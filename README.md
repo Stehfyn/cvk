@@ -44,47 +44,81 @@ Two naming sub-rules matter for generation:
   allocate-exportable-dedicated, then bind. The generator treats each qualifier as a
   `(pNext struct, extra parameters)` pair and stacks them mechanically.
 
-### Worked example (condensed from the buffer family)
+### Worked example (from the generated buffer family)
+
+These definitions use the house style from `.clang-format`: Allman braces, four-space
+indentation, aligned parameter names and assignments, and pointer stars attached to types.
+Locals use `snake_case` and are declared before statements; API parameters retain Vulkan's
+camelCase names. The current policy disables generated input assertions; result checks and
+output-handle assertions remain enabled.
 
 ```c
 /* Tier 0: flatten VkBufferCreateInfo, one vk call, fatal on failure. */
-void cvkCreateBuffer(VkDevice device, const void* pNext, VkBufferCreateFlags flags,
-                     VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode,
-                     uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices,
-                     const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer)
+void cvkCreateBuffer(VkDevice                     device,
+                     const void*                  pNext,
+                     VkBufferCreateFlags          flags,
+                     VkDeviceSize                 size,
+                     VkBufferUsageFlags           usage,
+                     VkSharingMode                sharingMode,
+                     uint32_t                     queueFamilyIndexCount,
+                     const uint32_t*              pQueueFamilyIndices,
+                     const VkAllocationCallbacks* pAllocator,
+                     VkBuffer*                    pBuffer)
 {
     VkBufferCreateInfo create_info;
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 != size);
-    CVK_ASSERT(0 == queueFamilyIndexCount || NULL != pQueueFamilyIndices);
-    create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    create_info.pNext = pNext;
-    /* ...remaining fields assigned positionally... */
+
+    create_info.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    create_info.pNext                 = pNext;
+    create_info.flags                 = flags;
+    create_info.size                  = size;
+    create_info.usage                 = usage;
+    create_info.sharingMode           = sharingMode;
+    create_info.queueFamilyIndexCount = queueFamilyIndexCount;
+    create_info.pQueueFamilyIndices   = pQueueFamilyIndices;
     CVK_CHECK(vkCreateBuffer(device, &create_info, pAllocator, pBuffer));
     CVK_ASSERT(VK_NULL_HANDLE != (*pBuffer));
 }
 
 /* Tier 1: one extension struct in front of the caller's chain, then tier 0. */
-void cvkCreateExternalMemoryBuffer(VkDevice device, const void* pNext,
-                                   VkExternalMemoryHandleTypeFlags handleTypes, /* ...same tail... */)
+void cvkCreateBufferWithExternalMemoryInfo(VkDevice                        device,
+                                           const void*                     pNext,
+                                           VkExternalMemoryHandleTypeFlags handleTypes,
+                                           VkBufferCreateFlags             flags,
+                                           VkDeviceSize                    size,
+                                           VkBufferUsageFlags              usage,
+                                           VkSharingMode                   sharingMode,
+                                           uint32_t                        queueFamilyIndexCount,
+                                           const uint32_t*                 pQueueFamilyIndices,
+                                           const VkAllocationCallbacks*    pAllocator,
+                                           VkBuffer*                       pBuffer)
 {
-    VkExternalMemoryBufferCreateInfo external_info;
-    external_info.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
-    external_info.pNext       = pNext;
-    external_info.handleTypes = handleTypes;
-    cvkCreateBuffer(device, &external_info, /* ...same tail... */);
+    VkExternalMemoryBufferCreateInfo external_memory_buffer_create_info;
+
+    external_memory_buffer_create_info.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
+    external_memory_buffer_create_info.pNext       = pNext;
+    external_memory_buffer_create_info.handleTypes = handleTypes;
+    cvkCreateBuffer(device, &external_memory_buffer_create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 
-/* Tier 2: create, allocate, bind; every produced handle is an out-param. */
-void cvkSetupExportableMemoryBuffer(VkPhysicalDevice physicalDevice, VkDevice device,
-                                    const void* pBufferNext, VkExternalMemoryHandleTypeFlags handleTypes,
-                                    /* ...buffer args..., */ const void* pMemoryNext,
-                                    VkMemoryPropertyFlags properties, const VkAllocationCallbacks* pAllocator,
-                                    VkBuffer* pBuffer, VkDeviceMemory* pMemory)
+/* Tier 2: create, allocate, bind; every produced handle is an out-parameter. */
+void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
+                    VkDevice                     device,
+                    const void*                  pBufferNext,
+                    VkBufferCreateFlags          flags,
+                    VkDeviceSize                 size,
+                    VkBufferUsageFlags           usage,
+                    VkSharingMode                sharingMode,
+                    uint32_t                     queueFamilyIndexCount,
+                    const uint32_t*              pQueueFamilyIndices,
+                    VkMemoryPropertyFlags        requiredProperties,
+                    const void*                  pMemoryNext,
+                    const VkAllocationCallbacks* pAllocator,
+                    VkBuffer*                    pBuffer,
+                    VkDeviceMemory*              pMemory)
 {
-    cvkCreateExternalMemoryBuffer(device, pBufferNext, handleTypes, /* ... */, pAllocator, pBuffer);
-    cvkAllocateExportableBufferMemory(physicalDevice, device, *pBuffer, pMemoryNext, handleTypes, properties, pAllocator, pMemory);
-    cvkBindBufferMemory(device, *pBuffer, *pMemory, CVK_NO_OFFSET);
+    cvkCreateBuffer(device, pBufferNext, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
+    cvkAllocateBufferMemory(physicalDevice, device, (*pBuffer), requiredProperties, pMemoryNext, pAllocator, pMemory);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
 }
 ```
 
