@@ -167,6 +167,18 @@ Selection helpers (`cvkSelectMemoryType`) are hand-written and shipped as `cvk_p
 
 ## 12. Open decisions
 
+- **Adjective-first convenience names.** `cvkCreateImageWithDrmFormatModifierExplicitInfo`
+  follows the registry order of `VkImageDrmFormatModifierExplicitCreateInfoEXT`;
+  `…WithExplicitDrmFormatModifierInfo` reads better as English. Tabled: no rule can tell an
+  adjective (`Explicit`) from a noun (`List`), and the registry order keeps the pair on one
+  stem and greppable against the struct and enum names. If adopted, it goes in as a
+  `name_overrides` table in `cvk.policy.json` applied by the generator, never as an edit.
+  Related idea, same table: conceptually `cvkCreateImageWithExternalMemoryInfo` could be
+  encoded as `cvkCreateExternalImage`, the reference module's name, where the qualifier
+  becomes an adjective on the created object instead of a chained-struct suffix. Same
+  objection applies (which word is the adjective, and `Memory` is dropped), so it would be a
+  declared override, not a rule.
+
 - Whether enumerations with a `void` return should also assert a non-zero count (the
   reference does for surface formats; the spec guarantees ≥ 1 there, not in general).
 - Whether `pAllocator` should be threaded at all given the policy always passes NULL.
