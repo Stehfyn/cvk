@@ -148,8 +148,9 @@ struct names with `Get` in front: `cvkGetPhysicalDeviceHostQueryResetFeatures`,
 sibling when one exists, so the input stays flattened. `<target>With<D><Kind>` is the fallback
 when the command's tail is not the run; no profile command needs it today.
 The function takes `p<ExtenderStruct>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
-chains it into the output struct, and returns it through an added out-parameter `p<ExtenderStruct>`
-(`pExternalImageFormatProperties`, `pMemoryDedicatedRequirements`).
+chains it into the base output struct, which stays a local, and returns exactly the struct it is
+named after through the out-parameter `p<ExtenderStruct>` (`pExternalImageFormatProperties`,
+`pMemoryDedicatedRequirements`). A caller who also wants the base struct calls the base query.
 
 ## 7. Tier 1': specializations (policy table)
 

@@ -818,15 +818,20 @@ class Generator:
         var = snake(ext_out)
         params: List[EmittedParam] = []
         args: List[str] = []
+        # The base output struct is only the head of the chain Vulkan requires: it stays a
+        # local, and the function returns exactly the struct it is named after.
+        base_var = snake(op.name)
         for p in t_params:
             if p is chain_param:
                 params.append(EmittedParam(f"void* {ext_next}", ext_next, f"Optional output extension chain attached to {ext.name}, or NULL", False))
                 args.append(f"&{var}")
+            elif p.name == op.name:
+                args.append(f"&{base_var}")
             else:
                 params.append(p)
                 args.append(p.name)
         params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out, f"Receives the {ext.name}", True))
-        body = [f"{ext.name} {var};", "", f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
+        body = [f"{base.name} {base_var};", f"{ext.name} {var};", "", f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
         call = f"{target}({', '.join(args)})"
         if ret != "void":
             body.insert(0, f"{ret} result;")
