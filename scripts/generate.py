@@ -162,24 +162,65 @@ class Generator:
         return "".join(out)
 
     def convenience_name(self, cmd: Command, base: Struct, ext: Struct) -> str:
-        """SPEC.md section 3: <tier-0>With<distinct part of the extender>Info.
+        """SPEC.md section 3. Distinct part D of the extender E against its base struct B:
+        align E with B by matching blocks; tokens of E outside any block form D, except a
+        one-token block strictly inside E, which stays (compound-term protection: the Format
+        inside DrmFormatModifier). Strip the struct-kind word and Info/version tokens from D.
 
-        The distinct part is the extender's tokens minus the longest common suffix and then
-        the longest common prefix it shares with the base struct it extends, minus the trailing
-        struct-kind word (Create/Allocate/Begin/Bind/Submit) and Info/version tokens.
-        VkImageViewUsageCreateInfo on VkImageViewCreateInfo -> Usage -> cvkCreateImageViewWithUsageInfo;
-        VkPhysicalDeviceImageDrmFormatModifierInfoEXT on VkPhysicalDeviceImageFormatInfo2 -> DrmFormatModifier."""
+        Placement: locate B's noun run (B minus kind/Info/version) in the command name after
+        the verb. If it is followed by a word (Properties, Support, ...), D is spliced into the
+        command name after the last matched block that precedes or overlaps D in E, or before
+        the first block when D leads. Otherwise the name is <tier-0>With<D>Info."""
+        import difflib
+
+        kind = ("Info", "Create", "Allocate", "Begin", "Bind", "Submit")
+
+        def norm(t: str) -> str:
+            return t[:-1] if len(t) > 3 and t.endswith("s") else t
+
         e = tokens(self.struct_short(ext))
         b = tokens(self.struct_short(base))
-        while e and b and e[-1] == b[-1]:
-            e.pop()
-            b.pop()
-        while e and b and e[0] == b[0]:
-            e.pop(0)
-            b.pop(0)
-        while e and (e[-1] in ("Info", "Create", "Allocate", "Begin", "Bind", "Submit") or e[-1].isdigit()):
-            e.pop()
-        return self.cmd_name(cmd) + "With" + "".join(e) + "Info"
+        blocks = [m for m in difflib.SequenceMatcher(None, e, b, autojunk=False).get_matching_blocks() if m.size]
+        matched = set()
+        for m in blocks:
+            if m.size == 1 and 0 < m.a < len(e) - 1:
+                continue
+            matched.update(range(m.a, m.a + m.size))
+        d_idx = [i for i in range(len(e)) if i not in matched]
+        d = [e[i] for i in d_idx]
+        while d and (d[-1] in kind or d[-1].isdigit()):
+            d.pop()
+        if not d:
+            self.errors.append(f"extender {ext.name} has no distinct part against {base.name}")
+            return self.cmd_name(cmd) + "With" + self.struct_short(ext)
+
+        cmd_tokens = tokens(strip_vendor(cmd.name[2:]))
+        verb, rest = cmd_tokens[0], cmd_tokens[1:]
+        run = [t for t in b if t not in kind and not t.isdigit()]
+        if verb not in ("Get", "Enumerate"):
+            return self.cmd_name(cmd) + "With" + "".join(d) + "Info"
+        # Query: an extender whose name covers the base noun run is the subject of the query.
+        ne, nrun = [norm(t) for t in e], [norm(t) for t in run]
+        if all(t in ne for t in nrun):
+            return "cvk" + verb + self.struct_short(ext)
+        nrest = [norm(t) for t in rest]
+        start = next((i for i in range(len(nrest) - len(nrun) + 1) if nrest[i:i + len(nrun)] == nrun), -1)
+        if start < 0:
+            return self.cmd_name(cmd) + "With" + "".join(d) + "Info"
+
+        # Splice: anchor on the base token at which D ends in E, mapped into the command name.
+        first_d, last_d = d_idx[0], d_idx[-1]
+        preceding = [m for m in blocks if m.a < last_d]
+        if preceding:
+            m = preceding[-1]
+            b_end = m.b + min(m.size, last_d - m.a + 1)          # base index just after the overlap
+            b_end = min(b_end, len(run))
+            insert_at = start + b_end
+        else:
+            following = [m for m in blocks if m.a > first_d]
+            insert_at = start + (following[0].b if following else 0)
+        spliced = rest[:insert_at] + d + rest[insert_at:]
+        return "cvk" + verb + "".join(spliced)
 
     def capacity_name(self, array_param: str) -> str:
         stem = array_param[1:] if array_param.startswith("p") and array_param[1:2].isupper() else array_param

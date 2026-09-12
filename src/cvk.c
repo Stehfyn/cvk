@@ -5074,15 +5074,15 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
                        pAllocator,
                        pSwapchain);
 }
-void cvkGetDescriptorSetLayoutSupportWithBindingFlagsInfo(VkDevice                            device,
-                                                          const void*                         pCreateInfoNext,
-                                                          uint32_t                            bindingFlagsBindingCount,
-                                                          const VkDescriptorBindingFlags*     pBindingFlags,
-                                                          VkDescriptorSetLayoutCreateFlags    flags,
-                                                          uint32_t                            bindingCount,
-                                                          const VkDescriptorSetLayoutBinding* pBindings,
-                                                          void*                               pSupportNext,
-                                                          VkDescriptorSetLayoutSupport*       pSupport)
+void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
+                                                     const void*                         pCreateInfoNext,
+                                                     uint32_t                            bindingFlagsBindingCount,
+                                                     const VkDescriptorBindingFlags*     pBindingFlags,
+                                                     VkDescriptorSetLayoutCreateFlags    flags,
+                                                     uint32_t                            bindingCount,
+                                                     const VkDescriptorSetLayoutBinding* pBindings,
+                                                     void*                               pSupportNext,
+                                                     VkDescriptorSetLayoutSupport*       pSupport)
 {
     VkDescriptorSetLayoutBindingFlagsCreateInfo descriptor_set_layout_binding_flags_create_info;
 
@@ -5092,12 +5092,12 @@ void cvkGetDescriptorSetLayoutSupportWithBindingFlagsInfo(VkDevice              
     descriptor_set_layout_binding_flags_create_info.pBindingFlags = pBindingFlags;
     cvkGetDescriptorSetLayoutSupport(device, &descriptor_set_layout_binding_flags_create_info, flags, bindingCount, pBindings, pSupportNext, pSupport);
 }
-void cvkGetImageMemoryRequirements2WithPlaneMemoryRequirementsInfo(VkDevice               device,
-                                                                   const void*            pInfoNext,
-                                                                   VkImageAspectFlagBits  planeAspect,
-                                                                   VkImage                image,
-                                                                   void*                  pMemoryRequirementsNext,
-                                                                   VkMemoryRequirements2* pMemoryRequirements)
+void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
+                                            const void*            pInfoNext,
+                                            VkImageAspectFlagBits  planeAspect,
+                                            VkImage                image,
+                                            void*                  pMemoryRequirementsNext,
+                                            VkMemoryRequirements2* pMemoryRequirements)
 {
     VkImagePlaneMemoryRequirementsInfo image_plane_memory_requirements_info;
 
@@ -5106,13 +5106,13 @@ void cvkGetImageMemoryRequirements2WithPlaneMemoryRequirementsInfo(VkDevice     
     image_plane_memory_requirements_info.planeAspect = planeAspect;
     cvkGetImageMemoryRequirements2(device, &image_plane_memory_requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
-void cvkGetPhysicalDeviceExternalSemaphorePropertiesWithSemaphoreTypeInfo(VkPhysicalDevice                      physicalDevice,
-                                                                          const void*                           pExternalSemaphoreInfoNext,
-                                                                          VkSemaphoreType                       semaphoreType,
-                                                                          uint64_t                              initialValue,
-                                                                          VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                                                          void*                                 pExternalSemaphorePropertiesNext,
-                                                                          VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
+void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice                      physicalDevice,
+                                                         const void*                           pExternalSemaphoreInfoNext,
+                                                         VkSemaphoreType                       semaphoreType,
+                                                         uint64_t                              initialValue,
+                                                         VkExternalSemaphoreHandleTypeFlagBits handleType,
+                                                         void*                                 pExternalSemaphorePropertiesNext,
+                                                         VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
 {
     VkSemaphoreTypeCreateInfo semaphore_type_create_info;
 
@@ -5122,17 +5122,17 @@ void cvkGetPhysicalDeviceExternalSemaphorePropertiesWithSemaphoreTypeInfo(VkPhys
     semaphore_type_create_info.initialValue  = initialValue;
     cvkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &semaphore_type_create_info, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
-void cvkGetPhysicalDeviceImageFormatProperties2WithImageFormatListInfo(VkPhysicalDevice          physicalDevice,
-                                                                       const void*               pImageFormatInfoNext,
-                                                                       uint32_t                  viewFormatCount,
-                                                                       const VkFormat*           pViewFormats,
-                                                                       VkFormat                  format,
-                                                                       VkImageType               type,
-                                                                       VkImageTiling             tiling,
-                                                                       VkImageUsageFlags         usage,
-                                                                       VkImageCreateFlags        flags,
-                                                                       void*                     pImageFormatPropertiesNext,
-                                                                       VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageFormatListProperties2(VkPhysicalDevice          physicalDevice,
+                                                    const void*               pImageFormatInfoNext,
+                                                    uint32_t                  viewFormatCount,
+                                                    const VkFormat*           pViewFormats,
+                                                    VkFormat                  format,
+                                                    VkImageType               type,
+                                                    VkImageTiling             tiling,
+                                                    VkImageUsageFlags         usage,
+                                                    VkImageCreateFlags        flags,
+                                                    void*                     pImageFormatPropertiesNext,
+                                                    VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageFormatListCreateInfo image_format_list_create_info;
 
@@ -5142,16 +5142,16 @@ void cvkGetPhysicalDeviceImageFormatProperties2WithImageFormatListInfo(VkPhysica
     image_format_list_create_info.pViewFormats    = pViewFormats;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageFormatProperties2WithImageStencilUsageInfo(VkPhysicalDevice          physicalDevice,
-                                                                         const void*               pImageFormatInfoNext,
-                                                                         VkImageUsageFlags         stencilUsage,
-                                                                         VkFormat                  format,
-                                                                         VkImageType               type,
-                                                                         VkImageTiling             tiling,
-                                                                         VkImageUsageFlags         usage,
-                                                                         VkImageCreateFlags        flags,
-                                                                         void*                     pImageFormatPropertiesNext,
-                                                                         VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageStencilUsageFormatProperties2(VkPhysicalDevice          physicalDevice,
+                                                            const void*               pImageFormatInfoNext,
+                                                            VkImageUsageFlags         stencilUsage,
+                                                            VkFormat                  format,
+                                                            VkImageType               type,
+                                                            VkImageTiling             tiling,
+                                                            VkImageUsageFlags         usage,
+                                                            VkImageCreateFlags        flags,
+                                                            void*                     pImageFormatPropertiesNext,
+                                                            VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 
@@ -5160,16 +5160,16 @@ void cvkGetPhysicalDeviceImageFormatProperties2WithImageStencilUsageInfo(VkPhysi
     image_stencil_usage_create_info.stencilUsage = stencilUsage;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_stencil_usage_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageFormatProperties2WithExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
-                                                                           const void*                        pImageFormatInfoNext,
-                                                                           VkExternalMemoryHandleTypeFlagBits handleType,
-                                                                           VkFormat                           format,
-                                                                           VkImageType                        type,
-                                                                           VkImageTiling                      tiling,
-                                                                           VkImageUsageFlags                  usage,
-                                                                           VkImageCreateFlags                 flags,
-                                                                           void*                              pImageFormatPropertiesNext,
-                                                                           VkImageFormatProperties2*          pImageFormatProperties)
+void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
+                                                 const void*                        pImageFormatInfoNext,
+                                                 VkExternalMemoryHandleTypeFlagBits handleType,
+                                                 VkFormat                           format,
+                                                 VkImageType                        type,
+                                                 VkImageTiling                      tiling,
+                                                 VkImageUsageFlags                  usage,
+                                                 VkImageCreateFlags                 flags,
+                                                 void*                              pImageFormatPropertiesNext,
+                                                 VkImageFormatProperties2*          pImageFormatProperties)
 {
     VkPhysicalDeviceExternalImageFormatInfo physical_device_external_image_format_info;
 
@@ -5178,19 +5178,19 @@ void cvkGetPhysicalDeviceImageFormatProperties2WithExternalImageFormatInfo(VkPhy
     physical_device_external_image_format_info.handleType = handleType;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &physical_device_external_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageFormatProperties2WithDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
-                                                                         const void*               pImageFormatInfoNext,
-                                                                         uint64_t                  drmFormatModifier,
-                                                                         VkSharingMode             sharingMode,
-                                                                         uint32_t                  queueFamilyIndexCount,
-                                                                         const uint32_t*           pQueueFamilyIndices,
-                                                                         VkFormat                  format,
-                                                                         VkImageType               type,
-                                                                         VkImageTiling             tiling,
-                                                                         VkImageUsageFlags         usage,
-                                                                         VkImageCreateFlags        flags,
-                                                                         void*                     pImageFormatPropertiesNext,
-                                                                         VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
+                                                    const void*               pImageFormatInfoNext,
+                                                    uint64_t                  drmFormatModifier,
+                                                    VkSharingMode             sharingMode,
+                                                    uint32_t                  queueFamilyIndexCount,
+                                                    const uint32_t*           pQueueFamilyIndices,
+                                                    VkFormat                  format,
+                                                    VkImageType               type,
+                                                    VkImageTiling             tiling,
+                                                    VkImageUsageFlags         usage,
+                                                    VkImageCreateFlags        flags,
+                                                    void*                     pImageFormatPropertiesNext,
+                                                    VkImageFormatProperties2* pImageFormatProperties)
 {
     VkPhysicalDeviceImageDrmFormatModifierInfoEXT physical_device_image_drm_format_modifier_info;
 
