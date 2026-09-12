@@ -26,5 +26,114 @@
     "CVK_MAX_DISPLAYS": 32
   },
   "default_capacity": 64,
-  "input_asserts": false
+  "input_asserts": false,
+  "chains": {
+    "cvkGetPhysicalDeviceMemoryTypeIndex": {
+      "brief": "Selects a memory type index of the physical device covering the required properties.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceMemoryProperties",
+          "local": {
+            "pMemoryProperties": "memory_properties"
+          }
+        },
+        {
+          "call": "cvkGetCompatibleMemoryTypeIndex",
+          "bind": {
+            "memoryTypeCount": "memory_properties.memoryTypeCount",
+            "pMemoryTypes": "memory_properties.memoryTypes"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkAllocateImageMemory": {
+      "brief": "Allocates memory sized and typed for a image.",
+      "steps": [
+        {
+          "call": "cvkGetImageMemoryRequirements",
+          "local": {
+            "pMemoryRequirements": "memory_requirements"
+          }
+        },
+        {
+          "call": "cvkGetPhysicalDeviceMemoryTypeIndex",
+          "bind": {
+            "memoryTypeBits": "memory_requirements.memoryTypeBits"
+          },
+          "into": "memory_type_index"
+        },
+        {
+          "assert": "VK_INVALID != memory_type_index"
+        },
+        {
+          "call": "cvkAllocateMemory",
+          "bind": {
+            "allocationSize": "memory_requirements.size"
+          }
+        }
+      ]
+    },
+    "cvkAllocateBufferMemory": {
+      "brief": "Allocates memory sized and typed for a buffer.",
+      "steps": [
+        {
+          "call": "cvkGetBufferMemoryRequirements",
+          "local": {
+            "pMemoryRequirements": "memory_requirements"
+          }
+        },
+        {
+          "call": "cvkGetPhysicalDeviceMemoryTypeIndex",
+          "bind": {
+            "memoryTypeBits": "memory_requirements.memoryTypeBits"
+          },
+          "into": "memory_type_index"
+        },
+        {
+          "assert": "VK_INVALID != memory_type_index"
+        },
+        {
+          "call": "cvkAllocateMemory",
+          "bind": {
+            "allocationSize": "memory_requirements.size"
+          }
+        }
+      ]
+    },
+    "cvkSetupImage": {
+      "brief": "Creates an image, allocates memory for it, and binds the memory.",
+      "steps": [
+        {
+          "call": "cvkCreateImage"
+        },
+        {
+          "call": "cvkAllocateImageMemory"
+        },
+        {
+          "call": "cvkBindImageMemory",
+          "bind": {
+            "memoryOffset": "0"
+          }
+        }
+      ]
+    },
+    "cvkSetupBuffer": {
+      "brief": "Creates a buffer, allocates memory for it, and binds the memory.",
+      "steps": [
+        {
+          "call": "cvkCreateBuffer"
+        },
+        {
+          "call": "cvkAllocateBufferMemory"
+        },
+        {
+          "call": "cvkBindBufferMemory",
+          "bind": {
+            "memoryOffset": "0"
+          }
+        }
+      ]
+    }
+  }
 }

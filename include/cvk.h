@@ -21,6 +21,9 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #endif
 #define CVK_CHECK(expression) cvkCheckResult((expression), #expression, __FILE__, __LINE__)
 
+/* Sentinel for an unavailable index. */
+#define VK_INVALID (UINT32_MAX)
+
 /* Fixed enumeration capacities; override any before including. */
 #ifndef CVK_MAX_DISPLAYS
 #define CVK_MAX_DISPLAYS (32U)
@@ -59,18 +62,13 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
  * \par Details:
  *  Wraps vkAcquireNextImage2KHR. Aborts on any error result.
  *
- * \param[in] device       VkDevice value
- * \param[in] pNext        Optional extension chain attached to VkAcquireNextImageInfoKHR, or NULL
- * \param[in] swapchain    VkAcquireNextImageInfoKHR::swapchain
- * \param[in] timeout      VkAcquireNextImageInfoKHR::timeout
- * \param[in] semaphore    VkAcquireNextImageInfoKHR::semaphore
- * \param[in] fence        VkAcquireNextImageInfoKHR::fence
- * \param[in] deviceMask   VkAcquireNextImageInfoKHR::deviceMask
- * \param[out] pImageIndex  Receives the uint32_t
+ * \param[in] device        VkDevice value
+ * \param[in] pAcquireInfo  VkAcquireNextImageInfoKHR value
+ * \param[out] pImageIndex   Receives the uint32_t
  *
  * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_NOT_READY, VK_SUBOPTIMAL_KHR. Error results abort.
  */
-VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex);
+VkResult cvkAcquireNextImage2(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex);
 /**
  * \brief Acquires next image.
  *
@@ -2358,12 +2356,11 @@ void cvkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCal
  *  Wraps vkGetBufferDeviceAddress.
  *
  * \param[in] device  VkDevice value
- * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
- * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
+ * \param[in] pInfo   VkBufferDeviceAddressInfo value
  *
  * \return The VkDeviceAddress returned by the command.
  */
-VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const void* pNext, VkBuffer buffer);
+VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo);
 /**
  * \brief Retrieves buffer memory requirements.
  *
@@ -2383,15 +2380,14 @@ void cvkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRe
  * \par Details:
  *  Wraps vkGetBufferMemoryRequirements2.
  *
- * \param[in] device                   VkDevice value
- * \param[in] pInfoNext                Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
- * \param[in] buffer                   VkBufferMemoryRequirementsInfo2::buffer
- * \param[in] pMemoryRequirementsNext  Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements      Receives the VkMemoryRequirements2
+ * \param[in] device               VkDevice value
+ * \param[in] pInfo                VkBufferMemoryRequirementsInfo2 value
+ * \param[in] pNext                Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out] pMemoryRequirements  Receives the VkMemoryRequirements2
  *
  * \retval None
  */
-void cvkGetBufferMemoryRequirements2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
+void cvkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequirementsInfo2* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements);
 /**
  * \brief Retrieves buffer opaque capture address.
  *
@@ -2399,12 +2395,11 @@ void cvkGetBufferMemoryRequirements2(VkDevice device, const void* pInfoNext, VkB
  *  Wraps vkGetBufferOpaqueCaptureAddress.
  *
  * \param[in] device  VkDevice value
- * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
- * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
+ * \param[in] pInfo   VkBufferDeviceAddressInfo value
  *
  * \return The uint64_t returned by the command.
  */
-uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const void* pNext, VkBuffer buffer);
+uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo);
 /**
  * \brief Retrieves descriptor set layout support.
  *
@@ -2489,12 +2484,11 @@ void cvkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDevi
  *  Wraps vkGetDeviceMemoryOpaqueCaptureAddress.
  *
  * \param[in] device  VkDevice value
- * \param[in] pNext   Optional extension chain attached to VkDeviceMemoryOpaqueCaptureAddressInfo, or NULL
- * \param[in] memory  VkDeviceMemoryOpaqueCaptureAddressInfo::memory
+ * \param[in] pInfo   VkDeviceMemoryOpaqueCaptureAddressInfo value
  *
  * \return The uint64_t returned by the command.
  */
-uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const void* pNext, VkDeviceMemory memory);
+uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo);
 /**
  * \brief Retrieves device proc addr.
  *
@@ -2527,16 +2521,13 @@ void cvkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queu
  * \par Details:
  *  Wraps vkGetDeviceQueue2.
  *
- * \param[in] device            VkDevice value
- * \param[in] pNext             Optional extension chain attached to VkDeviceQueueInfo2, or NULL
- * \param[in] flags             VkDeviceQueueInfo2::flags
- * \param[in] queueFamilyIndex  VkDeviceQueueInfo2::queueFamilyIndex
- * \param[in] queueIndex        VkDeviceQueueInfo2::queueIndex
- * \param[out] pQueue            Receives the created VkQueue
+ * \param[in] device      VkDevice value
+ * \param[in] pQueueInfo  VkDeviceQueueInfo2 value
+ * \param[out] pQueue      Receives the created VkQueue
  *
  * \retval None
  */
-void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
+void cvkGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue);
 /**
  * \brief Retrieves display mode properties.
  *
@@ -2634,15 +2625,14 @@ void cvkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequi
  * \par Details:
  *  Wraps vkGetImageMemoryRequirements2.
  *
- * \param[in] device                   VkDevice value
- * \param[in] pInfoNext                Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
- * \param[in] image                    VkImageMemoryRequirementsInfo2::image
- * \param[in] pMemoryRequirementsNext  Optional output extension chain attached to VkMemoryRequirements2, or NULL
- * \param[out] pMemoryRequirements      Receives the VkMemoryRequirements2
+ * \param[in] device               VkDevice value
+ * \param[in] pInfo                VkImageMemoryRequirementsInfo2 value
+ * \param[in] pNext                Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out] pMemoryRequirements  Receives the VkMemoryRequirements2
  *
  * \retval None
  */
-void cvkGetImageMemoryRequirements2(VkDevice device, const void* pInfoNext, VkImage image, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
+void cvkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirementsInfo2* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements);
 /**
  * \brief Retrieves image sparse memory requirements.
  *
@@ -2663,13 +2653,14 @@ uint32_t cvkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, VkS
  *  Wraps vkGetImageSparseMemoryRequirements2.
  *
  * \param[in] device                     VkDevice value
- * \param[in] pNext                      Optional extension chain attached to VkImageSparseMemoryRequirementsInfo2, or NULL
- * \param[in] image                      VkImageSparseMemoryRequirementsInfo2::image
+ * \param[in] pInfo                      VkImageSparseMemoryRequirementsInfo2 value
  * \param[out] pSparseMemoryRequirements  Receives up to CVK_MAX_SPARSE_MEMORY_REQUIREMENTS entries
  *
  * \return Number of entries written.
  */
-uint32_t cvkGetImageSparseMemoryRequirements2(VkDevice device, const void* pNext, VkImage image, VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS]);
+uint32_t cvkGetImageSparseMemoryRequirements2(VkDevice                                    device,
+                                              const VkImageSparseMemoryRequirementsInfo2* pInfo,
+                                              VkSparseImageMemoryRequirements2            pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS]);
 /**
  * \brief Retrieves image subresource layout.
  *
@@ -2703,14 +2694,12 @@ PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName
  *  Wraps vkGetMemoryFdKHR. Aborts on any error result.
  *
  * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetFdInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetFdInfoKHR::memory
- * \param[in] handleType  VkMemoryGetFdInfoKHR::handleType
+ * \param[in] pGetFdInfo  VkMemoryGetFdInfoKHR value
  * \param[out] pFd         Receives the int
  *
  * \retval None
  */
-void cvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd);
+void cvkGetMemoryFd(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
 /**
  * \brief Retrieves memory fd properties.
  *
@@ -2756,61 +2745,51 @@ uint32_t cvkGetPhysicalDeviceDisplayProperties(VkPhysicalDevice physicalDevice, 
  * \par Details:
  *  Wraps vkGetPhysicalDeviceExternalBufferProperties.
  *
- * \param[in] physicalDevice                 VkPhysicalDevice value
- * \param[in] pExternalBufferInfoNext        Optional extension chain attached to VkPhysicalDeviceExternalBufferInfo, or NULL
- * \param[in] flags                          VkPhysicalDeviceExternalBufferInfo::flags
- * \param[in] usage                          VkPhysicalDeviceExternalBufferInfo::usage
- * \param[in] handleType                     VkPhysicalDeviceExternalBufferInfo::handleType
- * \param[in] pExternalBufferPropertiesNext  Optional output extension chain attached to VkExternalBufferProperties, or NULL
- * \param[out] pExternalBufferProperties      Receives the VkExternalBufferProperties
+ * \param[in] physicalDevice             VkPhysicalDevice value
+ * \param[in] pExternalBufferInfo        VkPhysicalDeviceExternalBufferInfo value
+ * \param[in] pNext                      Optional output extension chain attached to VkExternalBufferProperties, or NULL
+ * \param[out] pExternalBufferProperties  Receives the VkExternalBufferProperties
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice                   physicalDevice,
-                                                  const void*                        pExternalBufferInfoNext,
-                                                  VkBufferCreateFlags                flags,
-                                                  VkBufferUsageFlags                 usage,
-                                                  VkExternalMemoryHandleTypeFlagBits handleType,
-                                                  void*                              pExternalBufferPropertiesNext,
-                                                  VkExternalBufferProperties*        pExternalBufferProperties);
+void cvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice                          physicalDevice,
+                                                  const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo,
+                                                  void*                                     pNext,
+                                                  VkExternalBufferProperties*               pExternalBufferProperties);
 /**
  * \brief Retrieves physical device external fence properties.
  *
  * \par Details:
  *  Wraps vkGetPhysicalDeviceExternalFenceProperties.
  *
- * \param[in] physicalDevice                VkPhysicalDevice value
- * \param[in] pExternalFenceInfoNext        Optional extension chain attached to VkPhysicalDeviceExternalFenceInfo, or NULL
- * \param[in] handleType                    VkPhysicalDeviceExternalFenceInfo::handleType
- * \param[in] pExternalFencePropertiesNext  Optional output extension chain attached to VkExternalFenceProperties, or NULL
- * \param[out] pExternalFenceProperties      Receives the VkExternalFenceProperties
+ * \param[in] physicalDevice            VkPhysicalDevice value
+ * \param[in] pExternalFenceInfo        VkPhysicalDeviceExternalFenceInfo value
+ * \param[in] pNext                     Optional output extension chain attached to VkExternalFenceProperties, or NULL
+ * \param[out] pExternalFenceProperties  Receives the VkExternalFenceProperties
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice                  physicalDevice,
-                                                 const void*                       pExternalFenceInfoNext,
-                                                 VkExternalFenceHandleTypeFlagBits handleType,
-                                                 void*                             pExternalFencePropertiesNext,
-                                                 VkExternalFenceProperties*        pExternalFenceProperties);
+void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice                         physicalDevice,
+                                                 const VkPhysicalDeviceExternalFenceInfo* pExternalFenceInfo,
+                                                 void*                                    pNext,
+                                                 VkExternalFenceProperties*               pExternalFenceProperties);
 /**
  * \brief Retrieves physical device external semaphore properties.
  *
  * \par Details:
  *  Wraps vkGetPhysicalDeviceExternalSemaphoreProperties.
  *
- * \param[in] physicalDevice                    VkPhysicalDevice value
- * \param[in] pExternalSemaphoreInfoNext        Optional extension chain attached to VkPhysicalDeviceExternalSemaphoreInfo, or NULL
- * \param[in] handleType                        VkPhysicalDeviceExternalSemaphoreInfo::handleType
- * \param[in] pExternalSemaphorePropertiesNext  Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
- * \param[out] pExternalSemaphoreProperties      Receives the VkExternalSemaphoreProperties
+ * \param[in] physicalDevice                VkPhysicalDevice value
+ * \param[in] pExternalSemaphoreInfo        VkPhysicalDeviceExternalSemaphoreInfo value
+ * \param[in] pNext                         Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
+ * \param[out] pExternalSemaphoreProperties  Receives the VkExternalSemaphoreProperties
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice                      physicalDevice,
-                                                     const void*                           pExternalSemaphoreInfoNext,
-                                                     VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                                     void*                                 pExternalSemaphorePropertiesNext,
-                                                     VkExternalSemaphoreProperties*        pExternalSemaphoreProperties);
+void cvkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice                             physicalDevice,
+                                                     const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo,
+                                                     void*                                        pNext,
+                                                     VkExternalSemaphoreProperties*               pExternalSemaphoreProperties);
 /**
  * \brief Retrieves physical device features.
  *
@@ -2892,27 +2871,17 @@ void cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physical
  * \par Details:
  *  Wraps vkGetPhysicalDeviceImageFormatProperties2. Aborts on any error result.
  *
- * \param[in] physicalDevice              VkPhysicalDevice value
- * \param[in] pImageFormatInfoNext        Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in] format                      VkPhysicalDeviceImageFormatInfo2::format
- * \param[in] type                        VkPhysicalDeviceImageFormatInfo2::type
- * \param[in] tiling                      VkPhysicalDeviceImageFormatInfo2::tiling
- * \param[in] usage                       VkPhysicalDeviceImageFormatInfo2::usage
- * \param[in] flags                       VkPhysicalDeviceImageFormatInfo2::flags
- * \param[in] pImageFormatPropertiesNext  Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties      Receives the VkImageFormatProperties2
+ * \param[in] physicalDevice          VkPhysicalDevice value
+ * \param[in] pImageFormatInfo        VkPhysicalDeviceImageFormatInfo2 value
+ * \param[in] pNext                   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out] pImageFormatProperties  Receives the VkImageFormatProperties2
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice          physicalDevice,
-                                                const void*               pImageFormatInfoNext,
-                                                VkFormat                  format,
-                                                VkImageType               type,
-                                                VkImageTiling             tiling,
-                                                VkImageUsageFlags         usage,
-                                                VkImageCreateFlags        flags,
-                                                void*                     pImageFormatPropertiesNext,
-                                                VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
+                                                const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+                                                void*                                   pNext,
+                                                VkImageFormatProperties2*               pImageFormatProperties);
 /**
  * \brief Retrieves physical device memory properties.
  *
@@ -3030,24 +2999,14 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice       
  *  Wraps vkGetPhysicalDeviceSparseImageFormatProperties2.
  *
  * \param[in] physicalDevice  VkPhysicalDevice value
- * \param[in] pNext           Optional extension chain attached to VkPhysicalDeviceSparseImageFormatInfo2, or NULL
- * \param[in] format          VkPhysicalDeviceSparseImageFormatInfo2::format
- * \param[in] type            VkPhysicalDeviceSparseImageFormatInfo2::type
- * \param[in] samples         VkPhysicalDeviceSparseImageFormatInfo2::samples
- * \param[in] usage           VkPhysicalDeviceSparseImageFormatInfo2::usage
- * \param[in] tiling          VkPhysicalDeviceSparseImageFormatInfo2::tiling
+ * \param[in] pFormatInfo     VkPhysicalDeviceSparseImageFormatInfo2 value
  * \param[out] pProperties     Receives up to CVK_MAX_PROPERTIES entries
  *
  * \return Number of entries written.
  */
-uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice               physicalDevice,
-                                                          const void*                    pNext,
-                                                          VkFormat                       format,
-                                                          VkImageType                    type,
-                                                          VkSampleCountFlagBits          samples,
-                                                          VkImageUsageFlags              usage,
-                                                          VkImageTiling                  tiling,
-                                                          VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES]);
+uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice                              physicalDevice,
+                                                          const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+                                                          VkSparseImageFormatProperties2                pProperties[CVK_MAX_PROPERTIES]);
 /**
  * \brief Retrieves physical device surface capabilities.
  *
@@ -3166,14 +3125,12 @@ void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_
  *  Wraps vkGetSemaphoreFdKHR. Aborts on any error result.
  *
  * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetFdInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetFdInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetFdInfoKHR::handleType
+ * \param[in] pGetFdInfo  VkSemaphoreGetFdInfoKHR value
  * \param[out] pFd         Receives the int
  *
  * \retval None
  */
-void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd);
+void cvkGetSemaphoreFd(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
 /**
  * \brief Retrieves swapchain images.
  *
@@ -3193,16 +3150,12 @@ uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImag
  * \par Details:
  *  Wraps vkImportSemaphoreFdKHR. Aborts on any error result.
  *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreFdInfoKHR, or NULL
- * \param[in] semaphore   VkImportSemaphoreFdInfoKHR::semaphore
- * \param[in] flags       VkImportSemaphoreFdInfoKHR::flags
- * \param[in] handleType  VkImportSemaphoreFdInfoKHR::handleType
- * \param[in] fd          VkImportSemaphoreFdInfoKHR::fd
+ * \param[in] device                  VkDevice value
+ * \param[in] pImportSemaphoreFdInfo  VkImportSemaphoreFdInfoKHR value
  *
  * \retval None
  */
-void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
+void cvkImportSemaphoreFd(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
 /**
  * \brief Calls vkInvalidateMappedMemoryRanges.
  *
@@ -3305,25 +3258,12 @@ void cvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char*
  * \par Details:
  *  Wraps vkQueuePresentKHR. Aborts on any error result.
  *
- * \param[in] queue               VkQueue value
- * \param[in] pNext               Optional extension chain attached to VkPresentInfoKHR, or NULL
- * \param[in] waitSemaphoreCount  VkPresentInfoKHR::waitSemaphoreCount
- * \param[in] pWaitSemaphores     VkPresentInfoKHR::pWaitSemaphores
- * \param[in] swapchainCount      VkPresentInfoKHR::swapchainCount
- * \param[in] pSwapchains         VkPresentInfoKHR::pSwapchains
- * \param[in] pImageIndices       VkPresentInfoKHR::pImageIndices
- * \param[in] pResults            VkPresentInfoKHR::pResults
+ * \param[in] queue         VkQueue value
+ * \param[in] pPresentInfo  VkPresentInfoKHR value
  *
  * \return VK_SUCCESS or one of: VK_SUBOPTIMAL_KHR. Error results abort.
  */
-VkResult cvkQueuePresent(VkQueue               queue,
-                         const void*           pNext,
-                         uint32_t              waitSemaphoreCount,
-                         const VkSemaphore*    pWaitSemaphores,
-                         uint32_t              swapchainCount,
-                         const VkSwapchainKHR* pSwapchains,
-                         const uint32_t*       pImageIndices,
-                         VkResult*             pResults);
+VkResult cvkQueuePresent(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
 /**
  * \brief Queues submit.
  *
@@ -3432,32 +3372,24 @@ void cvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQue
  * \par Details:
  *  Wraps vkSetDebugUtilsObjectNameEXT. Aborts on any error result.
  *
- * \param[in] device        VkDevice value
- * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectNameInfoEXT, or NULL
- * \param[in] objectType    VkDebugUtilsObjectNameInfoEXT::objectType
- * \param[in] objectHandle  VkDebugUtilsObjectNameInfoEXT::objectHandle
- * \param[in] pObjectName   VkDebugUtilsObjectNameInfoEXT::pObjectName
+ * \param[in] device     VkDevice value
+ * \param[in] pNameInfo  VkDebugUtilsObjectNameInfoEXT value
  *
  * \retval None
  */
-void cvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName);
+void cvkSetDebugUtilsObjectName(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo);
 /**
  * \brief Sets debug utils object tag.
  *
  * \par Details:
  *  Wraps vkSetDebugUtilsObjectTagEXT. Aborts on any error result.
  *
- * \param[in] device        VkDevice value
- * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectTagInfoEXT, or NULL
- * \param[in] objectType    VkDebugUtilsObjectTagInfoEXT::objectType
- * \param[in] objectHandle  VkDebugUtilsObjectTagInfoEXT::objectHandle
- * \param[in] tagName       VkDebugUtilsObjectTagInfoEXT::tagName
- * \param[in] tagSize       VkDebugUtilsObjectTagInfoEXT::tagSize
- * \param[in] pTag          VkDebugUtilsObjectTagInfoEXT::pTag
+ * \param[in] device    VkDevice value
+ * \param[in] pTagInfo  VkDebugUtilsObjectTagInfoEXT value
  *
  * \retval None
  */
-void cvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag);
+void cvkSetDebugUtilsObjectTag(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo);
 /**
  * \brief Sets event.
  *
@@ -3476,14 +3408,12 @@ void cvkSetEvent(VkDevice device, VkEvent event);
  * \par Details:
  *  Wraps vkSignalSemaphore. Aborts on any error result.
  *
- * \param[in] device     VkDevice value
- * \param[in] pNext      Optional extension chain attached to VkSemaphoreSignalInfo, or NULL
- * \param[in] semaphore  VkSemaphoreSignalInfo::semaphore
- * \param[in] value      VkSemaphoreSignalInfo::value
+ * \param[in] device       VkDevice value
+ * \param[in] pSignalInfo  VkSemaphoreSignalInfo value
  *
  * \retval None
  */
-void cvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value);
+void cvkSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo);
 /**
  * \brief Calls vkSubmitDebugUtilsMessageEXT.
  *
@@ -3596,6 +3526,303 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
  * \par Details:
  *  Wraps vkWaitSemaphores. Aborts on any error result.
  *
+ * \param[in] device     VkDevice value
+ * \param[in] pWaitInfo  VkSemaphoreWaitInfo value
+ * \param[in] timeout    uint64_t value
+ *
+ * \return VK_SUCCESS or one of: VK_TIMEOUT. Error results abort.
+ */
+VkResult cvkWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout);
+/**
+ * \brief Acquires next image 2 from the fields of VkAcquireNextImageInfoKHR.
+ *
+ * \param[in] device       VkDevice value
+ * \param[in] pNext        Optional extension chain attached to VkAcquireNextImageInfoKHR, or NULL
+ * \param[in] swapchain    VkAcquireNextImageInfoKHR::swapchain
+ * \param[in] timeout      VkAcquireNextImageInfoKHR::timeout
+ * \param[in] semaphore    VkAcquireNextImageInfoKHR::semaphore
+ * \param[in] fence        VkAcquireNextImageInfoKHR::fence
+ * \param[in] deviceMask   VkAcquireNextImageInfoKHR::deviceMask
+ * \param[out] pImageIndex  Receives the uint32_t
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkAcquireNextImageInfo(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex);
+/**
+ * \brief Retrieves buffer device address from the fields of VkBufferDeviceAddressInfo.
+ *
+ * \param[in] device  VkDevice value
+ * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
+ * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
+ *
+ * \return The VkDeviceAddress returned by the command.
+ */
+VkDeviceAddress cvkGetBufferDeviceAddressInfo(VkDevice device, const void* pNext, VkBuffer buffer);
+/**
+ * \brief Retrieves buffer memory requirements 2 from the fields of VkBufferMemoryRequirementsInfo2.
+ *
+ * \param[in] device                   VkDevice value
+ * \param[in] pInfoNext                Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
+ * \param[in] buffer                   VkBufferMemoryRequirementsInfo2::buffer
+ * \param[in] pMemoryRequirementsNext  Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out] pMemoryRequirements      Receives the VkMemoryRequirements2
+ *
+ * \retval None
+ */
+void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
+/**
+ * \brief Retrieves buffer opaque capture address from the fields of VkBufferDeviceAddressInfo.
+ *
+ * \param[in] device  VkDevice value
+ * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
+ * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
+ *
+ * \return The uint64_t returned by the command.
+ */
+uint64_t cvkGetBufferOpaqueCaptureAddressInfo(VkDevice device, const void* pNext, VkBuffer buffer);
+/**
+ * \brief Retrieves device memory opaque capture address from the fields of VkDeviceMemoryOpaqueCaptureAddressInfo.
+ *
+ * \param[in] device  VkDevice value
+ * \param[in] pNext   Optional extension chain attached to VkDeviceMemoryOpaqueCaptureAddressInfo, or NULL
+ * \param[in] memory  VkDeviceMemoryOpaqueCaptureAddressInfo::memory
+ *
+ * \return The uint64_t returned by the command.
+ */
+uint64_t cvkGetDeviceMemoryOpaqueCaptureAddressInfo(VkDevice device, const void* pNext, VkDeviceMemory memory);
+/**
+ * \brief Retrieves device queue 2 from the fields of VkDeviceQueueInfo2.
+ *
+ * \param[in] device            VkDevice value
+ * \param[in] pNext             Optional extension chain attached to VkDeviceQueueInfo2, or NULL
+ * \param[in] flags             VkDeviceQueueInfo2::flags
+ * \param[in] queueFamilyIndex  VkDeviceQueueInfo2::queueFamilyIndex
+ * \param[in] queueIndex        VkDeviceQueueInfo2::queueIndex
+ * \param[out] pQueue            Receives the created VkQueue
+ *
+ * \retval None
+ */
+void cvkGetDeviceQueueInfo2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
+/**
+ * \brief Retrieves image memory requirements 2 from the fields of VkImageMemoryRequirementsInfo2.
+ *
+ * \param[in] device                   VkDevice value
+ * \param[in] pInfoNext                Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
+ * \param[in] image                    VkImageMemoryRequirementsInfo2::image
+ * \param[in] pMemoryRequirementsNext  Optional output extension chain attached to VkMemoryRequirements2, or NULL
+ * \param[out] pMemoryRequirements      Receives the VkMemoryRequirements2
+ *
+ * \retval None
+ */
+void cvkGetImageMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkImage image, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
+/**
+ * \brief Retrieves image sparse memory requirements 2 from the fields of VkImageSparseMemoryRequirementsInfo2.
+ *
+ * \param[in] device                     VkDevice value
+ * \param[in] pNext                      Optional extension chain attached to VkImageSparseMemoryRequirementsInfo2, or NULL
+ * \param[in] image                      VkImageSparseMemoryRequirementsInfo2::image
+ * \param[out] pSparseMemoryRequirements  Receives up to CVK_MAX_SPARSE_MEMORY_REQUIREMENTS entries
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetImageSparseMemoryRequirementsInfo2(VkDevice device, const void* pNext, VkImage image, VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS]);
+/**
+ * \brief Retrieves memory fd from the fields of VkMemoryGetFdInfoKHR.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkMemoryGetFdInfoKHR, or NULL
+ * \param[in] memory      VkMemoryGetFdInfoKHR::memory
+ * \param[in] handleType  VkMemoryGetFdInfoKHR::handleType
+ * \param[out] pFd         Receives the int
+ *
+ * \retval None
+ */
+void cvkGetMemoryFdInfo(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd);
+/**
+ * \brief Retrieves physical device external buffer properties from the fields of VkPhysicalDeviceExternalBufferInfo.
+ *
+ * \param[in] physicalDevice                 VkPhysicalDevice value
+ * \param[in] pExternalBufferInfoNext        Optional extension chain attached to VkPhysicalDeviceExternalBufferInfo, or NULL
+ * \param[in] flags                          VkPhysicalDeviceExternalBufferInfo::flags
+ * \param[in] usage                          VkPhysicalDeviceExternalBufferInfo::usage
+ * \param[in] handleType                     VkPhysicalDeviceExternalBufferInfo::handleType
+ * \param[in] pExternalBufferPropertiesNext  Optional output extension chain attached to VkExternalBufferProperties, or NULL
+ * \param[out] pExternalBufferProperties      Receives the VkExternalBufferProperties
+ *
+ * \retval None
+ */
+void cvkGetPhysicalDeviceExternalBufferInfo(VkPhysicalDevice                   physicalDevice,
+                                            const void*                        pExternalBufferInfoNext,
+                                            VkBufferCreateFlags                flags,
+                                            VkBufferUsageFlags                 usage,
+                                            VkExternalMemoryHandleTypeFlagBits handleType,
+                                            void*                              pExternalBufferPropertiesNext,
+                                            VkExternalBufferProperties*        pExternalBufferProperties);
+/**
+ * \brief Retrieves physical device external fence properties from the fields of VkPhysicalDeviceExternalFenceInfo.
+ *
+ * \param[in] physicalDevice                VkPhysicalDevice value
+ * \param[in] pExternalFenceInfoNext        Optional extension chain attached to VkPhysicalDeviceExternalFenceInfo, or NULL
+ * \param[in] handleType                    VkPhysicalDeviceExternalFenceInfo::handleType
+ * \param[in] pExternalFencePropertiesNext  Optional output extension chain attached to VkExternalFenceProperties, or NULL
+ * \param[out] pExternalFenceProperties      Receives the VkExternalFenceProperties
+ *
+ * \retval None
+ */
+void cvkGetPhysicalDeviceExternalFenceInfo(VkPhysicalDevice                  physicalDevice,
+                                           const void*                       pExternalFenceInfoNext,
+                                           VkExternalFenceHandleTypeFlagBits handleType,
+                                           void*                             pExternalFencePropertiesNext,
+                                           VkExternalFenceProperties*        pExternalFenceProperties);
+/**
+ * \brief Retrieves physical device external semaphore properties from the fields of VkPhysicalDeviceExternalSemaphoreInfo.
+ *
+ * \param[in] physicalDevice                    VkPhysicalDevice value
+ * \param[in] pExternalSemaphoreInfoNext        Optional extension chain attached to VkPhysicalDeviceExternalSemaphoreInfo, or NULL
+ * \param[in] handleType                        VkPhysicalDeviceExternalSemaphoreInfo::handleType
+ * \param[in] pExternalSemaphorePropertiesNext  Optional output extension chain attached to VkExternalSemaphoreProperties, or NULL
+ * \param[out] pExternalSemaphoreProperties      Receives the VkExternalSemaphoreProperties
+ *
+ * \retval None
+ */
+void cvkGetPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDevice                      physicalDevice,
+                                               const void*                           pExternalSemaphoreInfoNext,
+                                               VkExternalSemaphoreHandleTypeFlagBits handleType,
+                                               void*                                 pExternalSemaphorePropertiesNext,
+                                               VkExternalSemaphoreProperties*        pExternalSemaphoreProperties);
+/**
+ * \brief Retrieves physical device image format properties 2 from the fields of VkPhysicalDeviceImageFormatInfo2.
+ *
+ * \param[in] physicalDevice              VkPhysicalDevice value
+ * \param[in] pImageFormatInfoNext        Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in] format                      VkPhysicalDeviceImageFormatInfo2::format
+ * \param[in] type                        VkPhysicalDeviceImageFormatInfo2::type
+ * \param[in] tiling                      VkPhysicalDeviceImageFormatInfo2::tiling
+ * \param[in] usage                       VkPhysicalDeviceImageFormatInfo2::usage
+ * \param[in] flags                       VkPhysicalDeviceImageFormatInfo2::flags
+ * \param[in] pImageFormatPropertiesNext  Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out] pImageFormatProperties      Receives the VkImageFormatProperties2
+ *
+ * \retval None
+ */
+void cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physicalDevice,
+                                          const void*               pImageFormatInfoNext,
+                                          VkFormat                  format,
+                                          VkImageType               type,
+                                          VkImageTiling             tiling,
+                                          VkImageUsageFlags         usage,
+                                          VkImageCreateFlags        flags,
+                                          void*                     pImageFormatPropertiesNext,
+                                          VkImageFormatProperties2* pImageFormatProperties);
+/**
+ * \brief Retrieves physical device sparse image format properties 2 from the fields of VkPhysicalDeviceSparseImageFormatInfo2.
+ *
+ * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[in] pNext           Optional extension chain attached to VkPhysicalDeviceSparseImageFormatInfo2, or NULL
+ * \param[in] format          VkPhysicalDeviceSparseImageFormatInfo2::format
+ * \param[in] type            VkPhysicalDeviceSparseImageFormatInfo2::type
+ * \param[in] samples         VkPhysicalDeviceSparseImageFormatInfo2::samples
+ * \param[in] usage           VkPhysicalDeviceSparseImageFormatInfo2::usage
+ * \param[in] tiling          VkPhysicalDeviceSparseImageFormatInfo2::tiling
+ * \param[out] pProperties     Receives up to CVK_MAX_PROPERTIES entries
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice               physicalDevice,
+                                                    const void*                    pNext,
+                                                    VkFormat                       format,
+                                                    VkImageType                    type,
+                                                    VkSampleCountFlagBits          samples,
+                                                    VkImageUsageFlags              usage,
+                                                    VkImageTiling                  tiling,
+                                                    VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES]);
+/**
+ * \brief Retrieves semaphore fd from the fields of VkSemaphoreGetFdInfoKHR.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetFdInfoKHR, or NULL
+ * \param[in] semaphore   VkSemaphoreGetFdInfoKHR::semaphore
+ * \param[in] handleType  VkSemaphoreGetFdInfoKHR::handleType
+ * \param[out] pFd         Receives the int
+ *
+ * \retval None
+ */
+void cvkGetSemaphoreFdInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd);
+/**
+ * \brief Imports semaphore fd from the fields of VkImportSemaphoreFdInfoKHR.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreFdInfoKHR, or NULL
+ * \param[in] semaphore   VkImportSemaphoreFdInfoKHR::semaphore
+ * \param[in] flags       VkImportSemaphoreFdInfoKHR::flags
+ * \param[in] handleType  VkImportSemaphoreFdInfoKHR::handleType
+ * \param[in] fd          VkImportSemaphoreFdInfoKHR::fd
+ *
+ * \retval None
+ */
+void cvkImportSemaphoreFdInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
+/**
+ * \brief Queues present from the fields of VkPresentInfoKHR.
+ *
+ * \param[in] queue               VkQueue value
+ * \param[in] pNext               Optional extension chain attached to VkPresentInfoKHR, or NULL
+ * \param[in] waitSemaphoreCount  VkPresentInfoKHR::waitSemaphoreCount
+ * \param[in] pWaitSemaphores     VkPresentInfoKHR::pWaitSemaphores
+ * \param[in] swapchainCount      VkPresentInfoKHR::swapchainCount
+ * \param[in] pSwapchains         VkPresentInfoKHR::pSwapchains
+ * \param[in] pImageIndices       VkPresentInfoKHR::pImageIndices
+ * \param[in] pResults            VkPresentInfoKHR::pResults
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkQueuePresentInfo(VkQueue               queue,
+                             const void*           pNext,
+                             uint32_t              waitSemaphoreCount,
+                             const VkSemaphore*    pWaitSemaphores,
+                             uint32_t              swapchainCount,
+                             const VkSwapchainKHR* pSwapchains,
+                             const uint32_t*       pImageIndices,
+                             VkResult*             pResults);
+/**
+ * \brief Sets debug utils object name from the fields of VkDebugUtilsObjectNameInfoEXT.
+ *
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectNameInfoEXT, or NULL
+ * \param[in] objectType    VkDebugUtilsObjectNameInfoEXT::objectType
+ * \param[in] objectHandle  VkDebugUtilsObjectNameInfoEXT::objectHandle
+ * \param[in] pObjectName   VkDebugUtilsObjectNameInfoEXT::pObjectName
+ *
+ * \retval None
+ */
+void cvkSetDebugUtilsObjectNameInfo(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName);
+/**
+ * \brief Sets debug utils object tag from the fields of VkDebugUtilsObjectTagInfoEXT.
+ *
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectTagInfoEXT, or NULL
+ * \param[in] objectType    VkDebugUtilsObjectTagInfoEXT::objectType
+ * \param[in] objectHandle  VkDebugUtilsObjectTagInfoEXT::objectHandle
+ * \param[in] tagName       VkDebugUtilsObjectTagInfoEXT::tagName
+ * \param[in] tagSize       VkDebugUtilsObjectTagInfoEXT::tagSize
+ * \param[in] pTag          VkDebugUtilsObjectTagInfoEXT::pTag
+ *
+ * \retval None
+ */
+void cvkSetDebugUtilsObjectTagInfo(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag);
+/**
+ * \brief Signals semaphore from the fields of VkSemaphoreSignalInfo.
+ *
+ * \param[in] device     VkDevice value
+ * \param[in] pNext      Optional extension chain attached to VkSemaphoreSignalInfo, or NULL
+ * \param[in] semaphore  VkSemaphoreSignalInfo::semaphore
+ * \param[in] value      VkSemaphoreSignalInfo::value
+ *
+ * \retval None
+ */
+void cvkSignalSemaphoreInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value);
+/**
+ * \brief Waits for semaphores from the fields of VkSemaphoreWaitInfo.
+ *
  * \param[in] device          VkDevice value
  * \param[in] pNext           Optional extension chain attached to VkSemaphoreWaitInfo, or NULL
  * \param[in] flags           VkSemaphoreWaitInfo::flags
@@ -3604,9 +3831,9 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
  * \param[in] pValues         VkSemaphoreWaitInfo::pValues
  * \param[in] timeout         uint64_t value
  *
- * \return VK_SUCCESS or one of: VK_TIMEOUT. Error results abort.
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout);
+VkResult cvkWaitSemaphoreInfo(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout);
 /**
  * \brief Initializes a VkAcquireNextImageInfoKHR.
  *
@@ -7574,12 +7801,12 @@ void cvkGetDescriptorSetLayoutBindingFlagsSupport(VkDevice                      
 /**
  * \brief Retrieves image memory requirements 2 with VkImagePlaneMemoryRequirementsInfo chained.
  *
- * \param[in] device                   See cvkGetImageMemoryRequirements2
- * \param[in] pInfoNext                See cvkGetImageMemoryRequirements2
+ * \param[in] device                   See cvkGetImageMemoryRequirementsInfo2
+ * \param[in] pInfoNext                See cvkGetImageMemoryRequirementsInfo2
  * \param[in] planeAspect              VkImagePlaneMemoryRequirementsInfo::planeAspect
- * \param[in] image                    See cvkGetImageMemoryRequirements2
- * \param[out] pMemoryRequirementsNext  See cvkGetImageMemoryRequirements2
- * \param[out] pMemoryRequirements      See cvkGetImageMemoryRequirements2
+ * \param[in] image                    See cvkGetImageMemoryRequirementsInfo2
+ * \param[out] pMemoryRequirementsNext  See cvkGetImageMemoryRequirementsInfo2
+ * \param[out] pMemoryRequirements      See cvkGetImageMemoryRequirementsInfo2
  *
  * \retval None
  */
@@ -7592,13 +7819,13 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
 /**
  * \brief Retrieves physical device external semaphore properties with VkSemaphoreTypeCreateInfo chained.
  *
- * \param[in] physicalDevice                    See cvkGetPhysicalDeviceExternalSemaphoreProperties
- * \param[in] pExternalSemaphoreInfoNext        See cvkGetPhysicalDeviceExternalSemaphoreProperties
+ * \param[in] physicalDevice                    See cvkGetPhysicalDeviceExternalSemaphoreInfo
+ * \param[in] pExternalSemaphoreInfoNext        See cvkGetPhysicalDeviceExternalSemaphoreInfo
  * \param[in] semaphoreType                     VkSemaphoreTypeCreateInfo::semaphoreType
  * \param[in] initialValue                      VkSemaphoreTypeCreateInfo::initialValue
- * \param[in] handleType                        See cvkGetPhysicalDeviceExternalSemaphoreProperties
- * \param[out] pExternalSemaphorePropertiesNext  See cvkGetPhysicalDeviceExternalSemaphoreProperties
- * \param[out] pExternalSemaphoreProperties      See cvkGetPhysicalDeviceExternalSemaphoreProperties
+ * \param[in] handleType                        See cvkGetPhysicalDeviceExternalSemaphoreInfo
+ * \param[out] pExternalSemaphorePropertiesNext  See cvkGetPhysicalDeviceExternalSemaphoreInfo
+ * \param[out] pExternalSemaphoreProperties      See cvkGetPhysicalDeviceExternalSemaphoreInfo
  *
  * \retval None
  */
@@ -7612,17 +7839,17 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageFormatListCreateInfo chained.
  *
- * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] viewFormatCount             VkImageFormatListCreateInfo::viewFormatCount
  * \param[in] pViewFormats                VkImageFormatListCreateInfo::pViewFormats
- * \param[in] format                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] type                        See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
  * \retval None
  */
@@ -7640,16 +7867,16 @@ void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          phy
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsageCreateInfo chained.
  *
- * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] stencilUsage                VkImageStencilUsageCreateInfo::stencilUsage
- * \param[in] format                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] type                        See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
  * \retval None
  */
@@ -7666,16 +7893,16 @@ void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice     
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceExternalImageFormatInfo chained.
  *
- * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] handleType                  VkPhysicalDeviceExternalImageFormatInfo::handleType
- * \param[in] format                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] type                        See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
  * \retval None
  */
@@ -7692,19 +7919,19 @@ void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice               
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageDrmFormatModifierInfoEXT chained.
  *
- * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] drmFormatModifier           VkPhysicalDeviceImageDrmFormatModifierInfoEXT::drmFormatModifier
  * \param[in] sharingMode                 VkPhysicalDeviceImageDrmFormatModifierInfoEXT::sharingMode
  * \param[in] queueFamilyIndexCount       VkPhysicalDeviceImageDrmFormatModifierInfoEXT::queueFamilyIndexCount
  * \param[in] pQueueFamilyIndices         VkPhysicalDeviceImageDrmFormatModifierInfoEXT::pQueueFamilyIndices
- * \param[in] format                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] type                        See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatProperties2
- * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatProperties2
+ * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
  * \retval None
  */
@@ -7724,17 +7951,17 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
 /**
  * \brief Queues present with VkDeviceGroupPresentInfoKHR chained.
  *
- * \param[in] queue                      See cvkQueuePresent
- * \param[in] pNext                      See cvkQueuePresent
+ * \param[in] queue                      See cvkQueuePresentInfo
+ * \param[in] pNext                      See cvkQueuePresentInfo
  * \param[in] deviceGroupSwapchainCount  VkDeviceGroupPresentInfoKHR::deviceGroupSwapchainCount
  * \param[in] pDeviceMasks               VkDeviceGroupPresentInfoKHR::pDeviceMasks
  * \param[in] mode                       VkDeviceGroupPresentInfoKHR::mode
- * \param[in] waitSemaphoreCount         See cvkQueuePresent
- * \param[in] pWaitSemaphores            See cvkQueuePresent
- * \param[in] swapchainCount             See cvkQueuePresent
- * \param[in] pSwapchains                See cvkQueuePresent
- * \param[in] pImageIndices              See cvkQueuePresent
- * \param[out] pResults                   See cvkQueuePresent
+ * \param[in] waitSemaphoreCount         See cvkQueuePresentInfo
+ * \param[in] pWaitSemaphores            See cvkQueuePresentInfo
+ * \param[in] swapchainCount             See cvkQueuePresentInfo
+ * \param[in] pSwapchains                See cvkQueuePresentInfo
+ * \param[in] pImageIndices              See cvkQueuePresentInfo
+ * \param[out] pResults                   See cvkQueuePresentInfo
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
@@ -7749,6 +7976,160 @@ VkResult cvkQueuePresentWithDeviceGroupInfo(VkQueue                             
                                             const VkSwapchainKHR*               pSwapchains,
                                             const uint32_t*                     pImageIndices,
                                             VkResult*                           pResults);
+/**
+ * \brief Returns the first memory type in the mask whose property flags equal the given flags exactly, or VK_INVALID.
+ *
+ * \param[in] memoryTypeCount  memoryTypeCount value
+ * \param[in] pMemoryTypes     pMemoryTypes value
+ * \param[in] memoryTypeBits   memoryTypeBits value
+ * \param[in] properties       properties value
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties);
+/**
+ * \brief Returns the first memory type in the mask whose property flags cover the required flags, or VK_INVALID.
+ *
+ * \param[in] memoryTypeCount     memoryTypeCount value
+ * \param[in] pMemoryTypes        pMemoryTypes value
+ * \param[in] memoryTypeBits      memoryTypeBits value
+ * \param[in] requiredProperties  requiredProperties value
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
+/**
+ * \brief Selects a memory type index of the physical device covering the required properties.
+ *
+ * \param[in] physicalDevice      See cvkGetPhysicalDeviceMemoryProperties
+ * \param[in] memoryTypeBits      See cvkGetCompatibleMemoryTypeIndex
+ * \param[in] requiredProperties  See cvkGetCompatibleMemoryTypeIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
+/**
+ * \brief Allocates memory sized and typed for a image.
+ *
+ * \param[in] physicalDevice      See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] device              See cvkGetImageMemoryRequirements
+ * \param[in] image               See cvkGetImageMemoryRequirements
+ * \param[in] requiredProperties  See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] pMemoryNext         See cvkAllocateMemory
+ * \param[in] pAllocator          See cvkAllocateMemory
+ * \param[out] pMemory             Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
+                            VkDevice                     device,
+                            VkImage                      image,
+                            VkMemoryPropertyFlags        requiredProperties,
+                            const void*                  pMemoryNext,
+                            const VkAllocationCallbacks* pAllocator,
+                            VkDeviceMemory*              pMemory);
+/**
+ * \brief Allocates memory sized and typed for a buffer.
+ *
+ * \param[in] physicalDevice      See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] device              See cvkGetBufferMemoryRequirements
+ * \param[in] buffer              See cvkGetBufferMemoryRequirements
+ * \param[in] requiredProperties  See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] pMemoryNext         See cvkAllocateMemory
+ * \param[in] pAllocator          See cvkAllocateMemory
+ * \param[out] pMemory             Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkAllocateBufferMemory(VkPhysicalDevice             physicalDevice,
+                             VkDevice                     device,
+                             VkBuffer                     buffer,
+                             VkMemoryPropertyFlags        requiredProperties,
+                             const void*                  pMemoryNext,
+                             const VkAllocationCallbacks* pAllocator,
+                             VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates an image, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkAllocateImageMemory
+ * \param[in] device                 See cvkCreateImage
+ * \param[in] pImageNext             See cvkCreateImage
+ * \param[in] flags                  See cvkCreateImage
+ * \param[in] imageType              See cvkCreateImage
+ * \param[in] format                 See cvkCreateImage
+ * \param[in] extent                 See cvkCreateImage
+ * \param[in] mipLevels              See cvkCreateImage
+ * \param[in] arrayLayers            See cvkCreateImage
+ * \param[in] samples                See cvkCreateImage
+ * \param[in] tiling                 See cvkCreateImage
+ * \param[in] usage                  See cvkCreateImage
+ * \param[in] sharingMode            See cvkCreateImage
+ * \param[in] queueFamilyIndexCount  See cvkCreateImage
+ * \param[in] pQueueFamilyIndices    See cvkCreateImage
+ * \param[in] initialLayout          See cvkCreateImage
+ * \param[in] requiredProperties     See cvkAllocateImageMemory
+ * \param[in] pMemoryNext            See cvkAllocateImageMemory
+ * \param[in] pAllocator             See cvkCreateImage
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupImage(VkPhysicalDevice             physicalDevice,
+                   VkDevice                     device,
+                   const void*                  pImageNext,
+                   VkImageCreateFlags           flags,
+                   VkImageType                  imageType,
+                   VkFormat                     format,
+                   VkExtent3D                   extent,
+                   uint32_t                     mipLevels,
+                   uint32_t                     arrayLayers,
+                   VkSampleCountFlagBits        samples,
+                   VkImageTiling                tiling,
+                   VkImageUsageFlags            usage,
+                   VkSharingMode                sharingMode,
+                   uint32_t                     queueFamilyIndexCount,
+                   const uint32_t*              pQueueFamilyIndices,
+                   VkImageLayout                initialLayout,
+                   VkMemoryPropertyFlags        requiredProperties,
+                   const void*                  pMemoryNext,
+                   const VkAllocationCallbacks* pAllocator,
+                   VkImage*                     pImage,
+                   VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a buffer, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkAllocateBufferMemory
+ * \param[in] device                 See cvkCreateBuffer
+ * \param[in] pBufferNext            See cvkCreateBuffer
+ * \param[in] flags                  See cvkCreateBuffer
+ * \param[in] size                   See cvkCreateBuffer
+ * \param[in] usage                  See cvkCreateBuffer
+ * \param[in] sharingMode            See cvkCreateBuffer
+ * \param[in] queueFamilyIndexCount  See cvkCreateBuffer
+ * \param[in] pQueueFamilyIndices    See cvkCreateBuffer
+ * \param[in] requiredProperties     See cvkAllocateBufferMemory
+ * \param[in] pMemoryNext            See cvkAllocateBufferMemory
+ * \param[in] pAllocator             See cvkCreateBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
+                    VkDevice                     device,
+                    const void*                  pBufferNext,
+                    VkBufferCreateFlags          flags,
+                    VkDeviceSize                 size,
+                    VkBufferUsageFlags           usage,
+                    VkSharingMode                sharingMode,
+                    uint32_t                     queueFamilyIndexCount,
+                    const uint32_t*              pQueueFamilyIndices,
+                    VkMemoryPropertyFlags        requiredProperties,
+                    const void*                  pMemoryNext,
+                    const VkAllocationCallbacks* pAllocator,
+                    VkBuffer*                    pBuffer,
+                    VkDeviceMemory*              pMemory);
 
 #ifdef __cplusplus
 }

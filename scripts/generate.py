@@ -113,6 +113,7 @@ class Generator:
         self.names: Dict[str, str] = {}
         self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
         self.defs: Dict[str, List[str]] = defaultdict(list)
+        self.sigs: Dict[str, Tuple[str, List[EmittedParam]]] = {}   # every emitted signature, for chains
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
@@ -266,10 +267,40 @@ class Generator:
         return out
 
     # -------------------------------------------------------------- tier 0
+    KIND = ("Create", "Allocate", "Begin", "Bind", "Submit", "End")
+
+    def is_plain_info(self, s: Struct) -> bool:
+        """A '<Noun>Info[N]' struct that is not a construction/recording kind: a query subject."""
+        t = tokens(self.struct_short(s))
+        while t and t[-1].isdigit():
+            t.pop()
+        return len(t) >= 2 and t[-1] == "Info" and t[-2] not in self.KIND
+
+    def flip_param(self, cmd: Command) -> Optional[Param]:
+        """The single plain-Info input whose tier 0 keeps the pointer (SPEC.md section 4)."""
+        roles = self.roles(cmd)
+        iparams = [p for p, r in zip(cmd.params, roles) if r == "I"]
+        if len(iparams) == 1 and self.is_plain_info(self.reg.struct_of(iparams[0].type)):
+            return iparams[0]
+        return None
+
+    def flat_name(self, cmd: Command, s: Struct) -> str:
+        """cvk<Verb><InfoStruct> with the verb token removed once from the struct name. When
+        Vulkan reuses one Info struct for several commands of the same verb
+        (VkBufferDeviceAddressInfo), the sibling is named after the command: <tier-0>Info."""
+        if self.flat_pairs.get((cmd.verb, s.name), 0) > 1:
+            return self.cmd_name(cmd) + "Info"
+        t = tokens(self.struct_short(s))
+        if cmd.verb in t:
+            t.remove(cmd.verb)
+        return "cvk" + cmd.verb + "".join(t)
+
     def emit_tier0(self, cmd: Command) -> None:
         reg = self.reg
         roles = self.roles(cmd)
         name = self.register(self.cmd_name(cmd), cmd.name)
+        keep = self.flip_param(cmd)
+        roles = ["S*" if (keep is not None and p is keep) else r for p, r in zip(cmd.params, roles)]
         filled = sum(1 for r in roles if r in ("I", "P"))
         params: List[EmittedParam] = []
         pre: List[str] = []
@@ -442,6 +473,7 @@ class Generator:
 
         doc = self.doc_block(self.brief(cmd), params, ret, cmd, informational if ret == "VkResult" else [])
         sig = self.signature(ret, name, params)
+        self.sigs[name] = (ret, params)
         self.place(self.platforms_for(cmd.extensions, cmd.core_version), doc + sig + ";",
                    sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
@@ -519,22 +551,63 @@ class Generator:
                    sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     # -------------------------------------------------------- conveniences
+    def emit_flat(self, cmd: Command, ip: Param) -> None:
+        """Flattened sibling of a pointer-keeping tier 0: builds the plain-Info struct from
+        its members and calls tier 0 (SPEC.md section 4)."""
+        s = self.reg.struct_of(ip.type)
+        name = self.register(self.flat_name(cmd, s), f"{cmd.name}:flat")
+        t0 = self.cmd_name(cmd)
+        ret, t0_params = self.sigs[t0]
+        has_p = any(r == "P" for r in self.roles(cmd))
+        stem = ip.name[1:] if ip.name.startswith("p") else ip.name
+        pn = f"p{stem}Next" if has_p else "pNext"
+        var = snake(ip.name)
+        params: List[EmittedParam] = []
+        args: List[str] = []
+        body: List[str] = [f"{s.name} {var};", "", f"{var}.sType = {s.stype};"]
+        p_out = next((q for q, r in zip(cmd.params, self.roles(cmd)) if r == "P"), None)
+        for p in t0_params:
+            if p.name != ip.name:
+                if p.name == "pNext" and p_out is not None:
+                    # Two structs are filled here, so the output chain takes its stem name.
+                    out_stem = p_out.name[1:] if p_out.name.startswith("p") else p_out.name
+                    renamed = f"p{out_stem}Next"
+                    params.append(EmittedParam(f"void* {renamed}", renamed, p.doc, False))
+                    args.append(renamed)
+                    continue
+                params.append(p)
+                args.append(p.name)
+                continue
+            for m in s.members:
+                if m.name == "sType":
+                    continue
+                if m.name == "pNext":
+                    params.append(EmittedParam(f"const void* {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
+                    body.append(f"{var}.pNext = {pn};")
+                elif m.array_len:
+                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                    body.append(f"memcpy({var}.{m.name}, {m.name}, sizeof({var}.{m.name}));")
+                else:
+                    params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
+                    body.append(f"{var}.{m.name} = {m.name};")
+            args.append(f"&{var}")
+        call = f"{t0}({', '.join(args)})"
+        body.append(("return " if ret != "void" else "") + call + ";")
+        doc = self.doc_block(f"{self.brief(cmd)[:-1]} from the fields of {s.name}.", params, ret, None, [])
+        sig = self.signature(ret, name, params)
+        self.sigs[name] = (ret, params)
+        self.place(self.platforms_for(cmd.extensions, cmd.core_version), doc + sig + ";",
+                   sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+
     def emit_convenience(self, cmd: Command, ip: Param, ext: Struct) -> None:
         reg = self.reg
         base = reg.struct_of(ip.type)
         q = self.qualifier(ext, base)
-        t0 = self.cmd_name(cmd)
+        # Chain onto the flattened form: the flat sibling when tier 0 keeps the pointer.
+        t0 = self.flat_name(cmd, base) if self.flip_param(cmd) is not None else self.cmd_name(cmd)
         name = self.register(self.convenience_name(cmd, base, ext), f"{cmd.name}+{ext.name}")
-        # Rebuild the tier-0 parameter list by re-running emit logic on a scratch generator state.
-        saved = (self.decls, self.defs, self.names.copy())
-        self.decls, self.defs = defaultdict(list), defaultdict(list)
-        self.emit_tier0(cmd)
-        sig_text = next(iter(self.decls.values()))[-1]
-        self.decls, self.defs, self.names = saved[0], saved[1], saved[2]
-        self.names[name] = f"{cmd.name}+{ext.name}"
-        m = re.search(r"\n(\w[\w ]*?) (cvk\w+)\((.*?)\);", sig_text, flags=re.S)
-        ret, _, plist = m.group(1), m.group(2), m.group(3)
-        base_params = [p.strip() for p in plist.split(",\n")] if plist.strip() != "void" else []
+        ret, t0_params = self.sigs[t0]
+        base_params = [p.text for p in t0_params]
         filled = sum(1 for r in self.roles(cmd) if r in ("I", "P"))
         stem = ip.name[1:] if ip.name.startswith("p") else ip.name
         pn = "pNext" if filled == 1 else f"p{stem}Next"
@@ -566,13 +639,183 @@ class Generator:
             e.is_out = e.text.split()[-1].startswith("p") and not e.text.startswith("const") and "*" in e.text
         doc = self.doc_block(f"{self.brief(cmd)[:-1]} with {ext.name} chained.", eparams, ret, None, [])
         sig = self.signature(ret, name, eparams)
+        self.sigs[name] = (ret, eparams)
         plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
         self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
+    # ------------------------------------------------------ policy functions
+    # Fixed logic the registry cannot supply (SPEC.md section 8). Declared here so that chains
+    # can compose it like any generated function; the text is policy, recorded in SPEC.md.
+    FIXED = [
+        {
+            "name": "cvkGetMemoryTypeIndex",
+            "ret": "uint32_t",
+            "brief": "Returns the first memory type in the mask whose property flags equal the given flags exactly, or VK_INVALID.",
+            "params": [("uint32_t", "memoryTypeCount"), ("const VkMemoryType*", "pMemoryTypes"),
+                       ("uint32_t", "memoryTypeBits"), ("VkMemoryPropertyFlags", "properties")],
+            "body": [
+                "uint32_t memory_type_index;",
+                "",
+                "for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)",
+                "{",
+                "    if ((memoryTypeBits & (1u << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))",
+                "    {",
+                "        return memory_type_index;",
+                "    }",
+                "}",
+                "return VK_INVALID;",
+            ],
+        },
+        {
+            "name": "cvkGetCompatibleMemoryTypeIndex",
+            "ret": "uint32_t",
+            "brief": "Returns the first memory type in the mask whose property flags cover the required flags, or VK_INVALID.",
+            "params": [("uint32_t", "memoryTypeCount"), ("const VkMemoryType*", "pMemoryTypes"),
+                       ("uint32_t", "memoryTypeBits"), ("VkMemoryPropertyFlags", "requiredProperties")],
+            "body": [
+                "uint32_t memory_type_index;",
+                "",
+                "for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)",
+                "{",
+                "    if ((memoryTypeBits & (1u << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))",
+                "    {",
+                "        return memory_type_index;",
+                "    }",
+                "}",
+                "return VK_INVALID;",
+            ],
+        },
+    ]
+
+    def emit_fixed(self, f: dict) -> None:
+        name = self.register(f["name"], "policy:" + f["name"])
+        params = [EmittedParam(f"{t} {n}", n, f"{n} value", False) for t, n in f["params"]]
+        doc = self.doc_block(f["brief"], params, f["ret"], None, [])
+        sig = self.signature(f["ret"], name, params)
+        self.sigs[name] = (f["ret"], params)
+        self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(f["body"])) + "\n}")
+
+    # ---------------------------------------------------------------- chains
+    LEVELS = ["instance", "physicalDevice", "device", "queue", "commandBuffer"]
+
+    def emit_chain(self, name: str, spec: dict) -> None:
+        """SPEC.md section 8: compose a straight-line chain from a step table.
+
+        The chain's parameters are computed from the steps' signatures: an input is satisfied
+        by an earlier output whose stem matches (image <- pImage, allocationSize <-
+        pAllocationSize), a step's pNext is renamed after that step's product (pImageNext,
+        pMemoryNext), every unsatisfied input becomes a chain parameter, and every produced
+        handle becomes a chain out-parameter. Dispatch handles come first by level, then inputs
+        in order of appearance, then pAllocator, then outputs."""
+        name = self.register(name, "chain:" + name)
+        inputs: Dict[str, EmittedParam] = {}
+        outputs: Dict[str, EmittedParam] = {}
+        locals_: Dict[str, str] = {}
+        available: Dict[str, str] = {}
+        body: List[str] = []
+        ret = "void"
+
+        def stem(n: str) -> str:
+            s = n[1:] if n.startswith("p") and n[1:2].isupper() else n
+            return s[0].lower() + s[1:]
+
+        declared = [EmittedParam(f"{x['type']} {x['name']}", x["name"], x.get("doc", f"{x['name']} value"), False) for x in spec.get("inputs", [])]
+        for out in spec.get("outputs", []):
+            outputs[out["name"]] = EmittedParam(f"{out['type']}* {out['name']}", out["name"], f"Receives the {stem(out['name'])}", True)
+            available[stem(out["name"])] = f"(*{out['name']})"
+        for step in spec["steps"]:
+            if "set" in step:
+                for k, v in step["set"].items():
+                    body.append(f"(*{k}) = {v};")
+                continue
+            if "assert" in step:
+                body.append(f"CVK_ASSERT({step['assert']});")
+                continue
+            if "return" in step and "call" not in step:
+                ret = spec["ret"]
+                body.append(f"return {step['return']};")
+                continue
+            fn = step["call"]
+            if fn not in self.sigs:
+                self.errors.append(f"chain {name}: unknown step {fn}")
+                return
+            sret, sparams = self.sigs[fn]
+            bind, local = step.get("bind", {}), step.get("local", {})
+            product = next((stem(p.name) for p in sparams if p.is_out and p.text.split()[0].rstrip("*") in self.reg.handles), None)
+            args = []
+            for p in sparams:
+                ptype = p.text.rsplit(" ", 1)[0]
+                if p.name in bind:
+                    args.append(bind[p.name])
+                elif p.name in local:
+                    var = local[p.name]
+                    locals_[var] = ptype.rstrip("*").strip()
+                    available[stem(p.name)] = var
+                    args.append(f"&{var}")
+                elif p.is_out:
+                    outputs.setdefault(p.name, p)
+                    available[stem(p.name)] = f"(*{p.name})"
+                    args.append(p.name)
+                elif p.name in available:
+                    args.append(available[p.name])
+                else:
+                    pname = p.name
+                    if re.fullmatch(r"p(\w+)?Next", p.name) and product:
+                        pname = "p" + product[0].upper() + product[1:] + "Next"
+                    if pname not in inputs:
+                        inputs[pname] = EmittedParam(f"{ptype} {pname}", pname, f"See {fn}", False)
+                    args.append(pname)
+            call = f"{fn}({', '.join(args)})"
+            if step.get("return"):
+                ret = sret
+                body.append(f"return {call};")
+            elif "store" in step:
+                body.append(f"(*{step['store']}) = {call};")
+            elif "into" in step:
+                var = step["into"]
+                locals_[var] = sret
+                available[var.replace("_", "")] = var          # matched by stem below
+                available[stem("p" + "".join(w.capitalize() for w in var.split("_")))] = var
+                body.append(f"{var} = {call};")
+            else:
+                body.append(f"{call};")
+
+        # Declared inputs (used only inside bind expressions) follow the step-derived ones.
+        for d_ in declared:
+            inputs.setdefault(d_.name, d_)
+        ordered = sorted(inputs.values(), key=lambda p: (self.LEVELS.index(p.name) if p.name in self.LEVELS else len(self.LEVELS), 0))
+        dispatch = [p for p in ordered if p.name in self.LEVELS]
+        declared_names = {d_.name for d_ in declared}
+        is_next = lambda p: bool(re.fullmatch(r"p\w*Next", p.name))
+        derived = [p for p in inputs.values() if p.name not in self.LEVELS and p.name != "pAllocator" and p.name not in declared_names]
+        # Derived inputs keep their order of appearance; declared inputs are inserted before the
+        # trailing run of extension-chain pointers so they sit with the inputs they qualify.
+        cut = len(derived)
+        while cut > 0 and is_next(derived[cut - 1]):
+            cut -= 1
+        rest = derived[:cut] + [p for p in inputs.values() if p.name in declared_names] + derived[cut:]
+        alloc = [p for p in inputs.values() if p.name == "pAllocator"]
+        params = dispatch + rest + alloc + list(outputs.values())
+        decls = [f"{t} {v};" for v, t in locals_.items()]
+        full = decls + ([""] if decls else []) + body
+        doc = self.doc_block(spec["brief"], params, ret, None, [])
+        sig = self.signature(ret, name, params)
+        self.sigs[name] = (ret, params)
+        self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(full))) + "\n}")
+
     # ---------------------------------------------------------------- run
     def run(self) -> None:
+        self.flat_pairs: Dict[Tuple[str, str], int] = defaultdict(int)
+        for cmd in self.cmds:
+            ip = self.flip_param(cmd)
+            if ip is not None:
+                self.flat_pairs[(cmd.verb, self.reg.struct_of(ip.type).name)] += 1
         for cmd in self.cmds:
             self.emit_tier0(cmd)
+        for cmd in self.cmds:
+            ip = self.flip_param(cmd)
+            if ip is not None:
+                self.emit_flat(cmd, ip)
         structs = [s for s in self.reg.structs.values() if s.stype and not s.alias_of and s.category == "struct" and self.struct_in_profile(s)]
         for s in sorted(structs, key=lambda s: s.name):
             self.emit_builder(s)
@@ -592,6 +835,10 @@ class Generator:
             self.convenience_pairs[(cmd.verb, ext.name)] += 1
         for cmd, ip, ext in pairs:
             self.emit_convenience(cmd, ip, ext)
+        for f in self.FIXED:
+            self.emit_fixed(f)
+        for chain_name, spec in self.policy.get("chains", {}).items():
+            self.emit_chain(chain_name, spec)
 
     PLATFORM_INCLUDES = {
         "win32": ["<windows.h>", "<vulkan/vulkan_win32.h>"],
@@ -637,6 +884,9 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #define CVK_ASSERT(expression) ((expression) ? (void)0 : cvkFatal(#expression, __FILE__, __LINE__))
 #endif
 #define CVK_CHECK(expression) cvkCheckResult((expression), #expression, __FILE__, __LINE__)
+
+/* Sentinel for an unavailable index. */
+#define VK_INVALID (UINT32_MAX)
 
 /* Fixed enumeration capacities; override any before including. */
 {caps}

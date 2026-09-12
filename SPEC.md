@@ -42,7 +42,7 @@ Parameters in registry order, transformed by role:
 | Role | Emitted |
 |---|---|
 | handle, scalar, enum, flags, POD by value | verbatim |
-| single sType input struct (`I`) | its members in order; `sType` dropped; `pNext` kept as `const void* pNext` |
+| single sType input struct (`I`) | **construction/recording kinds** (`CreateInfo`, `AllocateInfo`, `BeginInfo`, `BindInfo`, `SubmitInfo`, `EndInfo`): flattened, members in order, `sType` dropped, `pNext` kept as `const void* pNext`. **Plain `Info` structs** (query subjects such as `VkBufferMemoryRequirementsInfo2`, `VkMemoryGetFdInfoKHR`): tier 0 keeps the pointer as Vulkan declares it, and a flattened sibling `cvk<Verb><InfoStruct>` (verb token removed once from the struct name: `cvkGetBufferMemoryRequirementsInfo2`, `cvkGetMemoryFdInfo`, `cvkImportSemaphoreFdInfo`) builds the struct and calls tier 0. When Vulkan reuses one Info struct for several commands of the same verb (`VkBufferDeviceAddressInfo`), the sibling is named after the command instead: `<tier-0>Info` (`cvkGetBufferOpaqueCaptureAddressInfo`). Conveniences chain onto the flattened sibling |
 | pointer to sType struct inside an `I` struct | kept as pointer (builders exist for it) |
 | sType input array (`I[]`), POD array, handle array, scalar array | count + pointer verbatim |
 | `pAllocator` | verbatim |
@@ -131,10 +131,34 @@ study justified: `count = 1` forms, `VK_QUEUE_FAMILY_IGNORED` barriers, 2D from 
 
 ## 8. Tier 2: chains (policy table over derived handle flow)
 
-Each row names the produced handles and the sequence. The generator emits a straight-line
-body; every produced handle is an out-parameter; the import-constraint mask is a parameter.
-Selection helpers (`cvkSelectMemoryType`) are hand-written and shipped as `cvk_policy.c`.
-(Not yet generated.)
+A chain is a straight-line sequence of already-emitted functions, listed in `chains` in the
+policy file. **The chain's signature is computed from its steps' signatures**, never written:
+
+- an input of a step is satisfied by an earlier output whose stem matches (`image` from
+  `pImage`, `allocationSize` from `pAllocationSize`, `memoryTypeIndex` from `pMemoryTypeIndex`);
+- a step's `pNext` is renamed after that step's product (`pImageNext`, `pMemoryNext`);
+- every unsatisfied input becomes a chain parameter; every produced handle becomes a chain
+  out-parameter; a step output routed to a `local` stays internal;
+- `bind` fixes a step argument to an expression (`memoryOffset: 0`, a mask intersection);
+  `set` assigns a chain output; `store`/`return` route a step's return value;
+- parameter order: dispatch handles by level, then inputs in order of first appearance, then
+  `pAllocator`, then outputs.
+
+The one piece of logic the registry cannot supply, memory type selection
+(`cvkGetCompatibleMemoryTypeIndex`: first type in the mask whose property flags **cover** the
+required flags; `cvkGetMemoryTypeIndex`: first type in the mask whose property flags **equal**
+the given flags; both return `VK_INVALID` if none, and `cvk.h` defines `VK_INVALID` as
+`UINT32_MAX`), is fixed text in the generator and composes like any other function. Chains that go on to allocate carry an
+`assert` step on the index, so an impossible selection is fatal at the chain, not in the helper.
+
+Seeded chains: `cvkGetPhysicalDeviceMemoryTypeIndex`, `cvkAllocate{Image,Buffer}Memory`
+(requirements → type index → assert → allocate, all in one body; no import mask, that
+constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the
+extensible `2` form is used only where something is chained (dedicated requirements, plane),
+`cvkSetup{Image,Buffer}` (create → allocate → bind). Step forms: `bind`, `local`, `into`
+(return value to a local), `store` (return value to a chain output), `return` (on a call, or
+an expression with the chain's `ret` type), `set`, `assert`. An import constraint on memory types is a
+parameter of the import protocol, never a name and never part of a plain allocation.
 
 ## 9. Documentation phrasing (derived)
 
