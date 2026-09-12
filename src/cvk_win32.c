@@ -17,6 +17,14 @@ void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
     pInfo->signalSemaphoreValuesCount = signalSemaphoreValuesCount;
     pInfo->pSignalSemaphoreValues     = pSignalSemaphoreValues;
 }
+void cvkInitExportFenceWin32HandleInfo(VkExportFenceWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
+{
+    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
+    pInfo->pNext       = pNext;
+    pInfo->pAttributes = pAttributes;
+    pInfo->dwAccess    = dwAccess;
+    pInfo->name        = name;
+}
 void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
@@ -24,6 +32,13 @@ void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo,
     pInfo->pAttributes = pAttributes;
     pInfo->dwAccess    = dwAccess;
     pInfo->name        = name;
+}
+void cvkInitExportMemoryWin32HandleInfoNV(VkExportMemoryWin32HandleInfoNV* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess)
+{
+    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV;
+    pInfo->pNext       = pNext;
+    pInfo->pAttributes = pAttributes;
+    pInfo->dwAccess    = dwAccess;
 }
 void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
@@ -33,6 +48,29 @@ void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* 
     pInfo->dwAccess    = dwAccess;
     pInfo->name        = name;
 }
+void cvkInitFenceGetWin32HandleInfo(VkFenceGetWin32HandleInfoKHR* pInfo, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType)
+{
+    pInfo->sType      = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
+    pInfo->pNext      = pNext;
+    pInfo->fence      = fence;
+    pInfo->handleType = handleType;
+}
+void cvkInitImportFenceWin32HandleInfo(VkImportFenceWin32HandleInfoKHR*  pInfo,
+                                       const void*                       pNext,
+                                       VkFence                           fence,
+                                       VkFenceImportFlags                flags,
+                                       VkExternalFenceHandleTypeFlagBits handleType,
+                                       HANDLE                            handle,
+                                       LPCWSTR                           name)
+{
+    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
+    pInfo->pNext      = pNext;
+    pInfo->fence      = fence;
+    pInfo->flags      = flags;
+    pInfo->handleType = handleType;
+    pInfo->handle     = handle;
+    pInfo->name       = name;
+}
 void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name)
 {
     pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
@@ -40,6 +78,13 @@ void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo,
     pInfo->handleType = handleType;
     pInfo->handle     = handle;
     pInfo->name       = name;
+}
+void cvkInitImportMemoryWin32HandleInfoNV(VkImportMemoryWin32HandleInfoNV* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE handle)
+{
+    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV;
+    pInfo->pNext      = pNext;
+    pInfo->handleType = handleType;
+    pInfo->handle     = handle;
 }
 void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR*  pInfo,
                                            const void*                           pNext,
@@ -76,6 +121,63 @@ void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo,
     pInfo->semaphore  = semaphore;
     pInfo->handleType = handleType;
 }
+void cvkInitSurfaceCapabilitiesFullScreenExclusive(VkSurfaceCapabilitiesFullScreenExclusiveEXT* pInfo, void* pNext)
+{
+    pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
+    pInfo->pNext = pNext;
+}
+void cvkInitSurfaceFullScreenExclusiveInfo(VkSurfaceFullScreenExclusiveInfoEXT* pInfo, void* pNext, VkFullScreenExclusiveEXT fullScreenExclusive)
+{
+    pInfo->sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    pInfo->pNext               = pNext;
+    pInfo->fullScreenExclusive = fullScreenExclusive;
+}
+void cvkInitSurfaceFullScreenExclusiveWin32Info(VkSurfaceFullScreenExclusiveWin32InfoEXT* pInfo, const void* pNext, HMONITOR hmonitor)
+{
+    pInfo->sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    pInfo->pNext    = pNext;
+    pInfo->hmonitor = hmonitor;
+}
+void cvkInitWin32KeyedMutexAcquireReleaseInfo(VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo,
+                                              const void*                             pNext,
+                                              uint32_t                                acquireCount,
+                                              const VkDeviceMemory*                   pAcquireSyncs,
+                                              const uint64_t*                         pAcquireKeys,
+                                              const uint32_t*                         pAcquireTimeouts,
+                                              uint32_t                                releaseCount,
+                                              const VkDeviceMemory*                   pReleaseSyncs,
+                                              const uint64_t*                         pReleaseKeys)
+{
+    pInfo->sType            = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
+    pInfo->pNext            = pNext;
+    pInfo->acquireCount     = acquireCount;
+    pInfo->pAcquireSyncs    = pAcquireSyncs;
+    pInfo->pAcquireKeys     = pAcquireKeys;
+    pInfo->pAcquireTimeouts = pAcquireTimeouts;
+    pInfo->releaseCount     = releaseCount;
+    pInfo->pReleaseSyncs    = pReleaseSyncs;
+    pInfo->pReleaseKeys     = pReleaseKeys;
+}
+void cvkInitWin32KeyedMutexAcquireReleaseInfoNV(VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo,
+                                                const void*                            pNext,
+                                                uint32_t                               acquireCount,
+                                                const VkDeviceMemory*                  pAcquireSyncs,
+                                                const uint64_t*                        pAcquireKeys,
+                                                const uint32_t*                        pAcquireTimeoutMilliseconds,
+                                                uint32_t                               releaseCount,
+                                                const VkDeviceMemory*                  pReleaseSyncs,
+                                                const uint64_t*                        pReleaseKeys)
+{
+    pInfo->sType                       = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
+    pInfo->pNext                       = pNext;
+    pInfo->acquireCount                = acquireCount;
+    pInfo->pAcquireSyncs               = pAcquireSyncs;
+    pInfo->pAcquireKeys                = pAcquireKeys;
+    pInfo->pAcquireTimeoutMilliseconds = pAcquireTimeoutMilliseconds;
+    pInfo->releaseCount                = releaseCount;
+    pInfo->pReleaseSyncs               = pReleaseSyncs;
+    pInfo->pReleaseKeys                = pReleaseKeys;
+}
 void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd)
 {
     pInfo->sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
@@ -83,6 +185,20 @@ void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const voi
     pInfo->flags     = flags;
     pInfo->hinstance = hinstance;
     pInfo->hwnd      = hwnd;
+}
+void cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
+{
+    PFN_vkAcquireFullScreenExclusiveModeEXT function;
+
+    function = (PFN_vkAcquireFullScreenExclusiveModeEXT)cvkGetDeviceProcAddr(device, "vkAcquireFullScreenExclusiveModeEXT");
+    CVK_CHECK(function(device, swapchain));
+}
+void cvkAcquireWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
+{
+    PFN_vkAcquireWinrtDisplayNV function;
+
+    function = (PFN_vkAcquireWinrtDisplayNV)cvkGetInstanceProcAddr(instance, "vkAcquireWinrtDisplayNV");
+    CVK_CHECK(function(physicalDevice, display));
 }
 void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
@@ -95,6 +211,31 @@ void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32Surfac
     create_info.hwnd      = hwnd;
     CVK_CHECK(vkCreateWin32SurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
+}
+void cvkGetDeviceGroupSurfacePresentModes2(VkDevice device, const void* pNext, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+{
+    VkPhysicalDeviceSurfaceInfo2KHR             surface_info;
+    PFN_vkGetDeviceGroupSurfacePresentModes2EXT function;
+
+    surface_info.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+    surface_info.pNext   = pNext;
+    surface_info.surface = surface;
+
+    function = (PFN_vkGetDeviceGroupSurfacePresentModes2EXT)cvkGetDeviceProcAddr(device, "vkGetDeviceGroupSurfacePresentModes2EXT");
+    CVK_CHECK(function(device, &surface_info, pModes));
+}
+void cvkGetFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, HANDLE* pHandle)
+{
+    VkFenceGetWin32HandleInfoKHR get_win32_handle_info;
+    PFN_vkGetFenceWin32HandleKHR function;
+
+    get_win32_handle_info.sType      = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
+    get_win32_handle_info.pNext      = pNext;
+    get_win32_handle_info.fence      = fence;
+    get_win32_handle_info.handleType = handleType;
+
+    function = (PFN_vkGetFenceWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetFenceWin32HandleKHR");
+    CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
 void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle)
 {
@@ -109,6 +250,13 @@ void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory 
     function = (PFN_vkGetMemoryWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandleKHR");
     CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
+void cvkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle)
+{
+    PFN_vkGetMemoryWin32HandleNV function;
+
+    function = (PFN_vkGetMemoryWin32HandleNV)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandleNV");
+    CVK_CHECK(function(device, memory, handleType, pHandle));
+}
 void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties)
 {
     VkMemoryWin32HandlePropertiesKHR        memory_win32_handle_properties;
@@ -120,6 +268,22 @@ void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTy
     function = (PFN_vkGetMemoryWin32HandlePropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandlePropertiesKHR");
     CVK_CHECK(function(device, handleType, handle, &memory_win32_handle_properties));
     (*pMemoryWin32HandleProperties) = memory_win32_handle_properties;
+}
+uint32_t cvkGetPhysicalDeviceSurfacePresentModes2(VkInstance instance, VkPhysicalDevice physicalDevice, const void* pNext, VkSurfaceKHR surface, VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
+{
+    VkPhysicalDeviceSurfaceInfo2KHR                surface_info;
+    PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT function;
+    uint32_t                                       present_mode_count = 0;
+
+    surface_info.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+    surface_info.pNext   = pNext;
+    surface_info.surface = surface;
+
+    function = (PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfacePresentModes2EXT");
+    CVK_CHECK(function(physicalDevice, &surface_info, &present_mode_count, NULL));
+    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= present_mode_count);
+    CVK_CHECK(function(physicalDevice, &surface_info, &present_mode_count, pPresentModes));
+    return present_mode_count;
 }
 VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex)
 {
@@ -137,6 +301,30 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
 
     function = (PFN_vkGetSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreWin32HandleKHR");
     CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
+}
+void cvkGetWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
+{
+    PFN_vkGetWinrtDisplayNV function;
+
+    function = (PFN_vkGetWinrtDisplayNV)cvkGetInstanceProcAddr(instance, "vkGetWinrtDisplayNV");
+    CVK_CHECK(function(physicalDevice, deviceRelativeId, pDisplay));
+    CVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));
+}
+void cvkImportFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, VkFenceImportFlags flags, VkExternalFenceHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name)
+{
+    VkImportFenceWin32HandleInfoKHR import_fence_win32_handle_info;
+    PFN_vkImportFenceWin32HandleKHR function;
+
+    import_fence_win32_handle_info.sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
+    import_fence_win32_handle_info.pNext      = pNext;
+    import_fence_win32_handle_info.fence      = fence;
+    import_fence_win32_handle_info.flags      = flags;
+    import_fence_win32_handle_info.handleType = handleType;
+    import_fence_win32_handle_info.handle     = handle;
+    import_fence_win32_handle_info.name       = name;
+
+    function = (PFN_vkImportFenceWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportFenceWin32HandleKHR");
+    CVK_CHECK(function(device, &import_fence_win32_handle_info));
 }
 void cvkImportSemaphoreWin32Handle(VkDevice                              device,
                                    const void*                           pNext,
@@ -160,6 +348,13 @@ void cvkImportSemaphoreWin32Handle(VkDevice                              device,
     function = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
     CVK_CHECK(function(device, &import_semaphore_win32_handle_info));
 }
+void cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
+{
+    PFN_vkReleaseFullScreenExclusiveModeEXT function;
+
+    function = (PFN_vkReleaseFullScreenExclusiveModeEXT)cvkGetDeviceProcAddr(device, "vkReleaseFullScreenExclusiveModeEXT");
+    CVK_CHECK(function(device, swapchain));
+}
 void cvkAllocateExportMemoryWin32Handle(VkDevice                     device,
                                         const void*                  pNext,
                                         const SECURITY_ATTRIBUTES*   pAttributes,
@@ -178,6 +373,23 @@ void cvkAllocateExportMemoryWin32Handle(VkDevice                     device,
     export_memory_win32_handle_info.dwAccess    = dwAccess;
     export_memory_win32_handle_info.name        = name;
     cvkAllocateMemory(device, &export_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+}
+void cvkAllocateExportMemoryWin32HandleNV(VkDevice                     device,
+                                          const void*                  pNext,
+                                          const SECURITY_ATTRIBUTES*   pAttributes,
+                                          DWORD                        dwAccess,
+                                          VkDeviceSize                 allocationSize,
+                                          uint32_t                     memoryTypeIndex,
+                                          const VkAllocationCallbacks* pAllocator,
+                                          VkDeviceMemory*              pMemory)
+{
+    VkExportMemoryWin32HandleInfoNV export_memory_win32_handle_info_nv;
+
+    export_memory_win32_handle_info_nv.sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV;
+    export_memory_win32_handle_info_nv.pNext       = pNext;
+    export_memory_win32_handle_info_nv.pAttributes = pAttributes;
+    export_memory_win32_handle_info_nv.dwAccess    = dwAccess;
+    cvkAllocateMemory(device, &export_memory_win32_handle_info_nv, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateImportMemoryWin32Handle(VkDevice                           device,
                                         const void*                        pNext,
@@ -198,6 +410,41 @@ void cvkAllocateImportMemoryWin32Handle(VkDevice                           devic
     import_memory_win32_handle_info.name       = name;
     cvkAllocateMemory(device, &import_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
+void cvkAllocateImportMemoryWin32HandleNV(VkDevice                          device,
+                                          const void*                       pNext,
+                                          VkExternalMemoryHandleTypeFlagsNV handleType,
+                                          HANDLE                            handle,
+                                          VkDeviceSize                      allocationSize,
+                                          uint32_t                          memoryTypeIndex,
+                                          const VkAllocationCallbacks*      pAllocator,
+                                          VkDeviceMemory*                   pMemory)
+{
+    VkImportMemoryWin32HandleInfoNV import_memory_win32_handle_info_nv;
+
+    import_memory_win32_handle_info_nv.sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV;
+    import_memory_win32_handle_info_nv.pNext      = pNext;
+    import_memory_win32_handle_info_nv.handleType = handleType;
+    import_memory_win32_handle_info_nv.handle     = handle;
+    cvkAllocateMemory(device, &import_memory_win32_handle_info_nv, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+}
+void cvkCreateExportFenceWin32Handle(VkDevice                     device,
+                                     const void*                  pNext,
+                                     const SECURITY_ATTRIBUTES*   pAttributes,
+                                     DWORD                        dwAccess,
+                                     LPCWSTR                      name,
+                                     VkFenceCreateFlags           flags,
+                                     const VkAllocationCallbacks* pAllocator,
+                                     VkFence*                     pFence)
+{
+    VkExportFenceWin32HandleInfoKHR export_fence_win32_handle_info;
+
+    export_fence_win32_handle_info.sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
+    export_fence_win32_handle_info.pNext       = pNext;
+    export_fence_win32_handle_info.pAttributes = pAttributes;
+    export_fence_win32_handle_info.dwAccess    = dwAccess;
+    export_fence_win32_handle_info.name        = name;
+    cvkCreateFence(device, &export_fence_win32_handle_info, flags, pAllocator, pFence);
+}
 void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
                                          const void*                  pNext,
                                          const SECURITY_ATTRIBUTES*   pAttributes,
@@ -215,6 +462,243 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
     export_semaphore_win32_handle_info.dwAccess    = dwAccess;
     export_semaphore_win32_handle_info.name        = name;
     cvkCreateSemaphore(device, &export_semaphore_win32_handle_info, flags, pAllocator, pSemaphore);
+}
+void cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
+                                                          const void*                   pNext,
+                                                          VkFullScreenExclusiveEXT      fullScreenExclusive,
+                                                          VkSwapchainCreateFlagsKHR     flags,
+                                                          VkSurfaceKHR                  surface,
+                                                          uint32_t                      minImageCount,
+                                                          VkFormat                      imageFormat,
+                                                          VkColorSpaceKHR               imageColorSpace,
+                                                          VkExtent2D                    imageExtent,
+                                                          uint32_t                      imageArrayLayers,
+                                                          VkImageUsageFlags             imageUsage,
+                                                          VkSharingMode                 imageSharingMode,
+                                                          uint32_t                      queueFamilyIndexCount,
+                                                          const uint32_t*               pQueueFamilyIndices,
+                                                          VkSurfaceTransformFlagBitsKHR preTransform,
+                                                          VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                          VkPresentModeKHR              presentMode,
+                                                          VkBool32                      clipped,
+                                                          VkSwapchainKHR                oldSwapchain,
+                                                          const VkAllocationCallbacks*  pAllocator,
+                                                          VkSwapchainKHR*               pSwapchain)
+{
+    VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
+
+    surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    surface_full_screen_exclusive_info.pNext               = pNext;
+    surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
+    cvkCreateSwapchain(device,
+                       &surface_full_screen_exclusive_info,
+                       flags,
+                       surface,
+                       minImageCount,
+                       imageFormat,
+                       imageColorSpace,
+                       imageExtent,
+                       imageArrayLayers,
+                       imageUsage,
+                       imageSharingMode,
+                       queueFamilyIndexCount,
+                       pQueueFamilyIndices,
+                       preTransform,
+                       compositeAlpha,
+                       presentMode,
+                       clipped,
+                       oldSwapchain,
+                       pAllocator,
+                       pSwapchain);
+}
+void cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice                      device,
+                                                               const void*                   pNext,
+                                                               HMONITOR                      hmonitor,
+                                                               VkSwapchainCreateFlagsKHR     flags,
+                                                               VkSurfaceKHR                  surface,
+                                                               uint32_t                      minImageCount,
+                                                               VkFormat                      imageFormat,
+                                                               VkColorSpaceKHR               imageColorSpace,
+                                                               VkExtent2D                    imageExtent,
+                                                               uint32_t                      imageArrayLayers,
+                                                               VkImageUsageFlags             imageUsage,
+                                                               VkSharingMode                 imageSharingMode,
+                                                               uint32_t                      queueFamilyIndexCount,
+                                                               const uint32_t*               pQueueFamilyIndices,
+                                                               VkSurfaceTransformFlagBitsKHR preTransform,
+                                                               VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                               VkPresentModeKHR              presentMode,
+                                                               VkBool32                      clipped,
+                                                               VkSwapchainKHR                oldSwapchain,
+                                                               const VkAllocationCallbacks*  pAllocator,
+                                                               VkSwapchainKHR*               pSwapchain)
+{
+    VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
+
+    surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    surface_full_screen_exclusive_win32_info.pNext    = pNext;
+    surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
+    cvkCreateSwapchain(device,
+                       &surface_full_screen_exclusive_win32_info,
+                       flags,
+                       surface,
+                       minImageCount,
+                       imageFormat,
+                       imageColorSpace,
+                       imageExtent,
+                       imageArrayLayers,
+                       imageUsage,
+                       imageSharingMode,
+                       queueFamilyIndexCount,
+                       pQueueFamilyIndices,
+                       preTransform,
+                       compositeAlpha,
+                       presentMode,
+                       clipped,
+                       oldSwapchain,
+                       pAllocator,
+                       pSwapchain);
+}
+void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveInfo(VkDevice                          device,
+                                                                     const void*                       pNext,
+                                                                     VkFullScreenExclusiveEXT          fullScreenExclusive,
+                                                                     VkSurfaceKHR                      surface,
+                                                                     VkDeviceGroupPresentModeFlagsKHR* pModes)
+{
+    VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
+
+    surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    surface_full_screen_exclusive_info.pNext               = pNext;
+    surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
+    cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_info, surface, pModes);
+}
+void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveWin32Info(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+{
+    VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
+
+    surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    surface_full_screen_exclusive_win32_info.pNext    = pNext;
+    surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
+    cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_win32_info, surface, pModes);
+}
+void cvkGetDeviceGroupSurfacePresentModesWithPresentModeInfo(VkDevice device, const void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+{
+    VkSurfacePresentModeKHR surface_present_mode;
+
+    surface_present_mode.sType       = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_KHR;
+    surface_present_mode.pNext       = pNext;
+    surface_present_mode.presentMode = presentMode;
+    cvkGetDeviceGroupSurfacePresentModes2(device, &surface_present_mode, surface, pModes);
+}
+void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice           physicalDevice,
+                                                                const void*                pSurfaceInfoNext,
+                                                                VkFullScreenExclusiveEXT   fullScreenExclusive,
+                                                                VkSurfaceKHR               surface,
+                                                                void*                      pSurfaceCapabilitiesNext,
+                                                                VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+{
+    VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
+
+    surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    surface_full_screen_exclusive_info.pNext               = pSurfaceInfoNext;
+    surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
+    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
+}
+void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalDevice           physicalDevice,
+                                                                     const void*                pSurfaceInfoNext,
+                                                                     HMONITOR                   hmonitor,
+                                                                     VkSurfaceKHR               surface,
+                                                                     void*                      pSurfaceCapabilitiesNext,
+                                                                     VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+{
+    VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
+
+    surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    surface_full_screen_exclusive_win32_info.pNext    = pSurfaceInfoNext;
+    surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
+    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_win32_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
+}
+uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice         physicalDevice,
+                                                               const void*              pNext,
+                                                               VkFullScreenExclusiveEXT fullScreenExclusive,
+                                                               VkSurfaceKHR             surface,
+                                                               VkSurfaceFormat2KHR      pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
+{
+    VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
+
+    surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    surface_full_screen_exclusive_info.pNext               = pNext;
+    surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
+    return cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &surface_full_screen_exclusive_info, surface, pSurfaceFormats);
+}
+uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDevice    physicalDevice,
+                                                                    const void*         pNext,
+                                                                    HMONITOR            hmonitor,
+                                                                    VkSurfaceKHR        surface,
+                                                                    VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
+{
+    VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
+
+    surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    surface_full_screen_exclusive_win32_info.pNext    = pNext;
+    surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
+    return cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &surface_full_screen_exclusive_win32_info, surface, pSurfaceFormats);
+}
+uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkInstance               instance,
+                                                                    VkPhysicalDevice         physicalDevice,
+                                                                    const void*              pNext,
+                                                                    VkFullScreenExclusiveEXT fullScreenExclusive,
+                                                                    VkSurfaceKHR             surface,
+                                                                    VkPresentModeKHR         pPresentModes[CVK_MAX_PRESENT_MODES])
+{
+    VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
+
+    surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    surface_full_screen_exclusive_info.pNext               = pNext;
+    surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
+    return cvkGetPhysicalDeviceSurfacePresentModes2(instance, physicalDevice, &surface_full_screen_exclusive_info, surface, pPresentModes);
+}
+uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkInstance       instance,
+                                                                         VkPhysicalDevice physicalDevice,
+                                                                         const void*      pNext,
+                                                                         HMONITOR         hmonitor,
+                                                                         VkSurfaceKHR     surface,
+                                                                         VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
+{
+    VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
+
+    surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    surface_full_screen_exclusive_win32_info.pNext    = pNext;
+    surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
+    return cvkGetPhysicalDeviceSurfacePresentModes2(instance, physicalDevice, &surface_full_screen_exclusive_win32_info, surface, pPresentModes);
+}
+uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkInstance       instance,
+                                                            VkPhysicalDevice physicalDevice,
+                                                            const void*      pNext,
+                                                            VkPresentModeKHR presentMode,
+                                                            VkSurfaceKHR     surface,
+                                                            VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
+{
+    VkSurfacePresentModeKHR surface_present_mode;
+
+    surface_present_mode.sType       = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_KHR;
+    surface_present_mode.pNext       = pNext;
+    surface_present_mode.presentMode = presentMode;
+    return cvkGetPhysicalDeviceSurfacePresentModes2(instance, physicalDevice, &surface_present_mode, surface, pPresentModes);
+}
+void cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDevice                             physicalDevice,
+                                                                const void*                                  pSurfaceInfoNext,
+                                                                VkSurfaceKHR                                 surface,
+                                                                void*                                        pSurfaceCapabilitiesFullScreenExclusiveNext,
+                                                                VkSurfaceCapabilitiesFullScreenExclusiveEXT* pSurfaceCapabilitiesFullScreenExclusive)
+{
+    VkSurfaceCapabilities2KHR                   surface_capabilities;
+    VkSurfaceCapabilitiesFullScreenExclusiveEXT surface_capabilities_full_screen_exclusive;
+
+    surface_capabilities_full_screen_exclusive.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
+    surface_capabilities_full_screen_exclusive.pNext = pSurfaceCapabilitiesFullScreenExclusiveNext;
+    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_full_screen_exclusive, &surface_capabilities);
+    (*pSurfaceCapabilitiesFullScreenExclusive) = surface_capabilities_full_screen_exclusive;
 }
 void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                VkDevice                           device,

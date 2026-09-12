@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from vkxml import Command, Param, Registry, Struct, REPO_ROOT  # noqa: E402
 from study_commands import role_of  # noqa: E402
 
-VENDORS = ("KHR", "EXT", "NV", "NVX", "AMD", "INTEL", "GOOGLE", "ARM", "QCOM", "MESA", "VALVE", "HUAWEI",
+VENDORS = ("KHR", "EXT", "NV", "NVX", "AMD", "AMDX", "INTEL", "GOOGLE", "ARM", "QCOM", "MESA", "VALVE", "HUAWEI",
            "FUCHSIA", "SEC", "LUNARG", "ANDROID", "IMG", "MSFT", "NN", "MVK", "GGP", "QNX", "OHOS", "KHX")
 # Extensions whose commands the Vulkan loader exports as trampolines; linked directly.
 LOADER_LINKED = {"VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display", "VK_KHR_display_swapchain",
@@ -105,7 +105,14 @@ class Generator:
         self.reg = reg
         self.policy = policy
         self.core = policy["core"]
-        self.exts: Set[str] = set(policy["extensions"])
+        if policy["extensions"] == "all":
+            # Every extension the registry supports for the Vulkan API that is platform-neutral
+            # or belongs to one of the policy's platforms; provisional (beta) ones only if listed.
+            plats = set(policy.get("platforms", []))
+            self.exts: Set[str] = {e.name for e in reg.extensions.values()
+                                   if "vulkan" in e.supported and (e.platform is None or e.platform in plats)}
+        else:
+            self.exts = set(policy["extensions"])
         self.cmds: List[Command] = reg.profile(self.core, sorted(self.exts))
         self.capacities: Dict[str, int] = dict(policy.get("capacities", {}))
         self.default_capacity = policy.get("default_capacity", 64)
@@ -116,6 +123,7 @@ class Generator:
         self.defs: Dict[str, List[str]] = defaultdict(list)
         self.sigs: Dict[str, Tuple[str, List[EmittedParam]]] = {}   # every emitted signature, for chains
         self.used_overrides: Set[str] = set()
+        self.keep_suffix: Set[str] = set()
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
@@ -145,6 +153,7 @@ class Generator:
     def register(self, name: str, origin: str) -> str:
         """Final name of an emitted function. Declared exceptions in the policy's
         `name_overrides` table are applied here, so every caller uses the overridden name."""
+        name = self.hoist_vendor(name)
         override = self.policy.get("name_overrides", {}).get(name)
         if override:
             self.used_overrides.add(name)
@@ -154,15 +163,97 @@ class Generator:
         self.names[name] = origin
         return name
 
+    @staticmethod
+    def hoist_vendor(name: str) -> str:
+        """SPEC.md section 3: a kept vendor suffix trails the whole name. A derived name is
+        built from parts that may each carry a suffix (an NV command with a QCOM extender);
+        the suffixes move to the end in order of appearance:
+        cvkCreateImageWithExternalMemoryNVInfo -> cvkCreateImageWithExternalMemoryInfoNV."""
+        t = tokens(name[3:]) if name.startswith("cvk") else tokens(name)
+        tags = [x for x in t if x in VENDORS]
+        if not tags:
+            return name
+        rest = [x for x in t if x not in VENDORS]
+        return ("cvk" if name.startswith("cvk") else "") + "".join(rest + tags)
+
     def cmd_name(self, cmd: Command) -> str:
-        return "cvk" + strip_vendor(cmd.name[2:])
+        return "cvk" + (cmd.name[2:] if cmd.name in self.keep_suffix else strip_vendor(cmd.name[2:]))
 
     def struct_short(self, s: Struct) -> str:
-        return strip_vendor(s.name[2:])
+        return s.name[2:] if s.name in self.keep_suffix else strip_vendor(s.name[2:])
+
+    @staticmethod
+    def vendor_rank(name: str) -> int:
+        """Promotion order: core (no suffix) before KHR before EXT before other vendors."""
+        stripped = strip_vendor(name)
+        if stripped == name:
+            return 0
+        return {"KHR": 1, "EXT": 2}.get(name[len(stripped):], 3)
+
+    def compute_keep_suffix(self, structs: List[Struct]) -> None:
+        """SPEC.md section 3: when several in-profile entities share a stem after vendor
+        stripping, only the canonical one (lowest vendor rank, if unique) drops its suffix.
+        An output extender's replacement name (cvkGetPhysicalDeviceExternalImageFormatProperties
+        from VkExternalImageFormatProperties) competes in the command group of that name, so a
+        legacy command with the same stem (vkGetPhysicalDeviceExternalImageFormatPropertiesNV)
+        keeps its suffix. A tie between a command and a struct at the same rank is not settled
+        here: the command owns the plain name and the output convenience takes its With form."""
+        self.keep_suffix = set()
+        groups: Dict[str, List[str]] = defaultdict(list)
+        for c in self.cmds:
+            groups["cmd:" + strip_vendor(c.name)].append(c.name)
+        for st in structs:
+            groups["struct:" + strip_vendor(st.name)].append(st.name)
+        for cmd, op, ext in self.output_pairs():
+            spliced = self.splice_output_name(self.with_base(cmd), ext, self.reg.struct_of(op.type), [])
+            if spliced:
+                groups["cmd:v" + strip_vendor(spliced[1:])].append(ext.name)
+        for names in groups.values():
+            if len(names) < 2:
+                continue
+            low = min(self.vendor_rank(n) for n in names)
+            top = [n for n in names if self.vendor_rank(n) == low]
+            if len(top) > 1 and len({n[:2] == "vk" for n in top}) == 1:
+                self.keep_suffix.update(names)             # same kind, same rank: no canonical
+            else:
+                self.keep_suffix.update(n for n in names if self.vendor_rank(n) > low)
+
+    def output_pairs(self) -> List[Tuple[Command, Param, Struct]]:
+        """(command, output parameter, extender) for every in-profile extender of a command's
+        single output sType struct (SPEC.md section 6, output extenders)."""
+        out = []
+        for cmd in self.cmds:
+            roles = self.roles(cmd)
+            outs = [p for p, r in zip(cmd.params, roles) if r == "P"]
+            if len(outs) != 1:
+                continue
+            base = self.reg.struct_of(outs[0].type)
+            for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
+                if self.struct_in_profile(ext):
+                    out.append((cmd, outs[0], ext))
+        return out
+
+    def extensible_sibling(self, cmd: Command) -> bool:
+        """True when the command's version digit distinguishes it from an in-profile command
+        that is itself extensible (vkCreateRenderPass2 beside vkCreateRenderPass, whose
+        VkRenderPassCreateInfo has its own pNext): the digit is then part of the name."""
+        if not re.search(r"\d$", self.cmd_name(cmd)):
+            return False
+        stem = re.sub(r"\d+$", "", self.cmd_name(cmd))
+        for other in self.cmds:
+            if other is cmd or self.cmd_name(other) != stem:
+                continue
+            if any(r in ("I", "I[]") for r in self.roles(other)):
+                return True
+        return False
 
     def with_base(self, cmd: Command) -> str:
         """Tier-0 name minus the command's trailing version digit: a chained extender already
-        implies the extensible form (cvkBindImageMemory2 -> cvkBindImageMemoryWith...)."""
+        implies the extensible form (cvkBindImageMemory2 -> cvkBindImageMemoryWith...), unless
+        the digit-less command is itself extensible (cvkCreateRenderPass2With... beside
+        cvkCreateRenderPassWith...)."""
+        if self.extensible_sibling(cmd):
+            return self.cmd_name(cmd)
         return re.sub(r"\d+$", "", self.cmd_name(cmd))
 
     def qualifier(self, ext: Struct, base: Struct) -> str:
@@ -185,8 +276,6 @@ class Generator:
         extender covering B's noun run is the subject -> cvk<Verb><ExtenderStruct>; an add-on
         (CreateInfo/AllocateInfo/BeginInfo) is spliced between B's noun run and the command's
         tail, with the command's version digit dropped."""
-        import difflib
-
         kind = ("Info", "Create", "Allocate", "Begin", "Bind", "Submit")
 
         def norm(t: str) -> str:
@@ -194,21 +283,12 @@ class Generator:
 
         e = tokens(self.struct_short(ext))
         b = tokens(self.struct_short(base))
-        blocks = [m for m in difflib.SequenceMatcher(None, e, b, autojunk=False).get_matching_blocks() if m.size]
-        matched = set()
-        for m in blocks:
-            if m.size == 1 and 0 < m.a < len(e) - 1:
-                continue
-            matched.update(range(m.a, m.a + m.size))
-        d_idx = [i for i in range(len(e)) if i not in matched]
-        d = [e[i] for i in d_idx]
-        while d and (d[-1] in kind or d[-1].isdigit()):
-            d.pop()
+        d = self.distinct_part(ext, base)
         if not d:
             self.errors.append(f"extender {ext.name} has no distinct part against {base.name}")
-            return self.with_base(cmd) + "With" + self.struct_short(ext)
+            return self.cmd_name(cmd) + "With" + self.struct_short(ext)
 
-        cmd_tokens = tokens(strip_vendor(cmd.name[2:]))
+        cmd_tokens = tokens(self.cmd_name(cmd)[3:])
         verb, rest = cmd_tokens[0], cmd_tokens[1:]
         run = [t for t in b if t not in kind and not t.isdigit()]
         # Operation extenders (Import*/Export*): the extender names the operation, so the
@@ -217,9 +297,10 @@ class Generator:
         # With form when one such extender serves several bases with the same verb.
         e_op = tokens(self.struct_short(ext))
         if e_op and e_op[0] in ("Import", "Export") and self.convenience_pairs.get((verb, ext.name), 0) == 1:
+            tag = e_op.pop() if e_op[-1] in VENDORS else ""
             while e_op and (e_op[-1] in kind or e_op[-1].isdigit()):
                 e_op.pop()
-            return "cvk" + verb + "".join(e_op)
+            return "cvk" + verb + "".join(e_op) + tag
         if verb not in ("Get", "Enumerate"):
             return self.with_base(cmd) + "With" + "".join(d) + "Info"
         # Query: a plain Info extender whose name covers the base noun run is the subject of
@@ -239,7 +320,7 @@ class Generator:
         # Splice: the distinct part wraps the base run's unmatched remainder. Its first word
         # follows the last matched base word; the remainder of the run follows; then the rest
         # of the distinct part; then the command's tail.
-        matched_norm = {norm(e[i]) for i in matched}
+        matched_norm = {norm(t) for t in e if t not in d}   # extender tokens aligned with the base
         last = max((i for i, t in enumerate(run) if norm(t) in matched_norm), default=len(run) - 1)
         head, run_rest = run[: last + 1], run[last + 1:]
         spliced = rest[:start] + head + d[:1] + run_rest + d[1:] + rest[start + len(run):]
@@ -597,11 +678,25 @@ class Generator:
         if base.endswith("s"):
             return base[:-1]
         if s is not None:
+            if self.singular_pairs.get((cmd.verb, s.name), 0) > 1:
+                return self.cmd_name(cmd) + "Info"          # vkCmdBegin/EndTransformFeedback2EXT share one element struct
             t = tokens(self.struct_short(s))
             if cmd.verb in t:
                 t.remove(cmd.verb)
             return "cvk" + cmd.verb + "".join(t)
         return base + "Single"
+
+    def singular_struct(self, cmd: Command) -> Optional[Struct]:
+        """The element struct of the command's single input array, when it has a singular form."""
+        roles = self.roles(cmd)
+        arrays = [(p, r) for p, r in zip(cmd.params, roles) if r in ("I[]", "H[]", "H[]out") and p.len and "," not in p.len and "->" not in p.len]
+        others = [p for p, r in zip(cmd.params, roles) if r in ("S[]", "s[]", "P[]", "I", "n*")]
+        if not arrays or others:
+            return None
+        ins = [(p, r) for p, r in arrays if r != "H[]out"]
+        if len(ins) != 1 or ins[0][1] != "I[]":
+            return None
+        return self.reg.struct_of(ins[0][0].type)
 
     def emit_singular(self, cmd: Command) -> None:
         roles = self.roles(cmd)
@@ -915,6 +1010,8 @@ class Generator:
         # goes to the flattened sibling when one exists so the input stays flattened.
         prefix = self.with_base(cmd)
         spliced = self.splice_output_name(prefix, ext, base, d_tokens)
+        if spliced in self.tier0_names:
+            spliced = None                                   # the plain name is a command's (vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR)
         name = self.register(spliced if spliced else target + "With" + d + kind, f"{cmd.name}+{ext.name}:out")
         ret, t_params = self.sigs[target]
         out_stem = op.name[1:] if op.name.startswith("p") else op.name
@@ -1229,6 +1326,8 @@ class Generator:
 
     # ---------------------------------------------------------------- run
     def run(self) -> None:
+        self.compute_keep_suffix([st for st in self.reg.structs.values() if not st.alias_of and self.struct_in_profile(st)])
+        self.tier0_names = {self.cmd_name(c) for c in self.cmds}
         self.flat_pairs: Dict[Tuple[str, str], int] = defaultdict(int)
         for cmd in self.cmds:
             ip = self.flip_param(cmd)
@@ -1249,6 +1348,11 @@ class Generator:
             ip = self.flip_param(cmd)
             if ip is not None:
                 self.emit_flat(cmd, ip)
+        self.singular_pairs: Dict[Tuple[str, str], int] = defaultdict(int)
+        for cmd in self.cmds:
+            s = self.singular_struct(cmd)
+            if s is not None:
+                self.singular_pairs[(cmd.verb, s.name)] += 1
         for cmd in self.cmds:
             self.emit_singular(cmd)
         pairs: List[Tuple[Command, Param, Struct]] = []
@@ -1283,15 +1387,8 @@ class Generator:
                     continue
                 self.emit_array_convenience(cmd, arrays[0], ext)
         # Gap 2: extenders on the output sType struct (chained output).
-        for cmd in self.cmds:
-            roles = self.roles(cmd)
-            outs = [p for p, r in zip(cmd.params, roles) if r == "P"]
-            if len(outs) != 1:
-                continue
-            base = self.reg.struct_of(outs[0].type)
-            for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
-                if self.struct_in_profile(ext):
-                    self.emit_output_convenience(cmd, outs[0], ext)
+        for cmd, op, ext in self.output_pairs():
+            self.emit_output_convenience(cmd, op, ext)
         for f in self.FIXED:
             self.emit_fixed(f)
         # Chains and protocols compose each other: emit every chain whose steps are known,
