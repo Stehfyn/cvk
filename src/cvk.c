@@ -11767,6 +11767,262 @@ void cvkInitXYColor(VkXYColorEXT* pInfo, float x, float y)
     pInfo->x = x;
     pInfo->y = y;
 }
+void cvkInitAccelerationStructureGeometryDataTriangles(VkAccelerationStructureGeometryDataKHR* pInfo, VkAccelerationStructureGeometryTrianglesDataKHR triangles)
+{
+    pInfo->triangles = triangles;
+}
+void cvkInitAccelerationStructureGeometryDataAabbs(VkAccelerationStructureGeometryDataKHR* pInfo, VkAccelerationStructureGeometryAabbsDataKHR aabbs)
+{
+    pInfo->aabbs = aabbs;
+}
+void cvkInitAccelerationStructureGeometryDataInstances(VkAccelerationStructureGeometryDataKHR* pInfo, VkAccelerationStructureGeometryInstancesDataKHR instances)
+{
+    pInfo->instances = instances;
+}
+void cvkInitAccelerationStructureMotionInstanceDataStaticInstance(VkAccelerationStructureMotionInstanceDataNV* pInfo, VkAccelerationStructureInstanceKHR staticInstance)
+{
+    pInfo->staticInstance = staticInstance;
+}
+void cvkInitAccelerationStructureMotionInstanceDataMatrixMotionInstance(VkAccelerationStructureMotionInstanceDataNV* pInfo, VkAccelerationStructureMatrixMotionInstanceNV matrixMotionInstance)
+{
+    pInfo->matrixMotionInstance = matrixMotionInstance;
+}
+void cvkInitAccelerationStructureMotionInstanceDataSrtMotionInstance(VkAccelerationStructureMotionInstanceDataNV* pInfo, VkAccelerationStructureSRTMotionInstanceNV srtMotionInstance)
+{
+    pInfo->srtMotionInstance = srtMotionInstance;
+}
+void cvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[4])
+{
+    memcpy(pInfo->float32, float32, sizeof(pInfo->float32));
+}
+void cvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[4])
+{
+    memcpy(pInfo->int32, int32, sizeof(pInfo->int32));
+}
+void cvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[4])
+{
+    memcpy(pInfo->uint32, uint32, sizeof(pInfo->uint32));
+}
+void cvkInitClearValueColor(VkClearValue* pInfo, VkClearColorValue color)
+{
+    pInfo->color = color;
+}
+void cvkInitClearValueDepthStencil(VkClearValue* pInfo, VkClearDepthStencilValue depthStencil)
+{
+    pInfo->depthStencil = depthStencil;
+}
+void cvkInitClusterAccelerationStructureOpInputPClustersBottomLevel(VkClusterAccelerationStructureOpInputNV* pInfo, VkClusterAccelerationStructureClustersBottomLevelInputNV* pClustersBottomLevel)
+{
+    pInfo->pClustersBottomLevel = pClustersBottomLevel;
+}
+void cvkInitClusterAccelerationStructureOpInputPTriangleClusters(VkClusterAccelerationStructureOpInputNV* pInfo, VkClusterAccelerationStructureTriangleClusterInputNV* pTriangleClusters)
+{
+    pInfo->pTriangleClusters = pTriangleClusters;
+}
+void cvkInitClusterAccelerationStructureOpInputPMoveObjects(VkClusterAccelerationStructureOpInputNV* pInfo, VkClusterAccelerationStructureMoveObjectsInputNV* pMoveObjects)
+{
+    pInfo->pMoveObjects = pMoveObjects;
+}
+void cvkInitDescriptorDataPSampler(VkDescriptorDataEXT* pInfo, const VkSampler* pSampler)
+{
+    pInfo->pSampler = pSampler;
+}
+void cvkInitDescriptorDataPCombinedImageSampler(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pCombinedImageSampler)
+{
+    pInfo->pCombinedImageSampler = pCombinedImageSampler;
+}
+void cvkInitDescriptorDataPInputAttachmentImage(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pInputAttachmentImage)
+{
+    pInfo->pInputAttachmentImage = pInputAttachmentImage;
+}
+void cvkInitDescriptorDataPSampledImage(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pSampledImage)
+{
+    pInfo->pSampledImage = pSampledImage;
+}
+void cvkInitDescriptorDataPStorageImage(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pStorageImage)
+{
+    pInfo->pStorageImage = pStorageImage;
+}
+void cvkInitDescriptorDataPUniformTexelBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pUniformTexelBuffer)
+{
+    pInfo->pUniformTexelBuffer = pUniformTexelBuffer;
+}
+void cvkInitDescriptorDataPStorageTexelBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pStorageTexelBuffer)
+{
+    pInfo->pStorageTexelBuffer = pStorageTexelBuffer;
+}
+void cvkInitDescriptorDataPUniformBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pUniformBuffer)
+{
+    pInfo->pUniformBuffer = pUniformBuffer;
+}
+void cvkInitDescriptorDataPStorageBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pStorageBuffer)
+{
+    pInfo->pStorageBuffer = pStorageBuffer;
+}
+void cvkInitDescriptorDataAccelerationStructure(VkDescriptorDataEXT* pInfo, VkDeviceAddress accelerationStructure)
+{
+    pInfo->accelerationStructure = accelerationStructure;
+}
+void cvkInitDescriptorMappingSourceDataConstantOffset(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceConstantOffsetEXT constantOffset)
+{
+    pInfo->constantOffset = constantOffset;
+}
+void cvkInitDescriptorMappingSourceDataPushIndex(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourcePushIndexEXT pushIndex)
+{
+    pInfo->pushIndex = pushIndex;
+}
+void cvkInitDescriptorMappingSourceDataIndirectIndex(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceIndirectIndexEXT indirectIndex)
+{
+    pInfo->indirectIndex = indirectIndex;
+}
+void cvkInitDescriptorMappingSourceDataIndirectIndexArray(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceIndirectIndexArrayEXT indirectIndexArray)
+{
+    pInfo->indirectIndexArray = indirectIndexArray;
+}
+void cvkInitDescriptorMappingSourceDataHeapData(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceHeapDataEXT heapData)
+{
+    pInfo->heapData = heapData;
+}
+void cvkInitDescriptorMappingSourceDataPushDataOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t pushDataOffset)
+{
+    pInfo->pushDataOffset = pushDataOffset;
+}
+void cvkInitDescriptorMappingSourceDataPushAddressOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t pushAddressOffset)
+{
+    pInfo->pushAddressOffset = pushAddressOffset;
+}
+void cvkInitDescriptorMappingSourceDataIndirectAddress(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceIndirectAddressEXT indirectAddress)
+{
+    pInfo->indirectAddress = indirectAddress;
+}
+void cvkInitDescriptorMappingSourceDataShaderRecordIndex(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceShaderRecordIndexEXT shaderRecordIndex)
+{
+    pInfo->shaderRecordIndex = shaderRecordIndex;
+}
+void cvkInitDescriptorMappingSourceDataShaderRecordDataOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t shaderRecordDataOffset)
+{
+    pInfo->shaderRecordDataOffset = shaderRecordDataOffset;
+}
+void cvkInitDescriptorMappingSourceDataShaderRecordAddressOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t shaderRecordAddressOffset)
+{
+    pInfo->shaderRecordAddressOffset = shaderRecordAddressOffset;
+}
+void cvkInitDeviceOrHostAddressConstDeviceAddress(VkDeviceOrHostAddressConstKHR* pInfo, VkDeviceAddress deviceAddress)
+{
+    pInfo->deviceAddress = deviceAddress;
+}
+void cvkInitDeviceOrHostAddressConstHostAddress(VkDeviceOrHostAddressConstKHR* pInfo, const void* hostAddress)
+{
+    pInfo->hostAddress = hostAddress;
+}
+void cvkInitDeviceOrHostAddressDeviceAddress(VkDeviceOrHostAddressKHR* pInfo, VkDeviceAddress deviceAddress)
+{
+    pInfo->deviceAddress = deviceAddress;
+}
+void cvkInitDeviceOrHostAddressHostAddress(VkDeviceOrHostAddressKHR* pInfo, void* hostAddress)
+{
+    pInfo->hostAddress = hostAddress;
+}
+void cvkInitIndirectCommandsTokenDataPPushConstant(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsPushConstantTokenEXT* pPushConstant)
+{
+    pInfo->pPushConstant = pPushConstant;
+}
+void cvkInitIndirectCommandsTokenDataPVertexBuffer(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsVertexBufferTokenEXT* pVertexBuffer)
+{
+    pInfo->pVertexBuffer = pVertexBuffer;
+}
+void cvkInitIndirectCommandsTokenDataPIndexBuffer(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsIndexBufferTokenEXT* pIndexBuffer)
+{
+    pInfo->pIndexBuffer = pIndexBuffer;
+}
+void cvkInitIndirectCommandsTokenDataPExecutionSet(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsExecutionSetTokenEXT* pExecutionSet)
+{
+    pInfo->pExecutionSet = pExecutionSet;
+}
+void cvkInitIndirectExecutionSetInfoPPipelineInfo(VkIndirectExecutionSetInfoEXT* pInfo, const VkIndirectExecutionSetPipelineInfoEXT* pPipelineInfo)
+{
+    pInfo->pPipelineInfo = pPipelineInfo;
+}
+void cvkInitIndirectExecutionSetInfoPShaderInfo(VkIndirectExecutionSetInfoEXT* pInfo, const VkIndirectExecutionSetShaderInfoEXT* pShaderInfo)
+{
+    pInfo->pShaderInfo = pShaderInfo;
+}
+void cvkInitPerformanceCounterResultInt32(VkPerformanceCounterResultKHR* pInfo, int32_t int32)
+{
+    pInfo->int32 = int32;
+}
+void cvkInitPerformanceCounterResultInt64(VkPerformanceCounterResultKHR* pInfo, int64_t int64)
+{
+    pInfo->int64 = int64;
+}
+void cvkInitPerformanceCounterResultUint32(VkPerformanceCounterResultKHR* pInfo, uint32_t uint32)
+{
+    pInfo->uint32 = uint32;
+}
+void cvkInitPerformanceCounterResultUint64(VkPerformanceCounterResultKHR* pInfo, uint64_t uint64)
+{
+    pInfo->uint64 = uint64;
+}
+void cvkInitPerformanceCounterResultFloat32(VkPerformanceCounterResultKHR* pInfo, float float32)
+{
+    pInfo->float32 = float32;
+}
+void cvkInitPerformanceCounterResultFloat64(VkPerformanceCounterResultKHR* pInfo, double float64)
+{
+    pInfo->float64 = float64;
+}
+void cvkInitPerformanceValueDataValue32(VkPerformanceValueDataINTEL* pInfo, uint32_t value32)
+{
+    pInfo->value32 = value32;
+}
+void cvkInitPerformanceValueDataValue64(VkPerformanceValueDataINTEL* pInfo, uint64_t value64)
+{
+    pInfo->value64 = value64;
+}
+void cvkInitPerformanceValueDataValueFloat(VkPerformanceValueDataINTEL* pInfo, float valueFloat)
+{
+    pInfo->valueFloat = valueFloat;
+}
+void cvkInitPerformanceValueDataValueBool(VkPerformanceValueDataINTEL* pInfo, VkBool32 valueBool)
+{
+    pInfo->valueBool = valueBool;
+}
+void cvkInitPerformanceValueDataValueString(VkPerformanceValueDataINTEL* pInfo, const char* valueString)
+{
+    pInfo->valueString = valueString;
+}
+void cvkInitPipelineExecutableStatisticValueB32(VkPipelineExecutableStatisticValueKHR* pInfo, VkBool32 b32)
+{
+    pInfo->b32 = b32;
+}
+void cvkInitPipelineExecutableStatisticValueI64(VkPipelineExecutableStatisticValueKHR* pInfo, int64_t i64)
+{
+    pInfo->i64 = i64;
+}
+void cvkInitPipelineExecutableStatisticValueU64(VkPipelineExecutableStatisticValueKHR* pInfo, uint64_t u64)
+{
+    pInfo->u64 = u64;
+}
+void cvkInitPipelineExecutableStatisticValueF64(VkPipelineExecutableStatisticValueKHR* pInfo, double f64)
+{
+    pInfo->f64 = f64;
+}
+void cvkInitResourceDescriptorDataPImage(VkResourceDescriptorDataEXT* pInfo, const VkImageDescriptorInfoEXT* pImage)
+{
+    pInfo->pImage = pImage;
+}
+void cvkInitResourceDescriptorDataPTexelBuffer(VkResourceDescriptorDataEXT* pInfo, const VkTexelBufferDescriptorInfoEXT* pTexelBuffer)
+{
+    pInfo->pTexelBuffer = pTexelBuffer;
+}
+void cvkInitResourceDescriptorDataPAddressRange(VkResourceDescriptorDataEXT* pInfo, const VkDeviceAddressRangeEXT* pAddressRange)
+{
+    pInfo->pAddressRange = pAddressRange;
+}
+void cvkInitResourceDescriptorDataPTensorARM(VkResourceDescriptorDataEXT* pInfo, const VkTensorViewCreateInfoARM* pTensorARM)
+{
+    pInfo->pTensorARM = pTensorARM;
+}
 void cvkAcquireDrmDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, int32_t drmFd, VkDisplayKHR display)
 {
     PFN_vkAcquireDrmDisplayEXT function;
@@ -12445,21 +12701,21 @@ void cvkCmdBlitImage2(VkCommandBuffer     commandBuffer,
     blit_image_info.filter         = filter;
     vkCmdBlitImage2(commandBuffer, &blit_image_info);
 }
-void cvkCmdBuildAccelerationStructure(VkDevice                             device,
-                                      VkCommandBuffer                      commandBuffer,
-                                      const void*                          pNext,
-                                      VkAccelerationStructureTypeNV        type,
-                                      VkBuildAccelerationStructureFlagsKHR flags,
-                                      uint32_t                             instanceCount,
-                                      uint32_t                             geometryCount,
-                                      const VkGeometryNV*                  pGeometries,
-                                      VkBuffer                             instanceData,
-                                      VkDeviceSize                         instanceOffset,
-                                      VkBool32                             update,
-                                      VkAccelerationStructureNV            dst,
-                                      VkAccelerationStructureNV            src,
-                                      VkBuffer                             scratch,
-                                      VkDeviceSize                         scratchOffset)
+void cvkCmdBuildAccelerationStructureNV(VkDevice                             device,
+                                        VkCommandBuffer                      commandBuffer,
+                                        const void*                          pNext,
+                                        VkAccelerationStructureTypeNV        type,
+                                        VkBuildAccelerationStructureFlagsKHR flags,
+                                        uint32_t                             instanceCount,
+                                        uint32_t                             geometryCount,
+                                        const VkGeometryNV*                  pGeometries,
+                                        VkBuffer                             instanceData,
+                                        VkDeviceSize                         instanceOffset,
+                                        VkBool32                             update,
+                                        VkAccelerationStructureNV            dst,
+                                        VkAccelerationStructureNV            src,
+                                        VkBuffer                             scratch,
+                                        VkDeviceSize                         scratchOffset)
 {
     VkAccelerationStructureInfoNV         info;
     PFN_vkCmdBuildAccelerationStructureNV function;
@@ -21223,6 +21479,156 @@ void cvkCmdBeginRenderPassWithTransformInfo(VkCommandBuffer               comman
     render_pass_transform_begin_info.transform = transform;
     cvkCmdBeginRenderPass(commandBuffer, &render_pass_transform_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
+void cvkCmdBeginRenderPass2WithDeviceGroupInfo(VkCommandBuffer     commandBuffer,
+                                               const void*         pRenderPassBeginNext,
+                                               uint32_t            deviceMask,
+                                               uint32_t            deviceRenderAreaCount,
+                                               const VkRect2D*     pDeviceRenderAreas,
+                                               VkRenderPass        renderPass,
+                                               VkFramebuffer       framebuffer,
+                                               VkRect2D            renderArea,
+                                               uint32_t            clearValueCount,
+                                               const VkClearValue* pClearValues,
+                                               const void*         pSubpassBeginInfoNext,
+                                               VkSubpassContents   contents)
+{
+    VkDeviceGroupRenderPassBeginInfo device_group_render_pass_begin_info;
+
+    device_group_render_pass_begin_info.sType                 = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
+    device_group_render_pass_begin_info.pNext                 = pRenderPassBeginNext;
+    device_group_render_pass_begin_info.deviceMask            = deviceMask;
+    device_group_render_pass_begin_info.deviceRenderAreaCount = deviceRenderAreaCount;
+    device_group_render_pass_begin_info.pDeviceRenderAreas    = pDeviceRenderAreas;
+    cvkCmdBeginRenderPass2(commandBuffer, &device_group_render_pass_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
+void cvkCmdBeginRenderPass2WithMultiviewPerViewRenderAreasInfo(VkCommandBuffer     commandBuffer,
+                                                               const void*         pRenderPassBeginNext,
+                                                               uint32_t            perViewRenderAreaCount,
+                                                               const VkRect2D*     pPerViewRenderAreas,
+                                                               VkRenderPass        renderPass,
+                                                               VkFramebuffer       framebuffer,
+                                                               VkRect2D            renderArea,
+                                                               uint32_t            clearValueCount,
+                                                               const VkClearValue* pClearValues,
+                                                               const void*         pSubpassBeginInfoNext,
+                                                               VkSubpassContents   contents)
+{
+    VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM multiview_per_view_render_areas_render_pass_begin_info;
+
+    multiview_per_view_render_areas_render_pass_begin_info.sType                  = VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_RENDER_AREAS_RENDER_PASS_BEGIN_INFO_QCOM;
+    multiview_per_view_render_areas_render_pass_begin_info.pNext                  = pRenderPassBeginNext;
+    multiview_per_view_render_areas_render_pass_begin_info.perViewRenderAreaCount = perViewRenderAreaCount;
+    multiview_per_view_render_areas_render_pass_begin_info.pPerViewRenderAreas    = pPerViewRenderAreas;
+    cvkCmdBeginRenderPass2(commandBuffer, &multiview_per_view_render_areas_render_pass_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
+void cvkCmdBeginRenderPass2WithAttachmentInfo(VkCommandBuffer     commandBuffer,
+                                              const void*         pRenderPassBeginNext,
+                                              uint32_t            attachmentCount,
+                                              const VkImageView*  pAttachments,
+                                              VkRenderPass        renderPass,
+                                              VkFramebuffer       framebuffer,
+                                              VkRect2D            renderArea,
+                                              uint32_t            clearValueCount,
+                                              const VkClearValue* pClearValues,
+                                              const void*         pSubpassBeginInfoNext,
+                                              VkSubpassContents   contents)
+{
+    VkRenderPassAttachmentBeginInfo render_pass_attachment_begin_info;
+
+    render_pass_attachment_begin_info.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
+    render_pass_attachment_begin_info.pNext           = pRenderPassBeginNext;
+    render_pass_attachment_begin_info.attachmentCount = attachmentCount;
+    render_pass_attachment_begin_info.pAttachments    = pAttachments;
+    cvkCmdBeginRenderPass2(commandBuffer, &render_pass_attachment_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
+void cvkCmdBeginRenderPass2WithPerformanceCountersByRegionInfo(VkCommandBuffer        commandBuffer,
+                                                               void*                  pRenderPassBeginNext,
+                                                               uint32_t               counterAddressCount,
+                                                               const VkDeviceAddress* pCounterAddresses,
+                                                               VkBool32               serializeRegions,
+                                                               uint32_t               counterIndexCount,
+                                                               uint32_t*              pCounterIndices,
+                                                               VkRenderPass           renderPass,
+                                                               VkFramebuffer          framebuffer,
+                                                               VkRect2D               renderArea,
+                                                               uint32_t               clearValueCount,
+                                                               const VkClearValue*    pClearValues,
+                                                               const void*            pSubpassBeginInfoNext,
+                                                               VkSubpassContents      contents)
+{
+    VkRenderPassPerformanceCountersByRegionBeginInfoARM render_pass_performance_counters_by_region_begin_info;
+
+    render_pass_performance_counters_by_region_begin_info.sType               = VK_STRUCTURE_TYPE_RENDER_PASS_PERFORMANCE_COUNTERS_BY_REGION_BEGIN_INFO_ARM;
+    render_pass_performance_counters_by_region_begin_info.pNext               = pRenderPassBeginNext;
+    render_pass_performance_counters_by_region_begin_info.counterAddressCount = counterAddressCount;
+    render_pass_performance_counters_by_region_begin_info.pCounterAddresses   = pCounterAddresses;
+    render_pass_performance_counters_by_region_begin_info.serializeRegions    = serializeRegions;
+    render_pass_performance_counters_by_region_begin_info.counterIndexCount   = counterIndexCount;
+    render_pass_performance_counters_by_region_begin_info.pCounterIndices     = pCounterIndices;
+    cvkCmdBeginRenderPass2(commandBuffer, &render_pass_performance_counters_by_region_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
+void cvkCmdBeginRenderPass2WithSampleLocationsInfo(VkCommandBuffer                       commandBuffer,
+                                                   const void*                           pRenderPassBeginNext,
+                                                   uint32_t                              attachmentInitialSampleLocationsCount,
+                                                   const VkAttachmentSampleLocationsEXT* pAttachmentInitialSampleLocations,
+                                                   uint32_t                              postSubpassSampleLocationsCount,
+                                                   const VkSubpassSampleLocationsEXT*    pPostSubpassSampleLocations,
+                                                   VkRenderPass                          renderPass,
+                                                   VkFramebuffer                         framebuffer,
+                                                   VkRect2D                              renderArea,
+                                                   uint32_t                              clearValueCount,
+                                                   const VkClearValue*                   pClearValues,
+                                                   const void*                           pSubpassBeginInfoNext,
+                                                   VkSubpassContents                     contents)
+{
+    VkRenderPassSampleLocationsBeginInfoEXT render_pass_sample_locations_begin_info;
+
+    render_pass_sample_locations_begin_info.sType                                 = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
+    render_pass_sample_locations_begin_info.pNext                                 = pRenderPassBeginNext;
+    render_pass_sample_locations_begin_info.attachmentInitialSampleLocationsCount = attachmentInitialSampleLocationsCount;
+    render_pass_sample_locations_begin_info.pAttachmentInitialSampleLocations     = pAttachmentInitialSampleLocations;
+    render_pass_sample_locations_begin_info.postSubpassSampleLocationsCount       = postSubpassSampleLocationsCount;
+    render_pass_sample_locations_begin_info.pPostSubpassSampleLocations           = pPostSubpassSampleLocations;
+    cvkCmdBeginRenderPass2(commandBuffer, &render_pass_sample_locations_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
+void cvkCmdBeginRenderPass2WithStripeInfo(VkCommandBuffer                  commandBuffer,
+                                          const void*                      pRenderPassBeginNext,
+                                          uint32_t                         stripeInfoCount,
+                                          const VkRenderPassStripeInfoARM* pStripeInfos,
+                                          VkRenderPass                     renderPass,
+                                          VkFramebuffer                    framebuffer,
+                                          VkRect2D                         renderArea,
+                                          uint32_t                         clearValueCount,
+                                          const VkClearValue*              pClearValues,
+                                          const void*                      pSubpassBeginInfoNext,
+                                          VkSubpassContents                contents)
+{
+    VkRenderPassStripeBeginInfoARM render_pass_stripe_begin_info;
+
+    render_pass_stripe_begin_info.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_BEGIN_INFO_ARM;
+    render_pass_stripe_begin_info.pNext           = pRenderPassBeginNext;
+    render_pass_stripe_begin_info.stripeInfoCount = stripeInfoCount;
+    render_pass_stripe_begin_info.pStripeInfos    = pStripeInfos;
+    cvkCmdBeginRenderPass2(commandBuffer, &render_pass_stripe_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
+void cvkCmdBeginRenderPass2WithTransformInfo(VkCommandBuffer               commandBuffer,
+                                             const void*                   pRenderPassBeginNext,
+                                             VkSurfaceTransformFlagBitsKHR transform,
+                                             VkRenderPass                  renderPass,
+                                             VkFramebuffer                 framebuffer,
+                                             VkRect2D                      renderArea,
+                                             uint32_t                      clearValueCount,
+                                             const VkClearValue*           pClearValues,
+                                             const void*                   pSubpassBeginInfoNext,
+                                             VkSubpassContents             contents)
+{
+    VkRenderPassTransformBeginInfoQCOM render_pass_transform_begin_info;
+
+    render_pass_transform_begin_info.sType     = VK_STRUCTURE_TYPE_RENDER_PASS_TRANSFORM_BEGIN_INFO_QCOM;
+    render_pass_transform_begin_info.pNext     = pRenderPassBeginNext;
+    render_pass_transform_begin_info.transform = transform;
+    cvkCmdBeginRenderPass2(commandBuffer, &render_pass_transform_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, pSubpassBeginInfoNext, contents);
+}
 void cvkCmdBeginRenderingWithDeviceGroupRenderPassInfo(VkCommandBuffer                  commandBuffer,
                                                        const void*                      pNext,
                                                        uint32_t                         deviceMask,
@@ -22420,6 +22826,21 @@ void cvkCmdExecuteGeneratedCommandsWithShaderInfo(VkDevice                    de
                                    maxSequenceCount,
                                    sequenceCountAddress,
                                    maxDrawCount);
+}
+void cvkCmdNextSubpassWithRenderPassFragmentDensityMapOffsetInfo(VkCommandBuffer   commandBuffer,
+                                                                 const void*       pSubpassBeginInfoNext,
+                                                                 VkSubpassContents contents,
+                                                                 const void*       pSubpassEndInfoNext,
+                                                                 uint32_t          fragmentDensityOffsetCount,
+                                                                 const VkOffset2D* pFragmentDensityOffsets)
+{
+    VkRenderPassFragmentDensityMapOffsetEndInfoEXT render_pass_fragment_density_map_offset_end_info;
+
+    render_pass_fragment_density_map_offset_end_info.sType                      = VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_EXT;
+    render_pass_fragment_density_map_offset_end_info.pNext                      = pSubpassEndInfoNext;
+    render_pass_fragment_density_map_offset_end_info.fragmentDensityOffsetCount = fragmentDensityOffsetCount;
+    render_pass_fragment_density_map_offset_end_info.pFragmentDensityOffsets    = pFragmentDensityOffsets;
+    cvkCmdNextSubpass2(commandBuffer, pSubpassBeginInfoNext, contents, &render_pass_fragment_density_map_offset_end_info);
 }
 void cvkCmdPipelineBarrier2WithMemoryRangeBarriersInfo(VkCommandBuffer                commandBuffer,
                                                        const void*                    pNext,
@@ -42119,6 +42540,918 @@ VkResult cvkSetupGraphicsPipelineWithRenderingInfo(VkDevice                     
                                                       pAllocator,
                                                       pPipeline);
 }
+void cvkCmdBindGraphicsShaders(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT vertexShader, VkShaderEXT fragmentShader)
+{
+    VkShaderStageFlagBits stages[2] = {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
+    VkShaderEXT           shaders[2];
+
+    shaders[0] = vertexShader;
+    shaders[1] = fragmentShader;
+    cvkCmdBindShaders(device, commandBuffer, 2, stages, shaders);
+}
+void cvkSetupDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pBufferNext,
+                                 VkBufferCreateFlags          flags,
+                                 VkDeviceSize                 size,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkBufferUsageFlags           usage,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkBuffer*                    pBuffer,
+                                 VkDeviceMemory*              pMemory)
+{
+    VkMemoryAllocateFlagsInfo memory_allocate_flags_info;
+
+    cvkInitMemoryAllocateFlagsInfo(&memory_allocate_flags_info, pMemoryNext, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, 0);
+    cvkSetupDeviceLocalBuffer(physicalDevice,
+                              device,
+                              pBufferNext,
+                              flags,
+                              size,
+                              usage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+                              sharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              &memory_allocate_flags_info,
+                              pAllocator,
+                              pBuffer,
+                              pMemory);
+}
+void cvkSetupHostVisibleDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
+                                            VkDevice                     device,
+                                            const void*                  pBufferNext,
+                                            VkBufferCreateFlags          flags,
+                                            VkDeviceSize                 size,
+                                            VkSharingMode                sharingMode,
+                                            uint32_t                     queueFamilyIndexCount,
+                                            const uint32_t*              pQueueFamilyIndices,
+                                            VkBufferUsageFlags           usage,
+                                            const void*                  pMemoryNext,
+                                            const VkAllocationCallbacks* pAllocator,
+                                            VkBuffer*                    pBuffer,
+                                            VkDeviceMemory*              pMemory)
+{
+    VkMemoryAllocateFlagsInfo memory_allocate_flags_info;
+
+    cvkInitMemoryAllocateFlagsInfo(&memory_allocate_flags_info, pMemoryNext, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, 0);
+    cvkSetupHostVisibleBuffer(physicalDevice,
+                              device,
+                              pBufferNext,
+                              flags,
+                              size,
+                              usage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+                              sharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              &memory_allocate_flags_info,
+                              pAllocator,
+                              pBuffer,
+                              pMemory);
+}
+void cvkSetupAccelerationStructureBuffer(VkPhysicalDevice             physicalDevice,
+                                         VkDevice                     device,
+                                         const void*                  pBufferNext,
+                                         VkBufferCreateFlags          flags,
+                                         VkDeviceSize                 size,
+                                         VkSharingMode                sharingMode,
+                                         uint32_t                     queueFamilyIndexCount,
+                                         const uint32_t*              pQueueFamilyIndices,
+                                         const void*                  pMemoryNext,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkBuffer*                    pBuffer,
+                                         VkDeviceMemory*              pMemory)
+{
+    cvkSetupDeviceAddressBuffer(physicalDevice,
+                                device,
+                                pBufferNext,
+                                flags,
+                                size,
+                                sharingMode,
+                                queueFamilyIndexCount,
+                                pQueueFamilyIndices,
+                                VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+                                pMemoryNext,
+                                pAllocator,
+                                pBuffer,
+                                pMemory);
+}
+void cvkSetupScratchBuffer(VkPhysicalDevice             physicalDevice,
+                           VkDevice                     device,
+                           const void*                  pBufferNext,
+                           VkBufferCreateFlags          flags,
+                           VkDeviceSize                 size,
+                           VkSharingMode                sharingMode,
+                           uint32_t                     queueFamilyIndexCount,
+                           const uint32_t*              pQueueFamilyIndices,
+                           const void*                  pMemoryNext,
+                           const VkAllocationCallbacks* pAllocator,
+                           VkBuffer*                    pBuffer,
+                           VkDeviceMemory*              pMemory)
+{
+    cvkSetupDeviceAddressBuffer(physicalDevice,
+                                device,
+                                pBufferNext,
+                                flags,
+                                size,
+                                sharingMode,
+                                queueFamilyIndexCount,
+                                pQueueFamilyIndices,
+                                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                pMemoryNext,
+                                pAllocator,
+                                pBuffer,
+                                pMemory);
+}
+void cvkSetupShaderBindingTableBuffer(VkPhysicalDevice             physicalDevice,
+                                      VkDevice                     device,
+                                      const void*                  pBufferNext,
+                                      VkBufferCreateFlags          flags,
+                                      VkDeviceSize                 size,
+                                      VkSharingMode                sharingMode,
+                                      uint32_t                     queueFamilyIndexCount,
+                                      const uint32_t*              pQueueFamilyIndices,
+                                      const void*                  pMemoryNext,
+                                      const VkAllocationCallbacks* pAllocator,
+                                      VkBuffer*                    pBuffer,
+                                      VkDeviceMemory*              pMemory)
+{
+    cvkSetupHostVisibleDeviceAddressBuffer(physicalDevice,
+                                           device,
+                                           pBufferNext,
+                                           flags,
+                                           size,
+                                           sharingMode,
+                                           queueFamilyIndexCount,
+                                           pQueueFamilyIndices,
+                                           VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR,
+                                           pMemoryNext,
+                                           pAllocator,
+                                           pBuffer,
+                                           pMemory);
+}
+void cvkSetupAccelerationStructureBuildInputBuffer(VkPhysicalDevice             physicalDevice,
+                                                   VkDevice                     device,
+                                                   const void*                  pBufferNext,
+                                                   VkBufferCreateFlags          flags,
+                                                   VkDeviceSize                 size,
+                                                   VkSharingMode                sharingMode,
+                                                   uint32_t                     queueFamilyIndexCount,
+                                                   const uint32_t*              pQueueFamilyIndices,
+                                                   const void*                  pMemoryNext,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkBuffer*                    pBuffer,
+                                                   VkDeviceMemory*              pMemory)
+{
+    cvkSetupHostVisibleDeviceAddressBuffer(physicalDevice,
+                                           device,
+                                           pBufferNext,
+                                           flags,
+                                           size,
+                                           sharingMode,
+                                           queueFamilyIndexCount,
+                                           pQueueFamilyIndices,
+                                           VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+                                           pMemoryNext,
+                                           pAllocator,
+                                           pBuffer,
+                                           pMemory);
+}
+void cvkCreateBottomLevelAccelerationStructure(VkDevice                              device,
+                                               const void*                           pAccelerationStructureNext,
+                                               VkAccelerationStructureCreateFlagsKHR createFlags,
+                                               VkBuffer                              buffer,
+                                               VkDeviceSize                          offset,
+                                               VkDeviceSize                          size,
+                                               const VkAllocationCallbacks*          pAllocator,
+                                               VkAccelerationStructureKHR*           pAccelerationStructure)
+{
+    cvkCreateAccelerationStructure(device, pAccelerationStructureNext, createFlags, buffer, offset, size, VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR, 0, pAllocator, pAccelerationStructure);
+}
+void cvkCreateTopLevelAccelerationStructure(VkDevice                              device,
+                                            const void*                           pAccelerationStructureNext,
+                                            VkAccelerationStructureCreateFlagsKHR createFlags,
+                                            VkBuffer                              buffer,
+                                            VkDeviceSize                          offset,
+                                            VkDeviceSize                          size,
+                                            const VkAllocationCallbacks*          pAllocator,
+                                            VkAccelerationStructureKHR*           pAccelerationStructure)
+{
+    cvkCreateAccelerationStructure(device, pAccelerationStructureNext, createFlags, buffer, offset, size, VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR, 0, pAllocator, pAccelerationStructure);
+}
+void cvkInitTrianglesAccelerationStructureGeometry(VkAccelerationStructureGeometryKHR* pInfo, const void* pNext, VkAccelerationStructureGeometryTrianglesDataKHR triangles, VkGeometryFlagsKHR flags)
+{
+    VkAccelerationStructureGeometryDataKHR geometry_data;
+
+    cvkInitAccelerationStructureGeometryDataTriangles(&geometry_data, triangles);
+    cvkInitAccelerationStructureGeometry(pInfo, pNext, VK_GEOMETRY_TYPE_TRIANGLES_KHR, geometry_data, flags);
+}
+void cvkInitAabbsAccelerationStructureGeometry(VkAccelerationStructureGeometryKHR* pInfo, const void* pNext, VkAccelerationStructureGeometryAabbsDataKHR aabbs, VkGeometryFlagsKHR flags)
+{
+    VkAccelerationStructureGeometryDataKHR geometry_data;
+
+    cvkInitAccelerationStructureGeometryDataAabbs(&geometry_data, aabbs);
+    cvkInitAccelerationStructureGeometry(pInfo, pNext, VK_GEOMETRY_TYPE_AABBS_KHR, geometry_data, flags);
+}
+void cvkInitInstancesAccelerationStructureGeometry(VkAccelerationStructureGeometryKHR* pInfo, const void* pNext, VkAccelerationStructureGeometryInstancesDataKHR instances, VkGeometryFlagsKHR flags)
+{
+    VkAccelerationStructureGeometryDataKHR geometry_data;
+
+    cvkInitAccelerationStructureGeometryDataInstances(&geometry_data, instances);
+    cvkInitAccelerationStructureGeometry(pInfo, pNext, VK_GEOMETRY_TYPE_INSTANCES_KHR, geometry_data, flags);
+}
+void cvkInitDeviceAccelerationStructureGeometryTrianglesData(VkAccelerationStructureGeometryTrianglesDataKHR* pInfo,
+                                                             const void*                                      pNext,
+                                                             VkFormat                                         vertexFormat,
+                                                             VkDeviceSize                                     vertexStride,
+                                                             uint32_t                                         maxVertex,
+                                                             VkIndexType                                      indexType,
+                                                             VkDeviceAddress                                  vertexDeviceAddress,
+                                                             VkDeviceAddress                                  indexDeviceAddress,
+                                                             VkDeviceAddress                                  transformDeviceAddress)
+{
+    VkDeviceOrHostAddressConstKHR vertex_data;
+    VkDeviceOrHostAddressConstKHR index_data;
+    VkDeviceOrHostAddressConstKHR transform_data;
+
+    cvkInitDeviceOrHostAddressConstDeviceAddress(&vertex_data, vertexDeviceAddress);
+    cvkInitDeviceOrHostAddressConstDeviceAddress(&index_data, indexDeviceAddress);
+    cvkInitDeviceOrHostAddressConstDeviceAddress(&transform_data, transformDeviceAddress);
+    cvkInitAccelerationStructureGeometryTrianglesData(pInfo, pNext, vertexFormat, vertex_data, vertexStride, maxVertex, indexType, index_data, transform_data);
+}
+void cvkInitDeviceAccelerationStructureGeometryInstancesData(VkAccelerationStructureGeometryInstancesDataKHR* pInfo, const void* pNext, VkDeviceAddress instancesDeviceAddress)
+{
+    VkDeviceOrHostAddressConstKHR data;
+
+    cvkInitDeviceOrHostAddressConstDeviceAddress(&data, instancesDeviceAddress);
+    cvkInitAccelerationStructureGeometryInstancesData(pInfo, pNext, VK_FALSE, data);
+}
+void cvkInitDeviceAccelerationStructureGeometryAabbsData(VkAccelerationStructureGeometryAabbsDataKHR* pInfo, const void* pNext, VkDeviceSize stride, VkDeviceAddress aabbsDeviceAddress)
+{
+    VkDeviceOrHostAddressConstKHR data;
+
+    cvkInitDeviceOrHostAddressConstDeviceAddress(&data, aabbsDeviceAddress);
+    cvkInitAccelerationStructureGeometryAabbsData(pInfo, pNext, data, stride);
+}
+void cvkCmdBuildAccelerationStructure(VkDevice                                         device,
+                                      VkCommandBuffer                                  commandBuffer,
+                                      const void*                                      pNext,
+                                      VkAccelerationStructureTypeKHR                   type,
+                                      VkBuildAccelerationStructureFlagsKHR             flags,
+                                      VkBuildAccelerationStructureModeKHR              mode,
+                                      VkAccelerationStructureKHR                       srcAccelerationStructure,
+                                      VkAccelerationStructureKHR                       dstAccelerationStructure,
+                                      uint32_t                                         geometryCount,
+                                      const VkAccelerationStructureGeometryKHR*        pGeometries,
+                                      const VkAccelerationStructureGeometryKHR* const* ppGeometries,
+                                      VkDeviceOrHostAddressKHR                         scratchData,
+                                      const VkAccelerationStructureBuildRangeInfoKHR*  pBuildRangeInfos)
+{
+    VkAccelerationStructureBuildGeometryInfoKHR build_geometry_info;
+
+    cvkInitAccelerationStructureBuildGeometryInfo(&build_geometry_info,
+                                                  pNext,
+                                                  type,
+                                                  flags,
+                                                  mode,
+                                                  srcAccelerationStructure,
+                                                  dstAccelerationStructure,
+                                                  geometryCount,
+                                                  pGeometries,
+                                                  ppGeometries,
+                                                  scratchData);
+    cvkCmdBuildAccelerationStructures(device, commandBuffer, 1, &build_geometry_info, &pBuildRangeInfos);
+}
+void cvkCmdBuildDeviceAccelerationStructure(VkDevice                                        device,
+                                            VkCommandBuffer                                 commandBuffer,
+                                            const void*                                     pNext,
+                                            VkAccelerationStructureTypeKHR                  type,
+                                            VkBuildAccelerationStructureFlagsKHR            flags,
+                                            VkAccelerationStructureKHR                      dstAccelerationStructure,
+                                            uint32_t                                        geometryCount,
+                                            const VkAccelerationStructureGeometryKHR*       pGeometries,
+                                            const VkAccelerationStructureBuildRangeInfoKHR* pBuildRangeInfos,
+                                            VkDeviceAddress                                 scratchDeviceAddress)
+{
+    VkDeviceOrHostAddressKHR scratch_data;
+
+    cvkInitDeviceOrHostAddressDeviceAddress(&scratch_data, scratchDeviceAddress);
+    cvkCmdBuildAccelerationStructure(device,
+                                     commandBuffer,
+                                     pNext,
+                                     type,
+                                     flags,
+                                     VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+                                     VK_NULL_HANDLE,
+                                     dstAccelerationStructure,
+                                     geometryCount,
+                                     pGeometries,
+                                     NULL,
+                                     scratch_data,
+                                     pBuildRangeInfos);
+}
+void cvkCmdBuildDeviceBottomLevelAccelerationStructure(VkDevice                                        device,
+                                                       VkCommandBuffer                                 commandBuffer,
+                                                       const void*                                     pNext,
+                                                       VkBuildAccelerationStructureFlagsKHR            flags,
+                                                       VkAccelerationStructureKHR                      dstAccelerationStructure,
+                                                       uint32_t                                        geometryCount,
+                                                       const VkAccelerationStructureGeometryKHR*       pGeometries,
+                                                       const VkAccelerationStructureBuildRangeInfoKHR* pBuildRangeInfos,
+                                                       VkDeviceAddress                                 scratchDeviceAddress)
+{
+    cvkCmdBuildDeviceAccelerationStructure(device,
+                                           commandBuffer,
+                                           pNext,
+                                           VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+                                           flags,
+                                           dstAccelerationStructure,
+                                           geometryCount,
+                                           pGeometries,
+                                           pBuildRangeInfos,
+                                           scratchDeviceAddress);
+}
+void cvkCmdBuildDeviceTopLevelAccelerationStructure(VkDevice                                        device,
+                                                    VkCommandBuffer                                 commandBuffer,
+                                                    const void*                                     pNext,
+                                                    VkBuildAccelerationStructureFlagsKHR            flags,
+                                                    VkAccelerationStructureKHR                      dstAccelerationStructure,
+                                                    uint32_t                                        geometryCount,
+                                                    const VkAccelerationStructureGeometryKHR*       pGeometries,
+                                                    const VkAccelerationStructureBuildRangeInfoKHR* pBuildRangeInfos,
+                                                    VkDeviceAddress                                 scratchDeviceAddress)
+{
+    cvkCmdBuildDeviceAccelerationStructure(device,
+                                           commandBuffer,
+                                           pNext,
+                                           VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+                                           flags,
+                                           dstAccelerationStructure,
+                                           geometryCount,
+                                           pGeometries,
+                                           pBuildRangeInfos,
+                                           scratchDeviceAddress);
+}
+void cvkCmdAccelerationStructureBuildBarrier(VkCommandBuffer commandBuffer)
+{
+    cvkCmdMemoryBarrier(commandBuffer,
+                        NULL,
+                        VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
+                        VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR | VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
+                        VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
+                        VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR | VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
+                        0);
+}
+void cvkUpdateAccelerationStructureDescriptorSet(VkDevice                   device,
+                                                 const void*                pNext,
+                                                 VkDescriptorSet            dstSet,
+                                                 uint32_t                   dstBinding,
+                                                 uint32_t                   dstArrayElement,
+                                                 VkAccelerationStructureKHR accelerationStructure)
+{
+    VkWriteDescriptorSetAccelerationStructureKHR write_descriptor_set_acceleration_structure;
+
+    cvkInitWriteDescriptorSetAccelerationStructure(&write_descriptor_set_acceleration_structure, pNext, 1, &accelerationStructure);
+    cvkUpdateDescriptorSet(device, &write_descriptor_set_acceleration_structure, dstSet, dstBinding, dstArrayElement, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, NULL, NULL, NULL);
+}
+void cvkCmdBindRayTracingPipeline(VkCommandBuffer commandBuffer, VkPipeline pipeline)
+{
+    cvkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, pipeline);
+}
+void cvkCmdBindRayTracingDescriptorSets(VkCommandBuffer        commandBuffer,
+                                        VkPipelineLayout       layout,
+                                        uint32_t               firstSet,
+                                        uint32_t               descriptorSetCount,
+                                        const VkDescriptorSet* pDescriptorSets,
+                                        uint32_t               dynamicOffsetCount,
+                                        const uint32_t*        pDynamicOffsets)
+{
+    cvkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+}
+void cvkCmdPushRayTracingConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues)
+{
+    cvkCmdPushConstants(commandBuffer,
+                        layout,
+                        VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR |
+                            VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+                        offset,
+                        size,
+                        pValues);
+}
+void cvkCreateRayTracingPipelineLayout(VkDevice                     device,
+                                       const void*                  pPipelineLayoutNext,
+                                       VkPipelineLayoutCreateFlags  flags,
+                                       uint32_t                     setLayoutCount,
+                                       const VkDescriptorSetLayout* pSetLayouts,
+                                       uint32_t                     pushConstantOffset,
+                                       uint32_t                     pushConstantSize,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       VkPipelineLayout*            pPipelineLayout)
+{
+    VkPushConstantRange push_constant_range;
+
+    cvkInitPushConstantRange(&push_constant_range,
+                             VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR |
+                                 VK_SHADER_STAGE_INTERSECTION_BIT_KHR | VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+                             pushConstantOffset,
+                             pushConstantSize);
+    cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
+}
+void cvkInitGeneralRayTracingShaderGroupCreateInfo(VkRayTracingShaderGroupCreateInfoKHR* pInfo, const void* pNext, uint32_t generalShader)
+{
+    cvkInitRayTracingShaderGroupCreateInfo(pInfo, pNext, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR, generalShader, VK_SHADER_UNUSED_KHR, VK_SHADER_UNUSED_KHR, VK_SHADER_UNUSED_KHR, NULL);
+}
+void cvkInitTrianglesHitRayTracingShaderGroupCreateInfo(VkRayTracingShaderGroupCreateInfoKHR* pInfo, const void* pNext, uint32_t closestHitShader, uint32_t anyHitShader)
+{
+    cvkInitRayTracingShaderGroupCreateInfo(pInfo, pNext, VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR, VK_SHADER_UNUSED_KHR, closestHitShader, anyHitShader, VK_SHADER_UNUSED_KHR, NULL);
+}
+void cvkInitProceduralHitRayTracingShaderGroupCreateInfo(VkRayTracingShaderGroupCreateInfoKHR* pInfo, const void* pNext, uint32_t closestHitShader, uint32_t anyHitShader, uint32_t intersectionShader)
+{
+    cvkInitRayTracingShaderGroupCreateInfo(pInfo, pNext, VK_RAY_TRACING_SHADER_GROUP_TYPE_PROCEDURAL_HIT_GROUP_KHR, VK_SHADER_UNUSED_KHR, closestHitShader, anyHitShader, intersectionShader, NULL);
+}
+VkResult cvkSetupRayTracingPipeline(VkDevice                         device,
+                                    const void*                      pPipelineLayoutNext,
+                                    uint32_t                         setLayoutCount,
+                                    const VkDescriptorSetLayout*     pSetLayouts,
+                                    uint32_t                         pushConstantOffset,
+                                    uint32_t                         pushConstantSize,
+                                    VkPipelineCache                  pipelineCache,
+                                    const void*                      pPipelineNext,
+                                    VkPipelineCreateFlags            flags,
+                                    uint32_t                         maxPipelineRayRecursionDepth,
+                                    VkShaderModuleCreateFlags        shaderModuleFlags,
+                                    VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
+                                    VkPipelineShaderStageCreateFlags stageFlags,
+                                    const void*                      pRaygenShaderModuleNext,
+                                    size_t                           raygenCodeSize,
+                                    const uint32_t*                  pRaygenCode,
+                                    const void*                      pRaygenStageNext,
+                                    const char*                      pRaygenEntryPoint,
+                                    const VkSpecializationInfo*      pRaygenSpecializationInfo,
+                                    const void*                      pMissShaderModuleNext,
+                                    size_t                           missCodeSize,
+                                    const uint32_t*                  pMissCode,
+                                    const void*                      pMissStageNext,
+                                    const char*                      pMissEntryPoint,
+                                    const VkSpecializationInfo*      pMissSpecializationInfo,
+                                    const void*                      pClosestHitShaderModuleNext,
+                                    size_t                           closestHitCodeSize,
+                                    const uint32_t*                  pClosestHitCode,
+                                    const void*                      pClosestHitStageNext,
+                                    const char*                      pClosestHitEntryPoint,
+                                    const VkSpecializationInfo*      pClosestHitSpecializationInfo,
+                                    const VkAllocationCallbacks*     pAllocator,
+                                    VkShaderModule*                  pRaygenShaderModule,
+                                    VkShaderModule*                  pMissShaderModule,
+                                    VkShaderModule*                  pClosestHitShaderModule,
+                                    VkPipelineLayout*                pPipelineLayout,
+                                    VkPipeline*                      pPipeline)
+{
+    VkPipelineShaderStageCreateInfo      shader_stages[3];
+    VkRayTracingShaderGroupCreateInfoKHR shader_groups[3];
+
+    cvkCreateShaderModule(device, pRaygenShaderModuleNext, shaderModuleFlags, raygenCodeSize, pRaygenCode, pAllocator, pRaygenShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[0], pRaygenStageNext, stageFlags, VK_SHADER_STAGE_RAYGEN_BIT_KHR, (*pRaygenShaderModule), pRaygenEntryPoint, pRaygenSpecializationInfo);
+    cvkCreateShaderModule(device, pMissShaderModuleNext, shaderModuleFlags, missCodeSize, pMissCode, pAllocator, pMissShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[1], pMissStageNext, stageFlags, VK_SHADER_STAGE_MISS_BIT_KHR, (*pMissShaderModule), pMissEntryPoint, pMissSpecializationInfo);
+    cvkCreateShaderModule(device, pClosestHitShaderModuleNext, shaderModuleFlags, closestHitCodeSize, pClosestHitCode, pAllocator, pClosestHitShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[2],
+                                         pClosestHitStageNext,
+                                         stageFlags,
+                                         VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
+                                         (*pClosestHitShaderModule),
+                                         pClosestHitEntryPoint,
+                                         pClosestHitSpecializationInfo);
+    cvkInitGeneralRayTracingShaderGroupCreateInfo(&shader_groups[0], NULL, 0);
+    cvkInitGeneralRayTracingShaderGroupCreateInfo(&shader_groups[1], NULL, 1);
+    cvkInitTrianglesHitRayTracingShaderGroupCreateInfo(&shader_groups[2], NULL, 2, VK_SHADER_UNUSED_KHR);
+    cvkCreateRayTracingPipelineLayout(device, pPipelineLayoutNext, pipelineLayoutFlags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
+    return cvkCreateRayTracingPipeline(device,
+                                       VK_NULL_HANDLE,
+                                       pipelineCache,
+                                       pPipelineNext,
+                                       flags,
+                                       3,
+                                       shader_stages,
+                                       3,
+                                       shader_groups,
+                                       maxPipelineRayRecursionDepth,
+                                       NULL,
+                                       NULL,
+                                       NULL,
+                                       (*pPipelineLayout),
+                                       VK_NULL_HANDLE,
+                                       -1,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkDeviceSize cvkGetPhysicalDeviceRayTracingShaderGroupHandleStride(VkPhysicalDevice physicalDevice)
+{
+    VkPhysicalDeviceRayTracingPipelinePropertiesKHR ray_tracing_pipeline_properties;
+
+    cvkGetPhysicalDeviceRayTracingPipelineProperties(physicalDevice, NULL, &ray_tracing_pipeline_properties);
+    return cvkAlignDeviceSize(ray_tracing_pipeline_properties.shaderGroupHandleSize, ray_tracing_pipeline_properties.shaderGroupHandleAlignment);
+}
+void cvkCmdTraceRays2D(VkDevice                               device,
+                       VkCommandBuffer                        commandBuffer,
+                       const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                       const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                       const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                       const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                       VkExtent2D                             extent2D)
+{
+    cvkCmdTraceRays(device, commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, extent2D.width, extent2D.height, 1);
+}
+void cvkCmdTraceRayTracingRays(VkDevice                               device,
+                               VkCommandBuffer                        commandBuffer,
+                               VkPipeline                             pipeline,
+                               VkPipelineLayout                       layout,
+                               uint32_t                               firstSet,
+                               uint32_t                               descriptorSetCount,
+                               const VkDescriptorSet*                 pDescriptorSets,
+                               uint32_t                               dynamicOffsetCount,
+                               const uint32_t*                        pDynamicOffsets,
+                               const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                               const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                               const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                               const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                               uint32_t                               width,
+                               uint32_t                               height,
+                               uint32_t                               depth,
+                               uint32_t                               pushConstantOffset,
+                               uint32_t                               pushConstantSize,
+                               const void*                            pPushConstants)
+{
+    cvkCmdBindRayTracingPipeline(commandBuffer, pipeline);
+    cvkCmdBindRayTracingDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    cvkCmdPushRayTracingConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
+    cvkCmdTraceRays(device, commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
+}
+void cvkCmdTraceRayTracingRays2D(VkDevice                               device,
+                                 VkCommandBuffer                        commandBuffer,
+                                 VkPipeline                             pipeline,
+                                 VkPipelineLayout                       layout,
+                                 uint32_t                               firstSet,
+                                 uint32_t                               descriptorSetCount,
+                                 const VkDescriptorSet*                 pDescriptorSets,
+                                 uint32_t                               dynamicOffsetCount,
+                                 const uint32_t*                        pDynamicOffsets,
+                                 const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                                 const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                                 const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                                 const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                                 uint32_t                               pushConstantOffset,
+                                 uint32_t                               pushConstantSize,
+                                 const void*                            pPushConstants,
+                                 VkExtent2D                             extent2D)
+{
+    cvkCmdTraceRayTracingRays(device,
+                              commandBuffer,
+                              pipeline,
+                              layout,
+                              firstSet,
+                              descriptorSetCount,
+                              pDescriptorSets,
+                              dynamicOffsetCount,
+                              pDynamicOffsets,
+                              pRaygenShaderBindingTable,
+                              pMissShaderBindingTable,
+                              pHitShaderBindingTable,
+                              pCallableShaderBindingTable,
+                              extent2D.width,
+                              extent2D.height,
+                              1,
+                              pushConstantOffset,
+                              pushConstantSize,
+                              pPushConstants);
+}
+void cvkCmdPushMeshShadingConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues)
+{
+    cvkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT, offset, size, pValues);
+}
+void cvkCreateMeshShadingPipelineLayout(VkDevice                     device,
+                                        const void*                  pPipelineLayoutNext,
+                                        VkPipelineLayoutCreateFlags  flags,
+                                        uint32_t                     setLayoutCount,
+                                        const VkDescriptorSetLayout* pSetLayouts,
+                                        uint32_t                     pushConstantOffset,
+                                        uint32_t                     pushConstantSize,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkPipelineLayout*            pPipelineLayout)
+{
+    VkPushConstantRange push_constant_range;
+
+    cvkInitPushConstantRange(&push_constant_range, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstantOffset, pushConstantSize);
+    cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
+}
+VkResult cvkSetupMeshShadingPipeline(VkDevice                                      device,
+                                     const void*                                   pPipelineLayoutNext,
+                                     uint32_t                                      setLayoutCount,
+                                     const VkDescriptorSetLayout*                  pSetLayouts,
+                                     uint32_t                                      pushConstantOffset,
+                                     uint32_t                                      pushConstantSize,
+                                     VkPipelineCache                               pipelineCache,
+                                     const void*                                   pPipelineNext,
+                                     VkPipelineCreateFlags                         flags,
+                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                     VkRenderPass                                  renderPass,
+                                     uint32_t                                      subpass,
+                                     VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                     VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                     VkPipelineShaderStageCreateFlags              stageFlags,
+                                     const void*                                   pMeshShaderModuleNext,
+                                     size_t                                        meshCodeSize,
+                                     const uint32_t*                               pMeshCode,
+                                     const void*                                   pMeshStageNext,
+                                     const char*                                   pMeshEntryPoint,
+                                     const VkSpecializationInfo*                   pMeshSpecializationInfo,
+                                     const void*                                   pFragmentShaderModuleNext,
+                                     size_t                                        fragmentCodeSize,
+                                     const uint32_t*                               pFragmentCode,
+                                     const void*                                   pFragmentStageNext,
+                                     const char*                                   pFragmentEntryPoint,
+                                     const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                     const VkAllocationCallbacks*                  pAllocator,
+                                     VkShaderModule*                               pMeshShaderModule,
+                                     VkShaderModule*                               pFragmentShaderModule,
+                                     VkPipelineLayout*                             pPipelineLayout,
+                                     VkPipeline*                                   pPipeline)
+{
+    VkPipelineShaderStageCreateInfo shader_stages[2];
+
+    cvkCreateShaderModule(device, pMeshShaderModuleNext, shaderModuleFlags, meshCodeSize, pMeshCode, pAllocator, pMeshShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[0], pMeshStageNext, stageFlags, VK_SHADER_STAGE_MESH_BIT_EXT, (*pMeshShaderModule), pMeshEntryPoint, pMeshSpecializationInfo);
+    cvkCreateShaderModule(device, pFragmentShaderModuleNext, shaderModuleFlags, fragmentCodeSize, pFragmentCode, pAllocator, pFragmentShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[1], pFragmentStageNext, stageFlags, VK_SHADER_STAGE_FRAGMENT_BIT, (*pFragmentShaderModule), pFragmentEntryPoint, pFragmentSpecializationInfo);
+    cvkCreateMeshShadingPipelineLayout(device, pPipelineLayoutNext, pipelineLayoutFlags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     pPipelineNext,
+                                     flags,
+                                     2,
+                                     shader_stages,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     (*pPipelineLayout),
+                                     renderPass,
+                                     subpass,
+                                     VK_NULL_HANDLE,
+                                     -1,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkSetupTaskMeshShadingPipeline(VkDevice                                      device,
+                                         const void*                                   pPipelineLayoutNext,
+                                         uint32_t                                      setLayoutCount,
+                                         const VkDescriptorSetLayout*                  pSetLayouts,
+                                         uint32_t                                      pushConstantOffset,
+                                         uint32_t                                      pushConstantSize,
+                                         VkPipelineCache                               pipelineCache,
+                                         const void*                                   pPipelineNext,
+                                         VkPipelineCreateFlags                         flags,
+                                         const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                         const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                         const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                         const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                         const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                         const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                         VkRenderPass                                  renderPass,
+                                         uint32_t                                      subpass,
+                                         VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                         VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                         VkPipelineShaderStageCreateFlags              stageFlags,
+                                         const void*                                   pTaskShaderModuleNext,
+                                         size_t                                        taskCodeSize,
+                                         const uint32_t*                               pTaskCode,
+                                         const void*                                   pTaskStageNext,
+                                         const char*                                   pTaskEntryPoint,
+                                         const VkSpecializationInfo*                   pTaskSpecializationInfo,
+                                         const void*                                   pMeshShaderModuleNext,
+                                         size_t                                        meshCodeSize,
+                                         const uint32_t*                               pMeshCode,
+                                         const void*                                   pMeshStageNext,
+                                         const char*                                   pMeshEntryPoint,
+                                         const VkSpecializationInfo*                   pMeshSpecializationInfo,
+                                         const void*                                   pFragmentShaderModuleNext,
+                                         size_t                                        fragmentCodeSize,
+                                         const uint32_t*                               pFragmentCode,
+                                         const void*                                   pFragmentStageNext,
+                                         const char*                                   pFragmentEntryPoint,
+                                         const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                         const VkAllocationCallbacks*                  pAllocator,
+                                         VkShaderModule*                               pTaskShaderModule,
+                                         VkShaderModule*                               pMeshShaderModule,
+                                         VkShaderModule*                               pFragmentShaderModule,
+                                         VkPipelineLayout*                             pPipelineLayout,
+                                         VkPipeline*                                   pPipeline)
+{
+    VkPipelineShaderStageCreateInfo shader_stages[3];
+
+    cvkCreateShaderModule(device, pTaskShaderModuleNext, shaderModuleFlags, taskCodeSize, pTaskCode, pAllocator, pTaskShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[0], pTaskStageNext, stageFlags, VK_SHADER_STAGE_TASK_BIT_EXT, (*pTaskShaderModule), pTaskEntryPoint, pTaskSpecializationInfo);
+    cvkCreateShaderModule(device, pMeshShaderModuleNext, shaderModuleFlags, meshCodeSize, pMeshCode, pAllocator, pMeshShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[1], pMeshStageNext, stageFlags, VK_SHADER_STAGE_MESH_BIT_EXT, (*pMeshShaderModule), pMeshEntryPoint, pMeshSpecializationInfo);
+    cvkCreateShaderModule(device, pFragmentShaderModuleNext, shaderModuleFlags, fragmentCodeSize, pFragmentCode, pAllocator, pFragmentShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[2], pFragmentStageNext, stageFlags, VK_SHADER_STAGE_FRAGMENT_BIT, (*pFragmentShaderModule), pFragmentEntryPoint, pFragmentSpecializationInfo);
+    cvkCreateMeshShadingPipelineLayout(device, pPipelineLayoutNext, pipelineLayoutFlags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     pPipelineNext,
+                                     flags,
+                                     3,
+                                     shader_stages,
+                                     NULL,
+                                     NULL,
+                                     NULL,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     (*pPipelineLayout),
+                                     renderPass,
+                                     subpass,
+                                     VK_NULL_HANDLE,
+                                     -1,
+                                     pAllocator,
+                                     pPipeline);
+}
+void cvkCmdDrawMeshTaskItems(VkDevice device, VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
+{
+    cvkCmdDrawMeshTasks(device,
+                        commandBuffer,
+                        (itemCount.width + itemsPerInvocation.width * localSize.width - 1u) / (itemsPerInvocation.width * localSize.width),
+                        (itemCount.height + itemsPerInvocation.height * localSize.height - 1u) / (itemsPerInvocation.height * localSize.height),
+                        (itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1u) / (itemsPerInvocation.depth * localSize.depth));
+}
+void cvkCmdDrawMeshShadingTasks(VkDevice               device,
+                                VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                VkExtent3D             itemCount,
+                                VkExtent3D             itemsPerInvocation,
+                                VkExtent3D             localSize,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants)
+{
+    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    cvkCmdPushMeshShadingConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
+    cvkCmdDrawMeshTaskItems(device, commandBuffer, itemCount, itemsPerInvocation, localSize);
+}
+void cvkCmdDrawMeshTaskItems2D(VkDevice device, VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDrawMeshTaskItems(device, commandBuffer, item_count, items_per_invocation, local_size);
+}
+void cvkCmdDrawMeshShadingTasks2D(VkDevice               device,
+                                  VkCommandBuffer        commandBuffer,
+                                  VkPipeline             pipeline,
+                                  VkPipelineLayout       layout,
+                                  uint32_t               firstSet,
+                                  uint32_t               descriptorSetCount,
+                                  const VkDescriptorSet* pDescriptorSets,
+                                  uint32_t               dynamicOffsetCount,
+                                  const uint32_t*        pDynamicOffsets,
+                                  uint32_t               pushConstantOffset,
+                                  uint32_t               pushConstantSize,
+                                  const void*            pPushConstants,
+                                  VkExtent2D             itemCount2D,
+                                  VkExtent2D             itemsPerInvocation2D,
+                                  VkExtent2D             localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDrawMeshShadingTasks(device,
+                               commandBuffer,
+                               pipeline,
+                               layout,
+                               firstSet,
+                               descriptorSetCount,
+                               pDescriptorSets,
+                               dynamicOffsetCount,
+                               pDynamicOffsets,
+                               item_count,
+                               items_per_invocation,
+                               local_size,
+                               pushConstantOffset,
+                               pushConstantSize,
+                               pPushConstants);
+}
+VkResult cvkCreateTaskShader(VkDevice                     device,
+                             const void*                  pShaderNext,
+                             VkShaderCreateFlagsEXT       flags,
+                             size_t                       codeSize,
+                             const void*                  pCode,
+                             const char*                  pName,
+                             uint32_t                     setLayoutCount,
+                             const VkDescriptorSetLayout* pSetLayouts,
+                             uint32_t                     pushConstantRangeCount,
+                             const VkPushConstantRange*   pPushConstantRanges,
+                             const VkSpecializationInfo*  pSpecializationInfo,
+                             const VkAllocationCallbacks* pAllocator,
+                             VkShaderEXT*                 pShader)
+{
+    return cvkCreateShader(device,
+                           pShaderNext,
+                           flags,
+                           VK_SHADER_STAGE_TASK_BIT_EXT,
+                           VK_SHADER_STAGE_MESH_BIT_EXT,
+                           VK_SHADER_CODE_TYPE_SPIRV_EXT,
+                           codeSize,
+                           pCode,
+                           pName,
+                           setLayoutCount,
+                           pSetLayouts,
+                           pushConstantRangeCount,
+                           pPushConstantRanges,
+                           pSpecializationInfo,
+                           pAllocator,
+                           pShader);
+}
+VkResult cvkCreateMeshShader(VkDevice                     device,
+                             const void*                  pShaderNext,
+                             VkShaderCreateFlagsEXT       flags,
+                             size_t                       codeSize,
+                             const void*                  pCode,
+                             const char*                  pName,
+                             uint32_t                     setLayoutCount,
+                             const VkDescriptorSetLayout* pSetLayouts,
+                             uint32_t                     pushConstantRangeCount,
+                             const VkPushConstantRange*   pPushConstantRanges,
+                             const VkSpecializationInfo*  pSpecializationInfo,
+                             const VkAllocationCallbacks* pAllocator,
+                             VkShaderEXT*                 pShader)
+{
+    return cvkCreateShader(device,
+                           pShaderNext,
+                           flags,
+                           VK_SHADER_STAGE_MESH_BIT_EXT,
+                           VK_SHADER_STAGE_FRAGMENT_BIT,
+                           VK_SHADER_CODE_TYPE_SPIRV_EXT,
+                           codeSize,
+                           pCode,
+                           pName,
+                           setLayoutCount,
+                           pSetLayouts,
+                           pushConstantRangeCount,
+                           pPushConstantRanges,
+                           pSpecializationInfo,
+                           pAllocator,
+                           pShader);
+}
+void cvkCmdBindMeshShadingShaders(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT meshShader, VkShaderEXT fragmentShader)
+{
+    VkShaderStageFlagBits stages[3] = {VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT};
+    VkShaderEXT           shaders[3];
+
+    shaders[0] = VK_NULL_HANDLE;
+    shaders[1] = meshShader;
+    shaders[2] = fragmentShader;
+    cvkCmdBindShaders(device, commandBuffer, 3, stages, shaders);
+}
+void cvkCmdBindTaskMeshShadingShaders(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT taskShader, VkShaderEXT meshShader, VkShaderEXT fragmentShader)
+{
+    VkShaderStageFlagBits stages[3] = {VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT};
+    VkShaderEXT           shaders[3];
+
+    shaders[0] = taskShader;
+    shaders[1] = meshShader;
+    shaders[2] = fragmentShader;
+    cvkCmdBindShaders(device, commandBuffer, 3, stages, shaders);
+}
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                          VkDebugUtilsMessageTypeFlagsEXT             messageTypes,
                                                          const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -42812,6 +44145,119 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
     cvkBindVideoSessionMemory(device, videoSession, memory_requirements_count, bind_session_memory_infos);
     return memory_requirements_count;
 }
+void cvkSetupAccelerationStructure(VkPhysicalDevice                          physicalDevice,
+                                   VkDevice                                  device,
+                                   VkAccelerationStructureTypeKHR            type,
+                                   VkBuildAccelerationStructureFlagsKHR      buildFlags,
+                                   uint32_t                                  geometryCount,
+                                   const VkAccelerationStructureGeometryKHR* pGeometries,
+                                   const uint32_t*                           pMaxPrimitiveCounts,
+                                   const VkAllocationCallbacks*              pAllocator,
+                                   VkBuffer*                                 pBuffer,
+                                   VkDeviceMemory*                           pMemory,
+                                   VkAccelerationStructureKHR*               pAccelerationStructure,
+                                   VkBuffer*                                 pScratchBuffer,
+                                   VkDeviceMemory*                           pScratchMemory,
+                                   VkDeviceAddress*                          pScratchDeviceAddress)
+{
+    VkPhysicalDeviceAccelerationStructurePropertiesKHR acceleration_structure_properties;
+    VkDeviceOrHostAddressKHR                           scratch_data;
+    VkAccelerationStructureBuildGeometryInfoKHR        build_geometry_info;
+    VkAccelerationStructureBuildSizesInfoKHR           build_sizes_info;
+    VkDeviceSize                                       scratch_alignment;
+
+    cvkGetPhysicalDeviceAccelerationStructureProperties(physicalDevice, NULL, &acceleration_structure_properties);
+    scratch_alignment = acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment;
+
+    /* sizes: the build description with no destination and no scratch yet */
+    cvkInitDeviceOrHostAddressDeviceAddress(&scratch_data, 0);
+    cvkInitAccelerationStructureBuildGeometryInfo(&build_geometry_info,
+                                                  NULL,
+                                                  type,
+                                                  buildFlags,
+                                                  VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+                                                  VK_NULL_HANDLE,
+                                                  VK_NULL_HANDLE,
+                                                  geometryCount,
+                                                  pGeometries,
+                                                  NULL,
+                                                  scratch_data);
+    cvkGetAccelerationStructureBuildSizes(device, VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, &build_geometry_info, pMaxPrimitiveCounts, NULL, &build_sizes_info);
+
+    /* storage and structure */
+    cvkSetupAccelerationStructureBuffer(physicalDevice, device, NULL, 0, build_sizes_info.accelerationStructureSize, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    cvkCreateAccelerationStructure(device, NULL, 0, (*pBuffer), 0, build_sizes_info.accelerationStructureSize, type, 0, pAllocator, pAccelerationStructure);
+
+    /* scratch, with room to align its address */
+    cvkSetupScratchBuffer(physicalDevice, device, NULL, 0, build_sizes_info.buildScratchSize + scratch_alignment, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pScratchBuffer, pScratchMemory);
+    (*pScratchDeviceAddress) = cvkAlignDeviceSize(cvkGetBufferDeviceAddress(device, NULL, (*pScratchBuffer)), scratch_alignment);
+}
+void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physicalDevice,
+                                          VkDevice                         device,
+                                          VkPipeline                       pipeline,
+                                          uint32_t                         missGroupCount,
+                                          uint32_t                         hitGroupCount,
+                                          uint32_t                         callableGroupCount,
+                                          const VkAllocationCallbacks*     pAllocator,
+                                          VkBuffer*                        pBuffer,
+                                          VkDeviceMemory*                  pMemory,
+                                          VkStridedDeviceAddressRegionKHR* pRaygenRegion,
+                                          VkStridedDeviceAddressRegionKHR* pMissRegion,
+                                          VkStridedDeviceAddressRegionKHR* pHitRegion,
+                                          VkStridedDeviceAddressRegionKHR* pCallableRegion)
+{
+    VkPhysicalDeviceRayTracingPipelinePropertiesKHR ray_tracing_pipeline_properties;
+    VkDeviceSize                                    handle_size;
+    VkDeviceSize                                    handle_stride;
+    VkDeviceSize                                    raygen_size;
+    VkDeviceSize                                    miss_size;
+    VkDeviceSize                                    hit_size;
+    VkDeviceSize                                    callable_size;
+    VkDeviceAddress                                 base_address;
+    uint8_t*                                        mapped;
+    uint32_t                                        group_index;
+    uint32_t                                        region_first_group;
+    VkDeviceSize                                    region_offset;
+
+    cvkGetPhysicalDeviceRayTracingPipelineProperties(physicalDevice, NULL, &ray_tracing_pipeline_properties);
+    handle_size   = ray_tracing_pipeline_properties.shaderGroupHandleSize;
+    handle_stride = cvkAlignDeviceSize(handle_size, ray_tracing_pipeline_properties.shaderGroupHandleAlignment);
+    raygen_size   = cvkAlignDeviceSize(handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+    miss_size     = cvkAlignDeviceSize(missGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+    hit_size      = cvkAlignDeviceSize(hitGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+    callable_size = cvkAlignDeviceSize(callableGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+
+    cvkSetupShaderBindingTableBuffer(physicalDevice, device, NULL, 0, raygen_size + miss_size + hit_size + callable_size, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    base_address = cvkGetBufferDeviceAddress(device, NULL, (*pBuffer));
+
+    /* handles straight into the mapped table: region by region, group by group */
+    cvkMapWholeMemory(device, (*pMemory), (void**)&mapped);
+    cvkGetRayTracingShaderGroupHandles(device, pipeline, 0, 1, (size_t)handle_size, mapped);
+    region_first_group = 1;
+    region_offset      = raygen_size;
+    for (group_index = 0; group_index < missGroupCount; ++group_index)
+    {
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+    }
+    region_first_group += missGroupCount;
+    region_offset += miss_size;
+    for (group_index = 0; group_index < hitGroupCount; ++group_index)
+    {
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+    }
+    region_first_group += hitGroupCount;
+    region_offset += hit_size;
+    for (group_index = 0; group_index < callableGroupCount; ++group_index)
+    {
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+    }
+    cvkUnmapMemory(device, (*pMemory));
+
+    cvkInitStridedDeviceAddressRegion(pRaygenRegion, base_address, handle_stride, handle_stride);
+    cvkInitStridedDeviceAddressRegion(pMissRegion, (0 != missGroupCount) ? base_address + raygen_size : 0, handle_stride, miss_size);
+    cvkInitStridedDeviceAddressRegion(pHitRegion, (0 != hitGroupCount) ? base_address + raygen_size + miss_size : 0, handle_stride, hit_size);
+    cvkInitStridedDeviceAddressRegion(pCallableRegion, (0 != callableGroupCount) ? base_address + raygen_size + miss_size + hit_size : 0, handle_stride, callable_size);
+}
 void cvkCmdTransferBufferToImage(VkCommandBuffer          commandBuffer,
                                  VkDependencyFlags        dependencyFlags,
                                  const void*              pBufferBarrierNext,
@@ -43389,4 +44835,62 @@ void cvkSetupVideoSession(VkPhysicalDevice             physicalDevice,
                           pAllocator,
                           pVideoSession);
     (*pMemoryCount) = cvkAllocateVideoSessionMemory(physicalDevice, device, (*pVideoSession), requiredProperties, pMemoryNext, pAllocator, pMemories);
+}
+void cvkSetupBottomLevelAccelerationStructure(VkPhysicalDevice                          physicalDevice,
+                                              VkDevice                                  device,
+                                              VkBuildAccelerationStructureFlagsKHR      buildFlags,
+                                              uint32_t                                  geometryCount,
+                                              const VkAccelerationStructureGeometryKHR* pGeometries,
+                                              const uint32_t*                           pMaxPrimitiveCounts,
+                                              const VkAllocationCallbacks*              pAllocator,
+                                              VkBuffer*                                 pBuffer,
+                                              VkDeviceMemory*                           pMemory,
+                                              VkAccelerationStructureKHR*               pAccelerationStructure,
+                                              VkBuffer*                                 pScratchBuffer,
+                                              VkDeviceMemory*                           pScratchMemory,
+                                              VkDeviceAddress*                          pScratchDeviceAddress)
+{
+    cvkSetupAccelerationStructure(physicalDevice,
+                                  device,
+                                  VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+                                  buildFlags,
+                                  geometryCount,
+                                  pGeometries,
+                                  pMaxPrimitiveCounts,
+                                  pAllocator,
+                                  pBuffer,
+                                  pMemory,
+                                  pAccelerationStructure,
+                                  pScratchBuffer,
+                                  pScratchMemory,
+                                  pScratchDeviceAddress);
+}
+void cvkSetupTopLevelAccelerationStructure(VkPhysicalDevice                          physicalDevice,
+                                           VkDevice                                  device,
+                                           VkBuildAccelerationStructureFlagsKHR      buildFlags,
+                                           uint32_t                                  geometryCount,
+                                           const VkAccelerationStructureGeometryKHR* pGeometries,
+                                           const uint32_t*                           pMaxPrimitiveCounts,
+                                           const VkAllocationCallbacks*              pAllocator,
+                                           VkBuffer*                                 pBuffer,
+                                           VkDeviceMemory*                           pMemory,
+                                           VkAccelerationStructureKHR*               pAccelerationStructure,
+                                           VkBuffer*                                 pScratchBuffer,
+                                           VkDeviceMemory*                           pScratchMemory,
+                                           VkDeviceAddress*                          pScratchDeviceAddress)
+{
+    cvkSetupAccelerationStructure(physicalDevice,
+                                  device,
+                                  VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+                                  buildFlags,
+                                  geometryCount,
+                                  pGeometries,
+                                  pMaxPrimitiveCounts,
+                                  pAllocator,
+                                  pBuffer,
+                                  pMemory,
+                                  pAccelerationStructure,
+                                  pScratchBuffer,
+                                  pScratchMemory,
+                                  pScratchDeviceAddress);
 }

@@ -4178,6 +4178,1683 @@
           "return": true
         }
       ]
+    },
+    "cvkCmdBindGraphicsShaders": {
+      "brief": "Binds vertex and fragment shader objects; the other graphics stages are left as they are.",
+      "inputs": [
+        {
+          "type": "VkShaderEXT",
+          "name": "vertexShader",
+          "doc": "The vertex shader object"
+        },
+        {
+          "type": "VkShaderEXT",
+          "name": "fragmentShader",
+          "doc": "The fragment shader object"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "VkShaderStageFlagBits stages[2] = { VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT }"
+        },
+        {
+          "declare": "VkShaderEXT shaders[2]"
+        },
+        {
+          "assign": {
+            "shaders[0]": "vertexShader",
+            "shaders[1]": "fragmentShader"
+          }
+        },
+        {
+          "call": "cvkCmdBindShaders",
+          "bind": {
+            "stageCount": "2",
+            "pStages": "stages",
+            "pShaders": "shaders"
+          }
+        }
+      ]
+    },
+    "cvkSetupDeviceAddressBuffer": {
+      "brief": "Creates a device-local buffer with a device address, allocating its memory with VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT.",
+      "inputs": [
+        {
+          "type": "VkBufferUsageFlags",
+          "name": "usage",
+          "doc": "VkBufferCreateInfo::usage; VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT is added"
+        },
+        {
+          "type": "const void*",
+          "name": "pMemoryNext",
+          "doc": "Optional extension chain behind the allocate flags, or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitMemoryAllocateFlagsInfo",
+          "local": {
+            "pInfo": "memory_allocate_flags_info"
+          },
+          "bind": {
+            "pNext": "pMemoryNext",
+            "flags": "VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT",
+            "deviceMask": "0"
+          }
+        },
+        {
+          "call": "cvkSetupDeviceLocalBuffer",
+          "bind": {
+            "usage": "usage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT",
+            "pMemoryNext": "&memory_allocate_flags_info"
+          }
+        }
+      ]
+    },
+    "cvkSetupHostVisibleDeviceAddressBuffer": {
+      "brief": "Creates a host-visible, host-coherent buffer with a device address.",
+      "inputs": [
+        {
+          "type": "VkBufferUsageFlags",
+          "name": "usage",
+          "doc": "VkBufferCreateInfo::usage; VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT is added"
+        },
+        {
+          "type": "const void*",
+          "name": "pMemoryNext",
+          "doc": "Optional extension chain behind the allocate flags, or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitMemoryAllocateFlagsInfo",
+          "local": {
+            "pInfo": "memory_allocate_flags_info"
+          },
+          "bind": {
+            "pNext": "pMemoryNext",
+            "flags": "VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT",
+            "deviceMask": "0"
+          }
+        },
+        {
+          "call": "cvkSetupHostVisibleBuffer",
+          "bind": {
+            "usage": "usage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT",
+            "pMemoryNext": "&memory_allocate_flags_info"
+          }
+        }
+      ]
+    },
+    "cvkSetupAccelerationStructureBuffer": {
+      "brief": "Creates the storage buffer of an acceleration structure.",
+      "steps": [
+        {
+          "call": "cvkSetupDeviceAddressBuffer",
+          "bind": {
+            "usage": "VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupScratchBuffer": {
+      "brief": "Creates a scratch buffer for acceleration structure builds.",
+      "steps": [
+        {
+          "call": "cvkSetupDeviceAddressBuffer",
+          "bind": {
+            "usage": "VK_BUFFER_USAGE_STORAGE_BUFFER_BIT"
+          }
+        }
+      ]
+    },
+    "cvkSetupShaderBindingTableBuffer": {
+      "brief": "Creates a host-visible shader binding table buffer.",
+      "steps": [
+        {
+          "call": "cvkSetupHostVisibleDeviceAddressBuffer",
+          "bind": {
+            "usage": "VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupAccelerationStructureBuildInputBuffer": {
+      "brief": "Creates a host-visible buffer for acceleration structure build inputs (vertices, indices, transforms, AABBs, instances).",
+      "steps": [
+        {
+          "call": "cvkSetupHostVisibleDeviceAddressBuffer",
+          "bind": {
+            "usage": "VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCreateBottomLevelAccelerationStructure": {
+      "brief": "Creates a bottom-level acceleration structure over a buffer range.",
+      "steps": [
+        {
+          "call": "cvkCreateAccelerationStructure",
+          "bind": {
+            "type": "VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR",
+            "deviceAddress": "0"
+          }
+        }
+      ]
+    },
+    "cvkCreateTopLevelAccelerationStructure": {
+      "brief": "Creates a top-level acceleration structure over a buffer range.",
+      "steps": [
+        {
+          "call": "cvkCreateAccelerationStructure",
+          "bind": {
+            "type": "VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR",
+            "deviceAddress": "0"
+          }
+        }
+      ]
+    },
+    "cvkInitTrianglesAccelerationStructureGeometry": {
+      "brief": "Initializes a geometry of type VK_GEOMETRY_TYPE_TRIANGLES_KHR.",
+      "steps": [
+        {
+          "call": "cvkInitAccelerationStructureGeometryDataTriangles",
+          "local": {
+            "pInfo": "geometry_data"
+          }
+        },
+        {
+          "call": "cvkInitAccelerationStructureGeometry",
+          "bind": {
+            "geometryType": "VK_GEOMETRY_TYPE_TRIANGLES_KHR",
+            "geometry": "geometry_data"
+          }
+        }
+      ]
+    },
+    "cvkInitAabbsAccelerationStructureGeometry": {
+      "brief": "Initializes a geometry of type VK_GEOMETRY_TYPE_AABBS_KHR.",
+      "steps": [
+        {
+          "call": "cvkInitAccelerationStructureGeometryDataAabbs",
+          "local": {
+            "pInfo": "geometry_data"
+          }
+        },
+        {
+          "call": "cvkInitAccelerationStructureGeometry",
+          "bind": {
+            "geometryType": "VK_GEOMETRY_TYPE_AABBS_KHR",
+            "geometry": "geometry_data"
+          }
+        }
+      ]
+    },
+    "cvkInitInstancesAccelerationStructureGeometry": {
+      "brief": "Initializes a geometry of type VK_GEOMETRY_TYPE_INSTANCES_KHR.",
+      "steps": [
+        {
+          "call": "cvkInitAccelerationStructureGeometryDataInstances",
+          "local": {
+            "pInfo": "geometry_data"
+          }
+        },
+        {
+          "call": "cvkInitAccelerationStructureGeometry",
+          "bind": {
+            "geometryType": "VK_GEOMETRY_TYPE_INSTANCES_KHR",
+            "geometry": "geometry_data"
+          }
+        }
+      ]
+    },
+    "cvkInitDeviceAccelerationStructureGeometryTrianglesData": {
+      "brief": "Initializes triangle geometry data from device addresses; a zero index address means non-indexed, a zero transform address no transform.",
+      "inputs": [
+        {
+          "type": "VkDeviceAddress",
+          "name": "vertexDeviceAddress",
+          "doc": "Device address of the vertices"
+        },
+        {
+          "type": "VkDeviceAddress",
+          "name": "indexDeviceAddress",
+          "doc": "Device address of the indices, or 0"
+        },
+        {
+          "type": "VkDeviceAddress",
+          "name": "transformDeviceAddress",
+          "doc": "Device address of the VkTransformMatrixKHR, or 0"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitDeviceOrHostAddressConstDeviceAddress",
+          "local": {
+            "pInfo": "vertex_data"
+          },
+          "bind": {
+            "deviceAddress": "vertexDeviceAddress"
+          }
+        },
+        {
+          "call": "cvkInitDeviceOrHostAddressConstDeviceAddress",
+          "local": {
+            "pInfo": "index_data"
+          },
+          "bind": {
+            "deviceAddress": "indexDeviceAddress"
+          }
+        },
+        {
+          "call": "cvkInitDeviceOrHostAddressConstDeviceAddress",
+          "local": {
+            "pInfo": "transform_data"
+          },
+          "bind": {
+            "deviceAddress": "transformDeviceAddress"
+          }
+        },
+        {
+          "call": "cvkInitAccelerationStructureGeometryTrianglesData",
+          "bind": {
+            "vertexData": "vertex_data",
+            "indexData": "index_data",
+            "transformData": "transform_data"
+          }
+        }
+      ]
+    },
+    "cvkInitDeviceAccelerationStructureGeometryInstancesData": {
+      "brief": "Initializes instance geometry data from the device address of a tightly packed VkAccelerationStructureInstanceKHR array.",
+      "inputs": [
+        {
+          "type": "VkDeviceAddress",
+          "name": "instancesDeviceAddress",
+          "doc": "Device address of the instances"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitDeviceOrHostAddressConstDeviceAddress",
+          "local": {
+            "pInfo": "data"
+          },
+          "bind": {
+            "deviceAddress": "instancesDeviceAddress"
+          }
+        },
+        {
+          "call": "cvkInitAccelerationStructureGeometryInstancesData",
+          "bind": {
+            "arrayOfPointers": "VK_FALSE",
+            "data": "data"
+          }
+        }
+      ]
+    },
+    "cvkInitDeviceAccelerationStructureGeometryAabbsData": {
+      "brief": "Initializes AABB geometry data from a device address.",
+      "inputs": [
+        {
+          "type": "VkDeviceAddress",
+          "name": "aabbsDeviceAddress",
+          "doc": "Device address of the VkAabbPositionsKHR array"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitDeviceOrHostAddressConstDeviceAddress",
+          "local": {
+            "pInfo": "data"
+          },
+          "bind": {
+            "deviceAddress": "aabbsDeviceAddress"
+          }
+        },
+        {
+          "call": "cvkInitAccelerationStructureGeometryAabbsData",
+          "bind": {
+            "data": "data"
+          }
+        }
+      ]
+    },
+    "cvkCmdBuildAccelerationStructure": {
+      "brief": "Records one acceleration structure build.",
+      "inputs": [
+        {
+          "type": "const VkAccelerationStructureBuildRangeInfoKHR*",
+          "name": "pBuildRangeInfos",
+          "doc": "One build range per geometry"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitAccelerationStructureBuildGeometryInfo",
+          "local": {
+            "pInfo": "build_geometry_info"
+          }
+        },
+        {
+          "call": "cvkCmdBuildAccelerationStructures",
+          "bind": {
+            "infoCount": "1",
+            "pInfos": "&build_geometry_info",
+            "ppBuildRangeInfos": "&pBuildRangeInfos"
+          }
+        }
+      ]
+    },
+    "cvkCmdBuildDeviceAccelerationStructure": {
+      "brief": "Records a full build of an acceleration structure from device-address geometries into device scratch memory.",
+      "inputs": [
+        {
+          "type": "VkDeviceAddress",
+          "name": "scratchDeviceAddress",
+          "doc": "Aligned scratch device address, as cvkSetupAccelerationStructure returns"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitDeviceOrHostAddressDeviceAddress",
+          "local": {
+            "pInfo": "scratch_data"
+          },
+          "bind": {
+            "deviceAddress": "scratchDeviceAddress"
+          }
+        },
+        {
+          "call": "cvkCmdBuildAccelerationStructure",
+          "bind": {
+            "mode": "VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR",
+            "srcAccelerationStructure": "VK_NULL_HANDLE",
+            "ppGeometries": "NULL",
+            "scratchData": "scratch_data"
+          }
+        }
+      ]
+    },
+    "cvkCmdBuildDeviceBottomLevelAccelerationStructure": {
+      "brief": "Records a full bottom-level build.",
+      "steps": [
+        {
+          "call": "cvkCmdBuildDeviceAccelerationStructure",
+          "bind": {
+            "type": "VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdBuildDeviceTopLevelAccelerationStructure": {
+      "brief": "Records a full top-level build.",
+      "steps": [
+        {
+          "call": "cvkCmdBuildDeviceAccelerationStructure",
+          "bind": {
+            "type": "VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupBottomLevelAccelerationStructure": {
+      "brief": "cvkSetupAccelerationStructure for a bottom-level structure.",
+      "steps": [
+        {
+          "call": "cvkSetupAccelerationStructure",
+          "bind": {
+            "type": "VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupTopLevelAccelerationStructure": {
+      "brief": "cvkSetupAccelerationStructure for a top-level structure.",
+      "steps": [
+        {
+          "call": "cvkSetupAccelerationStructure",
+          "bind": {
+            "type": "VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdAccelerationStructureBuildBarrier": {
+      "brief": "Records the barrier between an acceleration structure build and a subsequent build reading it or a ray tracing shader using it.",
+      "steps": [
+        {
+          "call": "cvkCmdMemoryBarrier",
+          "bind": {
+            "pNext": "NULL",
+            "srcAccessMask": "VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR",
+            "dstAccessMask": "VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR | VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR",
+            "srcStageMask": "VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR",
+            "dstStageMask": "VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR | VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR",
+            "dependencyFlags": "0"
+          }
+        }
+      ]
+    },
+    "cvkUpdateAccelerationStructureDescriptorSet": {
+      "brief": "Writes one acceleration structure descriptor.",
+      "inputs": [
+        {
+          "type": "VkAccelerationStructureKHR",
+          "name": "accelerationStructure",
+          "doc": "The acceleration structure to write"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitWriteDescriptorSetAccelerationStructure",
+          "local": {
+            "pInfo": "write_descriptor_set_acceleration_structure"
+          },
+          "bind": {
+            "accelerationStructureCount": "1",
+            "pAccelerationStructures": "&accelerationStructure"
+          }
+        },
+        {
+          "call": "cvkUpdateDescriptorSet",
+          "bind": {
+            "pNext": "&write_descriptor_set_acceleration_structure",
+            "descriptorCount": "1",
+            "descriptorType": "VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR",
+            "pImageInfo": "NULL",
+            "pBufferInfo": "NULL",
+            "pTexelBufferView": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkCmdBindRayTracingPipeline": {
+      "brief": "Binds a ray tracing pipeline.",
+      "steps": [
+        {
+          "call": "cvkCmdBindPipeline",
+          "bind": {
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdBindRayTracingDescriptorSets": {
+      "brief": "Binds descriptor sets to the ray tracing bind point.",
+      "steps": [
+        {
+          "call": "cvkCmdBindDescriptorSets",
+          "bind": {
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdPushRayTracingConstants": {
+      "brief": "Pushes constants for every ray tracing stage.",
+      "steps": [
+        {
+          "call": "cvkCmdPushConstants",
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR | VK_SHADER_STAGE_CALLABLE_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCreateRayTracingPipelineLayout": {
+      "brief": "Creates a pipeline layout for every ray tracing stage with at most one push constant range.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constant range"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constant range, zero for none"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPushConstantRange",
+          "local": {
+            "pInfo": "push_constant_range"
+          },
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR | VK_SHADER_STAGE_CALLABLE_BIT_KHR",
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize"
+          }
+        },
+        {
+          "call": "cvkCreatePipelineLayout",
+          "bind": {
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pPushConstantRanges": "&push_constant_range"
+          }
+        }
+      ]
+    },
+    "cvkInitGeneralRayTracingShaderGroupCreateInfo": {
+      "brief": "Initializes a general shader group (raygen, miss, or callable) of one stage.",
+      "steps": [
+        {
+          "call": "cvkInitRayTracingShaderGroupCreateInfo",
+          "bind": {
+            "type": "VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR",
+            "closestHitShader": "VK_SHADER_UNUSED_KHR",
+            "anyHitShader": "VK_SHADER_UNUSED_KHR",
+            "intersectionShader": "VK_SHADER_UNUSED_KHR",
+            "pShaderGroupCaptureReplayHandle": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkInitTrianglesHitRayTracingShaderGroupCreateInfo": {
+      "brief": "Initializes a triangles hit group of a closest hit and an optional any hit stage.",
+      "steps": [
+        {
+          "call": "cvkInitRayTracingShaderGroupCreateInfo",
+          "bind": {
+            "type": "VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR",
+            "generalShader": "VK_SHADER_UNUSED_KHR",
+            "intersectionShader": "VK_SHADER_UNUSED_KHR",
+            "pShaderGroupCaptureReplayHandle": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkInitProceduralHitRayTracingShaderGroupCreateInfo": {
+      "brief": "Initializes a procedural hit group of an intersection, a closest hit, and an optional any hit stage.",
+      "steps": [
+        {
+          "call": "cvkInitRayTracingShaderGroupCreateInfo",
+          "bind": {
+            "type": "VK_RAY_TRACING_SHADER_GROUP_TYPE_PROCEDURAL_HIT_GROUP_KHR",
+            "generalShader": "VK_SHADER_UNUSED_KHR",
+            "pShaderGroupCaptureReplayHandle": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkSetupRayTracingPipeline": {
+      "brief": "Creates raygen, miss, and closest hit shader modules, three shader groups (general, general, triangles hit), a ray tracing pipeline layout, and a ray tracing pipeline; the groups are in shader binding table order.",
+      "inputs": [
+        {
+          "type": "VkShaderModuleCreateFlags",
+          "name": "shaderModuleFlags",
+          "doc": "VkShaderModuleCreateInfo::flags of every module"
+        },
+        {
+          "type": "VkPipelineLayoutCreateFlags",
+          "name": "pipelineLayoutFlags",
+          "doc": "VkPipelineLayoutCreateInfo::flags"
+        },
+        {
+          "type": "VkPipelineShaderStageCreateFlags",
+          "name": "stageFlags",
+          "doc": "VkPipelineShaderStageCreateInfo::flags of every stage"
+        },
+        {
+          "type": "const void*",
+          "name": "pRaygenShaderModuleNext",
+          "doc": "Optional extension chain for the raygen VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "raygenCodeSize",
+          "doc": "Size in bytes of the raygen shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pRaygenCode",
+          "doc": "Raygen shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pRaygenStageNext",
+          "doc": "Optional extension chain for the raygen VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pRaygenEntryPoint",
+          "doc": "Entry point name of the raygen shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pRaygenSpecializationInfo",
+          "doc": "Specialization of the raygen shader, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pMissShaderModuleNext",
+          "doc": "Optional extension chain for the miss VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "missCodeSize",
+          "doc": "Size in bytes of the miss shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pMissCode",
+          "doc": "Miss shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pMissStageNext",
+          "doc": "Optional extension chain for the miss VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pMissEntryPoint",
+          "doc": "Entry point name of the miss shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pMissSpecializationInfo",
+          "doc": "Specialization of the miss shader, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pClosestHitShaderModuleNext",
+          "doc": "Optional extension chain for the closest hit VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "closestHitCodeSize",
+          "doc": "Size in bytes of the closest hit shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pClosestHitCode",
+          "doc": "Closest hit shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pClosestHitStageNext",
+          "doc": "Optional extension chain for the closest hit VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pClosestHitEntryPoint",
+          "doc": "Entry point name of the closest hit shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pClosestHitSpecializationInfo",
+          "doc": "Specialization of the closest hit shader, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkShaderModule",
+          "name": "pRaygenShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pMissShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pClosestHitShaderModule"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pRaygenShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "raygenCodeSize",
+            "pCode": "pRaygenCode",
+            "pShaderModule": "pRaygenShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[0]"
+          },
+          "bind": {
+            "pNext": "pRaygenStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_RAYGEN_BIT_KHR",
+            "module": "(*pRaygenShaderModule)",
+            "pName": "pRaygenEntryPoint",
+            "pSpecializationInfo": "pRaygenSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pMissShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "missCodeSize",
+            "pCode": "pMissCode",
+            "pShaderModule": "pMissShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[1]"
+          },
+          "bind": {
+            "pNext": "pMissStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_MISS_BIT_KHR",
+            "module": "(*pMissShaderModule)",
+            "pName": "pMissEntryPoint",
+            "pSpecializationInfo": "pMissSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pClosestHitShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "closestHitCodeSize",
+            "pCode": "pClosestHitCode",
+            "pShaderModule": "pClosestHitShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[2]"
+          },
+          "bind": {
+            "pNext": "pClosestHitStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR",
+            "module": "(*pClosestHitShaderModule)",
+            "pName": "pClosestHitEntryPoint",
+            "pSpecializationInfo": "pClosestHitSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkInitGeneralRayTracingShaderGroupCreateInfo",
+          "local": {
+            "pInfo": "shader_groups[0]"
+          },
+          "bind": {
+            "pNext": "NULL",
+            "generalShader": "0"
+          }
+        },
+        {
+          "call": "cvkInitGeneralRayTracingShaderGroupCreateInfo",
+          "local": {
+            "pInfo": "shader_groups[1]"
+          },
+          "bind": {
+            "pNext": "NULL",
+            "generalShader": "1"
+          }
+        },
+        {
+          "call": "cvkInitTrianglesHitRayTracingShaderGroupCreateInfo",
+          "local": {
+            "pInfo": "shader_groups[2]"
+          },
+          "bind": {
+            "pNext": "NULL",
+            "closestHitShader": "2",
+            "anyHitShader": "VK_SHADER_UNUSED_KHR"
+          }
+        },
+        {
+          "call": "cvkCreateRayTracingPipelineLayout",
+          "bind": {
+            "flags": "pipelineLayoutFlags"
+          }
+        },
+        {
+          "call": "cvkCreateRayTracingPipeline",
+          "bind": {
+            "deferredOperation": "VK_NULL_HANDLE",
+            "stageCount": "3",
+            "pStages": "shader_stages",
+            "groupCount": "3",
+            "pGroups": "shader_groups",
+            "pLibraryInfo": "NULL",
+            "pLibraryInterface": "NULL",
+            "pDynamicState": "NULL",
+            "layout": "(*pPipelineLayout)",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceRayTracingShaderGroupHandleStride": {
+      "brief": "Returns the shader group handle size rounded up to the handle alignment: the stride of a shader binding table.",
+      "ret": "VkDeviceSize",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceRayTracingPipelineProperties",
+          "local": {
+            "pPhysicalDeviceRayTracingPipelineProperties": "ray_tracing_pipeline_properties"
+          },
+          "bind": {
+            "pPhysicalDeviceRayTracingPipelinePropertiesNext": "NULL"
+          }
+        },
+        {
+          "return": "cvkAlignDeviceSize(ray_tracing_pipeline_properties.shaderGroupHandleSize, ray_tracing_pipeline_properties.shaderGroupHandleAlignment)"
+        }
+      ]
+    },
+    "cvkCmdTraceRays2D": {
+      "brief": "2D form of cvkCmdTraceRays.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "Ray grid without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdTraceRays",
+          "bind": {
+            "width": "extent2D.width",
+            "height": "extent2D.height",
+            "depth": "1"
+          }
+        }
+      ]
+    },
+    "cvkCmdTraceRayTracingRays": {
+      "brief": "Binds a ray tracing pipeline, its descriptor sets, and push constants, then traces rays.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constants"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constants"
+        },
+        {
+          "type": "const void*",
+          "name": "pPushConstants",
+          "doc": "Push constant bytes"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBindRayTracingPipeline"
+        },
+        {
+          "call": "cvkCmdBindRayTracingDescriptorSets"
+        },
+        {
+          "call": "cvkCmdPushRayTracingConstants",
+          "bind": {
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize",
+            "pValues": "pPushConstants"
+          }
+        },
+        {
+          "call": "cvkCmdTraceRays"
+        }
+      ]
+    },
+    "cvkCmdTraceRayTracingRays2D": {
+      "brief": "2D form of cvkCmdTraceRayTracingRays.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "Ray grid without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdTraceRayTracingRays",
+          "bind": {
+            "width": "extent2D.width",
+            "height": "extent2D.height",
+            "depth": "1"
+          }
+        }
+      ]
+    },
+    "cvkCmdPushMeshShadingConstants": {
+      "brief": "Pushes constants for the task, mesh, and fragment stages.",
+      "steps": [
+        {
+          "call": "cvkCmdPushConstants",
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCreateMeshShadingPipelineLayout": {
+      "brief": "Creates a pipeline layout for the task, mesh, and fragment stages with at most one push constant range.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constant range"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constant range, zero for none"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPushConstantRange",
+          "local": {
+            "pInfo": "push_constant_range"
+          },
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT",
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize"
+          }
+        },
+        {
+          "call": "cvkCreatePipelineLayout",
+          "bind": {
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pPushConstantRanges": "&push_constant_range"
+          }
+        }
+      ]
+    },
+    "cvkSetupMeshShadingPipeline": {
+      "brief": "Creates mesh and fragment shader modules, a mesh shading pipeline layout, and a graphics pipeline without vertex input or input assembly state.",
+      "inputs": [
+        {
+          "type": "VkShaderModuleCreateFlags",
+          "name": "shaderModuleFlags",
+          "doc": "VkShaderModuleCreateInfo::flags of every module"
+        },
+        {
+          "type": "VkPipelineLayoutCreateFlags",
+          "name": "pipelineLayoutFlags",
+          "doc": "VkPipelineLayoutCreateInfo::flags"
+        },
+        {
+          "type": "VkPipelineShaderStageCreateFlags",
+          "name": "stageFlags",
+          "doc": "VkPipelineShaderStageCreateInfo::flags of every stage"
+        },
+        {
+          "type": "const void*",
+          "name": "pMeshShaderModuleNext",
+          "doc": "Optional extension chain for the mesh VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "meshCodeSize",
+          "doc": "Size in bytes of the mesh shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pMeshCode",
+          "doc": "Mesh shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pMeshStageNext",
+          "doc": "Optional extension chain for the mesh VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pMeshEntryPoint",
+          "doc": "Entry point name of the mesh shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pMeshSpecializationInfo",
+          "doc": "Specialization of the mesh shader, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentShaderModuleNext",
+          "doc": "Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "fragmentCodeSize",
+          "doc": "Size in bytes of the fragment shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pFragmentCode",
+          "doc": "Fragment shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentStageNext",
+          "doc": "Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pFragmentEntryPoint",
+          "doc": "Entry point name of the fragment shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pFragmentSpecializationInfo",
+          "doc": "Specialization of the fragment shader, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkShaderModule",
+          "name": "pMeshShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pFragmentShaderModule"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pMeshShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "meshCodeSize",
+            "pCode": "pMeshCode",
+            "pShaderModule": "pMeshShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[0]"
+          },
+          "bind": {
+            "pNext": "pMeshStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_MESH_BIT_EXT",
+            "module": "(*pMeshShaderModule)",
+            "pName": "pMeshEntryPoint",
+            "pSpecializationInfo": "pMeshSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pFragmentShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "fragmentCodeSize",
+            "pCode": "pFragmentCode",
+            "pShaderModule": "pFragmentShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[1]"
+          },
+          "bind": {
+            "pNext": "pFragmentStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "module": "(*pFragmentShaderModule)",
+            "pName": "pFragmentEntryPoint",
+            "pSpecializationInfo": "pFragmentSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateMeshShadingPipelineLayout",
+          "bind": {
+            "flags": "pipelineLayoutFlags"
+          }
+        },
+        {
+          "call": "cvkCreateGraphicsPipeline",
+          "bind": {
+            "pVertexInputState": "NULL",
+            "pInputAssemblyState": "NULL",
+            "pTessellationState": "NULL",
+            "layout": "(*pPipelineLayout)",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1",
+            "stageCount": "2",
+            "pStages": "shader_stages"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupTaskMeshShadingPipeline": {
+      "brief": "cvkSetupMeshShadingPipeline with a task shader stage before the mesh stage.",
+      "inputs": [
+        {
+          "type": "VkShaderModuleCreateFlags",
+          "name": "shaderModuleFlags",
+          "doc": "VkShaderModuleCreateInfo::flags of every module"
+        },
+        {
+          "type": "VkPipelineLayoutCreateFlags",
+          "name": "pipelineLayoutFlags",
+          "doc": "VkPipelineLayoutCreateInfo::flags"
+        },
+        {
+          "type": "VkPipelineShaderStageCreateFlags",
+          "name": "stageFlags",
+          "doc": "VkPipelineShaderStageCreateInfo::flags of every stage"
+        },
+        {
+          "type": "const void*",
+          "name": "pTaskShaderModuleNext",
+          "doc": "Optional extension chain for the task VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "taskCodeSize",
+          "doc": "Size in bytes of the task shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pTaskCode",
+          "doc": "Task shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pTaskStageNext",
+          "doc": "Optional extension chain for the task VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pTaskEntryPoint",
+          "doc": "Entry point name of the task shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pTaskSpecializationInfo",
+          "doc": "Specialization of the task shader, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pMeshShaderModuleNext",
+          "doc": "Optional extension chain for the mesh VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "meshCodeSize",
+          "doc": "Size in bytes of the mesh shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pMeshCode",
+          "doc": "Mesh shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pMeshStageNext",
+          "doc": "Optional extension chain for the mesh VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pMeshEntryPoint",
+          "doc": "Entry point name of the mesh shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pMeshSpecializationInfo",
+          "doc": "Specialization of the mesh shader, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentShaderModuleNext",
+          "doc": "Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "fragmentCodeSize",
+          "doc": "Size in bytes of the fragment shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pFragmentCode",
+          "doc": "Fragment shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentStageNext",
+          "doc": "Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pFragmentEntryPoint",
+          "doc": "Entry point name of the fragment shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pFragmentSpecializationInfo",
+          "doc": "Specialization of the fragment shader, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkShaderModule",
+          "name": "pTaskShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pMeshShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pFragmentShaderModule"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pTaskShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "taskCodeSize",
+            "pCode": "pTaskCode",
+            "pShaderModule": "pTaskShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[0]"
+          },
+          "bind": {
+            "pNext": "pTaskStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_TASK_BIT_EXT",
+            "module": "(*pTaskShaderModule)",
+            "pName": "pTaskEntryPoint",
+            "pSpecializationInfo": "pTaskSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pMeshShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "meshCodeSize",
+            "pCode": "pMeshCode",
+            "pShaderModule": "pMeshShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[1]"
+          },
+          "bind": {
+            "pNext": "pMeshStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_MESH_BIT_EXT",
+            "module": "(*pMeshShaderModule)",
+            "pName": "pMeshEntryPoint",
+            "pSpecializationInfo": "pMeshSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pFragmentShaderModuleNext",
+            "flags": "shaderModuleFlags",
+            "codeSize": "fragmentCodeSize",
+            "pCode": "pFragmentCode",
+            "pShaderModule": "pFragmentShaderModule"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[2]"
+          },
+          "bind": {
+            "pNext": "pFragmentStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "module": "(*pFragmentShaderModule)",
+            "pName": "pFragmentEntryPoint",
+            "pSpecializationInfo": "pFragmentSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateMeshShadingPipelineLayout",
+          "bind": {
+            "flags": "pipelineLayoutFlags"
+          }
+        },
+        {
+          "call": "cvkCreateGraphicsPipeline",
+          "bind": {
+            "pVertexInputState": "NULL",
+            "pInputAssemblyState": "NULL",
+            "pTessellationState": "NULL",
+            "layout": "(*pPipelineLayout)",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1",
+            "stageCount": "3",
+            "pStages": "shader_stages"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCmdDrawMeshTaskItems": {
+      "brief": "Draws enough mesh task workgroups to cover an item count, given items per invocation and the local size.",
+      "inputs": [
+        {
+          "type": "VkExtent3D",
+          "name": "itemCount",
+          "doc": "Items to cover"
+        },
+        {
+          "type": "VkExtent3D",
+          "name": "itemsPerInvocation",
+          "doc": "Items each invocation handles"
+        },
+        {
+          "type": "VkExtent3D",
+          "name": "localSize",
+          "doc": "Workgroup local size"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdDrawMeshTasks",
+          "bind": {
+            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1u) / (itemsPerInvocation.width * localSize.width)",
+            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1u) / (itemsPerInvocation.height * localSize.height)",
+            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1u) / (itemsPerInvocation.depth * localSize.depth)"
+          }
+        }
+      ]
+    },
+    "cvkCmdDrawMeshShadingTasks": {
+      "brief": "Binds a graphics pipeline, its descriptor sets, and mesh shading push constants, then draws mesh tasks by items.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constants"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constants"
+        },
+        {
+          "type": "const void*",
+          "name": "pPushConstants",
+          "doc": "Push constant bytes"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBindGraphicsPipeline"
+        },
+        {
+          "call": "cvkCmdBindGraphicsDescriptorSets"
+        },
+        {
+          "call": "cvkCmdPushMeshShadingConstants",
+          "bind": {
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize",
+            "pValues": "pPushConstants"
+          }
+        },
+        {
+          "call": "cvkCmdDrawMeshTaskItems"
+        }
+      ]
+    },
+    "cvkCmdDrawMeshTaskItems2D": {
+      "brief": "2D form of cvkCmdDrawMeshTaskItems.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "itemCount2D",
+          "doc": "itemCount without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "itemsPerInvocation2D",
+          "doc": "itemsPerInvocation without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "localSize2D",
+          "doc": "localSize without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "item_count"
+          },
+          "bind": {
+            "width": "itemCount2D.width",
+            "height": "itemCount2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "items_per_invocation"
+          },
+          "bind": {
+            "width": "itemsPerInvocation2D.width",
+            "height": "itemsPerInvocation2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "local_size"
+          },
+          "bind": {
+            "width": "localSize2D.width",
+            "height": "localSize2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdDrawMeshTaskItems",
+          "bind": {
+            "itemCount": "item_count",
+            "itemsPerInvocation": "items_per_invocation",
+            "localSize": "local_size"
+          }
+        }
+      ]
+    },
+    "cvkCmdDrawMeshShadingTasks2D": {
+      "brief": "2D form of cvkCmdDrawMeshShadingTasks.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "itemCount2D",
+          "doc": "itemCount without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "itemsPerInvocation2D",
+          "doc": "itemsPerInvocation without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "localSize2D",
+          "doc": "localSize without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "item_count"
+          },
+          "bind": {
+            "width": "itemCount2D.width",
+            "height": "itemCount2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "items_per_invocation"
+          },
+          "bind": {
+            "width": "itemsPerInvocation2D.width",
+            "height": "itemsPerInvocation2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "local_size"
+          },
+          "bind": {
+            "width": "localSize2D.width",
+            "height": "localSize2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdDrawMeshShadingTasks",
+          "bind": {
+            "itemCount": "item_count",
+            "itemsPerInvocation": "items_per_invocation",
+            "localSize": "local_size"
+          }
+        }
+      ]
+    },
+    "cvkCreateTaskShader": {
+      "brief": "Creates a task shader object from SPIR-V code.",
+      "steps": [
+        {
+          "call": "cvkCreateShader",
+          "bind": {
+            "stage": "VK_SHADER_STAGE_TASK_BIT_EXT",
+            "nextStage": "VK_SHADER_STAGE_MESH_BIT_EXT",
+            "codeType": "VK_SHADER_CODE_TYPE_SPIRV_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateMeshShader": {
+      "brief": "Creates a mesh shader object from SPIR-V code.",
+      "steps": [
+        {
+          "call": "cvkCreateShader",
+          "bind": {
+            "stage": "VK_SHADER_STAGE_MESH_BIT_EXT",
+            "nextStage": "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "codeType": "VK_SHADER_CODE_TYPE_SPIRV_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCmdBindMeshShadingShaders": {
+      "brief": "Binds mesh and fragment shader objects, with no task shader.",
+      "inputs": [
+        {
+          "type": "VkShaderEXT",
+          "name": "meshShader",
+          "doc": "The mesh shader object"
+        },
+        {
+          "type": "VkShaderEXT",
+          "name": "fragmentShader",
+          "doc": "The fragment shader object"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "VkShaderStageFlagBits stages[3] = { VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT }"
+        },
+        {
+          "declare": "VkShaderEXT shaders[3]"
+        },
+        {
+          "assign": {
+            "shaders[0]": "VK_NULL_HANDLE",
+            "shaders[1]": "meshShader",
+            "shaders[2]": "fragmentShader"
+          }
+        },
+        {
+          "call": "cvkCmdBindShaders",
+          "bind": {
+            "stageCount": "3",
+            "pStages": "stages",
+            "pShaders": "shaders"
+          }
+        }
+      ]
+    },
+    "cvkCmdBindTaskMeshShadingShaders": {
+      "brief": "Binds task, mesh, and fragment shader objects.",
+      "inputs": [
+        {
+          "type": "VkShaderEXT",
+          "name": "taskShader",
+          "doc": "The task shader object"
+        },
+        {
+          "type": "VkShaderEXT",
+          "name": "meshShader",
+          "doc": "The mesh shader object"
+        },
+        {
+          "type": "VkShaderEXT",
+          "name": "fragmentShader",
+          "doc": "The fragment shader object"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "VkShaderStageFlagBits stages[3] = { VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT }"
+        },
+        {
+          "declare": "VkShaderEXT shaders[3]"
+        },
+        {
+          "assign": {
+            "shaders[0]": "taskShader",
+            "shaders[1]": "meshShader",
+            "shaders[2]": "fragmentShader"
+          }
+        },
+        {
+          "call": "cvkCmdBindShaders",
+          "bind": {
+            "stageCount": "3",
+            "pStages": "stages",
+            "pShaders": "shaders"
+          }
+        }
+      ]
     }
   }
 }

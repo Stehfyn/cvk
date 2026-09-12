@@ -124,6 +124,7 @@ class Generator:
         self.sigs: Dict[str, Tuple[str, List[EmittedParam]]] = {}   # every emitted signature, for chains
         self.used_overrides: Set[str] = set()
         self.keep_suffix: Set[str] = set()
+        self.singular_pairs: Dict[Tuple[str, str], int] = defaultdict(int)
         self.recoverable: Set[str] = set(policy.get("recoverable_errors", []))
         self.errors: List[str] = []
 
@@ -205,6 +206,12 @@ class Generator:
             groups["cmd:" + strip_vendor(c.name)].append(c.name)
         for st in structs:
             groups["struct:" + strip_vendor(st.name)].append(st.name)
+        # A plural command reserves its singular stem (vkCmdBuildAccelerationStructuresKHR ->
+        # cvkCmdBuildAccelerationStructure), so a legacy command on that stem keeps its suffix.
+        for c in self.cmds:
+            stem = strip_vendor(c.name)
+            if stem.endswith("s") and any(r == "I[]" for r in self.roles(c)):
+                groups["cmd:" + stem[:-1]].append(c.name)
         for cmd, op, ext in self.output_pairs() + self.output_array_pairs():
             spliced = self.splice_output_name(self.with_base(cmd), ext, self.reg.struct_of(op.type), [])
             if spliced:
@@ -768,6 +775,26 @@ class Generator:
         self.sigs[name] = ("void", params)
         self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
                    sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+
+    def emit_union_builders(self, s: Struct) -> None:
+        """SPEC.md section 6: a union has one builder per member, cvkInit<Union><Member>, each
+        setting that member (cvkInitClearValueColor, cvkInitDeviceOrHostAddressDeviceAddress,
+        cvkInitAccelerationStructureGeometryDataTriangles)."""
+        for m in s.members:
+            cap = m.name[0].upper() + m.name[1:]
+            name = self.register("cvkInit" + self.struct_short(s) + cap, f"{s.name}::{m.name}")
+            params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
+            if m.array_len:
+                params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                body = [f"memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
+            else:
+                params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
+                body = [f"pInfo->{m.name} = {m.name};"]
+            doc = self.doc_block(f"Initializes a {s.name} holding its {m.name} member.", params, "void", None, [])
+            sig = self.signature("void", name, params)
+            self.sigs[name] = ("void", params)
+            self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
+                       sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     # ------------------------------------------------------------ singulars
     def singular_name(self, cmd: Command, s: Optional[Struct]) -> str:
@@ -1442,6 +1469,10 @@ class Generator:
             if "declare" in step:
                 raw_decls.append(step["declare"] + ";")          # a local with an initializer
                 continue
+            if "assign" in step:
+                for k, v in step["assign"].items():           # a statement on a local (an array element)
+                    body.append(f"{k} = {v};")
+                continue
             if "set" in step:
                 for k, v in step["set"].items():
                     if k in declared_outputs:
@@ -1546,6 +1577,8 @@ class Generator:
             outputs.setdefault(oname, oparam)
         # A chain over a builder is a builder: its pInfo leads like every cvkInit.
         info_out = [p for p in outputs.values() if p.name == "pInfo"]
+        if info_out:
+            rest = [p for p in rest if p.name == "pNext"] + [p for p in rest if p.name != "pNext"]   # pInfo, pNext, members
         params = info_out + dispatch + rest + alloc + [p for p in outputs.values() if p.name != "pInfo"]
         decls = [f"{t} {v};" for v, t in locals_.items()] + [f"{t} {v}[{n}];" for v, (t, n) in local_arrays.items()] + raw_decls
         full = decls + ([""] if decls else []) + body
@@ -1572,6 +1605,8 @@ class Generator:
                    and not any(":" in m.full_type for m in s.members)]
         for s in sorted(structs, key=lambda s: s.name):
             self.emit_builder(s)
+        for s in sorted((u for u in self.reg.structs.values() if not u.alias_of and u.category == "union" and self.struct_in_profile(u)), key=lambda u: u.name):
+            self.emit_union_builders(s)
         for cmd in self.cmds:
             self.emit_tier0(cmd)
         for cmd in self.cmds:
@@ -1588,14 +1623,12 @@ class Generator:
         pairs: List[Tuple[Command, Param, Struct]] = []
         for cmd in self.cmds:
             roles = self.roles(cmd)
-            iparams = [p for p, r in zip(cmd.params, roles) if r == "I"]
-            if len(iparams) != 1:
-                continue
-            base = self.reg.struct_of(iparams[0].type)
-            for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
-                if not self.struct_in_profile(ext) or re.match(r"VkPhysicalDevice\w*Features", ext.name):
-                    continue
-                pairs.append((cmd, iparams[0], ext))
+            for ip in [p for p, r in zip(cmd.params, roles) if r == "I"]:
+                base = self.reg.struct_of(ip.type)
+                for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
+                    if not self.struct_in_profile(ext) or re.match(r"VkPhysicalDevice\w*Features", ext.name):
+                        continue
+                    pairs.append((cmd, ip, ext))
         self.convenience_pairs = defaultdict(int)
         for cmd, _, ext in pairs:
             self.convenience_pairs[(cmd.verb, ext.name)] += 1

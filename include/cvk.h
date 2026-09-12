@@ -17133,6 +17133,582 @@ void cvkInitWriteIndirectExecutionSetShader(VkWriteIndirectExecutionSetShaderEXT
  */
 void cvkInitXYColor(VkXYColorEXT* pInfo, float x, float y);
 /**
+ * \brief Initializes a VkAccelerationStructureGeometryDataKHR holding its triangles member.
+ *
+ * \param[out] pInfo      Receives the initialized VkAccelerationStructureGeometryDataKHR
+ * \param[in] triangles  VkAccelerationStructureGeometryDataKHR::triangles
+ *
+ * \retval None
+ */
+void cvkInitAccelerationStructureGeometryDataTriangles(VkAccelerationStructureGeometryDataKHR* pInfo, VkAccelerationStructureGeometryTrianglesDataKHR triangles);
+/**
+ * \brief Initializes a VkAccelerationStructureGeometryDataKHR holding its aabbs member.
+ *
+ * \param[out] pInfo  Receives the initialized VkAccelerationStructureGeometryDataKHR
+ * \param[in] aabbs  VkAccelerationStructureGeometryDataKHR::aabbs
+ *
+ * \retval None
+ */
+void cvkInitAccelerationStructureGeometryDataAabbs(VkAccelerationStructureGeometryDataKHR* pInfo, VkAccelerationStructureGeometryAabbsDataKHR aabbs);
+/**
+ * \brief Initializes a VkAccelerationStructureGeometryDataKHR holding its instances member.
+ *
+ * \param[out] pInfo      Receives the initialized VkAccelerationStructureGeometryDataKHR
+ * \param[in] instances  VkAccelerationStructureGeometryDataKHR::instances
+ *
+ * \retval None
+ */
+void cvkInitAccelerationStructureGeometryDataInstances(VkAccelerationStructureGeometryDataKHR* pInfo, VkAccelerationStructureGeometryInstancesDataKHR instances);
+/**
+ * \brief Initializes a VkAccelerationStructureMotionInstanceDataNV holding its staticInstance member.
+ *
+ * \param[out] pInfo           Receives the initialized VkAccelerationStructureMotionInstanceDataNV
+ * \param[in] staticInstance  VkAccelerationStructureMotionInstanceDataNV::staticInstance
+ *
+ * \retval None
+ */
+void cvkInitAccelerationStructureMotionInstanceDataStaticInstance(VkAccelerationStructureMotionInstanceDataNV* pInfo, VkAccelerationStructureInstanceKHR staticInstance);
+/**
+ * \brief Initializes a VkAccelerationStructureMotionInstanceDataNV holding its matrixMotionInstance member.
+ *
+ * \param[out] pInfo                 Receives the initialized VkAccelerationStructureMotionInstanceDataNV
+ * \param[in] matrixMotionInstance  VkAccelerationStructureMotionInstanceDataNV::matrixMotionInstance
+ *
+ * \retval None
+ */
+void cvkInitAccelerationStructureMotionInstanceDataMatrixMotionInstance(VkAccelerationStructureMotionInstanceDataNV* pInfo, VkAccelerationStructureMatrixMotionInstanceNV matrixMotionInstance);
+/**
+ * \brief Initializes a VkAccelerationStructureMotionInstanceDataNV holding its srtMotionInstance member.
+ *
+ * \param[out] pInfo              Receives the initialized VkAccelerationStructureMotionInstanceDataNV
+ * \param[in] srtMotionInstance  VkAccelerationStructureMotionInstanceDataNV::srtMotionInstance
+ *
+ * \retval None
+ */
+void cvkInitAccelerationStructureMotionInstanceDataSrtMotionInstance(VkAccelerationStructureMotionInstanceDataNV* pInfo, VkAccelerationStructureSRTMotionInstanceNV srtMotionInstance);
+/**
+ * \brief Initializes a VkClearColorValue holding its float32 member.
+ *
+ * \param[out] pInfo    Receives the initialized VkClearColorValue
+ * \param[in] float32  VkClearColorValue::float32
+ *
+ * \retval None
+ */
+void cvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[4]);
+/**
+ * \brief Initializes a VkClearColorValue holding its int32 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkClearColorValue
+ * \param[in] int32  VkClearColorValue::int32
+ *
+ * \retval None
+ */
+void cvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[4]);
+/**
+ * \brief Initializes a VkClearColorValue holding its uint32 member.
+ *
+ * \param[out] pInfo   Receives the initialized VkClearColorValue
+ * \param[in] uint32  VkClearColorValue::uint32
+ *
+ * \retval None
+ */
+void cvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[4]);
+/**
+ * \brief Initializes a VkClearValue holding its color member.
+ *
+ * \param[out] pInfo  Receives the initialized VkClearValue
+ * \param[in] color  VkClearValue::color
+ *
+ * \retval None
+ */
+void cvkInitClearValueColor(VkClearValue* pInfo, VkClearColorValue color);
+/**
+ * \brief Initializes a VkClearValue holding its depthStencil member.
+ *
+ * \param[out] pInfo         Receives the initialized VkClearValue
+ * \param[in] depthStencil  VkClearValue::depthStencil
+ *
+ * \retval None
+ */
+void cvkInitClearValueDepthStencil(VkClearValue* pInfo, VkClearDepthStencilValue depthStencil);
+/**
+ * \brief Initializes a VkClusterAccelerationStructureOpInputNV holding its pClustersBottomLevel member.
+ *
+ * \param[out] pInfo                 Receives the initialized VkClusterAccelerationStructureOpInputNV
+ * \param[in] pClustersBottomLevel  VkClusterAccelerationStructureOpInputNV::pClustersBottomLevel
+ *
+ * \retval None
+ */
+void cvkInitClusterAccelerationStructureOpInputPClustersBottomLevel(VkClusterAccelerationStructureOpInputNV* pInfo, VkClusterAccelerationStructureClustersBottomLevelInputNV* pClustersBottomLevel);
+/**
+ * \brief Initializes a VkClusterAccelerationStructureOpInputNV holding its pTriangleClusters member.
+ *
+ * \param[out] pInfo              Receives the initialized VkClusterAccelerationStructureOpInputNV
+ * \param[in] pTriangleClusters  VkClusterAccelerationStructureOpInputNV::pTriangleClusters
+ *
+ * \retval None
+ */
+void cvkInitClusterAccelerationStructureOpInputPTriangleClusters(VkClusterAccelerationStructureOpInputNV* pInfo, VkClusterAccelerationStructureTriangleClusterInputNV* pTriangleClusters);
+/**
+ * \brief Initializes a VkClusterAccelerationStructureOpInputNV holding its pMoveObjects member.
+ *
+ * \param[out] pInfo         Receives the initialized VkClusterAccelerationStructureOpInputNV
+ * \param[in] pMoveObjects  VkClusterAccelerationStructureOpInputNV::pMoveObjects
+ *
+ * \retval None
+ */
+void cvkInitClusterAccelerationStructureOpInputPMoveObjects(VkClusterAccelerationStructureOpInputNV* pInfo, VkClusterAccelerationStructureMoveObjectsInputNV* pMoveObjects);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pSampler member.
+ *
+ * \param[out] pInfo     Receives the initialized VkDescriptorDataEXT
+ * \param[in] pSampler  VkDescriptorDataEXT::pSampler
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPSampler(VkDescriptorDataEXT* pInfo, const VkSampler* pSampler);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pCombinedImageSampler member.
+ *
+ * \param[out] pInfo                  Receives the initialized VkDescriptorDataEXT
+ * \param[in] pCombinedImageSampler  VkDescriptorDataEXT::pCombinedImageSampler
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPCombinedImageSampler(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pCombinedImageSampler);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pInputAttachmentImage member.
+ *
+ * \param[out] pInfo                  Receives the initialized VkDescriptorDataEXT
+ * \param[in] pInputAttachmentImage  VkDescriptorDataEXT::pInputAttachmentImage
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPInputAttachmentImage(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pInputAttachmentImage);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pSampledImage member.
+ *
+ * \param[out] pInfo          Receives the initialized VkDescriptorDataEXT
+ * \param[in] pSampledImage  VkDescriptorDataEXT::pSampledImage
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPSampledImage(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pSampledImage);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pStorageImage member.
+ *
+ * \param[out] pInfo          Receives the initialized VkDescriptorDataEXT
+ * \param[in] pStorageImage  VkDescriptorDataEXT::pStorageImage
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPStorageImage(VkDescriptorDataEXT* pInfo, const VkDescriptorImageInfo* pStorageImage);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pUniformTexelBuffer member.
+ *
+ * \param[out] pInfo                Receives the initialized VkDescriptorDataEXT
+ * \param[in] pUniformTexelBuffer  VkDescriptorDataEXT::pUniformTexelBuffer
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPUniformTexelBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pUniformTexelBuffer);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pStorageTexelBuffer member.
+ *
+ * \param[out] pInfo                Receives the initialized VkDescriptorDataEXT
+ * \param[in] pStorageTexelBuffer  VkDescriptorDataEXT::pStorageTexelBuffer
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPStorageTexelBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pStorageTexelBuffer);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pUniformBuffer member.
+ *
+ * \param[out] pInfo           Receives the initialized VkDescriptorDataEXT
+ * \param[in] pUniformBuffer  VkDescriptorDataEXT::pUniformBuffer
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPUniformBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pUniformBuffer);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its pStorageBuffer member.
+ *
+ * \param[out] pInfo           Receives the initialized VkDescriptorDataEXT
+ * \param[in] pStorageBuffer  VkDescriptorDataEXT::pStorageBuffer
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataPStorageBuffer(VkDescriptorDataEXT* pInfo, const VkDescriptorAddressInfoEXT* pStorageBuffer);
+/**
+ * \brief Initializes a VkDescriptorDataEXT holding its accelerationStructure member.
+ *
+ * \param[out] pInfo                  Receives the initialized VkDescriptorDataEXT
+ * \param[in] accelerationStructure  VkDescriptorDataEXT::accelerationStructure
+ *
+ * \retval None
+ */
+void cvkInitDescriptorDataAccelerationStructure(VkDescriptorDataEXT* pInfo, VkDeviceAddress accelerationStructure);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its constantOffset member.
+ *
+ * \param[out] pInfo           Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] constantOffset  VkDescriptorMappingSourceDataEXT::constantOffset
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataConstantOffset(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceConstantOffsetEXT constantOffset);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its pushIndex member.
+ *
+ * \param[out] pInfo      Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] pushIndex  VkDescriptorMappingSourceDataEXT::pushIndex
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataPushIndex(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourcePushIndexEXT pushIndex);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its indirectIndex member.
+ *
+ * \param[out] pInfo          Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] indirectIndex  VkDescriptorMappingSourceDataEXT::indirectIndex
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataIndirectIndex(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceIndirectIndexEXT indirectIndex);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its indirectIndexArray member.
+ *
+ * \param[out] pInfo               Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] indirectIndexArray  VkDescriptorMappingSourceDataEXT::indirectIndexArray
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataIndirectIndexArray(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceIndirectIndexArrayEXT indirectIndexArray);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its heapData member.
+ *
+ * \param[out] pInfo     Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] heapData  VkDescriptorMappingSourceDataEXT::heapData
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataHeapData(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceHeapDataEXT heapData);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its pushDataOffset member.
+ *
+ * \param[out] pInfo           Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] pushDataOffset  VkDescriptorMappingSourceDataEXT::pushDataOffset
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataPushDataOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t pushDataOffset);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its pushAddressOffset member.
+ *
+ * \param[out] pInfo              Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] pushAddressOffset  VkDescriptorMappingSourceDataEXT::pushAddressOffset
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataPushAddressOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t pushAddressOffset);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its indirectAddress member.
+ *
+ * \param[out] pInfo            Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] indirectAddress  VkDescriptorMappingSourceDataEXT::indirectAddress
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataIndirectAddress(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceIndirectAddressEXT indirectAddress);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its shaderRecordIndex member.
+ *
+ * \param[out] pInfo              Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] shaderRecordIndex  VkDescriptorMappingSourceDataEXT::shaderRecordIndex
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataShaderRecordIndex(VkDescriptorMappingSourceDataEXT* pInfo, VkDescriptorMappingSourceShaderRecordIndexEXT shaderRecordIndex);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its shaderRecordDataOffset member.
+ *
+ * \param[out] pInfo                   Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] shaderRecordDataOffset  VkDescriptorMappingSourceDataEXT::shaderRecordDataOffset
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataShaderRecordDataOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t shaderRecordDataOffset);
+/**
+ * \brief Initializes a VkDescriptorMappingSourceDataEXT holding its shaderRecordAddressOffset member.
+ *
+ * \param[out] pInfo                      Receives the initialized VkDescriptorMappingSourceDataEXT
+ * \param[in] shaderRecordAddressOffset  VkDescriptorMappingSourceDataEXT::shaderRecordAddressOffset
+ *
+ * \retval None
+ */
+void cvkInitDescriptorMappingSourceDataShaderRecordAddressOffset(VkDescriptorMappingSourceDataEXT* pInfo, uint32_t shaderRecordAddressOffset);
+/**
+ * \brief Initializes a VkDeviceOrHostAddressConstKHR holding its deviceAddress member.
+ *
+ * \param[out] pInfo          Receives the initialized VkDeviceOrHostAddressConstKHR
+ * \param[in] deviceAddress  VkDeviceOrHostAddressConstKHR::deviceAddress
+ *
+ * \retval None
+ */
+void cvkInitDeviceOrHostAddressConstDeviceAddress(VkDeviceOrHostAddressConstKHR* pInfo, VkDeviceAddress deviceAddress);
+/**
+ * \brief Initializes a VkDeviceOrHostAddressConstKHR holding its hostAddress member.
+ *
+ * \param[out] pInfo        Receives the initialized VkDeviceOrHostAddressConstKHR
+ * \param[in] hostAddress  VkDeviceOrHostAddressConstKHR::hostAddress
+ *
+ * \retval None
+ */
+void cvkInitDeviceOrHostAddressConstHostAddress(VkDeviceOrHostAddressConstKHR* pInfo, const void* hostAddress);
+/**
+ * \brief Initializes a VkDeviceOrHostAddressKHR holding its deviceAddress member.
+ *
+ * \param[out] pInfo          Receives the initialized VkDeviceOrHostAddressKHR
+ * \param[in] deviceAddress  VkDeviceOrHostAddressKHR::deviceAddress
+ *
+ * \retval None
+ */
+void cvkInitDeviceOrHostAddressDeviceAddress(VkDeviceOrHostAddressKHR* pInfo, VkDeviceAddress deviceAddress);
+/**
+ * \brief Initializes a VkDeviceOrHostAddressKHR holding its hostAddress member.
+ *
+ * \param[out] pInfo        Receives the initialized VkDeviceOrHostAddressKHR
+ * \param[in] hostAddress  VkDeviceOrHostAddressKHR::hostAddress
+ *
+ * \retval None
+ */
+void cvkInitDeviceOrHostAddressHostAddress(VkDeviceOrHostAddressKHR* pInfo, void* hostAddress);
+/**
+ * \brief Initializes a VkIndirectCommandsTokenDataEXT holding its pPushConstant member.
+ *
+ * \param[out] pInfo          Receives the initialized VkIndirectCommandsTokenDataEXT
+ * \param[in] pPushConstant  VkIndirectCommandsTokenDataEXT::pPushConstant
+ *
+ * \retval None
+ */
+void cvkInitIndirectCommandsTokenDataPPushConstant(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsPushConstantTokenEXT* pPushConstant);
+/**
+ * \brief Initializes a VkIndirectCommandsTokenDataEXT holding its pVertexBuffer member.
+ *
+ * \param[out] pInfo          Receives the initialized VkIndirectCommandsTokenDataEXT
+ * \param[in] pVertexBuffer  VkIndirectCommandsTokenDataEXT::pVertexBuffer
+ *
+ * \retval None
+ */
+void cvkInitIndirectCommandsTokenDataPVertexBuffer(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsVertexBufferTokenEXT* pVertexBuffer);
+/**
+ * \brief Initializes a VkIndirectCommandsTokenDataEXT holding its pIndexBuffer member.
+ *
+ * \param[out] pInfo         Receives the initialized VkIndirectCommandsTokenDataEXT
+ * \param[in] pIndexBuffer  VkIndirectCommandsTokenDataEXT::pIndexBuffer
+ *
+ * \retval None
+ */
+void cvkInitIndirectCommandsTokenDataPIndexBuffer(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsIndexBufferTokenEXT* pIndexBuffer);
+/**
+ * \brief Initializes a VkIndirectCommandsTokenDataEXT holding its pExecutionSet member.
+ *
+ * \param[out] pInfo          Receives the initialized VkIndirectCommandsTokenDataEXT
+ * \param[in] pExecutionSet  VkIndirectCommandsTokenDataEXT::pExecutionSet
+ *
+ * \retval None
+ */
+void cvkInitIndirectCommandsTokenDataPExecutionSet(VkIndirectCommandsTokenDataEXT* pInfo, const VkIndirectCommandsExecutionSetTokenEXT* pExecutionSet);
+/**
+ * \brief Initializes a VkIndirectExecutionSetInfoEXT holding its pPipelineInfo member.
+ *
+ * \param[out] pInfo          Receives the initialized VkIndirectExecutionSetInfoEXT
+ * \param[in] pPipelineInfo  VkIndirectExecutionSetInfoEXT::pPipelineInfo
+ *
+ * \retval None
+ */
+void cvkInitIndirectExecutionSetInfoPPipelineInfo(VkIndirectExecutionSetInfoEXT* pInfo, const VkIndirectExecutionSetPipelineInfoEXT* pPipelineInfo);
+/**
+ * \brief Initializes a VkIndirectExecutionSetInfoEXT holding its pShaderInfo member.
+ *
+ * \param[out] pInfo        Receives the initialized VkIndirectExecutionSetInfoEXT
+ * \param[in] pShaderInfo  VkIndirectExecutionSetInfoEXT::pShaderInfo
+ *
+ * \retval None
+ */
+void cvkInitIndirectExecutionSetInfoPShaderInfo(VkIndirectExecutionSetInfoEXT* pInfo, const VkIndirectExecutionSetShaderInfoEXT* pShaderInfo);
+/**
+ * \brief Initializes a VkPerformanceCounterResultKHR holding its int32 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkPerformanceCounterResultKHR
+ * \param[in] int32  VkPerformanceCounterResultKHR::int32
+ *
+ * \retval None
+ */
+void cvkInitPerformanceCounterResultInt32(VkPerformanceCounterResultKHR* pInfo, int32_t int32);
+/**
+ * \brief Initializes a VkPerformanceCounterResultKHR holding its int64 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkPerformanceCounterResultKHR
+ * \param[in] int64  VkPerformanceCounterResultKHR::int64
+ *
+ * \retval None
+ */
+void cvkInitPerformanceCounterResultInt64(VkPerformanceCounterResultKHR* pInfo, int64_t int64);
+/**
+ * \brief Initializes a VkPerformanceCounterResultKHR holding its uint32 member.
+ *
+ * \param[out] pInfo   Receives the initialized VkPerformanceCounterResultKHR
+ * \param[in] uint32  VkPerformanceCounterResultKHR::uint32
+ *
+ * \retval None
+ */
+void cvkInitPerformanceCounterResultUint32(VkPerformanceCounterResultKHR* pInfo, uint32_t uint32);
+/**
+ * \brief Initializes a VkPerformanceCounterResultKHR holding its uint64 member.
+ *
+ * \param[out] pInfo   Receives the initialized VkPerformanceCounterResultKHR
+ * \param[in] uint64  VkPerformanceCounterResultKHR::uint64
+ *
+ * \retval None
+ */
+void cvkInitPerformanceCounterResultUint64(VkPerformanceCounterResultKHR* pInfo, uint64_t uint64);
+/**
+ * \brief Initializes a VkPerformanceCounterResultKHR holding its float32 member.
+ *
+ * \param[out] pInfo    Receives the initialized VkPerformanceCounterResultKHR
+ * \param[in] float32  VkPerformanceCounterResultKHR::float32
+ *
+ * \retval None
+ */
+void cvkInitPerformanceCounterResultFloat32(VkPerformanceCounterResultKHR* pInfo, float float32);
+/**
+ * \brief Initializes a VkPerformanceCounterResultKHR holding its float64 member.
+ *
+ * \param[out] pInfo    Receives the initialized VkPerformanceCounterResultKHR
+ * \param[in] float64  VkPerformanceCounterResultKHR::float64
+ *
+ * \retval None
+ */
+void cvkInitPerformanceCounterResultFloat64(VkPerformanceCounterResultKHR* pInfo, double float64);
+/**
+ * \brief Initializes a VkPerformanceValueDataINTEL holding its value32 member.
+ *
+ * \param[out] pInfo    Receives the initialized VkPerformanceValueDataINTEL
+ * \param[in] value32  VkPerformanceValueDataINTEL::value32
+ *
+ * \retval None
+ */
+void cvkInitPerformanceValueDataValue32(VkPerformanceValueDataINTEL* pInfo, uint32_t value32);
+/**
+ * \brief Initializes a VkPerformanceValueDataINTEL holding its value64 member.
+ *
+ * \param[out] pInfo    Receives the initialized VkPerformanceValueDataINTEL
+ * \param[in] value64  VkPerformanceValueDataINTEL::value64
+ *
+ * \retval None
+ */
+void cvkInitPerformanceValueDataValue64(VkPerformanceValueDataINTEL* pInfo, uint64_t value64);
+/**
+ * \brief Initializes a VkPerformanceValueDataINTEL holding its valueFloat member.
+ *
+ * \param[out] pInfo       Receives the initialized VkPerformanceValueDataINTEL
+ * \param[in] valueFloat  VkPerformanceValueDataINTEL::valueFloat
+ *
+ * \retval None
+ */
+void cvkInitPerformanceValueDataValueFloat(VkPerformanceValueDataINTEL* pInfo, float valueFloat);
+/**
+ * \brief Initializes a VkPerformanceValueDataINTEL holding its valueBool member.
+ *
+ * \param[out] pInfo      Receives the initialized VkPerformanceValueDataINTEL
+ * \param[in] valueBool  VkPerformanceValueDataINTEL::valueBool
+ *
+ * \retval None
+ */
+void cvkInitPerformanceValueDataValueBool(VkPerformanceValueDataINTEL* pInfo, VkBool32 valueBool);
+/**
+ * \brief Initializes a VkPerformanceValueDataINTEL holding its valueString member.
+ *
+ * \param[out] pInfo        Receives the initialized VkPerformanceValueDataINTEL
+ * \param[in] valueString  VkPerformanceValueDataINTEL::valueString
+ *
+ * \retval None
+ */
+void cvkInitPerformanceValueDataValueString(VkPerformanceValueDataINTEL* pInfo, const char* valueString);
+/**
+ * \brief Initializes a VkPipelineExecutableStatisticValueKHR holding its b32 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineExecutableStatisticValueKHR
+ * \param[in] b32    VkPipelineExecutableStatisticValueKHR::b32
+ *
+ * \retval None
+ */
+void cvkInitPipelineExecutableStatisticValueB32(VkPipelineExecutableStatisticValueKHR* pInfo, VkBool32 b32);
+/**
+ * \brief Initializes a VkPipelineExecutableStatisticValueKHR holding its i64 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineExecutableStatisticValueKHR
+ * \param[in] i64    VkPipelineExecutableStatisticValueKHR::i64
+ *
+ * \retval None
+ */
+void cvkInitPipelineExecutableStatisticValueI64(VkPipelineExecutableStatisticValueKHR* pInfo, int64_t i64);
+/**
+ * \brief Initializes a VkPipelineExecutableStatisticValueKHR holding its u64 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineExecutableStatisticValueKHR
+ * \param[in] u64    VkPipelineExecutableStatisticValueKHR::u64
+ *
+ * \retval None
+ */
+void cvkInitPipelineExecutableStatisticValueU64(VkPipelineExecutableStatisticValueKHR* pInfo, uint64_t u64);
+/**
+ * \brief Initializes a VkPipelineExecutableStatisticValueKHR holding its f64 member.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineExecutableStatisticValueKHR
+ * \param[in] f64    VkPipelineExecutableStatisticValueKHR::f64
+ *
+ * \retval None
+ */
+void cvkInitPipelineExecutableStatisticValueF64(VkPipelineExecutableStatisticValueKHR* pInfo, double f64);
+/**
+ * \brief Initializes a VkResourceDescriptorDataEXT holding its pImage member.
+ *
+ * \param[out] pInfo   Receives the initialized VkResourceDescriptorDataEXT
+ * \param[in] pImage  VkResourceDescriptorDataEXT::pImage
+ *
+ * \retval None
+ */
+void cvkInitResourceDescriptorDataPImage(VkResourceDescriptorDataEXT* pInfo, const VkImageDescriptorInfoEXT* pImage);
+/**
+ * \brief Initializes a VkResourceDescriptorDataEXT holding its pTexelBuffer member.
+ *
+ * \param[out] pInfo         Receives the initialized VkResourceDescriptorDataEXT
+ * \param[in] pTexelBuffer  VkResourceDescriptorDataEXT::pTexelBuffer
+ *
+ * \retval None
+ */
+void cvkInitResourceDescriptorDataPTexelBuffer(VkResourceDescriptorDataEXT* pInfo, const VkTexelBufferDescriptorInfoEXT* pTexelBuffer);
+/**
+ * \brief Initializes a VkResourceDescriptorDataEXT holding its pAddressRange member.
+ *
+ * \param[out] pInfo          Receives the initialized VkResourceDescriptorDataEXT
+ * \param[in] pAddressRange  VkResourceDescriptorDataEXT::pAddressRange
+ *
+ * \retval None
+ */
+void cvkInitResourceDescriptorDataPAddressRange(VkResourceDescriptorDataEXT* pInfo, const VkDeviceAddressRangeEXT* pAddressRange);
+/**
+ * \brief Initializes a VkResourceDescriptorDataEXT holding its pTensorARM member.
+ *
+ * \param[out] pInfo       Receives the initialized VkResourceDescriptorDataEXT
+ * \param[in] pTensorARM  VkResourceDescriptorDataEXT::pTensorARM
+ *
+ * \retval None
+ */
+void cvkInitResourceDescriptorDataPTensorARM(VkResourceDescriptorDataEXT* pInfo, const VkTensorViewCreateInfoARM* pTensorARM);
+/**
  * \brief Acquires drm display.
  *
  * \par Details:
@@ -18205,21 +18781,21 @@ void cvkCmdBlitImage2(VkCommandBuffer     commandBuffer,
  *
  * \retval None
  */
-void cvkCmdBuildAccelerationStructure(VkDevice                             device,
-                                      VkCommandBuffer                      commandBuffer,
-                                      const void*                          pNext,
-                                      VkAccelerationStructureTypeNV        type,
-                                      VkBuildAccelerationStructureFlagsKHR flags,
-                                      uint32_t                             instanceCount,
-                                      uint32_t                             geometryCount,
-                                      const VkGeometryNV*                  pGeometries,
-                                      VkBuffer                             instanceData,
-                                      VkDeviceSize                         instanceOffset,
-                                      VkBool32                             update,
-                                      VkAccelerationStructureNV            dst,
-                                      VkAccelerationStructureNV            src,
-                                      VkBuffer                             scratch,
-                                      VkDeviceSize                         scratchOffset);
+void cvkCmdBuildAccelerationStructureNV(VkDevice                             device,
+                                        VkCommandBuffer                      commandBuffer,
+                                        const void*                          pNext,
+                                        VkAccelerationStructureTypeNV        type,
+                                        VkBuildAccelerationStructureFlagsKHR flags,
+                                        uint32_t                             instanceCount,
+                                        uint32_t                             geometryCount,
+                                        const VkGeometryNV*                  pGeometries,
+                                        VkBuffer                             instanceData,
+                                        VkDeviceSize                         instanceOffset,
+                                        VkBool32                             update,
+                                        VkAccelerationStructureNV            dst,
+                                        VkAccelerationStructureNV            src,
+                                        VkBuffer                             scratch,
+                                        VkDeviceSize                         scratchOffset);
 /**
  * \brief Records build acceleration structures indirect.
  *
@@ -30283,6 +30859,212 @@ void cvkCmdBeginRenderPassWithTransformInfo(VkCommandBuffer               comman
                                             const VkClearValue*           pClearValues,
                                             VkSubpassContents             contents);
 /**
+ * \brief Records begin render pass 2 with VkDeviceGroupRenderPassBeginInfo chained.
+ *
+ * \param[in] commandBuffer          See cvkCmdBeginRenderPass2
+ * \param[in] pRenderPassBeginNext   See cvkCmdBeginRenderPass2
+ * \param[in] deviceMask             VkDeviceGroupRenderPassBeginInfo::deviceMask
+ * \param[in] deviceRenderAreaCount  VkDeviceGroupRenderPassBeginInfo::deviceRenderAreaCount
+ * \param[in] pDeviceRenderAreas     VkDeviceGroupRenderPassBeginInfo::pDeviceRenderAreas
+ * \param[in] renderPass             See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer            See cvkCmdBeginRenderPass2
+ * \param[in] renderArea             See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount        See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues           See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext  See cvkCmdBeginRenderPass2
+ * \param[in] contents               See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithDeviceGroupInfo(VkCommandBuffer     commandBuffer,
+                                               const void*         pRenderPassBeginNext,
+                                               uint32_t            deviceMask,
+                                               uint32_t            deviceRenderAreaCount,
+                                               const VkRect2D*     pDeviceRenderAreas,
+                                               VkRenderPass        renderPass,
+                                               VkFramebuffer       framebuffer,
+                                               VkRect2D            renderArea,
+                                               uint32_t            clearValueCount,
+                                               const VkClearValue* pClearValues,
+                                               const void*         pSubpassBeginInfoNext,
+                                               VkSubpassContents   contents);
+/**
+ * \brief Records begin render pass 2 with VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM chained.
+ *
+ * \param[in] commandBuffer           See cvkCmdBeginRenderPass2
+ * \param[in] pRenderPassBeginNext    See cvkCmdBeginRenderPass2
+ * \param[in] perViewRenderAreaCount  VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM::perViewRenderAreaCount
+ * \param[in] pPerViewRenderAreas     VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM::pPerViewRenderAreas
+ * \param[in] renderPass              See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer             See cvkCmdBeginRenderPass2
+ * \param[in] renderArea              See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount         See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues            See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext   See cvkCmdBeginRenderPass2
+ * \param[in] contents                See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithMultiviewPerViewRenderAreasInfo(VkCommandBuffer     commandBuffer,
+                                                               const void*         pRenderPassBeginNext,
+                                                               uint32_t            perViewRenderAreaCount,
+                                                               const VkRect2D*     pPerViewRenderAreas,
+                                                               VkRenderPass        renderPass,
+                                                               VkFramebuffer       framebuffer,
+                                                               VkRect2D            renderArea,
+                                                               uint32_t            clearValueCount,
+                                                               const VkClearValue* pClearValues,
+                                                               const void*         pSubpassBeginInfoNext,
+                                                               VkSubpassContents   contents);
+/**
+ * \brief Records begin render pass 2 with VkRenderPassAttachmentBeginInfo chained.
+ *
+ * \param[in] commandBuffer          See cvkCmdBeginRenderPass2
+ * \param[in] pRenderPassBeginNext   See cvkCmdBeginRenderPass2
+ * \param[in] attachmentCount        VkRenderPassAttachmentBeginInfo::attachmentCount
+ * \param[in] pAttachments           VkRenderPassAttachmentBeginInfo::pAttachments
+ * \param[in] renderPass             See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer            See cvkCmdBeginRenderPass2
+ * \param[in] renderArea             See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount        See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues           See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext  See cvkCmdBeginRenderPass2
+ * \param[in] contents               See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithAttachmentInfo(VkCommandBuffer     commandBuffer,
+                                              const void*         pRenderPassBeginNext,
+                                              uint32_t            attachmentCount,
+                                              const VkImageView*  pAttachments,
+                                              VkRenderPass        renderPass,
+                                              VkFramebuffer       framebuffer,
+                                              VkRect2D            renderArea,
+                                              uint32_t            clearValueCount,
+                                              const VkClearValue* pClearValues,
+                                              const void*         pSubpassBeginInfoNext,
+                                              VkSubpassContents   contents);
+/**
+ * \brief Records begin render pass 2 with VkRenderPassPerformanceCountersByRegionBeginInfoARM chained.
+ *
+ * \param[in] commandBuffer          See cvkCmdBeginRenderPass2
+ * \param[out] pRenderPassBeginNext   See cvkCmdBeginRenderPass2
+ * \param[in] counterAddressCount    VkRenderPassPerformanceCountersByRegionBeginInfoARM::counterAddressCount
+ * \param[in] pCounterAddresses      VkRenderPassPerformanceCountersByRegionBeginInfoARM::pCounterAddresses
+ * \param[in] serializeRegions       VkRenderPassPerformanceCountersByRegionBeginInfoARM::serializeRegions
+ * \param[in] counterIndexCount      VkRenderPassPerformanceCountersByRegionBeginInfoARM::counterIndexCount
+ * \param[out] pCounterIndices        VkRenderPassPerformanceCountersByRegionBeginInfoARM::pCounterIndices
+ * \param[in] renderPass             See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer            See cvkCmdBeginRenderPass2
+ * \param[in] renderArea             See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount        See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues           See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext  See cvkCmdBeginRenderPass2
+ * \param[in] contents               See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithPerformanceCountersByRegionInfo(VkCommandBuffer        commandBuffer,
+                                                               void*                  pRenderPassBeginNext,
+                                                               uint32_t               counterAddressCount,
+                                                               const VkDeviceAddress* pCounterAddresses,
+                                                               VkBool32               serializeRegions,
+                                                               uint32_t               counterIndexCount,
+                                                               uint32_t*              pCounterIndices,
+                                                               VkRenderPass           renderPass,
+                                                               VkFramebuffer          framebuffer,
+                                                               VkRect2D               renderArea,
+                                                               uint32_t               clearValueCount,
+                                                               const VkClearValue*    pClearValues,
+                                                               const void*            pSubpassBeginInfoNext,
+                                                               VkSubpassContents      contents);
+/**
+ * \brief Records begin render pass 2 with VkRenderPassSampleLocationsBeginInfoEXT chained.
+ *
+ * \param[in] commandBuffer                          See cvkCmdBeginRenderPass2
+ * \param[in] pRenderPassBeginNext                   See cvkCmdBeginRenderPass2
+ * \param[in] attachmentInitialSampleLocationsCount  VkRenderPassSampleLocationsBeginInfoEXT::attachmentInitialSampleLocationsCount
+ * \param[in] pAttachmentInitialSampleLocations      VkRenderPassSampleLocationsBeginInfoEXT::pAttachmentInitialSampleLocations
+ * \param[in] postSubpassSampleLocationsCount        VkRenderPassSampleLocationsBeginInfoEXT::postSubpassSampleLocationsCount
+ * \param[in] pPostSubpassSampleLocations            VkRenderPassSampleLocationsBeginInfoEXT::pPostSubpassSampleLocations
+ * \param[in] renderPass                             See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer                            See cvkCmdBeginRenderPass2
+ * \param[in] renderArea                             See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount                        See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues                           See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext                  See cvkCmdBeginRenderPass2
+ * \param[in] contents                               See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithSampleLocationsInfo(VkCommandBuffer                       commandBuffer,
+                                                   const void*                           pRenderPassBeginNext,
+                                                   uint32_t                              attachmentInitialSampleLocationsCount,
+                                                   const VkAttachmentSampleLocationsEXT* pAttachmentInitialSampleLocations,
+                                                   uint32_t                              postSubpassSampleLocationsCount,
+                                                   const VkSubpassSampleLocationsEXT*    pPostSubpassSampleLocations,
+                                                   VkRenderPass                          renderPass,
+                                                   VkFramebuffer                         framebuffer,
+                                                   VkRect2D                              renderArea,
+                                                   uint32_t                              clearValueCount,
+                                                   const VkClearValue*                   pClearValues,
+                                                   const void*                           pSubpassBeginInfoNext,
+                                                   VkSubpassContents                     contents);
+/**
+ * \brief Records begin render pass 2 with VkRenderPassStripeBeginInfoARM chained.
+ *
+ * \param[in] commandBuffer          See cvkCmdBeginRenderPass2
+ * \param[in] pRenderPassBeginNext   See cvkCmdBeginRenderPass2
+ * \param[in] stripeInfoCount        VkRenderPassStripeBeginInfoARM::stripeInfoCount
+ * \param[in] pStripeInfos           VkRenderPassStripeBeginInfoARM::pStripeInfos
+ * \param[in] renderPass             See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer            See cvkCmdBeginRenderPass2
+ * \param[in] renderArea             See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount        See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues           See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext  See cvkCmdBeginRenderPass2
+ * \param[in] contents               See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithStripeInfo(VkCommandBuffer                  commandBuffer,
+                                          const void*                      pRenderPassBeginNext,
+                                          uint32_t                         stripeInfoCount,
+                                          const VkRenderPassStripeInfoARM* pStripeInfos,
+                                          VkRenderPass                     renderPass,
+                                          VkFramebuffer                    framebuffer,
+                                          VkRect2D                         renderArea,
+                                          uint32_t                         clearValueCount,
+                                          const VkClearValue*              pClearValues,
+                                          const void*                      pSubpassBeginInfoNext,
+                                          VkSubpassContents                contents);
+/**
+ * \brief Records begin render pass 2 with VkRenderPassTransformBeginInfoQCOM chained.
+ *
+ * \param[in] commandBuffer          See cvkCmdBeginRenderPass2
+ * \param[in] pRenderPassBeginNext   See cvkCmdBeginRenderPass2
+ * \param[in] transform              VkRenderPassTransformBeginInfoQCOM::transform
+ * \param[in] renderPass             See cvkCmdBeginRenderPass2
+ * \param[in] framebuffer            See cvkCmdBeginRenderPass2
+ * \param[in] renderArea             See cvkCmdBeginRenderPass2
+ * \param[in] clearValueCount        See cvkCmdBeginRenderPass2
+ * \param[in] pClearValues           See cvkCmdBeginRenderPass2
+ * \param[in] pSubpassBeginInfoNext  See cvkCmdBeginRenderPass2
+ * \param[in] contents               See cvkCmdBeginRenderPass2
+ *
+ * \retval None
+ */
+void cvkCmdBeginRenderPass2WithTransformInfo(VkCommandBuffer               commandBuffer,
+                                             const void*                   pRenderPassBeginNext,
+                                             VkSurfaceTransformFlagBitsKHR transform,
+                                             VkRenderPass                  renderPass,
+                                             VkFramebuffer                 framebuffer,
+                                             VkRect2D                      renderArea,
+                                             uint32_t                      clearValueCount,
+                                             const VkClearValue*           pClearValues,
+                                             const void*                   pSubpassBeginInfoNext,
+                                             VkSubpassContents             contents);
+/**
  * \brief Records begin rendering with VkDeviceGroupRenderPassBeginInfo chained.
  *
  * \param[in] commandBuffer          See cvkCmdBeginRendering
@@ -31627,6 +32409,24 @@ void cvkCmdExecuteGeneratedCommandsWithShaderInfo(VkDevice                    de
                                                   uint32_t                    maxSequenceCount,
                                                   VkDeviceAddress             sequenceCountAddress,
                                                   uint32_t                    maxDrawCount);
+/**
+ * \brief Records next subpass 2 with VkRenderPassFragmentDensityMapOffsetEndInfoEXT chained.
+ *
+ * \param[in] commandBuffer               See cvkCmdNextSubpass2
+ * \param[in] pSubpassBeginInfoNext       See cvkCmdNextSubpass2
+ * \param[in] contents                    See cvkCmdNextSubpass2
+ * \param[in] pSubpassEndInfoNext         See cvkCmdNextSubpass2
+ * \param[in] fragmentDensityOffsetCount  VkRenderPassFragmentDensityMapOffsetEndInfoEXT::fragmentDensityOffsetCount
+ * \param[in] pFragmentDensityOffsets     VkRenderPassFragmentDensityMapOffsetEndInfoEXT::pFragmentDensityOffsets
+ *
+ * \retval None
+ */
+void cvkCmdNextSubpassWithRenderPassFragmentDensityMapOffsetInfo(VkCommandBuffer   commandBuffer,
+                                                                 const void*       pSubpassBeginInfoNext,
+                                                                 VkSubpassContents contents,
+                                                                 const void*       pSubpassEndInfoNext,
+                                                                 uint32_t          fragmentDensityOffsetCount,
+                                                                 const VkOffset2D* pFragmentDensityOffsets);
 /**
  * \brief Records pipeline barrier 2 with VkMemoryRangeBarriersInfoKHR chained.
  *
@@ -53527,6 +54327,1138 @@ VkResult cvkSetupGraphicsPipelineWithRenderingInfo(VkDevice                     
                                                    VkPipelineLayout*                             pPipelineLayout,
                                                    VkPipeline*                                   pPipeline);
 /**
+ * \brief Binds vertex and fragment shader objects; the other graphics stages are left as they are.
+ *
+ * \param[in] device          See cvkCmdBindShaders
+ * \param[in] commandBuffer   See cvkCmdBindShaders
+ * \param[in] vertexShader    The vertex shader object
+ * \param[in] fragmentShader  The fragment shader object
+ *
+ * \retval None
+ */
+void cvkCmdBindGraphicsShaders(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT vertexShader, VkShaderEXT fragmentShader);
+/**
+ * \brief Creates a device-local buffer with a device address, allocating its memory with VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT.
+ *
+ * \param[in] physicalDevice         See cvkSetupDeviceLocalBuffer
+ * \param[in] device                 See cvkSetupDeviceLocalBuffer
+ * \param[in] pBufferNext            See cvkSetupDeviceLocalBuffer
+ * \param[in] flags                  See cvkSetupDeviceLocalBuffer
+ * \param[in] size                   See cvkSetupDeviceLocalBuffer
+ * \param[in] sharingMode            See cvkSetupDeviceLocalBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupDeviceLocalBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupDeviceLocalBuffer
+ * \param[in] usage                  VkBufferCreateInfo::usage; VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT is added
+ * \param[in] pMemoryNext            Optional extension chain behind the allocate flags, or NULL
+ * \param[in] pAllocator             See cvkSetupDeviceLocalBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pBufferNext,
+                                 VkBufferCreateFlags          flags,
+                                 VkDeviceSize                 size,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkBufferUsageFlags           usage,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkBuffer*                    pBuffer,
+                                 VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a host-visible, host-coherent buffer with a device address.
+ *
+ * \param[in] physicalDevice         See cvkSetupHostVisibleBuffer
+ * \param[in] device                 See cvkSetupHostVisibleBuffer
+ * \param[in] pBufferNext            See cvkSetupHostVisibleBuffer
+ * \param[in] flags                  See cvkSetupHostVisibleBuffer
+ * \param[in] size                   See cvkSetupHostVisibleBuffer
+ * \param[in] sharingMode            See cvkSetupHostVisibleBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupHostVisibleBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupHostVisibleBuffer
+ * \param[in] usage                  VkBufferCreateInfo::usage; VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT is added
+ * \param[in] pMemoryNext            Optional extension chain behind the allocate flags, or NULL
+ * \param[in] pAllocator             See cvkSetupHostVisibleBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupHostVisibleDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
+                                            VkDevice                     device,
+                                            const void*                  pBufferNext,
+                                            VkBufferCreateFlags          flags,
+                                            VkDeviceSize                 size,
+                                            VkSharingMode                sharingMode,
+                                            uint32_t                     queueFamilyIndexCount,
+                                            const uint32_t*              pQueueFamilyIndices,
+                                            VkBufferUsageFlags           usage,
+                                            const void*                  pMemoryNext,
+                                            const VkAllocationCallbacks* pAllocator,
+                                            VkBuffer*                    pBuffer,
+                                            VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates the storage buffer of an acceleration structure.
+ *
+ * \param[in] physicalDevice         See cvkSetupDeviceAddressBuffer
+ * \param[in] device                 See cvkSetupDeviceAddressBuffer
+ * \param[in] pBufferNext            See cvkSetupDeviceAddressBuffer
+ * \param[in] flags                  See cvkSetupDeviceAddressBuffer
+ * \param[in] size                   See cvkSetupDeviceAddressBuffer
+ * \param[in] sharingMode            See cvkSetupDeviceAddressBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupDeviceAddressBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupDeviceAddressBuffer
+ * \param[in] pMemoryNext            See cvkSetupDeviceAddressBuffer
+ * \param[in] pAllocator             See cvkSetupDeviceAddressBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupAccelerationStructureBuffer(VkPhysicalDevice             physicalDevice,
+                                         VkDevice                     device,
+                                         const void*                  pBufferNext,
+                                         VkBufferCreateFlags          flags,
+                                         VkDeviceSize                 size,
+                                         VkSharingMode                sharingMode,
+                                         uint32_t                     queueFamilyIndexCount,
+                                         const uint32_t*              pQueueFamilyIndices,
+                                         const void*                  pMemoryNext,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkBuffer*                    pBuffer,
+                                         VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a scratch buffer for acceleration structure builds.
+ *
+ * \param[in] physicalDevice         See cvkSetupDeviceAddressBuffer
+ * \param[in] device                 See cvkSetupDeviceAddressBuffer
+ * \param[in] pBufferNext            See cvkSetupDeviceAddressBuffer
+ * \param[in] flags                  See cvkSetupDeviceAddressBuffer
+ * \param[in] size                   See cvkSetupDeviceAddressBuffer
+ * \param[in] sharingMode            See cvkSetupDeviceAddressBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupDeviceAddressBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupDeviceAddressBuffer
+ * \param[in] pMemoryNext            See cvkSetupDeviceAddressBuffer
+ * \param[in] pAllocator             See cvkSetupDeviceAddressBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupScratchBuffer(VkPhysicalDevice             physicalDevice,
+                           VkDevice                     device,
+                           const void*                  pBufferNext,
+                           VkBufferCreateFlags          flags,
+                           VkDeviceSize                 size,
+                           VkSharingMode                sharingMode,
+                           uint32_t                     queueFamilyIndexCount,
+                           const uint32_t*              pQueueFamilyIndices,
+                           const void*                  pMemoryNext,
+                           const VkAllocationCallbacks* pAllocator,
+                           VkBuffer*                    pBuffer,
+                           VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a host-visible shader binding table buffer.
+ *
+ * \param[in] physicalDevice         See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] device                 See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pBufferNext            See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] flags                  See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] size                   See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] sharingMode            See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pMemoryNext            See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pAllocator             See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupShaderBindingTableBuffer(VkPhysicalDevice             physicalDevice,
+                                      VkDevice                     device,
+                                      const void*                  pBufferNext,
+                                      VkBufferCreateFlags          flags,
+                                      VkDeviceSize                 size,
+                                      VkSharingMode                sharingMode,
+                                      uint32_t                     queueFamilyIndexCount,
+                                      const uint32_t*              pQueueFamilyIndices,
+                                      const void*                  pMemoryNext,
+                                      const VkAllocationCallbacks* pAllocator,
+                                      VkBuffer*                    pBuffer,
+                                      VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a host-visible buffer for acceleration structure build inputs (vertices, indices, transforms, AABBs, instances).
+ *
+ * \param[in] physicalDevice         See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] device                 See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pBufferNext            See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] flags                  See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] size                   See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] sharingMode            See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pMemoryNext            See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[in] pAllocator             See cvkSetupHostVisibleDeviceAddressBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupAccelerationStructureBuildInputBuffer(VkPhysicalDevice             physicalDevice,
+                                                   VkDevice                     device,
+                                                   const void*                  pBufferNext,
+                                                   VkBufferCreateFlags          flags,
+                                                   VkDeviceSize                 size,
+                                                   VkSharingMode                sharingMode,
+                                                   uint32_t                     queueFamilyIndexCount,
+                                                   const uint32_t*              pQueueFamilyIndices,
+                                                   const void*                  pMemoryNext,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkBuffer*                    pBuffer,
+                                                   VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a bottom-level acceleration structure over a buffer range.
+ *
+ * \param[in] device                      See cvkCreateAccelerationStructure
+ * \param[in] pAccelerationStructureNext  See cvkCreateAccelerationStructure
+ * \param[in] createFlags                 See cvkCreateAccelerationStructure
+ * \param[in] buffer                      See cvkCreateAccelerationStructure
+ * \param[in] offset                      See cvkCreateAccelerationStructure
+ * \param[in] size                        See cvkCreateAccelerationStructure
+ * \param[in] pAllocator                  See cvkCreateAccelerationStructure
+ * \param[out] pAccelerationStructure      Receives the created VkAccelerationStructureKHR
+ *
+ * \retval None
+ */
+void cvkCreateBottomLevelAccelerationStructure(VkDevice                              device,
+                                               const void*                           pAccelerationStructureNext,
+                                               VkAccelerationStructureCreateFlagsKHR createFlags,
+                                               VkBuffer                              buffer,
+                                               VkDeviceSize                          offset,
+                                               VkDeviceSize                          size,
+                                               const VkAllocationCallbacks*          pAllocator,
+                                               VkAccelerationStructureKHR*           pAccelerationStructure);
+/**
+ * \brief Creates a top-level acceleration structure over a buffer range.
+ *
+ * \param[in] device                      See cvkCreateAccelerationStructure
+ * \param[in] pAccelerationStructureNext  See cvkCreateAccelerationStructure
+ * \param[in] createFlags                 See cvkCreateAccelerationStructure
+ * \param[in] buffer                      See cvkCreateAccelerationStructure
+ * \param[in] offset                      See cvkCreateAccelerationStructure
+ * \param[in] size                        See cvkCreateAccelerationStructure
+ * \param[in] pAllocator                  See cvkCreateAccelerationStructure
+ * \param[out] pAccelerationStructure      Receives the created VkAccelerationStructureKHR
+ *
+ * \retval None
+ */
+void cvkCreateTopLevelAccelerationStructure(VkDevice                              device,
+                                            const void*                           pAccelerationStructureNext,
+                                            VkAccelerationStructureCreateFlagsKHR createFlags,
+                                            VkBuffer                              buffer,
+                                            VkDeviceSize                          offset,
+                                            VkDeviceSize                          size,
+                                            const VkAllocationCallbacks*          pAllocator,
+                                            VkAccelerationStructureKHR*           pAccelerationStructure);
+/**
+ * \brief Initializes a geometry of type VK_GEOMETRY_TYPE_TRIANGLES_KHR.
+ *
+ * \param[out] pInfo      Receives the initialized VkAccelerationStructureGeometryKHR
+ * \param[in] pNext      See cvkInitAccelerationStructureGeometry
+ * \param[in] triangles  See cvkInitAccelerationStructureGeometryDataTriangles
+ * \param[in] flags      See cvkInitAccelerationStructureGeometry
+ *
+ * \retval None
+ */
+void cvkInitTrianglesAccelerationStructureGeometry(VkAccelerationStructureGeometryKHR* pInfo, const void* pNext, VkAccelerationStructureGeometryTrianglesDataKHR triangles, VkGeometryFlagsKHR flags);
+/**
+ * \brief Initializes a geometry of type VK_GEOMETRY_TYPE_AABBS_KHR.
+ *
+ * \param[out] pInfo  Receives the initialized VkAccelerationStructureGeometryKHR
+ * \param[in] pNext  See cvkInitAccelerationStructureGeometry
+ * \param[in] aabbs  See cvkInitAccelerationStructureGeometryDataAabbs
+ * \param[in] flags  See cvkInitAccelerationStructureGeometry
+ *
+ * \retval None
+ */
+void cvkInitAabbsAccelerationStructureGeometry(VkAccelerationStructureGeometryKHR* pInfo, const void* pNext, VkAccelerationStructureGeometryAabbsDataKHR aabbs, VkGeometryFlagsKHR flags);
+/**
+ * \brief Initializes a geometry of type VK_GEOMETRY_TYPE_INSTANCES_KHR.
+ *
+ * \param[out] pInfo      Receives the initialized VkAccelerationStructureGeometryKHR
+ * \param[in] pNext      See cvkInitAccelerationStructureGeometry
+ * \param[in] instances  See cvkInitAccelerationStructureGeometryDataInstances
+ * \param[in] flags      See cvkInitAccelerationStructureGeometry
+ *
+ * \retval None
+ */
+void cvkInitInstancesAccelerationStructureGeometry(VkAccelerationStructureGeometryKHR* pInfo, const void* pNext, VkAccelerationStructureGeometryInstancesDataKHR instances, VkGeometryFlagsKHR flags);
+/**
+ * \brief Initializes triangle geometry data from device addresses; a zero index address means non-indexed, a zero transform address no transform.
+ *
+ * \param[out] pInfo                   Receives the initialized VkAccelerationStructureGeometryTrianglesDataKHR
+ * \param[in] pNext                   See cvkInitAccelerationStructureGeometryTrianglesData
+ * \param[in] vertexFormat            See cvkInitAccelerationStructureGeometryTrianglesData
+ * \param[in] vertexStride            See cvkInitAccelerationStructureGeometryTrianglesData
+ * \param[in] maxVertex               See cvkInitAccelerationStructureGeometryTrianglesData
+ * \param[in] indexType               See cvkInitAccelerationStructureGeometryTrianglesData
+ * \param[in] vertexDeviceAddress     Device address of the vertices
+ * \param[in] indexDeviceAddress      Device address of the indices, or 0
+ * \param[in] transformDeviceAddress  Device address of the VkTransformMatrixKHR, or 0
+ *
+ * \retval None
+ */
+void cvkInitDeviceAccelerationStructureGeometryTrianglesData(VkAccelerationStructureGeometryTrianglesDataKHR* pInfo,
+                                                             const void*                                      pNext,
+                                                             VkFormat                                         vertexFormat,
+                                                             VkDeviceSize                                     vertexStride,
+                                                             uint32_t                                         maxVertex,
+                                                             VkIndexType                                      indexType,
+                                                             VkDeviceAddress                                  vertexDeviceAddress,
+                                                             VkDeviceAddress                                  indexDeviceAddress,
+                                                             VkDeviceAddress                                  transformDeviceAddress);
+/**
+ * \brief Initializes instance geometry data from the device address of a tightly packed VkAccelerationStructureInstanceKHR array.
+ *
+ * \param[out] pInfo                   Receives the initialized VkAccelerationStructureGeometryInstancesDataKHR
+ * \param[in] pNext                   See cvkInitAccelerationStructureGeometryInstancesData
+ * \param[in] instancesDeviceAddress  Device address of the instances
+ *
+ * \retval None
+ */
+void cvkInitDeviceAccelerationStructureGeometryInstancesData(VkAccelerationStructureGeometryInstancesDataKHR* pInfo, const void* pNext, VkDeviceAddress instancesDeviceAddress);
+/**
+ * \brief Initializes AABB geometry data from a device address.
+ *
+ * \param[out] pInfo               Receives the initialized VkAccelerationStructureGeometryAabbsDataKHR
+ * \param[in] pNext               See cvkInitAccelerationStructureGeometryAabbsData
+ * \param[in] stride              See cvkInitAccelerationStructureGeometryAabbsData
+ * \param[in] aabbsDeviceAddress  Device address of the VkAabbPositionsKHR array
+ *
+ * \retval None
+ */
+void cvkInitDeviceAccelerationStructureGeometryAabbsData(VkAccelerationStructureGeometryAabbsDataKHR* pInfo, const void* pNext, VkDeviceSize stride, VkDeviceAddress aabbsDeviceAddress);
+/**
+ * \brief Records one acceleration structure build.
+ *
+ * \param[in] device                    See cvkCmdBuildAccelerationStructures
+ * \param[in] commandBuffer             See cvkCmdBuildAccelerationStructures
+ * \param[in] pNext                     See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] type                      See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] flags                     See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] mode                      See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] srcAccelerationStructure  See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] dstAccelerationStructure  See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] geometryCount             See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] pGeometries               See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] ppGeometries              See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] scratchData               See cvkInitAccelerationStructureBuildGeometryInfo
+ * \param[in] pBuildRangeInfos          One build range per geometry
+ *
+ * \retval None
+ */
+void cvkCmdBuildAccelerationStructure(VkDevice                                         device,
+                                      VkCommandBuffer                                  commandBuffer,
+                                      const void*                                      pNext,
+                                      VkAccelerationStructureTypeKHR                   type,
+                                      VkBuildAccelerationStructureFlagsKHR             flags,
+                                      VkBuildAccelerationStructureModeKHR              mode,
+                                      VkAccelerationStructureKHR                       srcAccelerationStructure,
+                                      VkAccelerationStructureKHR                       dstAccelerationStructure,
+                                      uint32_t                                         geometryCount,
+                                      const VkAccelerationStructureGeometryKHR*        pGeometries,
+                                      const VkAccelerationStructureGeometryKHR* const* ppGeometries,
+                                      VkDeviceOrHostAddressKHR                         scratchData,
+                                      const VkAccelerationStructureBuildRangeInfoKHR*  pBuildRangeInfos);
+/**
+ * \brief Records a full build of an acceleration structure from device-address geometries into device scratch memory.
+ *
+ * \param[in] device                    See cvkCmdBuildAccelerationStructure
+ * \param[in] commandBuffer             See cvkCmdBuildAccelerationStructure
+ * \param[in] pNext                     See cvkCmdBuildAccelerationStructure
+ * \param[in] type                      See cvkCmdBuildAccelerationStructure
+ * \param[in] flags                     See cvkCmdBuildAccelerationStructure
+ * \param[in] dstAccelerationStructure  See cvkCmdBuildAccelerationStructure
+ * \param[in] geometryCount             See cvkCmdBuildAccelerationStructure
+ * \param[in] pGeometries               See cvkCmdBuildAccelerationStructure
+ * \param[in] pBuildRangeInfos          See cvkCmdBuildAccelerationStructure
+ * \param[in] scratchDeviceAddress      Aligned scratch device address, as cvkSetupAccelerationStructure returns
+ *
+ * \retval None
+ */
+void cvkCmdBuildDeviceAccelerationStructure(VkDevice                                        device,
+                                            VkCommandBuffer                                 commandBuffer,
+                                            const void*                                     pNext,
+                                            VkAccelerationStructureTypeKHR                  type,
+                                            VkBuildAccelerationStructureFlagsKHR            flags,
+                                            VkAccelerationStructureKHR                      dstAccelerationStructure,
+                                            uint32_t                                        geometryCount,
+                                            const VkAccelerationStructureGeometryKHR*       pGeometries,
+                                            const VkAccelerationStructureBuildRangeInfoKHR* pBuildRangeInfos,
+                                            VkDeviceAddress                                 scratchDeviceAddress);
+/**
+ * \brief Records a full bottom-level build.
+ *
+ * \param[in] device                    See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] commandBuffer             See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] pNext                     See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] flags                     See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] dstAccelerationStructure  See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] geometryCount             See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] pGeometries               See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] pBuildRangeInfos          See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] scratchDeviceAddress      See cvkCmdBuildDeviceAccelerationStructure
+ *
+ * \retval None
+ */
+void cvkCmdBuildDeviceBottomLevelAccelerationStructure(VkDevice                                        device,
+                                                       VkCommandBuffer                                 commandBuffer,
+                                                       const void*                                     pNext,
+                                                       VkBuildAccelerationStructureFlagsKHR            flags,
+                                                       VkAccelerationStructureKHR                      dstAccelerationStructure,
+                                                       uint32_t                                        geometryCount,
+                                                       const VkAccelerationStructureGeometryKHR*       pGeometries,
+                                                       const VkAccelerationStructureBuildRangeInfoKHR* pBuildRangeInfos,
+                                                       VkDeviceAddress                                 scratchDeviceAddress);
+/**
+ * \brief Records a full top-level build.
+ *
+ * \param[in] device                    See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] commandBuffer             See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] pNext                     See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] flags                     See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] dstAccelerationStructure  See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] geometryCount             See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] pGeometries               See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] pBuildRangeInfos          See cvkCmdBuildDeviceAccelerationStructure
+ * \param[in] scratchDeviceAddress      See cvkCmdBuildDeviceAccelerationStructure
+ *
+ * \retval None
+ */
+void cvkCmdBuildDeviceTopLevelAccelerationStructure(VkDevice                                        device,
+                                                    VkCommandBuffer                                 commandBuffer,
+                                                    const void*                                     pNext,
+                                                    VkBuildAccelerationStructureFlagsKHR            flags,
+                                                    VkAccelerationStructureKHR                      dstAccelerationStructure,
+                                                    uint32_t                                        geometryCount,
+                                                    const VkAccelerationStructureGeometryKHR*       pGeometries,
+                                                    const VkAccelerationStructureBuildRangeInfoKHR* pBuildRangeInfos,
+                                                    VkDeviceAddress                                 scratchDeviceAddress);
+/**
+ * \brief Records the barrier between an acceleration structure build and a subsequent build reading it or a ray tracing shader using it.
+ *
+ * \param[in] commandBuffer  See cvkCmdMemoryBarrier
+ *
+ * \retval None
+ */
+void cvkCmdAccelerationStructureBuildBarrier(VkCommandBuffer commandBuffer);
+/**
+ * \brief Writes one acceleration structure descriptor.
+ *
+ * \param[in] device                 See cvkUpdateDescriptorSet
+ * \param[in] pNext                  See cvkInitWriteDescriptorSetAccelerationStructure
+ * \param[in] dstSet                 See cvkUpdateDescriptorSet
+ * \param[in] dstBinding             See cvkUpdateDescriptorSet
+ * \param[in] dstArrayElement        See cvkUpdateDescriptorSet
+ * \param[in] accelerationStructure  The acceleration structure to write
+ *
+ * \retval None
+ */
+void cvkUpdateAccelerationStructureDescriptorSet(VkDevice                   device,
+                                                 const void*                pNext,
+                                                 VkDescriptorSet            dstSet,
+                                                 uint32_t                   dstBinding,
+                                                 uint32_t                   dstArrayElement,
+                                                 VkAccelerationStructureKHR accelerationStructure);
+/**
+ * \brief Binds a ray tracing pipeline.
+ *
+ * \param[in] commandBuffer  See cvkCmdBindPipeline
+ * \param[in] pipeline       See cvkCmdBindPipeline
+ *
+ * \retval None
+ */
+void cvkCmdBindRayTracingPipeline(VkCommandBuffer commandBuffer, VkPipeline pipeline);
+/**
+ * \brief Binds descriptor sets to the ray tracing bind point.
+ *
+ * \param[in] commandBuffer       See cvkCmdBindDescriptorSets
+ * \param[in] layout              See cvkCmdBindDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindDescriptorSets
+ *
+ * \retval None
+ */
+void cvkCmdBindRayTracingDescriptorSets(VkCommandBuffer        commandBuffer,
+                                        VkPipelineLayout       layout,
+                                        uint32_t               firstSet,
+                                        uint32_t               descriptorSetCount,
+                                        const VkDescriptorSet* pDescriptorSets,
+                                        uint32_t               dynamicOffsetCount,
+                                        const uint32_t*        pDynamicOffsets);
+/**
+ * \brief Pushes constants for every ray tracing stage.
+ *
+ * \param[in] commandBuffer  See cvkCmdPushConstants
+ * \param[in] layout         See cvkCmdPushConstants
+ * \param[in] offset         See cvkCmdPushConstants
+ * \param[in] size           See cvkCmdPushConstants
+ * \param[in] pValues        See cvkCmdPushConstants
+ *
+ * \retval None
+ */
+void cvkCmdPushRayTracingConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues);
+/**
+ * \brief Creates a pipeline layout for every ray tracing stage with at most one push constant range.
+ *
+ * \param[in] device               See cvkCreatePipelineLayout
+ * \param[in] pPipelineLayoutNext  See cvkCreatePipelineLayout
+ * \param[in] flags                See cvkCreatePipelineLayout
+ * \param[in] setLayoutCount       See cvkCreatePipelineLayout
+ * \param[in] pSetLayouts          See cvkCreatePipelineLayout
+ * \param[in] pushConstantOffset   Offset of the push constant range
+ * \param[in] pushConstantSize     Size of the push constant range, zero for none
+ * \param[in] pAllocator           See cvkCreatePipelineLayout
+ * \param[out] pPipelineLayout      Receives the created VkPipelineLayout
+ *
+ * \retval None
+ */
+void cvkCreateRayTracingPipelineLayout(VkDevice                     device,
+                                       const void*                  pPipelineLayoutNext,
+                                       VkPipelineLayoutCreateFlags  flags,
+                                       uint32_t                     setLayoutCount,
+                                       const VkDescriptorSetLayout* pSetLayouts,
+                                       uint32_t                     pushConstantOffset,
+                                       uint32_t                     pushConstantSize,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       VkPipelineLayout*            pPipelineLayout);
+/**
+ * \brief Initializes a general shader group (raygen, miss, or callable) of one stage.
+ *
+ * \param[out] pInfo          Receives the initialized VkRayTracingShaderGroupCreateInfoKHR
+ * \param[in] pNext          See cvkInitRayTracingShaderGroupCreateInfo
+ * \param[in] generalShader  See cvkInitRayTracingShaderGroupCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitGeneralRayTracingShaderGroupCreateInfo(VkRayTracingShaderGroupCreateInfoKHR* pInfo, const void* pNext, uint32_t generalShader);
+/**
+ * \brief Initializes a triangles hit group of a closest hit and an optional any hit stage.
+ *
+ * \param[out] pInfo             Receives the initialized VkRayTracingShaderGroupCreateInfoKHR
+ * \param[in] pNext             See cvkInitRayTracingShaderGroupCreateInfo
+ * \param[in] closestHitShader  See cvkInitRayTracingShaderGroupCreateInfo
+ * \param[in] anyHitShader      See cvkInitRayTracingShaderGroupCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitTrianglesHitRayTracingShaderGroupCreateInfo(VkRayTracingShaderGroupCreateInfoKHR* pInfo, const void* pNext, uint32_t closestHitShader, uint32_t anyHitShader);
+/**
+ * \brief Initializes a procedural hit group of an intersection, a closest hit, and an optional any hit stage.
+ *
+ * \param[out] pInfo               Receives the initialized VkRayTracingShaderGroupCreateInfoKHR
+ * \param[in] pNext               See cvkInitRayTracingShaderGroupCreateInfo
+ * \param[in] closestHitShader    See cvkInitRayTracingShaderGroupCreateInfo
+ * \param[in] anyHitShader        See cvkInitRayTracingShaderGroupCreateInfo
+ * \param[in] intersectionShader  See cvkInitRayTracingShaderGroupCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitProceduralHitRayTracingShaderGroupCreateInfo(VkRayTracingShaderGroupCreateInfoKHR* pInfo, const void* pNext, uint32_t closestHitShader, uint32_t anyHitShader, uint32_t intersectionShader);
+/**
+ * \brief Creates raygen, miss, and closest hit shader modules, three shader groups (general, general, triangles hit), a ray tracing pipeline layout, and a ray tracing pipeline; the groups are in shader binding table order.
+ *
+ * \param[in] device                         See cvkCreateShaderModule
+ * \param[in] pPipelineLayoutNext            See cvkCreateRayTracingPipelineLayout
+ * \param[in] setLayoutCount                 See cvkCreateRayTracingPipelineLayout
+ * \param[in] pSetLayouts                    See cvkCreateRayTracingPipelineLayout
+ * \param[in] pushConstantOffset             See cvkCreateRayTracingPipelineLayout
+ * \param[in] pushConstantSize               See cvkCreateRayTracingPipelineLayout
+ * \param[in] pipelineCache                  See cvkCreateRayTracingPipeline
+ * \param[in] pPipelineNext                  See cvkCreateRayTracingPipeline
+ * \param[in] flags                          See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth   See cvkCreateRayTracingPipeline
+ * \param[in] shaderModuleFlags              VkShaderModuleCreateInfo::flags of every module
+ * \param[in] pipelineLayoutFlags            VkPipelineLayoutCreateInfo::flags
+ * \param[in] stageFlags                     VkPipelineShaderStageCreateInfo::flags of every stage
+ * \param[in] pRaygenShaderModuleNext        Optional extension chain for the raygen VkShaderModuleCreateInfo, or NULL
+ * \param[in] raygenCodeSize                 Size in bytes of the raygen shader code
+ * \param[in] pRaygenCode                    Raygen shader SPIR-V code
+ * \param[in] pRaygenStageNext               Optional extension chain for the raygen VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pRaygenEntryPoint              Entry point name of the raygen shader
+ * \param[in] pRaygenSpecializationInfo      Specialization of the raygen shader, or NULL
+ * \param[in] pMissShaderModuleNext          Optional extension chain for the miss VkShaderModuleCreateInfo, or NULL
+ * \param[in] missCodeSize                   Size in bytes of the miss shader code
+ * \param[in] pMissCode                      Miss shader SPIR-V code
+ * \param[in] pMissStageNext                 Optional extension chain for the miss VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pMissEntryPoint                Entry point name of the miss shader
+ * \param[in] pMissSpecializationInfo        Specialization of the miss shader, or NULL
+ * \param[in] pClosestHitShaderModuleNext    Optional extension chain for the closest hit VkShaderModuleCreateInfo, or NULL
+ * \param[in] closestHitCodeSize             Size in bytes of the closest hit shader code
+ * \param[in] pClosestHitCode                Closest hit shader SPIR-V code
+ * \param[in] pClosestHitStageNext           Optional extension chain for the closest hit VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pClosestHitEntryPoint          Entry point name of the closest hit shader
+ * \param[in] pClosestHitSpecializationInfo  Specialization of the closest hit shader, or NULL
+ * \param[in] pAllocator                     See cvkCreateShaderModule
+ * \param[out] pRaygenShaderModule            Receives the raygenShaderModule
+ * \param[out] pMissShaderModule              Receives the missShaderModule
+ * \param[out] pClosestHitShaderModule        Receives the closestHitShaderModule
+ * \param[out] pPipelineLayout                Receives the created VkPipelineLayout
+ * \param[out] pPipeline                      Receives the created VkPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkSetupRayTracingPipeline(VkDevice                         device,
+                                    const void*                      pPipelineLayoutNext,
+                                    uint32_t                         setLayoutCount,
+                                    const VkDescriptorSetLayout*     pSetLayouts,
+                                    uint32_t                         pushConstantOffset,
+                                    uint32_t                         pushConstantSize,
+                                    VkPipelineCache                  pipelineCache,
+                                    const void*                      pPipelineNext,
+                                    VkPipelineCreateFlags            flags,
+                                    uint32_t                         maxPipelineRayRecursionDepth,
+                                    VkShaderModuleCreateFlags        shaderModuleFlags,
+                                    VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
+                                    VkPipelineShaderStageCreateFlags stageFlags,
+                                    const void*                      pRaygenShaderModuleNext,
+                                    size_t                           raygenCodeSize,
+                                    const uint32_t*                  pRaygenCode,
+                                    const void*                      pRaygenStageNext,
+                                    const char*                      pRaygenEntryPoint,
+                                    const VkSpecializationInfo*      pRaygenSpecializationInfo,
+                                    const void*                      pMissShaderModuleNext,
+                                    size_t                           missCodeSize,
+                                    const uint32_t*                  pMissCode,
+                                    const void*                      pMissStageNext,
+                                    const char*                      pMissEntryPoint,
+                                    const VkSpecializationInfo*      pMissSpecializationInfo,
+                                    const void*                      pClosestHitShaderModuleNext,
+                                    size_t                           closestHitCodeSize,
+                                    const uint32_t*                  pClosestHitCode,
+                                    const void*                      pClosestHitStageNext,
+                                    const char*                      pClosestHitEntryPoint,
+                                    const VkSpecializationInfo*      pClosestHitSpecializationInfo,
+                                    const VkAllocationCallbacks*     pAllocator,
+                                    VkShaderModule*                  pRaygenShaderModule,
+                                    VkShaderModule*                  pMissShaderModule,
+                                    VkShaderModule*                  pClosestHitShaderModule,
+                                    VkPipelineLayout*                pPipelineLayout,
+                                    VkPipeline*                      pPipeline);
+/**
+ * \brief Returns the shader group handle size rounded up to the handle alignment: the stride of a shader binding table.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceRayTracingPipelineProperties
+ *
+ * \return The VkDeviceSize returned by the command.
+ */
+VkDeviceSize cvkGetPhysicalDeviceRayTracingShaderGroupHandleStride(VkPhysicalDevice physicalDevice);
+/**
+ * \brief 2D form of cvkCmdTraceRays.
+ *
+ * \param[in] device                       See cvkCmdTraceRays
+ * \param[in] commandBuffer                See cvkCmdTraceRays
+ * \param[in] pRaygenShaderBindingTable    See cvkCmdTraceRays
+ * \param[in] pMissShaderBindingTable      See cvkCmdTraceRays
+ * \param[in] pHitShaderBindingTable       See cvkCmdTraceRays
+ * \param[in] pCallableShaderBindingTable  See cvkCmdTraceRays
+ * \param[in] extent2D                     Ray grid without depth
+ *
+ * \retval None
+ */
+void cvkCmdTraceRays2D(VkDevice                               device,
+                       VkCommandBuffer                        commandBuffer,
+                       const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                       const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                       const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                       const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                       VkExtent2D                             extent2D);
+/**
+ * \brief Binds a ray tracing pipeline, its descriptor sets, and push constants, then traces rays.
+ *
+ * \param[in] device                       See cvkCmdTraceRays
+ * \param[in] commandBuffer                See cvkCmdBindRayTracingPipeline
+ * \param[in] pipeline                     See cvkCmdBindRayTracingPipeline
+ * \param[in] layout                       See cvkCmdBindRayTracingDescriptorSets
+ * \param[in] firstSet                     See cvkCmdBindRayTracingDescriptorSets
+ * \param[in] descriptorSetCount           See cvkCmdBindRayTracingDescriptorSets
+ * \param[in] pDescriptorSets              See cvkCmdBindRayTracingDescriptorSets
+ * \param[in] dynamicOffsetCount           See cvkCmdBindRayTracingDescriptorSets
+ * \param[in] pDynamicOffsets              See cvkCmdBindRayTracingDescriptorSets
+ * \param[in] pRaygenShaderBindingTable    See cvkCmdTraceRays
+ * \param[in] pMissShaderBindingTable      See cvkCmdTraceRays
+ * \param[in] pHitShaderBindingTable       See cvkCmdTraceRays
+ * \param[in] pCallableShaderBindingTable  See cvkCmdTraceRays
+ * \param[in] width                        See cvkCmdTraceRays
+ * \param[in] height                       See cvkCmdTraceRays
+ * \param[in] depth                        See cvkCmdTraceRays
+ * \param[in] pushConstantOffset           Offset of the push constants
+ * \param[in] pushConstantSize             Size of the push constants
+ * \param[in] pPushConstants               Push constant bytes
+ *
+ * \retval None
+ */
+void cvkCmdTraceRayTracingRays(VkDevice                               device,
+                               VkCommandBuffer                        commandBuffer,
+                               VkPipeline                             pipeline,
+                               VkPipelineLayout                       layout,
+                               uint32_t                               firstSet,
+                               uint32_t                               descriptorSetCount,
+                               const VkDescriptorSet*                 pDescriptorSets,
+                               uint32_t                               dynamicOffsetCount,
+                               const uint32_t*                        pDynamicOffsets,
+                               const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                               const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                               const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                               const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                               uint32_t                               width,
+                               uint32_t                               height,
+                               uint32_t                               depth,
+                               uint32_t                               pushConstantOffset,
+                               uint32_t                               pushConstantSize,
+                               const void*                            pPushConstants);
+/**
+ * \brief 2D form of cvkCmdTraceRayTracingRays.
+ *
+ * \param[in] device                       See cvkCmdTraceRayTracingRays
+ * \param[in] commandBuffer                See cvkCmdTraceRayTracingRays
+ * \param[in] pipeline                     See cvkCmdTraceRayTracingRays
+ * \param[in] layout                       See cvkCmdTraceRayTracingRays
+ * \param[in] firstSet                     See cvkCmdTraceRayTracingRays
+ * \param[in] descriptorSetCount           See cvkCmdTraceRayTracingRays
+ * \param[in] pDescriptorSets              See cvkCmdTraceRayTracingRays
+ * \param[in] dynamicOffsetCount           See cvkCmdTraceRayTracingRays
+ * \param[in] pDynamicOffsets              See cvkCmdTraceRayTracingRays
+ * \param[in] pRaygenShaderBindingTable    See cvkCmdTraceRayTracingRays
+ * \param[in] pMissShaderBindingTable      See cvkCmdTraceRayTracingRays
+ * \param[in] pHitShaderBindingTable       See cvkCmdTraceRayTracingRays
+ * \param[in] pCallableShaderBindingTable  See cvkCmdTraceRayTracingRays
+ * \param[in] pushConstantOffset           See cvkCmdTraceRayTracingRays
+ * \param[in] pushConstantSize             See cvkCmdTraceRayTracingRays
+ * \param[in] pPushConstants               See cvkCmdTraceRayTracingRays
+ * \param[in] extent2D                     Ray grid without depth
+ *
+ * \retval None
+ */
+void cvkCmdTraceRayTracingRays2D(VkDevice                               device,
+                                 VkCommandBuffer                        commandBuffer,
+                                 VkPipeline                             pipeline,
+                                 VkPipelineLayout                       layout,
+                                 uint32_t                               firstSet,
+                                 uint32_t                               descriptorSetCount,
+                                 const VkDescriptorSet*                 pDescriptorSets,
+                                 uint32_t                               dynamicOffsetCount,
+                                 const uint32_t*                        pDynamicOffsets,
+                                 const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable,
+                                 const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+                                 const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+                                 const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
+                                 uint32_t                               pushConstantOffset,
+                                 uint32_t                               pushConstantSize,
+                                 const void*                            pPushConstants,
+                                 VkExtent2D                             extent2D);
+/**
+ * \brief Pushes constants for the task, mesh, and fragment stages.
+ *
+ * \param[in] commandBuffer  See cvkCmdPushConstants
+ * \param[in] layout         See cvkCmdPushConstants
+ * \param[in] offset         See cvkCmdPushConstants
+ * \param[in] size           See cvkCmdPushConstants
+ * \param[in] pValues        See cvkCmdPushConstants
+ *
+ * \retval None
+ */
+void cvkCmdPushMeshShadingConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues);
+/**
+ * \brief Creates a pipeline layout for the task, mesh, and fragment stages with at most one push constant range.
+ *
+ * \param[in] device               See cvkCreatePipelineLayout
+ * \param[in] pPipelineLayoutNext  See cvkCreatePipelineLayout
+ * \param[in] flags                See cvkCreatePipelineLayout
+ * \param[in] setLayoutCount       See cvkCreatePipelineLayout
+ * \param[in] pSetLayouts          See cvkCreatePipelineLayout
+ * \param[in] pushConstantOffset   Offset of the push constant range
+ * \param[in] pushConstantSize     Size of the push constant range, zero for none
+ * \param[in] pAllocator           See cvkCreatePipelineLayout
+ * \param[out] pPipelineLayout      Receives the created VkPipelineLayout
+ *
+ * \retval None
+ */
+void cvkCreateMeshShadingPipelineLayout(VkDevice                     device,
+                                        const void*                  pPipelineLayoutNext,
+                                        VkPipelineLayoutCreateFlags  flags,
+                                        uint32_t                     setLayoutCount,
+                                        const VkDescriptorSetLayout* pSetLayouts,
+                                        uint32_t                     pushConstantOffset,
+                                        uint32_t                     pushConstantSize,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkPipelineLayout*            pPipelineLayout);
+/**
+ * \brief Creates mesh and fragment shader modules, a mesh shading pipeline layout, and a graphics pipeline without vertex input or input assembly state.
+ *
+ * \param[in] device                       See cvkCreateShaderModule
+ * \param[in] pPipelineLayoutNext          See cvkCreateMeshShadingPipelineLayout
+ * \param[in] setLayoutCount               See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pSetLayouts                  See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pushConstantOffset           See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pushConstantSize             See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pipelineCache                See cvkCreateGraphicsPipeline
+ * \param[in] pPipelineNext                See cvkCreateGraphicsPipeline
+ * \param[in] flags                        See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState               See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState          See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState            See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState           See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState             See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                   See cvkCreateGraphicsPipeline
+ * \param[in] subpass                      See cvkCreateGraphicsPipeline
+ * \param[in] shaderModuleFlags            VkShaderModuleCreateInfo::flags of every module
+ * \param[in] pipelineLayoutFlags          VkPipelineLayoutCreateInfo::flags
+ * \param[in] stageFlags                   VkPipelineShaderStageCreateInfo::flags of every stage
+ * \param[in] pMeshShaderModuleNext        Optional extension chain for the mesh VkShaderModuleCreateInfo, or NULL
+ * \param[in] meshCodeSize                 Size in bytes of the mesh shader code
+ * \param[in] pMeshCode                    Mesh shader SPIR-V code
+ * \param[in] pMeshStageNext               Optional extension chain for the mesh VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pMeshEntryPoint              Entry point name of the mesh shader
+ * \param[in] pMeshSpecializationInfo      Specialization of the mesh shader, or NULL
+ * \param[in] pFragmentShaderModuleNext    Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL
+ * \param[in] fragmentCodeSize             Size in bytes of the fragment shader code
+ * \param[in] pFragmentCode                Fragment shader SPIR-V code
+ * \param[in] pFragmentStageNext           Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pFragmentEntryPoint          Entry point name of the fragment shader
+ * \param[in] pFragmentSpecializationInfo  Specialization of the fragment shader, or NULL
+ * \param[in] pAllocator                   See cvkCreateShaderModule
+ * \param[out] pMeshShaderModule            Receives the meshShaderModule
+ * \param[out] pFragmentShaderModule        Receives the fragmentShaderModule
+ * \param[out] pPipelineLayout              Receives the created VkPipelineLayout
+ * \param[out] pPipeline                    Receives the created VkPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkSetupMeshShadingPipeline(VkDevice                                      device,
+                                     const void*                                   pPipelineLayoutNext,
+                                     uint32_t                                      setLayoutCount,
+                                     const VkDescriptorSetLayout*                  pSetLayouts,
+                                     uint32_t                                      pushConstantOffset,
+                                     uint32_t                                      pushConstantSize,
+                                     VkPipelineCache                               pipelineCache,
+                                     const void*                                   pPipelineNext,
+                                     VkPipelineCreateFlags                         flags,
+                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                     VkRenderPass                                  renderPass,
+                                     uint32_t                                      subpass,
+                                     VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                     VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                     VkPipelineShaderStageCreateFlags              stageFlags,
+                                     const void*                                   pMeshShaderModuleNext,
+                                     size_t                                        meshCodeSize,
+                                     const uint32_t*                               pMeshCode,
+                                     const void*                                   pMeshStageNext,
+                                     const char*                                   pMeshEntryPoint,
+                                     const VkSpecializationInfo*                   pMeshSpecializationInfo,
+                                     const void*                                   pFragmentShaderModuleNext,
+                                     size_t                                        fragmentCodeSize,
+                                     const uint32_t*                               pFragmentCode,
+                                     const void*                                   pFragmentStageNext,
+                                     const char*                                   pFragmentEntryPoint,
+                                     const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                     const VkAllocationCallbacks*                  pAllocator,
+                                     VkShaderModule*                               pMeshShaderModule,
+                                     VkShaderModule*                               pFragmentShaderModule,
+                                     VkPipelineLayout*                             pPipelineLayout,
+                                     VkPipeline*                                   pPipeline);
+/**
+ * \brief cvkSetupMeshShadingPipeline with a task shader stage before the mesh stage.
+ *
+ * \param[in] device                       See cvkCreateShaderModule
+ * \param[in] pPipelineLayoutNext          See cvkCreateMeshShadingPipelineLayout
+ * \param[in] setLayoutCount               See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pSetLayouts                  See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pushConstantOffset           See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pushConstantSize             See cvkCreateMeshShadingPipelineLayout
+ * \param[in] pipelineCache                See cvkCreateGraphicsPipeline
+ * \param[in] pPipelineNext                See cvkCreateGraphicsPipeline
+ * \param[in] flags                        See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState               See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState          See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState            See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState           See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState             See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                   See cvkCreateGraphicsPipeline
+ * \param[in] subpass                      See cvkCreateGraphicsPipeline
+ * \param[in] shaderModuleFlags            VkShaderModuleCreateInfo::flags of every module
+ * \param[in] pipelineLayoutFlags          VkPipelineLayoutCreateInfo::flags
+ * \param[in] stageFlags                   VkPipelineShaderStageCreateInfo::flags of every stage
+ * \param[in] pTaskShaderModuleNext        Optional extension chain for the task VkShaderModuleCreateInfo, or NULL
+ * \param[in] taskCodeSize                 Size in bytes of the task shader code
+ * \param[in] pTaskCode                    Task shader SPIR-V code
+ * \param[in] pTaskStageNext               Optional extension chain for the task VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pTaskEntryPoint              Entry point name of the task shader
+ * \param[in] pTaskSpecializationInfo      Specialization of the task shader, or NULL
+ * \param[in] pMeshShaderModuleNext        Optional extension chain for the mesh VkShaderModuleCreateInfo, or NULL
+ * \param[in] meshCodeSize                 Size in bytes of the mesh shader code
+ * \param[in] pMeshCode                    Mesh shader SPIR-V code
+ * \param[in] pMeshStageNext               Optional extension chain for the mesh VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pMeshEntryPoint              Entry point name of the mesh shader
+ * \param[in] pMeshSpecializationInfo      Specialization of the mesh shader, or NULL
+ * \param[in] pFragmentShaderModuleNext    Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL
+ * \param[in] fragmentCodeSize             Size in bytes of the fragment shader code
+ * \param[in] pFragmentCode                Fragment shader SPIR-V code
+ * \param[in] pFragmentStageNext           Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pFragmentEntryPoint          Entry point name of the fragment shader
+ * \param[in] pFragmentSpecializationInfo  Specialization of the fragment shader, or NULL
+ * \param[in] pAllocator                   See cvkCreateShaderModule
+ * \param[out] pTaskShaderModule            Receives the taskShaderModule
+ * \param[out] pMeshShaderModule            Receives the meshShaderModule
+ * \param[out] pFragmentShaderModule        Receives the fragmentShaderModule
+ * \param[out] pPipelineLayout              Receives the created VkPipelineLayout
+ * \param[out] pPipeline                    Receives the created VkPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkSetupTaskMeshShadingPipeline(VkDevice                                      device,
+                                         const void*                                   pPipelineLayoutNext,
+                                         uint32_t                                      setLayoutCount,
+                                         const VkDescriptorSetLayout*                  pSetLayouts,
+                                         uint32_t                                      pushConstantOffset,
+                                         uint32_t                                      pushConstantSize,
+                                         VkPipelineCache                               pipelineCache,
+                                         const void*                                   pPipelineNext,
+                                         VkPipelineCreateFlags                         flags,
+                                         const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                         const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                         const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                         const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                         const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                         const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                         VkRenderPass                                  renderPass,
+                                         uint32_t                                      subpass,
+                                         VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                         VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                         VkPipelineShaderStageCreateFlags              stageFlags,
+                                         const void*                                   pTaskShaderModuleNext,
+                                         size_t                                        taskCodeSize,
+                                         const uint32_t*                               pTaskCode,
+                                         const void*                                   pTaskStageNext,
+                                         const char*                                   pTaskEntryPoint,
+                                         const VkSpecializationInfo*                   pTaskSpecializationInfo,
+                                         const void*                                   pMeshShaderModuleNext,
+                                         size_t                                        meshCodeSize,
+                                         const uint32_t*                               pMeshCode,
+                                         const void*                                   pMeshStageNext,
+                                         const char*                                   pMeshEntryPoint,
+                                         const VkSpecializationInfo*                   pMeshSpecializationInfo,
+                                         const void*                                   pFragmentShaderModuleNext,
+                                         size_t                                        fragmentCodeSize,
+                                         const uint32_t*                               pFragmentCode,
+                                         const void*                                   pFragmentStageNext,
+                                         const char*                                   pFragmentEntryPoint,
+                                         const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                         const VkAllocationCallbacks*                  pAllocator,
+                                         VkShaderModule*                               pTaskShaderModule,
+                                         VkShaderModule*                               pMeshShaderModule,
+                                         VkShaderModule*                               pFragmentShaderModule,
+                                         VkPipelineLayout*                             pPipelineLayout,
+                                         VkPipeline*                                   pPipeline);
+/**
+ * \brief Draws enough mesh task workgroups to cover an item count, given items per invocation and the local size.
+ *
+ * \param[in] device              See cvkCmdDrawMeshTasks
+ * \param[in] commandBuffer       See cvkCmdDrawMeshTasks
+ * \param[in] itemCount           Items to cover
+ * \param[in] itemsPerInvocation  Items each invocation handles
+ * \param[in] localSize           Workgroup local size
+ *
+ * \retval None
+ */
+void cvkCmdDrawMeshTaskItems(VkDevice device, VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize);
+/**
+ * \brief Binds a graphics pipeline, its descriptor sets, and mesh shading push constants, then draws mesh tasks by items.
+ *
+ * \param[in] device              See cvkCmdDrawMeshTaskItems
+ * \param[in] commandBuffer       See cvkCmdBindGraphicsPipeline
+ * \param[in] pipeline            See cvkCmdBindGraphicsPipeline
+ * \param[in] layout              See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] itemCount           See cvkCmdDrawMeshTaskItems
+ * \param[in] itemsPerInvocation  See cvkCmdDrawMeshTaskItems
+ * \param[in] localSize           See cvkCmdDrawMeshTaskItems
+ * \param[in] pushConstantOffset  Offset of the push constants
+ * \param[in] pushConstantSize    Size of the push constants
+ * \param[in] pPushConstants      Push constant bytes
+ *
+ * \retval None
+ */
+void cvkCmdDrawMeshShadingTasks(VkDevice               device,
+                                VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                VkExtent3D             itemCount,
+                                VkExtent3D             itemsPerInvocation,
+                                VkExtent3D             localSize,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants);
+/**
+ * \brief 2D form of cvkCmdDrawMeshTaskItems.
+ *
+ * \param[in] device                See cvkCmdDrawMeshTaskItems
+ * \param[in] commandBuffer         See cvkCmdDrawMeshTaskItems
+ * \param[in] itemCount2D           itemCount without depth
+ * \param[in] itemsPerInvocation2D  itemsPerInvocation without depth
+ * \param[in] localSize2D           localSize without depth
+ *
+ * \retval None
+ */
+void cvkCmdDrawMeshTaskItems2D(VkDevice device, VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D);
+/**
+ * \brief 2D form of cvkCmdDrawMeshShadingTasks.
+ *
+ * \param[in] device                See cvkCmdDrawMeshShadingTasks
+ * \param[in] commandBuffer         See cvkCmdDrawMeshShadingTasks
+ * \param[in] pipeline              See cvkCmdDrawMeshShadingTasks
+ * \param[in] layout                See cvkCmdDrawMeshShadingTasks
+ * \param[in] firstSet              See cvkCmdDrawMeshShadingTasks
+ * \param[in] descriptorSetCount    See cvkCmdDrawMeshShadingTasks
+ * \param[in] pDescriptorSets       See cvkCmdDrawMeshShadingTasks
+ * \param[in] dynamicOffsetCount    See cvkCmdDrawMeshShadingTasks
+ * \param[in] pDynamicOffsets       See cvkCmdDrawMeshShadingTasks
+ * \param[in] pushConstantOffset    See cvkCmdDrawMeshShadingTasks
+ * \param[in] pushConstantSize      See cvkCmdDrawMeshShadingTasks
+ * \param[in] pPushConstants        See cvkCmdDrawMeshShadingTasks
+ * \param[in] itemCount2D           itemCount without depth
+ * \param[in] itemsPerInvocation2D  itemsPerInvocation without depth
+ * \param[in] localSize2D           localSize without depth
+ *
+ * \retval None
+ */
+void cvkCmdDrawMeshShadingTasks2D(VkDevice               device,
+                                  VkCommandBuffer        commandBuffer,
+                                  VkPipeline             pipeline,
+                                  VkPipelineLayout       layout,
+                                  uint32_t               firstSet,
+                                  uint32_t               descriptorSetCount,
+                                  const VkDescriptorSet* pDescriptorSets,
+                                  uint32_t               dynamicOffsetCount,
+                                  const uint32_t*        pDynamicOffsets,
+                                  uint32_t               pushConstantOffset,
+                                  uint32_t               pushConstantSize,
+                                  const void*            pPushConstants,
+                                  VkExtent2D             itemCount2D,
+                                  VkExtent2D             itemsPerInvocation2D,
+                                  VkExtent2D             localSize2D);
+/**
+ * \brief Creates a task shader object from SPIR-V code.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pShaderNext             See cvkCreateShader
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 Receives the created VkShaderEXT
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateTaskShader(VkDevice                     device,
+                             const void*                  pShaderNext,
+                             VkShaderCreateFlagsEXT       flags,
+                             size_t                       codeSize,
+                             const void*                  pCode,
+                             const char*                  pName,
+                             uint32_t                     setLayoutCount,
+                             const VkDescriptorSetLayout* pSetLayouts,
+                             uint32_t                     pushConstantRangeCount,
+                             const VkPushConstantRange*   pPushConstantRanges,
+                             const VkSpecializationInfo*  pSpecializationInfo,
+                             const VkAllocationCallbacks* pAllocator,
+                             VkShaderEXT*                 pShader);
+/**
+ * \brief Creates a mesh shader object from SPIR-V code.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pShaderNext             See cvkCreateShader
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 Receives the created VkShaderEXT
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateMeshShader(VkDevice                     device,
+                             const void*                  pShaderNext,
+                             VkShaderCreateFlagsEXT       flags,
+                             size_t                       codeSize,
+                             const void*                  pCode,
+                             const char*                  pName,
+                             uint32_t                     setLayoutCount,
+                             const VkDescriptorSetLayout* pSetLayouts,
+                             uint32_t                     pushConstantRangeCount,
+                             const VkPushConstantRange*   pPushConstantRanges,
+                             const VkSpecializationInfo*  pSpecializationInfo,
+                             const VkAllocationCallbacks* pAllocator,
+                             VkShaderEXT*                 pShader);
+/**
+ * \brief Binds mesh and fragment shader objects, with no task shader.
+ *
+ * \param[in] device          See cvkCmdBindShaders
+ * \param[in] commandBuffer   See cvkCmdBindShaders
+ * \param[in] meshShader      The mesh shader object
+ * \param[in] fragmentShader  The fragment shader object
+ *
+ * \retval None
+ */
+void cvkCmdBindMeshShadingShaders(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT meshShader, VkShaderEXT fragmentShader);
+/**
+ * \brief Binds task, mesh, and fragment shader objects.
+ *
+ * \param[in] device          See cvkCmdBindShaders
+ * \param[in] commandBuffer   See cvkCmdBindShaders
+ * \param[in] taskShader      The task shader object
+ * \param[in] meshShader      The mesh shader object
+ * \param[in] fragmentShader  The fragment shader object
+ *
+ * \retval None
+ */
+void cvkCmdBindTaskMeshShadingShaders(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT taskShader, VkShaderEXT meshShader, VkShaderEXT fragmentShader);
+/**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
  *
  * \par Details:
@@ -54076,6 +56008,85 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
                                        const void*                  pMemoryNext,
                                        const VkAllocationCallbacks* pAllocator,
                                        VkDeviceMemory*              pMemories);
+/**
+ * \brief Creates an acceleration structure sized for a build description, with its storage and an aligned scratch buffer.
+ *
+ * \par Details:
+ *  Queries the build sizes for a device build of the geometries, creates the storage buffer
+ *  and the structure over it, and a scratch buffer with room to align its device address to
+ *  the scratch offset alignment. The build itself is recorded with
+ *  cvkCmdBuildDeviceAccelerationStructure using the same geometries and the scratch address.
+ *
+ * \param[in]  physicalDevice          Physical device the memory is selected on
+ * \param[in]  device                  Logical device owning the objects
+ * \param[in]  type                    Bottom or top level
+ * \param[in]  buildFlags              VkAccelerationStructureBuildGeometryInfoKHR::flags of the build the structure is sized for
+ * \param[in]  geometryCount           Number of geometries
+ * \param[in]  pGeometries             The geometries; the same array is given to the build
+ * \param[in]  pMaxPrimitiveCounts     Maximum primitive count per geometry
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the storage buffer
+ * \param[out] pMemory                 Receives the storage memory
+ * \param[out] pAccelerationStructure  Receives the acceleration structure
+ * \param[out] pScratchBuffer          Receives the scratch buffer
+ * \param[out] pScratchMemory          Receives the scratch memory
+ * \param[out] pScratchDeviceAddress   Receives the aligned scratch device address for the build
+ *
+ * \retval None
+ */
+void cvkSetupAccelerationStructure(VkPhysicalDevice                          physicalDevice,
+                                   VkDevice                                  device,
+                                   VkAccelerationStructureTypeKHR            type,
+                                   VkBuildAccelerationStructureFlagsKHR      buildFlags,
+                                   uint32_t                                  geometryCount,
+                                   const VkAccelerationStructureGeometryKHR* pGeometries,
+                                   const uint32_t*                           pMaxPrimitiveCounts,
+                                   const VkAllocationCallbacks*              pAllocator,
+                                   VkBuffer*                                 pBuffer,
+                                   VkDeviceMemory*                           pMemory,
+                                   VkAccelerationStructureKHR*               pAccelerationStructure,
+                                   VkBuffer*                                 pScratchBuffer,
+                                   VkDeviceMemory*                           pScratchMemory,
+                                   VkDeviceAddress*                          pScratchDeviceAddress);
+/**
+ * \brief Creates a shader binding table for a ray tracing pipeline whose groups are ordered raygen, miss, hit, callable.
+ *
+ * \par Details:
+ *  Group zero is the raygen group; the miss, hit, and callable groups follow in that order.
+ *  Every handle is placed at a stride of the handle size rounded up to the handle alignment,
+ *  and every region starts at the base alignment, in a host-visible buffer with a device
+ *  address. The handles are written straight into the mapped buffer. The raygen region's size
+ *  equals its stride as the specification requires; an empty region has a zero address.
+ *
+ * \param[in]  physicalDevice          Physical device whose ray tracing properties give the alignments
+ * \param[in]  device                  Logical device owning the pipeline and the table
+ * \param[in]  pipeline                Ray tracing pipeline the handles come from
+ * \param[in]  missGroupCount          Number of miss groups following the raygen group
+ * \param[in]  hitGroupCount           Number of hit groups following the miss groups
+ * \param[in]  callableGroupCount      Number of callable groups following the hit groups
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the table buffer
+ * \param[out] pMemory                 Receives the table memory
+ * \param[out] pRaygenRegion           Receives the raygen region
+ * \param[out] pMissRegion             Receives the miss region
+ * \param[out] pHitRegion              Receives the hit region
+ * \param[out] pCallableRegion         Receives the callable region
+ *
+ * \retval None
+ */
+void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physicalDevice,
+                                          VkDevice                         device,
+                                          VkPipeline                       pipeline,
+                                          uint32_t                         missGroupCount,
+                                          uint32_t                         hitGroupCount,
+                                          uint32_t                         callableGroupCount,
+                                          const VkAllocationCallbacks*     pAllocator,
+                                          VkBuffer*                        pBuffer,
+                                          VkDeviceMemory*                  pMemory,
+                                          VkStridedDeviceAddressRegionKHR* pRaygenRegion,
+                                          VkStridedDeviceAddressRegionKHR* pMissRegion,
+                                          VkStridedDeviceAddressRegionKHR* pHitRegion,
+                                          VkStridedDeviceAddressRegionKHR* pCallableRegion);
 /**
  * \brief Copies every plane of a subresource from a linear buffer into an image, with barriers and no ownership transfer.
  *
@@ -54638,6 +56649,70 @@ void cvkSetupVideoSession(VkPhysicalDevice             physicalDevice,
                           VkVideoSessionKHR*           pVideoSession,
                           VkDeviceMemory*              pMemories,
                           uint32_t*                    pMemoryCount);
+/**
+ * \brief cvkSetupAccelerationStructure for a bottom-level structure.
+ *
+ * \param[in] physicalDevice          See cvkSetupAccelerationStructure
+ * \param[in] device                  See cvkSetupAccelerationStructure
+ * \param[in] buildFlags              See cvkSetupAccelerationStructure
+ * \param[in] geometryCount           See cvkSetupAccelerationStructure
+ * \param[in] pGeometries             See cvkSetupAccelerationStructure
+ * \param[in] pMaxPrimitiveCounts     See cvkSetupAccelerationStructure
+ * \param[in] pAllocator              See cvkSetupAccelerationStructure
+ * \param[out] pBuffer                 
+ * \param[out] pMemory                 
+ * \param[out] pAccelerationStructure  
+ * \param[out] pScratchBuffer          
+ * \param[out] pScratchMemory          
+ * \param[out] pScratchDeviceAddress   
+ *
+ * \retval None
+ */
+void cvkSetupBottomLevelAccelerationStructure(VkPhysicalDevice                          physicalDevice,
+                                              VkDevice                                  device,
+                                              VkBuildAccelerationStructureFlagsKHR      buildFlags,
+                                              uint32_t                                  geometryCount,
+                                              const VkAccelerationStructureGeometryKHR* pGeometries,
+                                              const uint32_t*                           pMaxPrimitiveCounts,
+                                              const VkAllocationCallbacks*              pAllocator,
+                                              VkBuffer*                                 pBuffer,
+                                              VkDeviceMemory*                           pMemory,
+                                              VkAccelerationStructureKHR*               pAccelerationStructure,
+                                              VkBuffer*                                 pScratchBuffer,
+                                              VkDeviceMemory*                           pScratchMemory,
+                                              VkDeviceAddress*                          pScratchDeviceAddress);
+/**
+ * \brief cvkSetupAccelerationStructure for a top-level structure.
+ *
+ * \param[in] physicalDevice          See cvkSetupAccelerationStructure
+ * \param[in] device                  See cvkSetupAccelerationStructure
+ * \param[in] buildFlags              See cvkSetupAccelerationStructure
+ * \param[in] geometryCount           See cvkSetupAccelerationStructure
+ * \param[in] pGeometries             See cvkSetupAccelerationStructure
+ * \param[in] pMaxPrimitiveCounts     See cvkSetupAccelerationStructure
+ * \param[in] pAllocator              See cvkSetupAccelerationStructure
+ * \param[out] pBuffer                 
+ * \param[out] pMemory                 
+ * \param[out] pAccelerationStructure  
+ * \param[out] pScratchBuffer          
+ * \param[out] pScratchMemory          
+ * \param[out] pScratchDeviceAddress   
+ *
+ * \retval None
+ */
+void cvkSetupTopLevelAccelerationStructure(VkPhysicalDevice                          physicalDevice,
+                                           VkDevice                                  device,
+                                           VkBuildAccelerationStructureFlagsKHR      buildFlags,
+                                           uint32_t                                  geometryCount,
+                                           const VkAccelerationStructureGeometryKHR* pGeometries,
+                                           const uint32_t*                           pMaxPrimitiveCounts,
+                                           const VkAllocationCallbacks*              pAllocator,
+                                           VkBuffer*                                 pBuffer,
+                                           VkDeviceMemory*                           pMemory,
+                                           VkAccelerationStructureKHR*               pAccelerationStructure,
+                                           VkBuffer*                                 pScratchBuffer,
+                                           VkDeviceMemory*                           pScratchMemory,
+                                           VkDeviceAddress*                          pScratchDeviceAddress);
 
 #ifdef __cplusplus
 }

@@ -30,7 +30,7 @@ wrong by definition.
 
 | Thing | Name |
 |---|---|
-| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target. **Canonical suffix rule:** when several in-profile commands (or structs) share a stem after suffix stripping, only the canonical one drops its suffix: lowest vendor rank (core, then `KHR`, then `EXT`, then any other vendor) when that rank is held by exactly one of them; the rest keep their suffix (`cvkCmdDrawMeshTasks` for `EXT`, `cvkCmdDrawMeshTasksNV`; `cvkInitExportMemoryAllocateInfo`, `cvkInitExportMemoryAllocateInfoNV`). Same rank held by several of the same kind: all keep the suffix. An output extender's replacement name (section 6) competes in the command group of that name, so `vkGetPhysicalDeviceExternalImageFormatPropertiesNV` keeps its suffix beside the core `VkExternalImageFormatProperties` convenience; a tie between a command and a struct at the same rank is settled by tier-0 ownership: the command keeps the plain name and the convenience takes its `With` form (`cvkGetPhysicalDeviceCooperativeMatrixProperties` is the `KHR` enumeration, `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties` the limits query). A kept suffix always trails the whole derived name, every suffix in order of appearance (`cvkCreateImageWithExternalMemoryInfoNV`, `cvkGetGeneratedCommandsMemoryRequirementsWithTileRequirementsNVQCOM`) |
+| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target. **Canonical suffix rule:** when several in-profile commands (or structs) share a stem after suffix stripping, only the canonical one drops its suffix: lowest vendor rank (core, then `KHR`, then `EXT`, then any other vendor) when that rank is held by exactly one of them; the rest keep their suffix (`cvkCmdDrawMeshTasks` for `EXT`, `cvkCmdDrawMeshTasksNV`; `cvkInitExportMemoryAllocateInfo`, `cvkInitExportMemoryAllocateInfoNV`). Same rank held by several of the same kind: all keep the suffix. An output extender's replacement name (section 6) competes in the command group of that name, so `vkGetPhysicalDeviceExternalImageFormatPropertiesNV` keeps its suffix beside the core `VkExternalImageFormatProperties` convenience; a tie between a command and a struct at the same rank is settled by tier-0 ownership: the command keeps the plain name and the convenience takes its `With` form (`cvkGetPhysicalDeviceCooperativeMatrixProperties` is the `KHR` enumeration, `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties` the limits query). A plural command reserves its singular stem in the same groups (`vkCmdBuildAccelerationStructuresKHR` owns `cvkCmdBuildAccelerationStructure`, so `vkCmdBuildAccelerationStructureNV` keeps its suffix). A kept suffix always trails the whole derived name, every suffix in order of appearance (`cvkCreateImageWithExternalMemoryInfoNV`, `cvkGetGeneratedCommandsMemoryRequirementsWithTileRequirementsNVQCOM`) |
 | builder for `VkAbcInfo` | `cvkInitAbcInfo` |
 | single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Operation extenders** (`Import*`, `Export*`): the extender names the operation, so the name is `cvk<Verb><ExtenderStruct minus kind/Info>`, the `vkImportSemaphoreFdKHR` idiom: `cvkAllocateImportMemoryFd`, `cvkAllocateExportMemory`, `cvkCreateExportSemaphoreWin32Handle`, and on any platform `cvkAllocateImportMemoryZirconHandle`, `cvkAllocateImportAndroidHardwareBuffer`; when one such extender serves several bases with the same verb (`VkExportMetalObjectCreateInfoEXT`) it falls back to the next form. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `…Memory2With…`; a flattened sibling named after a struct keeps the struct's digit), unless the digit-less command is in the profile and is itself extensible, that is, takes an sType input of its own: then the digit is part of the name (`cvkCreateRenderPassWithFragmentDensityMapInfo` from `vkCreateRenderPass`, `cvkCreateRenderPass2WithFragmentDensityMapInfo` from `vkCreateRenderPass2`; `vkBindImageMemory` has no info struct, so `vkBindImageMemory2` drops its digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). The command may name the run in full or, when the run starts with the handle the base struct is about and the command is dispatched elsewhere, only its tail: `VkSurfaceFullScreenExclusiveInfoEXT` on `VkPhysicalDeviceSurfaceInfo2KHR` gives `cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes` from `vkGetPhysicalDeviceSurfacePresentModes2EXT` and `cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes` from `vkGetDeviceGroupSurfacePresentModes2EXT`; any other missing qualifier (`Compute` of `VkComputePipelineCreateInfo` in `vkGetPipelineIndirectMemoryRequirementsNV`) means the run is absent and the name is the `With` form (`cvkGetPipelineIndirectMemoryRequirementsWithBinaryInfo`). A collision is a generation error |
 | extender member sharing a base member's name | The tokens of its type absent from the base member's type distinguish it (`VkPipelineCreateFlags2 flags` beside `VkPipelineCreateFlags flags` → `flags2`, `VkBufferUsageFlags2 usage` → `usage2`); with the same type, the extender's distinct part qualifies it (`VkImageViewUsageCreateInfo::usage` on `VkPhysicalDeviceImageFormatInfo2` → `imageViewUsage`). Parallel-array names keep a name that is already plural (`flags` → `pFlags`) |
@@ -157,6 +157,15 @@ An extender member whose name collides with a tier-0 parameter name (for example
 Stacking more than one extender is done by the caller with builders in one frame. No
 multi-qualifier function is generated (policy: 2^n explosion; see `study/MEMORY.md`).
 
+**Union builders.** A union has one builder per member, `cvkInit<Union><Member>`, each
+setting that member: `cvkInitClearValueColor`, `cvkInitClearColorValueFloat32`,
+`cvkInitDeviceOrHostAddressDeviceAddress`, `cvkInitAccelerationStructureGeometryDataTriangles`.
+Chains build union values through them, never through a raw assignment.
+
+**Commands with several sType inputs** (`vkCmdBeginRenderPass2` with a render pass begin info
+and a subpass begin info) get a convenience per extender of each input, on that input's own
+`p<Stem>Next` (`cvkCmdBeginRenderPass2WithAttachmentInfo`, `cvkCmdBeginRenderPass2WithSampleLocationsInfo`).
+
 **Extenders on the singular of an array-input command** (`VkPipelineRenderingCreateInfo` on
 `VkGraphicsPipelineCreateInfo`, whose command takes an array): `<singular>With<D>Info` on the
 singular (`cvkCreateGraphicsPipelineWithRenderingInfo`, `cvkCreateComputePipelineWithFlags2Info`,
@@ -267,8 +276,10 @@ policy file. **The chain's signature is computed from its steps' signatures**, n
   `VkPipelineCreateFlags flags`) is a generation error: the policy binds one of them to a
   declared input (`shaderModuleFlags`, `pipelineLayoutFlags`), so the unqualified name stays
   with the chain's product;
+- `assign` writes a statement on a local (`shaders[0] = vertexShader`), for arrays whose
+  initializers are parameters;
 - declared outputs join the parameter list where a step first binds, stores, or sets them;
-  a chain over a builder is a builder, so its `pInfo` leads;
+  a chain over a builder is a builder, so its `pInfo` leads and its `pNext` follows;
 - parameter order: dispatch handles by level, then inputs in order of first appearance, then
   `pAllocator`, then outputs.
 
@@ -349,8 +360,24 @@ The `<Kind>` word binds the bind point (`VK_PIPELINE_BIND_POINT_<KIND>`), the st
 extender's distinct part (`H264`, `AV1`), which tier 1 already names. The video family has no
 layout or fixed-function level: its state lives in the session and its parameters objects,
 which the object level creates. Left to the caller: the codec picture infos (tier 1 carries
-them), the DPB activity flags, and shader-object graphics binding (the stage set bound per
-draw is the application's).
+them) and the DPB activity flags.
+
+The same levels for ray tracing and mesh shading. Mesh shading is the graphics family with
+other stages: its bind point is graphics, so it shares the graphics bind forms and only its
+stage set, layout, setup, work, and shader-object forms are its own.
+
+| Level | Ray tracing | Mesh shading |
+|---|---|---|
+| capability | `cvkGetPhysicalDeviceRayTracingPipelineProperties`, `cvkGetPhysicalDeviceAccelerationStructureProperties` (output extenders); `cvkGetPhysicalDeviceRayTracingShaderGroupHandleStride` | `cvkGetPhysicalDeviceMeshShaderProperties` |
+| program | shader modules; groups `cvkInit{General,TrianglesHit,ProceduralHit}RayTracingShaderGroupCreateInfo` | shader modules; shader objects `cvkCreate{Task,Mesh}Shader` |
+| layout | `cvkCreateRayTracingPipelineLayout` (every ray tracing stage) | `cvkCreateMeshShadingPipelineLayout` (task, mesh, fragment) |
+| resources | `cvkSetup{DeviceAddress,HostVisibleDeviceAddress}Buffer` (allocate flags chained), `cvkSetup{AccelerationStructure,Scratch,ShaderBindingTable,AccelerationStructureBuildInputBuffer}Buffer`; geometries `cvkInit{Triangles,Aabbs,Instances}AccelerationStructureGeometry` over the union builders, `cvkInitDevice…Data` forms from device addresses | — |
+| object | `cvkCreate{BottomLevel,TopLevel}AccelerationStructure`; `cvkSetup[{BottomLevel,TopLevel}]AccelerationStructure` (sizes, storage, structure, aligned scratch: a protocol); `cvkSetupRayTracingPipeline` (raygen, miss, closest hit; groups in table order); `cvkSetupRayTracingShaderBindingTable` (handles written into a mapped table, regions at the base alignment: a protocol) | `cvkSetup[Task]MeshShadingPipeline` (no vertex input or input assembly state) |
+| bind | `cvkCmdBindRayTracingPipeline`, `cvkCmdBindRayTracingDescriptorSets`, `cvkCmdPushRayTracingConstants`, `cvkUpdateAccelerationStructureDescriptorSet` | graphics bind forms; `cvkCmdPushMeshShadingConstants`; `cvkCmdBind[Task]MeshShadingShaders` |
+| work | `cvkCmdBuild[Device[{BottomLevel,TopLevel}]]AccelerationStructure`, `cvkCmdAccelerationStructureBuildBarrier`; `cvkCmdTraceRays2D`, `cvkCmdTraceRayTracingRays[2D]` (bind, bind, push, trace) | `cvkCmdDrawMeshTaskItems[2D]` (the dispatch arithmetic), `cvkCmdDrawMeshShadingTasks[2D]` (bind, bind, push, draw) |
+
+Filled gaps, all families: shader-object binding (`cvkCmdBindGraphicsShaders`), union builders,
+conveniences on commands with several sType inputs.
 
 ## 8b. Tier 3: protocols (authored C, folded in by the generator)
 
@@ -400,6 +427,13 @@ acceptance test of the surface: anything they cannot express is a generator defe
   are chains binding constants or building 3D offsets and extents from 2D ones. Chains and
   protocols may compose each other: the generator emits in dependency order.
 
+- Acceleration structures (`cvkSetupAccelerationStructure`, core): build sizes for a device
+  build, storage buffer and structure, scratch buffer with room to align its address to the
+  scratch offset alignment; the build is a chain over the same geometries.
+- Shader binding table (`cvkSetupRayTracingShaderBindingTable`, core): raygen group zero,
+  then miss, hit, callable; handle stride from the handle alignment, regions from the base
+  alignment, handles fetched one group at a time straight into the mapped table; the raygen
+  region's size equals its stride.
 - Video session memory (`cvkAllocateVideoSessionMemory`, core): the session form of
   `cvkAllocateImageMemory`; one compatible type, allocation, and bind per reported
   requirement, all binds in one call, count returned.

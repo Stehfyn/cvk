@@ -1086,3 +1086,160 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
     cvkBindVideoSessionMemory(device, videoSession, memory_requirements_count, bind_session_memory_infos);
     return memory_requirements_count;
 }
+
+/**
+ * \brief Creates an acceleration structure sized for a build description, with its storage and an aligned scratch buffer.
+ *
+ * \par Details:
+ *  Queries the build sizes for a device build of the geometries, creates the storage buffer
+ *  and the structure over it, and a scratch buffer with room to align its device address to
+ *  the scratch offset alignment. The build itself is recorded with
+ *  cvkCmdBuildDeviceAccelerationStructure using the same geometries and the scratch address.
+ *
+ * \param[in]  physicalDevice          Physical device the memory is selected on
+ * \param[in]  device                  Logical device owning the objects
+ * \param[in]  type                    Bottom or top level
+ * \param[in]  buildFlags              VkAccelerationStructureBuildGeometryInfoKHR::flags of the build the structure is sized for
+ * \param[in]  geometryCount           Number of geometries
+ * \param[in]  pGeometries             The geometries; the same array is given to the build
+ * \param[in]  pMaxPrimitiveCounts     Maximum primitive count per geometry
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the storage buffer
+ * \param[out] pMemory                 Receives the storage memory
+ * \param[out] pAccelerationStructure  Receives the acceleration structure
+ * \param[out] pScratchBuffer          Receives the scratch buffer
+ * \param[out] pScratchMemory          Receives the scratch memory
+ * \param[out] pScratchDeviceAddress   Receives the aligned scratch device address for the build
+ *
+ * \retval None
+ */
+void cvkSetupAccelerationStructure(VkPhysicalDevice                         physicalDevice,
+                                   VkDevice                                 device,
+                                   VkAccelerationStructureTypeKHR           type,
+                                   VkBuildAccelerationStructureFlagsKHR     buildFlags,
+                                   uint32_t                                 geometryCount,
+                                   const VkAccelerationStructureGeometryKHR* pGeometries,
+                                   const uint32_t*                          pMaxPrimitiveCounts,
+                                   const VkAllocationCallbacks*             pAllocator,
+                                   VkBuffer*                                pBuffer,
+                                   VkDeviceMemory*                          pMemory,
+                                   VkAccelerationStructureKHR*              pAccelerationStructure,
+                                   VkBuffer*                                pScratchBuffer,
+                                   VkDeviceMemory*                          pScratchMemory,
+                                   VkDeviceAddress*                         pScratchDeviceAddress)
+{
+    VkPhysicalDeviceAccelerationStructurePropertiesKHR acceleration_structure_properties;
+    VkDeviceOrHostAddressKHR                           scratch_data;
+    VkAccelerationStructureBuildGeometryInfoKHR        build_geometry_info;
+    VkAccelerationStructureBuildSizesInfoKHR           build_sizes_info;
+    VkDeviceSize                                       scratch_alignment;
+
+    cvkGetPhysicalDeviceAccelerationStructureProperties(physicalDevice, NULL, &acceleration_structure_properties);
+    scratch_alignment = acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment;
+
+    /* sizes: the build description with no destination and no scratch yet */
+    cvkInitDeviceOrHostAddressDeviceAddress(&scratch_data, 0);
+    cvkInitAccelerationStructureBuildGeometryInfo(&build_geometry_info, NULL, type, buildFlags, VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR, VK_NULL_HANDLE, VK_NULL_HANDLE, geometryCount, pGeometries, NULL, scratch_data);
+    cvkGetAccelerationStructureBuildSizes(device, VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, &build_geometry_info, pMaxPrimitiveCounts, NULL, &build_sizes_info);
+
+    /* storage and structure */
+    cvkSetupAccelerationStructureBuffer(physicalDevice, device, NULL, 0, build_sizes_info.accelerationStructureSize, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    cvkCreateAccelerationStructure(device, NULL, 0, (*pBuffer), 0, build_sizes_info.accelerationStructureSize, type, 0, pAllocator, pAccelerationStructure);
+
+    /* scratch, with room to align its address */
+    cvkSetupScratchBuffer(physicalDevice, device, NULL, 0, build_sizes_info.buildScratchSize + scratch_alignment, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pScratchBuffer, pScratchMemory);
+    (*pScratchDeviceAddress) = cvkAlignDeviceSize(cvkGetBufferDeviceAddress(device, NULL, (*pScratchBuffer)), scratch_alignment);
+}
+
+/**
+ * \brief Creates a shader binding table for a ray tracing pipeline whose groups are ordered raygen, miss, hit, callable.
+ *
+ * \par Details:
+ *  Group zero is the raygen group; the miss, hit, and callable groups follow in that order.
+ *  Every handle is placed at a stride of the handle size rounded up to the handle alignment,
+ *  and every region starts at the base alignment, in a host-visible buffer with a device
+ *  address. The handles are written straight into the mapped buffer. The raygen region's size
+ *  equals its stride as the specification requires; an empty region has a zero address.
+ *
+ * \param[in]  physicalDevice          Physical device whose ray tracing properties give the alignments
+ * \param[in]  device                  Logical device owning the pipeline and the table
+ * \param[in]  pipeline                Ray tracing pipeline the handles come from
+ * \param[in]  missGroupCount          Number of miss groups following the raygen group
+ * \param[in]  hitGroupCount           Number of hit groups following the miss groups
+ * \param[in]  callableGroupCount      Number of callable groups following the hit groups
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the table buffer
+ * \param[out] pMemory                 Receives the table memory
+ * \param[out] pRaygenRegion           Receives the raygen region
+ * \param[out] pMissRegion             Receives the miss region
+ * \param[out] pHitRegion              Receives the hit region
+ * \param[out] pCallableRegion         Receives the callable region
+ *
+ * \retval None
+ */
+void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physicalDevice,
+                                          VkDevice                         device,
+                                          VkPipeline                       pipeline,
+                                          uint32_t                         missGroupCount,
+                                          uint32_t                         hitGroupCount,
+                                          uint32_t                         callableGroupCount,
+                                          const VkAllocationCallbacks*     pAllocator,
+                                          VkBuffer*                        pBuffer,
+                                          VkDeviceMemory*                  pMemory,
+                                          VkStridedDeviceAddressRegionKHR* pRaygenRegion,
+                                          VkStridedDeviceAddressRegionKHR* pMissRegion,
+                                          VkStridedDeviceAddressRegionKHR* pHitRegion,
+                                          VkStridedDeviceAddressRegionKHR* pCallableRegion)
+{
+    VkPhysicalDeviceRayTracingPipelinePropertiesKHR ray_tracing_pipeline_properties;
+    VkDeviceSize                                    handle_size;
+    VkDeviceSize                                    handle_stride;
+    VkDeviceSize                                    raygen_size;
+    VkDeviceSize                                    miss_size;
+    VkDeviceSize                                    hit_size;
+    VkDeviceSize                                    callable_size;
+    VkDeviceAddress                                 base_address;
+    uint8_t*                                        mapped;
+    uint32_t                                        group_index;
+    uint32_t                                        region_first_group;
+    VkDeviceSize                                    region_offset;
+
+    cvkGetPhysicalDeviceRayTracingPipelineProperties(physicalDevice, NULL, &ray_tracing_pipeline_properties);
+    handle_size   = ray_tracing_pipeline_properties.shaderGroupHandleSize;
+    handle_stride = cvkAlignDeviceSize(handle_size, ray_tracing_pipeline_properties.shaderGroupHandleAlignment);
+    raygen_size   = cvkAlignDeviceSize(handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+    miss_size     = cvkAlignDeviceSize(missGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+    hit_size      = cvkAlignDeviceSize(hitGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+    callable_size = cvkAlignDeviceSize(callableGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
+
+    cvkSetupShaderBindingTableBuffer(physicalDevice, device, NULL, 0, raygen_size + miss_size + hit_size + callable_size, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    base_address = cvkGetBufferDeviceAddress(device, NULL, (*pBuffer));
+
+    /* handles straight into the mapped table: region by region, group by group */
+    cvkMapWholeMemory(device, (*pMemory), (void**)&mapped);
+    cvkGetRayTracingShaderGroupHandles(device, pipeline, 0, 1, (size_t)handle_size, mapped);
+    region_first_group = 1;
+    region_offset      = raygen_size;
+    for (group_index = 0; group_index < missGroupCount; ++group_index)
+    {
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+    }
+    region_first_group += missGroupCount;
+    region_offset += miss_size;
+    for (group_index = 0; group_index < hitGroupCount; ++group_index)
+    {
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+    }
+    region_first_group += hitGroupCount;
+    region_offset += hit_size;
+    for (group_index = 0; group_index < callableGroupCount; ++group_index)
+    {
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+    }
+    cvkUnmapMemory(device, (*pMemory));
+
+    cvkInitStridedDeviceAddressRegion(pRaygenRegion, base_address, handle_stride, handle_stride);
+    cvkInitStridedDeviceAddressRegion(pMissRegion, (0 != missGroupCount) ? base_address + raygen_size : 0, handle_stride, miss_size);
+    cvkInitStridedDeviceAddressRegion(pHitRegion, (0 != hitGroupCount) ? base_address + raygen_size + miss_size : 0, handle_stride, hit_size);
+    cvkInitStridedDeviceAddressRegion(pCallableRegion, (0 != callableGroupCount) ? base_address + raygen_size + miss_size + hit_size : 0, handle_stride, callable_size);
+}
