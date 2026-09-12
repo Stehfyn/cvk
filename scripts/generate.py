@@ -211,6 +211,15 @@ class Generator:
         cmd_tokens = tokens(strip_vendor(cmd.name[2:]))
         verb, rest = cmd_tokens[0], cmd_tokens[1:]
         run = [t for t in b if t not in kind and not t.isdigit()]
+        # Operation extenders (Import*/Export*): the extender names the operation, so the
+        # function is cvk<Verb><ExtenderStruct minus kind/Info>, the vkImportSemaphoreFdKHR idiom:
+        # cvkAllocateImportMemoryFd, cvkCreateExportSemaphoreWin32Handle. Falls back to the
+        # With form when one such extender serves several bases with the same verb.
+        e_op = tokens(self.struct_short(ext))
+        if e_op and e_op[0] in ("Import", "Export") and self.convenience_pairs.get((verb, ext.name), 0) == 1:
+            while e_op and (e_op[-1] in kind or e_op[-1].isdigit()):
+                e_op.pop()
+            return "cvk" + verb + "".join(e_op)
         if verb not in ("Get", "Enumerate"):
             return self.with_base(cmd) + "With" + "".join(d) + "Info"
         # Query: a plain Info extender whose name covers the base noun run is the subject of

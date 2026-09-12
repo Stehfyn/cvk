@@ -160,15 +160,15 @@ void cvkImportSemaphoreWin32Handle(VkDevice                              device,
     function = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
     CVK_CHECK(function(device, &import_semaphore_win32_handle_info));
 }
-void cvkAllocateMemoryWithExportMemoryWin32HandleInfo(VkDevice                     device,
-                                                      const void*                  pNext,
-                                                      const SECURITY_ATTRIBUTES*   pAttributes,
-                                                      DWORD                        dwAccess,
-                                                      LPCWSTR                      name,
-                                                      VkDeviceSize                 allocationSize,
-                                                      uint32_t                     memoryTypeIndex,
-                                                      const VkAllocationCallbacks* pAllocator,
-                                                      VkDeviceMemory*              pMemory)
+void cvkAllocateExportMemoryWin32Handle(VkDevice                     device,
+                                        const void*                  pNext,
+                                        const SECURITY_ATTRIBUTES*   pAttributes,
+                                        DWORD                        dwAccess,
+                                        LPCWSTR                      name,
+                                        VkDeviceSize                 allocationSize,
+                                        uint32_t                     memoryTypeIndex,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkDeviceMemory*              pMemory)
 {
     VkExportMemoryWin32HandleInfoKHR export_memory_win32_handle_info;
 
@@ -179,15 +179,15 @@ void cvkAllocateMemoryWithExportMemoryWin32HandleInfo(VkDevice                  
     export_memory_win32_handle_info.name        = name;
     cvkAllocateMemory(device, &export_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkAllocateMemoryWithImportMemoryWin32HandleInfo(VkDevice                           device,
-                                                      const void*                        pNext,
-                                                      VkExternalMemoryHandleTypeFlagBits handleType,
-                                                      HANDLE                             handle,
-                                                      LPCWSTR                            name,
-                                                      VkDeviceSize                       allocationSize,
-                                                      uint32_t                           memoryTypeIndex,
-                                                      const VkAllocationCallbacks*       pAllocator,
-                                                      VkDeviceMemory*                    pMemory)
+void cvkAllocateImportMemoryWin32Handle(VkDevice                           device,
+                                        const void*                        pNext,
+                                        VkExternalMemoryHandleTypeFlagBits handleType,
+                                        HANDLE                             handle,
+                                        LPCWSTR                            name,
+                                        VkDeviceSize                       allocationSize,
+                                        uint32_t                           memoryTypeIndex,
+                                        const VkAllocationCallbacks*       pAllocator,
+                                        VkDeviceMemory*                    pMemory)
 {
     VkImportMemoryWin32HandleInfoKHR import_memory_win32_handle_info;
 
@@ -198,14 +198,14 @@ void cvkAllocateMemoryWithImportMemoryWin32HandleInfo(VkDevice                  
     import_memory_win32_handle_info.name       = name;
     cvkAllocateMemory(device, &import_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkCreateSemaphoreWithExportSemaphoreWin32HandleInfo(VkDevice                     device,
-                                                          const void*                  pNext,
-                                                          const SECURITY_ATTRIBUTES*   pAttributes,
-                                                          DWORD                        dwAccess,
-                                                          LPCWSTR                      name,
-                                                          VkSemaphoreCreateFlags       flags,
-                                                          const VkAllocationCallbacks* pAllocator,
-                                                          VkSemaphore*                 pSemaphore)
+void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
+                                         const void*                  pNext,
+                                         const SECURITY_ATTRIBUTES*   pAttributes,
+                                         DWORD                        dwAccess,
+                                         LPCWSTR                      name,
+                                         VkSemaphoreCreateFlags       flags,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkSemaphore*                 pSemaphore)
 {
     VkExportSemaphoreWin32HandleInfoKHR export_semaphore_win32_handle_info;
 

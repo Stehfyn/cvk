@@ -6627,13 +6627,13 @@ void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice          
  *
  * \retval None
  */
-void cvkAllocateMemoryWithExportInfo(VkDevice                        device,
-                                     const void*                     pNext,
-                                     VkExternalMemoryHandleTypeFlags handleTypes,
-                                     VkDeviceSize                    allocationSize,
-                                     uint32_t                        memoryTypeIndex,
-                                     const VkAllocationCallbacks*    pAllocator,
-                                     VkDeviceMemory*                 pMemory);
+void cvkAllocateExportMemory(VkDevice                        device,
+                             const void*                     pNext,
+                             VkExternalMemoryHandleTypeFlags handleTypes,
+                             VkDeviceSize                    allocationSize,
+                             uint32_t                        memoryTypeIndex,
+                             const VkAllocationCallbacks*    pAllocator,
+                             VkDeviceMemory*                 pMemory);
 /**
  * \brief Allocates memory with VkImportMemoryFdInfoKHR chained.
  *
@@ -6648,14 +6648,14 @@ void cvkAllocateMemoryWithExportInfo(VkDevice                        device,
  *
  * \retval None
  */
-void cvkAllocateMemoryWithImportMemoryFdInfo(VkDevice                           device,
-                                             const void*                        pNext,
-                                             VkExternalMemoryHandleTypeFlagBits handleType,
-                                             int                                fd,
-                                             VkDeviceSize                       allocationSize,
-                                             uint32_t                           memoryTypeIndex,
-                                             const VkAllocationCallbacks*       pAllocator,
-                                             VkDeviceMemory*                    pMemory);
+void cvkAllocateImportMemoryFd(VkDevice                           device,
+                               const void*                        pNext,
+                               VkExternalMemoryHandleTypeFlagBits handleType,
+                               int                                fd,
+                               VkDeviceSize                       allocationSize,
+                               uint32_t                           memoryTypeIndex,
+                               const VkAllocationCallbacks*       pAllocator,
+                               VkDeviceMemory*                    pMemory);
 /**
  * \brief Allocates memory with VkMemoryAllocateFlagsInfo chained.
  *
@@ -6916,7 +6916,7 @@ void cvkCreateDeviceWithDeviceGroupInfo(VkPhysicalDevice                physical
  *
  * \retval None
  */
-void cvkCreateFenceWithExportInfo(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+void cvkCreateExportFence(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
 /**
  * \brief Creates a framebuffer with VkFramebufferAttachmentsCreateInfo chained.
  *
@@ -7531,12 +7531,12 @@ void cvkCreateSamplerWithYcbcrConversionInfo(VkDevice                     device
  *
  * \retval None
  */
-void cvkCreateSemaphoreWithExportInfo(VkDevice                           device,
-                                      const void*                        pNext,
-                                      VkExternalSemaphoreHandleTypeFlags handleTypes,
-                                      VkSemaphoreCreateFlags             flags,
-                                      const VkAllocationCallbacks*       pAllocator,
-                                      VkSemaphore*                       pSemaphore);
+void cvkCreateExportSemaphore(VkDevice                           device,
+                              const void*                        pNext,
+                              VkExternalSemaphoreHandleTypeFlags handleTypes,
+                              VkSemaphoreCreateFlags             flags,
+                              const VkAllocationCallbacks*       pAllocator,
+                              VkSemaphore*                       pSemaphore);
 /**
  * \brief Creates a semaphore with VkSemaphoreTypeCreateInfo chained.
  *
