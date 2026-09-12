@@ -12,7 +12,7 @@ from __future__ import annotations
 import argparse
 import filecmp
 import os
-import re
+from pathlib import Path
 import subprocess
 import sys
 import tempfile
@@ -35,8 +35,9 @@ def main() -> int:
         for sub in ("include", "src"):
             fresh_dir = os.path.join(tmp, sub)
             repo_dir = os.path.join(REPO_ROOT, sub)
-            fresh = sorted(os.listdir(fresh_dir))
-            repo = sorted(f for f in os.listdir(repo_dir) if f.endswith((".h", ".c")))
+            fresh = {p.relative_to(fresh_dir).as_posix() for p in Path(fresh_dir).rglob("*") if p.is_file()}
+            repo = {p.relative_to(repo_dir).as_posix() for p in Path(repo_dir).rglob("*")
+                    if p.is_file() and p.suffix in (".h", ".c")}
             for f in sorted(set(fresh) | set(repo)):
                 a, b = os.path.join(repo_dir, f), os.path.join(fresh_dir, f)
                 if not os.path.exists(a):

@@ -140,8 +140,10 @@ tier 0/1 functions exist there.
 - `cvk.h` / `cvk.c` for tiers 0, 1, 1', and templated tier 2, generated from the Vulkan registry
   plus a small policy file (naming prefix, `CVK_MAX_*` capacities, which extensions and platforms
   to include, constant-substitution table).
-- Per-platform headers (`cvk_linux.h`, `cvk_win32.h`) with the same tiers restricted to that
-  platform's extensions.
+- Per-platform headers (`include/xlib/cvk_xlib.h`, `include/win32/cvk_win32.h`) with the same
+  tiers restricted to that platform's extensions, and matching sources under `src/<platform>/`.
+  The `posix` protocol pair and `scvk` profile use the same layout. Include platform headers
+  as, for example, `#include "win32/cvk_win32.h"` with `include/` on the include path.
 - Doxygen contracts generated from the registry's parameter descriptions with the fixed phrasing
   above, so hand-written tier 3 code reads identically to generated tier 0–2 code.
 - Assertion sets derived mechanically: `optional="false"` handles → non-null assert, `len=`

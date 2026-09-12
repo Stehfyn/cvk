@@ -31,8 +31,10 @@ wrong by definition.
   constant, or type the profile lacks is dropped there (`missing: drop`), and a protocol file
   may declare the variant it belongs to (`Profile: vulkan` on the format protocols, whose
   utility-library tables describe formats the SC headers lack).
-- `include/cvk_<platform>.h`, `src/cvk_<platform>.c` per registry platform (`win32`, `xlib`),
-  each including `cvk.h` and its platform headers.
+- `include/<platform>/cvk_<platform>.h`, `src/<platform>/cvk_<platform>.c` per registry
+  platform (`win32`, `xlib`), each including `cvk.h` and its platform headers. The same
+  layout applies to `scvk` and the `posix` protocol pair; sources include their headers
+  as `<platform>/<prefix>_<platform>.h` relative to the public `include/` directory.
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
 - Every emitted function has a full Doxygen block with fixed phrasing (section 9).
 
