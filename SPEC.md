@@ -138,10 +138,16 @@ element array is sized by `CVK_MAX_<ArrayParam>` and the count is asserted again
 
 **Extenders on the output sType struct** (`VkMemoryDedicatedRequirements` on
 `VkMemoryRequirements2`, `VkExternalImageFormatProperties` on `VkImageFormatProperties2`,
-`VkPhysicalDeviceIDProperties` on `VkPhysicalDeviceProperties2`) are emitted as
-`<target>With<D><Kind>` where `<target>` is the flattened sibling when one exists, else tier 0,
-and `<Kind>` is the extender's trailing word: `cvkGetImageMemoryRequirementsInfo2WithDedicatedRequirements`,
-`cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties`, `cvkGetPhysicalDeviceProperties2WithIDProperties`.
+`VkPhysicalDeviceIDProperties` on `VkPhysicalDeviceProperties2`) are named by
+splicing when the target name ends with the kind word the extender qualifies, at the position
+the extender gives it, which reproduces Vulkan's struct names with `Get` in front:
+`cvkGetPhysicalDeviceHostQueryResetFeatures`, `cvkGetPhysicalDeviceIDProperties`,
+`cvkGetPhysicalDeviceVulkan12Properties`, `cvkGetDescriptorSetVariableDescriptorCountLayoutSupport`.
+When the target is a flattened sibling whose tail is not the kind (`…Info2`), or the distinct
+part has no anchor in the base, the form is `<target>With<D><Kind>`:
+`cvkGetImageMemoryRequirementsInfo2WithDedicatedRequirements`,
+`cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties`,
+`cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList`.
 The function takes `p<D><Kind>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
 chains it into the output struct, and returns it through an added out-parameter `p<D><Kind>`.
 

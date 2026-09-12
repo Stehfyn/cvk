@@ -7958,14 +7958,14 @@ void cvkGetBufferMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice      
  *
  * \retval None
  */
-void cvkGetDescriptorSetLayoutSupportWithVariableDescriptorCountSupport(VkDevice                                             device,
-                                                                        const void*                                          pCreateInfoNext,
-                                                                        VkDescriptorSetLayoutCreateFlags                     flags,
-                                                                        uint32_t                                             bindingCount,
-                                                                        const VkDescriptorSetLayoutBinding*                  pBindings,
-                                                                        void*                                                pVariableDescriptorCountSupportNext,
-                                                                        VkDescriptorSetLayoutSupport*                        pSupport,
-                                                                        VkDescriptorSetVariableDescriptorCountLayoutSupport* pVariableDescriptorCountSupport);
+void cvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice                                             device,
+                                                             const void*                                          pCreateInfoNext,
+                                                             VkDescriptorSetLayoutCreateFlags                     flags,
+                                                             uint32_t                                             bindingCount,
+                                                             const VkDescriptorSetLayoutBinding*                  pBindings,
+                                                             void*                                                pVariableDescriptorCountSupportNext,
+                                                             VkDescriptorSetLayoutSupport*                        pSupport,
+                                                             VkDescriptorSetVariableDescriptorCountLayoutSupport* pVariableDescriptorCountSupport);
 /**
  * \brief Retrieves image memory requirements 2 with VkMemoryDedicatedRequirements chained to the output.
  *
@@ -7994,10 +7994,10 @@ void cvkGetImageMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice       
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWith16BitStorageFeatures(VkPhysicalDevice                      physicalDevice,
-                                                          void*                                 p16BitStorageFeaturesNext,
-                                                          VkPhysicalDeviceFeatures2*            pFeatures,
-                                                          VkPhysicalDevice16BitStorageFeatures* p16BitStorageFeatures);
+void cvkGetPhysicalDevice16BitStorageFeatures(VkPhysicalDevice                      physicalDevice,
+                                              void*                                 p16BitStorageFeaturesNext,
+                                              VkPhysicalDeviceFeatures2*            pFeatures,
+                                              VkPhysicalDevice16BitStorageFeatures* p16BitStorageFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice8BitStorageFeatures chained to the output.
  *
@@ -8008,10 +8008,10 @@ void cvkGetPhysicalDeviceFeaturesWith16BitStorageFeatures(VkPhysicalDevice      
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWith8BitStorageFeatures(VkPhysicalDevice                     physicalDevice,
-                                                         void*                                p8BitStorageFeaturesNext,
-                                                         VkPhysicalDeviceFeatures2*           pFeatures,
-                                                         VkPhysicalDevice8BitStorageFeatures* p8BitStorageFeatures);
+void cvkGetPhysicalDevice8BitStorageFeatures(VkPhysicalDevice                     physicalDevice,
+                                             void*                                p8BitStorageFeaturesNext,
+                                             VkPhysicalDeviceFeatures2*           pFeatures,
+                                             VkPhysicalDevice8BitStorageFeatures* p8BitStorageFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceBufferDeviceAddressFeatures chained to the output.
  *
@@ -8022,10 +8022,10 @@ void cvkGetPhysicalDeviceFeaturesWith8BitStorageFeatures(VkPhysicalDevice       
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithBufferDeviceAddressFeatures(VkPhysicalDevice                             physicalDevice,
-                                                                 void*                                        pBufferDeviceAddressFeaturesNext,
-                                                                 VkPhysicalDeviceFeatures2*                   pFeatures,
-                                                                 VkPhysicalDeviceBufferDeviceAddressFeatures* pBufferDeviceAddressFeatures);
+void cvkGetPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDevice                             physicalDevice,
+                                                     void*                                        pBufferDeviceAddressFeaturesNext,
+                                                     VkPhysicalDeviceFeatures2*                   pFeatures,
+                                                     VkPhysicalDeviceBufferDeviceAddressFeatures* pBufferDeviceAddressFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDescriptorIndexingFeatures chained to the output.
  *
@@ -8036,10 +8036,10 @@ void cvkGetPhysicalDeviceFeaturesWithBufferDeviceAddressFeatures(VkPhysicalDevic
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithDescriptorIndexingFeatures(VkPhysicalDevice                            physicalDevice,
-                                                                void*                                       pDescriptorIndexingFeaturesNext,
-                                                                VkPhysicalDeviceFeatures2*                  pFeatures,
-                                                                VkPhysicalDeviceDescriptorIndexingFeatures* pDescriptorIndexingFeatures);
+void cvkGetPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDevice                            physicalDevice,
+                                                    void*                                       pDescriptorIndexingFeaturesNext,
+                                                    VkPhysicalDeviceFeatures2*                  pFeatures,
+                                                    VkPhysicalDeviceDescriptorIndexingFeatures* pDescriptorIndexingFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceHostQueryResetFeatures chained to the output.
  *
@@ -8050,10 +8050,10 @@ void cvkGetPhysicalDeviceFeaturesWithDescriptorIndexingFeatures(VkPhysicalDevice
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithHostQueryResetFeatures(VkPhysicalDevice                        physicalDevice,
-                                                            void*                                   pHostQueryResetFeaturesNext,
-                                                            VkPhysicalDeviceFeatures2*              pFeatures,
-                                                            VkPhysicalDeviceHostQueryResetFeatures* pHostQueryResetFeatures);
+void cvkGetPhysicalDeviceHostQueryResetFeatures(VkPhysicalDevice                        physicalDevice,
+                                                void*                                   pHostQueryResetFeaturesNext,
+                                                VkPhysicalDeviceFeatures2*              pFeatures,
+                                                VkPhysicalDeviceHostQueryResetFeatures* pHostQueryResetFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceImagelessFramebufferFeatures chained to the output.
  *
@@ -8064,10 +8064,10 @@ void cvkGetPhysicalDeviceFeaturesWithHostQueryResetFeatures(VkPhysicalDevice    
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithImagelessFramebufferFeatures(VkPhysicalDevice                              physicalDevice,
-                                                                  void*                                         pImagelessFramebufferFeaturesNext,
-                                                                  VkPhysicalDeviceFeatures2*                    pFeatures,
-                                                                  VkPhysicalDeviceImagelessFramebufferFeatures* pImagelessFramebufferFeatures);
+void cvkGetPhysicalDeviceImagelessFramebufferFeatures(VkPhysicalDevice                              physicalDevice,
+                                                      void*                                         pImagelessFramebufferFeaturesNext,
+                                                      VkPhysicalDeviceFeatures2*                    pFeatures,
+                                                      VkPhysicalDeviceImagelessFramebufferFeatures* pImagelessFramebufferFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceMultiviewFeatures chained to the output.
  *
@@ -8078,10 +8078,7 @@ void cvkGetPhysicalDeviceFeaturesWithImagelessFramebufferFeatures(VkPhysicalDevi
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithMultiviewFeatures(VkPhysicalDevice                   physicalDevice,
-                                                       void*                              pMultiviewFeaturesNext,
-                                                       VkPhysicalDeviceFeatures2*         pFeatures,
-                                                       VkPhysicalDeviceMultiviewFeatures* pMultiviewFeatures);
+void cvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice physicalDevice, void* pMultiviewFeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceMultiviewFeatures* pMultiviewFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceProtectedMemoryFeatures chained to the output.
  *
@@ -8092,10 +8089,10 @@ void cvkGetPhysicalDeviceFeaturesWithMultiviewFeatures(VkPhysicalDevice         
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithProtectedMemoryFeatures(VkPhysicalDevice                         physicalDevice,
-                                                             void*                                    pProtectedMemoryFeaturesNext,
-                                                             VkPhysicalDeviceFeatures2*               pFeatures,
-                                                             VkPhysicalDeviceProtectedMemoryFeatures* pProtectedMemoryFeatures);
+void cvkGetPhysicalDeviceProtectedMemoryFeatures(VkPhysicalDevice                         physicalDevice,
+                                                 void*                                    pProtectedMemoryFeaturesNext,
+                                                 VkPhysicalDeviceFeatures2*               pFeatures,
+                                                 VkPhysicalDeviceProtectedMemoryFeatures* pProtectedMemoryFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceSamplerYcbcrConversionFeatures chained to the output.
  *
@@ -8106,10 +8103,10 @@ void cvkGetPhysicalDeviceFeaturesWithProtectedMemoryFeatures(VkPhysicalDevice   
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithSamplerYcbcrConversionFeatures(VkPhysicalDevice                                physicalDevice,
-                                                                    void*                                           pSamplerYcbcrConversionFeaturesNext,
-                                                                    VkPhysicalDeviceFeatures2*                      pFeatures,
-                                                                    VkPhysicalDeviceSamplerYcbcrConversionFeatures* pSamplerYcbcrConversionFeatures);
+void cvkGetPhysicalDeviceSamplerYcbcrConversionFeatures(VkPhysicalDevice                                physicalDevice,
+                                                        void*                                           pSamplerYcbcrConversionFeaturesNext,
+                                                        VkPhysicalDeviceFeatures2*                      pFeatures,
+                                                        VkPhysicalDeviceSamplerYcbcrConversionFeatures* pSamplerYcbcrConversionFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceScalarBlockLayoutFeatures chained to the output.
  *
@@ -8120,10 +8117,10 @@ void cvkGetPhysicalDeviceFeaturesWithSamplerYcbcrConversionFeatures(VkPhysicalDe
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithScalarBlockLayoutFeatures(VkPhysicalDevice                           physicalDevice,
-                                                               void*                                      pScalarBlockLayoutFeaturesNext,
-                                                               VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                               VkPhysicalDeviceScalarBlockLayoutFeatures* pScalarBlockLayoutFeatures);
+void cvkGetPhysicalDeviceScalarBlockLayoutFeatures(VkPhysicalDevice                           physicalDevice,
+                                                   void*                                      pScalarBlockLayoutFeaturesNext,
+                                                   VkPhysicalDeviceFeatures2*                 pFeatures,
+                                                   VkPhysicalDeviceScalarBlockLayoutFeatures* pScalarBlockLayoutFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures chained to the output.
  *
@@ -8134,10 +8131,10 @@ void cvkGetPhysicalDeviceFeaturesWithScalarBlockLayoutFeatures(VkPhysicalDevice 
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithSeparateDepthStencilLayoutsFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                                         void*                                                pSeparateDepthStencilLayoutsFeaturesNext,
-                                                                         VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                                         VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pSeparateDepthStencilLayoutsFeatures);
+void cvkGetPhysicalDeviceSeparateDepthStencilLayoutsFeatures(VkPhysicalDevice                                     physicalDevice,
+                                                             void*                                                pSeparateDepthStencilLayoutsFeaturesNext,
+                                                             VkPhysicalDeviceFeatures2*                           pFeatures,
+                                                             VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pSeparateDepthStencilLayoutsFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderAtomicInt64Features chained to the output.
  *
@@ -8148,10 +8145,10 @@ void cvkGetPhysicalDeviceFeaturesWithSeparateDepthStencilLayoutsFeatures(VkPhysi
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithShaderAtomicInt64Features(VkPhysicalDevice                           physicalDevice,
-                                                               void*                                      pShaderAtomicInt64FeaturesNext,
-                                                               VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                               VkPhysicalDeviceShaderAtomicInt64Features* pShaderAtomicInt64Features);
+void cvkGetPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDevice                           physicalDevice,
+                                                   void*                                      pShaderAtomicInt64FeaturesNext,
+                                                   VkPhysicalDeviceFeatures2*                 pFeatures,
+                                                   VkPhysicalDeviceShaderAtomicInt64Features* pShaderAtomicInt64Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderDrawParametersFeatures chained to the output.
  *
@@ -8162,10 +8159,10 @@ void cvkGetPhysicalDeviceFeaturesWithShaderAtomicInt64Features(VkPhysicalDevice 
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithShaderDrawParametersFeatures(VkPhysicalDevice                              physicalDevice,
-                                                                  void*                                         pShaderDrawParametersFeaturesNext,
-                                                                  VkPhysicalDeviceFeatures2*                    pFeatures,
-                                                                  VkPhysicalDeviceShaderDrawParametersFeatures* pShaderDrawParametersFeatures);
+void cvkGetPhysicalDeviceShaderDrawParametersFeatures(VkPhysicalDevice                              physicalDevice,
+                                                      void*                                         pShaderDrawParametersFeaturesNext,
+                                                      VkPhysicalDeviceFeatures2*                    pFeatures,
+                                                      VkPhysicalDeviceShaderDrawParametersFeatures* pShaderDrawParametersFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderFloat16Int8Features chained to the output.
  *
@@ -8176,10 +8173,10 @@ void cvkGetPhysicalDeviceFeaturesWithShaderDrawParametersFeatures(VkPhysicalDevi
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithShaderFloat16Int8Features(VkPhysicalDevice                           physicalDevice,
-                                                               void*                                      pShaderFloat16Int8FeaturesNext,
-                                                               VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                               VkPhysicalDeviceShaderFloat16Int8Features* pShaderFloat16Int8Features);
+void cvkGetPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDevice                           physicalDevice,
+                                                   void*                                      pShaderFloat16Int8FeaturesNext,
+                                                   VkPhysicalDeviceFeatures2*                 pFeatures,
+                                                   VkPhysicalDeviceShaderFloat16Int8Features* pShaderFloat16Int8Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures chained to the output.
  *
@@ -8190,10 +8187,10 @@ void cvkGetPhysicalDeviceFeaturesWithShaderFloat16Int8Features(VkPhysicalDevice 
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithShaderSubgroupExtendedTypesFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                                         void*                                                pShaderSubgroupExtendedTypesFeaturesNext,
-                                                                         VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                                         VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pShaderSubgroupExtendedTypesFeatures);
+void cvkGetPhysicalDeviceShaderSubgroupExtendedTypesFeatures(VkPhysicalDevice                                     physicalDevice,
+                                                             void*                                                pShaderSubgroupExtendedTypesFeaturesNext,
+                                                             VkPhysicalDeviceFeatures2*                           pFeatures,
+                                                             VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pShaderSubgroupExtendedTypesFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceTimelineSemaphoreFeatures chained to the output.
  *
@@ -8204,10 +8201,10 @@ void cvkGetPhysicalDeviceFeaturesWithShaderSubgroupExtendedTypesFeatures(VkPhysi
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithTimelineSemaphoreFeatures(VkPhysicalDevice                           physicalDevice,
-                                                               void*                                      pTimelineSemaphoreFeaturesNext,
-                                                               VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                               VkPhysicalDeviceTimelineSemaphoreFeatures* pTimelineSemaphoreFeatures);
+void cvkGetPhysicalDeviceTimelineSemaphoreFeatures(VkPhysicalDevice                           physicalDevice,
+                                                   void*                                      pTimelineSemaphoreFeaturesNext,
+                                                   VkPhysicalDeviceFeatures2*                 pFeatures,
+                                                   VkPhysicalDeviceTimelineSemaphoreFeatures* pTimelineSemaphoreFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceUniformBufferStandardLayoutFeatures chained to the output.
  *
@@ -8218,10 +8215,10 @@ void cvkGetPhysicalDeviceFeaturesWithTimelineSemaphoreFeatures(VkPhysicalDevice 
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithUniformBufferStandardLayoutFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                                         void*                                                pUniformBufferStandardLayoutFeaturesNext,
-                                                                         VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                                         VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pUniformBufferStandardLayoutFeatures);
+void cvkGetPhysicalDeviceUniformBufferStandardLayoutFeatures(VkPhysicalDevice                                     physicalDevice,
+                                                             void*                                                pUniformBufferStandardLayoutFeaturesNext,
+                                                             VkPhysicalDeviceFeatures2*                           pFeatures,
+                                                             VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pUniformBufferStandardLayoutFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVariablePointersFeatures chained to the output.
  *
@@ -8232,10 +8229,10 @@ void cvkGetPhysicalDeviceFeaturesWithUniformBufferStandardLayoutFeatures(VkPhysi
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithVariablePointersFeatures(VkPhysicalDevice                          physicalDevice,
-                                                              void*                                     pVariablePointersFeaturesNext,
-                                                              VkPhysicalDeviceFeatures2*                pFeatures,
-                                                              VkPhysicalDeviceVariablePointersFeatures* pVariablePointersFeatures);
+void cvkGetPhysicalDeviceVariablePointersFeatures(VkPhysicalDevice                          physicalDevice,
+                                                  void*                                     pVariablePointersFeaturesNext,
+                                                  VkPhysicalDeviceFeatures2*                pFeatures,
+                                                  VkPhysicalDeviceVariablePointersFeatures* pVariablePointersFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkan11Features chained to the output.
  *
@@ -8246,10 +8243,7 @@ void cvkGetPhysicalDeviceFeaturesWithVariablePointersFeatures(VkPhysicalDevice  
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithVulkan11Features(VkPhysicalDevice                  physicalDevice,
-                                                      void*                             pVulkan11FeaturesNext,
-                                                      VkPhysicalDeviceFeatures2*        pFeatures,
-                                                      VkPhysicalDeviceVulkan11Features* pVulkan11Features);
+void cvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice physicalDevice, void* pVulkan11FeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceVulkan11Features* pVulkan11Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkan12Features chained to the output.
  *
@@ -8260,10 +8254,7 @@ void cvkGetPhysicalDeviceFeaturesWithVulkan11Features(VkPhysicalDevice          
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithVulkan12Features(VkPhysicalDevice                  physicalDevice,
-                                                      void*                             pVulkan12FeaturesNext,
-                                                      VkPhysicalDeviceFeatures2*        pFeatures,
-                                                      VkPhysicalDeviceVulkan12Features* pVulkan12Features);
+void cvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice physicalDevice, void* pVulkan12FeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceVulkan12Features* pVulkan12Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkanMemoryModelFeatures chained to the output.
  *
@@ -8274,10 +8265,10 @@ void cvkGetPhysicalDeviceFeaturesWithVulkan12Features(VkPhysicalDevice          
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFeaturesWithVulkanMemoryModelFeatures(VkPhysicalDevice                           physicalDevice,
-                                                               void*                                      pVulkanMemoryModelFeaturesNext,
-                                                               VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                               VkPhysicalDeviceVulkanMemoryModelFeatures* pVulkanMemoryModelFeatures);
+void cvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice                           physicalDevice,
+                                                   void*                                      pVulkanMemoryModelFeaturesNext,
+                                                   VkPhysicalDeviceFeatures2*                 pFeatures,
+                                                   VkPhysicalDeviceVulkanMemoryModelFeatures* pVulkanMemoryModelFeatures);
 /**
  * \brief Retrieves physical device format properties 2 with VkDrmFormatModifierPropertiesList2EXT chained to the output.
  *
@@ -8372,10 +8363,10 @@ void cvkGetPhysicalDeviceImageFormatInfo2WithSamplerYcbcrConversionProperties(Vk
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithDepthStencilResolveProperties(VkPhysicalDevice                               physicalDevice,
-                                                                     void*                                          pDepthStencilResolvePropertiesNext,
-                                                                     VkPhysicalDeviceProperties2*                   pProperties,
-                                                                     VkPhysicalDeviceDepthStencilResolveProperties* pDepthStencilResolveProperties);
+void cvkGetPhysicalDeviceDepthStencilResolveProperties(VkPhysicalDevice                               physicalDevice,
+                                                       void*                                          pDepthStencilResolvePropertiesNext,
+                                                       VkPhysicalDeviceProperties2*                   pProperties,
+                                                       VkPhysicalDeviceDepthStencilResolveProperties* pDepthStencilResolveProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDescriptorIndexingProperties chained to the output.
  *
@@ -8386,10 +8377,10 @@ void cvkGetPhysicalDevicePropertiesWithDepthStencilResolveProperties(VkPhysicalD
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithDescriptorIndexingProperties(VkPhysicalDevice                              physicalDevice,
-                                                                    void*                                         pDescriptorIndexingPropertiesNext,
-                                                                    VkPhysicalDeviceProperties2*                  pProperties,
-                                                                    VkPhysicalDeviceDescriptorIndexingProperties* pDescriptorIndexingProperties);
+void cvkGetPhysicalDeviceDescriptorIndexingProperties(VkPhysicalDevice                              physicalDevice,
+                                                      void*                                         pDescriptorIndexingPropertiesNext,
+                                                      VkPhysicalDeviceProperties2*                  pProperties,
+                                                      VkPhysicalDeviceDescriptorIndexingProperties* pDescriptorIndexingProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDriverProperties chained to the output.
  *
@@ -8400,10 +8391,7 @@ void cvkGetPhysicalDevicePropertiesWithDescriptorIndexingProperties(VkPhysicalDe
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithDriverProperties(VkPhysicalDevice                  physicalDevice,
-                                                        void*                             pDriverPropertiesNext,
-                                                        VkPhysicalDeviceProperties2*      pProperties,
-                                                        VkPhysicalDeviceDriverProperties* pDriverProperties);
+void cvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice physicalDevice, void* pDriverPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceDriverProperties* pDriverProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceFloatControlsProperties chained to the output.
  *
@@ -8414,10 +8402,10 @@ void cvkGetPhysicalDevicePropertiesWithDriverProperties(VkPhysicalDevice        
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithFloatControlsProperties(VkPhysicalDevice                         physicalDevice,
-                                                               void*                                    pFloatControlsPropertiesNext,
-                                                               VkPhysicalDeviceProperties2*             pProperties,
-                                                               VkPhysicalDeviceFloatControlsProperties* pFloatControlsProperties);
+void cvkGetPhysicalDeviceFloatControlsProperties(VkPhysicalDevice                         physicalDevice,
+                                                 void*                                    pFloatControlsPropertiesNext,
+                                                 VkPhysicalDeviceProperties2*             pProperties,
+                                                 VkPhysicalDeviceFloatControlsProperties* pFloatControlsProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceIDProperties chained to the output.
  *
@@ -8428,7 +8416,7 @@ void cvkGetPhysicalDevicePropertiesWithFloatControlsProperties(VkPhysicalDevice 
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithIDProperties(VkPhysicalDevice physicalDevice, void* pIDPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceIDProperties* pIDProperties);
+void cvkGetPhysicalDeviceIDProperties(VkPhysicalDevice physicalDevice, void* pIDPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceIDProperties* pIDProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceMaintenance3Properties chained to the output.
  *
@@ -8439,10 +8427,10 @@ void cvkGetPhysicalDevicePropertiesWithIDProperties(VkPhysicalDevice physicalDev
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithMaintenance3Properties(VkPhysicalDevice                        physicalDevice,
-                                                              void*                                   pMaintenance3PropertiesNext,
-                                                              VkPhysicalDeviceProperties2*            pProperties,
-                                                              VkPhysicalDeviceMaintenance3Properties* pMaintenance3Properties);
+void cvkGetPhysicalDeviceMaintenance3Properties(VkPhysicalDevice                        physicalDevice,
+                                                void*                                   pMaintenance3PropertiesNext,
+                                                VkPhysicalDeviceProperties2*            pProperties,
+                                                VkPhysicalDeviceMaintenance3Properties* pMaintenance3Properties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceMultiviewProperties chained to the output.
  *
@@ -8453,10 +8441,10 @@ void cvkGetPhysicalDevicePropertiesWithMaintenance3Properties(VkPhysicalDevice  
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithMultiviewProperties(VkPhysicalDevice                     physicalDevice,
-                                                           void*                                pMultiviewPropertiesNext,
-                                                           VkPhysicalDeviceProperties2*         pProperties,
-                                                           VkPhysicalDeviceMultiviewProperties* pMultiviewProperties);
+void cvkGetPhysicalDeviceMultiviewProperties(VkPhysicalDevice                     physicalDevice,
+                                             void*                                pMultiviewPropertiesNext,
+                                             VkPhysicalDeviceProperties2*         pProperties,
+                                             VkPhysicalDeviceMultiviewProperties* pMultiviewProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePCIBusInfoPropertiesEXT chained to the output.
  *
@@ -8467,10 +8455,10 @@ void cvkGetPhysicalDevicePropertiesWithMultiviewProperties(VkPhysicalDevice     
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithPCIBusInfoProperties(VkPhysicalDevice                         physicalDevice,
-                                                            void*                                    pPCIBusInfoPropertiesNext,
-                                                            VkPhysicalDeviceProperties2*             pProperties,
-                                                            VkPhysicalDevicePCIBusInfoPropertiesEXT* pPCIBusInfoProperties);
+void cvkGetPhysicalDevicePCIBusInfoProperties(VkPhysicalDevice                         physicalDevice,
+                                              void*                                    pPCIBusInfoPropertiesNext,
+                                              VkPhysicalDeviceProperties2*             pProperties,
+                                              VkPhysicalDevicePCIBusInfoPropertiesEXT* pPCIBusInfoProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePointClippingProperties chained to the output.
  *
@@ -8481,10 +8469,10 @@ void cvkGetPhysicalDevicePropertiesWithPCIBusInfoProperties(VkPhysicalDevice    
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithPointClippingProperties(VkPhysicalDevice                         physicalDevice,
-                                                               void*                                    pPointClippingPropertiesNext,
-                                                               VkPhysicalDeviceProperties2*             pProperties,
-                                                               VkPhysicalDevicePointClippingProperties* pPointClippingProperties);
+void cvkGetPhysicalDevicePointClippingProperties(VkPhysicalDevice                         physicalDevice,
+                                                 void*                                    pPointClippingPropertiesNext,
+                                                 VkPhysicalDeviceProperties2*             pProperties,
+                                                 VkPhysicalDevicePointClippingProperties* pPointClippingProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceProtectedMemoryProperties chained to the output.
  *
@@ -8495,10 +8483,10 @@ void cvkGetPhysicalDevicePropertiesWithPointClippingProperties(VkPhysicalDevice 
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithProtectedMemoryProperties(VkPhysicalDevice                           physicalDevice,
-                                                                 void*                                      pProtectedMemoryPropertiesNext,
-                                                                 VkPhysicalDeviceProperties2*               pProperties,
-                                                                 VkPhysicalDeviceProtectedMemoryProperties* pProtectedMemoryProperties);
+void cvkGetPhysicalDeviceProtectedMemoryProperties(VkPhysicalDevice                           physicalDevice,
+                                                   void*                                      pProtectedMemoryPropertiesNext,
+                                                   VkPhysicalDeviceProperties2*               pProperties,
+                                                   VkPhysicalDeviceProtectedMemoryProperties* pProtectedMemoryProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSamplerFilterMinmaxProperties chained to the output.
  *
@@ -8509,10 +8497,10 @@ void cvkGetPhysicalDevicePropertiesWithProtectedMemoryProperties(VkPhysicalDevic
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithSamplerFilterMinmaxProperties(VkPhysicalDevice                               physicalDevice,
-                                                                     void*                                          pSamplerFilterMinmaxPropertiesNext,
-                                                                     VkPhysicalDeviceProperties2*                   pProperties,
-                                                                     VkPhysicalDeviceSamplerFilterMinmaxProperties* pSamplerFilterMinmaxProperties);
+void cvkGetPhysicalDeviceSamplerFilterMinmaxProperties(VkPhysicalDevice                               physicalDevice,
+                                                       void*                                          pSamplerFilterMinmaxPropertiesNext,
+                                                       VkPhysicalDeviceProperties2*                   pProperties,
+                                                       VkPhysicalDeviceSamplerFilterMinmaxProperties* pSamplerFilterMinmaxProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSubgroupProperties chained to the output.
  *
@@ -8523,10 +8511,10 @@ void cvkGetPhysicalDevicePropertiesWithSamplerFilterMinmaxProperties(VkPhysicalD
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithSubgroupProperties(VkPhysicalDevice                    physicalDevice,
-                                                          void*                               pSubgroupPropertiesNext,
-                                                          VkPhysicalDeviceProperties2*        pProperties,
-                                                          VkPhysicalDeviceSubgroupProperties* pSubgroupProperties);
+void cvkGetPhysicalDeviceSubgroupProperties(VkPhysicalDevice                    physicalDevice,
+                                            void*                               pSubgroupPropertiesNext,
+                                            VkPhysicalDeviceProperties2*        pProperties,
+                                            VkPhysicalDeviceSubgroupProperties* pSubgroupProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceTimelineSemaphoreProperties chained to the output.
  *
@@ -8537,10 +8525,10 @@ void cvkGetPhysicalDevicePropertiesWithSubgroupProperties(VkPhysicalDevice      
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithTimelineSemaphoreProperties(VkPhysicalDevice                             physicalDevice,
-                                                                   void*                                        pTimelineSemaphorePropertiesNext,
-                                                                   VkPhysicalDeviceProperties2*                 pProperties,
-                                                                   VkPhysicalDeviceTimelineSemaphoreProperties* pTimelineSemaphoreProperties);
+void cvkGetPhysicalDeviceTimelineSemaphoreProperties(VkPhysicalDevice                             physicalDevice,
+                                                     void*                                        pTimelineSemaphorePropertiesNext,
+                                                     VkPhysicalDeviceProperties2*                 pProperties,
+                                                     VkPhysicalDeviceTimelineSemaphoreProperties* pTimelineSemaphoreProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan11Properties chained to the output.
  *
@@ -8551,10 +8539,10 @@ void cvkGetPhysicalDevicePropertiesWithTimelineSemaphoreProperties(VkPhysicalDev
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithVulkan11Properties(VkPhysicalDevice                    physicalDevice,
-                                                          void*                               pVulkan11PropertiesNext,
-                                                          VkPhysicalDeviceProperties2*        pProperties,
-                                                          VkPhysicalDeviceVulkan11Properties* pVulkan11Properties);
+void cvkGetPhysicalDeviceVulkan11Properties(VkPhysicalDevice                    physicalDevice,
+                                            void*                               pVulkan11PropertiesNext,
+                                            VkPhysicalDeviceProperties2*        pProperties,
+                                            VkPhysicalDeviceVulkan11Properties* pVulkan11Properties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan12Properties chained to the output.
  *
@@ -8565,10 +8553,10 @@ void cvkGetPhysicalDevicePropertiesWithVulkan11Properties(VkPhysicalDevice      
  *
  * \retval None
  */
-void cvkGetPhysicalDevicePropertiesWithVulkan12Properties(VkPhysicalDevice                    physicalDevice,
-                                                          void*                               pVulkan12PropertiesNext,
-                                                          VkPhysicalDeviceProperties2*        pProperties,
-                                                          VkPhysicalDeviceVulkan12Properties* pVulkan12Properties);
+void cvkGetPhysicalDeviceVulkan12Properties(VkPhysicalDevice                    physicalDevice,
+                                            void*                               pVulkan12PropertiesNext,
+                                            VkPhysicalDeviceProperties2*        pProperties,
+                                            VkPhysicalDeviceVulkan12Properties* pVulkan12Properties);
 /**
  * \brief Returns the first memory type in the mask whose property flags equal the given flags exactly, or VK_INVALID.
  *
