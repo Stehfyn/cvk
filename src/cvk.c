@@ -5936,6 +5936,42 @@ uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physical
     cvkGetPhysicalDeviceMemoryProperties(physicalDevice, &memory_properties);
     return cvkGetCompatibleMemoryTypeIndex(memory_properties.memoryTypeCount, memory_properties.memoryTypes, memoryTypeBits, requiredProperties);
 }
+VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice                   physicalDevice,
+                                                        VkExternalMemoryHandleTypeFlagBits handleType,
+                                                        VkFormat                           format,
+                                                        VkImageType                        type,
+                                                        VkImageTiling                      tiling,
+                                                        VkImageUsageFlags                  usage,
+                                                        VkImageCreateFlags                 flags,
+                                                        const void*                        pImageFormatInfoNext,
+                                                        VkBool32*                          pDedicatedOnly)
+{
+    VkPhysicalDeviceExternalImageFormatInfo external_image_format_info;
+    VkExternalImageFormatProperties         external_image_format_properties;
+
+    cvkInitPhysicalDeviceExternalImageFormatInfo(&external_image_format_info, pImageFormatInfoNext, handleType);
+    cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
+    (*pDedicatedOnly) = (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
+    return (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
+}
+VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkPhysicalDevice                   physicalDevice,
+                                                        VkExternalMemoryHandleTypeFlagBits handleType,
+                                                        VkFormat                           format,
+                                                        VkImageType                        type,
+                                                        VkImageTiling                      tiling,
+                                                        VkImageUsageFlags                  usage,
+                                                        VkImageCreateFlags                 flags,
+                                                        const void*                        pImageFormatInfoNext,
+                                                        VkBool32*                          pDedicatedOnly)
+{
+    VkPhysicalDeviceExternalImageFormatInfo external_image_format_info;
+    VkExternalImageFormatProperties         external_image_format_properties;
+
+    cvkInitPhysicalDeviceExternalImageFormatInfo(&external_image_format_info, pImageFormatInfoNext, handleType);
+    cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
+    (*pDedicatedOnly) = (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
+    return (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
+}
 void cvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
                             VkDevice                     device,
                             VkImage                      image,

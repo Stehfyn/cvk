@@ -10,6 +10,14 @@
       "binaryDir": "${sourceDir}/build/windows-msvc-2026"
     },
     {
+      "name": "linux",
+      "displayName": "Linux Ninja (gcc)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+    },
+    {
       "name": "ninja-clang",
       "displayName": "Ninja + clang",
       "generator": "Ninja",
@@ -19,6 +27,7 @@
   ],
   "buildPresets": [
     { "name": "windows-msvc-2026", "configurePreset": "windows-msvc-2026", "configuration": "Debug" },
+    { "name": "linux", "configurePreset": "linux" },
     { "name": "ninja-clang", "configurePreset": "ninja-clang" }
   ]
 }

@@ -296,6 +296,73 @@ void cvkCreateSemaphoreWithExportSemaphoreWin32HandleInfo(VkDevice              
                                                           VkSemaphoreCreateFlags       flags,
                                                           const VkAllocationCallbacks* pAllocator,
                                                           VkSemaphore*                 pSemaphore);
+/**
+ * \brief Imports a Win32 memory handle as a new image.
+ *
+ * \par Details:
+ *  Queries the handle's memory types (not permitted for the opaque Win32 handle types, which
+ *  therefore allow every type), and runs the specification's import chain: capability (the handle type must be
+ *  importable; DEDICATED_ONLY forces a dedicated allocation), creation with the handle type
+ *  declared, requirements with dedicated requirements chained (requiresDedicatedAllocation
+ *  also forces dedicated), memory type selection within the handle's memory types, allocation
+ *  with the import info chained (dedicated info in front when required), and binding. The
+ *  handle stays owned by the caller as Vulkan specifies for Win32 imports. The capability
+ *  query is made with handleType alone; image-creation extension structs in pImageNext are
+ *  not forwarded to it.
+ *
+ * \param[in]  physicalDevice          Physical device the image is created for
+ * \param[in]  device                  Logical device owning the image and memory
+ * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                   VkImageCreateInfo::flags
+ * \param[in]  imageType               VkImageCreateInfo::imageType
+ * \param[in]  format                  VkImageCreateInfo::format
+ * \param[in]  extent                  VkImageCreateInfo::extent
+ * \param[in]  mipLevels               VkImageCreateInfo::mipLevels
+ * \param[in]  arrayLayers             VkImageCreateInfo::arrayLayers
+ * \param[in]  samples                 VkImageCreateInfo::samples
+ * \param[in]  tiling                  VkImageCreateInfo::tiling
+ * \param[in]  usage                   VkImageCreateInfo::usage
+ * \param[in]  sharingMode             VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount   VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices     VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout           VkImageCreateInfo::initialLayout
+ * \param[in]  handleType              Win32 external memory handle type being imported
+ * \param[in]  handle                  Handle to import, or NULL when name is used
+ * \param[in]  name                    Name of the object to import, or NULL when handle is used
+ * \param[in]  allocationSize          Size of the external memory object; must cover the image's requirements
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pImage                  Receives the created VkImage
+ * \param[out] pMemory                 Receives the imported VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
+                               VkDevice                           device,
+                               const void*                        pImageNext,
+                               VkImageCreateFlags                 flags,
+                               VkImageType                        imageType,
+                               VkFormat                           format,
+                               VkExtent3D                         extent,
+                               uint32_t                           mipLevels,
+                               uint32_t                           arrayLayers,
+                               VkSampleCountFlagBits              samples,
+                               VkImageTiling                      tiling,
+                               VkImageUsageFlags                  usage,
+                               VkSharingMode                      sharingMode,
+                               uint32_t                           queueFamilyIndexCount,
+                               const uint32_t*                    pQueueFamilyIndices,
+                               VkImageLayout                      initialLayout,
+                               VkExternalMemoryHandleTypeFlagBits handleType,
+                               HANDLE                             handle,
+                               LPCWSTR                            name,
+                               VkDeviceSize                       allocationSize,
+                               VkMemoryPropertyFlags              requiredProperties,
+                               const void*                        pMemoryNext,
+                               const VkAllocationCallbacks*       pAllocator,
+                               VkImage*                           pImage,
+                               VkDeviceMemory*                    pMemory);
 
 #ifdef __cplusplus
 }

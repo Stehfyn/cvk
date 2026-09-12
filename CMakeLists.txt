@@ -29,12 +29,14 @@ if(Python3_Interpreter_FOUND)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-# Core is platform-free; each platform has its own generated pair that includes cvk.h.
+# Everything under include/ and src/ is generated. Core is platform-free; each platform has
+# its own generated pair that includes cvk.h. Tier 3 protocols (scripts/protocols/) are folded
+# into the platform pairs by the generator; "posix" is the pair for descriptor protocols.
 set(CVK_SOURCES src/cvk.c)
 if(WIN32)
     list(APPEND CVK_SOURCES src/cvk_win32.c)
 elseif(UNIX)
-    list(APPEND CVK_SOURCES src/cvk_xlib.c)
+    list(APPEND CVK_SOURCES src/cvk_xlib.c src/cvk_posix.c)
 endif()
 
 add_library(cvk STATIC ${CVK_SOURCES})

@@ -18,8 +18,10 @@ first, then the generator, then regenerate and re-run the studies.
 re-verify. A commit that changes the outputs without changing the generator or the policy is
 wrong by definition.
 
-- `generated/cvk.h`, `generated/cvk.c`: core profile. Platform-specific commands are inside
-  the same `#ifdef VK_USE_PLATFORM_*` guards `vulkan.h` uses, so the file set is one pair.
+- `include/cvk.h`, `src/cvk.c`: core profile, free of platform conditionals.
+- `include/cvk_<platform>.h`, `src/cvk_<platform>.c` per registry platform (`win32`, `xlib`),
+  each including `cvk.h` and its platform headers.
+- Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
 - Every emitted function has a full Doxygen block with fixed phrasing (section 9).
 
 ## 3. Names (derived)
@@ -182,7 +184,9 @@ the given flags; both return `VK_INVALID` if none, and `cvk.h` defines `VK_INVAL
 `assert` step on the index, so an impossible selection is fatal at the chain, not in the helper.
 
 Seeded chains: `cvkGetPhysicalDevice{,Compatible}MemoryTypeIndex` (memory properties, then the
-exact or the covering selector), `cvkAllocate{Image,Buffer}Memory`
+exact or the covering selector), `cvkGetPhysicalDeviceExternalImage{Import,Export}Support`
+(external format query → `VkBool32` for the feature bit, `pDedicatedOnly` out),
+`cvkAllocate{Image,Buffer}Memory`
 (requirements → type index → assert → allocate, all in one body; no import mask, that
 constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the
 extensible `2` form is used only where something is chained (dedicated requirements, plane),
@@ -190,6 +194,31 @@ extensible `2` form is used only where something is chained (dedicated requireme
 (return value to a local), `store` (return value to a chain output), `return` (on a call, or
 an expression with the chain's `ret` type), `set`, `assert`. An import constraint on memory types is a
 parameter of the import protocol, never a name and never part of a plain allocation.
+
+## 8b. Tier 3: protocols (authored C, folded in by the generator)
+
+Protocols branch on runtime facts the registry does not know (`DEDICATED_ONLY`,
+`requiresDedicatedAllocation`, memory object count), so their bodies are authored as real C,
+but **never under `include/` or `src/`**: they live with the generator as
+`scripts/protocols/cvk_protocol_<platform>.c`, and the generator folds each file into that
+platform's generated pair (Doxygen block and signature into the header, definition and system
+includes into the source). `posix` is a pair the registry does not name:
+`VK_KHR_external_memory_fd` is platform-neutral, `dup` is not. The generator enforces that a
+protocol calls only functions it produces and never a `vk*` command, so the protocols are the
+acceptance test of the surface: anything they cannot express is a generator defect.
+
+- `cvkImportWin32HandleImage` (`cvk_protocol_win32.c` → `cvk_win32.h/.c`) and `cvkImportFdImage`
+  (`cvk_protocol_posix.c` → `cvk_posix.h/.c`): each the complete import chain of
+  `study/MEMORY.md` §1 in one place: capability → create with the handle type declared → the
+  external object's memory types (except the opaque types the specification forbids querying)
+  → requirements with dedicated requirements chained → select within the external object's
+  memory types → allocate with the import info (dedicated info in front when `DEDICATED_ONLY`
+  or `requiresDedicatedAllocation` demands it) → bind. The external object's size is a
+  parameter, never derived. The Win32 handle stays caller-owned; the descriptor is imported as
+  a `dup` so the caller's stays valid. A handle-agnostic core was tried and removed: an import
+  is per handle kind, and a protocol should read as the specification's list in one place.
+
+Not yet written: buffer import, export, and the disjoint (per-plane, DRM modifier) image import.
 
 ## 9. Documentation phrasing (derived)
 

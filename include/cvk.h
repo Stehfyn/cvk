@@ -8505,6 +8505,54 @@ uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, ui
  */
 uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
 /**
+ * \brief Reports whether an image description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.
+ *
+ * \param[in] physicalDevice        See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] handleType            See cvkInitPhysicalDeviceExternalImageFormatInfo
+ * \param[in] format                See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] type                  See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] tiling                See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] usage                 See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] flags                 See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] pImageFormatInfoNext  Optional extension chain for the image format query, or NULL
+ * \param[out] pDedicatedOnly        Receives the dedicatedOnly
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice                   physicalDevice,
+                                                        VkExternalMemoryHandleTypeFlagBits handleType,
+                                                        VkFormat                           format,
+                                                        VkImageType                        type,
+                                                        VkImageTiling                      tiling,
+                                                        VkImageUsageFlags                  usage,
+                                                        VkImageCreateFlags                 flags,
+                                                        const void*                        pImageFormatInfoNext,
+                                                        VkBool32*                          pDedicatedOnly);
+/**
+ * \brief Reports whether an image description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.
+ *
+ * \param[in] physicalDevice        See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] handleType            See cvkInitPhysicalDeviceExternalImageFormatInfo
+ * \param[in] format                See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] type                  See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] tiling                See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] usage                 See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] flags                 See cvkGetPhysicalDeviceExternalImageFormatProperties
+ * \param[in] pImageFormatInfoNext  Optional extension chain for the image format query, or NULL
+ * \param[out] pDedicatedOnly        Receives the dedicatedOnly
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkPhysicalDevice                   physicalDevice,
+                                                        VkExternalMemoryHandleTypeFlagBits handleType,
+                                                        VkFormat                           format,
+                                                        VkImageType                        type,
+                                                        VkImageTiling                      tiling,
+                                                        VkImageUsageFlags                  usage,
+                                                        VkImageCreateFlags                 flags,
+                                                        const void*                        pImageFormatInfoNext,
+                                                        VkBool32*                          pDedicatedOnly);
+/**
  * \brief Allocates memory sized and typed for a image.
  *
  * \param[in] physicalDevice      See cvkGetPhysicalDeviceCompatibleMemoryTypeIndex

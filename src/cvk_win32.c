@@ -212,3 +212,98 @@ void cvkCreateSemaphoreWithExportSemaphoreWin32HandleInfo(VkDevice              
     export_semaphore_win32_handle_info.name        = name;
     cvkCreateSemaphore(device, &export_semaphore_win32_handle_info, flags, pAllocator, pSemaphore);
 }
+void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
+                               VkDevice                           device,
+                               const void*                        pImageNext,
+                               VkImageCreateFlags                 flags,
+                               VkImageType                        imageType,
+                               VkFormat                           format,
+                               VkExtent3D                         extent,
+                               uint32_t                           mipLevels,
+                               uint32_t                           arrayLayers,
+                               VkSampleCountFlagBits              samples,
+                               VkImageTiling                      tiling,
+                               VkImageUsageFlags                  usage,
+                               VkSharingMode                      sharingMode,
+                               uint32_t                           queueFamilyIndexCount,
+                               const uint32_t*                    pQueueFamilyIndices,
+                               VkImageLayout                      initialLayout,
+                               VkExternalMemoryHandleTypeFlagBits handleType,
+                               HANDLE                             handle,
+                               LPCWSTR                            name,
+                               VkDeviceSize                       allocationSize,
+                               VkMemoryPropertyFlags              requiredProperties,
+                               const void*                        pMemoryNext,
+                               const VkAllocationCallbacks*       pAllocator,
+                               VkImage*                           pImage,
+                               VkDeviceMemory*                    pMemory)
+{
+    VkMemoryWin32HandlePropertiesKHR memory_win32_handle_properties;
+    VkMemoryDedicatedRequirements    memory_dedicated_requirements;
+    VkMemoryRequirements2            memory_requirements;
+    VkImportMemoryWin32HandleInfoKHR import_memory_win32_handle_info;
+    VkMemoryDedicatedAllocateInfo    memory_dedicated_allocate_info;
+    const void*                      allocate_next;
+    VkBool32                         importable;
+    VkBool32                         dedicated;
+    uint32_t                         external_memory_type_bits;
+    uint32_t                         memory_type_index;
+
+    /* capability: the handle type must be importable for this image description */
+    importable = cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
+    CVK_ASSERT(importable);
+
+    /* create, with the handle type declared */
+    cvkCreateImageWithExternalMemoryInfo(device,
+                                         pImageNext,
+                                         (VkExternalMemoryHandleTypeFlags)handleType,
+                                         flags,
+                                         imageType,
+                                         format,
+                                         extent,
+                                         mipLevels,
+                                         arrayLayers,
+                                         samples,
+                                         tiling,
+                                         usage,
+                                         sharingMode,
+                                         queueFamilyIndexCount,
+                                         pQueueFamilyIndices,
+                                         initialLayout,
+                                         pAllocator,
+                                         pImage);
+
+    /* constraint: the handle's memory types; opaque Win32 handle types may not be queried and allow every type */
+    external_memory_type_bits = UINT32_MAX;
+    if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT != handleType) && (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT != handleType) && (NULL != handle))
+    {
+        cvkGetMemoryWin32HandleProperties(device, handleType, handle, NULL, &memory_win32_handle_properties);
+        external_memory_type_bits = memory_win32_handle_properties.memoryTypeBits;
+    }
+
+    /* requirements, with dedicated requirements chained */
+    cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
+    cvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
+    CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    if (memory_dedicated_requirements.requiresDedicatedAllocation)
+    {
+        dedicated = VK_TRUE;
+    }
+
+    /* select within the external object's memory types */
+    memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits, requiredProperties);
+    CVK_ASSERT(VK_INVALID != memory_type_index);
+
+    /* allocate: import info heads the caller's chain, dedicated info in front when required; the handle stays caller-owned */
+    cvkInitImportMemoryWin32HandleInfo(&import_memory_win32_handle_info, pMemoryNext, handleType, handle, name);
+    allocate_next = &import_memory_win32_handle_info;
+    if (dedicated)
+    {
+        cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_win32_handle_info, (*pImage), VK_NULL_HANDLE);
+        allocate_next = &memory_dedicated_allocate_info;
+    }
+    cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
+
+    /* bind */
+    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+}

@@ -66,6 +66,98 @@
         }
       ]
     },
+    "cvkGetPhysicalDeviceExternalImageImportSupport": {
+      "brief": "Reports whether an image description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.",
+      "ret": "VkBool32",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pImageFormatInfoNext",
+          "doc": "Optional extension chain for the image format query, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkBool32",
+          "name": "pDedicatedOnly"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPhysicalDeviceExternalImageFormatInfo",
+          "bind": {
+            "pNext": "pImageFormatInfoNext"
+          },
+          "local": {
+            "pInfo": "external_image_format_info"
+          }
+        },
+        {
+          "call": "cvkGetPhysicalDeviceExternalImageFormatProperties",
+          "bind": {
+            "pImageFormatInfoNext": "&external_image_format_info",
+            "pExternalImageFormatPropertiesNext": "NULL"
+          },
+          "local": {
+            "pExternalImageFormatProperties": "external_image_format_properties"
+          }
+        },
+        {
+          "set": {
+            "pDedicatedOnly": "(external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
+          }
+        },
+        {
+          "return": "(external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceExternalImageExportSupport": {
+      "brief": "Reports whether an image description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.",
+      "ret": "VkBool32",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pImageFormatInfoNext",
+          "doc": "Optional extension chain for the image format query, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkBool32",
+          "name": "pDedicatedOnly"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPhysicalDeviceExternalImageFormatInfo",
+          "bind": {
+            "pNext": "pImageFormatInfoNext"
+          },
+          "local": {
+            "pInfo": "external_image_format_info"
+          }
+        },
+        {
+          "call": "cvkGetPhysicalDeviceExternalImageFormatProperties",
+          "bind": {
+            "pImageFormatInfoNext": "&external_image_format_info",
+            "pExternalImageFormatPropertiesNext": "NULL"
+          },
+          "local": {
+            "pExternalImageFormatProperties": "external_image_format_properties"
+          }
+        },
+        {
+          "set": {
+            "pDedicatedOnly": "(external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
+          }
+        },
+        {
+          "return": "(external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+        }
+      ]
+    },
     "cvkAllocateImageMemory": {
       "brief": "Allocates memory sized and typed for a image.",
       "steps": [
