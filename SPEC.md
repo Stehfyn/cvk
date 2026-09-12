@@ -47,7 +47,7 @@ Parameters in registry order, transformed by role:
 | sType input array (`I[]`), POD array, handle array, scalar array | count + pointer verbatim |
 | `pAllocator` | verbatim |
 | output handle | out-pointer; asserted non-null before, `!= VK_NULL_HANDLE` after |
-| output sType struct (`P`) | `void* p<Stem>Next` immediately before the out-pointer; wrapper sets `sType`/`pNext` |
+| output sType struct (`P`) | `void* p<Stem>Next` immediately before the out-pointer. The wrapper fills a local named after the parameter (`support`, `memory_requirements`) with `sType`/`pNext`, passes it, and copies it to the out-pointer after the call; the caller's struct is never written before the call. Each struct fill is its own block |
 | output POD struct / scalar | out-pointer verbatim |
 | two-call enumeration | count pointer removed; function returns `uint32_t`; array becomes `T p<Name>[CVK_MAX_<NAME>]` |
 | non-`VkResult` return | passed through |

@@ -305,6 +305,7 @@ class Generator:
                 var = snake(p.name)
                 stem = p.name[1:] if p.name.startswith("p") else p.name
                 locals_.append(f"{s.name} {var};")
+                locals_.append("")
                 locals_.append(f"{var}.sType = {s.stype};")
                 for m in s.members:
                     if m.name == "sType":
@@ -329,9 +330,13 @@ class Generator:
                 params.append(EmittedParam(f"void* {pn}", pn, f"Optional output extension chain attached to {s.name}, or NULL", False))
                 params.append(EmittedParam(f"{p.full_type} {p.name}", p.name, f"Receives the {s.name}", True))
                 pre.append(f"CVK_ASSERT(NULL != {p.name});")
-                locals_.append(f"{p.name}->sType = {s.stype};")
-                locals_.append(f"{p.name}->pNext = {pn};")
-                call_args.append(p.name)
+                var = snake(p.name)
+                locals_.append(f"{s.name} {var};")
+                locals_.append("")
+                locals_.append(f"{var}.sType = {s.stype};")
+                locals_.append(f"{var}.pNext = {pn};")
+                call_args.append(f"&{var}")
+                post.append(f"(*{p.name}) = {var};")
             elif p is enum_count:
                 call_args.append("&" + snake(p.name))
             elif any(p is q for q, _ in enum_arrays):
@@ -424,6 +429,13 @@ class Generator:
         # Order: declarations first (C89-style block), then asserts, then statements.
         decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+;)", l)]
         other = [l for l in body if l not in decl_lines]
+        # One blank line between struct fills; none leading, trailing, or doubled.
+        collapsed: List[str] = []
+        for l in other:
+            if l == "" and (not collapsed or collapsed[-1] == ""):
+                continue
+            collapsed.append(l)
+        other = collapsed[:-1] if collapsed and collapsed[-1] == "" else collapsed
         if not self.input_asserts:
             pre = []
         body = decl_lines + ([""] if decl_lines else []) + pre + ([""] if pre else []) + other

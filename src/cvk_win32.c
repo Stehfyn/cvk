@@ -20,18 +20,23 @@ void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory 
     VkMemoryGetWin32HandleInfoKHR get_win32_handle_info;
 
     PFN_vkGetMemoryWin32HandleKHR function = (PFN_vkGetMemoryWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandleKHR");
-    get_win32_handle_info.sType            = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    get_win32_handle_info.pNext            = pNext;
-    get_win32_handle_info.memory           = memory;
-    get_win32_handle_info.handleType       = handleType;
+
+    get_win32_handle_info.sType      = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
+    get_win32_handle_info.pNext      = pNext;
+    get_win32_handle_info.memory     = memory;
+    get_win32_handle_info.handleType = handleType;
     CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
 void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties)
 {
+    VkMemoryWin32HandlePropertiesKHR memory_win32_handle_properties;
+
     PFN_vkGetMemoryWin32HandlePropertiesKHR function = (PFN_vkGetMemoryWin32HandlePropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandlePropertiesKHR");
-    pMemoryWin32HandleProperties->sType              = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
-    pMemoryWin32HandleProperties->pNext              = pNext;
-    CVK_CHECK(function(device, handleType, handle, pMemoryWin32HandleProperties));
+
+    memory_win32_handle_properties.sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
+    memory_win32_handle_properties.pNext = pNext;
+    CVK_CHECK(function(device, handleType, handle, &memory_win32_handle_properties));
+    (*pMemoryWin32HandleProperties) = memory_win32_handle_properties;
 }
 VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex)
 {
@@ -42,10 +47,11 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
     VkSemaphoreGetWin32HandleInfoKHR get_win32_handle_info;
 
     PFN_vkGetSemaphoreWin32HandleKHR function = (PFN_vkGetSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreWin32HandleKHR");
-    get_win32_handle_info.sType               = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-    get_win32_handle_info.pNext               = pNext;
-    get_win32_handle_info.semaphore           = semaphore;
-    get_win32_handle_info.handleType          = handleType;
+
+    get_win32_handle_info.sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
+    get_win32_handle_info.pNext      = pNext;
+    get_win32_handle_info.semaphore  = semaphore;
+    get_win32_handle_info.handleType = handleType;
     CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
 void cvkImportSemaphoreWin32Handle(VkDevice                              device,
@@ -58,7 +64,8 @@ void cvkImportSemaphoreWin32Handle(VkDevice                              device,
 {
     VkImportSemaphoreWin32HandleInfoKHR import_semaphore_win32_handle_info;
 
-    PFN_vkImportSemaphoreWin32HandleKHR function  = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
+    PFN_vkImportSemaphoreWin32HandleKHR function = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
+
     import_semaphore_win32_handle_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
     import_semaphore_win32_handle_info.pNext      = pNext;
     import_semaphore_win32_handle_info.semaphore  = semaphore;
