@@ -3831,6 +3831,9 @@
         {
           "return": "(VkQueryResultStatusKHR)status"
         }
+      ],
+      "extensions": [
+        "VK_KHR_video_queue"
       ]
     },
     "cvkCreateVideoEncodeBitstreamFeedbackQueryPool": {
@@ -3892,6 +3895,9 @@
         {
           "return": "(VkQueryResultStatusKHR)feedback[2]"
         }
+      ],
+      "extensions": [
+        "VK_KHR_video_queue"
       ]
     },
     "cvkCreateGraphicsPipelineLibrary": {

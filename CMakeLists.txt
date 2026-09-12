@@ -18,6 +18,9 @@ if(Python3_Interpreter_FOUND)
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate.py
                 --policy ${CMAKE_CURRENT_SOURCE_DIR}/cvk.policy.json
                 --out-dir ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate.py
+                --policy ${CMAKE_CURRENT_SOURCE_DIR}/scvk.policy.json
+                --out-dir ${CMAKE_CURRENT_SOURCE_DIR}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Generating cvk from the Vulkan registry"
         VERBATIM)
@@ -26,7 +29,6 @@ if(Python3_Interpreter_FOUND)
     enable_testing()
     add_test(NAME cvk-generated-files-match
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/check_generated.py
-                --policy ${CMAKE_CURRENT_SOURCE_DIR}/cvk.policy.json
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
@@ -50,4 +52,22 @@ if(MSVC)
     target_compile_options(cvk PRIVATE /W4)
 else()
     target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+# Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
+# prefix scvk, a standalone library against the SC headers. The format protocols need the
+# utility headers, which describe formats the SC headers lack, so that file is absent from it.
+set(SCVK_SOURCES src/scvk.c)
+if(WIN32)
+    list(APPEND SCVK_SOURCES src/scvk_win32.c)
+elseif(UNIX)
+    list(APPEND SCVK_SOURCES src/scvk_posix.c)
+endif()
+add_library(scvk STATIC ${SCVK_SOURCES})
+target_include_directories(scvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(scvk SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/VulkanSC-Headers/include)
+if(MSVC)
+    target_compile_options(scvk PRIVATE /W4)
+else()
+    target_compile_options(scvk PRIVATE -Wall -Wextra -Wpedantic)
 endif()

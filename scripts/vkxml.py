@@ -141,6 +141,22 @@ class Registry:
     enums: Dict[str, List[str]]             # enum type -> values
     bitmasks: Dict[str, Optional[str]]      # VkXFlags -> VkXFlagBits (requires)
     path: str
+    feature_depends: Dict[str, Set[str]] = field(default_factory=dict)   # public version -> versions it depends on
+    api: str = "vulkan"
+    enum_provenance: Dict[str, str] = field(default_factory=dict)         # enum value -> feature or extension defining it
+    type_provenance: Dict[str, str] = field(default_factory=dict)         # type -> first extension requiring it
+
+    def feature_closure(self, name: str) -> Set[str]:
+        """Every public version a version includes: VK_VERSION_1_4 -> 1_0..1_4,
+        VKSC_VERSION_1_0 -> VK_VERSION_1_0..1_2 and itself (its `depends`)."""
+        out, todo = set(), [name]
+        while todo:
+            n = todo.pop()
+            if n in out:
+                continue
+            out.add(n)
+            todo += list(self.feature_depends.get(n, ()))
+        return out
 
     # ---------------------------------------------------------------- loading
     @staticmethod
@@ -151,6 +167,25 @@ class Registry:
         def api_ok(elem: ET.Element) -> bool:
             a = elem.get("api")
             return a is None or api in a.split(",")
+
+        # A <require> block may depend on other extensions or versions being available
+        # ("VK_KHR_format_feature_flags2,VK_VERSION_1_3": any of; "+" is all of). For an API
+        # variant that lacks them the block is not part of the registry's headers either.
+        supported_exts = {e.get("name") for e in root.findall("extensions/extension") if api in (e.get("supported") or "").split(",")}
+
+        def available(dep: str) -> bool:
+            m = re.fullmatch(r"VK_VERSION_(\d+)_(\d+)", dep)
+            if m:
+                return api == "vulkan" or (int(m.group(1)), int(m.group(2))) <= (1, 2)
+            if dep.startswith("VKSC_VERSION_"):
+                return api == "vulkansc"
+            return dep in supported_exts
+
+        def deps_ok(elem: ET.Element) -> bool:
+            expr = (elem.get("depends") or "").replace("(", "").replace(")", "")
+            if not expr:
+                return True
+            return any(all(available(t) for t in part.split("+")) for part in expr.split(","))
 
         handles: Dict[str, Optional[str]] = {}
         dispatchable: Set[str] = set()
@@ -242,31 +277,65 @@ class Registry:
         # Newer registries split each core version into internal BASE/COMPUTE/GRAPHICS
         # features that VK_VERSION_x_y depends on. Merge everything with the same
         # number into the public VK_VERSION_x_y bucket.
+        def public_name(raw: str) -> Optional[str]:
+            """VK_GRAPHICS_VERSION_1_2 -> VK_VERSION_1_2; VKSC_VERSION_1_0 stays; anything else None."""
+            m = re.fullmatch(r"(VK|VKSC)_(?:[A-Z]+_)?VERSION_(\d+_\d+)", raw)
+            return f"{m.group(1)}_VERSION_{m.group(2)}" if m else None
+
         features: Dict[str, List[str]] = {}
+        feature_depends: Dict[str, Set[str]] = {}
+        enum_provenance: Dict[str, str] = {}
+        # Where every enum value and type comes from, across every feature and extension of the
+        # registry: a value the profile's headers do not define is then recognizable.
+        for f in root.findall("feature"):
+            pn = public_name(f.get("name") or "")
+            for req in f.findall("require"):
+                for en in req.findall("enum"):
+                    if en.get("extends") and pn:
+                        enum_provenance.setdefault(en.get("name"), pn)
+        type_provenance: Dict[str, str] = {}
+        for e in root.findall("extensions/extension"):
+            for req in e.findall("require"):
+                for en in req.findall("enum"):
+                    if en.get("extends"):
+                        enum_provenance.setdefault(en.get("name"), e.get("name"))
+                for ty in req.findall("type"):
+                    type_provenance.setdefault(ty.get("name"), e.get("name"))
+        removed_commands: Set[str] = set()
+        removed_types: Set[str] = set()
         for f in root.findall("feature"):
             if not api_ok(f):
                 continue
-            number = f.get("number")
-            if not number or not re.fullmatch(r"(VK_|VK_[A-Z]+_)VERSION_\d+_\d+", f.get("name")):
+            fname = public_name(f.get("name") or "")
+            if not fname:
                 continue
-            fname = "VK_VERSION_" + number.replace(".", "_")
+            deps = feature_depends.setdefault(fname, set())
+            for d in (f.get("depends") or "").split(","):
+                pn = public_name(d.strip())
+                if pn and pn != fname:
+                    deps.add(pn)
+            for rem in f.findall("remove"):
+                removed_commands.update(c.get("name") for c in rem.findall("command"))
+                removed_types.update(t.get("name") for t in rem.findall("type"))
             names = features.setdefault(fname, [])
             for req in f.findall("require"):
-                if not api_ok(req):
+                if not api_ok(req) or not deps_ok(req):
                     continue
                 for cn in req.findall("command"):
                     names.append(cn.get("name"))
+                for en in req.findall("enum"):
+                    if en.get("extends"):
+                        enum_provenance.setdefault(en.get("name"), fname)
         feature_types: Dict[str, List[str]] = {}
         for f in root.findall("feature"):
             if not api_ok(f):
                 continue
-            number = f.get("number")
-            if not number or not re.fullmatch(r"(VK_|VK_[A-Z]+_)VERSION_\d+_\d+", f.get("name")):
+            fname = public_name(f.get("name") or "")
+            if not fname:
                 continue
-            fname = "VK_VERSION_" + number.replace(".", "_")
             tl = feature_types.setdefault(fname, [])
             for req in f.findall("require"):
-                if api_ok(req):
+                if api_ok(req) and deps_ok(req):
                     tl += [x.get("name") for x in req.findall("type")]
         for fname in sorted(features):
             for n in features[fname]:
@@ -283,10 +352,16 @@ class Registry:
                 continue
             cmds, types = [], []
             for req in e.findall("require"):
-                if not api_ok(req):
+                if not api_ok(req) or not deps_ok(req):
                     continue
                 cmds += [x.get("name") for x in req.findall("command")]
                 types += [x.get("name") for x in req.findall("type")]
+                for en in req.findall("enum"):
+                    if en.get("extends"):
+                        enum_provenance.setdefault(en.get("name"), e.get("name"))
+            for rem in e.findall("remove"):
+                removed_commands.update(c.get("name") for c in rem.findall("command"))
+                removed_types.update(t.get("name") for t in rem.findall("type"))
             ext = Extension(
                 name=e.get("name"), number=int(e.get("number")), type=e.get("type"),
                 supported=supported, platform=e.get("platform"), promotedto=e.get("promotedto"),
@@ -301,10 +376,23 @@ class Registry:
                 if n in structs:
                     structs[n].extensions.append(ext.name)
 
+        # An API variant's <remove> blocks (Vulkan SC drops shader modules, sparse binding,
+        # descriptor update templates): the entity leaves the model entirely.
+        for n in removed_commands:
+            commands.pop(n, None)
+            for lst in list(features.values()) + [x.commands for x in extensions.values()]:
+                while n in lst:
+                    lst.remove(n)
+        for n in removed_types:
+            structs.pop(n, None)
+            for x in extensions.values():
+                while n in x.types:
+                    x.types.remove(n)
         return Registry(
             commands=commands, structs=structs, handles=handles, dispatchable_handles=dispatchable,
             extensions=extensions, features=features, platforms=platforms, enums=enums,
-            bitmasks=bitmasks, path=path,
+            bitmasks=bitmasks, path=path, feature_depends=feature_depends, api=api,
+            enum_provenance=enum_provenance, type_provenance=type_provenance,
         )
 
     @staticmethod
@@ -354,11 +442,8 @@ class Registry:
     def profile(self, core: str = "VK_VERSION_1_2", extensions: Optional[List[str]] = None) -> List[Command]:
         """Commands available in a core version plus explicit extensions (no aliases)."""
         wanted: Set[str] = set()
-        order = sorted(self.features)
-        for f in order:
-            wanted.update(self.features[f])
-            if f == core:
-                break
+        for f in self.feature_closure(core):
+            wanted.update(self.features.get(f, []))
         for e in extensions or []:
             if e in self.extensions:
                 wanted.update(self.extensions[e].commands)

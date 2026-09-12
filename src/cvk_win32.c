@@ -196,7 +196,7 @@ VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     return result;
 }
-void cvkAcquireWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
+void cvkAcquireWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
     PFN_vkAcquireWinrtDisplayNV function;
 
@@ -308,7 +308,7 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
     function = (PFN_vkGetSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreWin32HandleKHR");
     CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
-void cvkGetWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
+void cvkGetWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
 {
     PFN_vkGetWinrtDisplayNV function;
 

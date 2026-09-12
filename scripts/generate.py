@@ -105,12 +105,21 @@ class Generator:
         self.reg = reg
         self.policy = policy
         self.core = policy["core"]
+        # Profile (SPEC.md section 1): the API variant (vulkan, vulkansc), the identifier prefix
+        # every emitted name carries, the header the core file includes, and whether a chain or
+        # protocol whose step is absent from the profile is dropped or an error.
+        self.api: str = policy.get("api", "vulkan")
+        self.prefix: str = policy.get("prefix", "cvk")
+        self.vk_header: str = policy.get("header", "<vulkan/vulkan.h>")
+        self.drop_missing: bool = policy.get("missing", "error") == "drop"
+        self.dropped: List[str] = []
+        self.core_versions: Set[str] = reg.feature_closure(self.core)
         if policy["extensions"] == "all":
-            # Every extension the registry supports for the Vulkan API that is platform-neutral
+            # Every extension the registry supports for the profile's API that is platform-neutral
             # or belongs to one of the policy's platforms; provisional (beta) ones only if listed.
             plats = set(policy.get("platforms", []))
             self.exts: Set[str] = {e.name for e in reg.extensions.values()
-                                   if "vulkan" in e.supported and (e.platform is None or e.platform in plats)}
+                                   if self.api in e.supported and (e.platform is None or e.platform in plats)}
         else:
             self.exts = set(policy["extensions"])
         self.cmds: List[Command] = reg.profile(self.core, sorted(self.exts))
@@ -130,11 +139,30 @@ class Generator:
 
     # ------------------------------------------------------------ profile
     def struct_in_profile(self, s: Struct) -> bool:
-        return bool((s.core_version and s.core_version <= self.core) or any(e in self.exts for e in s.extensions))
+        return bool(s.core_version in self.core_versions or any(e in self.exts for e in s.extensions))
 
+    def enum_value_in_profile(self, value: str) -> bool:
+        """A result code (or any enum value) is usable when its defining version is in the
+        profile's closure or its defining extension is in the profile; core values always."""
+        origin = self.reg.enum_provenance.get(value)
+        return origin is None or origin in self.core_versions or origin in self.exts
+
+    def type_in_profile(self, name: str) -> bool:
+        """A struct in the profile; another type (enum, handle) unless an extension outside the
+        profile is what defines it; scalars always."""
+        s = self.reg.struct_of(name)
+        if s is not None:
+            return self.struct_in_profile(s)
+        origin = self.reg.type_provenance.get(name)
+        return origin is None or origin in self.exts or name in self.reg.features.get(self.core, [])
+
+    def text_in_profile(self, text: str) -> bool:
+        """Every VK_* constant and Vk* type a policy expression names is in the profile."""
+        return all(self.enum_value_in_profile(t) for t in re.findall(r"\bVK_[A-Z0-9_]+\b", text)) and \
+            all(self.type_in_profile(t) for t in re.findall(r"\bVk[A-Za-z0-9]+\b", text))
     def platforms_for(self, exts: List[str], core_version: Optional[str]) -> frozenset:
         """Platforms an entity belongs to: empty when core or provided by any platform-neutral extension."""
-        if core_version and core_version <= self.core:
+        if core_version in self.core_versions:
             return frozenset()
         plats = set()
         for e in exts:
@@ -146,7 +174,7 @@ class Generator:
         return frozenset(plats)
 
     def is_core(self, cmd: Command) -> bool:
-        return bool(cmd.core_version and cmd.core_version <= self.core)
+        return cmd.core_version in self.core_versions
 
     def linked(self, cmd: Command) -> bool:
         return self.is_core(cmd) or any(e in LOADER_LINKED for e in cmd.extensions if e in self.exts)
@@ -178,11 +206,17 @@ class Generator:
         rest = [x for x in t if x not in VENDORS]
         return ("cvk" if name.startswith("cvk") else "") + "".join(rest + tags)
 
+    def keeps_suffix(self, name: str) -> bool:
+        """SPEC.md section 3: KHR and EXT are the promotable tags and drop; a vendor tag (NV,
+        AMD, QCOM, ...) names a vendor's own feature and stays (cvkGetDisplayModeStereoPropertiesNV).
+        A promotable tag stays only on a non-canonical entity of a shared stem."""
+        return self.vendor_rank(name) >= 3 or name in self.keep_suffix
+
     def cmd_name(self, cmd: Command) -> str:
-        return "cvk" + (cmd.name[2:] if cmd.name in self.keep_suffix else strip_vendor(cmd.name[2:]))
+        return "cvk" + (cmd.name[2:] if self.keeps_suffix(cmd.name) else strip_vendor(cmd.name[2:]))
 
     def struct_short(self, s: Struct) -> str:
-        return s.name[2:] if s.name in self.keep_suffix else strip_vendor(s.name[2:])
+        return s.name[2:] if self.keeps_suffix(s.name) else strip_vendor(s.name[2:])
 
     @staticmethod
     def vendor_rank(name: str) -> int:
@@ -598,8 +632,8 @@ class Generator:
         call = f"{fn}({', '.join(call_args)})"
         enum_args = {ext_arrays.get(q.name) and snake(q.name) or q.name for q, _ in enum_arrays}
 
-        informational = [c for c in cmd.successcodes if c not in ("VK_SUCCESS",)]
-        recoverable = [c for c in cmd.errorcodes if c in self.recoverable] if not enum_count else []
+        informational = [c for c in cmd.successcodes if c not in ("VK_SUCCESS",) and self.enum_value_in_profile(c)]
+        recoverable = [c for c in cmd.errorcodes if c in self.recoverable and self.enum_value_in_profile(c)] if not enum_count else []
         if enum_count:
             informational = [c for c in informational if c != "VK_INCOMPLETE"]
         ret = "void"
@@ -1338,6 +1372,7 @@ class Generator:
 
     FIXED.append({
         "name": "cvkGetVideoQueueFamilyIndex",
+        "requires": ["VkQueueFamilyVideoPropertiesKHR"],
         "ret": "uint32_t",
         "brief": "Returns the first queue family whose video codec operations cover the required operations, or VK_INVALID.",
         "params": [("uint32_t", "propertyCount"), ("const VkQueueFamilyVideoPropertiesKHR*", "pVideoProperties"),
@@ -1386,6 +1421,9 @@ class Generator:
     })
 
     def emit_fixed(self, f: dict) -> None:
+        if any(self.reg.struct_of(t) is None or not self.struct_in_profile(self.reg.struct_of(t)) for t in f.get("requires", [])):
+            self.dropped.append(f["name"])                 # its types are not in this profile
+            return
         name = self.register(f["name"], "policy:" + f["name"])
         params = [EmittedParam(f"{t} {n}", n, f"{n} value", False) for t, n in f["params"]]
         doc = self.doc_block(f["brief"], params, f["ret"], None, [])
@@ -1403,9 +1441,15 @@ class Generator:
         its system includes to the source. Composed from the generated surface only: every
         cvk* it calls must exist, and it may not call vk* directly."""
         m_plat = re.search(r"cvk_protocol(?:_(\w+))?\.c$", os.path.basename(path))
-        plat = m_plat.group(1) or ""                      # cvk_protocol.c is the core pair
+        plat = m_plat.group(1) if m_plat.group(1) in self.PLATFORM_INCLUDES else ""   # else the core pair
         with open(path, encoding="utf-8") as fh:
             text = fh.read()
+        # A file may name the API variant it belongs to in its leading comment (Profile: vulkan):
+        # its includes and functions are then absent from the other variants.
+        m_prof = re.search(r"Profile:\s*(\w+)", text[:800])
+        if m_prof and m_prof.group(1) != self.api:
+            self.dropped.append(os.path.basename(path))
+            return
         stripped = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
         if re.search(r"\bvk[A-Z]\w*\s*\(", stripped):
             self.errors.append(f"protocol {os.path.basename(path)} calls a vk* command directly")
@@ -1420,8 +1464,16 @@ class Generator:
                 depth += {"{": 1, "}": -1}.get(text[i], 0)
                 i += 1
             body = text[m.end() - 1:i]
-            for callee in sorted(set(re.findall(r"\b(cvk\w+)\s*\(", body))):
-                if callee not in self.sigs and callee != name:
+            # A function may name the API variant it belongs to (\par Profile: vulkansc).
+            prof = re.search(r"\\par Profile:\s*(\w+)", doc)
+            if prof and prof.group(1) != self.api:
+                continue
+            unknown = [c for c in sorted(set(re.findall(r"\b(cvk\w+)\s*\(", body))) if c not in self.sigs and c != name]
+            if unknown:
+                if self.drop_missing:
+                    self.dropped.append(name)                # composes over something outside this profile
+                    continue
+                for callee in unknown:
                     self.errors.append(f"protocol {name} calls {callee}, which the generator does not produce")
             name = self.register(name, "protocol:" + os.path.basename(path))
             ret = sig.split(name)[0].strip()
@@ -1445,6 +1497,17 @@ class Generator:
         pMemoryNext), every unsatisfied input becomes a chain parameter, and every produced
         handle becomes a chain out-parameter. Dispatch handles come first by level, then inputs
         in order of appearance, then pAllocator, then outputs."""
+        missing = [st["call"] for st in spec["steps"] if "call" in st and st["call"] not in self.sigs]
+        mentions = json.dumps(spec)                           # every constant and type the row names
+        if any(e not in self.exts for e in spec.get("extensions", [])) or not self.text_in_profile(mentions):
+            self.dropped.append(name)                         # names a constant or type outside the profile
+            return
+        if missing:
+            if self.drop_missing:
+                self.dropped.append(name)
+            else:
+                self.errors.append(f"chain {name}: unknown step {missing[0]}")
+            return
         name = self.register(name, "chain:" + name)
         inputs: Dict[str, EmittedParam] = {}
         outputs: Dict[str, EmittedParam] = {}
@@ -1750,7 +1813,7 @@ class Generator:
 
 /* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */
 
-#include <vulkan/vulkan.h>
+#include {self.vk_header}
 #include <stddef.h>
 #include <stdint.h>
 
@@ -1809,14 +1872,36 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 """
 
 
+def load_policy(path: str) -> dict:
+    """A policy may extend another (scvk.policy.json extends cvk.policy.json): the base is
+    loaded first and the extending file's keys replace the base's."""
+    with open(path, encoding="utf-8") as f:
+        policy = json.load(f)
+    if "extends" in policy:
+        base = load_policy(os.path.join(os.path.dirname(os.path.abspath(path)), policy.pop("extends")))
+        base.update(policy)
+        policy = base
+    return policy
+
+
+def brand(text: str, prefix: str) -> str:
+    """SPEC.md section 3: every emitted identifier carries the profile's prefix. The generator
+    composes with the cvk spelling; the prefix is applied to the whole output, so a profile is
+    a standalone library (scvk.h/scvk.c for Vulkan SC)."""
+    if prefix == "cvk":
+        return text
+    text = re.sub(r"(?<![A-Za-z0-9_])cvk(?=[A-Z_.\s\"])", prefix, text)
+    text = re.sub(r"(?<![A-Za-z0-9_])CVK_", prefix.upper() + "_", text)
+    return text
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--policy", default=os.path.join(REPO_ROOT, "cvk.policy.json"))
     ap.add_argument("--out-dir", default=REPO_ROOT)
     args = ap.parse_args()
-    with open(args.policy, encoding="utf-8") as f:
-        policy = json.load(f)
-    reg = Registry.load()
+    policy = load_policy(args.policy)
+    reg = Registry.load(os.path.join(REPO_ROOT, policy["registry"]) if "registry" in policy else Registry.load.__defaults__[0], policy.get("api", "vulkan"))
     g = Generator(reg, policy)
     g.run()
     for stale in sorted(set(policy.get("name_overrides", {})) - g.used_overrides):
@@ -1827,18 +1912,21 @@ def main() -> None:
         sys.exit(1)
     os.makedirs(os.path.join(args.out_dir, "include"), exist_ok=True)
     os.makedirs(os.path.join(args.out_dir, "src"), exist_ok=True)
-    with open(os.path.join(args.out_dir, "include", "cvk.h"), "w", encoding="utf-8", newline="\n") as f:
-        f.write(g.header())
-    with open(os.path.join(args.out_dir, "src", "cvk.c"), "w", encoding="utf-8", newline="\n") as f:
-        f.write(g.source())
-    outputs = [os.path.join(args.out_dir, "include", "cvk.h"), os.path.join(args.out_dir, "src", "cvk.c")]
+    px = g.prefix
+    with open(os.path.join(args.out_dir, "include", f"{px}.h"), "w", encoding="utf-8", newline="\n") as f:
+        f.write(brand(g.header(), px))
+    with open(os.path.join(args.out_dir, "src", f"{px}.c"), "w", encoding="utf-8", newline="\n") as f:
+        f.write(brand(g.source(), px))
+    outputs = [os.path.join(args.out_dir, "include", f"{px}.h"), os.path.join(args.out_dir, "src", f"{px}.c")]
     for plat in sorted(k for k in g.decls if k):
-        hp, cp = os.path.join(args.out_dir, "include", f"cvk_{plat}.h"), os.path.join(args.out_dir, "src", f"cvk_{plat}.c")
+        hp, cp = os.path.join(args.out_dir, "include", f"{px}_{plat}.h"), os.path.join(args.out_dir, "src", f"{px}_{plat}.c")
         with open(hp, "w", encoding="utf-8", newline="\n") as f:
-            f.write(g.platform_header(plat))
+            f.write(brand(g.platform_header(plat), px))
         with open(cp, "w", encoding="utf-8", newline="\n") as f:
-            f.write(g.platform_source(plat))
+            f.write(brand(g.platform_source(plat), px))
         outputs += [hp, cp]
+    if g.dropped:
+        print(f"dropped {len(g.dropped)} compositions outside the {g.api} profile")
     # Final formatting is clang-format's (repository .clang-format); the generator's own alignment is a fallback.
     import shutil
     import subprocess

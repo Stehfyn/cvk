@@ -1,0 +1,10 @@
+{
+  "extends": "cvk.policy.json",
+  "api": "vulkansc",
+  "registry": "external/VulkanSC-Headers/registry/vk.xml",
+  "prefix": "scvk",
+  "header": "<vulkan/vulkan_sc.h>",
+  "core": "VKSC_VERSION_1_0",
+  "extensions": "all",
+  "missing": "drop"
+}

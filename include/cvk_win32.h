@@ -295,7 +295,7 @@ VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
  *
  * \retval None
  */
-void cvkAcquireWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display);
+void cvkAcquireWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display);
 /**
  * \brief Creates a win 32 surface.
  *
@@ -441,7 +441,7 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
  *
  * \retval None
  */
-void cvkGetWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
+void cvkGetWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
 /**
  * \brief Imports fence win 32 handle.
  *
