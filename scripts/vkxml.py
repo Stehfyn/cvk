@@ -145,6 +145,12 @@ class Registry:
     api: str = "vulkan"
     enum_provenance: Dict[str, str] = field(default_factory=dict)         # enum value -> feature or extension defining it
     type_provenance: Dict[str, str] = field(default_factory=dict)         # type -> first extension requiring it
+    enum_extends: Dict[str, List[str]] = field(default_factory=dict)      # enum type -> values added by features and extensions
+    type_aliases: Dict[str, str] = field(default_factory=dict)            # alias enum or bitmask type -> its target
+    type_feature: Dict[str, str] = field(default_factory=dict)            # type -> first public version requiring it
+    removed: Set[str] = field(default_factory=set)                        # names an API variant's <remove> blocks drop
+    enums64: Set[str] = field(default_factory=set)                        # 64-bit flag bit enumerations (values are static const objects, not enumerators)
+    constants: Dict[str, str] = field(default_factory=dict)               # API constant name -> C type (VK_SUBPASS_EXTERNAL -> uint32_t)
 
     def feature_closure(self, name: str) -> Set[str]:
         """Every public version a version includes: VK_VERSION_1_4 -> 1_0..1_4,
@@ -188,6 +194,7 @@ class Registry:
             return any(all(available(t) for t in part.split("+")) for part in expr.split(","))
 
         handles: Dict[str, Optional[str]] = {}
+        type_aliases: Dict[str, str] = {}
         dispatchable: Set[str] = set()
         structs: Dict[str, Struct] = {}
         enums: Dict[str, List[str]] = {}
@@ -232,10 +239,22 @@ class Registry:
                 )
             elif cat == "bitmask":
                 name = t.get("name") or t.findtext("name")
+                if t.get("alias"):
+                    type_aliases[name] = t.get("alias")
                 bitmasks[name] = t.get("requires") or t.get("bitvalues")
+            elif cat == "enum" and t.get("alias"):
+                type_aliases[t.get("name")] = t.get("alias")
 
+        enums64: Set[str] = set()
+        constants: Dict[str, str] = {}
         for e in root.findall("enums"):
-            enums[e.get("name")] = [v.get("name") for v in e.findall("enum")]
+            enums[e.get("name")] = [v.get("name") for v in e.findall("enum") if api_ok(v)]
+            if e.get("name") == "API Constants":
+                for v in e.findall("enum"):
+                    if api_ok(v) and v.get("type") and not v.get("alias"):
+                        constants[v.get("name")] = v.get("type")
+            if e.get("bitwidth") == "64":
+                enums64.add(e.get("name"))
 
         commands: Dict[str, Command] = {}
         for c in root.findall("commands/command"):
@@ -291,18 +310,29 @@ class Registry:
             pn = public_name(f.get("name") or "")
             for req in f.findall("require"):
                 for en in req.findall("enum"):
-                    if en.get("extends") and pn:
+                    if pn:                                   # extending values and required constants alike
                         enum_provenance.setdefault(en.get("name"), pn)
         type_provenance: Dict[str, str] = {}
+        enum_extends: Dict[str, List[str]] = {}
+        for f in root.findall("feature"):
+            for req in f.findall("require"):
+                if not api_ok(req) or not deps_ok(req):
+                    continue
+                for en in req.findall("enum"):
+                    if en.get("extends") and api_ok(en) and not en.get("protect") and en.get("name") not in enum_extends.setdefault(en.get("extends"), []):
+                        enum_extends[en.get("extends")].append(en.get("name"))
         for e in root.findall("extensions/extension"):
             for req in e.findall("require"):
                 for en in req.findall("enum"):
+                    enum_provenance.setdefault(en.get("name"), e.get("name"))
                     if en.get("extends"):
-                        enum_provenance.setdefault(en.get("name"), e.get("name"))
+                        if api_ok(req) and deps_ok(req) and api_ok(en) and not en.get("protect") and en.get("name") not in enum_extends.setdefault(en.get("extends"), []):
+                            enum_extends[en.get("extends")].append(en.get("name"))
                 for ty in req.findall("type"):
                     type_provenance.setdefault(ty.get("name"), e.get("name"))
         removed_commands: Set[str] = set()
         removed_types: Set[str] = set()
+        removed_enums: Set[str] = set()
         for f in root.findall("feature"):
             if not api_ok(f):
                 continue
@@ -317,6 +347,7 @@ class Registry:
             for rem in f.findall("remove"):
                 removed_commands.update(c.get("name") for c in rem.findall("command"))
                 removed_types.update(t.get("name") for t in rem.findall("type"))
+                removed_enums.update(en.get("name") for en in rem.findall("enum"))
             names = features.setdefault(fname, [])
             for req in f.findall("require"):
                 if not api_ok(req) or not deps_ok(req):
@@ -337,6 +368,10 @@ class Registry:
             for req in f.findall("require"):
                 if api_ok(req) and deps_ok(req):
                     tl += [x.get("name") for x in req.findall("type")]
+        type_feature: Dict[str, str] = {}
+        for fname in sorted(feature_types):
+            for n in feature_types[fname]:
+                type_feature.setdefault(n, fname)
         for fname in sorted(features):
             for n in features[fname]:
                 if n in commands and commands[n].core_version is None:
@@ -362,6 +397,7 @@ class Registry:
             for rem in e.findall("remove"):
                 removed_commands.update(c.get("name") for c in rem.findall("command"))
                 removed_types.update(t.get("name") for t in rem.findall("type"))
+                removed_enums.update(en.get("name") for en in rem.findall("enum"))
             ext = Extension(
                 name=e.get("name"), number=int(e.get("number")), type=e.get("type"),
                 supported=supported, platform=e.get("platform"), promotedto=e.get("promotedto"),
@@ -384,7 +420,9 @@ class Registry:
                 while n in lst:
                     lst.remove(n)
         for n in removed_types:
-            structs.pop(n, None)
+            st = structs.pop(n, None)
+            if st is not None and st.stype:
+                removed_enums.add(st.stype)
             for x in extensions.values():
                 while n in x.types:
                     x.types.remove(n)
@@ -392,7 +430,9 @@ class Registry:
             commands=commands, structs=structs, handles=handles, dispatchable_handles=dispatchable,
             extensions=extensions, features=features, platforms=platforms, enums=enums,
             bitmasks=bitmasks, path=path, feature_depends=feature_depends, api=api,
-            enum_provenance=enum_provenance, type_provenance=type_provenance,
+            enum_provenance=enum_provenance, type_provenance=type_provenance, enum_extends=enum_extends,
+            type_aliases=type_aliases, type_feature=type_feature, removed=removed_types | removed_enums | removed_commands,
+            enums64=enums64, constants=constants,
         )
 
     @staticmethod

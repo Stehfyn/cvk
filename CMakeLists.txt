@@ -54,6 +54,16 @@ else()
     target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
+# The JSON tier's test: parses a Vulkan SC pipeline JSON into structures; needs the loader to link.
+find_package(Vulkan QUIET)
+if(Vulkan_FOUND AND Vulkan_VERSION VERSION_GREATER_EQUAL 1.4)
+    add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
+    target_link_libraries(cvk-pipeline-json-test PRIVATE cvk Vulkan::Vulkan)
+    add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json)
+else()
+    message(STATUS "Vulkan 1.4 loader not found (the library links its core commands): the pipeline JSON test is not built")
+endif()
+
 # Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
 # prefix scvk, a standalone library against the SC headers. The format protocols need the
 # utility headers, which describe formats the SC headers lack, so that file is absent from it.

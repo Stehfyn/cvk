@@ -11,6 +11,27 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
     pInfo->dpy    = dpy;
     pInfo->window = window;
 }
+VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(const cvkJsonValue* pValue)
+{
+    return (VkXlibSurfaceCreateFlagsKHR)cvkGetJsonUint64(pValue);
+}
+void cvkParseJsonXlibSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkXlibSurfaceCreateInfoKHR* pInfo)
+{
+    const cvkJsonValue* value;
+
+    memset(pInfo, 0, sizeof(*pInfo));
+    pInfo->sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
+    if (!cvkIsJsonNull(value))
+    {
+        pInfo->pNext = cvkParseJsonStructureChain(pContext, value);
+    }
+    value = cvkGetJsonMember(&pContext->document, pObject, "flags");
+    if (!cvkIsJsonNull(value))
+    {
+        pInfo->flags = cvkParseJsonXlibSurfaceCreateFlags(value);
+    }
+}
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
     VkXlibSurfaceCreateInfoKHR create_info;

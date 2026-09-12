@@ -23,15 +23,9 @@ from study_commands import role_of  # noqa: E402
 
 VENDORS = ("KHR", "EXT", "NV", "NVX", "AMD", "AMDX", "INTEL", "GOOGLE", "ARM", "QCOM", "MESA", "VALVE", "HUAWEI",
            "FUCHSIA", "SEC", "LUNARG", "ANDROID", "IMG", "MSFT", "NN", "MVK", "GGP", "QNX", "OHOS", "KHX")
-# Extensions whose commands the Vulkan loader exports as trampolines; linked directly.
-LOADER_LINKED = {"VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display", "VK_KHR_display_swapchain",
-                 "VK_KHR_win32_surface", "VK_KHR_xlib_surface", "VK_KHR_xcb_surface", "VK_KHR_wayland_surface",
-                 "VK_KHR_android_surface", "VK_EXT_headless_surface", "VK_KHR_get_physical_device_properties2",
-                 "VK_KHR_device_group_creation", "VK_KHR_external_memory_capabilities",
-                 "VK_KHR_external_semaphore_capabilities", "VK_KHR_external_fence_capabilities",
-                 "VK_KHR_get_surface_capabilities2", "VK_KHR_get_display_properties2", "VK_EXT_direct_mode_display",
-                 "VK_EXT_display_surface_counter", "VK_EXT_acquire_xlib_display", "VK_EXT_debug_report",
-                 "VK_EXT_debug_utils"}
+# Extensions whose commands the Vulkan loader exports as trampolines (its export table: the WSI
+# extensions), linked directly; every other extension command is resolved per call.
+LOADER_LINKED = {"VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display", "VK_KHR_display_swapchain", "VK_KHR_win32_surface", "VK_KHR_xlib_surface", "VK_KHR_xcb_surface", "VK_KHR_wayland_surface", "VK_KHR_android_surface", "VK_EXT_headless_surface", "VK_KHR_get_physical_device_properties2", "VK_KHR_device_group_creation", "VK_KHR_external_memory_capabilities", "VK_KHR_external_semaphore_capabilities", "VK_KHR_external_fence_capabilities", "VK_KHR_get_surface_capabilities2", "VK_KHR_get_display_properties2", "VK_EXT_acquire_xlib_display"}
 DEVICE_LEVEL = ("VkDevice", "VkQueue", "VkCommandBuffer")
 
 
@@ -135,6 +129,14 @@ class Generator:
         self.keep_suffix: Set[str] = set()
         self.singular_pairs: Dict[Tuple[str, str], int] = defaultdict(int)
         self.recoverable: Set[str] = set(policy.get("recoverable_errors", []))
+        # Tier 3 header fragments (scripts/protocols/*.h): types the protocols and the generated
+        # JSON parsers share, folded into the header ahead of the declarations.
+        self.fragments: List[str] = []
+        if os.path.isdir(self.PROTOCOL_DIR):
+            for path in sorted(os.listdir(self.PROTOCOL_DIR)):
+                if path.endswith(".h"):
+                    with open(os.path.join(self.PROTOCOL_DIR, path), encoding="utf-8") as fh:
+                        self.fragments.append(fh.read().rstrip("\n"))
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
@@ -144,6 +146,8 @@ class Generator:
     def enum_value_in_profile(self, value: str) -> bool:
         """A result code (or any enum value) is usable when its defining version is in the
         profile's closure or its defining extension is in the profile; core values always."""
+        if value in self.reg.removed:
+            return False
         origin = self.reg.enum_provenance.get(value)
         return origin is None or origin in self.core_versions or origin in self.exts
 
@@ -153,8 +157,10 @@ class Generator:
         s = self.reg.struct_of(name)
         if s is not None:
             return self.struct_in_profile(s)
+        if name in self.reg.type_feature:
+            return self.reg.type_feature[name] in self.core_versions
         origin = self.reg.type_provenance.get(name)
-        return origin is None or origin in self.exts or name in self.reg.features.get(self.core, [])
+        return origin is None or origin in self.exts
 
     def text_in_profile(self, text: str) -> bool:
         """Every VK_* constant and Vk* type a policy expression names is in the profile."""
@@ -830,6 +836,262 @@ class Generator:
             self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
                        sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
+    # ---------------------------------------------------------- JSON parsers
+    JSON_UNSIGNED = ("uint32_t", "uint64_t", "uint16_t", "uint8_t", "size_t", "VkDeviceSize", "VkDeviceAddress", "VkFlags", "VkFlags64", "VkSampleMask")
+    JSON_SIGNED = ("int32_t", "int64_t", "int16_t", "int8_t", "int")
+    JSON_REAL = ("float", "double")
+
+    def enum_short(self, name: str) -> str:
+        return name[2:] if self.vendor_rank(name) >= 3 else strip_vendor(name[2:])
+
+    def json_type_required(self, name: str) -> bool:
+        """An enumeration or flag type whose headers the profile has: required by a version of
+        the closure or by an extension of the profile (an unrequired block, or one of another
+        API variant, is not in the headers)."""
+        if name in self.reg.removed:
+            return False
+        if name in self.reg.type_feature:
+            return self.reg.type_feature[name] in self.core_versions
+        origin = self.reg.type_provenance.get(name)
+        return origin is not None and origin in self.exts
+
+    def json_type_platforms(self, name: str) -> frozenset:
+        origin = self.reg.type_provenance.get(name)
+        return self.platforms_for([origin], None) if origin else frozenset()
+
+    def json_enum_values(self, enum: str) -> List[str]:
+        """The enumerants of a type the profile's headers define: the type's own block plus the
+        values features and extensions of the profile add; aliases included."""
+        seen: List[str] = []
+        for v in self.reg.enums.get(enum, []) + self.reg.enum_extends.get(enum, []):
+            if v not in seen and self.enum_value_in_profile(v):
+                seen.append(v)
+        return seen
+
+    def json_scalar(self, ctype: str, src: str) -> Optional[str]:
+        """Expression reading a scalar of a C type from a JSON value, or None for a type JSON does not carry."""
+        while ctype in self.reg.type_aliases:                  # VkSemaphoreTypeKHR -> VkSemaphoreType
+            ctype = self.reg.type_aliases[ctype]
+        if ctype == "VkBool32":
+            return f"cvkGetJsonBool32({src})"
+        if ctype in self.reg.enums:
+            return f"cvkParseJson{self.enum_short(ctype)}({src})" if self.json_type_required(ctype) else f"({ctype})cvkGetJsonInt64({src})"
+        if ctype in self.reg.bitmasks:
+            return f"cvkParseJson{self.enum_short(ctype)}({src})" if self.json_type_required(ctype) else f"({ctype})cvkGetJsonUint64({src})"
+        if ctype in self.reg.handles:
+            return f"({ctype})(uintptr_t)cvkResolveJsonHandle(pContext, \"{ctype}\", {src})"
+        if ctype in self.JSON_UNSIGNED:
+            return f"({ctype})cvkParseJsonUint64({src})"
+        if ctype in self.JSON_SIGNED:
+            return f"({ctype})cvkParseJsonInt64({src})"
+        if ctype in self.JSON_REAL:
+            return f"({ctype})cvkParseJsonDouble({src})"
+        return None
+
+    def json_member_statements(self, m: Param, dst: str) -> Tuple[List[str], bool, bool]:
+        """Statements assigning member `dst` (an lvalue expression) from the JSON `value`.
+        Returns (statements, needs_index, needs_storage); an empty list means the member is
+        not carried by JSON (data pointers, function pointers, platform types)."""
+        t = m.type
+        s = self.reg.struct_of(t)
+        struct_ok = s is not None and self.struct_in_profile(s) and not any(":" in x.full_type for x in s.members)
+        if m.name == "pNext":
+            return [f"{dst} = cvkParseJsonStructureChain(pContext, value);"], False, False
+        if m.array_len:
+            dims = [d for d in m.array_len.split("][")]
+            if t == "char" and len(dims) == 1:
+                return ["if (CVK_JSON_STRING == value->kind)", "{", f"    memcpy({dst}, value->pText, (value->textLength < sizeof({dst})) ? value->textLength : sizeof({dst}) - 1);", "}"], False, False
+            elem = self.json_scalar(t, "cvkGetJsonElement(&pContext->document, value, index)")
+            if elem is None and struct_ok:
+                elem = None
+                body = [f"cvkParseJson{self.struct_short(s)}(pContext, cvkGetJsonElement(&pContext->document, value, index), &{dst}[index]);"]
+            elif elem is None:
+                return [], False, False
+            else:
+                body = [f"{dst}[index] = {elem};"]
+            if len(dims) == 1:
+                return ["if (CVK_JSON_ARRAY == value->kind)", "{",
+                        f"    for (index = 0; index < value->childCount && index < {dims[0]}; ++index)", "    {"] + ["        " + l for l in body] + ["    }", "}"], True, False
+            # a matrix: rows of arrays
+            row_elem = self.json_scalar(t, "cvkGetJsonElement(&pContext->document, cvkGetJsonElement(&pContext->document, value, index), inner)")
+            return ["if (CVK_JSON_ARRAY == value->kind)", "{",
+                    f"    for (index = 0; index < value->childCount && index < {dims[0]}; ++index)", "    {",
+                    f"        for (inner = 0; inner < {dims[1]}; ++inner)", "        {",
+                    f"            {dst}[index][inner] = {row_elem};", "        }", "    }", "}"], True, False
+        if m.pointer_depth == 0:
+            if struct_ok:
+                return [f"cvkParseJson{self.struct_short(s)}(pContext, value, &{dst});"], False, False
+            e = self.json_scalar(t, "value")
+            return ([f"{dst} = {e};"], False, False) if e else ([], False, False)
+        # pointers
+        if t == "void" or t.startswith("PFN_"):
+            return [], False, False
+        if t == "char" and m.pointer_depth == 1:
+            return [f"{dst} = cvkCopyJsonString(pContext->pArena, value);"], False, False
+        if t == "char" and m.pointer_depth == 2:
+            return ["if (CVK_JSON_ARRAY == value->kind)", "{",
+                    "    storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof(const char*), 16);",
+                    "    for (index = 0; index < value->childCount; ++index)", "    {",
+                    "        ((const char**)storage)[index] = cvkCopyJsonString(pContext->pArena, cvkGetJsonElement(&pContext->document, value, index));",
+                    "    }", f"    {dst} = ({'const ' if m.is_const else ''}char* const*)storage;", "}"], True, True
+        if m.pointer_depth == 2 and struct_ok:
+            n = s.name
+            return ["if (CVK_JSON_ARRAY == value->kind)", "{",
+                    f"    storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof({n}*), 16);",
+                    "    for (index = 0; index < value->childCount; ++index)", "    {",
+                    f"        (({n}**)storage)[index] = ({n}*)cvkAllocateArena(pContext->pArena, sizeof({n}), 16);",
+                    f"        cvkParseJson{self.struct_short(s)}(pContext, cvkGetJsonElement(&pContext->document, value, index), (({n}**)storage)[index]);",
+                    "    }", f"    {dst} = ({'const ' if m.is_const else ''}{n}* const*)storage;", "}"], True, True
+        if m.pointer_depth != 1:
+            return [], False, False
+        elem = self.json_scalar(t, "cvkGetJsonElement(&pContext->document, value, index)")
+        if struct_ok and not m.len:
+            n = s.name
+            return [f"storage = cvkAllocateArena(pContext->pArena, sizeof({n}), 16);",
+                    f"cvkParseJson{self.struct_short(s)}(pContext, value, ({n}*)storage);",
+                    f"{dst} = ({'const ' if m.is_const else ''}{n}*)storage;"], False, True
+        if struct_ok:
+            n = s.name
+            return ["if (CVK_JSON_ARRAY == value->kind)", "{",
+                    f"    storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof({n}), 16);",
+                    "    for (index = 0; index < value->childCount; ++index)", "    {",
+                    f"        cvkParseJson{self.struct_short(s)}(pContext, cvkGetJsonElement(&pContext->document, value, index), &(({n}*)storage)[index]);",
+                    "    }", f"    {dst} = ({'const ' if m.is_const else ''}{n}*)storage;", "}"], True, True
+        if elem is not None:
+            const = "const " if m.is_const else ""
+            return ["if (CVK_JSON_ARRAY == value->kind)", "{",
+                    f"    storage = cvkAllocateArena(pContext->pArena, value->childCount * sizeof({t}), 16);",
+                    "    for (index = 0; index < value->childCount; ++index)", "    {",
+                    f"        (({t}*)storage)[index] = {elem};",
+                    "    }", f"    {dst} = ({const}{t}*)storage;", "}"], True, True
+        return [], False, False
+
+    def emit_json_parsers(self) -> None:
+        """SPEC.md section 8c: cvkParseJson<Type> for every enumeration, flag set, structure, and
+        union of the profile, and cvkParseJsonStructureChain dispatching on sType. The JSON
+        conventions are the Vulkan SC pipeline JSON's: enumerants and bits by name, flags as
+        names joined by "|", pointers as arrays or objects, "NULL" or null for none, handles as
+        object ids, VkBool32 as VK_TRUE/VK_FALSE."""
+        ctx = "const cvkJsonContext* pContext"
+        # numbers that may be written as API constants (VK_SUBPASS_EXTERNAL, VK_WHOLE_SIZE, VK_LOD_CLAMP_NONE)
+        # a constant is in the profile when a version or extension of the profile requires it
+        ints = [n for n, t in self.reg.constants.items() if t in ("uint32_t", "uint64_t") and n in self.reg.enum_provenance and self.enum_value_in_profile(n)]
+        reals = [n for n, t in self.reg.constants.items() if t == "float" and n in self.reg.enum_provenance and self.enum_value_in_profile(n)]
+        for fname, ret, reader, table, cast in (("cvkParseJsonUint64", "uint64_t", "cvkGetJsonUint64", ints, "(uint64_t)"),
+                                                ("cvkParseJsonInt64", "int64_t", "cvkGetJsonInt64", ints, "(int64_t)(uint64_t)"),
+                                                ("cvkParseJsonDouble", "double", "cvkGetJsonDouble", reals, "(double)")):
+            name = self.register(fname, "json:" + fname)
+            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: a number, or the name of an API constant", False)]
+            body = ["static const cvkJsonName table[] = {"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in table] + ["};", "uint64_t found;", "",
+                    "if ((NULL != pValue) && (CVK_JSON_STRING == pValue->kind) && cvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))",
+                    "{", f"    return {cast}found;" if cast != "(double)" else "    return (double)(float)found;", "}",
+                    f"return {reader}(pValue);"]
+            if cast == "(double)":
+                # float constants are stored as their bit-exact float value: the table holds (uint64_t)(float) which truncates 1000.0F to 1000
+                body = ["static const cvkJsonName table[] = {"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in table] + ["};", "uint64_t found;", "",
+                        "if ((NULL != pValue) && (CVK_JSON_STRING == pValue->kind) && cvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))",
+                        "{", "    return (double)found;", "}", f"return {reader}(pValue);"]
+            doc = self.doc_block(f"Reads a number from JSON, accepting the name of an API constant.", params, ret, None, [])
+            sig = self.signature(ret, name, params)
+            self.sigs[name] = (ret, params)
+            self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+        # enumerations and flag bits
+        for enum in sorted(self.reg.enums):
+            if not enum.startswith("Vk") or not self.json_type_required(enum) or enum in self.reg.type_aliases:
+                continue
+            values = self.json_enum_values(enum)
+            name = self.register("cvkParseJson" + self.enum_short(enum), f"json:{enum}")
+            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: an enumerant name or a number, or NULL", False)]
+            body = []
+            if values:
+                # 64-bit bits are static const objects in the headers, not constant expressions: their table is automatic.
+                body += [f"{'' if enum in self.reg.enums64 else 'static '}const cvkJsonName table[] = {{"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in values] + ["};", ""]
+                body.append(f"return ({enum})cvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));")
+            else:
+                body.append(f"return ({enum})cvkGetJsonInt64(pValue);")
+            doc = self.doc_block(f"Parses a {enum} from JSON.", params, enum, None, [])
+            sig = self.signature(enum, name, params)
+            self.sigs[name] = (enum, params)
+            self.place(self.json_type_platforms(enum), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+        # flag sets
+        for flags in sorted(self.reg.bitmasks):
+            if not flags.startswith("Vk") or not self.json_type_required(flags) or flags in self.reg.type_aliases:
+                continue
+            bits = self.reg.bitmasks[flags]
+            values = self.json_enum_values(bits) if bits and self.json_type_required(bits) else []
+            name = self.register("cvkParseJson" + self.enum_short(flags), f"json:{flags}")
+            params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: bit names joined by |, a number, or NULL", False)]
+            body = []
+            if values:
+                body += [f"{'' if bits in self.reg.enums64 else 'static '}const cvkJsonName table[] = {{"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in values] + ["};", ""]
+                body.append(f"return ({flags})cvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));")
+            else:
+                body.append(f"return ({flags})cvkGetJsonUint64(pValue);")
+            doc = self.doc_block(f"Parses a {flags} from JSON.", params, flags, None, [])
+            sig = self.signature(flags, name, params)
+            self.sigs[name] = (flags, params)
+            self.place(self.json_type_platforms(flags), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+        # structures and unions
+        parsed: List[Struct] = []
+        for s in sorted(self.reg.structs.values(), key=lambda x: x.name):
+            if s.alias_of or not self.struct_in_profile(s) or s.name in ("VkBaseInStructure", "VkBaseOutStructure"):
+                continue
+            name = self.register("cvkParseJson" + self.struct_short(s), f"json:{s.name}")
+            params = [EmittedParam(ctx, "pContext", "Parsing context: document, arena, handle resolver", False),
+                      EmittedParam("const cvkJsonValue* pObject", "pObject", f"The JSON object of the {s.name}", False),
+                      EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the parsed {s.name}, zeroed first", True)]
+            body: List[str] = []
+            needs_index = needs_storage = needs_inner = False
+            members = []
+            for m in s.members:
+                if m.name == "sType":
+                    continue
+                stmts, ni, ns = self.json_member_statements(m, f"pInfo->{m.name}")
+                if not stmts:
+                    continue
+                needs_index |= ni
+                needs_storage |= ns
+                needs_inner |= any("inner" in l for l in stmts)
+                members.append((m, stmts))
+            body.append(f"memset(pInfo, 0, sizeof(*pInfo));")
+            if s.stype:
+                body.append(f"pInfo->sType = {s.stype};")
+            for m, stmts in members:
+                body.append(f"value = cvkGetJsonMember(&pContext->document, pObject, \"{m.name}\");")
+                body.append("if (!cvkIsJsonNull(value))")
+                body.append("{")
+                body += ["    " + l for l in stmts]
+                if s.category == "union":
+                    body.append("    return;")
+                body.append("}")
+            decls = ["const cvkJsonValue* value;"] + (["void* storage;"] if needs_storage else []) + (["uint32_t index;"] if needs_index else []) + (["uint32_t inner;"] if needs_inner else [])
+            if not members:
+                decls = []
+                body = [l for l in body if not l.startswith("value =")] + ["(void)pContext;", "(void)pObject;"]
+            doc = self.doc_block(f"Parses a {s.name} from a JSON object; members absent or NULL stay zero.", params, "void", None, [])
+            sig = self.signature("void", name, params)
+            self.sigs[name] = ("void", params)
+            self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
+                       sig + "\n{\n" + indent("\n".join(decls + ([""] if decls else []) + body)) + "\n}")
+            if s.stype and not self.platforms_for(s.extensions, s.core_version):
+                parsed.append(s)
+        # the extension chain dispatcher: every sType structure of the core profile
+        name = self.register("cvkParseJsonStructureChain", "json:chain")
+        params = [EmittedParam(ctx, "pContext", "Parsing context", False),
+                  EmittedParam("const cvkJsonValue* pObject", "pObject", "The JSON object; its sType member selects the structure", False)]
+        body = ["const cvkJsonValue* s_type;", "void*               storage;", "",
+                "s_type = cvkGetJsonMember(&pContext->document, pObject, \"sType\");"]
+        for s in parsed:
+            body += [f"if (cvkJsonStringEquals(s_type, \"{s.stype}\"))", "{",
+                     f"    storage = cvkAllocateArena(pContext->pArena, sizeof({s.name}), 16);",
+                     f"    cvkParseJson{self.struct_short(s)}(pContext, pObject, ({s.name}*)storage);",
+                     "    return storage;", "}"]
+        body += ["cvkFatal(\"unknown sType in a JSON extension chain\", __FILE__, __LINE__);", "return NULL;"]
+        doc = self.doc_block("Parses one structure of an extension chain from a JSON object by its sType, into the arena.", params, "void*", None, [])
+        sig = self.signature("void*", name, params)
+        self.sigs[name] = ("void*", params)
+        self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+
     # ------------------------------------------------------------ singulars
     def singular_name(self, cmd: Command, s: Optional[Struct]) -> str:
         """SPEC.md section 7. A plural command name is depluralized (vkCreateComputePipelines ->
@@ -1459,9 +1721,20 @@ class Generator:
                 self.PLATFORM_SOURCE_INCLUDES[plat].append(inc)
         for m in re.finditer(r"(/\*\*(?=\s).*?\*/\s*)?^(\w[\w\s\*]*?\s+(cvk\w+)\s*\((.*?)\))\s*\{", text, flags=re.S | re.M):
             doc, sig, name, plist = m.group(1) or "", m.group(2), m.group(3), m.group(4)
-            depth, i = 1, m.end()
+            depth, i, quote = 1, m.end(), ""
             while i < len(text) and depth:
-                depth += {"{": 1, "}": -1}.get(text[i], 0)
+                c = text[i]
+                if quote:
+                    if c == "\\":
+                        i += 1
+                    elif c == quote:
+                        quote = ""
+                elif text.startswith("/*", i):
+                    i = text.index("*/", i) + 1                # comments hold no blocks (and stray apostrophes)
+                elif c in "\"'":
+                    quote = c                                  # braces inside literals ('{') are not blocks
+                else:
+                    depth += {"{": 1, "}": -1}.get(c, 0)
                 i += 1
             body = text[m.end() - 1:i]
             # A function may name the API variant it belongs to (\par Profile: vulkansc).
@@ -1670,6 +1943,8 @@ class Generator:
             self.emit_builder(s)
         for s in sorted((u for u in self.reg.structs.values() if not u.alias_of and u.category == "union" and self.struct_in_profile(u)), key=lambda u: u.name):
             self.emit_union_builders(s)
+        if self.policy.get("json", True):
+            self.emit_json_parsers()
         for cmd in self.cmds:
             self.emit_tier0(cmd)
         for cmd in self.cmds:
@@ -1836,6 +2111,8 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 /* Fixed capacities, from cvk.policy.json. */
 {caps}
 
+{(chr(10) * 2).join(self.fragments)}
+
 {chr(10).join(self.decls[""])}
 
 #ifdef __cplusplus
@@ -1892,6 +2169,7 @@ def brand(text: str, prefix: str) -> str:
         return text
     text = re.sub(r"(?<![A-Za-z0-9_])cvk(?=[A-Z_.\s\"])", prefix, text)
     text = re.sub(r"(?<![A-Za-z0-9_])CVK_", prefix.upper() + "_", text)
+    text = text.replace("PFN_cvk", "PFN_" + prefix)
     return text
 
 

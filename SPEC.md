@@ -7,7 +7,10 @@ first, then the generator, then regenerate and re-run the studies.
 
 ## 1. Inputs
 
-- `external/Vulkan-Headers/registry/vk.xml` (pinned by the submodule).
+- `external/Vulkan-Headers/registry/vk.xml` (pinned by the submodule), and for the Vulkan SC
+  profile `external/VulkanSC-Headers/registry/vk.xml` read with `api="vulkansc"`: the API
+  variant's own commands and members, its feature's `depends` closure and `<remove>` blocks,
+  and require blocks whose `depends` the variant satisfies.
 - `cvk.policy.json`: profile (core version, extension list or `"all"`, platforms), capacity
   constants, `role_overrides` for registry quirks, the tier-1' substitution table, and the
   tier-2 chain table. The profile is `VK_VERSION_1_4` with every extension whose platform is
@@ -21,6 +24,13 @@ re-verify. A commit that changes the outputs without changing the generator or t
 wrong by definition.
 
 - `include/cvk.h`, `src/cvk.c`: core profile, free of platform conditionals.
+- `include/scvk.h`, `src/scvk.c` (and platform pairs): the Vulkan SC profile, a standalone
+  library from `scvk.policy.json` (which extends `cvk.policy.json`: api `vulkansc`, its
+  registry, core `VKSC_VERSION_1_0`, every SC-supported extension, prefix `scvk` applied to
+  every identifier). The same rules over another registry: a composition naming a command,
+  constant, or type the profile lacks is dropped there (`missing: drop`), and a protocol file
+  may declare the variant it belongs to (`Profile: vulkan` on the format protocols, whose
+  utility-library tables describe formats the SC headers lack).
 - `include/cvk_<platform>.h`, `src/cvk_<platform>.c` per registry platform (`win32`, `xlib`),
   each including `cvk.h` and its platform headers.
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
@@ -30,7 +40,7 @@ wrong by definition.
 
 | Thing | Name |
 |---|---|
-| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target. **Canonical suffix rule:** when several in-profile commands (or structs) share a stem after suffix stripping, only the canonical one drops its suffix: lowest vendor rank (core, then `KHR`, then `EXT`, then any other vendor) when that rank is held by exactly one of them; the rest keep their suffix (`cvkCmdDrawMeshTasks` for `EXT`, `cvkCmdDrawMeshTasksNV`; `cvkInitExportMemoryAllocateInfo`, `cvkInitExportMemoryAllocateInfoNV`). Same rank held by several of the same kind: all keep the suffix. An output extender's replacement name (section 6) competes in the command group of that name, so `vkGetPhysicalDeviceExternalImageFormatPropertiesNV` keeps its suffix beside the core `VkExternalImageFormatProperties` convenience; a tie between a command and a struct at the same rank is settled by tier-0 ownership: the command keeps the plain name and the convenience takes its `With` form (`cvkGetPhysicalDeviceCooperativeMatrixProperties` is the `KHR` enumeration, `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties` the limits query). A plural command reserves its singular stem in the same groups (`vkCmdBuildAccelerationStructuresKHR` owns `cvkCmdBuildAccelerationStructure`, so `vkCmdBuildAccelerationStructureNV` keeps its suffix). A kept suffix always trails the whole derived name, every suffix in order of appearance (`cvkCreateImageWithExternalMemoryInfoNV`, `cvkGetGeneratedCommandsMemoryRequirementsWithTileRequirementsNVQCOM`) |
+| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; a promotable tag (`KHR`, `EXT`) is dropped, a vendor tag (`NV`, `AMD`, `QCOM`, ...) always stays (`cvkGetDisplayModeStereoPropertiesNV`); alias commands are not emitted, only their promoted target. **Canonical suffix rule:** when several in-profile commands (or structs) share a stem after suffix stripping, only the canonical one drops its suffix: lowest vendor rank (core, then `KHR`, then `EXT`, then any other vendor) when that rank is held by exactly one of them; the rest keep their suffix (`cvkCmdDrawMeshTasks` for `EXT`, `cvkCmdDrawMeshTasksNV`; `cvkInitExportMemoryAllocateInfo`, `cvkInitExportMemoryAllocateInfoNV`). Same rank held by several of the same kind: all keep the suffix. An output extender's replacement name (section 6) competes in the command group of that name, so `vkGetPhysicalDeviceExternalImageFormatPropertiesNV` keeps its suffix beside the core `VkExternalImageFormatProperties` convenience; a tie between a command and a struct at the same rank is settled by tier-0 ownership: the command keeps the plain name and the convenience takes its `With` form (`cvkGetPhysicalDeviceCooperativeMatrixProperties` is the `KHR` enumeration, `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties` the limits query). A plural command reserves its singular stem in the same groups (`vkCmdBuildAccelerationStructuresKHR` owns `cvkCmdBuildAccelerationStructure`, so `vkCmdBuildAccelerationStructureNV` keeps its suffix). A kept suffix always trails the whole derived name, every suffix in order of appearance (`cvkCreateImageWithExternalMemoryInfoNV`, `cvkGetGeneratedCommandsMemoryRequirementsWithTileRequirementsNVQCOM`) |
 | builder for `VkAbcInfo` | `cvkInitAbcInfo` |
 | single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Operation extenders** (`Import*`, `Export*`): the extender names the operation, so the name is `cvk<Verb><ExtenderStruct minus kind/Info>`, the `vkImportSemaphoreFdKHR` idiom: `cvkAllocateImportMemoryFd`, `cvkAllocateExportMemory`, `cvkCreateExportSemaphoreWin32Handle`, and on any platform `cvkAllocateImportMemoryZirconHandle`, `cvkAllocateImportAndroidHardwareBuffer`; when one such extender serves several bases with the same verb (`VkExportMetalObjectCreateInfoEXT`) it falls back to the next form. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `…Memory2With…`; a flattened sibling named after a struct keeps the struct's digit), unless the digit-less command is in the profile and is itself extensible, that is, takes an sType input of its own: then the digit is part of the name (`cvkCreateRenderPassWithFragmentDensityMapInfo` from `vkCreateRenderPass`, `cvkCreateRenderPass2WithFragmentDensityMapInfo` from `vkCreateRenderPass2`; `vkBindImageMemory` has no info struct, so `vkBindImageMemory2` drops its digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). The command may name the run in full or, when the run starts with the handle the base struct is about and the command is dispatched elsewhere, only its tail: `VkSurfaceFullScreenExclusiveInfoEXT` on `VkPhysicalDeviceSurfaceInfo2KHR` gives `cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes` from `vkGetPhysicalDeviceSurfacePresentModes2EXT` and `cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes` from `vkGetDeviceGroupSurfacePresentModes2EXT`; any other missing qualifier (`Compute` of `VkComputePipelineCreateInfo` in `vkGetPipelineIndirectMemoryRequirementsNV`) means the run is absent and the name is the `With` form (`cvkGetPipelineIndirectMemoryRequirementsWithBinaryInfo`). A collision is a generation error |
 | extender member sharing a base member's name | The tokens of its type absent from the base member's type distinguish it (`VkPipelineCreateFlags2 flags` beside `VkPipelineCreateFlags flags` → `flags2`, `VkBufferUsageFlags2 usage` → `usage2`); with the same type, the extender's distinct part qualifies it (`VkImageViewUsageCreateInfo::usage` on `VkPhysicalDeviceImageFormatInfo2` → `imageViewUsage`). Parallel-array names keep a name that is already plural (`flags` → `pFlags`) |
@@ -434,6 +444,9 @@ acceptance test of the surface: anything they cannot express is a generator defe
   then miss, hit, callable; handle stride from the handle alignment, regions from the base
   alignment, handles fetched one group at a time straight into the mapped table; the raygen
   region's size equals its stride.
+- Memory access (`cvkWriteMemory`, `cvkReadMemory`, `cvkWriteCoherentMemory`,
+  `cvkReadCoherentMemory`, core): map, copy, flush or invalidate the range, unmap, with every
+  parameter of the map and of the mapped range exposed; the coherent forms skip the flush.
 - Video session memory (`cvkAllocateVideoSessionMemory`, core): the session form of
   `cvkAllocateImageMemory`; one compatible type, allocation, and bind per reported
   requirement, all binds in one call, count returned.
@@ -448,6 +461,36 @@ acceptance test of the surface: anything they cannot express is a generator defe
   `cvkGetMemoryWin32Handle`. The Win32 forms take the export handle info's attributes, access
   and name, chained only for the opaque Win32 and D3D handle types, the only ones the
   specification permits it for. The exported descriptor or handle is owned by the caller.
+
+## 8c. JSON (derived parsers over an authored reader)
+
+The Vulkan SC pipeline JSON (the pipeline cache compiler's input) is the reference format:
+enumerants and bits by name, flags as names joined by `|` or `"0"`, `VkBool32` as `VK_TRUE`
+and `VK_FALSE`, pointers as arrays or objects, `"NULL"` or `null` for none, extension chains
+as objects with an `sType`, handles as the file's object ids, strings and fixed arrays as
+themselves. Three pieces:
+
+- **Reader** (`cvk_protocol_json.c`, with the types of `cvk_protocol_json.h` folded into the
+  header): `cvkParseJsonDocument` reads a document into a caller-provided value array with no
+  allocation; members and elements are found with `cvkGetJsonMember` and `cvkGetJsonElement`;
+  numbers, booleans, and strings are read by kind; `cvkArena` holds what the parsers build;
+  `cvkResolveJsonHandle` maps an id through the context's resolver, or keeps it.
+- **Parsers** (derived): `cvkParseJson<Type>` for every enumeration and flag type the
+  profile's headers define (name tables from the registry, gated by API variant, version
+  closure, extension, and `protect`), and for every structure and union of the profile
+  (`memset`, `sType`, then each member by kind; arrays and pointed-to structures allocated
+  from the arena; data and function pointers and platform types stay zero);
+  `cvkParseJsonStructureChain` dispatches an extension chain object on its `sType`.
+- **Pipeline** (`cvk_protocol_json_pipeline.c`): `cvkParsePipelineJson` reads a pipeline file
+  (render pass by version, id-keyed descriptor set layouts, samplers, Ycbcr conversions, the
+  pipeline layout, the pipeline, shader file names, enabled extensions, the pipeline UUID);
+  `cvkCreatePipelineJsonObjects` creates them in dependency order, resolving the ids in
+  immutable samplers, set layouts, layout and render pass, and shader modules through the
+  caller's resolver; `cvkCreatePipelineFromJson` does both from the text. The SC form
+  `scvkCreateOfflinePipelineFromJson` chains the file's UUID in a `VkPipelineOfflineCreateInfo`
+  with the caller's match control and pool entry size, modules `VK_NULL_HANDLE`.
+  `tests/pipeline_json_test.c` parses `tests/cube.pc.json` (the Khronos SC cube sample's
+  pipeline) under CTest.
 
 ## 9. Documentation phrasing (derived)
 
