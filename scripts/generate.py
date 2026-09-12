@@ -43,8 +43,9 @@ def strip_vendor(name: str) -> str:
 
 
 def tokens(name: str) -> List[str]:
-    """CamelCase words with digit runs as their own tokens: 'ImageMemoryRequirementsInfo2' -> [..., 'Info', '2']."""
-    return re.findall(r"[A-Z]+[a-z]*|[0-9]+", name)
+    """CamelCase words with digit runs and acronyms as their own tokens:
+    'ImageMemoryRequirementsInfo2' -> [..., 'Info', '2'], 'PhysicalDeviceIDProperties' -> [..., 'ID', 'Properties']."""
+    return re.findall(r"[A-Z]+(?![a-z])|[A-Z][a-z]*|[0-9]+", name)
 
 
 def upper_snake(name: str) -> str:
@@ -152,6 +153,11 @@ class Generator:
     def struct_short(self, s: Struct) -> str:
         return strip_vendor(s.name[2:])
 
+    def with_base(self, cmd: Command) -> str:
+        """Tier-0 name minus the command's trailing version digit: a chained extender already
+        implies the extensible form (cvkBindImageMemory2 -> cvkBindImageMemoryWith...)."""
+        return re.sub(r"\d+$", "", self.cmd_name(cmd))
+
     def qualifier(self, ext: Struct, base: Struct) -> str:
         base_tokens = tokens(strip_vendor(base.name[2:]))
         out = []
@@ -193,13 +199,13 @@ class Generator:
             d.pop()
         if not d:
             self.errors.append(f"extender {ext.name} has no distinct part against {base.name}")
-            return self.cmd_name(cmd) + "With" + self.struct_short(ext)
+            return self.with_base(cmd) + "With" + self.struct_short(ext)
 
         cmd_tokens = tokens(strip_vendor(cmd.name[2:]))
         verb, rest = cmd_tokens[0], cmd_tokens[1:]
         run = [t for t in b if t not in kind and not t.isdigit()]
         if verb not in ("Get", "Enumerate"):
-            return self.cmd_name(cmd) + "With" + "".join(d) + "Info"
+            return self.with_base(cmd) + "With" + "".join(d) + "Info"
         # Query: a plain Info extender whose name covers the base noun run is the subject of
         # the query. A CreateInfo/AllocateInfo/BeginInfo extender is an add-on and is spliced.
         ne, nrun = [norm(t) for t in e], [norm(t) for t in run]
@@ -212,7 +218,7 @@ class Generator:
         nrest = [norm(t) for t in rest]
         start = next((i for i in range(len(nrest) - len(nrun) + 1) if nrest[i:i + len(nrun)] == nrun), -1)
         if start < 0:
-            return self.cmd_name(cmd) + "With" + "".join(d) + "Info"
+            return self.with_base(cmd) + "With" + "".join(d) + "Info"
 
         # Splice: the distinct part wraps the base run's unmatched remainder. Its first word
         # follows the last matched base word; the remainder of the run follows; then the rest
@@ -647,6 +653,141 @@ class Generator:
         plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
         self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
+    # ------------------------------------------------ array and output extenders
+    @staticmethod
+    def plural(name: str) -> str:
+        """Parallel-array parameter name for a member: image -> pImages, memory -> pMemories, imageIndex -> pImageIndices."""
+        cap = name[0].upper() + name[1:]
+        if cap.endswith("Index"):
+            return "p" + cap[:-5] + "Indices"
+        if cap.endswith("y"):
+            return "p" + cap[:-1] + "ies"
+        return "p" + cap + "s"
+
+    KINDS_OUT = ("Properties", "Requirements", "Features", "Support", "Capabilities")
+
+    def distinct_part(self, ext: Struct, base: Struct, strip_info: bool = True) -> List[str]:
+        """The extender's tokens outside the blocks matching its base (see convenience_name).
+        A trailing version digit is a struct suffix only when it follows a kind word
+        (Info2, Properties2); a digit inside a name (Vulkan12) is part of that name."""
+        import difflib
+        e = tokens(self.struct_short(ext))
+        if len(e) >= 2 and e[-1].isdigit() and (e[-2] in self.KINDS_OUT or e[-2] == "Info"):
+            e.pop()
+        b = tokens(self.struct_short(base))
+        blocks = [m for m in difflib.SequenceMatcher(None, e, b, autojunk=False).get_matching_blocks() if m.size]
+        matched = set()
+        for m in blocks:
+            if m.size == 1 and 0 < m.a < len(e) - 1:
+                continue
+            if m.size == 1 and e[m.a].isdigit():
+                continue                                 # a lone digit never matches a version digit
+            matched.update(range(m.a, m.a + m.size))
+        d = [e[i] for i in range(len(e)) if i not in matched]
+        strip = self.KIND + (("Info",) if strip_info else ())
+        while d and d[-1] in strip:
+            d.pop()
+        return d
+
+    def emit_array_convenience(self, cmd: Command, ap: Param, ext: Struct) -> None:
+        """SPEC.md section 6: <tier-0>With<D>Info for an array input, as parallel arrays.
+        Each element of the base struct gets the extender chained; the base members and the
+        extender members become parallel arrays sized by the command's count parameter."""
+        base = self.reg.struct_of(ap.type)
+        d = "".join(self.distinct_part(ext, base))
+        name = self.register(self.with_base(cmd) + "With" + d + "Info", f"{cmd.name}+{ext.name}[]")
+        t0 = self.cmd_name(cmd)
+        ret, t0_params = self.sigs[t0]
+        count = ap.len.split(",")[0]
+        cap = self.capacity_name(ap.name)
+        base_var = snake(ap.name)                               # bind_infos
+        ext_var = snake(self.struct_short(ext)) + "s"           # bind_image_plane_memory_infos
+        params: List[EmittedParam] = []
+        args: List[str] = []
+        fill: List[str] = []
+        for p in t0_params:
+            if p.name != ap.name:
+                params.append(p)
+                args.append(p.name)
+                continue
+            params.append(EmittedParam("const void* const* ppNexts", "ppNexts", f"Optional per-element extension chains attached to {ext.name}, or NULL", False))
+            for m in ext.members:
+                if m.name in ("sType", "pNext"):
+                    continue
+                pn = self.plural(m.name)
+                params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{ext.name}::{m.name} per element", False))
+                fill.append(f"{ext_var}[index].{m.name} = {pn}[index];")
+            for m in base.members:
+                if m.name in ("sType", "pNext"):
+                    continue
+                pn = self.plural(m.name)
+                params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{base.name}::{m.name} per element", False))
+                fill.append(f"{base_var}[index].{m.name} = {pn}[index];")
+            args.append(base_var)
+        body = [f"{base.name} {base_var}[{cap}];", f"{ext.name} {ext_var}[{cap}];", "uint32_t index;", "",
+                f"CVK_ASSERT({cap} >= {count});",
+                f"for (index = 0; index < {count}; ++index)", "{",
+                f"    {ext_var}[index].sType = {ext.stype};",
+                f"    {ext_var}[index].pNext = (NULL != ppNexts) ? ppNexts[index] : NULL;"]
+        body += ["    " + l for l in fill if l.startswith(ext_var)]
+        body += [f"    {base_var}[index].sType = {base.stype};", f"    {base_var}[index].pNext = &{ext_var}[index];"]
+        body += ["    " + l for l in fill if l.startswith(base_var)]
+        body += ["}", ("return " if ret != "void" else "") + f"{t0}({', '.join(args)});"]
+        doc = self.doc_block(f"{self.brief(cmd)[:-1]} with {ext.name} chained to every element.", params, ret, None, [])
+        sig = self.signature(ret, name, params)
+        self.sigs[name] = (ret, params)
+        plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
+        self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+
+    def emit_output_convenience(self, cmd: Command, op: Param, ext: Struct) -> None:
+        """SPEC.md section 6: <target>With<D><Kind> chains an extender onto the output struct
+        and returns it as an additional out-parameter. <target> is the flattened sibling when
+        one exists, else tier 0; <Kind> is the extender's trailing word (Requirements,
+        Properties, Features)."""
+        base = self.reg.struct_of(op.type)
+        d_tokens = self.distinct_part(ext, base, strip_info=False)
+        d = "".join(d_tokens)
+        # The kind is the base struct's (Properties, Requirements, Features), appended unless
+        # the distinct part already carries it (VkDrmFormatModifierPropertiesListEXT).
+        base_tokens = [t for t in tokens(self.struct_short(base)) if not t.isdigit()]
+        kind = base_tokens[-1] if base_tokens and base_tokens[-1] in self.KINDS_OUT else ""
+        if kind in d_tokens:
+            kind = ""
+        target = self.flat_name(cmd, self.reg.struct_of(self.flip_param(cmd).type)) if self.flip_param(cmd) is not None else self.cmd_name(cmd)
+        prefix = target if self.flip_param(cmd) is not None else self.with_base(cmd)
+        name = self.register(prefix + "With" + d + kind, f"{cmd.name}+{ext.name}:out")
+        ret, t_params = self.sigs[target]
+        out_stem = op.name[1:] if op.name.startswith("p") else op.name
+        chain_param = next((p for p in t_params if p.name in (f"p{out_stem}Next", "pNext") and p.text.startswith("void*")), None)
+        if chain_param is None:
+            self.errors.append(f"output convenience {name}: no output chain parameter on {target}")
+            return
+        ext_out = "p" + d + kind
+        ext_next = f"p{d}{kind}Next"
+        var = snake(ext_out)
+        params: List[EmittedParam] = []
+        args: List[str] = []
+        for p in t_params:
+            if p is chain_param:
+                params.append(EmittedParam(f"void* {ext_next}", ext_next, f"Optional output extension chain attached to {ext.name}, or NULL", False))
+                args.append(f"&{var}")
+            else:
+                params.append(p)
+                args.append(p.name)
+        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out, f"Receives the {ext.name}", True))
+        body = [f"{ext.name} {var};", "", f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
+        call = f"{target}({', '.join(args)})"
+        if ret != "void":
+            body.insert(0, f"{ret} result;")
+            body += [f"result = {call};", f"(*{ext_out}) = {var};", "return result;"]
+        else:
+            body += [f"{call};", f"(*{ext_out}) = {var};"]
+        doc = self.doc_block(f"{self.brief(cmd)[:-1]} with {ext.name} chained to the output.", params, ret, None, [])
+        sig = self.signature(ret, name, params)
+        self.sigs[name] = (ret, params)
+        plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
+        self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+
     # ------------------------------------------------------ policy functions
     # Fixed logic the registry cannot supply (SPEC.md section 8). Declared here so that chains
     # can compose it like any generated function; the text is policy, recorded in SPEC.md.
@@ -839,6 +980,31 @@ class Generator:
             self.convenience_pairs[(cmd.verb, ext.name)] += 1
         for cmd, ip, ext in pairs:
             self.emit_convenience(cmd, ip, ext)
+        # Gap 1: per-element extenders on array inputs (parallel-array form).
+        for cmd in self.cmds:
+            roles = self.roles(cmd)
+            arrays = [p for p, r in zip(cmd.params, roles) if r == "I[]"]
+            if len(arrays) != 1:
+                continue
+            base = self.reg.struct_of(arrays[0].type)
+            if any(m.is_pointer or m.array_len for m in base.members if m.name not in ("sType", "pNext")):
+                continue                         # base has arrays/pointers: parallel arrays would nest
+            for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
+                if not self.struct_in_profile(ext):
+                    continue
+                if any(m.is_pointer or m.array_len for m in ext.members if m.name not in ("sType", "pNext")):
+                    continue
+                self.emit_array_convenience(cmd, arrays[0], ext)
+        # Gap 2: extenders on the output sType struct (chained output).
+        for cmd in self.cmds:
+            roles = self.roles(cmd)
+            outs = [p for p, r in zip(cmd.params, roles) if r == "P"]
+            if len(outs) != 1:
+                continue
+            base = self.reg.struct_of(outs[0].type)
+            for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
+                if self.struct_in_profile(ext):
+                    self.emit_output_convenience(cmd, outs[0], ext)
         for f in self.FIXED:
             self.emit_fixed(f)
         for chain_name, spec in self.policy.get("chains", {}).items():

@@ -28,7 +28,7 @@ wrong by definition.
 |---|---|
 | tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target |
 | builder for `VkAbcInfo` | `cvkInitAbcInfo` |
-| single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Constructors and everything but queries**: `<tier-0>With<D>Info` (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). A collision is a generation error |
+| single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `…Memory2With…`; a flattened sibling named after a struct keeps the struct's digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). A collision is a generation error |
 | qualifier for extender `E` of base `B` (used only to disambiguate colliding parameter names) | CamelCase tokens of `E` minus the multiset of tokens of `B`, vendor suffix dropped, in `E`'s order |
 | capacity constant for enumeration array `pFooBars` | `CVK_MAX_FOO_BARS` |
 
@@ -118,9 +118,23 @@ An extender member whose name collides with a tier-0 parameter name (for example
 Stacking more than one extender is done by the caller with builders in one frame. No
 multi-qualifier function is generated (policy: 2^n explosion; see `study/MEMORY.md`).
 
-Per-element extenders on `I[]` inputs (for example `VkBindImagePlaneMemoryInfo` on
-`VkBindImageMemoryInfo`) are emitted as the parallel-array form: `cvk<Verb><Qualifier><Rest>2(
-handle, count, <extender member arrays>..., <base member arrays>...)`. (Not yet generated.)
+**Per-element extenders on array inputs** (`VkBindImagePlaneMemoryInfo` on
+`VkBindImageMemoryInfo`) are emitted as the parallel-array form
+`<tier-0>With<D>Info(handle, count, ppNexts, <extender member arrays>, <base member arrays>)`:
+`cvkBindImageMemory2WithPlaneInfo(device, bindInfoCount, ppNexts, pPlaneAspects, pImages, pMemories, pMemoryOffsets)`.
+Array parameter names pluralize the member (`memory` → `pMemories`, `imageIndex` → `pImageIndices`).
+Only generated when neither the base nor the extender has pointer or array members, since
+parallel arrays would otherwise nest; the caller builds such arrays with the builders. The
+element array is sized by `CVK_MAX_<ArrayParam>` and the count is asserted against it.
+
+**Extenders on the output sType struct** (`VkMemoryDedicatedRequirements` on
+`VkMemoryRequirements2`, `VkExternalImageFormatProperties` on `VkImageFormatProperties2`,
+`VkPhysicalDeviceIDProperties` on `VkPhysicalDeviceProperties2`) are emitted as
+`<target>With<D><Kind>` where `<target>` is the flattened sibling when one exists, else tier 0,
+and `<Kind>` is the extender's trailing word: `cvkGetImageMemoryRequirementsInfo2WithDedicatedRequirements`,
+`cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties`, `cvkGetPhysicalDeviceProperties2WithIDProperties`.
+The function takes `p<D><Kind>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
+chains it into the output struct, and returns it through an added out-parameter `p<D><Kind>`.
 
 ## 7. Tier 1': specializations (policy table)
 
