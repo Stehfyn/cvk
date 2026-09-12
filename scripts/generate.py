@@ -51,6 +51,13 @@ def upper_snake(name: str) -> str:
     return "_".join(t.upper() for t in tokens(name))
 
 
+def snake(name: str) -> str:
+    """Block-scope variable name from a Vulkan identifier: 'pCreateInfo' -> 'create_info', 'Win32HandleInfo' -> 'win32_handle_info'."""
+    if name.startswith("p") and name[1:2].isupper():
+        name = name[1:]
+    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "_", name).lower()
+
+
 def indent(text: str, n: int = 4) -> str:
     pad = " " * n
     return "\n".join(pad + l if l else l for l in text.split("\n"))
@@ -101,6 +108,7 @@ class Generator:
         self.cmds: List[Command] = reg.profile(self.core, sorted(self.exts))
         self.capacities: Dict[str, int] = dict(policy.get("capacities", {}))
         self.default_capacity = policy.get("default_capacity", 64)
+        self.input_asserts: bool = bool(policy.get("input_asserts", False))
         self.used_capacities: Dict[str, int] = {}
         self.names: Dict[str, str] = {}
         self.decls: List[str] = []
@@ -242,8 +250,7 @@ class Generator:
         for p, r in zip(cmd.params, roles):
             if r == "I":
                 s = reg.struct_of(p.type)
-                var = p.name.lstrip("p")
-                var = var[0].lower() + var[1:]
+                var = snake(p.name)
                 stem = p.name[1:] if p.name.startswith("p") else p.name
                 locals_.append(f"{s.name} {var};")
                 locals_.append(f"{var}.sType = {s.stype};")
@@ -274,7 +281,7 @@ class Generator:
                 locals_.append(f"{p.name}->pNext = {pn};")
                 call_args.append(p.name)
             elif p is enum_count:
-                call_args.append("&count")
+                call_args.append("&" + snake(p.name))
             elif any(p is q for q, _ in enum_arrays):
                 cap = dict((id(q), c) for q, c in enum_arrays)[id(p)]
                 elem = p.full_type.rstrip("*").strip()
@@ -313,19 +320,20 @@ class Generator:
         body: List[str] = list(locals_)
         if enum_count:
             ret = "uint32_t"
+            count_var = snake(enum_count.name)
             first = call.replace(enum_arrays[0][0].name, "NULL")
-            body.insert(0, "uint32_t count = 0;")
+            body.insert(0, f"uint32_t {count_var} = 0;")
             if cmd.return_type == "VkResult":
                 body.append(f"CVK_CHECK({first});")
             else:
                 body.append(f"{first};")
             for q, cap in enum_arrays:
-                body.append(f"CVK_ASSERT({cap} >= count);")
+                body.append(f"CVK_ASSERT({cap} >= {count_var});")
                 s = reg.struct_of(q.type)
                 if s and s.stype:
                     body.append("{")
                     body.append("    uint32_t index;")
-                    body.append("    for (index = 0; index < count; ++index)")
+                    body.append(f"    for (index = 0; index < {count_var}; ++index)")
                     body.append("    {")
                     body.append(f"        {q.name}[index].sType = {s.stype};")
                     body.append(f"        {q.name}[index].pNext = NULL;")
@@ -336,7 +344,7 @@ class Generator:
             else:
                 body.append(f"{call};")
             body += post
-            body.append("return count;")
+            body.append(f"return {count_var};")
         elif cmd.return_type == "VkResult" and informational:
             ret = "VkResult"
             body.insert(0, "VkResult result;")
@@ -362,8 +370,10 @@ class Generator:
             body.append(f"return {call};")
 
         # Order: declarations first (C89-style block), then asserts, then statements.
-        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function;|VkResult result;|uint32_t count|Vk\w+ \w+;)", l)]
+        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+;)", l)]
         other = [l for l in body if l not in decl_lines]
+        if not self.input_asserts:
+            pre = []
         body = decl_lines + ([""] if decl_lines else []) + pre + ([""] if pre else []) + other
 
         doc = self.doc_block(self.brief(cmd), params, ret, cmd, informational if ret == "VkResult" else [])
@@ -423,7 +433,7 @@ class Generator:
         pnext_type = next((m.full_type for m in s.members if m.name == "pNext"), "const void*")
         params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True),
                   EmittedParam(f"{pnext_type} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False)]
-        body = ["CVK_ASSERT(NULL != pInfo);", "", f"pInfo->sType = {s.stype};", "pInfo->pNext = pNext;"]
+        body = (["CVK_ASSERT(NULL != pInfo);", ""] if self.input_asserts else []) + [f"pInfo->sType = {s.stype};", "pInfo->pNext = pNext;"]
         if not s.returnedonly:
             for m in s.members:
                 if m.name in ("sType", "pNext"):
@@ -462,7 +472,8 @@ class Generator:
         pn = "pNext" if filled == 1 else f"p{stem}Next"
         idx = next(i for i, p in enumerate(base_params) if p.split()[-1] == pn)
         ext_params: List[str] = []
-        body = [f"{ext.name} extension;", "", f"extension.sType = {ext.stype};", f"extension.pNext = {pn};"]
+        ext_var = snake(self.struct_short(ext))
+        body = [f"{ext.name} {ext_var};", "", f"{ext_var}.sType = {ext.stype};", f"{ext_var}.pNext = {pn};"]
         base_names = {p.split()[-1].split("[")[0] for p in base_params}
         qlower = q[0].lower() + q[1:]
         for em in ext.members:
@@ -472,13 +483,13 @@ class Generator:
             pname = em.name if em.name not in base_names else qlower + em.name[0].upper() + em.name[1:]
             if em.array_len:
                 ext_params.append(f"const {em.full_type} {pname}[{em.array_len}]")
-                body.append(f"memcpy(extension.{em.name}, {pname}, sizeof(extension.{em.name}));")
+                body.append(f"memcpy({ext_var}.{em.name}, {pname}, sizeof({ext_var}.{em.name}));")
             else:
                 ext_params.append(f"{em.full_type} {pname}")
-                body.append(f"extension.{em.name} = {pname};")
+                body.append(f"{ext_var}.{em.name} = {pname};")
         all_params = base_params[: idx + 1] + ext_params + base_params[idx + 1:]
         args = [p.split()[-1].split("[")[0] for p in base_params]
-        args[idx] = "&extension"
+        args[idx] = "&" + ext_var
         call = f"{t0}({', '.join(args)})"
         body.append(("return " if ret != "void" else "") + call + ";")
         eparams = [EmittedParam(p, p.split()[-1].split("[")[0], "", False) for p in all_params]

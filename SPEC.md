@@ -72,7 +72,20 @@ whose dispatch handle is a `VkQueue` or `VkCommandBuffer` gains `VkDevice device
 parameter; one dispatched on a `VkPhysicalDevice` gains `VkInstance instance`. Reason: no
 global table, no init order, and the parent is the only stateless way to resolve.
 
+Block-scope variables are `snake_case` and follow the Vulkan parameter they stand for: the
+flattened input struct is named after its parameter minus the `p` (`pCreateInfo` →
+`create_info`, `pInfo` → `info`), the enumeration count after the removed count parameter
+(`pPhysicalDeviceCount` → `physical_device_count`), a chained extender after its struct
+(`VkMemoryDedicatedAllocateInfo` → `memory_dedicated_allocate_info`), and resolved commands
+and results are `function` and `result`.
+
 ## 5. Assertions (derived from `optional` and `len`)
+
+Input assertions are a policy switch (`input_asserts` in the policy file), currently **off**:
+no precondition on parameters or flattened members is emitted. What is always emitted are
+the post-call checks, which are the wrapper's own contract: a created handle is
+`!= VK_NULL_HANDLE`, a resolved command pointer is `!= NULL`, and an enumeration count is
+`<= CVK_MAX_*`. When the switch is on, the rules below apply.
 
 - Non-optional handle or pointer parameter/member: `!= VK_NULL_HANDLE` / `!= NULL`.
 - Array with `len=<count>`: `0 == <count> || NULL != <array>` when the array is optional,

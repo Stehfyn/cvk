@@ -25,5 +25,6 @@
     "CVK_MAX_SWAPCHAIN_IMAGES": 16,
     "CVK_MAX_DISPLAYS": 32
   },
-  "default_capacity": 64
+  "default_capacity": 64,
+  "input_asserts": false
 }

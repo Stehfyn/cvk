@@ -23,20 +23,16 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex)
 {
     VkResult                  result;
-    VkAcquireNextImageInfoKHR acquireInfo;
+    VkAcquireNextImageInfoKHR acquire_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != swapchain);
-    CVK_ASSERT(NULL != pImageIndex);
-
-    acquireInfo.sType      = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
-    acquireInfo.pNext      = pNext;
-    acquireInfo.swapchain  = swapchain;
-    acquireInfo.timeout    = timeout;
-    acquireInfo.semaphore  = semaphore;
-    acquireInfo.fence      = fence;
-    acquireInfo.deviceMask = deviceMask;
-    result                 = vkAcquireNextImage2KHR(device, &acquireInfo, pImageIndex);
+    acquire_info.sType      = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
+    acquire_info.pNext      = pNext;
+    acquire_info.swapchain  = swapchain;
+    acquire_info.timeout    = timeout;
+    acquire_info.semaphore  = semaphore;
+    acquire_info.fence      = fence;
+    acquire_info.deviceMask = deviceMask;
+    result                  = vkAcquireNextImage2KHR(device, &acquire_info, pImageIndex);
     CVK_ASSERT(0 <= result);
     return result;
 }
@@ -44,28 +40,20 @@ VkResult cvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_t
 {
     VkResult result;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != swapchain);
-    CVK_ASSERT(NULL != pImageIndex);
-
     result = vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
     CVK_ASSERT(0 <= result);
     return result;
 }
 void cvkAllocateCommandBuffers(VkDevice device, const void* pNext, VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers)
 {
-    VkCommandBufferAllocateInfo allocateInfo;
+    VkCommandBufferAllocateInfo allocate_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != commandPool);
-    CVK_ASSERT(NULL != pCommandBuffers);
-
-    allocateInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocateInfo.pNext              = pNext;
-    allocateInfo.commandPool        = commandPool;
-    allocateInfo.level              = level;
-    allocateInfo.commandBufferCount = commandBufferCount;
-    CVK_CHECK(vkAllocateCommandBuffers(device, &allocateInfo, pCommandBuffers));
+    allocate_info.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocate_info.pNext              = pNext;
+    allocate_info.commandPool        = commandPool;
+    allocate_info.level              = level;
+    allocate_info.commandBufferCount = commandBufferCount;
+    CVK_CHECK(vkAllocateCommandBuffers(device, &allocate_info, pCommandBuffers));
 }
 void cvkAllocateDescriptorSets(VkDevice                     device,
                                const void*                  pNext,
@@ -74,94 +62,64 @@ void cvkAllocateDescriptorSets(VkDevice                     device,
                                const VkDescriptorSetLayout* pSetLayouts,
                                VkDescriptorSet*             pDescriptorSets)
 {
-    VkDescriptorSetAllocateInfo allocateInfo;
+    VkDescriptorSetAllocateInfo allocate_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != descriptorPool);
-    CVK_ASSERT(0 == descriptorSetCount || NULL != pSetLayouts);
-    CVK_ASSERT(NULL != pDescriptorSets);
-
-    allocateInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocateInfo.pNext              = pNext;
-    allocateInfo.descriptorPool     = descriptorPool;
-    allocateInfo.descriptorSetCount = descriptorSetCount;
-    allocateInfo.pSetLayouts        = pSetLayouts;
-    CVK_CHECK(vkAllocateDescriptorSets(device, &allocateInfo, pDescriptorSets));
+    allocate_info.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocate_info.pNext              = pNext;
+    allocate_info.descriptorPool     = descriptorPool;
+    allocate_info.descriptorSetCount = descriptorSetCount;
+    allocate_info.pSetLayouts        = pSetLayouts;
+    CVK_CHECK(vkAllocateDescriptorSets(device, &allocate_info, pDescriptorSets));
 }
 void cvkAllocateMemory(VkDevice device, const void* pNext, VkDeviceSize allocationSize, uint32_t memoryTypeIndex, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
-    VkMemoryAllocateInfo allocateInfo;
+    VkMemoryAllocateInfo allocate_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pMemory);
-
-    allocateInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocateInfo.pNext           = pNext;
-    allocateInfo.allocationSize  = allocationSize;
-    allocateInfo.memoryTypeIndex = memoryTypeIndex;
-    CVK_CHECK(vkAllocateMemory(device, &allocateInfo, pAllocator, pMemory));
+    allocate_info.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocate_info.pNext           = pNext;
+    allocate_info.allocationSize  = allocationSize;
+    allocate_info.memoryTypeIndex = memoryTypeIndex;
+    CVK_CHECK(vkAllocateMemory(device, &allocate_info, pAllocator, pMemory));
     CVK_ASSERT(VK_NULL_HANDLE != (*pMemory));
 }
 void cvkBeginCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext, VkCommandBufferUsageFlags flags, const VkCommandBufferInheritanceInfo* pInheritanceInfo)
 {
-    VkCommandBufferBeginInfo beginInfo;
+    VkCommandBufferBeginInfo begin_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
-    beginInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.pNext            = pNext;
-    beginInfo.flags            = flags;
-    beginInfo.pInheritanceInfo = pInheritanceInfo;
-    CVK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+    begin_info.sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    begin_info.pNext            = pNext;
+    begin_info.flags            = flags;
+    begin_info.pInheritanceInfo = pInheritanceInfo;
+    CVK_CHECK(vkBeginCommandBuffer(commandBuffer, &begin_info));
 }
 void cvkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-
     CVK_CHECK(vkBindBufferMemory(device, buffer, memory, memoryOffset));
 }
 void cvkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == bindInfoCount || NULL != pBindInfos);
-
     CVK_CHECK(vkBindBufferMemory2(device, bindInfoCount, pBindInfos));
 }
 void cvkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-
     CVK_CHECK(vkBindImageMemory(device, image, memory, memoryOffset));
 }
 void cvkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == bindInfoCount || NULL != pBindInfos);
-
     CVK_CHECK(vkBindImageMemory2(device, bindInfoCount, pBindInfos));
 }
 void cvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT labelInfo;
+    VkDebugUtilsLabelEXT label_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(NULL != pLabelName);
-
-    labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-    labelInfo.pNext      = pNext;
-    labelInfo.pLabelName = pLabelName;
-    memcpy(labelInfo.color, color, sizeof(labelInfo.color));
-    vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &labelInfo);
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+    memcpy(label_info.color, color, sizeof(label_info.color));
+    vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &label_info);
 }
 void cvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-
     vkCmdBeginQuery(commandBuffer, queryPool, query, flags);
 }
 void cvkCmdBeginRenderPass(VkCommandBuffer     commandBuffer,
@@ -173,21 +131,16 @@ void cvkCmdBeginRenderPass(VkCommandBuffer     commandBuffer,
                            const VkClearValue* pClearValues,
                            VkSubpassContents   contents)
 {
-    VkRenderPassBeginInfo renderPassBegin;
+    VkRenderPassBeginInfo render_pass_begin;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != renderPass);
-    CVK_ASSERT(VK_NULL_HANDLE != framebuffer);
-    CVK_ASSERT(0 == clearValueCount || NULL != pClearValues);
-
-    renderPassBegin.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBegin.pNext           = pNext;
-    renderPassBegin.renderPass      = renderPass;
-    renderPassBegin.framebuffer     = framebuffer;
-    renderPassBegin.renderArea      = renderArea;
-    renderPassBegin.clearValueCount = clearValueCount;
-    renderPassBegin.pClearValues    = pClearValues;
-    vkCmdBeginRenderPass(commandBuffer, &renderPassBegin, contents);
+    render_pass_begin.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    render_pass_begin.pNext           = pNext;
+    render_pass_begin.renderPass      = renderPass;
+    render_pass_begin.framebuffer     = framebuffer;
+    render_pass_begin.renderArea      = renderArea;
+    render_pass_begin.clearValueCount = clearValueCount;
+    render_pass_begin.pClearValues    = pClearValues;
+    vkCmdBeginRenderPass(commandBuffer, &render_pass_begin, contents);
 }
 void cvkCmdBeginRenderPass2(VkCommandBuffer     commandBuffer,
                             const void*         pRenderPassBeginNext,
@@ -199,25 +152,20 @@ void cvkCmdBeginRenderPass2(VkCommandBuffer     commandBuffer,
                             const void*         pSubpassBeginInfoNext,
                             VkSubpassContents   contents)
 {
-    VkRenderPassBeginInfo renderPassBegin;
-    VkSubpassBeginInfo    subpassBeginInfo;
+    VkRenderPassBeginInfo render_pass_begin;
+    VkSubpassBeginInfo    subpass_begin_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != renderPass);
-    CVK_ASSERT(VK_NULL_HANDLE != framebuffer);
-    CVK_ASSERT(0 == clearValueCount || NULL != pClearValues);
-
-    renderPassBegin.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBegin.pNext           = pRenderPassBeginNext;
-    renderPassBegin.renderPass      = renderPass;
-    renderPassBegin.framebuffer     = framebuffer;
-    renderPassBegin.renderArea      = renderArea;
-    renderPassBegin.clearValueCount = clearValueCount;
-    renderPassBegin.pClearValues    = pClearValues;
-    subpassBeginInfo.sType          = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
-    subpassBeginInfo.pNext          = pSubpassBeginInfoNext;
-    subpassBeginInfo.contents       = contents;
-    vkCmdBeginRenderPass2(commandBuffer, &renderPassBegin, &subpassBeginInfo);
+    render_pass_begin.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    render_pass_begin.pNext           = pRenderPassBeginNext;
+    render_pass_begin.renderPass      = renderPass;
+    render_pass_begin.framebuffer     = framebuffer;
+    render_pass_begin.renderArea      = renderArea;
+    render_pass_begin.clearValueCount = clearValueCount;
+    render_pass_begin.pClearValues    = pClearValues;
+    subpass_begin_info.sType          = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
+    subpass_begin_info.pNext          = pSubpassBeginInfoNext;
+    subpass_begin_info.contents       = contents;
+    vkCmdBeginRenderPass2(commandBuffer, &render_pass_begin, &subpass_begin_info);
 }
 void cvkCmdBindDescriptorSets(VkCommandBuffer        commandBuffer,
                               VkPipelineBindPoint    pipelineBindPoint,
@@ -228,32 +176,18 @@ void cvkCmdBindDescriptorSets(VkCommandBuffer        commandBuffer,
                               uint32_t               dynamicOffsetCount,
                               const uint32_t*        pDynamicOffsets)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != layout);
-    CVK_ASSERT(0 == descriptorSetCount || NULL != pDescriptorSets);
-    CVK_ASSERT(0 == dynamicOffsetCount || NULL != pDynamicOffsets);
-
     vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
 void cvkCmdBindIndexBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdBindIndexBuffer(commandBuffer, buffer, offset, indexType);
 }
 void cvkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != pipeline);
-
     vkCmdBindPipeline(commandBuffer, pipelineBindPoint, pipeline);
 }
 void cvkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == bindingCount || NULL != pBuffers);
-    CVK_ASSERT(0 == bindingCount || NULL != pOffsets);
-
     vkCmdBindVertexBuffers(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets);
 }
 void cvkCmdBlitImage(VkCommandBuffer    commandBuffer,
@@ -265,28 +199,14 @@ void cvkCmdBlitImage(VkCommandBuffer    commandBuffer,
                      const VkImageBlit* pRegions,
                      VkFilter           filter)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != srcImage);
-    CVK_ASSERT(VK_NULL_HANDLE != dstImage);
-    CVK_ASSERT(0 == regionCount || NULL != pRegions);
-
     vkCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions, filter);
 }
 void cvkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == attachmentCount || NULL != pAttachments);
-    CVK_ASSERT(0 == rectCount || NULL != pRects);
-
     vkCmdClearAttachments(commandBuffer, attachmentCount, pAttachments, rectCount, pRects);
 }
 void cvkCmdClearColorImage(VkCommandBuffer commandBuffer, VkImage image, VkImageLayout imageLayout, const VkClearColorValue* pColor, uint32_t rangeCount, const VkImageSubresourceRange* pRanges)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pColor);
-    CVK_ASSERT(0 == rangeCount || NULL != pRanges);
-
     vkCmdClearColorImage(commandBuffer, image, imageLayout, pColor, rangeCount, pRanges);
 }
 void cvkCmdClearDepthStencilImage(VkCommandBuffer                 commandBuffer,
@@ -296,47 +216,22 @@ void cvkCmdClearDepthStencilImage(VkCommandBuffer                 commandBuffer,
                                   uint32_t                        rangeCount,
                                   const VkImageSubresourceRange*  pRanges)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pDepthStencil);
-    CVK_ASSERT(0 == rangeCount || NULL != pRanges);
-
     vkCmdClearDepthStencilImage(commandBuffer, image, imageLayout, pDepthStencil, rangeCount, pRanges);
 }
 void cvkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != srcBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != dstBuffer);
-    CVK_ASSERT(0 == regionCount || NULL != pRegions);
-
     vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, regionCount, pRegions);
 }
 void cvkCmdCopyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != srcBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != dstImage);
-    CVK_ASSERT(0 == regionCount || NULL != pRegions);
-
     vkCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, regionCount, pRegions);
 }
 void cvkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != srcImage);
-    CVK_ASSERT(VK_NULL_HANDLE != dstImage);
-    CVK_ASSERT(0 == regionCount || NULL != pRegions);
-
     vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 void cvkCmdCopyImageToBuffer(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferImageCopy* pRegions)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != srcImage);
-    CVK_ASSERT(VK_NULL_HANDLE != dstBuffer);
-    CVK_ASSERT(0 == regionCount || NULL != pRegions);
-
     vkCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, regionCount, pRegions);
 }
 void cvkCmdCopyQueryPoolResults(VkCommandBuffer    commandBuffer,
@@ -348,148 +243,97 @@ void cvkCmdCopyQueryPoolResults(VkCommandBuffer    commandBuffer,
                                 VkDeviceSize       stride,
                                 VkQueryResultFlags flags)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-    CVK_ASSERT(VK_NULL_HANDLE != dstBuffer);
-
     vkCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags);
 }
 void cvkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdDispatch(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 void cvkCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint32_t baseGroupY, uint32_t baseGroupZ, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
 void cvkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-
     vkCmdDispatchIndirect(commandBuffer, buffer, offset);
 }
 void cvkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
 void cvkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 }
 void cvkCmdDrawIndexedIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-
     vkCmdDrawIndexedIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 void cvkCmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-    CVK_ASSERT(VK_NULL_HANDLE != countBuffer);
-
     vkCmdDrawIndexedIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 void cvkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-
     vkCmdDrawIndirect(commandBuffer, buffer, offset, drawCount, stride);
 }
 void cvkCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-    CVK_ASSERT(VK_NULL_HANDLE != countBuffer);
-
     vkCmdDrawIndirectCount(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 void cvkCmdEndDebugUtilsLabel(VkCommandBuffer commandBuffer)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdEndDebugUtilsLabelEXT(commandBuffer);
 }
 void cvkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-
     vkCmdEndQuery(commandBuffer, queryPool, query);
 }
 void cvkCmdEndRenderPass(VkCommandBuffer commandBuffer)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdEndRenderPass(commandBuffer);
 }
 void cvkCmdEndRenderPass2(VkCommandBuffer commandBuffer, const void* pNext)
 {
-    VkSubpassEndInfo subpassEndInfo;
+    VkSubpassEndInfo subpass_end_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
-    subpassEndInfo.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
-    subpassEndInfo.pNext = pNext;
-    vkCmdEndRenderPass2(commandBuffer, &subpassEndInfo);
+    subpass_end_info.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
+    subpass_end_info.pNext = pNext;
+    vkCmdEndRenderPass2(commandBuffer, &subpass_end_info);
 }
 void cvkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == commandBufferCount || NULL != pCommandBuffers);
-
     vkCmdExecuteCommands(commandBuffer, commandBufferCount, pCommandBuffers);
 }
 void cvkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != dstBuffer);
-
     vkCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
 void cvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT labelInfo;
+    VkDebugUtilsLabelEXT label_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(NULL != pLabelName);
-
-    labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-    labelInfo.pNext      = pNext;
-    labelInfo.pLabelName = pLabelName;
-    memcpy(labelInfo.color, color, sizeof(labelInfo.color));
-    vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &labelInfo);
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+    memcpy(label_info.color, color, sizeof(label_info.color));
+    vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &label_info);
 }
 void cvkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdNextSubpass(commandBuffer, contents);
 }
 void cvkCmdNextSubpass2(VkCommandBuffer commandBuffer, const void* pSubpassBeginInfoNext, VkSubpassContents contents, const void* pSubpassEndInfoNext)
 {
-    VkSubpassBeginInfo subpassBeginInfo;
-    VkSubpassEndInfo   subpassEndInfo;
+    VkSubpassBeginInfo subpass_begin_info;
+    VkSubpassEndInfo   subpass_end_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
-    subpassBeginInfo.sType    = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
-    subpassBeginInfo.pNext    = pSubpassBeginInfoNext;
-    subpassBeginInfo.contents = contents;
-    subpassEndInfo.sType      = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
-    subpassEndInfo.pNext      = pSubpassEndInfoNext;
-    vkCmdNextSubpass2(commandBuffer, &subpassBeginInfo, &subpassEndInfo);
+    subpass_begin_info.sType    = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
+    subpass_begin_info.pNext    = pSubpassBeginInfoNext;
+    subpass_begin_info.contents = contents;
+    subpass_end_info.sType      = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
+    subpass_end_info.pNext      = pSubpassEndInfoNext;
+    vkCmdNextSubpass2(commandBuffer, &subpass_begin_info, &subpass_end_info);
 }
 void cvkCmdPipelineBarrier(VkCommandBuffer              commandBuffer,
                            VkPipelineStageFlags         srcStageMask,
@@ -502,11 +346,6 @@ void cvkCmdPipelineBarrier(VkCommandBuffer              commandBuffer,
                            uint32_t                     imageMemoryBarrierCount,
                            const VkImageMemoryBarrier*  pImageMemoryBarriers)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == memoryBarrierCount || NULL != pMemoryBarriers);
-    CVK_ASSERT(0 == bufferMemoryBarrierCount || NULL != pBufferMemoryBarriers);
-    CVK_ASSERT(0 == imageMemoryBarrierCount || NULL != pImageMemoryBarriers);
-
     vkCmdPipelineBarrier(commandBuffer,
                          srcStageMask,
                          dstStageMask,
@@ -520,24 +359,14 @@ void cvkCmdPipelineBarrier(VkCommandBuffer              commandBuffer,
 }
 void cvkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != layout);
-    CVK_ASSERT(0 == size || NULL != pValues);
-
     vkCmdPushConstants(commandBuffer, layout, stageFlags, offset, size, pValues);
 }
 void cvkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != event);
-
     vkCmdResetEvent(commandBuffer, event, stageMask);
 }
 void cvkCmdResetQueryPool(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-
     vkCmdResetQueryPool(commandBuffer, queryPool, firstQuery, queryCount);
 }
 void cvkCmdResolveImage(VkCommandBuffer       commandBuffer,
@@ -548,88 +377,54 @@ void cvkCmdResolveImage(VkCommandBuffer       commandBuffer,
                         uint32_t              regionCount,
                         const VkImageResolve* pRegions)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != srcImage);
-    CVK_ASSERT(VK_NULL_HANDLE != dstImage);
-    CVK_ASSERT(0 == regionCount || NULL != pRegions);
-
     vkCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, regionCount, pRegions);
 }
 void cvkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4])
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetBlendConstants(commandBuffer, blendConstants);
 }
 void cvkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetDepthBias(commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
 }
 void cvkCmdSetDepthBounds(VkCommandBuffer commandBuffer, float minDepthBounds, float maxDepthBounds)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetDepthBounds(commandBuffer, minDepthBounds, maxDepthBounds);
 }
 void cvkCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetDeviceMask(commandBuffer, deviceMask);
 }
 void cvkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != event);
-
     vkCmdSetEvent(commandBuffer, event, stageMask);
 }
 void cvkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetLineWidth(commandBuffer, lineWidth);
 }
 void cvkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == scissorCount || NULL != pScissors);
-
     vkCmdSetScissor(commandBuffer, firstScissor, scissorCount, pScissors);
 }
 void cvkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetStencilCompareMask(commandBuffer, faceMask, compareMask);
 }
 void cvkCmdSetStencilReference(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t reference)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetStencilReference(commandBuffer, faceMask, reference);
 }
 void cvkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     vkCmdSetStencilWriteMask(commandBuffer, faceMask, writeMask);
 }
 void cvkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == viewportCount || NULL != pViewports);
-
     vkCmdSetViewport(commandBuffer, firstViewport, viewportCount, pViewports);
 }
 void cvkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize dataSize, const void* pData)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != dstBuffer);
-    CVK_ASSERT(0 == dataSize || NULL != pData);
-
     vkCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, dataSize, pData);
 }
 void cvkCmdWaitEvents(VkCommandBuffer              commandBuffer,
@@ -644,12 +439,6 @@ void cvkCmdWaitEvents(VkCommandBuffer              commandBuffer,
                       uint32_t                     imageMemoryBarrierCount,
                       const VkImageMemoryBarrier*  pImageMemoryBarriers)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(0 == eventCount || NULL != pEvents);
-    CVK_ASSERT(0 == memoryBarrierCount || NULL != pMemoryBarriers);
-    CVK_ASSERT(0 == bufferMemoryBarrierCount || NULL != pBufferMemoryBarriers);
-    CVK_ASSERT(0 == imageMemoryBarrierCount || NULL != pImageMemoryBarriers);
-
     vkCmdWaitEvents(commandBuffer,
                     eventCount,
                     pEvents,
@@ -664,9 +453,6 @@ void cvkCmdWaitEvents(VkCommandBuffer              commandBuffer,
 }
 void cvkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-
     vkCmdWriteTimestamp(commandBuffer, pipelineStage, queryPool, query);
 }
 void cvkCreateBuffer(VkDevice                     device,
@@ -680,21 +466,17 @@ void cvkCreateBuffer(VkDevice                     device,
                      const VkAllocationCallbacks* pAllocator,
                      VkBuffer*                    pBuffer)
 {
-    VkBufferCreateInfo createInfo;
+    VkBufferCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == queueFamilyIndexCount || NULL != pQueueFamilyIndices);
-    CVK_ASSERT(NULL != pBuffer);
-
-    createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    createInfo.pNext                 = pNext;
-    createInfo.flags                 = flags;
-    createInfo.size                  = size;
-    createInfo.usage                 = usage;
-    createInfo.sharingMode           = sharingMode;
-    createInfo.queueFamilyIndexCount = queueFamilyIndexCount;
-    createInfo.pQueueFamilyIndices   = pQueueFamilyIndices;
-    CVK_CHECK(vkCreateBuffer(device, &createInfo, pAllocator, pBuffer));
+    create_info.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    create_info.pNext                 = pNext;
+    create_info.flags                 = flags;
+    create_info.size                  = size;
+    create_info.usage                 = usage;
+    create_info.sharingMode           = sharingMode;
+    create_info.queueFamilyIndexCount = queueFamilyIndexCount;
+    create_info.pQueueFamilyIndices   = pQueueFamilyIndices;
+    CVK_CHECK(vkCreateBuffer(device, &create_info, pAllocator, pBuffer));
     CVK_ASSERT(VK_NULL_HANDLE != (*pBuffer));
 }
 void cvkCreateBufferView(VkDevice                     device,
@@ -707,34 +489,27 @@ void cvkCreateBufferView(VkDevice                     device,
                          const VkAllocationCallbacks* pAllocator,
                          VkBufferView*                pView)
 {
-    VkBufferViewCreateInfo createInfo;
+    VkBufferViewCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-    CVK_ASSERT(NULL != pView);
-
-    createInfo.sType  = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
-    createInfo.pNext  = pNext;
-    createInfo.flags  = flags;
-    createInfo.buffer = buffer;
-    createInfo.format = format;
-    createInfo.offset = offset;
-    createInfo.range  = range;
-    CVK_CHECK(vkCreateBufferView(device, &createInfo, pAllocator, pView));
+    create_info.sType  = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+    create_info.pNext  = pNext;
+    create_info.flags  = flags;
+    create_info.buffer = buffer;
+    create_info.format = format;
+    create_info.offset = offset;
+    create_info.range  = range;
+    CVK_CHECK(vkCreateBufferView(device, &create_info, pAllocator, pView));
     CVK_ASSERT(VK_NULL_HANDLE != (*pView));
 }
 void cvkCreateCommandPool(VkDevice device, const void* pNext, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
 {
-    VkCommandPoolCreateInfo createInfo;
+    VkCommandPoolCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pCommandPool);
-
-    createInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    createInfo.pNext            = pNext;
-    createInfo.flags            = flags;
-    createInfo.queueFamilyIndex = queueFamilyIndex;
-    CVK_CHECK(vkCreateCommandPool(device, &createInfo, pAllocator, pCommandPool));
+    create_info.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    create_info.pNext            = pNext;
+    create_info.flags            = flags;
+    create_info.queueFamilyIndex = queueFamilyIndex;
+    CVK_CHECK(vkCreateCommandPool(device, &create_info, pAllocator, pCommandPool));
     CVK_ASSERT(VK_NULL_HANDLE != (*pCommandPool));
 }
 VkResult cvkCreateComputePipelines(VkDevice                           device,
@@ -745,10 +520,6 @@ VkResult cvkCreateComputePipelines(VkDevice                           device,
                                    VkPipeline*                        pPipelines)
 {
     VkResult result;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == createInfoCount || NULL != pCreateInfos);
-    CVK_ASSERT(NULL != pPipelines);
 
     result = vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     CVK_ASSERT(0 <= result);
@@ -764,19 +535,16 @@ void cvkCreateDebugUtilsMessenger(VkInstance                           instance,
                                   const VkAllocationCallbacks*         pAllocator,
                                   VkDebugUtilsMessengerEXT*            pMessenger)
 {
-    VkDebugUtilsMessengerCreateInfoEXT createInfo;
+    VkDebugUtilsMessengerCreateInfoEXT create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(NULL != pMessenger);
-
-    createInfo.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.pNext           = pNext;
-    createInfo.flags           = flags;
-    createInfo.messageSeverity = messageSeverity;
-    createInfo.messageType     = messageType;
-    createInfo.pfnUserCallback = pfnUserCallback;
-    createInfo.pUserData       = pUserData;
-    CVK_CHECK(vkCreateDebugUtilsMessengerEXT(instance, &createInfo, pAllocator, pMessenger));
+    create_info.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    create_info.pNext           = pNext;
+    create_info.flags           = flags;
+    create_info.messageSeverity = messageSeverity;
+    create_info.messageType     = messageType;
+    create_info.pfnUserCallback = pfnUserCallback;
+    create_info.pUserData       = pUserData;
+    CVK_CHECK(vkCreateDebugUtilsMessengerEXT(instance, &create_info, pAllocator, pMessenger));
     CVK_ASSERT(VK_NULL_HANDLE != (*pMessenger));
 }
 void cvkCreateDescriptorPool(VkDevice                     device,
@@ -788,19 +556,15 @@ void cvkCreateDescriptorPool(VkDevice                     device,
                              const VkAllocationCallbacks* pAllocator,
                              VkDescriptorPool*            pDescriptorPool)
 {
-    VkDescriptorPoolCreateInfo createInfo;
+    VkDescriptorPoolCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == poolSizeCount || NULL != pPoolSizes);
-    CVK_ASSERT(NULL != pDescriptorPool);
-
-    createInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    createInfo.pNext         = pNext;
-    createInfo.flags         = flags;
-    createInfo.maxSets       = maxSets;
-    createInfo.poolSizeCount = poolSizeCount;
-    createInfo.pPoolSizes    = pPoolSizes;
-    CVK_CHECK(vkCreateDescriptorPool(device, &createInfo, pAllocator, pDescriptorPool));
+    create_info.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    create_info.pNext         = pNext;
+    create_info.flags         = flags;
+    create_info.maxSets       = maxSets;
+    create_info.poolSizeCount = poolSizeCount;
+    create_info.pPoolSizes    = pPoolSizes;
+    CVK_CHECK(vkCreateDescriptorPool(device, &create_info, pAllocator, pDescriptorPool));
     CVK_ASSERT(VK_NULL_HANDLE != (*pDescriptorPool));
 }
 void cvkCreateDescriptorSetLayout(VkDevice                            device,
@@ -811,18 +575,14 @@ void cvkCreateDescriptorSetLayout(VkDevice                            device,
                                   const VkAllocationCallbacks*        pAllocator,
                                   VkDescriptorSetLayout*              pSetLayout)
 {
-    VkDescriptorSetLayoutCreateInfo createInfo;
+    VkDescriptorSetLayoutCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == bindingCount || NULL != pBindings);
-    CVK_ASSERT(NULL != pSetLayout);
-
-    createInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    createInfo.pNext        = pNext;
-    createInfo.flags        = flags;
-    createInfo.bindingCount = bindingCount;
-    createInfo.pBindings    = pBindings;
-    CVK_CHECK(vkCreateDescriptorSetLayout(device, &createInfo, pAllocator, pSetLayout));
+    create_info.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    create_info.pNext        = pNext;
+    create_info.flags        = flags;
+    create_info.bindingCount = bindingCount;
+    create_info.pBindings    = pBindings;
+    CVK_CHECK(vkCreateDescriptorSetLayout(device, &create_info, pAllocator, pSetLayout));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSetLayout));
 }
 void cvkCreateDescriptorUpdateTemplate(VkDevice                               device,
@@ -838,25 +598,19 @@ void cvkCreateDescriptorUpdateTemplate(VkDevice                               de
                                        const VkAllocationCallbacks*           pAllocator,
                                        VkDescriptorUpdateTemplate*            pDescriptorUpdateTemplate)
 {
-    VkDescriptorUpdateTemplateCreateInfo createInfo;
+    VkDescriptorUpdateTemplateCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == descriptorUpdateEntryCount || NULL != pDescriptorUpdateEntries);
-    CVK_ASSERT(VK_NULL_HANDLE != descriptorSetLayout);
-    CVK_ASSERT(VK_NULL_HANDLE != pipelineLayout);
-    CVK_ASSERT(NULL != pDescriptorUpdateTemplate);
-
-    createInfo.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
-    createInfo.pNext                      = pNext;
-    createInfo.flags                      = flags;
-    createInfo.descriptorUpdateEntryCount = descriptorUpdateEntryCount;
-    createInfo.pDescriptorUpdateEntries   = pDescriptorUpdateEntries;
-    createInfo.templateType               = templateType;
-    createInfo.descriptorSetLayout        = descriptorSetLayout;
-    createInfo.pipelineBindPoint          = pipelineBindPoint;
-    createInfo.pipelineLayout             = pipelineLayout;
-    createInfo.set                        = set;
-    CVK_CHECK(vkCreateDescriptorUpdateTemplate(device, &createInfo, pAllocator, pDescriptorUpdateTemplate));
+    create_info.sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
+    create_info.pNext                      = pNext;
+    create_info.flags                      = flags;
+    create_info.descriptorUpdateEntryCount = descriptorUpdateEntryCount;
+    create_info.pDescriptorUpdateEntries   = pDescriptorUpdateEntries;
+    create_info.templateType               = templateType;
+    create_info.descriptorSetLayout        = descriptorSetLayout;
+    create_info.pipelineBindPoint          = pipelineBindPoint;
+    create_info.pipelineLayout             = pipelineLayout;
+    create_info.set                        = set;
+    CVK_CHECK(vkCreateDescriptorUpdateTemplate(device, &create_info, pAllocator, pDescriptorUpdateTemplate));
     CVK_ASSERT(VK_NULL_HANDLE != (*pDescriptorUpdateTemplate));
 }
 void cvkCreateDevice(VkPhysicalDevice                physicalDevice,
@@ -872,25 +626,19 @@ void cvkCreateDevice(VkPhysicalDevice                physicalDevice,
                      const VkAllocationCallbacks*    pAllocator,
                      VkDevice*                       pDevice)
 {
-    VkDeviceCreateInfo createInfo;
+    VkDeviceCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(0 == queueCreateInfoCount || NULL != pQueueCreateInfos);
-    CVK_ASSERT(NULL != ppEnabledLayerNames);
-    CVK_ASSERT(NULL != ppEnabledExtensionNames);
-    CVK_ASSERT(NULL != pDevice);
-
-    createInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    createInfo.pNext                   = pNext;
-    createInfo.flags                   = flags;
-    createInfo.queueCreateInfoCount    = queueCreateInfoCount;
-    createInfo.pQueueCreateInfos       = pQueueCreateInfos;
-    createInfo.enabledLayerCount       = enabledLayerCount;
-    createInfo.ppEnabledLayerNames     = ppEnabledLayerNames;
-    createInfo.enabledExtensionCount   = enabledExtensionCount;
-    createInfo.ppEnabledExtensionNames = ppEnabledExtensionNames;
-    createInfo.pEnabledFeatures        = pEnabledFeatures;
-    CVK_CHECK(vkCreateDevice(physicalDevice, &createInfo, pAllocator, pDevice));
+    create_info.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    create_info.pNext                   = pNext;
+    create_info.flags                   = flags;
+    create_info.queueCreateInfoCount    = queueCreateInfoCount;
+    create_info.pQueueCreateInfos       = pQueueCreateInfos;
+    create_info.enabledLayerCount       = enabledLayerCount;
+    create_info.ppEnabledLayerNames     = ppEnabledLayerNames;
+    create_info.enabledExtensionCount   = enabledExtensionCount;
+    create_info.ppEnabledExtensionNames = ppEnabledExtensionNames;
+    create_info.pEnabledFeatures        = pEnabledFeatures;
+    CVK_CHECK(vkCreateDevice(physicalDevice, &create_info, pAllocator, pDevice));
     CVK_ASSERT(VK_NULL_HANDLE != (*pDevice));
 }
 void cvkCreateDisplayMode(VkPhysicalDevice             physicalDevice,
@@ -901,17 +649,13 @@ void cvkCreateDisplayMode(VkPhysicalDevice             physicalDevice,
                           const VkAllocationCallbacks* pAllocator,
                           VkDisplayModeKHR*            pMode)
 {
-    VkDisplayModeCreateInfoKHR createInfo;
+    VkDisplayModeCreateInfoKHR create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(VK_NULL_HANDLE != display);
-    CVK_ASSERT(NULL != pMode);
-
-    createInfo.sType      = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
-    createInfo.pNext      = pNext;
-    createInfo.flags      = flags;
-    createInfo.parameters = parameters;
-    CVK_CHECK(vkCreateDisplayModeKHR(physicalDevice, display, &createInfo, pAllocator, pMode));
+    create_info.sType      = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
+    create_info.pNext      = pNext;
+    create_info.flags      = flags;
+    create_info.parameters = parameters;
+    CVK_CHECK(vkCreateDisplayModeKHR(physicalDevice, display, &create_info, pAllocator, pMode));
     CVK_ASSERT(VK_NULL_HANDLE != (*pMode));
 }
 void cvkCreateDisplayPlaneSurface(VkInstance                     instance,
@@ -927,49 +671,39 @@ void cvkCreateDisplayPlaneSurface(VkInstance                     instance,
                                   const VkAllocationCallbacks*   pAllocator,
                                   VkSurfaceKHR*                  pSurface)
 {
-    VkDisplaySurfaceCreateInfoKHR createInfo;
+    VkDisplaySurfaceCreateInfoKHR create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(VK_NULL_HANDLE != displayMode);
-    CVK_ASSERT(NULL != pSurface);
-
-    createInfo.sType           = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext           = pNext;
-    createInfo.flags           = flags;
-    createInfo.displayMode     = displayMode;
-    createInfo.planeIndex      = planeIndex;
-    createInfo.planeStackIndex = planeStackIndex;
-    createInfo.transform       = transform;
-    createInfo.globalAlpha     = globalAlpha;
-    createInfo.alphaMode       = alphaMode;
-    createInfo.imageExtent     = imageExtent;
-    CVK_CHECK(vkCreateDisplayPlaneSurfaceKHR(instance, &createInfo, pAllocator, pSurface));
+    create_info.sType           = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
+    create_info.pNext           = pNext;
+    create_info.flags           = flags;
+    create_info.displayMode     = displayMode;
+    create_info.planeIndex      = planeIndex;
+    create_info.planeStackIndex = planeStackIndex;
+    create_info.transform       = transform;
+    create_info.globalAlpha     = globalAlpha;
+    create_info.alphaMode       = alphaMode;
+    create_info.imageExtent     = imageExtent;
+    CVK_CHECK(vkCreateDisplayPlaneSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
 void cvkCreateEvent(VkDevice device, const void* pNext, VkEventCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkEvent* pEvent)
 {
-    VkEventCreateInfo createInfo;
+    VkEventCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pEvent);
-
-    createInfo.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
-    createInfo.pNext = pNext;
-    createInfo.flags = flags;
-    CVK_CHECK(vkCreateEvent(device, &createInfo, pAllocator, pEvent));
+    create_info.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
+    create_info.pNext = pNext;
+    create_info.flags = flags;
+    CVK_CHECK(vkCreateEvent(device, &create_info, pAllocator, pEvent));
     CVK_ASSERT(VK_NULL_HANDLE != (*pEvent));
 }
 void cvkCreateFence(VkDevice device, const void* pNext, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    VkFenceCreateInfo createInfo;
+    VkFenceCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pFence);
-
-    createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    createInfo.pNext = pNext;
-    createInfo.flags = flags;
-    CVK_CHECK(vkCreateFence(device, &createInfo, pAllocator, pFence));
+    create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    create_info.pNext = pNext;
+    create_info.flags = flags;
+    CVK_CHECK(vkCreateFence(device, &create_info, pAllocator, pFence));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFence));
 }
 void cvkCreateFramebuffer(VkDevice                     device,
@@ -984,23 +718,18 @@ void cvkCreateFramebuffer(VkDevice                     device,
                           const VkAllocationCallbacks* pAllocator,
                           VkFramebuffer*               pFramebuffer)
 {
-    VkFramebufferCreateInfo createInfo;
+    VkFramebufferCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != renderPass);
-    CVK_ASSERT(0 == attachmentCount || NULL != pAttachments);
-    CVK_ASSERT(NULL != pFramebuffer);
-
-    createInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    createInfo.pNext           = pNext;
-    createInfo.flags           = flags;
-    createInfo.renderPass      = renderPass;
-    createInfo.attachmentCount = attachmentCount;
-    createInfo.pAttachments    = pAttachments;
-    createInfo.width           = width;
-    createInfo.height          = height;
-    createInfo.layers          = layers;
-    CVK_CHECK(vkCreateFramebuffer(device, &createInfo, pAllocator, pFramebuffer));
+    create_info.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    create_info.pNext           = pNext;
+    create_info.flags           = flags;
+    create_info.renderPass      = renderPass;
+    create_info.attachmentCount = attachmentCount;
+    create_info.pAttachments    = pAttachments;
+    create_info.width           = width;
+    create_info.height          = height;
+    create_info.layers          = layers;
+    CVK_CHECK(vkCreateFramebuffer(device, &create_info, pAllocator, pFramebuffer));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFramebuffer));
 }
 VkResult cvkCreateGraphicsPipelines(VkDevice                            device,
@@ -1012,25 +741,18 @@ VkResult cvkCreateGraphicsPipelines(VkDevice                            device,
 {
     VkResult result;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == createInfoCount || NULL != pCreateInfos);
-    CVK_ASSERT(NULL != pPipelines);
-
     result = vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     CVK_ASSERT(0 <= result);
     return result;
 }
 void cvkCreateHeadlessSurface(VkInstance instance, const void* pNext, VkHeadlessSurfaceCreateFlagsEXT flags, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
-    VkHeadlessSurfaceCreateInfoEXT createInfo;
+    VkHeadlessSurfaceCreateInfoEXT create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(NULL != pSurface);
-
-    createInfo.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
-    createInfo.pNext = pNext;
-    createInfo.flags = flags;
-    CVK_CHECK(vkCreateHeadlessSurfaceEXT(instance, &createInfo, pAllocator, pSurface));
+    create_info.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
+    create_info.pNext = pNext;
+    create_info.flags = flags;
+    CVK_CHECK(vkCreateHeadlessSurfaceEXT(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
 void cvkCreateImage(VkDevice                     device,
@@ -1051,28 +773,24 @@ void cvkCreateImage(VkDevice                     device,
                     const VkAllocationCallbacks* pAllocator,
                     VkImage*                     pImage)
 {
-    VkImageCreateInfo createInfo;
+    VkImageCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == queueFamilyIndexCount || NULL != pQueueFamilyIndices);
-    CVK_ASSERT(NULL != pImage);
-
-    createInfo.sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-    createInfo.pNext                 = pNext;
-    createInfo.flags                 = flags;
-    createInfo.imageType             = imageType;
-    createInfo.format                = format;
-    createInfo.extent                = extent;
-    createInfo.mipLevels             = mipLevels;
-    createInfo.arrayLayers           = arrayLayers;
-    createInfo.samples               = samples;
-    createInfo.tiling                = tiling;
-    createInfo.usage                 = usage;
-    createInfo.sharingMode           = sharingMode;
-    createInfo.queueFamilyIndexCount = queueFamilyIndexCount;
-    createInfo.pQueueFamilyIndices   = pQueueFamilyIndices;
-    createInfo.initialLayout         = initialLayout;
-    CVK_CHECK(vkCreateImage(device, &createInfo, pAllocator, pImage));
+    create_info.sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    create_info.pNext                 = pNext;
+    create_info.flags                 = flags;
+    create_info.imageType             = imageType;
+    create_info.format                = format;
+    create_info.extent                = extent;
+    create_info.mipLevels             = mipLevels;
+    create_info.arrayLayers           = arrayLayers;
+    create_info.samples               = samples;
+    create_info.tiling                = tiling;
+    create_info.usage                 = usage;
+    create_info.sharingMode           = sharingMode;
+    create_info.queueFamilyIndexCount = queueFamilyIndexCount;
+    create_info.pQueueFamilyIndices   = pQueueFamilyIndices;
+    create_info.initialLayout         = initialLayout;
+    CVK_CHECK(vkCreateImage(device, &create_info, pAllocator, pImage));
     CVK_ASSERT(VK_NULL_HANDLE != (*pImage));
 }
 void cvkCreateImageView(VkDevice                     device,
@@ -1086,21 +804,17 @@ void cvkCreateImageView(VkDevice                     device,
                         const VkAllocationCallbacks* pAllocator,
                         VkImageView*                 pView)
 {
-    VkImageViewCreateInfo createInfo;
+    VkImageViewCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pView);
-
-    createInfo.sType            = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    createInfo.pNext            = pNext;
-    createInfo.flags            = flags;
-    createInfo.image            = image;
-    createInfo.viewType         = viewType;
-    createInfo.format           = format;
-    createInfo.components       = components;
-    createInfo.subresourceRange = subresourceRange;
-    CVK_CHECK(vkCreateImageView(device, &createInfo, pAllocator, pView));
+    create_info.sType            = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    create_info.pNext            = pNext;
+    create_info.flags            = flags;
+    create_info.image            = image;
+    create_info.viewType         = viewType;
+    create_info.format           = format;
+    create_info.components       = components;
+    create_info.subresourceRange = subresourceRange;
+    CVK_CHECK(vkCreateImageView(device, &create_info, pAllocator, pView));
     CVK_ASSERT(VK_NULL_HANDLE != (*pView));
 }
 void cvkCreateInstance(const void*                  pNext,
@@ -1113,21 +827,17 @@ void cvkCreateInstance(const void*                  pNext,
                        const VkAllocationCallbacks* pAllocator,
                        VkInstance*                  pInstance)
 {
-    VkInstanceCreateInfo createInfo;
+    VkInstanceCreateInfo create_info;
 
-    CVK_ASSERT(NULL != ppEnabledLayerNames);
-    CVK_ASSERT(NULL != ppEnabledExtensionNames);
-    CVK_ASSERT(NULL != pInstance);
-
-    createInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pNext                   = pNext;
-    createInfo.flags                   = flags;
-    createInfo.pApplicationInfo        = pApplicationInfo;
-    createInfo.enabledLayerCount       = enabledLayerCount;
-    createInfo.ppEnabledLayerNames     = ppEnabledLayerNames;
-    createInfo.enabledExtensionCount   = enabledExtensionCount;
-    createInfo.ppEnabledExtensionNames = ppEnabledExtensionNames;
-    CVK_CHECK(vkCreateInstance(&createInfo, pAllocator, pInstance));
+    create_info.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    create_info.pNext                   = pNext;
+    create_info.flags                   = flags;
+    create_info.pApplicationInfo        = pApplicationInfo;
+    create_info.enabledLayerCount       = enabledLayerCount;
+    create_info.ppEnabledLayerNames     = ppEnabledLayerNames;
+    create_info.enabledExtensionCount   = enabledExtensionCount;
+    create_info.ppEnabledExtensionNames = ppEnabledExtensionNames;
+    CVK_CHECK(vkCreateInstance(&create_info, pAllocator, pInstance));
     CVK_ASSERT(VK_NULL_HANDLE != (*pInstance));
 }
 void cvkCreatePipelineCache(VkDevice                     device,
@@ -1138,18 +848,14 @@ void cvkCreatePipelineCache(VkDevice                     device,
                             const VkAllocationCallbacks* pAllocator,
                             VkPipelineCache*             pPipelineCache)
 {
-    VkPipelineCacheCreateInfo createInfo;
+    VkPipelineCacheCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == initialDataSize || NULL != pInitialData);
-    CVK_ASSERT(NULL != pPipelineCache);
-
-    createInfo.sType           = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-    createInfo.pNext           = pNext;
-    createInfo.flags           = flags;
-    createInfo.initialDataSize = initialDataSize;
-    createInfo.pInitialData    = pInitialData;
-    CVK_CHECK(vkCreatePipelineCache(device, &createInfo, pAllocator, pPipelineCache));
+    create_info.sType           = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+    create_info.pNext           = pNext;
+    create_info.flags           = flags;
+    create_info.initialDataSize = initialDataSize;
+    create_info.pInitialData    = pInitialData;
+    CVK_CHECK(vkCreatePipelineCache(device, &create_info, pAllocator, pPipelineCache));
     CVK_ASSERT(VK_NULL_HANDLE != (*pPipelineCache));
 }
 void cvkCreatePipelineLayout(VkDevice                     device,
@@ -1162,21 +868,16 @@ void cvkCreatePipelineLayout(VkDevice                     device,
                              const VkAllocationCallbacks* pAllocator,
                              VkPipelineLayout*            pPipelineLayout)
 {
-    VkPipelineLayoutCreateInfo createInfo;
+    VkPipelineLayoutCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == setLayoutCount || NULL != pSetLayouts);
-    CVK_ASSERT(0 == pushConstantRangeCount || NULL != pPushConstantRanges);
-    CVK_ASSERT(NULL != pPipelineLayout);
-
-    createInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    createInfo.pNext                  = pNext;
-    createInfo.flags                  = flags;
-    createInfo.setLayoutCount         = setLayoutCount;
-    createInfo.pSetLayouts            = pSetLayouts;
-    createInfo.pushConstantRangeCount = pushConstantRangeCount;
-    createInfo.pPushConstantRanges    = pPushConstantRanges;
-    CVK_CHECK(vkCreatePipelineLayout(device, &createInfo, pAllocator, pPipelineLayout));
+    create_info.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    create_info.pNext                  = pNext;
+    create_info.flags                  = flags;
+    create_info.setLayoutCount         = setLayoutCount;
+    create_info.pSetLayouts            = pSetLayouts;
+    create_info.pushConstantRangeCount = pushConstantRangeCount;
+    create_info.pPushConstantRanges    = pPushConstantRanges;
+    CVK_CHECK(vkCreatePipelineLayout(device, &create_info, pAllocator, pPipelineLayout));
     CVK_ASSERT(VK_NULL_HANDLE != (*pPipelineLayout));
 }
 void cvkCreateQueryPool(VkDevice                      device,
@@ -1188,18 +889,15 @@ void cvkCreateQueryPool(VkDevice                      device,
                         const VkAllocationCallbacks*  pAllocator,
                         VkQueryPool*                  pQueryPool)
 {
-    VkQueryPoolCreateInfo createInfo;
+    VkQueryPoolCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pQueryPool);
-
-    createInfo.sType              = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-    createInfo.pNext              = pNext;
-    createInfo.flags              = flags;
-    createInfo.queryType          = queryType;
-    createInfo.queryCount         = queryCount;
-    createInfo.pipelineStatistics = pipelineStatistics;
-    CVK_CHECK(vkCreateQueryPool(device, &createInfo, pAllocator, pQueryPool));
+    create_info.sType              = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+    create_info.pNext              = pNext;
+    create_info.flags              = flags;
+    create_info.queryType          = queryType;
+    create_info.queryCount         = queryCount;
+    create_info.pipelineStatistics = pipelineStatistics;
+    CVK_CHECK(vkCreateQueryPool(device, &create_info, pAllocator, pQueryPool));
     CVK_ASSERT(VK_NULL_HANDLE != (*pQueryPool));
 }
 void cvkCreateRenderPass(VkDevice                       device,
@@ -1214,24 +912,18 @@ void cvkCreateRenderPass(VkDevice                       device,
                          const VkAllocationCallbacks*   pAllocator,
                          VkRenderPass*                  pRenderPass)
 {
-    VkRenderPassCreateInfo createInfo;
+    VkRenderPassCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == attachmentCount || NULL != pAttachments);
-    CVK_ASSERT(0 == subpassCount || NULL != pSubpasses);
-    CVK_ASSERT(0 == dependencyCount || NULL != pDependencies);
-    CVK_ASSERT(NULL != pRenderPass);
-
-    createInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    createInfo.pNext           = pNext;
-    createInfo.flags           = flags;
-    createInfo.attachmentCount = attachmentCount;
-    createInfo.pAttachments    = pAttachments;
-    createInfo.subpassCount    = subpassCount;
-    createInfo.pSubpasses      = pSubpasses;
-    createInfo.dependencyCount = dependencyCount;
-    createInfo.pDependencies   = pDependencies;
-    CVK_CHECK(vkCreateRenderPass(device, &createInfo, pAllocator, pRenderPass));
+    create_info.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    create_info.pNext           = pNext;
+    create_info.flags           = flags;
+    create_info.attachmentCount = attachmentCount;
+    create_info.pAttachments    = pAttachments;
+    create_info.subpassCount    = subpassCount;
+    create_info.pSubpasses      = pSubpasses;
+    create_info.dependencyCount = dependencyCount;
+    create_info.pDependencies   = pDependencies;
+    CVK_CHECK(vkCreateRenderPass(device, &create_info, pAllocator, pRenderPass));
     CVK_ASSERT(VK_NULL_HANDLE != (*pRenderPass));
 }
 void cvkCreateRenderPass2(VkDevice                        device,
@@ -1248,27 +940,20 @@ void cvkCreateRenderPass2(VkDevice                        device,
                           const VkAllocationCallbacks*    pAllocator,
                           VkRenderPass*                   pRenderPass)
 {
-    VkRenderPassCreateInfo2 createInfo;
+    VkRenderPassCreateInfo2 create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == attachmentCount || NULL != pAttachments);
-    CVK_ASSERT(0 == subpassCount || NULL != pSubpasses);
-    CVK_ASSERT(0 == dependencyCount || NULL != pDependencies);
-    CVK_ASSERT(0 == correlatedViewMaskCount || NULL != pCorrelatedViewMasks);
-    CVK_ASSERT(NULL != pRenderPass);
-
-    createInfo.sType                   = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
-    createInfo.pNext                   = pNext;
-    createInfo.flags                   = flags;
-    createInfo.attachmentCount         = attachmentCount;
-    createInfo.pAttachments            = pAttachments;
-    createInfo.subpassCount            = subpassCount;
-    createInfo.pSubpasses              = pSubpasses;
-    createInfo.dependencyCount         = dependencyCount;
-    createInfo.pDependencies           = pDependencies;
-    createInfo.correlatedViewMaskCount = correlatedViewMaskCount;
-    createInfo.pCorrelatedViewMasks    = pCorrelatedViewMasks;
-    CVK_CHECK(vkCreateRenderPass2(device, &createInfo, pAllocator, pRenderPass));
+    create_info.sType                   = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
+    create_info.pNext                   = pNext;
+    create_info.flags                   = flags;
+    create_info.attachmentCount         = attachmentCount;
+    create_info.pAttachments            = pAttachments;
+    create_info.subpassCount            = subpassCount;
+    create_info.pSubpasses              = pSubpasses;
+    create_info.dependencyCount         = dependencyCount;
+    create_info.pDependencies           = pDependencies;
+    create_info.correlatedViewMaskCount = correlatedViewMaskCount;
+    create_info.pCorrelatedViewMasks    = pCorrelatedViewMasks;
+    CVK_CHECK(vkCreateRenderPass2(device, &create_info, pAllocator, pRenderPass));
     CVK_ASSERT(VK_NULL_HANDLE != (*pRenderPass));
 }
 void cvkCreateSampler(VkDevice                     device,
@@ -1292,30 +977,27 @@ void cvkCreateSampler(VkDevice                     device,
                       const VkAllocationCallbacks* pAllocator,
                       VkSampler*                   pSampler)
 {
-    VkSamplerCreateInfo createInfo;
+    VkSamplerCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pSampler);
-
-    createInfo.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    createInfo.pNext                   = pNext;
-    createInfo.flags                   = flags;
-    createInfo.magFilter               = magFilter;
-    createInfo.minFilter               = minFilter;
-    createInfo.mipmapMode              = mipmapMode;
-    createInfo.addressModeU            = addressModeU;
-    createInfo.addressModeV            = addressModeV;
-    createInfo.addressModeW            = addressModeW;
-    createInfo.mipLodBias              = mipLodBias;
-    createInfo.anisotropyEnable        = anisotropyEnable;
-    createInfo.maxAnisotropy           = maxAnisotropy;
-    createInfo.compareEnable           = compareEnable;
-    createInfo.compareOp               = compareOp;
-    createInfo.minLod                  = minLod;
-    createInfo.maxLod                  = maxLod;
-    createInfo.borderColor             = borderColor;
-    createInfo.unnormalizedCoordinates = unnormalizedCoordinates;
-    CVK_CHECK(vkCreateSampler(device, &createInfo, pAllocator, pSampler));
+    create_info.sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    create_info.pNext                   = pNext;
+    create_info.flags                   = flags;
+    create_info.magFilter               = magFilter;
+    create_info.minFilter               = minFilter;
+    create_info.mipmapMode              = mipmapMode;
+    create_info.addressModeU            = addressModeU;
+    create_info.addressModeV            = addressModeV;
+    create_info.addressModeW            = addressModeW;
+    create_info.mipLodBias              = mipLodBias;
+    create_info.anisotropyEnable        = anisotropyEnable;
+    create_info.maxAnisotropy           = maxAnisotropy;
+    create_info.compareEnable           = compareEnable;
+    create_info.compareOp               = compareOp;
+    create_info.minLod                  = minLod;
+    create_info.maxLod                  = maxLod;
+    create_info.borderColor             = borderColor;
+    create_info.unnormalizedCoordinates = unnormalizedCoordinates;
+    CVK_CHECK(vkCreateSampler(device, &create_info, pAllocator, pSampler));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSampler));
 }
 void cvkCreateSamplerYcbcrConversion(VkDevice                      device,
@@ -1331,35 +1013,29 @@ void cvkCreateSamplerYcbcrConversion(VkDevice                      device,
                                      const VkAllocationCallbacks*  pAllocator,
                                      VkSamplerYcbcrConversion*     pYcbcrConversion)
 {
-    VkSamplerYcbcrConversionCreateInfo createInfo;
+    VkSamplerYcbcrConversionCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pYcbcrConversion);
-
-    createInfo.sType                       = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
-    createInfo.pNext                       = pNext;
-    createInfo.format                      = format;
-    createInfo.ycbcrModel                  = ycbcrModel;
-    createInfo.ycbcrRange                  = ycbcrRange;
-    createInfo.components                  = components;
-    createInfo.xChromaOffset               = xChromaOffset;
-    createInfo.yChromaOffset               = yChromaOffset;
-    createInfo.chromaFilter                = chromaFilter;
-    createInfo.forceExplicitReconstruction = forceExplicitReconstruction;
-    CVK_CHECK(vkCreateSamplerYcbcrConversion(device, &createInfo, pAllocator, pYcbcrConversion));
+    create_info.sType                       = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
+    create_info.pNext                       = pNext;
+    create_info.format                      = format;
+    create_info.ycbcrModel                  = ycbcrModel;
+    create_info.ycbcrRange                  = ycbcrRange;
+    create_info.components                  = components;
+    create_info.xChromaOffset               = xChromaOffset;
+    create_info.yChromaOffset               = yChromaOffset;
+    create_info.chromaFilter                = chromaFilter;
+    create_info.forceExplicitReconstruction = forceExplicitReconstruction;
+    CVK_CHECK(vkCreateSamplerYcbcrConversion(device, &create_info, pAllocator, pYcbcrConversion));
     CVK_ASSERT(VK_NULL_HANDLE != (*pYcbcrConversion));
 }
 void cvkCreateSemaphore(VkDevice device, const void* pNext, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore)
 {
-    VkSemaphoreCreateInfo createInfo;
+    VkSemaphoreCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pSemaphore);
-
-    createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    createInfo.pNext = pNext;
-    createInfo.flags = flags;
-    CVK_CHECK(vkCreateSemaphore(device, &createInfo, pAllocator, pSemaphore));
+    create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    create_info.pNext = pNext;
+    create_info.flags = flags;
+    CVK_CHECK(vkCreateSemaphore(device, &create_info, pAllocator, pSemaphore));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSemaphore));
 }
 void cvkCreateShaderModule(VkDevice                     device,
@@ -1370,18 +1046,14 @@ void cvkCreateShaderModule(VkDevice                     device,
                            const VkAllocationCallbacks* pAllocator,
                            VkShaderModule*              pShaderModule)
 {
-    VkShaderModuleCreateInfo createInfo;
+    VkShaderModuleCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pCode);
-    CVK_ASSERT(NULL != pShaderModule);
-
-    createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.pNext    = pNext;
-    createInfo.flags    = flags;
-    createInfo.codeSize = codeSize;
-    createInfo.pCode    = pCode;
-    CVK_CHECK(vkCreateShaderModule(device, &createInfo, pAllocator, pShaderModule));
+    create_info.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    create_info.pNext    = pNext;
+    create_info.flags    = flags;
+    create_info.codeSize = codeSize;
+    create_info.pCode    = pCode;
+    CVK_CHECK(vkCreateShaderModule(device, &create_info, pAllocator, pShaderModule));
     CVK_ASSERT(VK_NULL_HANDLE != (*pShaderModule));
 }
 void cvkCreateSwapchain(VkDevice                      device,
@@ -1405,109 +1077,83 @@ void cvkCreateSwapchain(VkDevice                      device,
                         const VkAllocationCallbacks*  pAllocator,
                         VkSwapchainKHR*               pSwapchain)
 {
-    VkSwapchainCreateInfoKHR createInfo;
+    VkSwapchainCreateInfoKHR create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != surface);
-    CVK_ASSERT(0 == queueFamilyIndexCount || NULL != pQueueFamilyIndices);
-    CVK_ASSERT(NULL != pSwapchain);
-
-    createInfo.sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.pNext                 = pNext;
-    createInfo.flags                 = flags;
-    createInfo.surface               = surface;
-    createInfo.minImageCount         = minImageCount;
-    createInfo.imageFormat           = imageFormat;
-    createInfo.imageColorSpace       = imageColorSpace;
-    createInfo.imageExtent           = imageExtent;
-    createInfo.imageArrayLayers      = imageArrayLayers;
-    createInfo.imageUsage            = imageUsage;
-    createInfo.imageSharingMode      = imageSharingMode;
-    createInfo.queueFamilyIndexCount = queueFamilyIndexCount;
-    createInfo.pQueueFamilyIndices   = pQueueFamilyIndices;
-    createInfo.preTransform          = preTransform;
-    createInfo.compositeAlpha        = compositeAlpha;
-    createInfo.presentMode           = presentMode;
-    createInfo.clipped               = clipped;
-    createInfo.oldSwapchain          = oldSwapchain;
-    CVK_CHECK(vkCreateSwapchainKHR(device, &createInfo, pAllocator, pSwapchain));
+    create_info.sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    create_info.pNext                 = pNext;
+    create_info.flags                 = flags;
+    create_info.surface               = surface;
+    create_info.minImageCount         = minImageCount;
+    create_info.imageFormat           = imageFormat;
+    create_info.imageColorSpace       = imageColorSpace;
+    create_info.imageExtent           = imageExtent;
+    create_info.imageArrayLayers      = imageArrayLayers;
+    create_info.imageUsage            = imageUsage;
+    create_info.imageSharingMode      = imageSharingMode;
+    create_info.queueFamilyIndexCount = queueFamilyIndexCount;
+    create_info.pQueueFamilyIndices   = pQueueFamilyIndices;
+    create_info.preTransform          = preTransform;
+    create_info.compositeAlpha        = compositeAlpha;
+    create_info.presentMode           = presentMode;
+    create_info.clipped               = clipped;
+    create_info.oldSwapchain          = oldSwapchain;
+    CVK_CHECK(vkCreateSwapchainKHR(device, &create_info, pAllocator, pSwapchain));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSwapchain));
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
-    VkWin32SurfaceCreateInfoKHR createInfo;
+    VkWin32SurfaceCreateInfoKHR create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(NULL != pSurface);
-
-    createInfo.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext     = pNext;
-    createInfo.flags     = flags;
-    createInfo.hinstance = hinstance;
-    createInfo.hwnd      = hwnd;
-    CVK_CHECK(vkCreateWin32SurfaceKHR(instance, &createInfo, pAllocator, pSurface));
+    create_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+    create_info.pNext     = pNext;
+    create_info.flags     = flags;
+    create_info.hinstance = hinstance;
+    create_info.hwnd      = hwnd;
+    CVK_CHECK(vkCreateWin32SurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
-    VkXlibSurfaceCreateInfoKHR createInfo;
+    VkXlibSurfaceCreateInfoKHR create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(NULL != dpy);
-    CVK_ASSERT(NULL != pSurface);
-
-    createInfo.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext  = pNext;
-    createInfo.flags  = flags;
-    createInfo.dpy    = dpy;
-    createInfo.window = window;
-    CVK_CHECK(vkCreateXlibSurfaceKHR(instance, &createInfo, pAllocator, pSurface));
+    create_info.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    create_info.pNext  = pNext;
+    create_info.flags  = flags;
+    create_info.dpy    = dpy;
+    create_info.window = window;
+    CVK_CHECK(vkCreateXlibSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
 #endif
 void cvkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyBuffer(device, buffer, pAllocator);
 }
 void cvkDestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyBufferView(device, bufferView, pAllocator);
 }
 void cvkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyCommandPool(device, commandPool, pAllocator);
 }
 void cvkDestroyDebugUtilsMessenger(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-
     vkDestroyDebugUtilsMessengerEXT(instance, messenger, pAllocator);
 }
 void cvkDestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyDescriptorPool(device, descriptorPool, pAllocator);
 }
 void cvkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
 }
 void cvkDestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyDescriptorUpdateTemplate(device, descriptorUpdateTemplate, pAllocator);
 }
 void cvkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator)
@@ -1516,32 +1162,22 @@ void cvkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator)
 }
 void cvkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyEvent(device, event, pAllocator);
 }
 void cvkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyFence(device, fence, pAllocator);
 }
 void cvkDestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyFramebuffer(device, framebuffer, pAllocator);
 }
 void cvkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyImage(device, image, pAllocator);
 }
 void cvkDestroyImageView(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyImageView(device, imageView, pAllocator);
 }
 void cvkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator)
@@ -1550,201 +1186,141 @@ void cvkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAlloc
 }
 void cvkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyPipeline(device, pipeline, pAllocator);
 }
 void cvkDestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyPipelineCache(device, pipelineCache, pAllocator);
 }
 void cvkDestroyPipelineLayout(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyPipelineLayout(device, pipelineLayout, pAllocator);
 }
 void cvkDestroyQueryPool(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyQueryPool(device, queryPool, pAllocator);
 }
 void cvkDestroyRenderPass(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyRenderPass(device, renderPass, pAllocator);
 }
 void cvkDestroySampler(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroySampler(device, sampler, pAllocator);
 }
 void cvkDestroySamplerYcbcrConversion(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroySamplerYcbcrConversion(device, ycbcrConversion, pAllocator);
 }
 void cvkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroySemaphore(device, semaphore, pAllocator);
 }
 void cvkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroyShaderModule(device, shaderModule, pAllocator);
 }
 void cvkDestroySurface(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-
     vkDestroySurfaceKHR(instance, surface, pAllocator);
 }
 void cvkDestroySwapchain(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkDestroySwapchainKHR(device, swapchain, pAllocator);
 }
 void cvkDeviceWaitIdle(VkDevice device)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     CVK_CHECK(vkDeviceWaitIdle(device));
 }
 void cvkEndCommandBuffer(VkCommandBuffer commandBuffer)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     CVK_CHECK(vkEndCommandBuffer(commandBuffer));
 }
 uint32_t cvkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &count, pProperties));
-    return count;
+    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &property_count, pProperties));
+    return property_count;
 }
 uint32_t cvkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, VkLayerProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, &count, pProperties));
-    return count;
+    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, &property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, &property_count, pProperties));
+    return property_count;
 }
 uint32_t cvkEnumerateInstanceExtensionProperties(const char* pLayerName, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, &count, pProperties));
-    return count;
+    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, &property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, &property_count, pProperties));
+    return property_count;
 }
 uint32_t cvkEnumerateInstanceLayerProperties(VkLayerProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkEnumerateInstanceLayerProperties(&count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkEnumerateInstanceLayerProperties(&count, pProperties));
-    return count;
+    CVK_CHECK(vkEnumerateInstanceLayerProperties(&property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkEnumerateInstanceLayerProperties(&property_count, pProperties));
+    return property_count;
 }
 void cvkEnumerateInstanceVersion(uint32_t* pApiVersion)
 {
-    CVK_ASSERT(NULL != pApiVersion);
-
     CVK_CHECK(vkEnumerateInstanceVersion(pApiVersion));
 }
 uint32_t cvkEnumeratePhysicalDeviceGroups(VkInstance instance, VkPhysicalDeviceGroupProperties pPhysicalDeviceGroupProperties[CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t physical_device_group_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(NULL != pPhysicalDeviceGroupProperties);
-
-    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES >= count);
+    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, &physical_device_group_count, NULL));
+    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES >= physical_device_group_count);
     {
         uint32_t index;
-        for (index = 0; index < count; ++index)
+        for (index = 0; index < physical_device_group_count; ++index)
         {
             pPhysicalDeviceGroupProperties[index].sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
             pPhysicalDeviceGroupProperties[index].pNext = NULL;
         }
     }
-    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, &count, pPhysicalDeviceGroupProperties));
-    return count;
+    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, &physical_device_group_count, pPhysicalDeviceGroupProperties));
+    return physical_device_group_count;
 }
 uint32_t cvkEnumeratePhysicalDevices(VkInstance instance, VkPhysicalDevice pPhysicalDevices[CVK_MAX_PHYSICAL_DEVICES])
 {
-    uint32_t count = 0;
+    uint32_t physical_device_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(NULL != pPhysicalDevices);
-
-    CVK_CHECK(vkEnumeratePhysicalDevices(instance, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICES >= count);
-    CVK_CHECK(vkEnumeratePhysicalDevices(instance, &count, pPhysicalDevices));
-    return count;
+    CVK_CHECK(vkEnumeratePhysicalDevices(instance, &physical_device_count, NULL));
+    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICES >= physical_device_count);
+    CVK_CHECK(vkEnumeratePhysicalDevices(instance, &physical_device_count, pPhysicalDevices));
+    return physical_device_count;
 }
 void cvkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == memoryRangeCount || NULL != pMemoryRanges);
-
     CVK_CHECK(vkFlushMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges));
 }
 void cvkFreeCommandBuffers(VkDevice device, VkCommandPool commandPool, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != commandPool);
-    CVK_ASSERT(0 == commandBufferCount || NULL != pCommandBuffers);
-
     vkFreeCommandBuffers(device, commandPool, commandBufferCount, pCommandBuffers);
 }
 void cvkFreeDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != descriptorPool);
-    CVK_ASSERT(0 == descriptorSetCount || NULL != pDescriptorSets);
-
     CVK_CHECK(vkFreeDescriptorSets(device, descriptorPool, descriptorSetCount, pDescriptorSets));
 }
 void cvkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
     vkFreeMemory(device, memory, pAllocator);
 }
 VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const void* pNext, VkBuffer buffer)
 {
     VkBufferDeviceAddressInfo info;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
 
     info.sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
     info.pNext  = pNext;
@@ -1753,19 +1329,11 @@ VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const void* pNext, Vk
 }
 void cvkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-    CVK_ASSERT(NULL != pMemoryRequirements);
-
     vkGetBufferMemoryRequirements(device, buffer, pMemoryRequirements);
 }
 void cvkGetBufferMemoryRequirements2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
 {
     VkBufferMemoryRequirementsInfo2 info;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
-    CVK_ASSERT(NULL != pMemoryRequirements);
 
     info.sType                 = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
     info.pNext                 = pInfoNext;
@@ -1777,9 +1345,6 @@ void cvkGetBufferMemoryRequirements2(VkDevice device, const void* pInfoNext, VkB
 uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const void* pNext, VkBuffer buffer)
 {
     VkBufferDeviceAddressInfo info;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != buffer);
 
     info.sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
     info.pNext  = pNext;
@@ -1794,59 +1359,38 @@ void cvkGetDescriptorSetLayoutSupport(VkDevice                            device
                                       void*                               pSupportNext,
                                       VkDescriptorSetLayoutSupport*       pSupport)
 {
-    VkDescriptorSetLayoutCreateInfo createInfo;
+    VkDescriptorSetLayoutCreateInfo create_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == bindingCount || NULL != pBindings);
-    CVK_ASSERT(NULL != pSupport);
-
-    createInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    createInfo.pNext        = pCreateInfoNext;
-    createInfo.flags        = flags;
-    createInfo.bindingCount = bindingCount;
-    createInfo.pBindings    = pBindings;
-    pSupport->sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
-    pSupport->pNext         = pSupportNext;
-    vkGetDescriptorSetLayoutSupport(device, &createInfo, pSupport);
+    create_info.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    create_info.pNext        = pCreateInfoNext;
+    create_info.flags        = flags;
+    create_info.bindingCount = bindingCount;
+    create_info.pBindings    = pBindings;
+    pSupport->sType          = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
+    pSupport->pNext          = pSupportNext;
+    vkGetDescriptorSetLayoutSupport(device, &create_info, pSupport);
 }
 void cvkGetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pPeerMemoryFeatures);
-
     vkGetDeviceGroupPeerMemoryFeatures(device, heapIndex, localDeviceIndex, remoteDeviceIndex, pPeerMemoryFeatures);
 }
 void cvkGetDeviceGroupPresentCapabilities(VkDevice device, void* pNext, VkDeviceGroupPresentCapabilitiesKHR* pDeviceGroupPresentCapabilities)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pDeviceGroupPresentCapabilities);
-
     pDeviceGroupPresentCapabilities->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
     pDeviceGroupPresentCapabilities->pNext = pNext;
     CVK_CHECK(vkGetDeviceGroupPresentCapabilitiesKHR(device, pDeviceGroupPresentCapabilities));
 }
 void cvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != surface);
-    CVK_ASSERT(NULL != pModes);
-
     CVK_CHECK(vkGetDeviceGroupSurfacePresentModesKHR(device, surface, pModes));
 }
 void cvkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDeviceSize* pCommittedMemoryInBytes)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-    CVK_ASSERT(NULL != pCommittedMemoryInBytes);
-
     vkGetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
 uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const void* pNext, VkDeviceMemory memory)
 {
     VkDeviceMemoryOpaqueCaptureAddressInfo info;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
 
     info.sType  = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
     info.pNext  = pNext;
@@ -1857,75 +1401,52 @@ PFN_vkVoidFunction cvkGetDeviceProcAddr(VkDevice device, const char* pName)
 {
     PFN_vkVoidFunction function;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pName);
-
     function = vkGetDeviceProcAddr(device, pName);
     CVK_ASSERT(NULL != function);
     return function;
 }
 void cvkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pQueue);
-
     vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
     CVK_ASSERT(VK_NULL_HANDLE != (*pQueue));
 }
 void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)
 {
-    VkDeviceQueueInfo2 queueInfo;
+    VkDeviceQueueInfo2 queue_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pQueue);
-
-    queueInfo.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
-    queueInfo.pNext            = pNext;
-    queueInfo.flags            = flags;
-    queueInfo.queueFamilyIndex = queueFamilyIndex;
-    queueInfo.queueIndex       = queueIndex;
-    vkGetDeviceQueue2(device, &queueInfo, pQueue);
+    queue_info.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
+    queue_info.pNext            = pNext;
+    queue_info.flags            = flags;
+    queue_info.queueFamilyIndex = queueFamilyIndex;
+    queue_info.queueIndex       = queueIndex;
+    vkGetDeviceQueue2(device, &queue_info, pQueue);
     CVK_ASSERT(VK_NULL_HANDLE != (*pQueue));
 }
 uint32_t cvkGetDisplayModeProperties(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(VK_NULL_HANDLE != display);
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, &count, pProperties));
-    return count;
+    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, &property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, &property_count, pProperties));
+    return property_count;
 }
 void cvkGetDisplayPlaneCapabilities(VkPhysicalDevice physicalDevice, VkDisplayModeKHR mode, uint32_t planeIndex, VkDisplayPlaneCapabilitiesKHR* pCapabilities)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(VK_NULL_HANDLE != mode);
-    CVK_ASSERT(NULL != pCapabilities);
-
     CVK_CHECK(vkGetDisplayPlaneCapabilitiesKHR(physicalDevice, mode, planeIndex, pCapabilities));
 }
 uint32_t cvkGetDisplayPlaneSupportedDisplays(VkPhysicalDevice physicalDevice, uint32_t planeIndex, VkDisplayKHR pDisplays[CVK_MAX_DISPLAYS])
 {
-    uint32_t count = 0;
+    uint32_t display_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pDisplays);
-
-    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &count, NULL));
-    CVK_ASSERT(CVK_MAX_DISPLAYS >= count);
-    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &count, pDisplays));
-    return count;
+    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &display_count, NULL));
+    CVK_ASSERT(CVK_MAX_DISPLAYS >= display_count);
+    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &display_count, pDisplays));
+    return display_count;
 }
 VkResult cvkGetEventStatus(VkDevice device, VkEvent event)
 {
     VkResult result;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != event);
 
     result = vkGetEventStatus(device, event);
     CVK_ASSERT(0 <= result);
@@ -1935,19 +1456,12 @@ VkResult cvkGetFenceStatus(VkDevice device, VkFence fence)
 {
     VkResult result;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != fence);
-
     result = vkGetFenceStatus(device, fence);
     CVK_ASSERT(0 <= result);
     return result;
 }
 void cvkGetImageDrmFormatModifierProperties(VkDevice device, VkImage image, void* pNext, VkImageDrmFormatModifierPropertiesEXT* pProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pProperties);
-
     PFN_vkGetImageDrmFormatModifierPropertiesEXT function = (PFN_vkGetImageDrmFormatModifierPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetImageDrmFormatModifierPropertiesEXT");
     pProperties->sType                                    = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
     pProperties->pNext                                    = pNext;
@@ -1955,19 +1469,11 @@ void cvkGetImageDrmFormatModifierProperties(VkDevice device, VkImage image, void
 }
 void cvkGetImageMemoryRequirements(VkDevice device, VkImage image, VkMemoryRequirements* pMemoryRequirements)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pMemoryRequirements);
-
     vkGetImageMemoryRequirements(device, image, pMemoryRequirements);
 }
 void cvkGetImageMemoryRequirements2(VkDevice device, const void* pInfoNext, VkImage image, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
 {
     VkImageMemoryRequirementsInfo2 info;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pMemoryRequirements);
 
     info.sType                 = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
     info.pNext                 = pInfoNext;
@@ -1978,56 +1484,41 @@ void cvkGetImageMemoryRequirements2(VkDevice device, const void* pInfoNext, VkIm
 }
 uint32_t cvkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, VkSparseImageMemoryRequirements pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
 {
-    uint32_t count = 0;
+    uint32_t sparse_memory_requirement_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pSparseMemoryRequirements);
-
-    vkGetImageSparseMemoryRequirements(device, image, &count, NULL);
-    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= count);
-    vkGetImageSparseMemoryRequirements(device, image, &count, pSparseMemoryRequirements);
-    return count;
+    vkGetImageSparseMemoryRequirements(device, image, &sparse_memory_requirement_count, NULL);
+    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= sparse_memory_requirement_count);
+    vkGetImageSparseMemoryRequirements(device, image, &sparse_memory_requirement_count, pSparseMemoryRequirements);
+    return sparse_memory_requirement_count;
 }
 uint32_t cvkGetImageSparseMemoryRequirements2(VkDevice device, const void* pNext, VkImage image, VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
 {
-    uint32_t                             count = 0;
+    uint32_t                             sparse_memory_requirement_count = 0;
     VkImageSparseMemoryRequirementsInfo2 info;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pSparseMemoryRequirements);
 
     info.sType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
     info.pNext = pNext;
     info.image = image;
-    vkGetImageSparseMemoryRequirements2(device, &info, &count, NULL);
-    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= count);
+    vkGetImageSparseMemoryRequirements2(device, &info, &sparse_memory_requirement_count, NULL);
+    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= sparse_memory_requirement_count);
     {
         uint32_t index;
-        for (index = 0; index < count; ++index)
+        for (index = 0; index < sparse_memory_requirement_count; ++index)
         {
             pSparseMemoryRequirements[index].sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
             pSparseMemoryRequirements[index].pNext = NULL;
         }
     }
-    vkGetImageSparseMemoryRequirements2(device, &info, &count, pSparseMemoryRequirements);
-    return count;
+    vkGetImageSparseMemoryRequirements2(device, &info, &sparse_memory_requirement_count, pSparseMemoryRequirements);
+    return sparse_memory_requirement_count;
 }
 void cvkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != image);
-    CVK_ASSERT(NULL != pSubresource);
-    CVK_ASSERT(NULL != pLayout);
-
     vkGetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
 PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName)
 {
     PFN_vkVoidFunction function;
-
-    CVK_ASSERT(NULL != pName);
 
     function = vkGetInstanceProcAddr(instance, pName);
     CVK_ASSERT(NULL != function);
@@ -2035,24 +1526,17 @@ PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName
 }
 void cvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd)
 {
-    VkMemoryGetFdInfoKHR getFdInfo;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-    CVK_ASSERT(NULL != pFd);
+    VkMemoryGetFdInfoKHR get_fd_info;
 
     PFN_vkGetMemoryFdKHR function = (PFN_vkGetMemoryFdKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryFdKHR");
-    getFdInfo.sType               = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
-    getFdInfo.pNext               = pNext;
-    getFdInfo.memory              = memory;
-    getFdInfo.handleType          = handleType;
-    CVK_CHECK(function(device, &getFdInfo, pFd));
+    get_fd_info.sType             = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+    get_fd_info.pNext             = pNext;
+    get_fd_info.memory            = memory;
+    get_fd_info.handleType        = handleType;
+    CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 void cvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pMemoryFdProperties);
-
     PFN_vkGetMemoryFdPropertiesKHR function = (PFN_vkGetMemoryFdPropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryFdPropertiesKHR");
     pMemoryFdProperties->sType              = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
     pMemoryFdProperties->pNext              = pNext;
@@ -2061,26 +1545,19 @@ void cvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBit
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle)
 {
-    VkMemoryGetWin32HandleInfoKHR getWin32HandleInfo;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-    CVK_ASSERT(NULL != pHandle);
+    VkMemoryGetWin32HandleInfoKHR get_win32_handle_info;
 
     PFN_vkGetMemoryWin32HandleKHR function = (PFN_vkGetMemoryWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandleKHR");
-    getWin32HandleInfo.sType               = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    getWin32HandleInfo.pNext               = pNext;
-    getWin32HandleInfo.memory              = memory;
-    getWin32HandleInfo.handleType          = handleType;
-    CVK_CHECK(function(device, &getWin32HandleInfo, pHandle));
+    get_win32_handle_info.sType            = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
+    get_win32_handle_info.pNext            = pNext;
+    get_win32_handle_info.memory           = memory;
+    get_win32_handle_info.handleType       = handleType;
+    CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
 #endif
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(NULL != pMemoryWin32HandleProperties);
-
     PFN_vkGetMemoryWin32HandlePropertiesKHR function = (PFN_vkGetMemoryWin32HandlePropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandlePropertiesKHR");
     pMemoryWin32HandleProperties->sType              = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
     pMemoryWin32HandleProperties->pNext              = pNext;
@@ -2089,27 +1566,21 @@ void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTy
 #endif
 uint32_t cvkGetPhysicalDeviceDisplayPlaneProperties(VkPhysicalDevice physicalDevice, VkDisplayPlanePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &count, pProperties));
-    return count;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &property_count, pProperties));
+    return property_count;
 }
 uint32_t cvkGetPhysicalDeviceDisplayProperties(VkPhysicalDevice physicalDevice, VkDisplayPropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &count, pProperties));
-    return count;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &property_count, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &property_count, pProperties));
+    return property_count;
 }
 void cvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice                   physicalDevice,
                                                   const void*                        pExternalBufferInfoNext,
@@ -2119,19 +1590,16 @@ void cvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice              
                                                   void*                              pExternalBufferPropertiesNext,
                                                   VkExternalBufferProperties*        pExternalBufferProperties)
 {
-    VkPhysicalDeviceExternalBufferInfo externalBufferInfo;
+    VkPhysicalDeviceExternalBufferInfo external_buffer_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pExternalBufferProperties);
-
-    externalBufferInfo.sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
-    externalBufferInfo.pNext         = pExternalBufferInfoNext;
-    externalBufferInfo.flags         = flags;
-    externalBufferInfo.usage         = usage;
-    externalBufferInfo.handleType    = handleType;
+    external_buffer_info.sType       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
+    external_buffer_info.pNext       = pExternalBufferInfoNext;
+    external_buffer_info.flags       = flags;
+    external_buffer_info.usage       = usage;
+    external_buffer_info.handleType  = handleType;
     pExternalBufferProperties->sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
     pExternalBufferProperties->pNext = pExternalBufferPropertiesNext;
-    vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, &externalBufferInfo, pExternalBufferProperties);
+    vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, &external_buffer_info, pExternalBufferProperties);
 }
 void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice                  physicalDevice,
                                                  const void*                       pExternalFenceInfoNext,
@@ -2139,17 +1607,14 @@ void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice               
                                                  void*                             pExternalFencePropertiesNext,
                                                  VkExternalFenceProperties*        pExternalFenceProperties)
 {
-    VkPhysicalDeviceExternalFenceInfo externalFenceInfo;
+    VkPhysicalDeviceExternalFenceInfo external_fence_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pExternalFenceProperties);
-
-    externalFenceInfo.sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
-    externalFenceInfo.pNext         = pExternalFenceInfoNext;
-    externalFenceInfo.handleType    = handleType;
+    external_fence_info.sType       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
+    external_fence_info.pNext       = pExternalFenceInfoNext;
+    external_fence_info.handleType  = handleType;
     pExternalFenceProperties->sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
     pExternalFenceProperties->pNext = pExternalFencePropertiesNext;
-    vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, &externalFenceInfo, pExternalFenceProperties);
+    vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, &external_fence_info, pExternalFenceProperties);
 }
 void cvkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice                      physicalDevice,
                                                      const void*                           pExternalSemaphoreInfoNext,
@@ -2157,46 +1622,31 @@ void cvkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice           
                                                      void*                                 pExternalSemaphorePropertiesNext,
                                                      VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
 {
-    VkPhysicalDeviceExternalSemaphoreInfo externalSemaphoreInfo;
+    VkPhysicalDeviceExternalSemaphoreInfo external_semaphore_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pExternalSemaphoreProperties);
-
-    externalSemaphoreInfo.sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
-    externalSemaphoreInfo.pNext         = pExternalSemaphoreInfoNext;
-    externalSemaphoreInfo.handleType    = handleType;
+    external_semaphore_info.sType       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
+    external_semaphore_info.pNext       = pExternalSemaphoreInfoNext;
+    external_semaphore_info.handleType  = handleType;
     pExternalSemaphoreProperties->sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
     pExternalSemaphoreProperties->pNext = pExternalSemaphorePropertiesNext;
-    vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &externalSemaphoreInfo, pExternalSemaphoreProperties);
+    vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &external_semaphore_info, pExternalSemaphoreProperties);
 }
 void cvkGetPhysicalDeviceFeatures(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFeatures* pFeatures)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pFeatures);
-
     vkGetPhysicalDeviceFeatures(physicalDevice, pFeatures);
 }
 void cvkGetPhysicalDeviceFeatures2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceFeatures2* pFeatures)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pFeatures);
-
     pFeatures->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
     pFeatures->pNext = pNext;
     vkGetPhysicalDeviceFeatures2(physicalDevice, pFeatures);
 }
 void cvkGetPhysicalDeviceFormatProperties(VkPhysicalDevice physicalDevice, VkFormat format, VkFormatProperties* pFormatProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pFormatProperties);
-
     vkGetPhysicalDeviceFormatProperties(physicalDevice, format, pFormatProperties);
 }
 void cvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFormat format, void* pNext, VkFormatProperties2* pFormatProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pFormatProperties);
-
     pFormatProperties->sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     pFormatProperties->pNext = pNext;
     vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, pFormatProperties);
@@ -2209,9 +1659,6 @@ void cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physical
                                                VkImageCreateFlags       flags,
                                                VkImageFormatProperties* pImageFormatProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pImageFormatProperties);
-
     CVK_CHECK(vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties));
 }
 void cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice          physicalDevice,
@@ -2224,98 +1671,73 @@ void cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice          physic
                                                 void*                     pImageFormatPropertiesNext,
                                                 VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkPhysicalDeviceImageFormatInfo2 imageFormatInfo;
+    VkPhysicalDeviceImageFormatInfo2 image_format_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pImageFormatProperties);
-
-    imageFormatInfo.sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
-    imageFormatInfo.pNext         = pImageFormatInfoNext;
-    imageFormatInfo.format        = format;
-    imageFormatInfo.type          = type;
-    imageFormatInfo.tiling        = tiling;
-    imageFormatInfo.usage         = usage;
-    imageFormatInfo.flags         = flags;
+    image_format_info.sType       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+    image_format_info.pNext       = pImageFormatInfoNext;
+    image_format_info.format      = format;
+    image_format_info.type        = type;
+    image_format_info.tiling      = tiling;
+    image_format_info.usage       = usage;
+    image_format_info.flags       = flags;
     pImageFormatProperties->sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
     pImageFormatProperties->pNext = pImageFormatPropertiesNext;
-    CVK_CHECK(vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &imageFormatInfo, pImageFormatProperties));
+    CVK_CHECK(vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_info, pImageFormatProperties));
 }
 void cvkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pMemoryProperties);
-
     vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 }
 void cvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceMemoryProperties2* pMemoryProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pMemoryProperties);
-
     pMemoryProperties->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
     pMemoryProperties->pNext = pNext;
     vkGetPhysicalDeviceMemoryProperties2(physicalDevice, pMemoryProperties);
 }
 uint32_t cvkGetPhysicalDevicePresentRectangles(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkRect2D pRects[CVK_MAX_RECTS])
 {
-    uint32_t count = 0;
+    uint32_t rect_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(VK_NULL_HANDLE != surface);
-    CVK_ASSERT(NULL != pRects);
-
-    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &count, NULL));
-    CVK_ASSERT(CVK_MAX_RECTS >= count);
-    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &count, pRects));
-    return count;
+    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &rect_count, NULL));
+    CVK_ASSERT(CVK_MAX_RECTS >= rect_count);
+    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &rect_count, pRects));
+    return rect_count;
 }
 void cvkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
     vkGetPhysicalDeviceProperties(physicalDevice, pProperties);
 }
 void cvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, void* pNext, VkPhysicalDeviceProperties2* pProperties)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
     pProperties->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
     pProperties->pNext = pNext;
     vkGetPhysicalDeviceProperties2(physicalDevice, pProperties);
 }
 uint32_t cvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyProperties pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t queue_family_property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pQueueFamilyProperties);
-
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= count);
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, pQueueFamilyProperties);
-    return count;
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queue_family_property_count, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queue_family_property_count, pQueueFamilyProperties);
+    return queue_family_property_count;
 }
 uint32_t cvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, VkQueueFamilyProperties2 pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t queue_family_property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pQueueFamilyProperties);
-
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
     {
         uint32_t index;
-        for (index = 0; index < count; ++index)
+        for (index = 0; index < queue_family_property_count; ++index)
         {
             pQueueFamilyProperties[index].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
             pQueueFamilyProperties[index].pNext = NULL;
         }
     }
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &count, pQueueFamilyProperties);
-    return count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, pQueueFamilyProperties);
+    return queue_family_property_count;
 }
 uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice              physicalDevice,
                                                          VkFormat                      format,
@@ -2325,15 +1747,12 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice       
                                                          VkImageTiling                 tiling,
                                                          VkSparseImageFormatProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t count = 0;
+    uint32_t property_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
-    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, &count, NULL);
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
-    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, &count, pProperties);
-    return count;
+    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, &property_count, NULL);
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, &property_count, pProperties);
+    return property_count;
 }
 uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice               physicalDevice,
                                                           const void*                    pNext,
@@ -2344,96 +1763,70 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice      
                                                           VkImageTiling                  tiling,
                                                           VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t                               count = 0;
-    VkPhysicalDeviceSparseImageFormatInfo2 formatInfo;
+    uint32_t                               property_count = 0;
+    VkPhysicalDeviceSparseImageFormatInfo2 format_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pProperties);
-
-    formatInfo.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
-    formatInfo.pNext   = pNext;
-    formatInfo.format  = format;
-    formatInfo.type    = type;
-    formatInfo.samples = samples;
-    formatInfo.usage   = usage;
-    formatInfo.tiling  = tiling;
-    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &formatInfo, &count, NULL);
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= count);
+    format_info.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
+    format_info.pNext   = pNext;
+    format_info.format  = format;
+    format_info.type    = type;
+    format_info.samples = samples;
+    format_info.usage   = usage;
+    format_info.tiling  = tiling;
+    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, &property_count, NULL);
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
     {
         uint32_t index;
-        for (index = 0; index < count; ++index)
+        for (index = 0; index < property_count; ++index)
         {
             pProperties[index].sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
             pProperties[index].pNext = NULL;
         }
     }
-    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &formatInfo, &count, pProperties);
-    return count;
+    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, &property_count, pProperties);
+    return property_count;
 }
 void cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(VK_NULL_HANDLE != surface);
-    CVK_ASSERT(NULL != pSurfaceCapabilities);
-
     CVK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities));
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFormats(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceFormatKHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
-    uint32_t count = 0;
+    uint32_t surface_format_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pSurfaceFormats);
-
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, NULL));
-    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= count);
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &count, pSurfaceFormats));
-    return count;
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surface_format_count, NULL));
+    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= surface_format_count);
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surface_format_count, pSurfaceFormats));
+    return surface_format_count;
 }
 uint32_t cvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
 {
-    uint32_t count = 0;
+    uint32_t present_mode_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != pPresentModes);
-
-    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, NULL));
-    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= count);
-    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &count, pPresentModes));
-    return count;
+    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &present_mode_count, NULL));
+    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= present_mode_count);
+    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &present_mode_count, pPresentModes));
+    return present_mode_count;
 }
 void cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(VK_NULL_HANDLE != surface);
-    CVK_ASSERT(NULL != pSupported);
-
     CVK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported));
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-
     return vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
 }
 #endif
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != physicalDevice);
-    CVK_ASSERT(NULL != dpy);
-
     return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
 }
 #endif
 VkResult cvkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
 {
     VkResult result;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != pipelineCache);
-    CVK_ASSERT(NULL != pDataSize);
 
     result = vkGetPipelineCacheData(device, pipelineCache, pDataSize, pData);
     CVK_ASSERT(0 <= result);
@@ -2443,90 +1836,63 @@ VkResult cvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t
 {
     VkResult result;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-    CVK_ASSERT(NULL != pData);
-
     result = vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
     CVK_ASSERT(0 <= result);
     return result;
 }
 void cvkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != renderPass);
-    CVK_ASSERT(NULL != pGranularity);
-
     vkGetRenderAreaGranularity(device, renderPass, pGranularity);
 }
 void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != semaphore);
-    CVK_ASSERT(NULL != pValue);
-
     CVK_CHECK(vkGetSemaphoreCounterValue(device, semaphore, pValue));
 }
 void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd)
 {
-    VkSemaphoreGetFdInfoKHR getFdInfo;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != semaphore);
-    CVK_ASSERT(NULL != pFd);
+    VkSemaphoreGetFdInfoKHR get_fd_info;
 
     PFN_vkGetSemaphoreFdKHR function = (PFN_vkGetSemaphoreFdKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreFdKHR");
-    getFdInfo.sType                  = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
-    getFdInfo.pNext                  = pNext;
-    getFdInfo.semaphore              = semaphore;
-    getFdInfo.handleType             = handleType;
-    CVK_CHECK(function(device, &getFdInfo, pFd));
+    get_fd_info.sType                = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
+    get_fd_info.pNext                = pNext;
+    get_fd_info.semaphore            = semaphore;
+    get_fd_info.handleType           = handleType;
+    CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, HANDLE* pHandle)
 {
-    VkSemaphoreGetWin32HandleInfoKHR getWin32HandleInfo;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != semaphore);
-    CVK_ASSERT(NULL != pHandle);
+    VkSemaphoreGetWin32HandleInfoKHR get_win32_handle_info;
 
     PFN_vkGetSemaphoreWin32HandleKHR function = (PFN_vkGetSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreWin32HandleKHR");
-    getWin32HandleInfo.sType                  = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-    getWin32HandleInfo.pNext                  = pNext;
-    getWin32HandleInfo.semaphore              = semaphore;
-    getWin32HandleInfo.handleType             = handleType;
-    CVK_CHECK(function(device, &getWin32HandleInfo, pHandle));
+    get_win32_handle_info.sType               = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
+    get_win32_handle_info.pNext               = pNext;
+    get_win32_handle_info.semaphore           = semaphore;
+    get_win32_handle_info.handleType          = handleType;
+    CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
 }
 #endif
 uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImage pSwapchainImages[CVK_MAX_SWAPCHAIN_IMAGES])
 {
-    uint32_t count = 0;
+    uint32_t swapchain_image_count = 0;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != swapchain);
-    CVK_ASSERT(NULL != pSwapchainImages);
-
-    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &count, NULL));
-    CVK_ASSERT(CVK_MAX_SWAPCHAIN_IMAGES >= count);
-    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &count, pSwapchainImages));
-    return count;
+    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, NULL));
+    CVK_ASSERT(CVK_MAX_SWAPCHAIN_IMAGES >= swapchain_image_count);
+    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, pSwapchainImages));
+    return swapchain_image_count;
 }
 void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
 {
-    VkImportSemaphoreFdInfoKHR importSemaphoreFdInfo;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != semaphore);
+    VkImportSemaphoreFdInfoKHR import_semaphore_fd_info;
 
     PFN_vkImportSemaphoreFdKHR function = (PFN_vkImportSemaphoreFdKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreFdKHR");
-    importSemaphoreFdInfo.sType         = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
-    importSemaphoreFdInfo.pNext         = pNext;
-    importSemaphoreFdInfo.semaphore     = semaphore;
-    importSemaphoreFdInfo.flags         = flags;
-    importSemaphoreFdInfo.handleType    = handleType;
-    importSemaphoreFdInfo.fd            = fd;
-    CVK_CHECK(function(device, &importSemaphoreFdInfo));
+    import_semaphore_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+    import_semaphore_fd_info.pNext      = pNext;
+    import_semaphore_fd_info.semaphore  = semaphore;
+    import_semaphore_fd_info.flags      = flags;
+    import_semaphore_fd_info.handleType = handleType;
+    import_semaphore_fd_info.fd         = fd;
+    CVK_CHECK(function(device, &import_semaphore_fd_info));
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkImportSemaphoreWin32Handle(VkDevice                              device,
@@ -2537,83 +1903,58 @@ void cvkImportSemaphoreWin32Handle(VkDevice                              device,
                                    HANDLE                                handle,
                                    LPCWSTR                               name)
 {
-    VkImportSemaphoreWin32HandleInfoKHR importSemaphoreWin32HandleInfo;
+    VkImportSemaphoreWin32HandleInfoKHR import_semaphore_win32_handle_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != semaphore);
-
-    PFN_vkImportSemaphoreWin32HandleKHR function = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
-    importSemaphoreWin32HandleInfo.sType         = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    importSemaphoreWin32HandleInfo.pNext         = pNext;
-    importSemaphoreWin32HandleInfo.semaphore     = semaphore;
-    importSemaphoreWin32HandleInfo.flags         = flags;
-    importSemaphoreWin32HandleInfo.handleType    = handleType;
-    importSemaphoreWin32HandleInfo.handle        = handle;
-    importSemaphoreWin32HandleInfo.name          = name;
-    CVK_CHECK(function(device, &importSemaphoreWin32HandleInfo));
+    PFN_vkImportSemaphoreWin32HandleKHR function  = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
+    import_semaphore_win32_handle_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
+    import_semaphore_win32_handle_info.pNext      = pNext;
+    import_semaphore_win32_handle_info.semaphore  = semaphore;
+    import_semaphore_win32_handle_info.flags      = flags;
+    import_semaphore_win32_handle_info.handleType = handleType;
+    import_semaphore_win32_handle_info.handle     = handle;
+    import_semaphore_win32_handle_info.name       = name;
+    CVK_CHECK(function(device, &import_semaphore_win32_handle_info));
 }
 #endif
 void cvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == memoryRangeCount || NULL != pMemoryRanges);
-
     CVK_CHECK(vkInvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges));
 }
 void cvkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-    CVK_ASSERT(NULL != ppData);
-
     CVK_CHECK(vkMapMemory(device, memory, offset, size, flags, ppData));
 }
 void cvkMergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t srcCacheCount, const VkPipelineCache* pSrcCaches)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != dstCache);
-    CVK_ASSERT(0 == srcCacheCount || NULL != pSrcCaches);
-
     CVK_CHECK(vkMergePipelineCaches(device, dstCache, srcCacheCount, pSrcCaches));
 }
 void cvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT labelInfo;
+    VkDebugUtilsLabelEXT label_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-    CVK_ASSERT(NULL != pLabelName);
-
-    labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-    labelInfo.pNext      = pNext;
-    labelInfo.pLabelName = pLabelName;
-    memcpy(labelInfo.color, color, sizeof(labelInfo.color));
-    vkQueueBeginDebugUtilsLabelEXT(queue, &labelInfo);
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+    memcpy(label_info.color, color, sizeof(label_info.color));
+    vkQueueBeginDebugUtilsLabelEXT(queue, &label_info);
 }
 void cvkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-    CVK_ASSERT(0 == bindInfoCount || NULL != pBindInfo);
-
     CVK_CHECK(vkQueueBindSparse(queue, bindInfoCount, pBindInfo, fence));
 }
 void cvkQueueEndDebugUtilsLabel(VkQueue queue)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-
     vkQueueEndDebugUtilsLabelEXT(queue);
 }
 void cvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT labelInfo;
+    VkDebugUtilsLabelEXT label_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-    CVK_ASSERT(NULL != pLabelName);
-
-    labelInfo.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-    labelInfo.pNext      = pNext;
-    labelInfo.pLabelName = pLabelName;
-    memcpy(labelInfo.color, color, sizeof(labelInfo.color));
-    vkQueueInsertDebugUtilsLabelEXT(queue, &labelInfo);
+    label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+    label_info.pNext      = pNext;
+    label_info.pLabelName = pLabelName;
+    memcpy(label_info.color, color, sizeof(label_info.color));
+    vkQueueInsertDebugUtilsLabelEXT(queue, &label_info);
 }
 VkResult cvkQueuePresent(VkQueue               queue,
                          const void*           pNext,
@@ -2625,127 +1966,89 @@ VkResult cvkQueuePresent(VkQueue               queue,
                          VkResult*             pResults)
 {
     VkResult         result;
-    VkPresentInfoKHR presentInfo;
+    VkPresentInfoKHR present_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-    CVK_ASSERT(0 == waitSemaphoreCount || NULL != pWaitSemaphores);
-    CVK_ASSERT(0 == swapchainCount || NULL != pSwapchains);
-    CVK_ASSERT(0 == swapchainCount || NULL != pImageIndices);
-
-    presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.pNext              = pNext;
-    presentInfo.waitSemaphoreCount = waitSemaphoreCount;
-    presentInfo.pWaitSemaphores    = pWaitSemaphores;
-    presentInfo.swapchainCount     = swapchainCount;
-    presentInfo.pSwapchains        = pSwapchains;
-    presentInfo.pImageIndices      = pImageIndices;
-    presentInfo.pResults           = pResults;
-    result                         = vkQueuePresentKHR(queue, &presentInfo);
+    present_info.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    present_info.pNext              = pNext;
+    present_info.waitSemaphoreCount = waitSemaphoreCount;
+    present_info.pWaitSemaphores    = pWaitSemaphores;
+    present_info.swapchainCount     = swapchainCount;
+    present_info.pSwapchains        = pSwapchains;
+    present_info.pImageIndices      = pImageIndices;
+    present_info.pResults           = pResults;
+    result                          = vkQueuePresentKHR(queue, &present_info);
     CVK_ASSERT(0 <= result);
     return result;
 }
 void cvkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-    CVK_ASSERT(0 == submitCount || NULL != pSubmits);
-
     CVK_CHECK(vkQueueSubmit(queue, submitCount, pSubmits, fence));
 }
 void cvkQueueWaitIdle(VkQueue queue)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != queue);
-
     CVK_CHECK(vkQueueWaitIdle(queue));
 }
 void cvkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != commandBuffer);
-
     CVK_CHECK(vkResetCommandBuffer(commandBuffer, flags));
 }
 void cvkResetCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolResetFlags flags)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != commandPool);
-
     CVK_CHECK(vkResetCommandPool(device, commandPool, flags));
 }
 void cvkResetDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorPoolResetFlags flags)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != descriptorPool);
-
     CVK_CHECK(vkResetDescriptorPool(device, descriptorPool, flags));
 }
 void cvkResetEvent(VkDevice device, VkEvent event)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != event);
-
     CVK_CHECK(vkResetEvent(device, event));
 }
 void cvkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == fenceCount || NULL != pFences);
-
     CVK_CHECK(vkResetFences(device, fenceCount, pFences));
 }
 void cvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != queryPool);
-
     vkResetQueryPool(device, queryPool, firstQuery, queryCount);
 }
 void cvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
 {
-    VkDebugUtilsObjectNameInfoEXT nameInfo;
+    VkDebugUtilsObjectNameInfoEXT name_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-
-    nameInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-    nameInfo.pNext        = pNext;
-    nameInfo.objectType   = objectType;
-    nameInfo.objectHandle = objectHandle;
-    nameInfo.pObjectName  = pObjectName;
-    CVK_CHECK(vkSetDebugUtilsObjectNameEXT(device, &nameInfo));
+    name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+    name_info.pNext        = pNext;
+    name_info.objectType   = objectType;
+    name_info.objectHandle = objectHandle;
+    name_info.pObjectName  = pObjectName;
+    CVK_CHECK(vkSetDebugUtilsObjectNameEXT(device, &name_info));
 }
 void cvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag)
 {
-    VkDebugUtilsObjectTagInfoEXT tagInfo;
+    VkDebugUtilsObjectTagInfoEXT tag_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == tagSize || NULL != pTag);
-
-    tagInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
-    tagInfo.pNext        = pNext;
-    tagInfo.objectType   = objectType;
-    tagInfo.objectHandle = objectHandle;
-    tagInfo.tagName      = tagName;
-    tagInfo.tagSize      = tagSize;
-    tagInfo.pTag         = pTag;
-    CVK_CHECK(vkSetDebugUtilsObjectTagEXT(device, &tagInfo));
+    tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
+    tag_info.pNext        = pNext;
+    tag_info.objectType   = objectType;
+    tag_info.objectHandle = objectHandle;
+    tag_info.tagName      = tagName;
+    tag_info.tagSize      = tagSize;
+    tag_info.pTag         = pTag;
+    CVK_CHECK(vkSetDebugUtilsObjectTagEXT(device, &tag_info));
 }
 void cvkSetEvent(VkDevice device, VkEvent event)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != event);
-
     CVK_CHECK(vkSetEvent(device, event));
 }
 void cvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value)
 {
-    VkSemaphoreSignalInfo signalInfo;
+    VkSemaphoreSignalInfo signal_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != semaphore);
-
-    signalInfo.sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
-    signalInfo.pNext     = pNext;
-    signalInfo.semaphore = semaphore;
-    signalInfo.value     = value;
-    CVK_CHECK(vkSignalSemaphore(device, &signalInfo));
+    signal_info.sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
+    signal_info.pNext     = pNext;
+    signal_info.semaphore = semaphore;
+    signal_info.value     = value;
+    CVK_CHECK(vkSignalSemaphore(device, &signal_info));
 }
 void cvkSubmitDebugUtilsMessage(VkInstance                                instance,
                                 VkDebugUtilsMessageSeverityFlagBitsEXT    messageSeverity,
@@ -2762,64 +2065,41 @@ void cvkSubmitDebugUtilsMessage(VkInstance                                instan
                                 uint32_t                                  objectCount,
                                 const VkDebugUtilsObjectNameInfoEXT*      pObjects)
 {
-    VkDebugUtilsMessengerCallbackDataEXT callbackData;
+    VkDebugUtilsMessengerCallbackDataEXT callback_data;
 
-    CVK_ASSERT(VK_NULL_HANDLE != instance);
-    CVK_ASSERT(0 == queueLabelCount || NULL != pQueueLabels);
-    CVK_ASSERT(0 == cmdBufLabelCount || NULL != pCmdBufLabels);
-    CVK_ASSERT(0 == objectCount || NULL != pObjects);
-
-    callbackData.sType            = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
-    callbackData.pNext            = pNext;
-    callbackData.flags            = flags;
-    callbackData.pMessageIdName   = pMessageIdName;
-    callbackData.messageIdNumber  = messageIdNumber;
-    callbackData.pMessage         = pMessage;
-    callbackData.queueLabelCount  = queueLabelCount;
-    callbackData.pQueueLabels     = pQueueLabels;
-    callbackData.cmdBufLabelCount = cmdBufLabelCount;
-    callbackData.pCmdBufLabels    = pCmdBufLabels;
-    callbackData.objectCount      = objectCount;
-    callbackData.pObjects         = pObjects;
-    vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, &callbackData);
+    callback_data.sType            = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
+    callback_data.pNext            = pNext;
+    callback_data.flags            = flags;
+    callback_data.pMessageIdName   = pMessageIdName;
+    callback_data.messageIdNumber  = messageIdNumber;
+    callback_data.pMessage         = pMessage;
+    callback_data.queueLabelCount  = queueLabelCount;
+    callback_data.pQueueLabels     = pQueueLabels;
+    callback_data.cmdBufLabelCount = cmdBufLabelCount;
+    callback_data.pCmdBufLabels    = pCmdBufLabels;
+    callback_data.objectCount      = objectCount;
+    callback_data.pObjects         = pObjects;
+    vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, &callback_data);
 }
 void cvkTrimCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoolTrimFlags flags)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != commandPool);
-
     vkTrimCommandPool(device, commandPool, flags);
 }
 void cvkUnmapMemory(VkDevice device, VkDeviceMemory memory)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != memory);
-
     vkUnmapMemory(device, memory);
 }
 void cvkUpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(VK_NULL_HANDLE != descriptorSet);
-    CVK_ASSERT(VK_NULL_HANDLE != descriptorUpdateTemplate);
-    CVK_ASSERT(NULL != pData);
-
     vkUpdateDescriptorSetWithTemplate(device, descriptorSet, descriptorUpdateTemplate, pData);
 }
 void cvkUpdateDescriptorSets(VkDevice device, uint32_t descriptorWriteCount, const VkWriteDescriptorSet* pDescriptorWrites, uint32_t descriptorCopyCount, const VkCopyDescriptorSet* pDescriptorCopies)
 {
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == descriptorWriteCount || NULL != pDescriptorWrites);
-    CVK_ASSERT(0 == descriptorCopyCount || NULL != pDescriptorCopies);
-
     vkUpdateDescriptorSets(device, descriptorWriteCount, pDescriptorWrites, descriptorCopyCount, pDescriptorCopies);
 }
 VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout)
 {
     VkResult result;
-
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == fenceCount || NULL != pFences);
 
     result = vkWaitForFences(device, fenceCount, pFences, waitAll, timeout);
     CVK_ASSERT(0 <= result);
@@ -2828,26 +2108,20 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
 VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout)
 {
     VkResult            result;
-    VkSemaphoreWaitInfo waitInfo;
+    VkSemaphoreWaitInfo wait_info;
 
-    CVK_ASSERT(VK_NULL_HANDLE != device);
-    CVK_ASSERT(0 == semaphoreCount || NULL != pSemaphores);
-    CVK_ASSERT(0 == semaphoreCount || NULL != pValues);
-
-    waitInfo.sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
-    waitInfo.pNext          = pNext;
-    waitInfo.flags          = flags;
-    waitInfo.semaphoreCount = semaphoreCount;
-    waitInfo.pSemaphores    = pSemaphores;
-    waitInfo.pValues        = pValues;
-    result                  = vkWaitSemaphores(device, &waitInfo, timeout);
+    wait_info.sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
+    wait_info.pNext          = pNext;
+    wait_info.flags          = flags;
+    wait_info.semaphoreCount = semaphoreCount;
+    wait_info.pSemaphores    = pSemaphores;
+    wait_info.pValues        = pValues;
+    result                   = vkWaitSemaphores(device, &wait_info, timeout);
     CVK_ASSERT(0 <= result);
     return result;
 }
 void cvkInitAcquireNextImageInfo(VkAcquireNextImageInfoKHR* pInfo, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->swapchain  = swapchain;
@@ -2864,8 +2138,6 @@ void cvkInitApplicationInfo(VkApplicationInfo* pInfo,
                             uint32_t           engineVersion,
                             uint32_t           apiVersion)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     pInfo->pNext              = pNext;
     pInfo->pApplicationName   = pApplicationName;
@@ -2886,8 +2158,6 @@ void cvkInitAttachmentDescription2(VkAttachmentDescription2*    pInfo,
                                    VkImageLayout                initialLayout,
                                    VkImageLayout                finalLayout)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType          = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
     pInfo->pNext          = pNext;
     pInfo->flags          = flags;
@@ -2902,8 +2172,6 @@ void cvkInitAttachmentDescription2(VkAttachmentDescription2*    pInfo,
 }
 void cvkInitAttachmentDescriptionStencilLayout(VkAttachmentDescriptionStencilLayout* pInfo, void* pNext, VkImageLayout stencilInitialLayout, VkImageLayout stencilFinalLayout)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT;
     pInfo->pNext                = pNext;
     pInfo->stencilInitialLayout = stencilInitialLayout;
@@ -2911,8 +2179,6 @@ void cvkInitAttachmentDescriptionStencilLayout(VkAttachmentDescriptionStencilLay
 }
 void cvkInitAttachmentReference2(VkAttachmentReference2* pInfo, const void* pNext, uint32_t attachment, VkImageLayout layout, VkImageAspectFlags aspectMask)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
     pInfo->pNext      = pNext;
     pInfo->attachment = attachment;
@@ -2921,16 +2187,12 @@ void cvkInitAttachmentReference2(VkAttachmentReference2* pInfo, const void* pNex
 }
 void cvkInitAttachmentReferenceStencilLayout(VkAttachmentReferenceStencilLayout* pInfo, void* pNext, VkImageLayout stencilLayout)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT;
     pInfo->pNext         = pNext;
     pInfo->stencilLayout = stencilLayout;
 }
 void cvkInitBindBufferMemoryDeviceGroupInfo(VkBindBufferMemoryDeviceGroupInfo* pInfo, const void* pNext, uint32_t deviceIndexCount, const uint32_t* pDeviceIndices)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
     pInfo->pNext            = pNext;
     pInfo->deviceIndexCount = deviceIndexCount;
@@ -2938,8 +2200,6 @@ void cvkInitBindBufferMemoryDeviceGroupInfo(VkBindBufferMemoryDeviceGroupInfo* p
 }
 void cvkInitBindBufferMemoryInfo(VkBindBufferMemoryInfo* pInfo, const void* pNext, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
     pInfo->pNext        = pNext;
     pInfo->buffer       = buffer;
@@ -2953,8 +2213,6 @@ void cvkInitBindImageMemoryDeviceGroupInfo(VkBindImageMemoryDeviceGroupInfo* pIn
                                            uint32_t                          splitInstanceBindRegionCount,
                                            const VkRect2D*                   pSplitInstanceBindRegions)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
     pInfo->pNext                        = pNext;
     pInfo->deviceIndexCount             = deviceIndexCount;
@@ -2964,8 +2222,6 @@ void cvkInitBindImageMemoryDeviceGroupInfo(VkBindImageMemoryDeviceGroupInfo* pIn
 }
 void cvkInitBindImageMemoryInfo(VkBindImageMemoryInfo* pInfo, const void* pNext, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
     pInfo->pNext        = pNext;
     pInfo->image        = image;
@@ -2974,8 +2230,6 @@ void cvkInitBindImageMemoryInfo(VkBindImageMemoryInfo* pInfo, const void* pNext,
 }
 void cvkInitBindImageMemorySwapchainInfo(VkBindImageMemorySwapchainInfoKHR* pInfo, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->swapchain  = swapchain;
@@ -2983,8 +2237,6 @@ void cvkInitBindImageMemorySwapchainInfo(VkBindImageMemorySwapchainInfoKHR* pInf
 }
 void cvkInitBindImagePlaneMemoryInfo(VkBindImagePlaneMemoryInfo* pInfo, const void* pNext, VkImageAspectFlagBits planeAspect)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
     pInfo->pNext       = pNext;
     pInfo->planeAspect = planeAspect;
@@ -3002,8 +2254,6 @@ void cvkInitBindSparseInfo(VkBindSparseInfo*                        pInfo,
                            uint32_t                                 signalSemaphoreCount,
                            const VkSemaphore*                       pSignalSemaphores)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
     pInfo->pNext                = pNext;
     pInfo->waitSemaphoreCount   = waitSemaphoreCount;
@@ -3026,8 +2276,6 @@ void cvkInitBufferCreateInfo(VkBufferCreateInfo* pInfo,
                              uint32_t            queueFamilyIndexCount,
                              const uint32_t*     pQueueFamilyIndices)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     pInfo->pNext                 = pNext;
     pInfo->flags                 = flags;
@@ -3039,8 +2287,6 @@ void cvkInitBufferCreateInfo(VkBufferCreateInfo* pInfo,
 }
 void cvkInitBufferDeviceAddressInfo(VkBufferDeviceAddressInfo* pInfo, const void* pNext, VkBuffer buffer)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
     pInfo->pNext  = pNext;
     pInfo->buffer = buffer;
@@ -3055,8 +2301,6 @@ void cvkInitBufferMemoryBarrier(VkBufferMemoryBarrier* pInfo,
                                 VkDeviceSize           offset,
                                 VkDeviceSize           size)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
     pInfo->pNext               = pNext;
     pInfo->srcAccessMask       = srcAccessMask;
@@ -3069,24 +2313,18 @@ void cvkInitBufferMemoryBarrier(VkBufferMemoryBarrier* pInfo,
 }
 void cvkInitBufferMemoryRequirementsInfo2(VkBufferMemoryRequirementsInfo2* pInfo, const void* pNext, VkBuffer buffer)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
     pInfo->pNext  = pNext;
     pInfo->buffer = buffer;
 }
 void cvkInitBufferOpaqueCaptureAddressCreateInfo(VkBufferOpaqueCaptureAddressCreateInfo* pInfo, const void* pNext, uint64_t opaqueCaptureAddress)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
     pInfo->pNext                = pNext;
     pInfo->opaqueCaptureAddress = opaqueCaptureAddress;
 }
 void cvkInitBufferViewCreateInfo(VkBufferViewCreateInfo* pInfo, const void* pNext, VkBufferViewCreateFlags flags, VkBuffer buffer, VkFormat format, VkDeviceSize offset, VkDeviceSize range)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
     pInfo->pNext  = pNext;
     pInfo->flags  = flags;
@@ -3097,8 +2335,6 @@ void cvkInitBufferViewCreateInfo(VkBufferViewCreateInfo* pInfo, const void* pNex
 }
 void cvkInitCommandBufferAllocateInfo(VkCommandBufferAllocateInfo* pInfo, const void* pNext, VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     pInfo->pNext              = pNext;
     pInfo->commandPool        = commandPool;
@@ -3107,8 +2343,6 @@ void cvkInitCommandBufferAllocateInfo(VkCommandBufferAllocateInfo* pInfo, const 
 }
 void cvkInitCommandBufferBeginInfo(VkCommandBufferBeginInfo* pInfo, const void* pNext, VkCommandBufferUsageFlags flags, const VkCommandBufferInheritanceInfo* pInheritanceInfo)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     pInfo->pNext            = pNext;
     pInfo->flags            = flags;
@@ -3123,8 +2357,6 @@ void cvkInitCommandBufferInheritanceInfo(VkCommandBufferInheritanceInfo* pInfo,
                                          VkQueryControlFlags             queryFlags,
                                          VkQueryPipelineStatisticFlags   pipelineStatistics)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
     pInfo->pNext                = pNext;
     pInfo->renderPass           = renderPass;
@@ -3136,8 +2368,6 @@ void cvkInitCommandBufferInheritanceInfo(VkCommandBufferInheritanceInfo* pInfo,
 }
 void cvkInitCommandPoolCreateInfo(VkCommandPoolCreateInfo* pInfo, const void* pNext, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     pInfo->pNext            = pNext;
     pInfo->flags            = flags;
@@ -3151,8 +2381,6 @@ void cvkInitComputePipelineCreateInfo(VkComputePipelineCreateInfo*    pInfo,
                                       VkPipeline                      basePipelineHandle,
                                       int32_t                         basePipelineIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
     pInfo->pNext              = pNext;
     pInfo->flags              = flags;
@@ -3171,8 +2399,6 @@ void cvkInitCopyDescriptorSet(VkCopyDescriptorSet* pInfo,
                               uint32_t             dstArrayElement,
                               uint32_t             descriptorCount)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
     pInfo->pNext           = pNext;
     pInfo->srcSet          = srcSet;
@@ -3191,8 +2417,6 @@ void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
                                  uint32_t                   signalSemaphoreValuesCount,
                                  const uint64_t*            pSignalSemaphoreValues)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                      = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
     pInfo->pNext                      = pNext;
     pInfo->waitSemaphoreValuesCount   = waitSemaphoreValuesCount;
@@ -3203,8 +2427,6 @@ void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
 #endif
 void cvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[4])
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     pInfo->pNext      = pNext;
     pInfo->pLabelName = pLabelName;
@@ -3223,8 +2445,6 @@ void cvkInitDebugUtilsMessengerCallbackData(VkDebugUtilsMessengerCallbackDataEXT
                                             uint32_t                                  objectCount,
                                             const VkDebugUtilsObjectNameInfoEXT*      pObjects)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
     pInfo->pNext            = pNext;
     pInfo->flags            = flags;
@@ -3246,8 +2466,6 @@ void cvkInitDebugUtilsMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT*  p
                                           PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
                                           void*                                pUserData)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -3258,8 +2476,6 @@ void cvkInitDebugUtilsMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT*  p
 }
 void cvkInitDebugUtilsObjectNameInfo(VkDebugUtilsObjectNameInfoEXT* pInfo, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
     pInfo->pNext        = pNext;
     pInfo->objectType   = objectType;
@@ -3268,8 +2484,6 @@ void cvkInitDebugUtilsObjectNameInfo(VkDebugUtilsObjectNameInfoEXT* pInfo, const
 }
 void cvkInitDebugUtilsObjectTagInfo(VkDebugUtilsObjectTagInfoEXT* pInfo, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
     pInfo->pNext        = pNext;
     pInfo->objectType   = objectType;
@@ -3285,8 +2499,6 @@ void cvkInitDescriptorPoolCreateInfo(VkDescriptorPoolCreateInfo* pInfo,
                                      uint32_t                    poolSizeCount,
                                      const VkDescriptorPoolSize* pPoolSizes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     pInfo->pNext         = pNext;
     pInfo->flags         = flags;
@@ -3296,8 +2508,6 @@ void cvkInitDescriptorPoolCreateInfo(VkDescriptorPoolCreateInfo* pInfo,
 }
 void cvkInitDescriptorSetAllocateInfo(VkDescriptorSetAllocateInfo* pInfo, const void* pNext, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     pInfo->pNext              = pNext;
     pInfo->descriptorPool     = descriptorPool;
@@ -3306,8 +2516,6 @@ void cvkInitDescriptorSetAllocateInfo(VkDescriptorSetAllocateInfo* pInfo, const 
 }
 void cvkInitDescriptorSetLayoutBindingFlagsCreateInfo(VkDescriptorSetLayoutBindingFlagsCreateInfo* pInfo, const void* pNext, uint32_t bindingCount, const VkDescriptorBindingFlags* pBindingFlags)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
     pInfo->pNext         = pNext;
     pInfo->bindingCount  = bindingCount;
@@ -3319,8 +2527,6 @@ void cvkInitDescriptorSetLayoutCreateInfo(VkDescriptorSetLayoutCreateInfo*    pI
                                           uint32_t                            bindingCount,
                                           const VkDescriptorSetLayoutBinding* pBindings)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     pInfo->pNext        = pNext;
     pInfo->flags        = flags;
@@ -3329,8 +2535,6 @@ void cvkInitDescriptorSetLayoutCreateInfo(VkDescriptorSetLayoutCreateInfo*    pI
 }
 void cvkInitDescriptorSetLayoutSupport(VkDescriptorSetLayoutSupport* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
     pInfo->pNext = pNext;
 }
@@ -3339,8 +2543,6 @@ void cvkInitDescriptorSetVariableDescriptorCountAllocateInfo(VkDescriptorSetVari
                                                              uint32_t                                            descriptorSetCount,
                                                              const uint32_t*                                     pDescriptorCounts)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
     pInfo->pNext              = pNext;
     pInfo->descriptorSetCount = descriptorSetCount;
@@ -3348,8 +2550,6 @@ void cvkInitDescriptorSetVariableDescriptorCountAllocateInfo(VkDescriptorSetVari
 }
 void cvkInitDescriptorSetVariableDescriptorCountLayoutSupport(VkDescriptorSetVariableDescriptorCountLayoutSupport* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
     pInfo->pNext = pNext;
 }
@@ -3364,8 +2564,6 @@ void cvkInitDescriptorUpdateTemplateCreateInfo(VkDescriptorUpdateTemplateCreateI
                                                VkPipelineLayout                       pipelineLayout,
                                                uint32_t                               set)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                      = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
     pInfo->pNext                      = pNext;
     pInfo->flags                      = flags;
@@ -3388,8 +2586,6 @@ void cvkInitDeviceCreateInfo(VkDeviceCreateInfo*             pInfo,
                              const char* const*              ppEnabledExtensionNames,
                              const VkPhysicalDeviceFeatures* pEnabledFeatures)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     pInfo->pNext                   = pNext;
     pInfo->flags                   = flags;
@@ -3403,8 +2599,6 @@ void cvkInitDeviceCreateInfo(VkDeviceCreateInfo*             pInfo,
 }
 void cvkInitDeviceGroupBindSparseInfo(VkDeviceGroupBindSparseInfo* pInfo, const void* pNext, uint32_t resourceDeviceIndex, uint32_t memoryDeviceIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType               = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO;
     pInfo->pNext               = pNext;
     pInfo->resourceDeviceIndex = resourceDeviceIndex;
@@ -3412,16 +2606,12 @@ void cvkInitDeviceGroupBindSparseInfo(VkDeviceGroupBindSparseInfo* pInfo, const 
 }
 void cvkInitDeviceGroupCommandBufferBeginInfo(VkDeviceGroupCommandBufferBeginInfo* pInfo, const void* pNext, uint32_t deviceMask)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
     pInfo->pNext      = pNext;
     pInfo->deviceMask = deviceMask;
 }
 void cvkInitDeviceGroupDeviceCreateInfo(VkDeviceGroupDeviceCreateInfo* pInfo, const void* pNext, uint32_t physicalDeviceCount, const VkPhysicalDevice* pPhysicalDevices)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType               = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
     pInfo->pNext               = pNext;
     pInfo->physicalDeviceCount = physicalDeviceCount;
@@ -3429,15 +2619,11 @@ void cvkInitDeviceGroupDeviceCreateInfo(VkDeviceGroupDeviceCreateInfo* pInfo, co
 }
 void cvkInitDeviceGroupPresentCapabilities(VkDeviceGroupPresentCapabilitiesKHR* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
     pInfo->pNext = pNext;
 }
 void cvkInitDeviceGroupPresentInfo(VkDeviceGroupPresentInfoKHR* pInfo, const void* pNext, uint32_t swapchainCount, const uint32_t* pDeviceMasks, VkDeviceGroupPresentModeFlagBitsKHR mode)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType          = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
     pInfo->pNext          = pNext;
     pInfo->swapchainCount = swapchainCount;
@@ -3446,8 +2632,6 @@ void cvkInitDeviceGroupPresentInfo(VkDeviceGroupPresentInfoKHR* pInfo, const voi
 }
 void cvkInitDeviceGroupRenderPassBeginInfo(VkDeviceGroupRenderPassBeginInfo* pInfo, const void* pNext, uint32_t deviceMask, uint32_t deviceRenderAreaCount, const VkRect2D* pDeviceRenderAreas)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
     pInfo->pNext                 = pNext;
     pInfo->deviceMask            = deviceMask;
@@ -3463,8 +2647,6 @@ void cvkInitDeviceGroupSubmitInfo(VkDeviceGroupSubmitInfo* pInfo,
                                   uint32_t                 signalSemaphoreCount,
                                   const uint32_t*          pSignalSemaphoreDeviceIndices)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                         = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO;
     pInfo->pNext                         = pNext;
     pInfo->waitSemaphoreCount            = waitSemaphoreCount;
@@ -3476,24 +2658,18 @@ void cvkInitDeviceGroupSubmitInfo(VkDeviceGroupSubmitInfo* pInfo,
 }
 void cvkInitDeviceGroupSwapchainCreateInfo(VkDeviceGroupSwapchainCreateInfoKHR* pInfo, const void* pNext, VkDeviceGroupPresentModeFlagsKHR modes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
     pInfo->pNext = pNext;
     pInfo->modes = modes;
 }
 void cvkInitDeviceMemoryOpaqueCaptureAddressInfo(VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo, const void* pNext, VkDeviceMemory memory)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
     pInfo->pNext  = pNext;
     pInfo->memory = memory;
 }
 void cvkInitDeviceQueueCreateInfo(VkDeviceQueueCreateInfo* pInfo, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueCount, const float* pQueuePriorities)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     pInfo->pNext            = pNext;
     pInfo->flags            = flags;
@@ -3503,8 +2679,6 @@ void cvkInitDeviceQueueCreateInfo(VkDeviceQueueCreateInfo* pInfo, const void* pN
 }
 void cvkInitDeviceQueueInfo2(VkDeviceQueueInfo2* pInfo, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
     pInfo->pNext            = pNext;
     pInfo->flags            = flags;
@@ -3513,8 +2687,6 @@ void cvkInitDeviceQueueInfo2(VkDeviceQueueInfo2* pInfo, const void* pNext, VkDev
 }
 void cvkInitDisplayModeCreateInfo(VkDisplayModeCreateInfoKHR* pInfo, const void* pNext, VkDisplayModeCreateFlagsKHR flags, VkDisplayModeParametersKHR parameters)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->flags      = flags;
@@ -3531,8 +2703,6 @@ void cvkInitDisplaySurfaceCreateInfo(VkDisplaySurfaceCreateInfoKHR* pInfo,
                                      VkDisplayPlaneAlphaFlagBitsKHR alphaMode,
                                      VkExtent2D                     imageExtent)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -3546,38 +2716,28 @@ void cvkInitDisplaySurfaceCreateInfo(VkDisplaySurfaceCreateInfoKHR* pInfo,
 }
 void cvkInitDrmFormatModifierPropertiesList2(VkDrmFormatModifierPropertiesList2EXT* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT;
     pInfo->pNext = pNext;
 }
 void cvkInitDrmFormatModifierPropertiesList(VkDrmFormatModifierPropertiesListEXT* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
     pInfo->pNext = pNext;
 }
 void cvkInitEventCreateInfo(VkEventCreateInfo* pInfo, const void* pNext, VkEventCreateFlags flags)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
     pInfo->pNext = pNext;
     pInfo->flags = flags;
 }
 void cvkInitExportFenceCreateInfo(VkExportFenceCreateInfo* pInfo, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
 }
 void cvkInitExportMemoryAllocateInfo(VkExportMemoryAllocateInfo* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlags handleTypes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
@@ -3585,8 +2745,6 @@ void cvkInitExportMemoryAllocateInfo(VkExportMemoryAllocateInfo* pInfo, const vo
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
     pInfo->pNext       = pNext;
     pInfo->pAttributes = pAttributes;
@@ -3596,8 +2754,6 @@ void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo,
 #endif
 void cvkInitExportSemaphoreCreateInfo(VkExportSemaphoreCreateInfo* pInfo, const void* pNext, VkExternalSemaphoreHandleTypeFlags handleTypes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
@@ -3605,8 +2761,6 @@ void cvkInitExportSemaphoreCreateInfo(VkExportSemaphoreCreateInfo* pInfo, const 
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
     pInfo->pNext       = pNext;
     pInfo->pAttributes = pAttributes;
@@ -3616,60 +2770,44 @@ void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* 
 #endif
 void cvkInitExternalBufferProperties(VkExternalBufferProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitExternalFenceProperties(VkExternalFenceProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitExternalImageFormatProperties(VkExternalImageFormatProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitExternalMemoryBufferCreateInfo(VkExternalMemoryBufferCreateInfo* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlags handleTypes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
 }
 void cvkInitExternalMemoryImageCreateInfo(VkExternalMemoryImageCreateInfo* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlags handleTypes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
 }
 void cvkInitExternalSemaphoreProperties(VkExternalSemaphoreProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitFenceCreateInfo(VkFenceCreateInfo* pInfo, const void* pNext, VkFenceCreateFlags flags)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     pInfo->pNext = pNext;
     pInfo->flags = flags;
 }
 void cvkInitFormatProperties2(VkFormatProperties2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
@@ -3683,8 +2821,6 @@ void cvkInitFramebufferAttachmentImageInfo(VkFramebufferAttachmentImageInfo* pIn
                                            uint32_t                          viewFormatCount,
                                            const VkFormat*                   pViewFormats)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -3700,8 +2836,6 @@ void cvkInitFramebufferAttachmentsCreateInfo(VkFramebufferAttachmentsCreateInfo*
                                              uint32_t                                attachmentImageInfoCount,
                                              const VkFramebufferAttachmentImageInfo* pAttachmentImageInfos)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                    = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
     pInfo->pNext                    = pNext;
     pInfo->attachmentImageInfoCount = attachmentImageInfoCount;
@@ -3717,8 +2851,6 @@ void cvkInitFramebufferCreateInfo(VkFramebufferCreateInfo* pInfo,
                                   uint32_t                 height,
                                   uint32_t                 layers)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -3749,8 +2881,6 @@ void cvkInitGraphicsPipelineCreateInfo(VkGraphicsPipelineCreateInfo*            
                                        VkPipeline                                    basePipelineHandle,
                                        int32_t                                       basePipelineIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pInfo->pNext               = pNext;
     pInfo->flags               = flags;
@@ -3773,8 +2903,6 @@ void cvkInitGraphicsPipelineCreateInfo(VkGraphicsPipelineCreateInfo*            
 }
 void cvkInitHeadlessSurfaceCreateInfo(VkHeadlessSurfaceCreateInfoEXT* pInfo, const void* pNext, VkHeadlessSurfaceCreateFlagsEXT flags)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
     pInfo->pNext = pNext;
     pInfo->flags = flags;
@@ -3795,8 +2923,6 @@ void cvkInitImageCreateInfo(VkImageCreateInfo*    pInfo,
                             const uint32_t*       pQueueFamilyIndices,
                             VkImageLayout         initialLayout)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     pInfo->pNext                 = pNext;
     pInfo->flags                 = flags;
@@ -3819,8 +2945,6 @@ void cvkInitImageDrmFormatModifierExplicitCreateInfo(VkImageDrmFormatModifierExp
                                                      uint32_t                                       drmFormatModifierPlaneCount,
                                                      const VkSubresourceLayout*                     pPlaneLayouts)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                       = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
     pInfo->pNext                       = pNext;
     pInfo->drmFormatModifier           = drmFormatModifier;
@@ -3829,8 +2953,6 @@ void cvkInitImageDrmFormatModifierExplicitCreateInfo(VkImageDrmFormatModifierExp
 }
 void cvkInitImageDrmFormatModifierListCreateInfo(VkImageDrmFormatModifierListCreateInfoEXT* pInfo, const void* pNext, uint32_t drmFormatModifierCount, const uint64_t* pDrmFormatModifiers)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                  = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
     pInfo->pNext                  = pNext;
     pInfo->drmFormatModifierCount = drmFormatModifierCount;
@@ -3838,15 +2960,11 @@ void cvkInitImageDrmFormatModifierListCreateInfo(VkImageDrmFormatModifierListCre
 }
 void cvkInitImageDrmFormatModifierProperties(VkImageDrmFormatModifierPropertiesEXT* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
     pInfo->pNext = pNext;
 }
 void cvkInitImageFormatListCreateInfo(VkImageFormatListCreateInfo* pInfo, const void* pNext, uint32_t viewFormatCount, const VkFormat* pViewFormats)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
     pInfo->pNext           = pNext;
     pInfo->viewFormatCount = viewFormatCount;
@@ -3854,8 +2972,6 @@ void cvkInitImageFormatListCreateInfo(VkImageFormatListCreateInfo* pInfo, const 
 }
 void cvkInitImageFormatProperties2(VkImageFormatProperties2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
@@ -3870,8 +2986,6 @@ void cvkInitImageMemoryBarrier(VkImageMemoryBarrier*   pInfo,
                                VkImage                 image,
                                VkImageSubresourceRange subresourceRange)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     pInfo->pNext               = pNext;
     pInfo->srcAccessMask       = srcAccessMask;
@@ -3885,40 +2999,30 @@ void cvkInitImageMemoryBarrier(VkImageMemoryBarrier*   pInfo,
 }
 void cvkInitImageMemoryRequirementsInfo2(VkImageMemoryRequirementsInfo2* pInfo, const void* pNext, VkImage image)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
     pInfo->pNext = pNext;
     pInfo->image = image;
 }
 void cvkInitImagePlaneMemoryRequirementsInfo(VkImagePlaneMemoryRequirementsInfo* pInfo, const void* pNext, VkImageAspectFlagBits planeAspect)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType       = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
     pInfo->pNext       = pNext;
     pInfo->planeAspect = planeAspect;
 }
 void cvkInitImageSparseMemoryRequirementsInfo2(VkImageSparseMemoryRequirementsInfo2* pInfo, const void* pNext, VkImage image)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
     pInfo->pNext = pNext;
     pInfo->image = image;
 }
 void cvkInitImageStencilUsageCreateInfo(VkImageStencilUsageCreateInfo* pInfo, const void* pNext, VkImageUsageFlags stencilUsage)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
     pInfo->pNext        = pNext;
     pInfo->stencilUsage = stencilUsage;
 }
 void cvkInitImageSwapchainCreateInfo(VkImageSwapchainCreateInfoKHR* pInfo, const void* pNext, VkSwapchainKHR swapchain)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType     = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
     pInfo->pNext     = pNext;
     pInfo->swapchain = swapchain;
@@ -3932,8 +3036,6 @@ void cvkInitImageViewCreateInfo(VkImageViewCreateInfo*  pInfo,
                                 VkComponentMapping      components,
                                 VkImageSubresourceRange subresourceRange)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     pInfo->pNext            = pNext;
     pInfo->flags            = flags;
@@ -3945,16 +3047,12 @@ void cvkInitImageViewCreateInfo(VkImageViewCreateInfo*  pInfo,
 }
 void cvkInitImageViewUsageCreateInfo(VkImageViewUsageCreateInfo* pInfo, const void* pNext, VkImageUsageFlags usage)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
     pInfo->pNext = pNext;
     pInfo->usage = usage;
 }
 void cvkInitImportMemoryFdInfo(VkImportMemoryFdInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, int fd)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->handleType = handleType;
@@ -3963,8 +3061,6 @@ void cvkInitImportMemoryFdInfo(VkImportMemoryFdInfoKHR* pInfo, const void* pNext
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->handleType = handleType;
@@ -3974,8 +3070,6 @@ void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo,
 #endif
 void cvkInitImportSemaphoreFdInfo(VkImportSemaphoreFdInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->semaphore  = semaphore;
@@ -3992,8 +3086,6 @@ void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR* 
                                            HANDLE                                handle,
                                            LPCWSTR                               name)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->semaphore  = semaphore;
@@ -4012,8 +3104,6 @@ void cvkInitInstanceCreateInfo(VkInstanceCreateInfo*    pInfo,
                                uint32_t                 enabledExtensionCount,
                                const char* const*       ppEnabledExtensionNames)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     pInfo->pNext                   = pNext;
     pInfo->flags                   = flags;
@@ -4025,8 +3115,6 @@ void cvkInitInstanceCreateInfo(VkInstanceCreateInfo*    pInfo,
 }
 void cvkInitMappedMemoryRange(VkMappedMemoryRange* pInfo, const void* pNext, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
     pInfo->pNext  = pNext;
     pInfo->memory = memory;
@@ -4035,8 +3123,6 @@ void cvkInitMappedMemoryRange(VkMappedMemoryRange* pInfo, const void* pNext, VkD
 }
 void cvkInitMemoryAllocateFlagsInfo(VkMemoryAllocateFlagsInfo* pInfo, const void* pNext, VkMemoryAllocateFlags flags, uint32_t deviceMask)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
     pInfo->pNext      = pNext;
     pInfo->flags      = flags;
@@ -4044,8 +3130,6 @@ void cvkInitMemoryAllocateFlagsInfo(VkMemoryAllocateFlagsInfo* pInfo, const void
 }
 void cvkInitMemoryAllocateInfo(VkMemoryAllocateInfo* pInfo, const void* pNext, VkDeviceSize allocationSize, uint32_t memoryTypeIndex)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     pInfo->pNext           = pNext;
     pInfo->allocationSize  = allocationSize;
@@ -4053,8 +3137,6 @@ void cvkInitMemoryAllocateInfo(VkMemoryAllocateInfo* pInfo, const void* pNext, V
 }
 void cvkInitMemoryBarrier(VkMemoryBarrier* pInfo, const void* pNext, VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
     pInfo->pNext         = pNext;
     pInfo->srcAccessMask = srcAccessMask;
@@ -4062,8 +3144,6 @@ void cvkInitMemoryBarrier(VkMemoryBarrier* pInfo, const void* pNext, VkAccessFla
 }
 void cvkInitMemoryDedicatedAllocateInfo(VkMemoryDedicatedAllocateInfo* pInfo, const void* pNext, VkImage image, VkBuffer buffer)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
     pInfo->pNext  = pNext;
     pInfo->image  = image;
@@ -4071,22 +3151,16 @@ void cvkInitMemoryDedicatedAllocateInfo(VkMemoryDedicatedAllocateInfo* pInfo, co
 }
 void cvkInitMemoryDedicatedRequirements(VkMemoryDedicatedRequirements* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
     pInfo->pNext = pNext;
 }
 void cvkInitMemoryFdProperties(VkMemoryFdPropertiesKHR* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
     pInfo->pNext = pNext;
 }
 void cvkInitMemoryGetFdInfo(VkMemoryGetFdInfoKHR* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->memory     = memory;
@@ -4095,8 +3169,6 @@ void cvkInitMemoryGetFdInfo(VkMemoryGetFdInfoKHR* pInfo, const void* pNext, VkDe
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitMemoryGetWin32HandleInfo(VkMemoryGetWin32HandleInfoKHR* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->memory     = memory;
@@ -4105,24 +3177,18 @@ void cvkInitMemoryGetWin32HandleInfo(VkMemoryGetWin32HandleInfoKHR* pInfo, const
 #endif
 void cvkInitMemoryOpaqueCaptureAddressAllocateInfo(VkMemoryOpaqueCaptureAddressAllocateInfo* pInfo, const void* pNext, uint64_t opaqueCaptureAddress)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
     pInfo->pNext                = pNext;
     pInfo->opaqueCaptureAddress = opaqueCaptureAddress;
 }
 void cvkInitMemoryRequirements2(VkMemoryRequirements2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     pInfo->pNext = pNext;
 }
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
     pInfo->pNext = pNext;
 }
@@ -4134,8 +3200,6 @@ void cvkInitPhysicalDevice16BitStorageFeatures(VkPhysicalDevice16BitStorageFeatu
                                                VkBool32                              storagePushConstant16,
                                                VkBool32                              storageInputOutput16)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
     pInfo->pNext                              = pNext;
     pInfo->storageBuffer16BitAccess           = storageBuffer16BitAccess;
@@ -4149,8 +3213,6 @@ void cvkInitPhysicalDevice8BitStorageFeatures(VkPhysicalDevice8BitStorageFeature
                                               VkBool32                             uniformAndStorageBuffer8BitAccess,
                                               VkBool32                             storagePushConstant8)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
     pInfo->pNext                             = pNext;
     pInfo->storageBuffer8BitAccess           = storageBuffer8BitAccess;
@@ -4163,8 +3225,6 @@ void cvkInitPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDeviceBufferDevi
                                                       VkBool32                                     bufferDeviceAddressCaptureReplay,
                                                       VkBool32                                     bufferDeviceAddressMultiDevice)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
     pInfo->pNext                            = pNext;
     pInfo->bufferDeviceAddress              = bufferDeviceAddress;
@@ -4173,8 +3233,6 @@ void cvkInitPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDeviceBufferDevi
 }
 void cvkInitPhysicalDeviceDepthStencilResolveProperties(VkPhysicalDeviceDepthStencilResolveProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
     pInfo->pNext = pNext;
 }
@@ -4201,8 +3259,6 @@ void cvkInitPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDeviceDescriptorI
                                                      VkBool32                                    descriptorBindingVariableDescriptorCount,
                                                      VkBool32                                    runtimeDescriptorArray)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                                              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
     pInfo->pNext                                              = pNext;
     pInfo->shaderInputAttachmentArrayDynamicIndexing          = shaderInputAttachmentArrayDynamicIndexing;
@@ -4228,15 +3284,11 @@ void cvkInitPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDeviceDescriptorI
 }
 void cvkInitPhysicalDeviceDescriptorIndexingProperties(VkPhysicalDeviceDescriptorIndexingProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceDriverProperties(VkPhysicalDeviceDriverProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
     pInfo->pNext = pNext;
 }
@@ -4246,8 +3298,6 @@ void cvkInitPhysicalDeviceExternalBufferInfo(VkPhysicalDeviceExternalBufferInfo*
                                              VkBufferUsageFlags                  usage,
                                              VkExternalMemoryHandleTypeFlagBits  handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
     pInfo->pNext      = pNext;
     pInfo->flags      = flags;
@@ -4256,62 +3306,46 @@ void cvkInitPhysicalDeviceExternalBufferInfo(VkPhysicalDeviceExternalBufferInfo*
 }
 void cvkInitPhysicalDeviceExternalFenceInfo(VkPhysicalDeviceExternalFenceInfo* pInfo, const void* pNext, VkExternalFenceHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
     pInfo->pNext      = pNext;
     pInfo->handleType = handleType;
 }
 void cvkInitPhysicalDeviceExternalImageFormatInfo(VkPhysicalDeviceExternalImageFormatInfo* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
     pInfo->pNext      = pNext;
     pInfo->handleType = handleType;
 }
 void cvkInitPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDeviceExternalSemaphoreInfo* pInfo, const void* pNext, VkExternalSemaphoreHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
     pInfo->pNext      = pNext;
     pInfo->handleType = handleType;
 }
 void cvkInitPhysicalDeviceFeatures2(VkPhysicalDeviceFeatures2* pInfo, void* pNext, VkPhysicalDeviceFeatures features)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
     pInfo->pNext    = pNext;
     pInfo->features = features;
 }
 void cvkInitPhysicalDeviceFloatControlsProperties(VkPhysicalDeviceFloatControlsProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceGroupProperties(VkPhysicalDeviceGroupProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceHostQueryResetFeatures(VkPhysicalDeviceHostQueryResetFeatures* pInfo, void* pNext, VkBool32 hostQueryReset)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
     pInfo->pNext          = pNext;
     pInfo->hostQueryReset = hostQueryReset;
 }
 void cvkInitPhysicalDeviceIDProperties(VkPhysicalDeviceIDProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
     pInfo->pNext = pNext;
 }
@@ -4322,8 +3356,6 @@ void cvkInitPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDeviceImageDrmFor
                                                      uint32_t                                       queueFamilyIndexCount,
                                                      const uint32_t*                                pQueueFamilyIndices)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
     pInfo->pNext                 = pNext;
     pInfo->drmFormatModifier     = drmFormatModifier;
@@ -4339,8 +3371,6 @@ void cvkInitPhysicalDeviceImageFormatInfo2(VkPhysicalDeviceImageFormatInfo2* pIn
                                            VkImageUsageFlags                 usage,
                                            VkImageCreateFlags                flags)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
     pInfo->pNext  = pNext;
     pInfo->format = format;
@@ -4351,30 +3381,22 @@ void cvkInitPhysicalDeviceImageFormatInfo2(VkPhysicalDeviceImageFormatInfo2* pIn
 }
 void cvkInitPhysicalDeviceImagelessFramebufferFeatures(VkPhysicalDeviceImagelessFramebufferFeatures* pInfo, void* pNext, VkBool32 imagelessFramebuffer)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
     pInfo->pNext                = pNext;
     pInfo->imagelessFramebuffer = imagelessFramebuffer;
 }
 void cvkInitPhysicalDeviceMaintenance3Properties(VkPhysicalDeviceMaintenance3Properties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceMemoryProperties2(VkPhysicalDeviceMemoryProperties2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceMultiviewFeatures(VkPhysicalDeviceMultiviewFeatures* pInfo, void* pNext, VkBool32 multiview, VkBool32 multiviewGeometryShader, VkBool32 multiviewTessellationShader)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
     pInfo->pNext                       = pNext;
     pInfo->multiview                   = multiview;
@@ -4383,82 +3405,60 @@ void cvkInitPhysicalDeviceMultiviewFeatures(VkPhysicalDeviceMultiviewFeatures* p
 }
 void cvkInitPhysicalDeviceMultiviewProperties(VkPhysicalDeviceMultiviewProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDevicePCIBusInfoProperties(VkPhysicalDevicePCIBusInfoPropertiesEXT* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDevicePointClippingProperties(VkPhysicalDevicePointClippingProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceProperties2(VkPhysicalDeviceProperties2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceProtectedMemoryFeatures(VkPhysicalDeviceProtectedMemoryFeatures* pInfo, void* pNext, VkBool32 protectedMemory)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
     pInfo->pNext           = pNext;
     pInfo->protectedMemory = protectedMemory;
 }
 void cvkInitPhysicalDeviceProtectedMemoryProperties(VkPhysicalDeviceProtectedMemoryProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceSamplerFilterMinmaxProperties(VkPhysicalDeviceSamplerFilterMinmaxProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceSamplerYcbcrConversionFeatures(VkPhysicalDeviceSamplerYcbcrConversionFeatures* pInfo, void* pNext, VkBool32 samplerYcbcrConversion)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
     pInfo->pNext                  = pNext;
     pInfo->samplerYcbcrConversion = samplerYcbcrConversion;
 }
 void cvkInitPhysicalDeviceScalarBlockLayoutFeatures(VkPhysicalDeviceScalarBlockLayoutFeatures* pInfo, void* pNext, VkBool32 scalarBlockLayout)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
     pInfo->pNext             = pNext;
     pInfo->scalarBlockLayout = scalarBlockLayout;
 }
 void cvkInitPhysicalDeviceSeparateDepthStencilLayoutsFeatures(VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pInfo, void* pNext, VkBool32 separateDepthStencilLayouts)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
     pInfo->pNext                       = pNext;
     pInfo->separateDepthStencilLayouts = separateDepthStencilLayouts;
 }
 void cvkInitPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDeviceShaderAtomicInt64Features* pInfo, void* pNext, VkBool32 shaderBufferInt64Atomics, VkBool32 shaderSharedInt64Atomics)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
     pInfo->pNext                    = pNext;
     pInfo->shaderBufferInt64Atomics = shaderBufferInt64Atomics;
@@ -4466,16 +3466,12 @@ void cvkInitPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDeviceShaderAtomic
 }
 void cvkInitPhysicalDeviceShaderDrawParametersFeatures(VkPhysicalDeviceShaderDrawParametersFeatures* pInfo, void* pNext, VkBool32 shaderDrawParameters)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
     pInfo->pNext                = pNext;
     pInfo->shaderDrawParameters = shaderDrawParameters;
 }
 void cvkInitPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDeviceShaderFloat16Int8Features* pInfo, void* pNext, VkBool32 shaderFloat16, VkBool32 shaderInt8)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
     pInfo->pNext         = pNext;
     pInfo->shaderFloat16 = shaderFloat16;
@@ -4483,8 +3479,6 @@ void cvkInitPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDeviceShaderFloat1
 }
 void cvkInitPhysicalDeviceShaderSubgroupExtendedTypesFeatures(VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pInfo, void* pNext, VkBool32 shaderSubgroupExtendedTypes)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
     pInfo->pNext                       = pNext;
     pInfo->shaderSubgroupExtendedTypes = shaderSubgroupExtendedTypes;
@@ -4497,8 +3491,6 @@ void cvkInitPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDeviceSparseImageForm
                                                  VkImageUsageFlags                       usage,
                                                  VkImageTiling                           tiling)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
     pInfo->pNext   = pNext;
     pInfo->format  = format;
@@ -4509,38 +3501,28 @@ void cvkInitPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDeviceSparseImageForm
 }
 void cvkInitPhysicalDeviceSubgroupProperties(VkPhysicalDeviceSubgroupProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceTimelineSemaphoreFeatures(VkPhysicalDeviceTimelineSemaphoreFeatures* pInfo, void* pNext, VkBool32 timelineSemaphore)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
     pInfo->pNext             = pNext;
     pInfo->timelineSemaphore = timelineSemaphore;
 }
 void cvkInitPhysicalDeviceTimelineSemaphoreProperties(VkPhysicalDeviceTimelineSemaphoreProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitPhysicalDeviceUniformBufferStandardLayoutFeatures(VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pInfo, void* pNext, VkBool32 uniformBufferStandardLayout)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
     pInfo->pNext                       = pNext;
     pInfo->uniformBufferStandardLayout = uniformBufferStandardLayout;
 }
 void cvkInitPhysicalDeviceVariablePointersFeatures(VkPhysicalDeviceVariablePointersFeatures* pInfo, void* pNext, VkBool32 variablePointersStorageBuffer, VkBool32 variablePointers)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
     pInfo->pNext                         = pNext;
     pInfo->variablePointersStorageBuffer = variablePointersStorageBuffer;
@@ -4561,8 +3543,6 @@ void cvkInitPhysicalDeviceVulkan11Features(VkPhysicalDeviceVulkan11Features* pIn
                                            VkBool32                          samplerYcbcrConversion,
                                            VkBool32                          shaderDrawParameters)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
     pInfo->pNext                              = pNext;
     pInfo->storageBuffer16BitAccess           = storageBuffer16BitAccess;
@@ -4580,8 +3560,6 @@ void cvkInitPhysicalDeviceVulkan11Features(VkPhysicalDeviceVulkan11Features* pIn
 }
 void cvkInitPhysicalDeviceVulkan11Properties(VkPhysicalDeviceVulkan11Properties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
     pInfo->pNext = pNext;
 }
@@ -4635,8 +3613,6 @@ void cvkInitPhysicalDeviceVulkan12Features(VkPhysicalDeviceVulkan12Features* pIn
                                            VkBool32                          shaderOutputLayer,
                                            VkBool32                          subgroupBroadcastDynamicId)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                                              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
     pInfo->pNext                                              = pNext;
     pInfo->samplerMirrorClampToEdge                           = samplerMirrorClampToEdge;
@@ -4689,8 +3665,6 @@ void cvkInitPhysicalDeviceVulkan12Features(VkPhysicalDeviceVulkan12Features* pIn
 }
 void cvkInitPhysicalDeviceVulkan12Properties(VkPhysicalDeviceVulkan12Properties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
     pInfo->pNext = pNext;
 }
@@ -4700,8 +3674,6 @@ void cvkInitPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDeviceVulkanMemory
                                                     VkBool32                                   vulkanMemoryModelDeviceScope,
                                                     VkBool32                                   vulkanMemoryModelAvailabilityVisibilityChains)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                                         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
     pInfo->pNext                                         = pNext;
     pInfo->vulkanMemoryModel                             = vulkanMemoryModel;
@@ -4710,8 +3682,6 @@ void cvkInitPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDeviceVulkanMemory
 }
 void cvkInitPipelineCacheCreateInfo(VkPipelineCacheCreateInfo* pInfo, const void* pNext, VkPipelineCacheCreateFlags flags, size_t initialDataSize, const void* pInitialData)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -4727,8 +3697,6 @@ void cvkInitPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInf
                                               const VkPipelineColorBlendAttachmentState* pAttachments,
                                               const float                                blendConstants[4])
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -4751,8 +3719,6 @@ void cvkInitPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreat
                                                 float                                  minDepthBounds,
                                                 float                                  maxDepthBounds)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     pInfo->pNext                 = pNext;
     pInfo->flags                 = flags;
@@ -4772,8 +3738,6 @@ void cvkInitPipelineDynamicStateCreateInfo(VkPipelineDynamicStateCreateInfo* pIn
                                            uint32_t                          dynamicStateCount,
                                            const VkDynamicState*             pDynamicStates)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     pInfo->pNext             = pNext;
     pInfo->flags             = flags;
@@ -4786,8 +3750,6 @@ void cvkInitPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCre
                                                  VkPrimitiveTopology                     topology,
                                                  VkBool32                                primitiveRestartEnable)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     pInfo->pNext                  = pNext;
     pInfo->flags                  = flags;
@@ -4802,8 +3764,6 @@ void cvkInitPipelineLayoutCreateInfo(VkPipelineLayoutCreateInfo*  pInfo,
                                      uint32_t                     pushConstantRangeCount,
                                      const VkPushConstantRange*   pPushConstantRanges)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pInfo->pNext                  = pNext;
     pInfo->flags                  = flags;
@@ -4822,8 +3782,6 @@ void cvkInitPipelineMultisampleStateCreateInfo(VkPipelineMultisampleStateCreateI
                                                VkBool32                              alphaToCoverageEnable,
                                                VkBool32                              alphaToOneEnable)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     pInfo->pNext                 = pNext;
     pInfo->flags                 = flags;
@@ -4848,8 +3806,6 @@ void cvkInitPipelineRasterizationStateCreateInfo(VkPipelineRasterizationStateCre
                                                  float                                   depthBiasSlopeFactor,
                                                  float                                   lineWidth)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                   = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     pInfo->pNext                   = pNext;
     pInfo->flags                   = flags;
@@ -4872,8 +3828,6 @@ void cvkInitPipelineShaderStageCreateInfo(VkPipelineShaderStageCreateInfo* pInfo
                                           const char*                      pName,
                                           const VkSpecializationInfo*      pSpecializationInfo)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType               = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     pInfo->pNext               = pNext;
     pInfo->flags               = flags;
@@ -4884,16 +3838,12 @@ void cvkInitPipelineShaderStageCreateInfo(VkPipelineShaderStageCreateInfo* pInfo
 }
 void cvkInitPipelineTessellationDomainOriginStateCreateInfo(VkPipelineTessellationDomainOriginStateCreateInfo* pInfo, const void* pNext, VkTessellationDomainOrigin domainOrigin)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType        = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
     pInfo->pNext        = pNext;
     pInfo->domainOrigin = domainOrigin;
 }
 void cvkInitPipelineTessellationStateCreateInfo(VkPipelineTessellationStateCreateInfo* pInfo, const void* pNext, VkPipelineTessellationStateCreateFlags flags, uint32_t patchControlPoints)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
     pInfo->pNext              = pNext;
     pInfo->flags              = flags;
@@ -4907,8 +3857,6 @@ void cvkInitPipelineVertexInputStateCreateInfo(VkPipelineVertexInputStateCreateI
                                                uint32_t                                 vertexAttributeDescriptionCount,
                                                const VkVertexInputAttributeDescription* pVertexAttributeDescriptions)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     pInfo->pNext                           = pNext;
     pInfo->flags                           = flags;
@@ -4925,8 +3873,6 @@ void cvkInitPipelineViewportStateCreateInfo(VkPipelineViewportStateCreateInfo* p
                                             uint32_t                           scissorCount,
                                             const VkRect2D*                    pScissors)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     pInfo->pNext         = pNext;
     pInfo->flags         = flags;
@@ -4944,8 +3890,6 @@ void cvkInitPresentInfo(VkPresentInfoKHR*     pInfo,
                         const uint32_t*       pImageIndices,
                         VkResult*             pResults)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     pInfo->pNext              = pNext;
     pInfo->waitSemaphoreCount = waitSemaphoreCount;
@@ -4957,8 +3901,6 @@ void cvkInitPresentInfo(VkPresentInfoKHR*     pInfo,
 }
 void cvkInitProtectedSubmitInfo(VkProtectedSubmitInfo* pInfo, const void* pNext, VkBool32 protectedSubmit)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
     pInfo->pNext           = pNext;
     pInfo->protectedSubmit = protectedSubmit;
@@ -4970,8 +3912,6 @@ void cvkInitQueryPoolCreateInfo(VkQueryPoolCreateInfo*        pInfo,
                                 uint32_t                      queryCount,
                                 VkQueryPipelineStatisticFlags pipelineStatistics)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType              = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
     pInfo->pNext              = pNext;
     pInfo->flags              = flags;
@@ -4981,15 +3921,11 @@ void cvkInitQueryPoolCreateInfo(VkQueryPoolCreateInfo*        pInfo,
 }
 void cvkInitQueueFamilyProperties2(VkQueueFamilyProperties2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
 void cvkInitRenderPassAttachmentBeginInfo(VkRenderPassAttachmentBeginInfo* pInfo, const void* pNext, uint32_t attachmentCount, const VkImageView* pAttachments)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
     pInfo->pNext           = pNext;
     pInfo->attachmentCount = attachmentCount;
@@ -5003,8 +3939,6 @@ void cvkInitRenderPassBeginInfo(VkRenderPassBeginInfo* pInfo,
                                 uint32_t               clearValueCount,
                                 const VkClearValue*    pClearValues)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     pInfo->pNext           = pNext;
     pInfo->renderPass      = renderPass;
@@ -5023,8 +3957,6 @@ void cvkInitRenderPassCreateInfo(VkRenderPassCreateInfo*        pInfo,
                                  uint32_t                       dependencyCount,
                                  const VkSubpassDependency*     pDependencies)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     pInfo->pNext           = pNext;
     pInfo->flags           = flags;
@@ -5047,8 +3979,6 @@ void cvkInitRenderPassCreateInfo2(VkRenderPassCreateInfo2*        pInfo,
                                   uint32_t                        correlatedViewMaskCount,
                                   const uint32_t*                 pCorrelatedViewMasks)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                   = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
     pInfo->pNext                   = pNext;
     pInfo->flags                   = flags;
@@ -5066,8 +3996,6 @@ void cvkInitRenderPassInputAttachmentAspectCreateInfo(VkRenderPassInputAttachmen
                                                       uint32_t                                     aspectReferenceCount,
                                                       const VkInputAttachmentAspectReference*      pAspectReferences)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
     pInfo->pNext                = pNext;
     pInfo->aspectReferenceCount = aspectReferenceCount;
@@ -5082,8 +4010,6 @@ void cvkInitRenderPassMultiviewCreateInfo(VkRenderPassMultiviewCreateInfo* pInfo
                                           uint32_t                         correlationMaskCount,
                                           const uint32_t*                  pCorrelationMasks)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
     pInfo->pNext                = pNext;
     pInfo->subpassCount         = subpassCount;
@@ -5112,8 +4038,6 @@ void cvkInitSamplerCreateInfo(VkSamplerCreateInfo* pInfo,
                               VkBorderColor        borderColor,
                               VkBool32             unnormalizedCoordinates)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                   = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     pInfo->pNext                   = pNext;
     pInfo->flags                   = flags;
@@ -5135,8 +4059,6 @@ void cvkInitSamplerCreateInfo(VkSamplerCreateInfo* pInfo,
 }
 void cvkInitSamplerReductionModeCreateInfo(VkSamplerReductionModeCreateInfo* pInfo, const void* pNext, VkSamplerReductionMode reductionMode)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
     pInfo->pNext         = pNext;
     pInfo->reductionMode = reductionMode;
@@ -5152,8 +4074,6 @@ void cvkInitSamplerYcbcrConversionCreateInfo(VkSamplerYcbcrConversionCreateInfo*
                                              VkFilter                            chromaFilter,
                                              VkBool32                            forceExplicitReconstruction)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                       = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
     pInfo->pNext                       = pNext;
     pInfo->format                      = format;
@@ -5167,31 +4087,23 @@ void cvkInitSamplerYcbcrConversionCreateInfo(VkSamplerYcbcrConversionCreateInfo*
 }
 void cvkInitSamplerYcbcrConversionImageFormatProperties(VkSamplerYcbcrConversionImageFormatProperties* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
     pInfo->pNext = pNext;
 }
 void cvkInitSamplerYcbcrConversionInfo(VkSamplerYcbcrConversionInfo* pInfo, const void* pNext, VkSamplerYcbcrConversion conversion)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
     pInfo->pNext      = pNext;
     pInfo->conversion = conversion;
 }
 void cvkInitSemaphoreCreateInfo(VkSemaphoreCreateInfo* pInfo, const void* pNext, VkSemaphoreCreateFlags flags)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     pInfo->pNext = pNext;
     pInfo->flags = flags;
 }
 void cvkInitSemaphoreGetFdInfo(VkSemaphoreGetFdInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->semaphore  = semaphore;
@@ -5200,8 +4112,6 @@ void cvkInitSemaphoreGetFdInfo(VkSemaphoreGetFdInfoKHR* pInfo, const void* pNext
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->semaphore  = semaphore;
@@ -5210,8 +4120,6 @@ void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo,
 #endif
 void cvkInitSemaphoreSignalInfo(VkSemaphoreSignalInfo* pInfo, const void* pNext, VkSemaphore semaphore, uint64_t value)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
     pInfo->pNext     = pNext;
     pInfo->semaphore = semaphore;
@@ -5219,8 +4127,6 @@ void cvkInitSemaphoreSignalInfo(VkSemaphoreSignalInfo* pInfo, const void* pNext,
 }
 void cvkInitSemaphoreTypeCreateInfo(VkSemaphoreTypeCreateInfo* pInfo, const void* pNext, VkSemaphoreType semaphoreType, uint64_t initialValue)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
     pInfo->pNext         = pNext;
     pInfo->semaphoreType = semaphoreType;
@@ -5228,8 +4134,6 @@ void cvkInitSemaphoreTypeCreateInfo(VkSemaphoreTypeCreateInfo* pInfo, const void
 }
 void cvkInitSemaphoreWaitInfo(VkSemaphoreWaitInfo* pInfo, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
     pInfo->pNext          = pNext;
     pInfo->flags          = flags;
@@ -5239,8 +4143,6 @@ void cvkInitSemaphoreWaitInfo(VkSemaphoreWaitInfo* pInfo, const void* pNext, VkS
 }
 void cvkInitShaderModuleCreateInfo(VkShaderModuleCreateInfo* pInfo, const void* pNext, VkShaderModuleCreateFlags flags, size_t codeSize, const uint32_t* pCode)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     pInfo->pNext    = pNext;
     pInfo->flags    = flags;
@@ -5249,15 +4151,11 @@ void cvkInitShaderModuleCreateInfo(VkShaderModuleCreateInfo* pInfo, const void* 
 }
 void cvkInitSparseImageFormatProperties2(VkSparseImageFormatProperties2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
 void cvkInitSparseImageMemoryRequirements2(VkSparseImageMemoryRequirements2* pInfo, void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
     pInfo->pNext = pNext;
 }
@@ -5271,8 +4169,6 @@ void cvkInitSubmitInfo(VkSubmitInfo*               pInfo,
                        uint32_t                    signalSemaphoreCount,
                        const VkSemaphore*          pSignalSemaphores)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     pInfo->pNext                = pNext;
     pInfo->waitSemaphoreCount   = waitSemaphoreCount;
@@ -5285,8 +4181,6 @@ void cvkInitSubmitInfo(VkSubmitInfo*               pInfo,
 }
 void cvkInitSubpassBeginInfo(VkSubpassBeginInfo* pInfo, const void* pNext, VkSubpassContents contents)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType    = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
     pInfo->pNext    = pNext;
     pInfo->contents = contents;
@@ -5302,8 +4196,6 @@ void cvkInitSubpassDependency2(VkSubpassDependency2* pInfo,
                                VkDependencyFlags     dependencyFlags,
                                int32_t               viewOffset)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType           = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
     pInfo->pNext           = pNext;
     pInfo->srcSubpass      = srcSubpass;
@@ -5329,8 +4221,6 @@ void cvkInitSubpassDescription2(VkSubpassDescription2*        pInfo,
                                 uint32_t                      preserveAttachmentCount,
                                 const uint32_t*               pPreserveAttachments)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                   = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
     pInfo->pNext                   = pNext;
     pInfo->flags                   = flags;
@@ -5351,8 +4241,6 @@ void cvkInitSubpassDescriptionDepthStencilResolve(VkSubpassDescriptionDepthStenc
                                                   VkResolveModeFlagBits                    stencilResolveMode,
                                                   const VkAttachmentReference2*            pDepthStencilResolveAttachment)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                          = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
     pInfo->pNext                          = pNext;
     pInfo->depthResolveMode               = depthResolveMode;
@@ -5361,8 +4249,6 @@ void cvkInitSubpassDescriptionDepthStencilResolve(VkSubpassDescriptionDepthStenc
 }
 void cvkInitSubpassEndInfo(VkSubpassEndInfo* pInfo, const void* pNext)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
     pInfo->pNext = pNext;
 }
@@ -5385,8 +4271,6 @@ void cvkInitSwapchainCreateInfo(VkSwapchainCreateInfoKHR*     pInfo,
                                 VkBool32                      clipped,
                                 VkSwapchainKHR                oldSwapchain)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     pInfo->pNext                 = pNext;
     pInfo->flags                 = flags;
@@ -5413,8 +4297,6 @@ void cvkInitTimelineSemaphoreSubmitInfo(VkTimelineSemaphoreSubmitInfo* pInfo,
                                         uint32_t                       signalSemaphoreValueCount,
                                         const uint64_t*                pSignalSemaphoreValues)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType                     = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
     pInfo->pNext                     = pNext;
     pInfo->waitSemaphoreValueCount   = waitSemaphoreValueCount;
@@ -5425,8 +4307,6 @@ void cvkInitTimelineSemaphoreSubmitInfo(VkTimelineSemaphoreSubmitInfo* pInfo,
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     pInfo->pNext     = pNext;
     pInfo->flags     = flags;
@@ -5445,8 +4325,6 @@ void cvkInitWriteDescriptorSet(VkWriteDescriptorSet*         pInfo,
                                const VkDescriptorBufferInfo* pBufferInfo,
                                const VkBufferView*           pTexelBufferView)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     pInfo->pNext            = pNext;
     pInfo->dstSet           = dstSet;
@@ -5461,8 +4339,6 @@ void cvkInitWriteDescriptorSet(VkWriteDescriptorSet*         pInfo,
 #if defined(VK_USE_PLATFORM_XLIB_KHR)
 void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
 {
-    CVK_ASSERT(NULL != pInfo);
-
     pInfo->sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     pInfo->pNext  = pNext;
     pInfo->flags  = flags;
@@ -5479,13 +4355,13 @@ void cvkAllocateDescriptorSetVariableDescriptorCountAllocateInfo(VkDevice       
                                                                  const VkDescriptorSetLayout* pSetLayouts,
                                                                  VkDescriptorSet*             pDescriptorSets)
 {
-    VkDescriptorSetVariableDescriptorCountAllocateInfo extension;
+    VkDescriptorSetVariableDescriptorCountAllocateInfo descriptor_set_variable_descriptor_count_allocate_info;
 
-    extension.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
-    extension.pNext              = pNext;
-    extension.descriptorSetCount = variableDescriptorCountDescriptorSetCount;
-    extension.pDescriptorCounts  = pDescriptorCounts;
-    cvkAllocateDescriptorSets(device, &extension, descriptorPool, descriptorSetCount, pSetLayouts, pDescriptorSets);
+    descriptor_set_variable_descriptor_count_allocate_info.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
+    descriptor_set_variable_descriptor_count_allocate_info.pNext              = pNext;
+    descriptor_set_variable_descriptor_count_allocate_info.descriptorSetCount = variableDescriptorCountDescriptorSetCount;
+    descriptor_set_variable_descriptor_count_allocate_info.pDescriptorCounts  = pDescriptorCounts;
+    cvkAllocateDescriptorSets(device, &descriptor_set_variable_descriptor_count_allocate_info, descriptorPool, descriptorSetCount, pSetLayouts, pDescriptorSets);
 }
 void cvkAllocateExportMemoryAllocateInfo(VkDevice                        device,
                                          const void*                     pNext,
@@ -5495,12 +4371,12 @@ void cvkAllocateExportMemoryAllocateInfo(VkDevice                        device,
                                          const VkAllocationCallbacks*    pAllocator,
                                          VkDeviceMemory*                 pMemory)
 {
-    VkExportMemoryAllocateInfo extension;
+    VkExportMemoryAllocateInfo export_memory_allocate_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
-    extension.pNext       = pNext;
-    extension.handleTypes = handleTypes;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    export_memory_allocate_info.sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
+    export_memory_allocate_info.pNext       = pNext;
+    export_memory_allocate_info.handleTypes = handleTypes;
+    cvkAllocateMemory(device, &export_memory_allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 #if (defined(VK_USE_PLATFORM_WIN32_KHR))
 void cvkAllocateExportMemoryWin32HandleInfo(VkDevice                     device,
@@ -5513,14 +4389,14 @@ void cvkAllocateExportMemoryWin32HandleInfo(VkDevice                     device,
                                             const VkAllocationCallbacks* pAllocator,
                                             VkDeviceMemory*              pMemory)
 {
-    VkExportMemoryWin32HandleInfoKHR extension;
+    VkExportMemoryWin32HandleInfoKHR export_memory_win32_handle_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    extension.pNext       = pNext;
-    extension.pAttributes = pAttributes;
-    extension.dwAccess    = dwAccess;
-    extension.name        = name;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    export_memory_win32_handle_info.sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
+    export_memory_win32_handle_info.pNext       = pNext;
+    export_memory_win32_handle_info.pAttributes = pAttributes;
+    export_memory_win32_handle_info.dwAccess    = dwAccess;
+    export_memory_win32_handle_info.name        = name;
+    cvkAllocateMemory(device, &export_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 #endif
 void cvkAllocateImportMemoryFdInfo(VkDevice                           device,
@@ -5532,13 +4408,13 @@ void cvkAllocateImportMemoryFdInfo(VkDevice                           device,
                                    const VkAllocationCallbacks*       pAllocator,
                                    VkDeviceMemory*                    pMemory)
 {
-    VkImportMemoryFdInfoKHR extension;
+    VkImportMemoryFdInfoKHR import_memory_fd_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
-    extension.pNext      = pNext;
-    extension.handleType = handleType;
-    extension.fd         = fd;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    import_memory_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
+    import_memory_fd_info.pNext      = pNext;
+    import_memory_fd_info.handleType = handleType;
+    import_memory_fd_info.fd         = fd;
+    cvkAllocateMemory(device, &import_memory_fd_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 #if (defined(VK_USE_PLATFORM_WIN32_KHR))
 void cvkAllocateImportMemoryWin32HandleInfo(VkDevice                           device,
@@ -5551,14 +4427,14 @@ void cvkAllocateImportMemoryWin32HandleInfo(VkDevice                           d
                                             const VkAllocationCallbacks*       pAllocator,
                                             VkDeviceMemory*                    pMemory)
 {
-    VkImportMemoryWin32HandleInfoKHR extension;
+    VkImportMemoryWin32HandleInfoKHR import_memory_win32_handle_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    extension.pNext      = pNext;
-    extension.handleType = handleType;
-    extension.handle     = handle;
-    extension.name       = name;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    import_memory_win32_handle_info.sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
+    import_memory_win32_handle_info.pNext      = pNext;
+    import_memory_win32_handle_info.handleType = handleType;
+    import_memory_win32_handle_info.handle     = handle;
+    import_memory_win32_handle_info.name       = name;
+    cvkAllocateMemory(device, &import_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 #endif
 void cvkAllocateMemoryAllocateFlagsInfo(VkDevice                     device,
@@ -5570,13 +4446,13 @@ void cvkAllocateMemoryAllocateFlagsInfo(VkDevice                     device,
                                         const VkAllocationCallbacks* pAllocator,
                                         VkDeviceMemory*              pMemory)
 {
-    VkMemoryAllocateFlagsInfo extension;
+    VkMemoryAllocateFlagsInfo memory_allocate_flags_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
-    extension.pNext      = pNext;
-    extension.flags      = flags;
-    extension.deviceMask = deviceMask;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    memory_allocate_flags_info.sType      = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
+    memory_allocate_flags_info.pNext      = pNext;
+    memory_allocate_flags_info.flags      = flags;
+    memory_allocate_flags_info.deviceMask = deviceMask;
+    cvkAllocateMemory(device, &memory_allocate_flags_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateMemoryDedicatedAllocateInfo(VkDevice                     device,
                                             const void*                  pNext,
@@ -5587,13 +4463,13 @@ void cvkAllocateMemoryDedicatedAllocateInfo(VkDevice                     device,
                                             const VkAllocationCallbacks* pAllocator,
                                             VkDeviceMemory*              pMemory)
 {
-    VkMemoryDedicatedAllocateInfo extension;
+    VkMemoryDedicatedAllocateInfo memory_dedicated_allocate_info;
 
-    extension.sType  = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
-    extension.pNext  = pNext;
-    extension.image  = image;
-    extension.buffer = buffer;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    memory_dedicated_allocate_info.sType  = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+    memory_dedicated_allocate_info.pNext  = pNext;
+    memory_dedicated_allocate_info.image  = image;
+    memory_dedicated_allocate_info.buffer = buffer;
+    cvkAllocateMemory(device, &memory_dedicated_allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateMemoryOpaqueCaptureAddressAllocateInfo(VkDevice                     device,
                                                        const void*                  pNext,
@@ -5603,12 +4479,12 @@ void cvkAllocateMemoryOpaqueCaptureAddressAllocateInfo(VkDevice                 
                                                        const VkAllocationCallbacks* pAllocator,
                                                        VkDeviceMemory*              pMemory)
 {
-    VkMemoryOpaqueCaptureAddressAllocateInfo extension;
+    VkMemoryOpaqueCaptureAddressAllocateInfo memory_opaque_capture_address_allocate_info;
 
-    extension.sType                = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
-    extension.pNext                = pNext;
-    extension.opaqueCaptureAddress = opaqueCaptureAddress;
-    cvkAllocateMemory(device, &extension, allocationSize, memoryTypeIndex, pAllocator, pMemory);
+    memory_opaque_capture_address_allocate_info.sType                = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
+    memory_opaque_capture_address_allocate_info.pNext                = pNext;
+    memory_opaque_capture_address_allocate_info.opaqueCaptureAddress = opaqueCaptureAddress;
+    cvkAllocateMemory(device, &memory_opaque_capture_address_allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkBeginDeviceGroupCommandBufferBeginInfo(VkCommandBuffer                       commandBuffer,
                                                const void*                           pNext,
@@ -5616,12 +4492,12 @@ void cvkBeginDeviceGroupCommandBufferBeginInfo(VkCommandBuffer                  
                                                VkCommandBufferUsageFlags             flags,
                                                const VkCommandBufferInheritanceInfo* pInheritanceInfo)
 {
-    VkDeviceGroupCommandBufferBeginInfo extension;
+    VkDeviceGroupCommandBufferBeginInfo device_group_command_buffer_begin_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
-    extension.pNext      = pNext;
-    extension.deviceMask = deviceMask;
-    cvkBeginCommandBuffer(commandBuffer, &extension, flags, pInheritanceInfo);
+    device_group_command_buffer_begin_info.sType      = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
+    device_group_command_buffer_begin_info.pNext      = pNext;
+    device_group_command_buffer_begin_info.deviceMask = deviceMask;
+    cvkBeginCommandBuffer(commandBuffer, &device_group_command_buffer_begin_info, flags, pInheritanceInfo);
 }
 void cvkCmdDeviceGroupRenderPassBeginInfo(VkCommandBuffer     commandBuffer,
                                           const void*         pNext,
@@ -5635,14 +4511,14 @@ void cvkCmdDeviceGroupRenderPassBeginInfo(VkCommandBuffer     commandBuffer,
                                           const VkClearValue* pClearValues,
                                           VkSubpassContents   contents)
 {
-    VkDeviceGroupRenderPassBeginInfo extension;
+    VkDeviceGroupRenderPassBeginInfo device_group_render_pass_begin_info;
 
-    extension.sType                 = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
-    extension.pNext                 = pNext;
-    extension.deviceMask            = deviceMask;
-    extension.deviceRenderAreaCount = deviceRenderAreaCount;
-    extension.pDeviceRenderAreas    = pDeviceRenderAreas;
-    cvkCmdBeginRenderPass(commandBuffer, &extension, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
+    device_group_render_pass_begin_info.sType                 = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
+    device_group_render_pass_begin_info.pNext                 = pNext;
+    device_group_render_pass_begin_info.deviceMask            = deviceMask;
+    device_group_render_pass_begin_info.deviceRenderAreaCount = deviceRenderAreaCount;
+    device_group_render_pass_begin_info.pDeviceRenderAreas    = pDeviceRenderAreas;
+    cvkCmdBeginRenderPass(commandBuffer, &device_group_render_pass_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
 void cvkCmdRenderPassAttachmentBeginInfo(VkCommandBuffer     commandBuffer,
                                          const void*         pNext,
@@ -5655,13 +4531,13 @@ void cvkCmdRenderPassAttachmentBeginInfo(VkCommandBuffer     commandBuffer,
                                          const VkClearValue* pClearValues,
                                          VkSubpassContents   contents)
 {
-    VkRenderPassAttachmentBeginInfo extension;
+    VkRenderPassAttachmentBeginInfo render_pass_attachment_begin_info;
 
-    extension.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
-    extension.pNext           = pNext;
-    extension.attachmentCount = attachmentCount;
-    extension.pAttachments    = pAttachments;
-    cvkCmdBeginRenderPass(commandBuffer, &extension, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
+    render_pass_attachment_begin_info.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
+    render_pass_attachment_begin_info.pNext           = pNext;
+    render_pass_attachment_begin_info.attachmentCount = attachmentCount;
+    render_pass_attachment_begin_info.pAttachments    = pAttachments;
+    cvkCmdBeginRenderPass(commandBuffer, &render_pass_attachment_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
 void cvkCreateBufferOpaqueCaptureAddressCreateInfo(VkDevice                     device,
                                                    const void*                  pNext,
@@ -5675,12 +4551,12 @@ void cvkCreateBufferOpaqueCaptureAddressCreateInfo(VkDevice                     
                                                    const VkAllocationCallbacks* pAllocator,
                                                    VkBuffer*                    pBuffer)
 {
-    VkBufferOpaqueCaptureAddressCreateInfo extension;
+    VkBufferOpaqueCaptureAddressCreateInfo buffer_opaque_capture_address_create_info;
 
-    extension.sType                = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
-    extension.pNext                = pNext;
-    extension.opaqueCaptureAddress = opaqueCaptureAddress;
-    cvkCreateBuffer(device, &extension, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
+    buffer_opaque_capture_address_create_info.sType                = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
+    buffer_opaque_capture_address_create_info.pNext                = pNext;
+    buffer_opaque_capture_address_create_info.opaqueCaptureAddress = opaqueCaptureAddress;
+    cvkCreateBuffer(device, &buffer_opaque_capture_address_create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 void cvkCreateExternalMemoryBufferCreateInfo(VkDevice                        device,
                                              const void*                     pNext,
@@ -5694,12 +4570,12 @@ void cvkCreateExternalMemoryBufferCreateInfo(VkDevice                        dev
                                              const VkAllocationCallbacks*    pAllocator,
                                              VkBuffer*                       pBuffer)
 {
-    VkExternalMemoryBufferCreateInfo extension;
+    VkExternalMemoryBufferCreateInfo external_memory_buffer_create_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
-    extension.pNext       = pNext;
-    extension.handleTypes = handleTypes;
-    cvkCreateBuffer(device, &extension, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
+    external_memory_buffer_create_info.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
+    external_memory_buffer_create_info.pNext       = pNext;
+    external_memory_buffer_create_info.handleTypes = handleTypes;
+    cvkCreateBuffer(device, &external_memory_buffer_create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 void cvkCreateDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
                                                         const void*                         pNext,
@@ -5711,13 +4587,13 @@ void cvkCreateDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                
                                                         const VkAllocationCallbacks*        pAllocator,
                                                         VkDescriptorSetLayout*              pSetLayout)
 {
-    VkDescriptorSetLayoutBindingFlagsCreateInfo extension;
+    VkDescriptorSetLayoutBindingFlagsCreateInfo descriptor_set_layout_binding_flags_create_info;
 
-    extension.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
-    extension.pNext         = pNext;
-    extension.bindingCount  = bindingFlagsBindingCount;
-    extension.pBindingFlags = pBindingFlags;
-    cvkCreateDescriptorSetLayout(device, &extension, flags, bindingCount, pBindings, pAllocator, pSetLayout);
+    descriptor_set_layout_binding_flags_create_info.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+    descriptor_set_layout_binding_flags_create_info.pNext         = pNext;
+    descriptor_set_layout_binding_flags_create_info.bindingCount  = bindingFlagsBindingCount;
+    descriptor_set_layout_binding_flags_create_info.pBindingFlags = pBindingFlags;
+    cvkCreateDescriptorSetLayout(device, &descriptor_set_layout_binding_flags_create_info, flags, bindingCount, pBindings, pAllocator, pSetLayout);
 }
 void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physicalDevice,
                                           const void*                     pNext,
@@ -5734,14 +4610,14 @@ void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physic
                                           const VkAllocationCallbacks*    pAllocator,
                                           VkDevice*                       pDevice)
 {
-    VkDeviceGroupDeviceCreateInfo extension;
+    VkDeviceGroupDeviceCreateInfo device_group_device_create_info;
 
-    extension.sType               = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
-    extension.pNext               = pNext;
-    extension.physicalDeviceCount = physicalDeviceCount;
-    extension.pPhysicalDevices    = pPhysicalDevices;
+    device_group_device_create_info.sType               = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
+    device_group_device_create_info.pNext               = pNext;
+    device_group_device_create_info.physicalDeviceCount = physicalDeviceCount;
+    device_group_device_create_info.pPhysicalDevices    = pPhysicalDevices;
     cvkCreateDevice(physicalDevice,
-                    &extension,
+                    &device_group_device_create_info,
                     flags,
                     queueCreateInfoCount,
                     pQueueCreateInfos,
@@ -5755,12 +4631,12 @@ void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physic
 }
 void cvkCreateExportFenceCreateInfo(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    VkExportFenceCreateInfo extension;
+    VkExportFenceCreateInfo export_fence_create_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
-    extension.pNext       = pNext;
-    extension.handleTypes = handleTypes;
-    cvkCreateFence(device, &extension, flags, pAllocator, pFence);
+    export_fence_create_info.sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
+    export_fence_create_info.pNext       = pNext;
+    export_fence_create_info.handleTypes = handleTypes;
+    cvkCreateFence(device, &export_fence_create_info, flags, pAllocator, pFence);
 }
 void cvkCreateFramebufferAttachmentsCreateInfo(VkDevice                                device,
                                                const void*                             pNext,
@@ -5776,13 +4652,13 @@ void cvkCreateFramebufferAttachmentsCreateInfo(VkDevice                         
                                                const VkAllocationCallbacks*            pAllocator,
                                                VkFramebuffer*                          pFramebuffer)
 {
-    VkFramebufferAttachmentsCreateInfo extension;
+    VkFramebufferAttachmentsCreateInfo framebuffer_attachments_create_info;
 
-    extension.sType                    = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
-    extension.pNext                    = pNext;
-    extension.attachmentImageInfoCount = attachmentImageInfoCount;
-    extension.pAttachmentImageInfos    = pAttachmentImageInfos;
-    cvkCreateFramebuffer(device, &extension, flags, renderPass, attachmentCount, pAttachments, width, height, layers, pAllocator, pFramebuffer);
+    framebuffer_attachments_create_info.sType                    = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
+    framebuffer_attachments_create_info.pNext                    = pNext;
+    framebuffer_attachments_create_info.attachmentImageInfoCount = attachmentImageInfoCount;
+    framebuffer_attachments_create_info.pAttachmentImageInfos    = pAttachmentImageInfos;
+    cvkCreateFramebuffer(device, &framebuffer_attachments_create_info, flags, renderPass, attachmentCount, pAttachments, width, height, layers, pAllocator, pFramebuffer);
 }
 void cvkCreateExternalMemoryImageCreateInfo(VkDevice                        device,
                                             const void*                     pNext,
@@ -5803,13 +4679,13 @@ void cvkCreateExternalMemoryImageCreateInfo(VkDevice                        devi
                                             const VkAllocationCallbacks*    pAllocator,
                                             VkImage*                        pImage)
 {
-    VkExternalMemoryImageCreateInfo extension;
+    VkExternalMemoryImageCreateInfo external_memory_image_create_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
-    extension.pNext       = pNext;
-    extension.handleTypes = handleTypes;
+    external_memory_image_create_info.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+    external_memory_image_create_info.pNext       = pNext;
+    external_memory_image_create_info.handleTypes = handleTypes;
     cvkCreateImage(device,
-                   &extension,
+                   &external_memory_image_create_info,
                    flags,
                    imageType,
                    format,
@@ -5847,15 +4723,15 @@ void cvkCreateImageDrmFormatModifierExplicitCreateInfo(VkDevice                 
                                                        const VkAllocationCallbacks* pAllocator,
                                                        VkImage*                     pImage)
 {
-    VkImageDrmFormatModifierExplicitCreateInfoEXT extension;
+    VkImageDrmFormatModifierExplicitCreateInfoEXT image_drm_format_modifier_explicit_create_info;
 
-    extension.sType                       = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
-    extension.pNext                       = pNext;
-    extension.drmFormatModifier           = drmFormatModifier;
-    extension.drmFormatModifierPlaneCount = drmFormatModifierPlaneCount;
-    extension.pPlaneLayouts               = pPlaneLayouts;
+    image_drm_format_modifier_explicit_create_info.sType                       = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
+    image_drm_format_modifier_explicit_create_info.pNext                       = pNext;
+    image_drm_format_modifier_explicit_create_info.drmFormatModifier           = drmFormatModifier;
+    image_drm_format_modifier_explicit_create_info.drmFormatModifierPlaneCount = drmFormatModifierPlaneCount;
+    image_drm_format_modifier_explicit_create_info.pPlaneLayouts               = pPlaneLayouts;
     cvkCreateImage(device,
-                   &extension,
+                   &image_drm_format_modifier_explicit_create_info,
                    flags,
                    imageType,
                    format,
@@ -5892,14 +4768,14 @@ void cvkCreateImageDrmFormatModifierListCreateInfo(VkDevice                     
                                                    const VkAllocationCallbacks* pAllocator,
                                                    VkImage*                     pImage)
 {
-    VkImageDrmFormatModifierListCreateInfoEXT extension;
+    VkImageDrmFormatModifierListCreateInfoEXT image_drm_format_modifier_list_create_info;
 
-    extension.sType                  = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
-    extension.pNext                  = pNext;
-    extension.drmFormatModifierCount = drmFormatModifierCount;
-    extension.pDrmFormatModifiers    = pDrmFormatModifiers;
+    image_drm_format_modifier_list_create_info.sType                  = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
+    image_drm_format_modifier_list_create_info.pNext                  = pNext;
+    image_drm_format_modifier_list_create_info.drmFormatModifierCount = drmFormatModifierCount;
+    image_drm_format_modifier_list_create_info.pDrmFormatModifiers    = pDrmFormatModifiers;
     cvkCreateImage(device,
-                   &extension,
+                   &image_drm_format_modifier_list_create_info,
                    flags,
                    imageType,
                    format,
@@ -5936,14 +4812,14 @@ void cvkCreateImageWithImageFormatListCreateInfo(VkDevice                     de
                                                  const VkAllocationCallbacks* pAllocator,
                                                  VkImage*                     pImage)
 {
-    VkImageFormatListCreateInfo extension;
+    VkImageFormatListCreateInfo image_format_list_create_info;
 
-    extension.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
-    extension.pNext           = pNext;
-    extension.viewFormatCount = viewFormatCount;
-    extension.pViewFormats    = pViewFormats;
+    image_format_list_create_info.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
+    image_format_list_create_info.pNext           = pNext;
+    image_format_list_create_info.viewFormatCount = viewFormatCount;
+    image_format_list_create_info.pViewFormats    = pViewFormats;
     cvkCreateImage(device,
-                   &extension,
+                   &image_format_list_create_info,
                    flags,
                    imageType,
                    format,
@@ -5979,13 +4855,13 @@ void cvkCreateImageStencilUsageCreateInfo(VkDevice                     device,
                                           const VkAllocationCallbacks* pAllocator,
                                           VkImage*                     pImage)
 {
-    VkImageStencilUsageCreateInfo extension;
+    VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 
-    extension.sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
-    extension.pNext        = pNext;
-    extension.stencilUsage = stencilUsage;
+    image_stencil_usage_create_info.sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
+    image_stencil_usage_create_info.pNext        = pNext;
+    image_stencil_usage_create_info.stencilUsage = stencilUsage;
     cvkCreateImage(device,
-                   &extension,
+                   &image_stencil_usage_create_info,
                    flags,
                    imageType,
                    format,
@@ -6021,13 +4897,13 @@ void cvkCreateImageSwapchainCreateInfo(VkDevice                     device,
                                        const VkAllocationCallbacks* pAllocator,
                                        VkImage*                     pImage)
 {
-    VkImageSwapchainCreateInfoKHR extension;
+    VkImageSwapchainCreateInfoKHR image_swapchain_create_info;
 
-    extension.sType     = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
-    extension.pNext     = pNext;
-    extension.swapchain = swapchain;
+    image_swapchain_create_info.sType     = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
+    image_swapchain_create_info.pNext     = pNext;
+    image_swapchain_create_info.swapchain = swapchain;
     cvkCreateImage(device,
-                   &extension,
+                   &image_swapchain_create_info,
                    flags,
                    imageType,
                    format,
@@ -6056,12 +4932,12 @@ void cvkCreateImageViewUsageCreateInfo(VkDevice                     device,
                                        const VkAllocationCallbacks* pAllocator,
                                        VkImageView*                 pView)
 {
-    VkImageViewUsageCreateInfo extension;
+    VkImageViewUsageCreateInfo image_view_usage_create_info;
 
-    extension.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
-    extension.pNext = pNext;
-    extension.usage = usage;
-    cvkCreateImageView(device, &extension, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
+    image_view_usage_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
+    image_view_usage_create_info.pNext = pNext;
+    image_view_usage_create_info.usage = usage;
+    cvkCreateImageView(device, &image_view_usage_create_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                     device,
                                                       const void*                  pNext,
@@ -6075,12 +4951,12 @@ void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                  
                                                       const VkAllocationCallbacks* pAllocator,
                                                       VkImageView*                 pView)
 {
-    VkSamplerYcbcrConversionInfo extension;
+    VkSamplerYcbcrConversionInfo sampler_ycbcr_conversion_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
-    extension.pNext      = pNext;
-    extension.conversion = conversion;
-    cvkCreateImageView(device, &extension, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
+    sampler_ycbcr_conversion_info.sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
+    sampler_ycbcr_conversion_info.pNext      = pNext;
+    sampler_ycbcr_conversion_info.conversion = conversion;
+    cvkCreateImageView(device, &sampler_ycbcr_conversion_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void cvkCreateDebugUtilsMessengerCreateInfo(const void*                          pNext,
                                             VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
@@ -6097,16 +4973,16 @@ void cvkCreateDebugUtilsMessengerCreateInfo(const void*                         
                                             const VkAllocationCallbacks*         pAllocator,
                                             VkInstance*                          pInstance)
 {
-    VkDebugUtilsMessengerCreateInfoEXT extension;
+    VkDebugUtilsMessengerCreateInfoEXT debug_utils_messenger_create_info;
 
-    extension.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    extension.pNext           = pNext;
-    extension.flags           = debugUtilsMessengerFlags;
-    extension.messageSeverity = messageSeverity;
-    extension.messageType     = messageType;
-    extension.pfnUserCallback = pfnUserCallback;
-    extension.pUserData       = pUserData;
-    cvkCreateInstance(&extension, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
+    debug_utils_messenger_create_info.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    debug_utils_messenger_create_info.pNext           = pNext;
+    debug_utils_messenger_create_info.flags           = debugUtilsMessengerFlags;
+    debug_utils_messenger_create_info.messageSeverity = messageSeverity;
+    debug_utils_messenger_create_info.messageType     = messageType;
+    debug_utils_messenger_create_info.pfnUserCallback = pfnUserCallback;
+    debug_utils_messenger_create_info.pUserData       = pUserData;
+    cvkCreateInstance(&debug_utils_messenger_create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void cvkCreateRenderPassInputAttachmentAspectCreateInfo(VkDevice                                device,
                                                         const void*                             pNext,
@@ -6122,13 +4998,23 @@ void cvkCreateRenderPassInputAttachmentAspectCreateInfo(VkDevice                
                                                         const VkAllocationCallbacks*            pAllocator,
                                                         VkRenderPass*                           pRenderPass)
 {
-    VkRenderPassInputAttachmentAspectCreateInfo extension;
+    VkRenderPassInputAttachmentAspectCreateInfo render_pass_input_attachment_aspect_create_info;
 
-    extension.sType                = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
-    extension.pNext                = pNext;
-    extension.aspectReferenceCount = aspectReferenceCount;
-    extension.pAspectReferences    = pAspectReferences;
-    cvkCreateRenderPass(device, &extension, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
+    render_pass_input_attachment_aspect_create_info.sType                = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
+    render_pass_input_attachment_aspect_create_info.pNext                = pNext;
+    render_pass_input_attachment_aspect_create_info.aspectReferenceCount = aspectReferenceCount;
+    render_pass_input_attachment_aspect_create_info.pAspectReferences    = pAspectReferences;
+    cvkCreateRenderPass(device,
+                        &render_pass_input_attachment_aspect_create_info,
+                        flags,
+                        attachmentCount,
+                        pAttachments,
+                        subpassCount,
+                        pSubpasses,
+                        dependencyCount,
+                        pDependencies,
+                        pAllocator,
+                        pRenderPass);
 }
 void cvkCreateRenderPassMultiviewCreateInfo(VkDevice                       device,
                                             const void*                    pNext,
@@ -6148,17 +5034,17 @@ void cvkCreateRenderPassMultiviewCreateInfo(VkDevice                       devic
                                             const VkAllocationCallbacks*   pAllocator,
                                             VkRenderPass*                  pRenderPass)
 {
-    VkRenderPassMultiviewCreateInfo extension;
+    VkRenderPassMultiviewCreateInfo render_pass_multiview_create_info;
 
-    extension.sType                = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
-    extension.pNext                = pNext;
-    extension.subpassCount         = multiviewSubpassCount;
-    extension.pViewMasks           = pViewMasks;
-    extension.dependencyCount      = multiviewDependencyCount;
-    extension.pViewOffsets         = pViewOffsets;
-    extension.correlationMaskCount = correlationMaskCount;
-    extension.pCorrelationMasks    = pCorrelationMasks;
-    cvkCreateRenderPass(device, &extension, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
+    render_pass_multiview_create_info.sType                = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
+    render_pass_multiview_create_info.pNext                = pNext;
+    render_pass_multiview_create_info.subpassCount         = multiviewSubpassCount;
+    render_pass_multiview_create_info.pViewMasks           = pViewMasks;
+    render_pass_multiview_create_info.dependencyCount      = multiviewDependencyCount;
+    render_pass_multiview_create_info.pViewOffsets         = pViewOffsets;
+    render_pass_multiview_create_info.correlationMaskCount = correlationMaskCount;
+    render_pass_multiview_create_info.pCorrelationMasks    = pCorrelationMasks;
+    cvkCreateRenderPass(device, &render_pass_multiview_create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
 void cvkCreateDebugUtilsObjectNameInfo(VkDevice                     device,
                                        const void*                  pNext,
@@ -6184,15 +5070,15 @@ void cvkCreateDebugUtilsObjectNameInfo(VkDevice                     device,
                                        const VkAllocationCallbacks* pAllocator,
                                        VkSampler*                   pSampler)
 {
-    VkDebugUtilsObjectNameInfoEXT extension;
+    VkDebugUtilsObjectNameInfoEXT debug_utils_object_name_info;
 
-    extension.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-    extension.pNext        = pNext;
-    extension.objectType   = objectType;
-    extension.objectHandle = objectHandle;
-    extension.pObjectName  = pObjectName;
+    debug_utils_object_name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+    debug_utils_object_name_info.pNext        = pNext;
+    debug_utils_object_name_info.objectType   = objectType;
+    debug_utils_object_name_info.objectHandle = objectHandle;
+    debug_utils_object_name_info.pObjectName  = pObjectName;
     cvkCreateSampler(device,
-                     &extension,
+                     &debug_utils_object_name_info,
                      flags,
                      magFilter,
                      minFilter,
@@ -6234,13 +5120,13 @@ void cvkCreateSamplerReductionModeCreateInfo(VkDevice                     device
                                              const VkAllocationCallbacks* pAllocator,
                                              VkSampler*                   pSampler)
 {
-    VkSamplerReductionModeCreateInfo extension;
+    VkSamplerReductionModeCreateInfo sampler_reduction_mode_create_info;
 
-    extension.sType         = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
-    extension.pNext         = pNext;
-    extension.reductionMode = reductionMode;
+    sampler_reduction_mode_create_info.sType         = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
+    sampler_reduction_mode_create_info.pNext         = pNext;
+    sampler_reduction_mode_create_info.reductionMode = reductionMode;
     cvkCreateSampler(device,
-                     &extension,
+                     &sampler_reduction_mode_create_info,
                      flags,
                      magFilter,
                      minFilter,
@@ -6282,13 +5168,13 @@ void cvkCreateSamplerWithSamplerYcbcrConversionInfo(VkDevice                    
                                                     const VkAllocationCallbacks* pAllocator,
                                                     VkSampler*                   pSampler)
 {
-    VkSamplerYcbcrConversionInfo extension;
+    VkSamplerYcbcrConversionInfo sampler_ycbcr_conversion_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
-    extension.pNext      = pNext;
-    extension.conversion = conversion;
+    sampler_ycbcr_conversion_info.sType      = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
+    sampler_ycbcr_conversion_info.pNext      = pNext;
+    sampler_ycbcr_conversion_info.conversion = conversion;
     cvkCreateSampler(device,
-                     &extension,
+                     &sampler_ycbcr_conversion_info,
                      flags,
                      magFilter,
                      minFilter,
@@ -6315,12 +5201,12 @@ void cvkCreateExportSemaphoreCreateInfo(VkDevice                           devic
                                         const VkAllocationCallbacks*       pAllocator,
                                         VkSemaphore*                       pSemaphore)
 {
-    VkExportSemaphoreCreateInfo extension;
+    VkExportSemaphoreCreateInfo export_semaphore_create_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
-    extension.pNext       = pNext;
-    extension.handleTypes = handleTypes;
-    cvkCreateSemaphore(device, &extension, flags, pAllocator, pSemaphore);
+    export_semaphore_create_info.sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
+    export_semaphore_create_info.pNext       = pNext;
+    export_semaphore_create_info.handleTypes = handleTypes;
+    cvkCreateSemaphore(device, &export_semaphore_create_info, flags, pAllocator, pSemaphore);
 }
 #if (defined(VK_USE_PLATFORM_WIN32_KHR))
 void cvkCreateExportSemaphoreWin32HandleInfo(VkDevice                     device,
@@ -6332,14 +5218,14 @@ void cvkCreateExportSemaphoreWin32HandleInfo(VkDevice                     device
                                              const VkAllocationCallbacks* pAllocator,
                                              VkSemaphore*                 pSemaphore)
 {
-    VkExportSemaphoreWin32HandleInfoKHR extension;
+    VkExportSemaphoreWin32HandleInfoKHR export_semaphore_win32_handle_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    extension.pNext       = pNext;
-    extension.pAttributes = pAttributes;
-    extension.dwAccess    = dwAccess;
-    extension.name        = name;
-    cvkCreateSemaphore(device, &extension, flags, pAllocator, pSemaphore);
+    export_semaphore_win32_handle_info.sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
+    export_semaphore_win32_handle_info.pNext       = pNext;
+    export_semaphore_win32_handle_info.pAttributes = pAttributes;
+    export_semaphore_win32_handle_info.dwAccess    = dwAccess;
+    export_semaphore_win32_handle_info.name        = name;
+    cvkCreateSemaphore(device, &export_semaphore_win32_handle_info, flags, pAllocator, pSemaphore);
 }
 #endif
 void cvkCreateSemaphoreTypeCreateInfo(VkDevice                     device,
@@ -6350,13 +5236,13 @@ void cvkCreateSemaphoreTypeCreateInfo(VkDevice                     device,
                                       const VkAllocationCallbacks* pAllocator,
                                       VkSemaphore*                 pSemaphore)
 {
-    VkSemaphoreTypeCreateInfo extension;
+    VkSemaphoreTypeCreateInfo semaphore_type_create_info;
 
-    extension.sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
-    extension.pNext         = pNext;
-    extension.semaphoreType = semaphoreType;
-    extension.initialValue  = initialValue;
-    cvkCreateSemaphore(device, &extension, flags, pAllocator, pSemaphore);
+    semaphore_type_create_info.sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
+    semaphore_type_create_info.pNext         = pNext;
+    semaphore_type_create_info.semaphoreType = semaphoreType;
+    semaphore_type_create_info.initialValue  = initialValue;
+    cvkCreateSemaphore(device, &semaphore_type_create_info, flags, pAllocator, pSemaphore);
 }
 void cvkCreateDeviceGroupSwapchainCreateInfo(VkDevice                         device,
                                              const void*                      pNext,
@@ -6380,13 +5266,13 @@ void cvkCreateDeviceGroupSwapchainCreateInfo(VkDevice                         de
                                              const VkAllocationCallbacks*     pAllocator,
                                              VkSwapchainKHR*                  pSwapchain)
 {
-    VkDeviceGroupSwapchainCreateInfoKHR extension;
+    VkDeviceGroupSwapchainCreateInfoKHR device_group_swapchain_create_info;
 
-    extension.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
-    extension.pNext = pNext;
-    extension.modes = modes;
+    device_group_swapchain_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
+    device_group_swapchain_create_info.pNext = pNext;
+    device_group_swapchain_create_info.modes = modes;
     cvkCreateSwapchain(device,
-                       &extension,
+                       &device_group_swapchain_create_info,
                        flags,
                        surface,
                        minImageCount,
@@ -6429,14 +5315,14 @@ void cvkCreateSwapchainWithImageFormatListCreateInfo(VkDevice                   
                                                      const VkAllocationCallbacks*  pAllocator,
                                                      VkSwapchainKHR*               pSwapchain)
 {
-    VkImageFormatListCreateInfo extension;
+    VkImageFormatListCreateInfo image_format_list_create_info;
 
-    extension.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
-    extension.pNext           = pNext;
-    extension.viewFormatCount = viewFormatCount;
-    extension.pViewFormats    = pViewFormats;
+    image_format_list_create_info.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
+    image_format_list_create_info.pNext           = pNext;
+    image_format_list_create_info.viewFormatCount = viewFormatCount;
+    image_format_list_create_info.pViewFormats    = pViewFormats;
     cvkCreateSwapchain(device,
-                       &extension,
+                       &image_format_list_create_info,
                        flags,
                        surface,
                        minImageCount,
@@ -6466,13 +5352,13 @@ void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                   
                                                      void*                               pSupportNext,
                                                      VkDescriptorSetLayoutSupport*       pSupport)
 {
-    VkDescriptorSetLayoutBindingFlagsCreateInfo extension;
+    VkDescriptorSetLayoutBindingFlagsCreateInfo descriptor_set_layout_binding_flags_create_info;
 
-    extension.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
-    extension.pNext         = pCreateInfoNext;
-    extension.bindingCount  = bindingFlagsBindingCount;
-    extension.pBindingFlags = pBindingFlags;
-    cvkGetDescriptorSetLayoutSupport(device, &extension, flags, bindingCount, pBindings, pSupportNext, pSupport);
+    descriptor_set_layout_binding_flags_create_info.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+    descriptor_set_layout_binding_flags_create_info.pNext         = pCreateInfoNext;
+    descriptor_set_layout_binding_flags_create_info.bindingCount  = bindingFlagsBindingCount;
+    descriptor_set_layout_binding_flags_create_info.pBindingFlags = pBindingFlags;
+    cvkGetDescriptorSetLayoutSupport(device, &descriptor_set_layout_binding_flags_create_info, flags, bindingCount, pBindings, pSupportNext, pSupport);
 }
 void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
                                             const void*            pInfoNext,
@@ -6481,12 +5367,12 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
                                             void*                  pMemoryRequirementsNext,
                                             VkMemoryRequirements2* pMemoryRequirements)
 {
-    VkImagePlaneMemoryRequirementsInfo extension;
+    VkImagePlaneMemoryRequirementsInfo image_plane_memory_requirements_info;
 
-    extension.sType       = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
-    extension.pNext       = pInfoNext;
-    extension.planeAspect = planeAspect;
-    cvkGetImageMemoryRequirements2(device, &extension, image, pMemoryRequirementsNext, pMemoryRequirements);
+    image_plane_memory_requirements_info.sType       = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
+    image_plane_memory_requirements_info.pNext       = pInfoNext;
+    image_plane_memory_requirements_info.planeAspect = planeAspect;
+    cvkGetImageMemoryRequirements2(device, &image_plane_memory_requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void cvkGetSemaphoreTypeCreateInfo(VkPhysicalDevice                      physicalDevice,
                                    const void*                           pExternalSemaphoreInfoNext,
@@ -6496,13 +5382,13 @@ void cvkGetSemaphoreTypeCreateInfo(VkPhysicalDevice                      physica
                                    void*                                 pExternalSemaphorePropertiesNext,
                                    VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
 {
-    VkSemaphoreTypeCreateInfo extension;
+    VkSemaphoreTypeCreateInfo semaphore_type_create_info;
 
-    extension.sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
-    extension.pNext         = pExternalSemaphoreInfoNext;
-    extension.semaphoreType = semaphoreType;
-    extension.initialValue  = initialValue;
-    cvkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &extension, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
+    semaphore_type_create_info.sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
+    semaphore_type_create_info.pNext         = pExternalSemaphoreInfoNext;
+    semaphore_type_create_info.semaphoreType = semaphoreType;
+    semaphore_type_create_info.initialValue  = initialValue;
+    cvkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &semaphore_type_create_info, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
 void cvkGetImageFormatListCreateInfo(VkPhysicalDevice          physicalDevice,
                                      const void*               pImageFormatInfoNext,
@@ -6516,13 +5402,13 @@ void cvkGetImageFormatListCreateInfo(VkPhysicalDevice          physicalDevice,
                                      void*                     pImageFormatPropertiesNext,
                                      VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkImageFormatListCreateInfo extension;
+    VkImageFormatListCreateInfo image_format_list_create_info;
 
-    extension.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
-    extension.pNext           = pImageFormatInfoNext;
-    extension.viewFormatCount = viewFormatCount;
-    extension.pViewFormats    = pViewFormats;
-    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &extension, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    image_format_list_create_info.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
+    image_format_list_create_info.pNext           = pImageFormatInfoNext;
+    image_format_list_create_info.viewFormatCount = viewFormatCount;
+    image_format_list_create_info.pViewFormats    = pViewFormats;
+    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetImageStencilUsageCreateInfo(VkPhysicalDevice          physicalDevice,
                                        const void*               pImageFormatInfoNext,
@@ -6535,12 +5421,12 @@ void cvkGetImageStencilUsageCreateInfo(VkPhysicalDevice          physicalDevice,
                                        void*                     pImageFormatPropertiesNext,
                                        VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkImageStencilUsageCreateInfo extension;
+    VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 
-    extension.sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
-    extension.pNext        = pImageFormatInfoNext;
-    extension.stencilUsage = stencilUsage;
-    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &extension, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    image_stencil_usage_create_info.sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
+    image_stencil_usage_create_info.pNext        = pImageFormatInfoNext;
+    image_stencil_usage_create_info.stencilUsage = stencilUsage;
+    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_stencil_usage_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
                                                  const void*                        pImageFormatInfoNext,
@@ -6553,12 +5439,12 @@ void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice               
                                                  void*                              pImageFormatPropertiesNext,
                                                  VkImageFormatProperties2*          pImageFormatProperties)
 {
-    VkPhysicalDeviceExternalImageFormatInfo extension;
+    VkPhysicalDeviceExternalImageFormatInfo physical_device_external_image_format_info;
 
-    extension.sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
-    extension.pNext      = pImageFormatInfoNext;
-    extension.handleType = handleType;
-    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &extension, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    physical_device_external_image_format_info.sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
+    physical_device_external_image_format_info.pNext      = pImageFormatInfoNext;
+    physical_device_external_image_format_info.handleType = handleType;
+    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &physical_device_external_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
                                                     const void*               pImageFormatInfoNext,
@@ -6574,15 +5460,15 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
                                                     void*                     pImageFormatPropertiesNext,
                                                     VkImageFormatProperties2* pImageFormatProperties)
 {
-    VkPhysicalDeviceImageDrmFormatModifierInfoEXT extension;
+    VkPhysicalDeviceImageDrmFormatModifierInfoEXT physical_device_image_drm_format_modifier_info;
 
-    extension.sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
-    extension.pNext                 = pImageFormatInfoNext;
-    extension.drmFormatModifier     = drmFormatModifier;
-    extension.sharingMode           = sharingMode;
-    extension.queueFamilyIndexCount = queueFamilyIndexCount;
-    extension.pQueueFamilyIndices   = pQueueFamilyIndices;
-    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &extension, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    physical_device_image_drm_format_modifier_info.sType                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
+    physical_device_image_drm_format_modifier_info.pNext                 = pImageFormatInfoNext;
+    physical_device_image_drm_format_modifier_info.drmFormatModifier     = drmFormatModifier;
+    physical_device_image_drm_format_modifier_info.sharingMode           = sharingMode;
+    physical_device_image_drm_format_modifier_info.queueFamilyIndexCount = queueFamilyIndexCount;
+    physical_device_image_drm_format_modifier_info.pQueueFamilyIndices   = pQueueFamilyIndices;
+    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &physical_device_image_drm_format_modifier_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 VkResult cvkQueueDeviceGroupPresentInfo(VkQueue                             queue,
                                         const void*                         pNext,
@@ -6596,12 +5482,12 @@ VkResult cvkQueueDeviceGroupPresentInfo(VkQueue                             queu
                                         const uint32_t*                     pImageIndices,
                                         VkResult*                           pResults)
 {
-    VkDeviceGroupPresentInfoKHR extension;
+    VkDeviceGroupPresentInfoKHR device_group_present_info;
 
-    extension.sType          = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
-    extension.pNext          = pNext;
-    extension.swapchainCount = deviceGroupSwapchainCount;
-    extension.pDeviceMasks   = pDeviceMasks;
-    extension.mode           = mode;
-    return cvkQueuePresent(queue, &extension, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
+    device_group_present_info.sType          = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
+    device_group_present_info.pNext          = pNext;
+    device_group_present_info.swapchainCount = deviceGroupSwapchainCount;
+    device_group_present_info.pDeviceMasks   = pDeviceMasks;
+    device_group_present_info.mode           = mode;
+    return cvkQueuePresent(queue, &device_group_present_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
