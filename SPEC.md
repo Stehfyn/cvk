@@ -28,7 +28,7 @@ wrong by definition.
 |---|---|
 | tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target |
 | builder for `VkAbcInfo` | `cvkInitAbcInfo` |
-| single-qualifier convenience | **named after the struct it builds, verb first**: `cvk<Verb><ExtenderStruct>` with the vendor suffix dropped. `VkPhysicalDeviceExternalImageFormatInfo` on `vkGetPhysicalDeviceImageFormatProperties2` → `cvkGetPhysicalDeviceExternalImageFormatInfo`; `VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`; `VkMemoryDedicatedAllocateInfo` → `cvkAllocateMemoryDedicatedAllocateInfo`. When one (verb, extender) pair serves more than one base command in the profile the name is `<tier-0>With<ExtenderStruct>` (`cvkCreateImageWithImageFormatListCreateInfo`, `cvkCreateSwapchainWithImageFormatListCreateInfo`) |
+| single-qualifier convenience | `<tier-0>With<distinct part>Info`. The distinct part is the extender's tokens minus the longest common suffix, then the longest common prefix, shared with the **base struct it extends**, then minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. `VkImageViewUsageCreateInfo` on `VkImageViewCreateInfo` → `cvkCreateImageViewWithUsageInfo`; `VkMemoryDedicatedAllocateInfo` on `VkMemoryAllocateInfo` → `cvkAllocateMemoryWithDedicatedInfo`; `VkPhysicalDeviceImageDrmFormatModifierInfoEXT` on `VkPhysicalDeviceImageFormatInfo2` → `cvkGetPhysicalDeviceImageFormatProperties2WithDrmFormatModifierInfo`. Injective by construction: tier-0 name and extender are both unique; a collision is a generation error |
 | qualifier for extender `E` of base `B` (used only to disambiguate colliding parameter names) | CamelCase tokens of `E` minus the multiset of tokens of `B`, vendor suffix dropped, in `E`'s order |
 | capacity constant for enumeration array `pFooBars` | `CVK_MAX_FOO_BARS` |
 
@@ -154,7 +154,10 @@ Selection helpers (`cvkSelectMemoryType`) are hand-written and shipped as `cvk_p
 
 ## 11. Verification loop
 
-1. `python scripts/generate.py` → `generated/`.
+0. `python scripts/check_generated.py` (also the CTest test `cvk-generated-files-match`)
+   regenerates into a temporary directory and fails if any file under `include/` or `src/`
+   differs. This is rule zero made mechanical; it runs before anything else.
+1. `python scripts/generate.py` → `include/`, `src/`.
 2. `clang -fsyntax-only -std=c17 -Wall -Wextra -Iexternal/Vulkan-Headers/include generated/cvk.c`
    with and without each platform define.
 3. `python scripts/study_reference.py --ref generated --prefix cvk` must report tier 0 name

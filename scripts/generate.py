@@ -111,26 +111,26 @@ class Generator:
         self.input_asserts: bool = bool(policy.get("input_asserts", False))
         self.used_capacities: Dict[str, int] = {}
         self.names: Dict[str, str] = {}
-        self.decls: List[str] = []
-        self.defs: List[str] = []
+        self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
+        self.defs: Dict[str, List[str]] = defaultdict(list)
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
     def struct_in_profile(self, s: Struct) -> bool:
         return bool((s.core_version and s.core_version <= self.core) or any(e in self.exts for e in s.extensions))
 
-    def guard_for(self, exts: List[str], core_version: Optional[str]) -> Optional[str]:
-        """#ifdef protect macro when every providing extension is platform-specific."""
+    def platforms_for(self, exts: List[str], core_version: Optional[str]) -> frozenset:
+        """Platforms an entity belongs to: empty when core or provided by any platform-neutral extension."""
         if core_version and core_version <= self.core:
-            return None
+            return frozenset()
         plats = set()
         for e in exts:
             x = self.reg.extensions.get(e)
             if e in self.exts and x:
                 if not x.platform:
-                    return None
-                plats.add(self.reg.platforms[x.platform])
-        return " || ".join(f"defined({p})" for p in sorted(plats)) if plats else None
+                    return frozenset()
+                plats.add(x.platform)
+        return frozenset(plats)
 
     def is_core(self, cmd: Command) -> bool:
         return bool(cmd.core_version and cmd.core_version <= self.core)
@@ -162,13 +162,24 @@ class Generator:
         return "".join(out)
 
     def convenience_name(self, cmd: Command, base: Struct, ext: Struct) -> str:
-        """SPEC.md section 3: a convenience is named after the struct it builds, verb first:
-        cvk<Verb><ExtenderStruct>. When the same verb and extender serve more than one base
-        command in the profile, the name is <tier-0>With<ExtenderStruct> instead."""
-        short = self.cmd_name(cmd) + "With" + self.struct_short(ext)
-        if self.convenience_pairs.get((cmd.verb, ext.name), 0) > 1:
-            return short
-        return "cvk" + cmd.verb + self.struct_short(ext)
+        """SPEC.md section 3: <tier-0>With<distinct part of the extender>Info.
+
+        The distinct part is the extender's tokens minus the longest common suffix and then
+        the longest common prefix it shares with the base struct it extends, minus the trailing
+        struct-kind word (Create/Allocate/Begin/Bind/Submit) and Info/version tokens.
+        VkImageViewUsageCreateInfo on VkImageViewCreateInfo -> Usage -> cvkCreateImageViewWithUsageInfo;
+        VkPhysicalDeviceImageDrmFormatModifierInfoEXT on VkPhysicalDeviceImageFormatInfo2 -> DrmFormatModifier."""
+        e = tokens(self.struct_short(ext))
+        b = tokens(self.struct_short(base))
+        while e and b and e[-1] == b[-1]:
+            e.pop()
+            b.pop()
+        while e and b and e[0] == b[0]:
+            e.pop(0)
+            b.pop(0)
+        while e and (e[-1] in ("Info", "Create", "Allocate", "Begin", "Bind", "Submit") or e[-1].isdigit()):
+            e.pop()
+        return self.cmd_name(cmd) + "With" + "".join(e) + "Info"
 
     def capacity_name(self, array_param: str) -> str:
         stem = array_param[1:] if array_param.startswith("p") and array_param[1:2].isupper() else array_param
@@ -378,9 +389,8 @@ class Generator:
 
         doc = self.doc_block(self.brief(cmd), params, ret, cmd, informational if ret == "VkResult" else [])
         sig = self.signature(ret, name, params)
-        guard = self.guard_for(cmd.extensions, cmd.core_version)
-        self.decls.append(self.guarded(guard, doc + sig + ";"))
-        self.defs.append(self.guarded(guard, sig + "\n{\n" + indent("\n".join(body)) + "\n}"))
+        self.place(self.platforms_for(cmd.extensions, cmd.core_version), doc + sig + ";",
+                   sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     def param_doc(self, p: Param, role: str) -> str:
         if p.name == "pAllocator":
@@ -424,8 +434,14 @@ class Generator:
         lines.append(" */")
         return "\n".join(lines) + "\n"
 
-    def guarded(self, guard: Optional[str], text: str) -> str:
-        return f"#if {guard}\n{text}\n#endif" if guard else text
+    def place(self, plats: frozenset, decl: str, defn: str) -> None:
+        """Route an emitted function to the core files or to exactly one platform's files."""
+        if len(plats) > 1:
+            self.errors.append(f"entity spans several platforms {sorted(plats)}: {decl.splitlines()[-1]}")
+            return
+        key = next(iter(plats)) if plats else ""
+        self.decls[key].append(decl)
+        self.defs[key].append(defn)
 
     # ------------------------------------------------------------ builders
     def emit_builder(self, s: Struct) -> None:
@@ -446,9 +462,8 @@ class Generator:
                     body.append(f"pInfo->{m.name} = {m.name};")
         doc = self.doc_block(f"Initializes a {s.name}.", params, "void", None, [])
         sig = self.signature("void", name, params)
-        guard = self.guard_for(s.extensions, s.core_version)
-        self.decls.append(self.guarded(guard, doc + sig + ";"))
-        self.defs.append(self.guarded(guard, sig + "\n{\n" + indent("\n".join(body)) + "\n}"))
+        self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
+                   sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     # -------------------------------------------------------- conveniences
     def emit_convenience(self, cmd: Command, ip: Param, ext: Struct) -> None:
@@ -459,9 +474,9 @@ class Generator:
         name = self.register(self.convenience_name(cmd, base, ext), f"{cmd.name}+{ext.name}")
         # Rebuild the tier-0 parameter list by re-running emit logic on a scratch generator state.
         saved = (self.decls, self.defs, self.names.copy())
-        self.decls, self.defs = [], []
+        self.decls, self.defs = defaultdict(list), defaultdict(list)
         self.emit_tier0(cmd)
-        sig_text = self.decls[-1]
+        sig_text = next(iter(self.decls.values()))[-1]
         self.decls, self.defs, self.names = saved[0], saved[1], saved[2]
         self.names[name] = f"{cmd.name}+{ext.name}"
         m = re.search(r"\n(\w[\w ]*?) (cvk\w+)\((.*?)\);", sig_text, flags=re.S)
@@ -498,10 +513,8 @@ class Generator:
             e.is_out = e.text.split()[-1].startswith("p") and not e.text.startswith("const") and "*" in e.text
         doc = self.doc_block(f"{self.brief(cmd)[:-1]} with {ext.name} chained.", eparams, ret, None, [])
         sig = self.signature(ret, name, eparams)
-        guards = [g for g in (self.guard_for(cmd.extensions, cmd.core_version), self.guard_for(ext.extensions, ext.core_version)) if g]
-        guard = " && ".join(f"({g})" for g in guards) if guards else None
-        self.decls.append(self.guarded(guard, doc + sig + ";"))
-        self.defs.append(self.guarded(guard, sig + "\n{\n" + indent("\n".join(body)) + "\n}"))
+        plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
+        self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     # ---------------------------------------------------------------- run
     def run(self) -> None:
@@ -526,6 +539,27 @@ class Generator:
             self.convenience_pairs[(cmd.verb, ext.name)] += 1
         for cmd, ip, ext in pairs:
             self.emit_convenience(cmd, ip, ext)
+
+    PLATFORM_INCLUDES = {
+        "win32": ["<windows.h>", "<vulkan/vulkan_win32.h>"],
+        "xlib": ["<X11/Xlib.h>", "<vulkan/vulkan_xlib.h>"],
+        "xcb": ["<xcb/xcb.h>", "<vulkan/vulkan_xcb.h>"],
+        "wayland": ["<wayland-client.h>", "<vulkan/vulkan_wayland.h>"],
+    }
+
+    def platform_header(self, plat: str) -> str:
+        guard = f"CVK_{plat.upper()}_H"
+        includes = "\n".join(f"#include {i}" for i in self.PLATFORM_INCLUDES[plat])
+        decls = "\n".join(self.decls[plat])
+        return (f"#ifndef {guard}\n#define {guard}\n\n"
+                "/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
+                f"#include \"cvk.h\"\n{includes}\n\n#ifdef __cplusplus\nextern \"C\" {{\n#endif\n\n"
+                f"{decls}\n\n#ifdef __cplusplus\n}}\n#endif\n\n#endif /* {guard} */\n")
+
+    def platform_source(self, plat: str) -> str:
+        defs = "\n".join(self.defs[plat])
+        return ("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
+                f"#include \"cvk_{plat}.h\"\n#include <string.h>\n\n{defs}\n")
 
     def header(self) -> str:
         caps = "\n".join(f"#ifndef {k}\n#define {k} ({v}U)\n#endif" for k, v in sorted(self.used_capacities.items()))
@@ -554,7 +588,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 /* Fixed enumeration capacities; override any before including. */
 {caps}
 
-{chr(10).join(self.decls)}
+{chr(10).join(self.decls[""])}
 
 #ifdef __cplusplus
 }}
@@ -586,7 +620,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
     }}
 }}
 
-{chr(10).join(self.defs)}
+{chr(10).join(self.defs[""])}
 """
 
 
@@ -610,20 +644,28 @@ def main() -> None:
         f.write(g.header())
     with open(os.path.join(args.out_dir, "src", "cvk.c"), "w", encoding="utf-8", newline="\n") as f:
         f.write(g.source())
+    outputs = [os.path.join(args.out_dir, "include", "cvk.h"), os.path.join(args.out_dir, "src", "cvk.c")]
+    for plat in sorted(k for k in g.decls if k):
+        hp, cp = os.path.join(args.out_dir, "include", f"cvk_{plat}.h"), os.path.join(args.out_dir, "src", f"cvk_{plat}.c")
+        with open(hp, "w", encoding="utf-8", newline="\n") as f:
+            f.write(g.platform_header(plat))
+        with open(cp, "w", encoding="utf-8", newline="\n") as f:
+            f.write(g.platform_source(plat))
+        outputs += [hp, cp]
     # Final formatting is clang-format's (repository .clang-format); the generator's own alignment is a fallback.
     import shutil
     import subprocess
     clang_format = shutil.which("clang-format")
     if clang_format:
-        subprocess.run([clang_format, "-i", "--style=file",
-                        os.path.join(args.out_dir, "include", "cvk.h"), os.path.join(args.out_dir, "src", "cvk.c")],
-                       check=True, cwd=args.out_dir)
+        style = os.path.join(REPO_ROOT, ".clang-format")
+        subprocess.run([clang_format, "-i", f"--style=file:{style}"] + outputs, check=True, cwd=args.out_dir)
     else:
         print("warning: clang-format not found; output left with generator alignment only")
     t0 = sum(1 for n in g.names.values() if n.startswith("vk") and "+" not in n)
     builders = sum(1 for n in g.names if n.startswith("cvkInit"))
     conv = sum(1 for n in g.names.values() if "+" in n)
-    print(f"generated include/cvk.h and src/cvk.c: tier0={t0} builders={builders} conveniences={conv} capacities={len(g.used_capacities)}")
+    per = ", ".join(f"{k or 'core'}={len(v)}" for k, v in sorted(g.decls.items()))
+    print(f"generated {len(outputs)} files ({per}): tier0={t0} builders={builders} conveniences={conv} capacities={len(g.used_capacities)}")
 
 
 if __name__ == "__main__":

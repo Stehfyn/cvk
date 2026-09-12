@@ -1100,34 +1100,6 @@ void cvkCreateSwapchain(VkDevice                      device,
     CVK_CHECK(vkCreateSwapchainKHR(device, &create_info, pAllocator, pSwapchain));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSwapchain));
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
-{
-    VkWin32SurfaceCreateInfoKHR create_info;
-
-    create_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    create_info.pNext     = pNext;
-    create_info.flags     = flags;
-    create_info.hinstance = hinstance;
-    create_info.hwnd      = hwnd;
-    CVK_CHECK(vkCreateWin32SurfaceKHR(instance, &create_info, pAllocator, pSurface));
-    CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
-}
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
-{
-    VkXlibSurfaceCreateInfoKHR create_info;
-
-    create_info.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    create_info.pNext  = pNext;
-    create_info.flags  = flags;
-    create_info.dpy    = dpy;
-    create_info.window = window;
-    CVK_CHECK(vkCreateXlibSurfaceKHR(instance, &create_info, pAllocator, pSurface));
-    CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
-}
-#endif
 void cvkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
 {
     vkDestroyBuffer(device, buffer, pAllocator);
@@ -1542,28 +1514,6 @@ void cvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBit
     pMemoryFdProperties->pNext              = pNext;
     CVK_CHECK(function(device, handleType, fd, pMemoryFdProperties));
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle)
-{
-    VkMemoryGetWin32HandleInfoKHR get_win32_handle_info;
-
-    PFN_vkGetMemoryWin32HandleKHR function = (PFN_vkGetMemoryWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandleKHR");
-    get_win32_handle_info.sType            = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    get_win32_handle_info.pNext            = pNext;
-    get_win32_handle_info.memory           = memory;
-    get_win32_handle_info.handleType       = handleType;
-    CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
-}
-#endif
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties)
-{
-    PFN_vkGetMemoryWin32HandlePropertiesKHR function = (PFN_vkGetMemoryWin32HandlePropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryWin32HandlePropertiesKHR");
-    pMemoryWin32HandleProperties->sType              = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
-    pMemoryWin32HandleProperties->pNext              = pNext;
-    CVK_CHECK(function(device, handleType, handle, pMemoryWin32HandleProperties));
-}
-#endif
 uint32_t cvkGetPhysicalDeviceDisplayPlaneProperties(VkPhysicalDevice physicalDevice, VkDisplayPlanePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
     uint32_t property_count = 0;
@@ -1812,18 +1762,6 @@ void cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_
 {
     CVK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported));
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex)
-{
-    return vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice, queueFamilyIndex);
-}
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID)
-{
-    return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
-}
-#endif
 VkResult cvkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache, size_t* pDataSize, void* pData)
 {
     VkResult result;
@@ -1859,19 +1797,6 @@ void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore
     get_fd_info.handleType           = handleType;
     CVK_CHECK(function(device, &get_fd_info, pFd));
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, HANDLE* pHandle)
-{
-    VkSemaphoreGetWin32HandleInfoKHR get_win32_handle_info;
-
-    PFN_vkGetSemaphoreWin32HandleKHR function = (PFN_vkGetSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreWin32HandleKHR");
-    get_win32_handle_info.sType               = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-    get_win32_handle_info.pNext               = pNext;
-    get_win32_handle_info.semaphore           = semaphore;
-    get_win32_handle_info.handleType          = handleType;
-    CVK_CHECK(function(device, &get_win32_handle_info, pHandle));
-}
-#endif
 uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImage pSwapchainImages[CVK_MAX_SWAPCHAIN_IMAGES])
 {
     uint32_t swapchain_image_count = 0;
@@ -1894,28 +1819,6 @@ void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaph
     import_semaphore_fd_info.fd         = fd;
     CVK_CHECK(function(device, &import_semaphore_fd_info));
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkImportSemaphoreWin32Handle(VkDevice                              device,
-                                   const void*                           pNext,
-                                   VkSemaphore                           semaphore,
-                                   VkSemaphoreImportFlags                flags,
-                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                   HANDLE                                handle,
-                                   LPCWSTR                               name)
-{
-    VkImportSemaphoreWin32HandleInfoKHR import_semaphore_win32_handle_info;
-
-    PFN_vkImportSemaphoreWin32HandleKHR function  = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
-    import_semaphore_win32_handle_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    import_semaphore_win32_handle_info.pNext      = pNext;
-    import_semaphore_win32_handle_info.semaphore  = semaphore;
-    import_semaphore_win32_handle_info.flags      = flags;
-    import_semaphore_win32_handle_info.handleType = handleType;
-    import_semaphore_win32_handle_info.handle     = handle;
-    import_semaphore_win32_handle_info.name       = name;
-    CVK_CHECK(function(device, &import_semaphore_win32_handle_info));
-}
-#endif
 void cvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
     CVK_CHECK(vkInvalidateMappedMemoryRanges(device, memoryRangeCount, pMemoryRanges));
@@ -2409,22 +2312,6 @@ void cvkInitCopyDescriptorSet(VkCopyDescriptorSet* pInfo,
     pInfo->dstArrayElement = dstArrayElement;
     pInfo->descriptorCount = descriptorCount;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
-                                 const void*                pNext,
-                                 uint32_t                   waitSemaphoreValuesCount,
-                                 const uint64_t*            pWaitSemaphoreValues,
-                                 uint32_t                   signalSemaphoreValuesCount,
-                                 const uint64_t*            pSignalSemaphoreValues)
-{
-    pInfo->sType                      = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
-    pInfo->pNext                      = pNext;
-    pInfo->waitSemaphoreValuesCount   = waitSemaphoreValuesCount;
-    pInfo->pWaitSemaphoreValues       = pWaitSemaphoreValues;
-    pInfo->signalSemaphoreValuesCount = signalSemaphoreValuesCount;
-    pInfo->pSignalSemaphoreValues     = pSignalSemaphoreValues;
-}
-#endif
 void cvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[4])
 {
     pInfo->sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
@@ -2742,32 +2629,12 @@ void cvkInitExportMemoryAllocateInfo(VkExportMemoryAllocateInfo* pInfo, const vo
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
-{
-    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext       = pNext;
-    pInfo->pAttributes = pAttributes;
-    pInfo->dwAccess    = dwAccess;
-    pInfo->name        = name;
-}
-#endif
 void cvkInitExportSemaphoreCreateInfo(VkExportSemaphoreCreateInfo* pInfo, const void* pNext, VkExternalSemaphoreHandleTypeFlags handleTypes)
 {
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
-{
-    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext       = pNext;
-    pInfo->pAttributes = pAttributes;
-    pInfo->dwAccess    = dwAccess;
-    pInfo->name        = name;
-}
-#endif
 void cvkInitExternalBufferProperties(VkExternalBufferProperties* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
@@ -3058,16 +2925,6 @@ void cvkInitImportMemoryFdInfo(VkImportMemoryFdInfoKHR* pInfo, const void* pNext
     pInfo->handleType = handleType;
     pInfo->fd         = fd;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name)
-{
-    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->handleType = handleType;
-    pInfo->handle     = handle;
-    pInfo->name       = name;
-}
-#endif
 void cvkInitImportSemaphoreFdInfo(VkImportSemaphoreFdInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
 {
     pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
@@ -3077,24 +2934,6 @@ void cvkInitImportSemaphoreFdInfo(VkImportSemaphoreFdInfoKHR* pInfo, const void*
     pInfo->handleType = handleType;
     pInfo->fd         = fd;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR*  pInfo,
-                                           const void*                           pNext,
-                                           VkSemaphore                           semaphore,
-                                           VkSemaphoreImportFlags                flags,
-                                           VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                           HANDLE                                handle,
-                                           LPCWSTR                               name)
-{
-    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->semaphore  = semaphore;
-    pInfo->flags      = flags;
-    pInfo->handleType = handleType;
-    pInfo->handle     = handle;
-    pInfo->name       = name;
-}
-#endif
 void cvkInitInstanceCreateInfo(VkInstanceCreateInfo*    pInfo,
                                const void*              pNext,
                                VkInstanceCreateFlags    flags,
@@ -3166,15 +3005,6 @@ void cvkInitMemoryGetFdInfo(VkMemoryGetFdInfoKHR* pInfo, const void* pNext, VkDe
     pInfo->memory     = memory;
     pInfo->handleType = handleType;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitMemoryGetWin32HandleInfo(VkMemoryGetWin32HandleInfoKHR* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
-{
-    pInfo->sType      = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->memory     = memory;
-    pInfo->handleType = handleType;
-}
-#endif
 void cvkInitMemoryOpaqueCaptureAddressAllocateInfo(VkMemoryOpaqueCaptureAddressAllocateInfo* pInfo, const void* pNext, uint64_t opaqueCaptureAddress)
 {
     pInfo->sType                = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
@@ -3186,13 +3016,6 @@ void cvkInitMemoryRequirements2(VkMemoryRequirements2* pInfo, void* pNext)
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     pInfo->pNext = pNext;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo, void* pNext)
-{
-    pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
-    pInfo->pNext = pNext;
-}
-#endif
 void cvkInitPhysicalDevice16BitStorageFeatures(VkPhysicalDevice16BitStorageFeatures* pInfo,
                                                void*                                 pNext,
                                                VkBool32                              storageBuffer16BitAccess,
@@ -4109,15 +3932,6 @@ void cvkInitSemaphoreGetFdInfo(VkSemaphoreGetFdInfoKHR* pInfo, const void* pNext
     pInfo->semaphore  = semaphore;
     pInfo->handleType = handleType;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType)
-{
-    pInfo->sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->semaphore  = semaphore;
-    pInfo->handleType = handleType;
-}
-#endif
 void cvkInitSemaphoreSignalInfo(VkSemaphoreSignalInfo* pInfo, const void* pNext, VkSemaphore semaphore, uint64_t value)
 {
     pInfo->sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
@@ -4304,16 +4118,6 @@ void cvkInitTimelineSemaphoreSubmitInfo(VkTimelineSemaphoreSubmitInfo* pInfo,
     pInfo->signalSemaphoreValueCount = signalSemaphoreValueCount;
     pInfo->pSignalSemaphoreValues    = pSignalSemaphoreValues;
 }
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd)
-{
-    pInfo->sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    pInfo->pNext     = pNext;
-    pInfo->flags     = flags;
-    pInfo->hinstance = hinstance;
-    pInfo->hwnd      = hwnd;
-}
-#endif
 void cvkInitWriteDescriptorSet(VkWriteDescriptorSet*         pInfo,
                                const void*                   pNext,
                                VkDescriptorSet               dstSet,
@@ -4336,24 +4140,14 @@ void cvkInitWriteDescriptorSet(VkWriteDescriptorSet*         pInfo,
     pInfo->pBufferInfo      = pBufferInfo;
     pInfo->pTexelBufferView = pTexelBufferView;
 }
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
-{
-    pInfo->sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    pInfo->pNext  = pNext;
-    pInfo->flags  = flags;
-    pInfo->dpy    = dpy;
-    pInfo->window = window;
-}
-#endif
-void cvkAllocateDescriptorSetVariableDescriptorCountAllocateInfo(VkDevice                     device,
-                                                                 const void*                  pNext,
-                                                                 uint32_t                     variableDescriptorCountDescriptorSetCount,
-                                                                 const uint32_t*              pDescriptorCounts,
-                                                                 VkDescriptorPool             descriptorPool,
-                                                                 uint32_t                     descriptorSetCount,
-                                                                 const VkDescriptorSetLayout* pSetLayouts,
-                                                                 VkDescriptorSet*             pDescriptorSets)
+void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice                     device,
+                                                              const void*                  pNext,
+                                                              uint32_t                     variableDescriptorCountDescriptorSetCount,
+                                                              const uint32_t*              pDescriptorCounts,
+                                                              VkDescriptorPool             descriptorPool,
+                                                              uint32_t                     descriptorSetCount,
+                                                              const VkDescriptorSetLayout* pSetLayouts,
+                                                              VkDescriptorSet*             pDescriptorSets)
 {
     VkDescriptorSetVariableDescriptorCountAllocateInfo descriptor_set_variable_descriptor_count_allocate_info;
 
@@ -4363,13 +4157,13 @@ void cvkAllocateDescriptorSetVariableDescriptorCountAllocateInfo(VkDevice       
     descriptor_set_variable_descriptor_count_allocate_info.pDescriptorCounts  = pDescriptorCounts;
     cvkAllocateDescriptorSets(device, &descriptor_set_variable_descriptor_count_allocate_info, descriptorPool, descriptorSetCount, pSetLayouts, pDescriptorSets);
 }
-void cvkAllocateExportMemoryAllocateInfo(VkDevice                        device,
-                                         const void*                     pNext,
-                                         VkExternalMemoryHandleTypeFlags handleTypes,
-                                         VkDeviceSize                    allocationSize,
-                                         uint32_t                        memoryTypeIndex,
-                                         const VkAllocationCallbacks*    pAllocator,
-                                         VkDeviceMemory*                 pMemory)
+void cvkAllocateMemoryWithExportInfo(VkDevice                        device,
+                                     const void*                     pNext,
+                                     VkExternalMemoryHandleTypeFlags handleTypes,
+                                     VkDeviceSize                    allocationSize,
+                                     uint32_t                        memoryTypeIndex,
+                                     const VkAllocationCallbacks*    pAllocator,
+                                     VkDeviceMemory*                 pMemory)
 {
     VkExportMemoryAllocateInfo export_memory_allocate_info;
 
@@ -4378,35 +4172,14 @@ void cvkAllocateExportMemoryAllocateInfo(VkDevice                        device,
     export_memory_allocate_info.handleTypes = handleTypes;
     cvkAllocateMemory(device, &export_memory_allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-#if (defined(VK_USE_PLATFORM_WIN32_KHR))
-void cvkAllocateExportMemoryWin32HandleInfo(VkDevice                     device,
-                                            const void*                  pNext,
-                                            const SECURITY_ATTRIBUTES*   pAttributes,
-                                            DWORD                        dwAccess,
-                                            LPCWSTR                      name,
-                                            VkDeviceSize                 allocationSize,
-                                            uint32_t                     memoryTypeIndex,
-                                            const VkAllocationCallbacks* pAllocator,
-                                            VkDeviceMemory*              pMemory)
-{
-    VkExportMemoryWin32HandleInfoKHR export_memory_win32_handle_info;
-
-    export_memory_win32_handle_info.sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    export_memory_win32_handle_info.pNext       = pNext;
-    export_memory_win32_handle_info.pAttributes = pAttributes;
-    export_memory_win32_handle_info.dwAccess    = dwAccess;
-    export_memory_win32_handle_info.name        = name;
-    cvkAllocateMemory(device, &export_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
-}
-#endif
-void cvkAllocateImportMemoryFdInfo(VkDevice                           device,
-                                   const void*                        pNext,
-                                   VkExternalMemoryHandleTypeFlagBits handleType,
-                                   int                                fd,
-                                   VkDeviceSize                       allocationSize,
-                                   uint32_t                           memoryTypeIndex,
-                                   const VkAllocationCallbacks*       pAllocator,
-                                   VkDeviceMemory*                    pMemory)
+void cvkAllocateMemoryWithImportMemoryFdInfo(VkDevice                           device,
+                                             const void*                        pNext,
+                                             VkExternalMemoryHandleTypeFlagBits handleType,
+                                             int                                fd,
+                                             VkDeviceSize                       allocationSize,
+                                             uint32_t                           memoryTypeIndex,
+                                             const VkAllocationCallbacks*       pAllocator,
+                                             VkDeviceMemory*                    pMemory)
 {
     VkImportMemoryFdInfoKHR import_memory_fd_info;
 
@@ -4416,35 +4189,14 @@ void cvkAllocateImportMemoryFdInfo(VkDevice                           device,
     import_memory_fd_info.fd         = fd;
     cvkAllocateMemory(device, &import_memory_fd_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-#if (defined(VK_USE_PLATFORM_WIN32_KHR))
-void cvkAllocateImportMemoryWin32HandleInfo(VkDevice                           device,
-                                            const void*                        pNext,
-                                            VkExternalMemoryHandleTypeFlagBits handleType,
-                                            HANDLE                             handle,
-                                            LPCWSTR                            name,
-                                            VkDeviceSize                       allocationSize,
-                                            uint32_t                           memoryTypeIndex,
-                                            const VkAllocationCallbacks*       pAllocator,
-                                            VkDeviceMemory*                    pMemory)
-{
-    VkImportMemoryWin32HandleInfoKHR import_memory_win32_handle_info;
-
-    import_memory_win32_handle_info.sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    import_memory_win32_handle_info.pNext      = pNext;
-    import_memory_win32_handle_info.handleType = handleType;
-    import_memory_win32_handle_info.handle     = handle;
-    import_memory_win32_handle_info.name       = name;
-    cvkAllocateMemory(device, &import_memory_win32_handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
-}
-#endif
-void cvkAllocateMemoryAllocateFlagsInfo(VkDevice                     device,
-                                        const void*                  pNext,
-                                        VkMemoryAllocateFlags        flags,
-                                        uint32_t                     deviceMask,
-                                        VkDeviceSize                 allocationSize,
-                                        uint32_t                     memoryTypeIndex,
-                                        const VkAllocationCallbacks* pAllocator,
-                                        VkDeviceMemory*              pMemory)
+void cvkAllocateMemoryWithFlagsInfo(VkDevice                     device,
+                                    const void*                  pNext,
+                                    VkMemoryAllocateFlags        flags,
+                                    uint32_t                     deviceMask,
+                                    VkDeviceSize                 allocationSize,
+                                    uint32_t                     memoryTypeIndex,
+                                    const VkAllocationCallbacks* pAllocator,
+                                    VkDeviceMemory*              pMemory)
 {
     VkMemoryAllocateFlagsInfo memory_allocate_flags_info;
 
@@ -4454,14 +4206,14 @@ void cvkAllocateMemoryAllocateFlagsInfo(VkDevice                     device,
     memory_allocate_flags_info.deviceMask = deviceMask;
     cvkAllocateMemory(device, &memory_allocate_flags_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkAllocateMemoryDedicatedAllocateInfo(VkDevice                     device,
-                                            const void*                  pNext,
-                                            VkImage                      image,
-                                            VkBuffer                     buffer,
-                                            VkDeviceSize                 allocationSize,
-                                            uint32_t                     memoryTypeIndex,
-                                            const VkAllocationCallbacks* pAllocator,
-                                            VkDeviceMemory*              pMemory)
+void cvkAllocateMemoryWithDedicatedInfo(VkDevice                     device,
+                                        const void*                  pNext,
+                                        VkImage                      image,
+                                        VkBuffer                     buffer,
+                                        VkDeviceSize                 allocationSize,
+                                        uint32_t                     memoryTypeIndex,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkDeviceMemory*              pMemory)
 {
     VkMemoryDedicatedAllocateInfo memory_dedicated_allocate_info;
 
@@ -4471,13 +4223,13 @@ void cvkAllocateMemoryDedicatedAllocateInfo(VkDevice                     device,
     memory_dedicated_allocate_info.buffer = buffer;
     cvkAllocateMemory(device, &memory_dedicated_allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkAllocateMemoryOpaqueCaptureAddressAllocateInfo(VkDevice                     device,
-                                                       const void*                  pNext,
-                                                       uint64_t                     opaqueCaptureAddress,
-                                                       VkDeviceSize                 allocationSize,
-                                                       uint32_t                     memoryTypeIndex,
-                                                       const VkAllocationCallbacks* pAllocator,
-                                                       VkDeviceMemory*              pMemory)
+void cvkAllocateMemoryWithOpaqueCaptureAddressInfo(VkDevice                     device,
+                                                   const void*                  pNext,
+                                                   uint64_t                     opaqueCaptureAddress,
+                                                   VkDeviceSize                 allocationSize,
+                                                   uint32_t                     memoryTypeIndex,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkDeviceMemory*              pMemory)
 {
     VkMemoryOpaqueCaptureAddressAllocateInfo memory_opaque_capture_address_allocate_info;
 
@@ -4486,11 +4238,11 @@ void cvkAllocateMemoryOpaqueCaptureAddressAllocateInfo(VkDevice                 
     memory_opaque_capture_address_allocate_info.opaqueCaptureAddress = opaqueCaptureAddress;
     cvkAllocateMemory(device, &memory_opaque_capture_address_allocate_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkBeginDeviceGroupCommandBufferBeginInfo(VkCommandBuffer                       commandBuffer,
-                                               const void*                           pNext,
-                                               uint32_t                              deviceMask,
-                                               VkCommandBufferUsageFlags             flags,
-                                               const VkCommandBufferInheritanceInfo* pInheritanceInfo)
+void cvkBeginCommandBufferWithDeviceGroupInfo(VkCommandBuffer                       commandBuffer,
+                                              const void*                           pNext,
+                                              uint32_t                              deviceMask,
+                                              VkCommandBufferUsageFlags             flags,
+                                              const VkCommandBufferInheritanceInfo* pInheritanceInfo)
 {
     VkDeviceGroupCommandBufferBeginInfo device_group_command_buffer_begin_info;
 
@@ -4499,17 +4251,17 @@ void cvkBeginDeviceGroupCommandBufferBeginInfo(VkCommandBuffer                  
     device_group_command_buffer_begin_info.deviceMask = deviceMask;
     cvkBeginCommandBuffer(commandBuffer, &device_group_command_buffer_begin_info, flags, pInheritanceInfo);
 }
-void cvkCmdDeviceGroupRenderPassBeginInfo(VkCommandBuffer     commandBuffer,
-                                          const void*         pNext,
-                                          uint32_t            deviceMask,
-                                          uint32_t            deviceRenderAreaCount,
-                                          const VkRect2D*     pDeviceRenderAreas,
-                                          VkRenderPass        renderPass,
-                                          VkFramebuffer       framebuffer,
-                                          VkRect2D            renderArea,
-                                          uint32_t            clearValueCount,
-                                          const VkClearValue* pClearValues,
-                                          VkSubpassContents   contents)
+void cvkCmdBeginRenderPassWithDeviceGroupInfo(VkCommandBuffer     commandBuffer,
+                                              const void*         pNext,
+                                              uint32_t            deviceMask,
+                                              uint32_t            deviceRenderAreaCount,
+                                              const VkRect2D*     pDeviceRenderAreas,
+                                              VkRenderPass        renderPass,
+                                              VkFramebuffer       framebuffer,
+                                              VkRect2D            renderArea,
+                                              uint32_t            clearValueCount,
+                                              const VkClearValue* pClearValues,
+                                              VkSubpassContents   contents)
 {
     VkDeviceGroupRenderPassBeginInfo device_group_render_pass_begin_info;
 
@@ -4520,16 +4272,16 @@ void cvkCmdDeviceGroupRenderPassBeginInfo(VkCommandBuffer     commandBuffer,
     device_group_render_pass_begin_info.pDeviceRenderAreas    = pDeviceRenderAreas;
     cvkCmdBeginRenderPass(commandBuffer, &device_group_render_pass_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
-void cvkCmdRenderPassAttachmentBeginInfo(VkCommandBuffer     commandBuffer,
-                                         const void*         pNext,
-                                         uint32_t            attachmentCount,
-                                         const VkImageView*  pAttachments,
-                                         VkRenderPass        renderPass,
-                                         VkFramebuffer       framebuffer,
-                                         VkRect2D            renderArea,
-                                         uint32_t            clearValueCount,
-                                         const VkClearValue* pClearValues,
-                                         VkSubpassContents   contents)
+void cvkCmdBeginRenderPassWithAttachmentInfo(VkCommandBuffer     commandBuffer,
+                                             const void*         pNext,
+                                             uint32_t            attachmentCount,
+                                             const VkImageView*  pAttachments,
+                                             VkRenderPass        renderPass,
+                                             VkFramebuffer       framebuffer,
+                                             VkRect2D            renderArea,
+                                             uint32_t            clearValueCount,
+                                             const VkClearValue* pClearValues,
+                                             VkSubpassContents   contents)
 {
     VkRenderPassAttachmentBeginInfo render_pass_attachment_begin_info;
 
@@ -4539,17 +4291,17 @@ void cvkCmdRenderPassAttachmentBeginInfo(VkCommandBuffer     commandBuffer,
     render_pass_attachment_begin_info.pAttachments    = pAttachments;
     cvkCmdBeginRenderPass(commandBuffer, &render_pass_attachment_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
-void cvkCreateBufferOpaqueCaptureAddressCreateInfo(VkDevice                     device,
-                                                   const void*                  pNext,
-                                                   uint64_t                     opaqueCaptureAddress,
-                                                   VkBufferCreateFlags          flags,
-                                                   VkDeviceSize                 size,
-                                                   VkBufferUsageFlags           usage,
-                                                   VkSharingMode                sharingMode,
-                                                   uint32_t                     queueFamilyIndexCount,
-                                                   const uint32_t*              pQueueFamilyIndices,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkBuffer*                    pBuffer)
+void cvkCreateBufferWithOpaqueCaptureAddressInfo(VkDevice                     device,
+                                                 const void*                  pNext,
+                                                 uint64_t                     opaqueCaptureAddress,
+                                                 VkBufferCreateFlags          flags,
+                                                 VkDeviceSize                 size,
+                                                 VkBufferUsageFlags           usage,
+                                                 VkSharingMode                sharingMode,
+                                                 uint32_t                     queueFamilyIndexCount,
+                                                 const uint32_t*              pQueueFamilyIndices,
+                                                 const VkAllocationCallbacks* pAllocator,
+                                                 VkBuffer*                    pBuffer)
 {
     VkBufferOpaqueCaptureAddressCreateInfo buffer_opaque_capture_address_create_info;
 
@@ -4558,17 +4310,17 @@ void cvkCreateBufferOpaqueCaptureAddressCreateInfo(VkDevice                     
     buffer_opaque_capture_address_create_info.opaqueCaptureAddress = opaqueCaptureAddress;
     cvkCreateBuffer(device, &buffer_opaque_capture_address_create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
-void cvkCreateExternalMemoryBufferCreateInfo(VkDevice                        device,
-                                             const void*                     pNext,
-                                             VkExternalMemoryHandleTypeFlags handleTypes,
-                                             VkBufferCreateFlags             flags,
-                                             VkDeviceSize                    size,
-                                             VkBufferUsageFlags              usage,
-                                             VkSharingMode                   sharingMode,
-                                             uint32_t                        queueFamilyIndexCount,
-                                             const uint32_t*                 pQueueFamilyIndices,
-                                             const VkAllocationCallbacks*    pAllocator,
-                                             VkBuffer*                       pBuffer)
+void cvkCreateBufferWithExternalMemoryInfo(VkDevice                        device,
+                                           const void*                     pNext,
+                                           VkExternalMemoryHandleTypeFlags handleTypes,
+                                           VkBufferCreateFlags             flags,
+                                           VkDeviceSize                    size,
+                                           VkBufferUsageFlags              usage,
+                                           VkSharingMode                   sharingMode,
+                                           uint32_t                        queueFamilyIndexCount,
+                                           const uint32_t*                 pQueueFamilyIndices,
+                                           const VkAllocationCallbacks*    pAllocator,
+                                           VkBuffer*                       pBuffer)
 {
     VkExternalMemoryBufferCreateInfo external_memory_buffer_create_info;
 
@@ -4577,15 +4329,15 @@ void cvkCreateExternalMemoryBufferCreateInfo(VkDevice                        dev
     external_memory_buffer_create_info.handleTypes = handleTypes;
     cvkCreateBuffer(device, &external_memory_buffer_create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
-void cvkCreateDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
-                                                        const void*                         pNext,
-                                                        uint32_t                            bindingFlagsBindingCount,
-                                                        const VkDescriptorBindingFlags*     pBindingFlags,
-                                                        VkDescriptorSetLayoutCreateFlags    flags,
-                                                        uint32_t                            bindingCount,
-                                                        const VkDescriptorSetLayoutBinding* pBindings,
-                                                        const VkAllocationCallbacks*        pAllocator,
-                                                        VkDescriptorSetLayout*              pSetLayout)
+void cvkCreateDescriptorSetLayoutWithBindingFlagsInfo(VkDevice                            device,
+                                                      const void*                         pNext,
+                                                      uint32_t                            bindingFlagsBindingCount,
+                                                      const VkDescriptorBindingFlags*     pBindingFlags,
+                                                      VkDescriptorSetLayoutCreateFlags    flags,
+                                                      uint32_t                            bindingCount,
+                                                      const VkDescriptorSetLayoutBinding* pBindings,
+                                                      const VkAllocationCallbacks*        pAllocator,
+                                                      VkDescriptorSetLayout*              pSetLayout)
 {
     VkDescriptorSetLayoutBindingFlagsCreateInfo descriptor_set_layout_binding_flags_create_info;
 
@@ -4595,20 +4347,20 @@ void cvkCreateDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                
     descriptor_set_layout_binding_flags_create_info.pBindingFlags = pBindingFlags;
     cvkCreateDescriptorSetLayout(device, &descriptor_set_layout_binding_flags_create_info, flags, bindingCount, pBindings, pAllocator, pSetLayout);
 }
-void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physicalDevice,
-                                          const void*                     pNext,
-                                          uint32_t                        physicalDeviceCount,
-                                          const VkPhysicalDevice*         pPhysicalDevices,
-                                          VkDeviceCreateFlags             flags,
-                                          uint32_t                        queueCreateInfoCount,
-                                          const VkDeviceQueueCreateInfo*  pQueueCreateInfos,
-                                          uint32_t                        enabledLayerCount,
-                                          const char* const*              ppEnabledLayerNames,
-                                          uint32_t                        enabledExtensionCount,
-                                          const char* const*              ppEnabledExtensionNames,
-                                          const VkPhysicalDeviceFeatures* pEnabledFeatures,
-                                          const VkAllocationCallbacks*    pAllocator,
-                                          VkDevice*                       pDevice)
+void cvkCreateDeviceWithDeviceGroupInfo(VkPhysicalDevice                physicalDevice,
+                                        const void*                     pNext,
+                                        uint32_t                        physicalDeviceCount,
+                                        const VkPhysicalDevice*         pPhysicalDevices,
+                                        VkDeviceCreateFlags             flags,
+                                        uint32_t                        queueCreateInfoCount,
+                                        const VkDeviceQueueCreateInfo*  pQueueCreateInfos,
+                                        uint32_t                        enabledLayerCount,
+                                        const char* const*              ppEnabledLayerNames,
+                                        uint32_t                        enabledExtensionCount,
+                                        const char* const*              ppEnabledExtensionNames,
+                                        const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                        const VkAllocationCallbacks*    pAllocator,
+                                        VkDevice*                       pDevice)
 {
     VkDeviceGroupDeviceCreateInfo device_group_device_create_info;
 
@@ -4629,7 +4381,7 @@ void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physic
                     pAllocator,
                     pDevice);
 }
-void cvkCreateExportFenceCreateInfo(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
+void cvkCreateFenceWithExportInfo(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
     VkExportFenceCreateInfo export_fence_create_info;
 
@@ -4638,19 +4390,19 @@ void cvkCreateExportFenceCreateInfo(VkDevice device, const void* pNext, VkExtern
     export_fence_create_info.handleTypes = handleTypes;
     cvkCreateFence(device, &export_fence_create_info, flags, pAllocator, pFence);
 }
-void cvkCreateFramebufferAttachmentsCreateInfo(VkDevice                                device,
-                                               const void*                             pNext,
-                                               uint32_t                                attachmentImageInfoCount,
-                                               const VkFramebufferAttachmentImageInfo* pAttachmentImageInfos,
-                                               VkFramebufferCreateFlags                flags,
-                                               VkRenderPass                            renderPass,
-                                               uint32_t                                attachmentCount,
-                                               const VkImageView*                      pAttachments,
-                                               uint32_t                                width,
-                                               uint32_t                                height,
-                                               uint32_t                                layers,
-                                               const VkAllocationCallbacks*            pAllocator,
-                                               VkFramebuffer*                          pFramebuffer)
+void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                                device,
+                                             const void*                             pNext,
+                                             uint32_t                                attachmentImageInfoCount,
+                                             const VkFramebufferAttachmentImageInfo* pAttachmentImageInfos,
+                                             VkFramebufferCreateFlags                flags,
+                                             VkRenderPass                            renderPass,
+                                             uint32_t                                attachmentCount,
+                                             const VkImageView*                      pAttachments,
+                                             uint32_t                                width,
+                                             uint32_t                                height,
+                                             uint32_t                                layers,
+                                             const VkAllocationCallbacks*            pAllocator,
+                                             VkFramebuffer*                          pFramebuffer)
 {
     VkFramebufferAttachmentsCreateInfo framebuffer_attachments_create_info;
 
@@ -4660,24 +4412,24 @@ void cvkCreateFramebufferAttachmentsCreateInfo(VkDevice                         
     framebuffer_attachments_create_info.pAttachmentImageInfos    = pAttachmentImageInfos;
     cvkCreateFramebuffer(device, &framebuffer_attachments_create_info, flags, renderPass, attachmentCount, pAttachments, width, height, layers, pAllocator, pFramebuffer);
 }
-void cvkCreateExternalMemoryImageCreateInfo(VkDevice                        device,
-                                            const void*                     pNext,
-                                            VkExternalMemoryHandleTypeFlags handleTypes,
-                                            VkImageCreateFlags              flags,
-                                            VkImageType                     imageType,
-                                            VkFormat                        format,
-                                            VkExtent3D                      extent,
-                                            uint32_t                        mipLevels,
-                                            uint32_t                        arrayLayers,
-                                            VkSampleCountFlagBits           samples,
-                                            VkImageTiling                   tiling,
-                                            VkImageUsageFlags               usage,
-                                            VkSharingMode                   sharingMode,
-                                            uint32_t                        queueFamilyIndexCount,
-                                            const uint32_t*                 pQueueFamilyIndices,
-                                            VkImageLayout                   initialLayout,
-                                            const VkAllocationCallbacks*    pAllocator,
-                                            VkImage*                        pImage)
+void cvkCreateImageWithExternalMemoryInfo(VkDevice                        device,
+                                          const void*                     pNext,
+                                          VkExternalMemoryHandleTypeFlags handleTypes,
+                                          VkImageCreateFlags              flags,
+                                          VkImageType                     imageType,
+                                          VkFormat                        format,
+                                          VkExtent3D                      extent,
+                                          uint32_t                        mipLevels,
+                                          uint32_t                        arrayLayers,
+                                          VkSampleCountFlagBits           samples,
+                                          VkImageTiling                   tiling,
+                                          VkImageUsageFlags               usage,
+                                          VkSharingMode                   sharingMode,
+                                          uint32_t                        queueFamilyIndexCount,
+                                          const uint32_t*                 pQueueFamilyIndices,
+                                          VkImageLayout                   initialLayout,
+                                          const VkAllocationCallbacks*    pAllocator,
+                                          VkImage*                        pImage)
 {
     VkExternalMemoryImageCreateInfo external_memory_image_create_info;
 
@@ -4702,26 +4454,26 @@ void cvkCreateExternalMemoryImageCreateInfo(VkDevice                        devi
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageDrmFormatModifierExplicitCreateInfo(VkDevice                     device,
-                                                       const void*                  pNext,
-                                                       uint64_t                     drmFormatModifier,
-                                                       uint32_t                     drmFormatModifierPlaneCount,
-                                                       const VkSubresourceLayout*   pPlaneLayouts,
-                                                       VkImageCreateFlags           flags,
-                                                       VkImageType                  imageType,
-                                                       VkFormat                     format,
-                                                       VkExtent3D                   extent,
-                                                       uint32_t                     mipLevels,
-                                                       uint32_t                     arrayLayers,
-                                                       VkSampleCountFlagBits        samples,
-                                                       VkImageTiling                tiling,
-                                                       VkImageUsageFlags            usage,
-                                                       VkSharingMode                sharingMode,
-                                                       uint32_t                     queueFamilyIndexCount,
-                                                       const uint32_t*              pQueueFamilyIndices,
-                                                       VkImageLayout                initialLayout,
-                                                       const VkAllocationCallbacks* pAllocator,
-                                                       VkImage*                     pImage)
+void cvkCreateImageWithDrmFormatModifierExplicitInfo(VkDevice                     device,
+                                                     const void*                  pNext,
+                                                     uint64_t                     drmFormatModifier,
+                                                     uint32_t                     drmFormatModifierPlaneCount,
+                                                     const VkSubresourceLayout*   pPlaneLayouts,
+                                                     VkImageCreateFlags           flags,
+                                                     VkImageType                  imageType,
+                                                     VkFormat                     format,
+                                                     VkExtent3D                   extent,
+                                                     uint32_t                     mipLevels,
+                                                     uint32_t                     arrayLayers,
+                                                     VkSampleCountFlagBits        samples,
+                                                     VkImageTiling                tiling,
+                                                     VkImageUsageFlags            usage,
+                                                     VkSharingMode                sharingMode,
+                                                     uint32_t                     queueFamilyIndexCount,
+                                                     const uint32_t*              pQueueFamilyIndices,
+                                                     VkImageLayout                initialLayout,
+                                                     const VkAllocationCallbacks* pAllocator,
+                                                     VkImage*                     pImage)
 {
     VkImageDrmFormatModifierExplicitCreateInfoEXT image_drm_format_modifier_explicit_create_info;
 
@@ -4748,25 +4500,25 @@ void cvkCreateImageDrmFormatModifierExplicitCreateInfo(VkDevice                 
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageDrmFormatModifierListCreateInfo(VkDevice                     device,
-                                                   const void*                  pNext,
-                                                   uint32_t                     drmFormatModifierCount,
-                                                   const uint64_t*              pDrmFormatModifiers,
-                                                   VkImageCreateFlags           flags,
-                                                   VkImageType                  imageType,
-                                                   VkFormat                     format,
-                                                   VkExtent3D                   extent,
-                                                   uint32_t                     mipLevels,
-                                                   uint32_t                     arrayLayers,
-                                                   VkSampleCountFlagBits        samples,
-                                                   VkImageTiling                tiling,
-                                                   VkImageUsageFlags            usage,
-                                                   VkSharingMode                sharingMode,
-                                                   uint32_t                     queueFamilyIndexCount,
-                                                   const uint32_t*              pQueueFamilyIndices,
-                                                   VkImageLayout                initialLayout,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkImage*                     pImage)
+void cvkCreateImageWithDrmFormatModifierListInfo(VkDevice                     device,
+                                                 const void*                  pNext,
+                                                 uint32_t                     drmFormatModifierCount,
+                                                 const uint64_t*              pDrmFormatModifiers,
+                                                 VkImageCreateFlags           flags,
+                                                 VkImageType                  imageType,
+                                                 VkFormat                     format,
+                                                 VkExtent3D                   extent,
+                                                 uint32_t                     mipLevels,
+                                                 uint32_t                     arrayLayers,
+                                                 VkSampleCountFlagBits        samples,
+                                                 VkImageTiling                tiling,
+                                                 VkImageUsageFlags            usage,
+                                                 VkSharingMode                sharingMode,
+                                                 uint32_t                     queueFamilyIndexCount,
+                                                 const uint32_t*              pQueueFamilyIndices,
+                                                 VkImageLayout                initialLayout,
+                                                 const VkAllocationCallbacks* pAllocator,
+                                                 VkImage*                     pImage)
 {
     VkImageDrmFormatModifierListCreateInfoEXT image_drm_format_modifier_list_create_info;
 
@@ -4792,25 +4544,25 @@ void cvkCreateImageDrmFormatModifierListCreateInfo(VkDevice                     
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageWithImageFormatListCreateInfo(VkDevice                     device,
-                                                 const void*                  pNext,
-                                                 uint32_t                     viewFormatCount,
-                                                 const VkFormat*              pViewFormats,
-                                                 VkImageCreateFlags           flags,
-                                                 VkImageType                  imageType,
-                                                 VkFormat                     format,
-                                                 VkExtent3D                   extent,
-                                                 uint32_t                     mipLevels,
-                                                 uint32_t                     arrayLayers,
-                                                 VkSampleCountFlagBits        samples,
-                                                 VkImageTiling                tiling,
-                                                 VkImageUsageFlags            usage,
-                                                 VkSharingMode                sharingMode,
-                                                 uint32_t                     queueFamilyIndexCount,
-                                                 const uint32_t*              pQueueFamilyIndices,
-                                                 VkImageLayout                initialLayout,
-                                                 const VkAllocationCallbacks* pAllocator,
-                                                 VkImage*                     pImage)
+void cvkCreateImageWithFormatListInfo(VkDevice                     device,
+                                      const void*                  pNext,
+                                      uint32_t                     viewFormatCount,
+                                      const VkFormat*              pViewFormats,
+                                      VkImageCreateFlags           flags,
+                                      VkImageType                  imageType,
+                                      VkFormat                     format,
+                                      VkExtent3D                   extent,
+                                      uint32_t                     mipLevels,
+                                      uint32_t                     arrayLayers,
+                                      VkSampleCountFlagBits        samples,
+                                      VkImageTiling                tiling,
+                                      VkImageUsageFlags            usage,
+                                      VkSharingMode                sharingMode,
+                                      uint32_t                     queueFamilyIndexCount,
+                                      const uint32_t*              pQueueFamilyIndices,
+                                      VkImageLayout                initialLayout,
+                                      const VkAllocationCallbacks* pAllocator,
+                                      VkImage*                     pImage)
 {
     VkImageFormatListCreateInfo image_format_list_create_info;
 
@@ -4836,24 +4588,24 @@ void cvkCreateImageWithImageFormatListCreateInfo(VkDevice                     de
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageStencilUsageCreateInfo(VkDevice                     device,
-                                          const void*                  pNext,
-                                          VkImageUsageFlags            stencilUsage,
-                                          VkImageCreateFlags           flags,
-                                          VkImageType                  imageType,
-                                          VkFormat                     format,
-                                          VkExtent3D                   extent,
-                                          uint32_t                     mipLevels,
-                                          uint32_t                     arrayLayers,
-                                          VkSampleCountFlagBits        samples,
-                                          VkImageTiling                tiling,
-                                          VkImageUsageFlags            usage,
-                                          VkSharingMode                sharingMode,
-                                          uint32_t                     queueFamilyIndexCount,
-                                          const uint32_t*              pQueueFamilyIndices,
-                                          VkImageLayout                initialLayout,
-                                          const VkAllocationCallbacks* pAllocator,
-                                          VkImage*                     pImage)
+void cvkCreateImageWithStencilUsageInfo(VkDevice                     device,
+                                        const void*                  pNext,
+                                        VkImageUsageFlags            stencilUsage,
+                                        VkImageCreateFlags           flags,
+                                        VkImageType                  imageType,
+                                        VkFormat                     format,
+                                        VkExtent3D                   extent,
+                                        uint32_t                     mipLevels,
+                                        uint32_t                     arrayLayers,
+                                        VkSampleCountFlagBits        samples,
+                                        VkImageTiling                tiling,
+                                        VkImageUsageFlags            usage,
+                                        VkSharingMode                sharingMode,
+                                        uint32_t                     queueFamilyIndexCount,
+                                        const uint32_t*              pQueueFamilyIndices,
+                                        VkImageLayout                initialLayout,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkImage*                     pImage)
 {
     VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 
@@ -4878,24 +4630,24 @@ void cvkCreateImageStencilUsageCreateInfo(VkDevice                     device,
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageSwapchainCreateInfo(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkSwapchainKHR               swapchain,
-                                       VkImageCreateFlags           flags,
-                                       VkImageType                  imageType,
-                                       VkFormat                     format,
-                                       VkExtent3D                   extent,
-                                       uint32_t                     mipLevels,
-                                       uint32_t                     arrayLayers,
-                                       VkSampleCountFlagBits        samples,
-                                       VkImageTiling                tiling,
-                                       VkImageUsageFlags            usage,
-                                       VkSharingMode                sharingMode,
-                                       uint32_t                     queueFamilyIndexCount,
-                                       const uint32_t*              pQueueFamilyIndices,
-                                       VkImageLayout                initialLayout,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkImage*                     pImage)
+void cvkCreateImageWithSwapchainInfo(VkDevice                     device,
+                                     const void*                  pNext,
+                                     VkSwapchainKHR               swapchain,
+                                     VkImageCreateFlags           flags,
+                                     VkImageType                  imageType,
+                                     VkFormat                     format,
+                                     VkExtent3D                   extent,
+                                     uint32_t                     mipLevels,
+                                     uint32_t                     arrayLayers,
+                                     VkSampleCountFlagBits        samples,
+                                     VkImageTiling                tiling,
+                                     VkImageUsageFlags            usage,
+                                     VkSharingMode                sharingMode,
+                                     uint32_t                     queueFamilyIndexCount,
+                                     const uint32_t*              pQueueFamilyIndices,
+                                     VkImageLayout                initialLayout,
+                                     const VkAllocationCallbacks* pAllocator,
+                                     VkImage*                     pImage)
 {
     VkImageSwapchainCreateInfoKHR image_swapchain_create_info;
 
@@ -4920,17 +4672,17 @@ void cvkCreateImageSwapchainCreateInfo(VkDevice                     device,
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageViewUsageCreateInfo(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkImageUsageFlags            usage,
-                                       VkImageViewCreateFlags       flags,
-                                       VkImage                      image,
-                                       VkImageViewType              viewType,
-                                       VkFormat                     format,
-                                       VkComponentMapping           components,
-                                       VkImageSubresourceRange      subresourceRange,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkImageView*                 pView)
+void cvkCreateImageViewWithUsageInfo(VkDevice                     device,
+                                     const void*                  pNext,
+                                     VkImageUsageFlags            usage,
+                                     VkImageViewCreateFlags       flags,
+                                     VkImage                      image,
+                                     VkImageViewType              viewType,
+                                     VkFormat                     format,
+                                     VkComponentMapping           components,
+                                     VkImageSubresourceRange      subresourceRange,
+                                     const VkAllocationCallbacks* pAllocator,
+                                     VkImageView*                 pView)
 {
     VkImageViewUsageCreateInfo image_view_usage_create_info;
 
@@ -4958,20 +4710,20 @@ void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                  
     sampler_ycbcr_conversion_info.conversion = conversion;
     cvkCreateImageView(device, &sampler_ycbcr_conversion_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
-void cvkCreateDebugUtilsMessengerCreateInfo(const void*                          pNext,
-                                            VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
-                                            VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
-                                            VkDebugUtilsMessageTypeFlagsEXT      messageType,
-                                            PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
-                                            void*                                pUserData,
-                                            VkInstanceCreateFlags                flags,
-                                            const VkApplicationInfo*             pApplicationInfo,
-                                            uint32_t                             enabledLayerCount,
-                                            const char* const*                   ppEnabledLayerNames,
-                                            uint32_t                             enabledExtensionCount,
-                                            const char* const*                   ppEnabledExtensionNames,
-                                            const VkAllocationCallbacks*         pAllocator,
-                                            VkInstance*                          pInstance)
+void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                          pNext,
+                                                  VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
+                                                  VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
+                                                  VkDebugUtilsMessageTypeFlagsEXT      messageType,
+                                                  PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
+                                                  void*                                pUserData,
+                                                  VkInstanceCreateFlags                flags,
+                                                  const VkApplicationInfo*             pApplicationInfo,
+                                                  uint32_t                             enabledLayerCount,
+                                                  const char* const*                   ppEnabledLayerNames,
+                                                  uint32_t                             enabledExtensionCount,
+                                                  const char* const*                   ppEnabledExtensionNames,
+                                                  const VkAllocationCallbacks*         pAllocator,
+                                                  VkInstance*                          pInstance)
 {
     VkDebugUtilsMessengerCreateInfoEXT debug_utils_messenger_create_info;
 
@@ -4984,19 +4736,19 @@ void cvkCreateDebugUtilsMessengerCreateInfo(const void*                         
     debug_utils_messenger_create_info.pUserData       = pUserData;
     cvkCreateInstance(&debug_utils_messenger_create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
-void cvkCreateRenderPassInputAttachmentAspectCreateInfo(VkDevice                                device,
-                                                        const void*                             pNext,
-                                                        uint32_t                                aspectReferenceCount,
-                                                        const VkInputAttachmentAspectReference* pAspectReferences,
-                                                        VkRenderPassCreateFlags                 flags,
-                                                        uint32_t                                attachmentCount,
-                                                        const VkAttachmentDescription*          pAttachments,
-                                                        uint32_t                                subpassCount,
-                                                        const VkSubpassDescription*             pSubpasses,
-                                                        uint32_t                                dependencyCount,
-                                                        const VkSubpassDependency*              pDependencies,
-                                                        const VkAllocationCallbacks*            pAllocator,
-                                                        VkRenderPass*                           pRenderPass)
+void cvkCreateRenderPassWithInputAttachmentAspectInfo(VkDevice                                device,
+                                                      const void*                             pNext,
+                                                      uint32_t                                aspectReferenceCount,
+                                                      const VkInputAttachmentAspectReference* pAspectReferences,
+                                                      VkRenderPassCreateFlags                 flags,
+                                                      uint32_t                                attachmentCount,
+                                                      const VkAttachmentDescription*          pAttachments,
+                                                      uint32_t                                subpassCount,
+                                                      const VkSubpassDescription*             pSubpasses,
+                                                      uint32_t                                dependencyCount,
+                                                      const VkSubpassDependency*              pDependencies,
+                                                      const VkAllocationCallbacks*            pAllocator,
+                                                      VkRenderPass*                           pRenderPass)
 {
     VkRenderPassInputAttachmentAspectCreateInfo render_pass_input_attachment_aspect_create_info;
 
@@ -5016,23 +4768,23 @@ void cvkCreateRenderPassInputAttachmentAspectCreateInfo(VkDevice                
                         pAllocator,
                         pRenderPass);
 }
-void cvkCreateRenderPassMultiviewCreateInfo(VkDevice                       device,
-                                            const void*                    pNext,
-                                            uint32_t                       multiviewSubpassCount,
-                                            const uint32_t*                pViewMasks,
-                                            uint32_t                       multiviewDependencyCount,
-                                            const int32_t*                 pViewOffsets,
-                                            uint32_t                       correlationMaskCount,
-                                            const uint32_t*                pCorrelationMasks,
-                                            VkRenderPassCreateFlags        flags,
-                                            uint32_t                       attachmentCount,
-                                            const VkAttachmentDescription* pAttachments,
-                                            uint32_t                       subpassCount,
-                                            const VkSubpassDescription*    pSubpasses,
-                                            uint32_t                       dependencyCount,
-                                            const VkSubpassDependency*     pDependencies,
-                                            const VkAllocationCallbacks*   pAllocator,
-                                            VkRenderPass*                  pRenderPass)
+void cvkCreateRenderPassWithMultiviewInfo(VkDevice                       device,
+                                          const void*                    pNext,
+                                          uint32_t                       multiviewSubpassCount,
+                                          const uint32_t*                pViewMasks,
+                                          uint32_t                       multiviewDependencyCount,
+                                          const int32_t*                 pViewOffsets,
+                                          uint32_t                       correlationMaskCount,
+                                          const uint32_t*                pCorrelationMasks,
+                                          VkRenderPassCreateFlags        flags,
+                                          uint32_t                       attachmentCount,
+                                          const VkAttachmentDescription* pAttachments,
+                                          uint32_t                       subpassCount,
+                                          const VkSubpassDescription*    pSubpasses,
+                                          uint32_t                       dependencyCount,
+                                          const VkSubpassDependency*     pDependencies,
+                                          const VkAllocationCallbacks*   pAllocator,
+                                          VkRenderPass*                  pRenderPass)
 {
     VkRenderPassMultiviewCreateInfo render_pass_multiview_create_info;
 
@@ -5046,29 +4798,29 @@ void cvkCreateRenderPassMultiviewCreateInfo(VkDevice                       devic
     render_pass_multiview_create_info.pCorrelationMasks    = pCorrelationMasks;
     cvkCreateRenderPass(device, &render_pass_multiview_create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
-void cvkCreateDebugUtilsObjectNameInfo(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkObjectType                 objectType,
-                                       uint64_t                     objectHandle,
-                                       const char*                  pObjectName,
-                                       VkSamplerCreateFlags         flags,
-                                       VkFilter                     magFilter,
-                                       VkFilter                     minFilter,
-                                       VkSamplerMipmapMode          mipmapMode,
-                                       VkSamplerAddressMode         addressModeU,
-                                       VkSamplerAddressMode         addressModeV,
-                                       VkSamplerAddressMode         addressModeW,
-                                       float                        mipLodBias,
-                                       VkBool32                     anisotropyEnable,
-                                       float                        maxAnisotropy,
-                                       VkBool32                     compareEnable,
-                                       VkCompareOp                  compareOp,
-                                       float                        minLod,
-                                       float                        maxLod,
-                                       VkBorderColor                borderColor,
-                                       VkBool32                     unnormalizedCoordinates,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkSampler*                   pSampler)
+void cvkCreateSamplerWithDebugUtilsObjectNameInfo(VkDevice                     device,
+                                                  const void*                  pNext,
+                                                  VkObjectType                 objectType,
+                                                  uint64_t                     objectHandle,
+                                                  const char*                  pObjectName,
+                                                  VkSamplerCreateFlags         flags,
+                                                  VkFilter                     magFilter,
+                                                  VkFilter                     minFilter,
+                                                  VkSamplerMipmapMode          mipmapMode,
+                                                  VkSamplerAddressMode         addressModeU,
+                                                  VkSamplerAddressMode         addressModeV,
+                                                  VkSamplerAddressMode         addressModeW,
+                                                  float                        mipLodBias,
+                                                  VkBool32                     anisotropyEnable,
+                                                  float                        maxAnisotropy,
+                                                  VkBool32                     compareEnable,
+                                                  VkCompareOp                  compareOp,
+                                                  float                        minLod,
+                                                  float                        maxLod,
+                                                  VkBorderColor                borderColor,
+                                                  VkBool32                     unnormalizedCoordinates,
+                                                  const VkAllocationCallbacks* pAllocator,
+                                                  VkSampler*                   pSampler)
 {
     VkDebugUtilsObjectNameInfoEXT debug_utils_object_name_info;
 
@@ -5098,27 +4850,27 @@ void cvkCreateDebugUtilsObjectNameInfo(VkDevice                     device,
                      pAllocator,
                      pSampler);
 }
-void cvkCreateSamplerReductionModeCreateInfo(VkDevice                     device,
-                                             const void*                  pNext,
-                                             VkSamplerReductionMode       reductionMode,
-                                             VkSamplerCreateFlags         flags,
-                                             VkFilter                     magFilter,
-                                             VkFilter                     minFilter,
-                                             VkSamplerMipmapMode          mipmapMode,
-                                             VkSamplerAddressMode         addressModeU,
-                                             VkSamplerAddressMode         addressModeV,
-                                             VkSamplerAddressMode         addressModeW,
-                                             float                        mipLodBias,
-                                             VkBool32                     anisotropyEnable,
-                                             float                        maxAnisotropy,
-                                             VkBool32                     compareEnable,
-                                             VkCompareOp                  compareOp,
-                                             float                        minLod,
-                                             float                        maxLod,
-                                             VkBorderColor                borderColor,
-                                             VkBool32                     unnormalizedCoordinates,
-                                             const VkAllocationCallbacks* pAllocator,
-                                             VkSampler*                   pSampler)
+void cvkCreateSamplerWithReductionModeInfo(VkDevice                     device,
+                                           const void*                  pNext,
+                                           VkSamplerReductionMode       reductionMode,
+                                           VkSamplerCreateFlags         flags,
+                                           VkFilter                     magFilter,
+                                           VkFilter                     minFilter,
+                                           VkSamplerMipmapMode          mipmapMode,
+                                           VkSamplerAddressMode         addressModeU,
+                                           VkSamplerAddressMode         addressModeV,
+                                           VkSamplerAddressMode         addressModeW,
+                                           float                        mipLodBias,
+                                           VkBool32                     anisotropyEnable,
+                                           float                        maxAnisotropy,
+                                           VkBool32                     compareEnable,
+                                           VkCompareOp                  compareOp,
+                                           float                        minLod,
+                                           float                        maxLod,
+                                           VkBorderColor                borderColor,
+                                           VkBool32                     unnormalizedCoordinates,
+                                           const VkAllocationCallbacks* pAllocator,
+                                           VkSampler*                   pSampler)
 {
     VkSamplerReductionModeCreateInfo sampler_reduction_mode_create_info;
 
@@ -5146,27 +4898,27 @@ void cvkCreateSamplerReductionModeCreateInfo(VkDevice                     device
                      pAllocator,
                      pSampler);
 }
-void cvkCreateSamplerWithSamplerYcbcrConversionInfo(VkDevice                     device,
-                                                    const void*                  pNext,
-                                                    VkSamplerYcbcrConversion     conversion,
-                                                    VkSamplerCreateFlags         flags,
-                                                    VkFilter                     magFilter,
-                                                    VkFilter                     minFilter,
-                                                    VkSamplerMipmapMode          mipmapMode,
-                                                    VkSamplerAddressMode         addressModeU,
-                                                    VkSamplerAddressMode         addressModeV,
-                                                    VkSamplerAddressMode         addressModeW,
-                                                    float                        mipLodBias,
-                                                    VkBool32                     anisotropyEnable,
-                                                    float                        maxAnisotropy,
-                                                    VkBool32                     compareEnable,
-                                                    VkCompareOp                  compareOp,
-                                                    float                        minLod,
-                                                    float                        maxLod,
-                                                    VkBorderColor                borderColor,
-                                                    VkBool32                     unnormalizedCoordinates,
-                                                    const VkAllocationCallbacks* pAllocator,
-                                                    VkSampler*                   pSampler)
+void cvkCreateSamplerWithYcbcrConversionInfo(VkDevice                     device,
+                                             const void*                  pNext,
+                                             VkSamplerYcbcrConversion     conversion,
+                                             VkSamplerCreateFlags         flags,
+                                             VkFilter                     magFilter,
+                                             VkFilter                     minFilter,
+                                             VkSamplerMipmapMode          mipmapMode,
+                                             VkSamplerAddressMode         addressModeU,
+                                             VkSamplerAddressMode         addressModeV,
+                                             VkSamplerAddressMode         addressModeW,
+                                             float                        mipLodBias,
+                                             VkBool32                     anisotropyEnable,
+                                             float                        maxAnisotropy,
+                                             VkBool32                     compareEnable,
+                                             VkCompareOp                  compareOp,
+                                             float                        minLod,
+                                             float                        maxLod,
+                                             VkBorderColor                borderColor,
+                                             VkBool32                     unnormalizedCoordinates,
+                                             const VkAllocationCallbacks* pAllocator,
+                                             VkSampler*                   pSampler)
 {
     VkSamplerYcbcrConversionInfo sampler_ycbcr_conversion_info;
 
@@ -5194,12 +4946,12 @@ void cvkCreateSamplerWithSamplerYcbcrConversionInfo(VkDevice                    
                      pAllocator,
                      pSampler);
 }
-void cvkCreateExportSemaphoreCreateInfo(VkDevice                           device,
-                                        const void*                        pNext,
-                                        VkExternalSemaphoreHandleTypeFlags handleTypes,
-                                        VkSemaphoreCreateFlags             flags,
-                                        const VkAllocationCallbacks*       pAllocator,
-                                        VkSemaphore*                       pSemaphore)
+void cvkCreateSemaphoreWithExportInfo(VkDevice                           device,
+                                      const void*                        pNext,
+                                      VkExternalSemaphoreHandleTypeFlags handleTypes,
+                                      VkSemaphoreCreateFlags             flags,
+                                      const VkAllocationCallbacks*       pAllocator,
+                                      VkSemaphore*                       pSemaphore)
 {
     VkExportSemaphoreCreateInfo export_semaphore_create_info;
 
@@ -5208,33 +4960,13 @@ void cvkCreateExportSemaphoreCreateInfo(VkDevice                           devic
     export_semaphore_create_info.handleTypes = handleTypes;
     cvkCreateSemaphore(device, &export_semaphore_create_info, flags, pAllocator, pSemaphore);
 }
-#if (defined(VK_USE_PLATFORM_WIN32_KHR))
-void cvkCreateExportSemaphoreWin32HandleInfo(VkDevice                     device,
-                                             const void*                  pNext,
-                                             const SECURITY_ATTRIBUTES*   pAttributes,
-                                             DWORD                        dwAccess,
-                                             LPCWSTR                      name,
-                                             VkSemaphoreCreateFlags       flags,
-                                             const VkAllocationCallbacks* pAllocator,
-                                             VkSemaphore*                 pSemaphore)
-{
-    VkExportSemaphoreWin32HandleInfoKHR export_semaphore_win32_handle_info;
-
-    export_semaphore_win32_handle_info.sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    export_semaphore_win32_handle_info.pNext       = pNext;
-    export_semaphore_win32_handle_info.pAttributes = pAttributes;
-    export_semaphore_win32_handle_info.dwAccess    = dwAccess;
-    export_semaphore_win32_handle_info.name        = name;
-    cvkCreateSemaphore(device, &export_semaphore_win32_handle_info, flags, pAllocator, pSemaphore);
-}
-#endif
-void cvkCreateSemaphoreTypeCreateInfo(VkDevice                     device,
-                                      const void*                  pNext,
-                                      VkSemaphoreType              semaphoreType,
-                                      uint64_t                     initialValue,
-                                      VkSemaphoreCreateFlags       flags,
-                                      const VkAllocationCallbacks* pAllocator,
-                                      VkSemaphore*                 pSemaphore)
+void cvkCreateSemaphoreWithTypeInfo(VkDevice                     device,
+                                    const void*                  pNext,
+                                    VkSemaphoreType              semaphoreType,
+                                    uint64_t                     initialValue,
+                                    VkSemaphoreCreateFlags       flags,
+                                    const VkAllocationCallbacks* pAllocator,
+                                    VkSemaphore*                 pSemaphore)
 {
     VkSemaphoreTypeCreateInfo semaphore_type_create_info;
 
@@ -5244,27 +4976,27 @@ void cvkCreateSemaphoreTypeCreateInfo(VkDevice                     device,
     semaphore_type_create_info.initialValue  = initialValue;
     cvkCreateSemaphore(device, &semaphore_type_create_info, flags, pAllocator, pSemaphore);
 }
-void cvkCreateDeviceGroupSwapchainCreateInfo(VkDevice                         device,
-                                             const void*                      pNext,
-                                             VkDeviceGroupPresentModeFlagsKHR modes,
-                                             VkSwapchainCreateFlagsKHR        flags,
-                                             VkSurfaceKHR                     surface,
-                                             uint32_t                         minImageCount,
-                                             VkFormat                         imageFormat,
-                                             VkColorSpaceKHR                  imageColorSpace,
-                                             VkExtent2D                       imageExtent,
-                                             uint32_t                         imageArrayLayers,
-                                             VkImageUsageFlags                imageUsage,
-                                             VkSharingMode                    imageSharingMode,
-                                             uint32_t                         queueFamilyIndexCount,
-                                             const uint32_t*                  pQueueFamilyIndices,
-                                             VkSurfaceTransformFlagBitsKHR    preTransform,
-                                             VkCompositeAlphaFlagBitsKHR      compositeAlpha,
-                                             VkPresentModeKHR                 presentMode,
-                                             VkBool32                         clipped,
-                                             VkSwapchainKHR                   oldSwapchain,
-                                             const VkAllocationCallbacks*     pAllocator,
-                                             VkSwapchainKHR*                  pSwapchain)
+void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         device,
+                                           const void*                      pNext,
+                                           VkDeviceGroupPresentModeFlagsKHR modes,
+                                           VkSwapchainCreateFlagsKHR        flags,
+                                           VkSurfaceKHR                     surface,
+                                           uint32_t                         minImageCount,
+                                           VkFormat                         imageFormat,
+                                           VkColorSpaceKHR                  imageColorSpace,
+                                           VkExtent2D                       imageExtent,
+                                           uint32_t                         imageArrayLayers,
+                                           VkImageUsageFlags                imageUsage,
+                                           VkSharingMode                    imageSharingMode,
+                                           uint32_t                         queueFamilyIndexCount,
+                                           const uint32_t*                  pQueueFamilyIndices,
+                                           VkSurfaceTransformFlagBitsKHR    preTransform,
+                                           VkCompositeAlphaFlagBitsKHR      compositeAlpha,
+                                           VkPresentModeKHR                 presentMode,
+                                           VkBool32                         clipped,
+                                           VkSwapchainKHR                   oldSwapchain,
+                                           const VkAllocationCallbacks*     pAllocator,
+                                           VkSwapchainKHR*                  pSwapchain)
 {
     VkDeviceGroupSwapchainCreateInfoKHR device_group_swapchain_create_info;
 
@@ -5292,28 +5024,28 @@ void cvkCreateDeviceGroupSwapchainCreateInfo(VkDevice                         de
                        pAllocator,
                        pSwapchain);
 }
-void cvkCreateSwapchainWithImageFormatListCreateInfo(VkDevice                      device,
-                                                     const void*                   pNext,
-                                                     uint32_t                      viewFormatCount,
-                                                     const VkFormat*               pViewFormats,
-                                                     VkSwapchainCreateFlagsKHR     flags,
-                                                     VkSurfaceKHR                  surface,
-                                                     uint32_t                      minImageCount,
-                                                     VkFormat                      imageFormat,
-                                                     VkColorSpaceKHR               imageColorSpace,
-                                                     VkExtent2D                    imageExtent,
-                                                     uint32_t                      imageArrayLayers,
-                                                     VkImageUsageFlags             imageUsage,
-                                                     VkSharingMode                 imageSharingMode,
-                                                     uint32_t                      queueFamilyIndexCount,
-                                                     const uint32_t*               pQueueFamilyIndices,
-                                                     VkSurfaceTransformFlagBitsKHR preTransform,
-                                                     VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                     VkPresentModeKHR              presentMode,
-                                                     VkBool32                      clipped,
-                                                     VkSwapchainKHR                oldSwapchain,
-                                                     const VkAllocationCallbacks*  pAllocator,
-                                                     VkSwapchainKHR*               pSwapchain)
+void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      device,
+                                               const void*                   pNext,
+                                               uint32_t                      viewFormatCount,
+                                               const VkFormat*               pViewFormats,
+                                               VkSwapchainCreateFlagsKHR     flags,
+                                               VkSurfaceKHR                  surface,
+                                               uint32_t                      minImageCount,
+                                               VkFormat                      imageFormat,
+                                               VkColorSpaceKHR               imageColorSpace,
+                                               VkExtent2D                    imageExtent,
+                                               uint32_t                      imageArrayLayers,
+                                               VkImageUsageFlags             imageUsage,
+                                               VkSharingMode                 imageSharingMode,
+                                               uint32_t                      queueFamilyIndexCount,
+                                               const uint32_t*               pQueueFamilyIndices,
+                                               VkSurfaceTransformFlagBitsKHR preTransform,
+                                               VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                               VkPresentModeKHR              presentMode,
+                                               VkBool32                      clipped,
+                                               VkSwapchainKHR                oldSwapchain,
+                                               const VkAllocationCallbacks*  pAllocator,
+                                               VkSwapchainKHR*               pSwapchain)
 {
     VkImageFormatListCreateInfo image_format_list_create_info;
 
@@ -5342,15 +5074,15 @@ void cvkCreateSwapchainWithImageFormatListCreateInfo(VkDevice                   
                        pAllocator,
                        pSwapchain);
 }
-void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
-                                                     const void*                         pCreateInfoNext,
-                                                     uint32_t                            bindingFlagsBindingCount,
-                                                     const VkDescriptorBindingFlags*     pBindingFlags,
-                                                     VkDescriptorSetLayoutCreateFlags    flags,
-                                                     uint32_t                            bindingCount,
-                                                     const VkDescriptorSetLayoutBinding* pBindings,
-                                                     void*                               pSupportNext,
-                                                     VkDescriptorSetLayoutSupport*       pSupport)
+void cvkGetDescriptorSetLayoutSupportWithBindingFlagsInfo(VkDevice                            device,
+                                                          const void*                         pCreateInfoNext,
+                                                          uint32_t                            bindingFlagsBindingCount,
+                                                          const VkDescriptorBindingFlags*     pBindingFlags,
+                                                          VkDescriptorSetLayoutCreateFlags    flags,
+                                                          uint32_t                            bindingCount,
+                                                          const VkDescriptorSetLayoutBinding* pBindings,
+                                                          void*                               pSupportNext,
+                                                          VkDescriptorSetLayoutSupport*       pSupport)
 {
     VkDescriptorSetLayoutBindingFlagsCreateInfo descriptor_set_layout_binding_flags_create_info;
 
@@ -5360,12 +5092,12 @@ void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                   
     descriptor_set_layout_binding_flags_create_info.pBindingFlags = pBindingFlags;
     cvkGetDescriptorSetLayoutSupport(device, &descriptor_set_layout_binding_flags_create_info, flags, bindingCount, pBindings, pSupportNext, pSupport);
 }
-void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
-                                            const void*            pInfoNext,
-                                            VkImageAspectFlagBits  planeAspect,
-                                            VkImage                image,
-                                            void*                  pMemoryRequirementsNext,
-                                            VkMemoryRequirements2* pMemoryRequirements)
+void cvkGetImageMemoryRequirements2WithPlaneMemoryRequirementsInfo(VkDevice               device,
+                                                                   const void*            pInfoNext,
+                                                                   VkImageAspectFlagBits  planeAspect,
+                                                                   VkImage                image,
+                                                                   void*                  pMemoryRequirementsNext,
+                                                                   VkMemoryRequirements2* pMemoryRequirements)
 {
     VkImagePlaneMemoryRequirementsInfo image_plane_memory_requirements_info;
 
@@ -5374,13 +5106,13 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
     image_plane_memory_requirements_info.planeAspect = planeAspect;
     cvkGetImageMemoryRequirements2(device, &image_plane_memory_requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
-void cvkGetSemaphoreTypeCreateInfo(VkPhysicalDevice                      physicalDevice,
-                                   const void*                           pExternalSemaphoreInfoNext,
-                                   VkSemaphoreType                       semaphoreType,
-                                   uint64_t                              initialValue,
-                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                   void*                                 pExternalSemaphorePropertiesNext,
-                                   VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
+void cvkGetPhysicalDeviceExternalSemaphorePropertiesWithSemaphoreTypeInfo(VkPhysicalDevice                      physicalDevice,
+                                                                          const void*                           pExternalSemaphoreInfoNext,
+                                                                          VkSemaphoreType                       semaphoreType,
+                                                                          uint64_t                              initialValue,
+                                                                          VkExternalSemaphoreHandleTypeFlagBits handleType,
+                                                                          void*                                 pExternalSemaphorePropertiesNext,
+                                                                          VkExternalSemaphoreProperties*        pExternalSemaphoreProperties)
 {
     VkSemaphoreTypeCreateInfo semaphore_type_create_info;
 
@@ -5390,17 +5122,17 @@ void cvkGetSemaphoreTypeCreateInfo(VkPhysicalDevice                      physica
     semaphore_type_create_info.initialValue  = initialValue;
     cvkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &semaphore_type_create_info, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
-void cvkGetImageFormatListCreateInfo(VkPhysicalDevice          physicalDevice,
-                                     const void*               pImageFormatInfoNext,
-                                     uint32_t                  viewFormatCount,
-                                     const VkFormat*           pViewFormats,
-                                     VkFormat                  format,
-                                     VkImageType               type,
-                                     VkImageTiling             tiling,
-                                     VkImageUsageFlags         usage,
-                                     VkImageCreateFlags        flags,
-                                     void*                     pImageFormatPropertiesNext,
-                                     VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageFormatProperties2WithImageFormatListInfo(VkPhysicalDevice          physicalDevice,
+                                                                       const void*               pImageFormatInfoNext,
+                                                                       uint32_t                  viewFormatCount,
+                                                                       const VkFormat*           pViewFormats,
+                                                                       VkFormat                  format,
+                                                                       VkImageType               type,
+                                                                       VkImageTiling             tiling,
+                                                                       VkImageUsageFlags         usage,
+                                                                       VkImageCreateFlags        flags,
+                                                                       void*                     pImageFormatPropertiesNext,
+                                                                       VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageFormatListCreateInfo image_format_list_create_info;
 
@@ -5410,16 +5142,16 @@ void cvkGetImageFormatListCreateInfo(VkPhysicalDevice          physicalDevice,
     image_format_list_create_info.pViewFormats    = pViewFormats;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetImageStencilUsageCreateInfo(VkPhysicalDevice          physicalDevice,
-                                       const void*               pImageFormatInfoNext,
-                                       VkImageUsageFlags         stencilUsage,
-                                       VkFormat                  format,
-                                       VkImageType               type,
-                                       VkImageTiling             tiling,
-                                       VkImageUsageFlags         usage,
-                                       VkImageCreateFlags        flags,
-                                       void*                     pImageFormatPropertiesNext,
-                                       VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageFormatProperties2WithImageStencilUsageInfo(VkPhysicalDevice          physicalDevice,
+                                                                         const void*               pImageFormatInfoNext,
+                                                                         VkImageUsageFlags         stencilUsage,
+                                                                         VkFormat                  format,
+                                                                         VkImageType               type,
+                                                                         VkImageTiling             tiling,
+                                                                         VkImageUsageFlags         usage,
+                                                                         VkImageCreateFlags        flags,
+                                                                         void*                     pImageFormatPropertiesNext,
+                                                                         VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 
@@ -5428,16 +5160,16 @@ void cvkGetImageStencilUsageCreateInfo(VkPhysicalDevice          physicalDevice,
     image_stencil_usage_create_info.stencilUsage = stencilUsage;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_stencil_usage_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
-                                                 const void*                        pImageFormatInfoNext,
-                                                 VkExternalMemoryHandleTypeFlagBits handleType,
-                                                 VkFormat                           format,
-                                                 VkImageType                        type,
-                                                 VkImageTiling                      tiling,
-                                                 VkImageUsageFlags                  usage,
-                                                 VkImageCreateFlags                 flags,
-                                                 void*                              pImageFormatPropertiesNext,
-                                                 VkImageFormatProperties2*          pImageFormatProperties)
+void cvkGetPhysicalDeviceImageFormatProperties2WithExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
+                                                                           const void*                        pImageFormatInfoNext,
+                                                                           VkExternalMemoryHandleTypeFlagBits handleType,
+                                                                           VkFormat                           format,
+                                                                           VkImageType                        type,
+                                                                           VkImageTiling                      tiling,
+                                                                           VkImageUsageFlags                  usage,
+                                                                           VkImageCreateFlags                 flags,
+                                                                           void*                              pImageFormatPropertiesNext,
+                                                                           VkImageFormatProperties2*          pImageFormatProperties)
 {
     VkPhysicalDeviceExternalImageFormatInfo physical_device_external_image_format_info;
 
@@ -5446,19 +5178,19 @@ void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice               
     physical_device_external_image_format_info.handleType = handleType;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &physical_device_external_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
-                                                    const void*               pImageFormatInfoNext,
-                                                    uint64_t                  drmFormatModifier,
-                                                    VkSharingMode             sharingMode,
-                                                    uint32_t                  queueFamilyIndexCount,
-                                                    const uint32_t*           pQueueFamilyIndices,
-                                                    VkFormat                  format,
-                                                    VkImageType               type,
-                                                    VkImageTiling             tiling,
-                                                    VkImageUsageFlags         usage,
-                                                    VkImageCreateFlags        flags,
-                                                    void*                     pImageFormatPropertiesNext,
-                                                    VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageFormatProperties2WithDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
+                                                                         const void*               pImageFormatInfoNext,
+                                                                         uint64_t                  drmFormatModifier,
+                                                                         VkSharingMode             sharingMode,
+                                                                         uint32_t                  queueFamilyIndexCount,
+                                                                         const uint32_t*           pQueueFamilyIndices,
+                                                                         VkFormat                  format,
+                                                                         VkImageType               type,
+                                                                         VkImageTiling             tiling,
+                                                                         VkImageUsageFlags         usage,
+                                                                         VkImageCreateFlags        flags,
+                                                                         void*                     pImageFormatPropertiesNext,
+                                                                         VkImageFormatProperties2* pImageFormatProperties)
 {
     VkPhysicalDeviceImageDrmFormatModifierInfoEXT physical_device_image_drm_format_modifier_info;
 
@@ -5470,17 +5202,17 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
     physical_device_image_drm_format_modifier_info.pQueueFamilyIndices   = pQueueFamilyIndices;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &physical_device_image_drm_format_modifier_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-VkResult cvkQueueDeviceGroupPresentInfo(VkQueue                             queue,
-                                        const void*                         pNext,
-                                        uint32_t                            deviceGroupSwapchainCount,
-                                        const uint32_t*                     pDeviceMasks,
-                                        VkDeviceGroupPresentModeFlagBitsKHR mode,
-                                        uint32_t                            waitSemaphoreCount,
-                                        const VkSemaphore*                  pWaitSemaphores,
-                                        uint32_t                            swapchainCount,
-                                        const VkSwapchainKHR*               pSwapchains,
-                                        const uint32_t*                     pImageIndices,
-                                        VkResult*                           pResults)
+VkResult cvkQueuePresentWithDeviceGroupInfo(VkQueue                             queue,
+                                            const void*                         pNext,
+                                            uint32_t                            deviceGroupSwapchainCount,
+                                            const uint32_t*                     pDeviceMasks,
+                                            VkDeviceGroupPresentModeFlagBitsKHR mode,
+                                            uint32_t                            waitSemaphoreCount,
+                                            const VkSemaphore*                  pWaitSemaphores,
+                                            uint32_t                            swapchainCount,
+                                            const VkSwapchainKHR*               pSwapchains,
+                                            const uint32_t*                     pImageIndices,
+                                            VkResult*                           pResults)
 {
     VkDeviceGroupPresentInfoKHR device_group_present_info;
 

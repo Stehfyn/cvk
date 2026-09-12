@@ -20,9 +20,24 @@ if(Python3_Interpreter_FOUND)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Generating cvk from the Vulkan registry"
         VERBATIM)
+
+    # Rule zero: the generated files must equal a fresh generation.
+    enable_testing()
+    add_test(NAME cvk-generated-files-match
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/check_generated.py
+                --policy ${CMAKE_CURRENT_SOURCE_DIR}/cvk.policy.json
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-add_library(cvk STATIC src/cvk.c)
+# Core is platform-free; each platform has its own generated pair that includes cvk.h.
+set(CVK_SOURCES src/cvk.c)
+if(WIN32)
+    list(APPEND CVK_SOURCES src/cvk_win32.c)
+elseif(UNIX)
+    list(APPEND CVK_SOURCES src/cvk_xlib.c)
+endif()
+
+add_library(cvk STATIC ${CVK_SOURCES})
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(cvk PUBLIC Vulkan::Headers)
 
@@ -30,10 +45,4 @@ if(MSVC)
     target_compile_options(cvk PRIVATE /W4)
 else()
     target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic)
-endif()
-
-if(WIN32)
-    target_compile_definitions(cvk PUBLIC VK_USE_PLATFORM_WIN32_KHR=1)
-elseif(UNIX)
-    target_compile_definitions(cvk PUBLIC VK_USE_PLATFORM_XLIB_KHR=1)
 endif()

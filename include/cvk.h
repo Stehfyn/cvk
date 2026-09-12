@@ -1869,44 +1869,6 @@ void cvkCreateSwapchain(VkDevice                      device,
                         VkSwapchainKHR                oldSwapchain,
                         const VkAllocationCallbacks*  pAllocator,
                         VkSwapchainKHR*               pSwapchain);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Creates a win 32 surface.
- *
- * \par Details:
- *  Wraps vkCreateWin32SurfaceKHR. Aborts on any error result.
- *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkWin32SurfaceCreateInfoKHR::flags
- * \param[in] hinstance   VkWin32SurfaceCreateInfoKHR::hinstance
- * \param[in] hwnd        VkWin32SurfaceCreateInfoKHR::hwnd
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None
- */
-void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-/**
- * \brief Creates a xlib surface.
- *
- * \par Details:
- *  Wraps vkCreateXlibSurfaceKHR. Aborts on any error result.
- *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy         VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window      VkXlibSurfaceCreateInfoKHR::window
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None
- */
-void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-#endif
 /**
  * \brief Destroys a buffer.
  *
@@ -2764,40 +2726,6 @@ void cvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, V
  * \retval None
  */
 void cvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Retrieves memory win 32 handle.
- *
- * \par Details:
- *  Wraps vkGetMemoryWin32HandleKHR. Aborts on any error result.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetWin32HandleInfoKHR::memory
- * \param[in] handleType  VkMemoryGetWin32HandleInfoKHR::handleType
- * \param[out] pHandle     Receives the HANDLE
- *
- * \retval None
- */
-void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle);
-#endif
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Retrieves memory win 32 handle properties.
- *
- * \par Details:
- *  Wraps vkGetMemoryWin32HandlePropertiesKHR. Aborts on any error result.
- *
- * \param[in] device                        VkDevice value
- * \param[in] handleType                    VkExternalMemoryHandleTypeFlagBits value
- * \param[in] handle                        HANDLE value
- * \param[in] pNext                         Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
- * \param[out] pMemoryWin32HandleProperties  Receives the VkMemoryWin32HandlePropertiesKHR
- *
- * \retval None
- */
-void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
-#endif
 /**
  * \brief Retrieves physical device display plane properties.
  *
@@ -3173,36 +3101,6 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice
  * \retval None
  */
 void cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Retrieves physical device win 32 presentation support.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceWin32PresentationSupportKHR.
- *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
- *
- * \return The VkBool32 returned by the command.
- */
-VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
-#endif
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-/**
- * \brief Retrieves physical device xlib presentation support.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceXlibPresentationSupportKHR.
- *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
- * \param[out] dpy               Receives the Display
- * \param[in] visualID          VisualID value
- *
- * \return The VkBool32 returned by the command.
- */
-VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
-#endif
 /**
  * \brief Retrieves pipeline cache data.
  *
@@ -3276,23 +3174,6 @@ void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_
  * \retval None
  */
 void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Retrieves semaphore win 32 handle.
- *
- * \par Details:
- *  Wraps vkGetSemaphoreWin32HandleKHR. Aborts on any error result.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
- * \param[out] pHandle     Receives the HANDLE
- *
- * \retval None
- */
-void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, HANDLE* pHandle);
-#endif
 /**
  * \brief Retrieves swapchain images.
  *
@@ -3322,31 +3203,6 @@ uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImag
  * \retval None
  */
 void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Imports semaphore win 32 handle.
- *
- * \par Details:
- *  Wraps vkImportSemaphoreWin32HandleKHR. Aborts on any error result.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkImportSemaphoreWin32HandleInfoKHR::semaphore
- * \param[in] flags       VkImportSemaphoreWin32HandleInfoKHR::flags
- * \param[in] handleType  VkImportSemaphoreWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportSemaphoreWin32HandleInfoKHR::handle
- * \param[in] name        VkImportSemaphoreWin32HandleInfoKHR::name
- *
- * \retval None
- */
-void cvkImportSemaphoreWin32Handle(VkDevice                              device,
-                                   const void*                           pNext,
-                                   VkSemaphore                           semaphore,
-                                   VkSemaphoreImportFlags                flags,
-                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                   HANDLE                                handle,
-                                   LPCWSTR                               name);
-#endif
 /**
  * \brief Calls vkInvalidateMappedMemoryRanges.
  *
@@ -4140,26 +3996,6 @@ void cvkInitCopyDescriptorSet(VkCopyDescriptorSet* pInfo,
                               uint32_t             dstBinding,
                               uint32_t             dstArrayElement,
                               uint32_t             descriptorCount);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkD3D12FenceSubmitInfoKHR.
- *
- * \param[out] pInfo                       Receives the initialized VkD3D12FenceSubmitInfoKHR
- * \param[in] pNext                       Optional extension chain attached to VkD3D12FenceSubmitInfoKHR, or NULL
- * \param[in] waitSemaphoreValuesCount    VkD3D12FenceSubmitInfoKHR::waitSemaphoreValuesCount
- * \param[in] pWaitSemaphoreValues        VkD3D12FenceSubmitInfoKHR::pWaitSemaphoreValues
- * \param[in] signalSemaphoreValuesCount  VkD3D12FenceSubmitInfoKHR::signalSemaphoreValuesCount
- * \param[in] pSignalSemaphoreValues      VkD3D12FenceSubmitInfoKHR::pSignalSemaphoreValues
- *
- * \retval None
- */
-void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
-                                 const void*                pNext,
-                                 uint32_t                   waitSemaphoreValuesCount,
-                                 const uint64_t*            pWaitSemaphoreValues,
-                                 uint32_t                   signalSemaphoreValuesCount,
-                                 const uint64_t*            pSignalSemaphoreValues);
-#endif
 /**
  * \brief Initializes a VkDebugUtilsLabelEXT.
  *
@@ -4605,20 +4441,6 @@ void cvkInitExportFenceCreateInfo(VkExportFenceCreateInfo* pInfo, const void* pN
  * \retval None
  */
 void cvkInitExportMemoryAllocateInfo(VkExportMemoryAllocateInfo* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlags handleTypes);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkExportMemoryWin32HandleInfoKHR.
- *
- * \param[out] pInfo        Receives the initialized VkExportMemoryWin32HandleInfoKHR
- * \param[in] pNext        Optional extension chain attached to VkExportMemoryWin32HandleInfoKHR, or NULL
- * \param[in] pAttributes  VkExportMemoryWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportMemoryWin32HandleInfoKHR::name
- *
- * \retval None
- */
-void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name);
-#endif
 /**
  * \brief Initializes a VkExportSemaphoreCreateInfo.
  *
@@ -4629,20 +4451,6 @@ void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo,
  * \retval None
  */
 void cvkInitExportSemaphoreCreateInfo(VkExportSemaphoreCreateInfo* pInfo, const void* pNext, VkExternalSemaphoreHandleTypeFlags handleTypes);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkExportSemaphoreWin32HandleInfoKHR.
- *
- * \param[out] pInfo        Receives the initialized VkExportSemaphoreWin32HandleInfoKHR
- * \param[in] pNext        Optional extension chain attached to VkExportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] pAttributes  VkExportSemaphoreWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportSemaphoreWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportSemaphoreWin32HandleInfoKHR::name
- *
- * \retval None
- */
-void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name);
-#endif
 /**
  * \brief Initializes a VkExternalBufferProperties.
  *
@@ -5045,20 +4853,6 @@ void cvkInitImageViewUsageCreateInfo(VkImageViewUsageCreateInfo* pInfo, const vo
  * \retval None
  */
 void cvkInitImportMemoryFdInfo(VkImportMemoryFdInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, int fd);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkImportMemoryWin32HandleInfoKHR.
- *
- * \param[out] pInfo       Receives the initialized VkImportMemoryWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkImportMemoryWin32HandleInfoKHR, or NULL
- * \param[in] handleType  VkImportMemoryWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportMemoryWin32HandleInfoKHR::handle
- * \param[in] name        VkImportMemoryWin32HandleInfoKHR::name
- *
- * \retval None
- */
-void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name);
-#endif
 /**
  * \brief Initializes a VkImportSemaphoreFdInfoKHR.
  *
@@ -5072,28 +4866,6 @@ void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo,
  * \retval None
  */
 void cvkInitImportSemaphoreFdInfo(VkImportSemaphoreFdInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkImportSemaphoreWin32HandleInfoKHR.
- *
- * \param[out] pInfo       Receives the initialized VkImportSemaphoreWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkImportSemaphoreWin32HandleInfoKHR::semaphore
- * \param[in] flags       VkImportSemaphoreWin32HandleInfoKHR::flags
- * \param[in] handleType  VkImportSemaphoreWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportSemaphoreWin32HandleInfoKHR::handle
- * \param[in] name        VkImportSemaphoreWin32HandleInfoKHR::name
- *
- * \retval None
- */
-void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR*  pInfo,
-                                           const void*                           pNext,
-                                           VkSemaphore                           semaphore,
-                                           VkSemaphoreImportFlags                flags,
-                                           VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                           HANDLE                                handle,
-                                           LPCWSTR                               name);
-#endif
 /**
  * \brief Initializes a VkInstanceCreateInfo.
  *
@@ -5201,19 +4973,6 @@ void cvkInitMemoryFdProperties(VkMemoryFdPropertiesKHR* pInfo, void* pNext);
  * \retval None
  */
 void cvkInitMemoryGetFdInfo(VkMemoryGetFdInfoKHR* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkMemoryGetWin32HandleInfoKHR.
- *
- * \param[out] pInfo       Receives the initialized VkMemoryGetWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetWin32HandleInfoKHR::memory
- * \param[in] handleType  VkMemoryGetWin32HandleInfoKHR::handleType
- *
- * \retval None
- */
-void cvkInitMemoryGetWin32HandleInfo(VkMemoryGetWin32HandleInfoKHR* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType);
-#endif
 /**
  * \brief Initializes a VkMemoryOpaqueCaptureAddressAllocateInfo.
  *
@@ -5233,17 +4992,6 @@ void cvkInitMemoryOpaqueCaptureAddressAllocateInfo(VkMemoryOpaqueCaptureAddressA
  * \retval None
  */
 void cvkInitMemoryRequirements2(VkMemoryRequirements2* pInfo, void* pNext);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkMemoryWin32HandlePropertiesKHR.
- *
- * \param[out] pInfo  Receives the initialized VkMemoryWin32HandlePropertiesKHR
- * \param[in] pNext  Optional extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
- *
- * \retval None
- */
-void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo, void* pNext);
-#endif
 /**
  * \brief Initializes a VkPhysicalDevice16BitStorageFeatures.
  *
@@ -6468,19 +6216,6 @@ void cvkInitSemaphoreCreateInfo(VkSemaphoreCreateInfo* pInfo, const void* pNext,
  * \retval None
  */
 void cvkInitSemaphoreGetFdInfo(VkSemaphoreGetFdInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkSemaphoreGetWin32HandleInfoKHR.
- *
- * \param[out] pInfo       Receives the initialized VkSemaphoreGetWin32HandleInfoKHR
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
- *
- * \retval None
- */
-void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType);
-#endif
 /**
  * \brief Initializes a VkSemaphoreSignalInfo.
  *
@@ -6723,20 +6458,6 @@ void cvkInitTimelineSemaphoreSubmitInfo(VkTimelineSemaphoreSubmitInfo* pInfo,
                                         const uint64_t*                pWaitSemaphoreValues,
                                         uint32_t                       signalSemaphoreValueCount,
                                         const uint64_t*                pSignalSemaphoreValues);
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-/**
- * \brief Initializes a VkWin32SurfaceCreateInfoKHR.
- *
- * \param[out] pInfo      Receives the initialized VkWin32SurfaceCreateInfoKHR
- * \param[in] pNext      Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in] flags      VkWin32SurfaceCreateInfoKHR::flags
- * \param[in] hinstance  VkWin32SurfaceCreateInfoKHR::hinstance
- * \param[in] hwnd       VkWin32SurfaceCreateInfoKHR::hwnd
- *
- * \retval None
- */
-void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd);
-#endif
 /**
  * \brief Initializes a VkWriteDescriptorSet.
  *
@@ -6763,20 +6484,6 @@ void cvkInitWriteDescriptorSet(VkWriteDescriptorSet*         pInfo,
                                const VkDescriptorImageInfo*  pImageInfo,
                                const VkDescriptorBufferInfo* pBufferInfo,
                                const VkBufferView*           pTexelBufferView);
-#if defined(VK_USE_PLATFORM_XLIB_KHR)
-/**
- * \brief Initializes a VkXlibSurfaceCreateInfoKHR.
- *
- * \param[out] pInfo   Receives the initialized VkXlibSurfaceCreateInfoKHR
- * \param[in] pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags   VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy     VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window  VkXlibSurfaceCreateInfoKHR::window
- *
- * \retval None
- */
-void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window);
-#endif
 /**
  * \brief Allocates descriptor sets with VkDescriptorSetVariableDescriptorCountAllocateInfo chained.
  *
@@ -6791,14 +6498,14 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
  *
  * \retval None
  */
-void cvkAllocateDescriptorSetVariableDescriptorCountAllocateInfo(VkDevice                     device,
-                                                                 const void*                  pNext,
-                                                                 uint32_t                     variableDescriptorCountDescriptorSetCount,
-                                                                 const uint32_t*              pDescriptorCounts,
-                                                                 VkDescriptorPool             descriptorPool,
-                                                                 uint32_t                     descriptorSetCount,
-                                                                 const VkDescriptorSetLayout* pSetLayouts,
-                                                                 VkDescriptorSet*             pDescriptorSets);
+void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice                     device,
+                                                              const void*                  pNext,
+                                                              uint32_t                     variableDescriptorCountDescriptorSetCount,
+                                                              const uint32_t*              pDescriptorCounts,
+                                                              VkDescriptorPool             descriptorPool,
+                                                              uint32_t                     descriptorSetCount,
+                                                              const VkDescriptorSetLayout* pSetLayouts,
+                                                              VkDescriptorSet*             pDescriptorSets);
 /**
  * \brief Allocates memory with VkExportMemoryAllocateInfo chained.
  *
@@ -6812,39 +6519,13 @@ void cvkAllocateDescriptorSetVariableDescriptorCountAllocateInfo(VkDevice       
  *
  * \retval None
  */
-void cvkAllocateExportMemoryAllocateInfo(VkDevice                        device,
-                                         const void*                     pNext,
-                                         VkExternalMemoryHandleTypeFlags handleTypes,
-                                         VkDeviceSize                    allocationSize,
-                                         uint32_t                        memoryTypeIndex,
-                                         const VkAllocationCallbacks*    pAllocator,
-                                         VkDeviceMemory*                 pMemory);
-#if (defined(VK_USE_PLATFORM_WIN32_KHR))
-/**
- * \brief Allocates memory with VkExportMemoryWin32HandleInfoKHR chained.
- *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] pAttributes      VkExportMemoryWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess         VkExportMemoryWin32HandleInfoKHR::dwAccess
- * \param[in] name             VkExportMemoryWin32HandleInfoKHR::name
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
- * \param[out] pMemory          See cvkAllocateMemory
- *
- * \retval None
- */
-void cvkAllocateExportMemoryWin32HandleInfo(VkDevice                     device,
-                                            const void*                  pNext,
-                                            const SECURITY_ATTRIBUTES*   pAttributes,
-                                            DWORD                        dwAccess,
-                                            LPCWSTR                      name,
-                                            VkDeviceSize                 allocationSize,
-                                            uint32_t                     memoryTypeIndex,
-                                            const VkAllocationCallbacks* pAllocator,
-                                            VkDeviceMemory*              pMemory);
-#endif
+void cvkAllocateMemoryWithExportInfo(VkDevice                        device,
+                                     const void*                     pNext,
+                                     VkExternalMemoryHandleTypeFlags handleTypes,
+                                     VkDeviceSize                    allocationSize,
+                                     uint32_t                        memoryTypeIndex,
+                                     const VkAllocationCallbacks*    pAllocator,
+                                     VkDeviceMemory*                 pMemory);
 /**
  * \brief Allocates memory with VkImportMemoryFdInfoKHR chained.
  *
@@ -6859,40 +6540,14 @@ void cvkAllocateExportMemoryWin32HandleInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkAllocateImportMemoryFdInfo(VkDevice                           device,
-                                   const void*                        pNext,
-                                   VkExternalMemoryHandleTypeFlagBits handleType,
-                                   int                                fd,
-                                   VkDeviceSize                       allocationSize,
-                                   uint32_t                           memoryTypeIndex,
-                                   const VkAllocationCallbacks*       pAllocator,
-                                   VkDeviceMemory*                    pMemory);
-#if (defined(VK_USE_PLATFORM_WIN32_KHR))
-/**
- * \brief Allocates memory with VkImportMemoryWin32HandleInfoKHR chained.
- *
- * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
- * \param[in] handleType       VkImportMemoryWin32HandleInfoKHR::handleType
- * \param[in] handle           VkImportMemoryWin32HandleInfoKHR::handle
- * \param[in] name             VkImportMemoryWin32HandleInfoKHR::name
- * \param[in] allocationSize   See cvkAllocateMemory
- * \param[in] memoryTypeIndex  See cvkAllocateMemory
- * \param[in] pAllocator       See cvkAllocateMemory
- * \param[out] pMemory          See cvkAllocateMemory
- *
- * \retval None
- */
-void cvkAllocateImportMemoryWin32HandleInfo(VkDevice                           device,
-                                            const void*                        pNext,
-                                            VkExternalMemoryHandleTypeFlagBits handleType,
-                                            HANDLE                             handle,
-                                            LPCWSTR                            name,
-                                            VkDeviceSize                       allocationSize,
-                                            uint32_t                           memoryTypeIndex,
-                                            const VkAllocationCallbacks*       pAllocator,
-                                            VkDeviceMemory*                    pMemory);
-#endif
+void cvkAllocateMemoryWithImportMemoryFdInfo(VkDevice                           device,
+                                             const void*                        pNext,
+                                             VkExternalMemoryHandleTypeFlagBits handleType,
+                                             int                                fd,
+                                             VkDeviceSize                       allocationSize,
+                                             uint32_t                           memoryTypeIndex,
+                                             const VkAllocationCallbacks*       pAllocator,
+                                             VkDeviceMemory*                    pMemory);
 /**
  * \brief Allocates memory with VkMemoryAllocateFlagsInfo chained.
  *
@@ -6907,14 +6562,14 @@ void cvkAllocateImportMemoryWin32HandleInfo(VkDevice                           d
  *
  * \retval None
  */
-void cvkAllocateMemoryAllocateFlagsInfo(VkDevice                     device,
-                                        const void*                  pNext,
-                                        VkMemoryAllocateFlags        flags,
-                                        uint32_t                     deviceMask,
-                                        VkDeviceSize                 allocationSize,
-                                        uint32_t                     memoryTypeIndex,
-                                        const VkAllocationCallbacks* pAllocator,
-                                        VkDeviceMemory*              pMemory);
+void cvkAllocateMemoryWithFlagsInfo(VkDevice                     device,
+                                    const void*                  pNext,
+                                    VkMemoryAllocateFlags        flags,
+                                    uint32_t                     deviceMask,
+                                    VkDeviceSize                 allocationSize,
+                                    uint32_t                     memoryTypeIndex,
+                                    const VkAllocationCallbacks* pAllocator,
+                                    VkDeviceMemory*              pMemory);
 /**
  * \brief Allocates memory with VkMemoryDedicatedAllocateInfo chained.
  *
@@ -6929,14 +6584,14 @@ void cvkAllocateMemoryAllocateFlagsInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkAllocateMemoryDedicatedAllocateInfo(VkDevice                     device,
-                                            const void*                  pNext,
-                                            VkImage                      image,
-                                            VkBuffer                     buffer,
-                                            VkDeviceSize                 allocationSize,
-                                            uint32_t                     memoryTypeIndex,
-                                            const VkAllocationCallbacks* pAllocator,
-                                            VkDeviceMemory*              pMemory);
+void cvkAllocateMemoryWithDedicatedInfo(VkDevice                     device,
+                                        const void*                  pNext,
+                                        VkImage                      image,
+                                        VkBuffer                     buffer,
+                                        VkDeviceSize                 allocationSize,
+                                        uint32_t                     memoryTypeIndex,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkDeviceMemory*              pMemory);
 /**
  * \brief Allocates memory with VkMemoryOpaqueCaptureAddressAllocateInfo chained.
  *
@@ -6950,13 +6605,13 @@ void cvkAllocateMemoryDedicatedAllocateInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkAllocateMemoryOpaqueCaptureAddressAllocateInfo(VkDevice                     device,
-                                                       const void*                  pNext,
-                                                       uint64_t                     opaqueCaptureAddress,
-                                                       VkDeviceSize                 allocationSize,
-                                                       uint32_t                     memoryTypeIndex,
-                                                       const VkAllocationCallbacks* pAllocator,
-                                                       VkDeviceMemory*              pMemory);
+void cvkAllocateMemoryWithOpaqueCaptureAddressInfo(VkDevice                     device,
+                                                   const void*                  pNext,
+                                                   uint64_t                     opaqueCaptureAddress,
+                                                   VkDeviceSize                 allocationSize,
+                                                   uint32_t                     memoryTypeIndex,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   VkDeviceMemory*              pMemory);
 /**
  * \brief Begins command buffer with VkDeviceGroupCommandBufferBeginInfo chained.
  *
@@ -6968,11 +6623,11 @@ void cvkAllocateMemoryOpaqueCaptureAddressAllocateInfo(VkDevice                 
  *
  * \retval None
  */
-void cvkBeginDeviceGroupCommandBufferBeginInfo(VkCommandBuffer                       commandBuffer,
-                                               const void*                           pNext,
-                                               uint32_t                              deviceMask,
-                                               VkCommandBufferUsageFlags             flags,
-                                               const VkCommandBufferInheritanceInfo* pInheritanceInfo);
+void cvkBeginCommandBufferWithDeviceGroupInfo(VkCommandBuffer                       commandBuffer,
+                                              const void*                           pNext,
+                                              uint32_t                              deviceMask,
+                                              VkCommandBufferUsageFlags             flags,
+                                              const VkCommandBufferInheritanceInfo* pInheritanceInfo);
 /**
  * \brief Records begin render pass with VkDeviceGroupRenderPassBeginInfo chained.
  *
@@ -6990,17 +6645,17 @@ void cvkBeginDeviceGroupCommandBufferBeginInfo(VkCommandBuffer                  
  *
  * \retval None
  */
-void cvkCmdDeviceGroupRenderPassBeginInfo(VkCommandBuffer     commandBuffer,
-                                          const void*         pNext,
-                                          uint32_t            deviceMask,
-                                          uint32_t            deviceRenderAreaCount,
-                                          const VkRect2D*     pDeviceRenderAreas,
-                                          VkRenderPass        renderPass,
-                                          VkFramebuffer       framebuffer,
-                                          VkRect2D            renderArea,
-                                          uint32_t            clearValueCount,
-                                          const VkClearValue* pClearValues,
-                                          VkSubpassContents   contents);
+void cvkCmdBeginRenderPassWithDeviceGroupInfo(VkCommandBuffer     commandBuffer,
+                                              const void*         pNext,
+                                              uint32_t            deviceMask,
+                                              uint32_t            deviceRenderAreaCount,
+                                              const VkRect2D*     pDeviceRenderAreas,
+                                              VkRenderPass        renderPass,
+                                              VkFramebuffer       framebuffer,
+                                              VkRect2D            renderArea,
+                                              uint32_t            clearValueCount,
+                                              const VkClearValue* pClearValues,
+                                              VkSubpassContents   contents);
 /**
  * \brief Records begin render pass with VkRenderPassAttachmentBeginInfo chained.
  *
@@ -7017,16 +6672,16 @@ void cvkCmdDeviceGroupRenderPassBeginInfo(VkCommandBuffer     commandBuffer,
  *
  * \retval None
  */
-void cvkCmdRenderPassAttachmentBeginInfo(VkCommandBuffer     commandBuffer,
-                                         const void*         pNext,
-                                         uint32_t            attachmentCount,
-                                         const VkImageView*  pAttachments,
-                                         VkRenderPass        renderPass,
-                                         VkFramebuffer       framebuffer,
-                                         VkRect2D            renderArea,
-                                         uint32_t            clearValueCount,
-                                         const VkClearValue* pClearValues,
-                                         VkSubpassContents   contents);
+void cvkCmdBeginRenderPassWithAttachmentInfo(VkCommandBuffer     commandBuffer,
+                                             const void*         pNext,
+                                             uint32_t            attachmentCount,
+                                             const VkImageView*  pAttachments,
+                                             VkRenderPass        renderPass,
+                                             VkFramebuffer       framebuffer,
+                                             VkRect2D            renderArea,
+                                             uint32_t            clearValueCount,
+                                             const VkClearValue* pClearValues,
+                                             VkSubpassContents   contents);
 /**
  * \brief Creates a buffer with VkBufferOpaqueCaptureAddressCreateInfo chained.
  *
@@ -7044,17 +6699,17 @@ void cvkCmdRenderPassAttachmentBeginInfo(VkCommandBuffer     commandBuffer,
  *
  * \retval None
  */
-void cvkCreateBufferOpaqueCaptureAddressCreateInfo(VkDevice                     device,
-                                                   const void*                  pNext,
-                                                   uint64_t                     opaqueCaptureAddress,
-                                                   VkBufferCreateFlags          flags,
-                                                   VkDeviceSize                 size,
-                                                   VkBufferUsageFlags           usage,
-                                                   VkSharingMode                sharingMode,
-                                                   uint32_t                     queueFamilyIndexCount,
-                                                   const uint32_t*              pQueueFamilyIndices,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkBuffer*                    pBuffer);
+void cvkCreateBufferWithOpaqueCaptureAddressInfo(VkDevice                     device,
+                                                 const void*                  pNext,
+                                                 uint64_t                     opaqueCaptureAddress,
+                                                 VkBufferCreateFlags          flags,
+                                                 VkDeviceSize                 size,
+                                                 VkBufferUsageFlags           usage,
+                                                 VkSharingMode                sharingMode,
+                                                 uint32_t                     queueFamilyIndexCount,
+                                                 const uint32_t*              pQueueFamilyIndices,
+                                                 const VkAllocationCallbacks* pAllocator,
+                                                 VkBuffer*                    pBuffer);
 /**
  * \brief Creates a buffer with VkExternalMemoryBufferCreateInfo chained.
  *
@@ -7072,17 +6727,17 @@ void cvkCreateBufferOpaqueCaptureAddressCreateInfo(VkDevice                     
  *
  * \retval None
  */
-void cvkCreateExternalMemoryBufferCreateInfo(VkDevice                        device,
-                                             const void*                     pNext,
-                                             VkExternalMemoryHandleTypeFlags handleTypes,
-                                             VkBufferCreateFlags             flags,
-                                             VkDeviceSize                    size,
-                                             VkBufferUsageFlags              usage,
-                                             VkSharingMode                   sharingMode,
-                                             uint32_t                        queueFamilyIndexCount,
-                                             const uint32_t*                 pQueueFamilyIndices,
-                                             const VkAllocationCallbacks*    pAllocator,
-                                             VkBuffer*                       pBuffer);
+void cvkCreateBufferWithExternalMemoryInfo(VkDevice                        device,
+                                           const void*                     pNext,
+                                           VkExternalMemoryHandleTypeFlags handleTypes,
+                                           VkBufferCreateFlags             flags,
+                                           VkDeviceSize                    size,
+                                           VkBufferUsageFlags              usage,
+                                           VkSharingMode                   sharingMode,
+                                           uint32_t                        queueFamilyIndexCount,
+                                           const uint32_t*                 pQueueFamilyIndices,
+                                           const VkAllocationCallbacks*    pAllocator,
+                                           VkBuffer*                       pBuffer);
 /**
  * \brief Creates a descriptor set layout with VkDescriptorSetLayoutBindingFlagsCreateInfo chained.
  *
@@ -7098,15 +6753,15 @@ void cvkCreateExternalMemoryBufferCreateInfo(VkDevice                        dev
  *
  * \retval None
  */
-void cvkCreateDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
-                                                        const void*                         pNext,
-                                                        uint32_t                            bindingFlagsBindingCount,
-                                                        const VkDescriptorBindingFlags*     pBindingFlags,
-                                                        VkDescriptorSetLayoutCreateFlags    flags,
-                                                        uint32_t                            bindingCount,
-                                                        const VkDescriptorSetLayoutBinding* pBindings,
-                                                        const VkAllocationCallbacks*        pAllocator,
-                                                        VkDescriptorSetLayout*              pSetLayout);
+void cvkCreateDescriptorSetLayoutWithBindingFlagsInfo(VkDevice                            device,
+                                                      const void*                         pNext,
+                                                      uint32_t                            bindingFlagsBindingCount,
+                                                      const VkDescriptorBindingFlags*     pBindingFlags,
+                                                      VkDescriptorSetLayoutCreateFlags    flags,
+                                                      uint32_t                            bindingCount,
+                                                      const VkDescriptorSetLayoutBinding* pBindings,
+                                                      const VkAllocationCallbacks*        pAllocator,
+                                                      VkDescriptorSetLayout*              pSetLayout);
 /**
  * \brief Creates a device with VkDeviceGroupDeviceCreateInfo chained.
  *
@@ -7127,20 +6782,20 @@ void cvkCreateDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                
  *
  * \retval None
  */
-void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physicalDevice,
-                                          const void*                     pNext,
-                                          uint32_t                        physicalDeviceCount,
-                                          const VkPhysicalDevice*         pPhysicalDevices,
-                                          VkDeviceCreateFlags             flags,
-                                          uint32_t                        queueCreateInfoCount,
-                                          const VkDeviceQueueCreateInfo*  pQueueCreateInfos,
-                                          uint32_t                        enabledLayerCount,
-                                          const char* const*              ppEnabledLayerNames,
-                                          uint32_t                        enabledExtensionCount,
-                                          const char* const*              ppEnabledExtensionNames,
-                                          const VkPhysicalDeviceFeatures* pEnabledFeatures,
-                                          const VkAllocationCallbacks*    pAllocator,
-                                          VkDevice*                       pDevice);
+void cvkCreateDeviceWithDeviceGroupInfo(VkPhysicalDevice                physicalDevice,
+                                        const void*                     pNext,
+                                        uint32_t                        physicalDeviceCount,
+                                        const VkPhysicalDevice*         pPhysicalDevices,
+                                        VkDeviceCreateFlags             flags,
+                                        uint32_t                        queueCreateInfoCount,
+                                        const VkDeviceQueueCreateInfo*  pQueueCreateInfos,
+                                        uint32_t                        enabledLayerCount,
+                                        const char* const*              ppEnabledLayerNames,
+                                        uint32_t                        enabledExtensionCount,
+                                        const char* const*              ppEnabledExtensionNames,
+                                        const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                        const VkAllocationCallbacks*    pAllocator,
+                                        VkDevice*                       pDevice);
 /**
  * \brief Creates a fence with VkExportFenceCreateInfo chained.
  *
@@ -7153,7 +6808,7 @@ void cvkCreateDeviceGroupDeviceCreateInfo(VkPhysicalDevice                physic
  *
  * \retval None
  */
-void cvkCreateExportFenceCreateInfo(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+void cvkCreateFenceWithExportInfo(VkDevice device, const void* pNext, VkExternalFenceHandleTypeFlags handleTypes, VkFenceCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
 /**
  * \brief Creates a framebuffer with VkFramebufferAttachmentsCreateInfo chained.
  *
@@ -7173,19 +6828,19 @@ void cvkCreateExportFenceCreateInfo(VkDevice device, const void* pNext, VkExtern
  *
  * \retval None
  */
-void cvkCreateFramebufferAttachmentsCreateInfo(VkDevice                                device,
-                                               const void*                             pNext,
-                                               uint32_t                                attachmentImageInfoCount,
-                                               const VkFramebufferAttachmentImageInfo* pAttachmentImageInfos,
-                                               VkFramebufferCreateFlags                flags,
-                                               VkRenderPass                            renderPass,
-                                               uint32_t                                attachmentCount,
-                                               const VkImageView*                      pAttachments,
-                                               uint32_t                                width,
-                                               uint32_t                                height,
-                                               uint32_t                                layers,
-                                               const VkAllocationCallbacks*            pAllocator,
-                                               VkFramebuffer*                          pFramebuffer);
+void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                                device,
+                                             const void*                             pNext,
+                                             uint32_t                                attachmentImageInfoCount,
+                                             const VkFramebufferAttachmentImageInfo* pAttachmentImageInfos,
+                                             VkFramebufferCreateFlags                flags,
+                                             VkRenderPass                            renderPass,
+                                             uint32_t                                attachmentCount,
+                                             const VkImageView*                      pAttachments,
+                                             uint32_t                                width,
+                                             uint32_t                                height,
+                                             uint32_t                                layers,
+                                             const VkAllocationCallbacks*            pAllocator,
+                                             VkFramebuffer*                          pFramebuffer);
 /**
  * \brief Creates a image with VkExternalMemoryImageCreateInfo chained.
  *
@@ -7210,24 +6865,24 @@ void cvkCreateFramebufferAttachmentsCreateInfo(VkDevice                         
  *
  * \retval None
  */
-void cvkCreateExternalMemoryImageCreateInfo(VkDevice                        device,
-                                            const void*                     pNext,
-                                            VkExternalMemoryHandleTypeFlags handleTypes,
-                                            VkImageCreateFlags              flags,
-                                            VkImageType                     imageType,
-                                            VkFormat                        format,
-                                            VkExtent3D                      extent,
-                                            uint32_t                        mipLevels,
-                                            uint32_t                        arrayLayers,
-                                            VkSampleCountFlagBits           samples,
-                                            VkImageTiling                   tiling,
-                                            VkImageUsageFlags               usage,
-                                            VkSharingMode                   sharingMode,
-                                            uint32_t                        queueFamilyIndexCount,
-                                            const uint32_t*                 pQueueFamilyIndices,
-                                            VkImageLayout                   initialLayout,
-                                            const VkAllocationCallbacks*    pAllocator,
-                                            VkImage*                        pImage);
+void cvkCreateImageWithExternalMemoryInfo(VkDevice                        device,
+                                          const void*                     pNext,
+                                          VkExternalMemoryHandleTypeFlags handleTypes,
+                                          VkImageCreateFlags              flags,
+                                          VkImageType                     imageType,
+                                          VkFormat                        format,
+                                          VkExtent3D                      extent,
+                                          uint32_t                        mipLevels,
+                                          uint32_t                        arrayLayers,
+                                          VkSampleCountFlagBits           samples,
+                                          VkImageTiling                   tiling,
+                                          VkImageUsageFlags               usage,
+                                          VkSharingMode                   sharingMode,
+                                          uint32_t                        queueFamilyIndexCount,
+                                          const uint32_t*                 pQueueFamilyIndices,
+                                          VkImageLayout                   initialLayout,
+                                          const VkAllocationCallbacks*    pAllocator,
+                                          VkImage*                        pImage);
 /**
  * \brief Creates a image with VkImageDrmFormatModifierExplicitCreateInfoEXT chained.
  *
@@ -7254,26 +6909,26 @@ void cvkCreateExternalMemoryImageCreateInfo(VkDevice                        devi
  *
  * \retval None
  */
-void cvkCreateImageDrmFormatModifierExplicitCreateInfo(VkDevice                     device,
-                                                       const void*                  pNext,
-                                                       uint64_t                     drmFormatModifier,
-                                                       uint32_t                     drmFormatModifierPlaneCount,
-                                                       const VkSubresourceLayout*   pPlaneLayouts,
-                                                       VkImageCreateFlags           flags,
-                                                       VkImageType                  imageType,
-                                                       VkFormat                     format,
-                                                       VkExtent3D                   extent,
-                                                       uint32_t                     mipLevels,
-                                                       uint32_t                     arrayLayers,
-                                                       VkSampleCountFlagBits        samples,
-                                                       VkImageTiling                tiling,
-                                                       VkImageUsageFlags            usage,
-                                                       VkSharingMode                sharingMode,
-                                                       uint32_t                     queueFamilyIndexCount,
-                                                       const uint32_t*              pQueueFamilyIndices,
-                                                       VkImageLayout                initialLayout,
-                                                       const VkAllocationCallbacks* pAllocator,
-                                                       VkImage*                     pImage);
+void cvkCreateImageWithDrmFormatModifierExplicitInfo(VkDevice                     device,
+                                                     const void*                  pNext,
+                                                     uint64_t                     drmFormatModifier,
+                                                     uint32_t                     drmFormatModifierPlaneCount,
+                                                     const VkSubresourceLayout*   pPlaneLayouts,
+                                                     VkImageCreateFlags           flags,
+                                                     VkImageType                  imageType,
+                                                     VkFormat                     format,
+                                                     VkExtent3D                   extent,
+                                                     uint32_t                     mipLevels,
+                                                     uint32_t                     arrayLayers,
+                                                     VkSampleCountFlagBits        samples,
+                                                     VkImageTiling                tiling,
+                                                     VkImageUsageFlags            usage,
+                                                     VkSharingMode                sharingMode,
+                                                     uint32_t                     queueFamilyIndexCount,
+                                                     const uint32_t*              pQueueFamilyIndices,
+                                                     VkImageLayout                initialLayout,
+                                                     const VkAllocationCallbacks* pAllocator,
+                                                     VkImage*                     pImage);
 /**
  * \brief Creates a image with VkImageDrmFormatModifierListCreateInfoEXT chained.
  *
@@ -7299,25 +6954,25 @@ void cvkCreateImageDrmFormatModifierExplicitCreateInfo(VkDevice                 
  *
  * \retval None
  */
-void cvkCreateImageDrmFormatModifierListCreateInfo(VkDevice                     device,
-                                                   const void*                  pNext,
-                                                   uint32_t                     drmFormatModifierCount,
-                                                   const uint64_t*              pDrmFormatModifiers,
-                                                   VkImageCreateFlags           flags,
-                                                   VkImageType                  imageType,
-                                                   VkFormat                     format,
-                                                   VkExtent3D                   extent,
-                                                   uint32_t                     mipLevels,
-                                                   uint32_t                     arrayLayers,
-                                                   VkSampleCountFlagBits        samples,
-                                                   VkImageTiling                tiling,
-                                                   VkImageUsageFlags            usage,
-                                                   VkSharingMode                sharingMode,
-                                                   uint32_t                     queueFamilyIndexCount,
-                                                   const uint32_t*              pQueueFamilyIndices,
-                                                   VkImageLayout                initialLayout,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkImage*                     pImage);
+void cvkCreateImageWithDrmFormatModifierListInfo(VkDevice                     device,
+                                                 const void*                  pNext,
+                                                 uint32_t                     drmFormatModifierCount,
+                                                 const uint64_t*              pDrmFormatModifiers,
+                                                 VkImageCreateFlags           flags,
+                                                 VkImageType                  imageType,
+                                                 VkFormat                     format,
+                                                 VkExtent3D                   extent,
+                                                 uint32_t                     mipLevels,
+                                                 uint32_t                     arrayLayers,
+                                                 VkSampleCountFlagBits        samples,
+                                                 VkImageTiling                tiling,
+                                                 VkImageUsageFlags            usage,
+                                                 VkSharingMode                sharingMode,
+                                                 uint32_t                     queueFamilyIndexCount,
+                                                 const uint32_t*              pQueueFamilyIndices,
+                                                 VkImageLayout                initialLayout,
+                                                 const VkAllocationCallbacks* pAllocator,
+                                                 VkImage*                     pImage);
 /**
  * \brief Creates a image with VkImageFormatListCreateInfo chained.
  *
@@ -7343,25 +6998,25 @@ void cvkCreateImageDrmFormatModifierListCreateInfo(VkDevice                     
  *
  * \retval None
  */
-void cvkCreateImageWithImageFormatListCreateInfo(VkDevice                     device,
-                                                 const void*                  pNext,
-                                                 uint32_t                     viewFormatCount,
-                                                 const VkFormat*              pViewFormats,
-                                                 VkImageCreateFlags           flags,
-                                                 VkImageType                  imageType,
-                                                 VkFormat                     format,
-                                                 VkExtent3D                   extent,
-                                                 uint32_t                     mipLevels,
-                                                 uint32_t                     arrayLayers,
-                                                 VkSampleCountFlagBits        samples,
-                                                 VkImageTiling                tiling,
-                                                 VkImageUsageFlags            usage,
-                                                 VkSharingMode                sharingMode,
-                                                 uint32_t                     queueFamilyIndexCount,
-                                                 const uint32_t*              pQueueFamilyIndices,
-                                                 VkImageLayout                initialLayout,
-                                                 const VkAllocationCallbacks* pAllocator,
-                                                 VkImage*                     pImage);
+void cvkCreateImageWithFormatListInfo(VkDevice                     device,
+                                      const void*                  pNext,
+                                      uint32_t                     viewFormatCount,
+                                      const VkFormat*              pViewFormats,
+                                      VkImageCreateFlags           flags,
+                                      VkImageType                  imageType,
+                                      VkFormat                     format,
+                                      VkExtent3D                   extent,
+                                      uint32_t                     mipLevels,
+                                      uint32_t                     arrayLayers,
+                                      VkSampleCountFlagBits        samples,
+                                      VkImageTiling                tiling,
+                                      VkImageUsageFlags            usage,
+                                      VkSharingMode                sharingMode,
+                                      uint32_t                     queueFamilyIndexCount,
+                                      const uint32_t*              pQueueFamilyIndices,
+                                      VkImageLayout                initialLayout,
+                                      const VkAllocationCallbacks* pAllocator,
+                                      VkImage*                     pImage);
 /**
  * \brief Creates a image with VkImageStencilUsageCreateInfo chained.
  *
@@ -7386,24 +7041,24 @@ void cvkCreateImageWithImageFormatListCreateInfo(VkDevice                     de
  *
  * \retval None
  */
-void cvkCreateImageStencilUsageCreateInfo(VkDevice                     device,
-                                          const void*                  pNext,
-                                          VkImageUsageFlags            stencilUsage,
-                                          VkImageCreateFlags           flags,
-                                          VkImageType                  imageType,
-                                          VkFormat                     format,
-                                          VkExtent3D                   extent,
-                                          uint32_t                     mipLevels,
-                                          uint32_t                     arrayLayers,
-                                          VkSampleCountFlagBits        samples,
-                                          VkImageTiling                tiling,
-                                          VkImageUsageFlags            usage,
-                                          VkSharingMode                sharingMode,
-                                          uint32_t                     queueFamilyIndexCount,
-                                          const uint32_t*              pQueueFamilyIndices,
-                                          VkImageLayout                initialLayout,
-                                          const VkAllocationCallbacks* pAllocator,
-                                          VkImage*                     pImage);
+void cvkCreateImageWithStencilUsageInfo(VkDevice                     device,
+                                        const void*                  pNext,
+                                        VkImageUsageFlags            stencilUsage,
+                                        VkImageCreateFlags           flags,
+                                        VkImageType                  imageType,
+                                        VkFormat                     format,
+                                        VkExtent3D                   extent,
+                                        uint32_t                     mipLevels,
+                                        uint32_t                     arrayLayers,
+                                        VkSampleCountFlagBits        samples,
+                                        VkImageTiling                tiling,
+                                        VkImageUsageFlags            usage,
+                                        VkSharingMode                sharingMode,
+                                        uint32_t                     queueFamilyIndexCount,
+                                        const uint32_t*              pQueueFamilyIndices,
+                                        VkImageLayout                initialLayout,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkImage*                     pImage);
 /**
  * \brief Creates a image with VkImageSwapchainCreateInfoKHR chained.
  *
@@ -7428,24 +7083,24 @@ void cvkCreateImageStencilUsageCreateInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkCreateImageSwapchainCreateInfo(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkSwapchainKHR               swapchain,
-                                       VkImageCreateFlags           flags,
-                                       VkImageType                  imageType,
-                                       VkFormat                     format,
-                                       VkExtent3D                   extent,
-                                       uint32_t                     mipLevels,
-                                       uint32_t                     arrayLayers,
-                                       VkSampleCountFlagBits        samples,
-                                       VkImageTiling                tiling,
-                                       VkImageUsageFlags            usage,
-                                       VkSharingMode                sharingMode,
-                                       uint32_t                     queueFamilyIndexCount,
-                                       const uint32_t*              pQueueFamilyIndices,
-                                       VkImageLayout                initialLayout,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkImage*                     pImage);
+void cvkCreateImageWithSwapchainInfo(VkDevice                     device,
+                                     const void*                  pNext,
+                                     VkSwapchainKHR               swapchain,
+                                     VkImageCreateFlags           flags,
+                                     VkImageType                  imageType,
+                                     VkFormat                     format,
+                                     VkExtent3D                   extent,
+                                     uint32_t                     mipLevels,
+                                     uint32_t                     arrayLayers,
+                                     VkSampleCountFlagBits        samples,
+                                     VkImageTiling                tiling,
+                                     VkImageUsageFlags            usage,
+                                     VkSharingMode                sharingMode,
+                                     uint32_t                     queueFamilyIndexCount,
+                                     const uint32_t*              pQueueFamilyIndices,
+                                     VkImageLayout                initialLayout,
+                                     const VkAllocationCallbacks* pAllocator,
+                                     VkImage*                     pImage);
 /**
  * \brief Creates a image view with VkImageViewUsageCreateInfo chained.
  *
@@ -7463,17 +7118,17 @@ void cvkCreateImageSwapchainCreateInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkCreateImageViewUsageCreateInfo(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkImageUsageFlags            usage,
-                                       VkImageViewCreateFlags       flags,
-                                       VkImage                      image,
-                                       VkImageViewType              viewType,
-                                       VkFormat                     format,
-                                       VkComponentMapping           components,
-                                       VkImageSubresourceRange      subresourceRange,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkImageView*                 pView);
+void cvkCreateImageViewWithUsageInfo(VkDevice                     device,
+                                     const void*                  pNext,
+                                     VkImageUsageFlags            usage,
+                                     VkImageViewCreateFlags       flags,
+                                     VkImage                      image,
+                                     VkImageViewType              viewType,
+                                     VkFormat                     format,
+                                     VkComponentMapping           components,
+                                     VkImageSubresourceRange      subresourceRange,
+                                     const VkAllocationCallbacks* pAllocator,
+                                     VkImageView*                 pView);
 /**
  * \brief Creates a image view with VkSamplerYcbcrConversionInfo chained.
  *
@@ -7522,20 +7177,20 @@ void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                  
  *
  * \retval None
  */
-void cvkCreateDebugUtilsMessengerCreateInfo(const void*                          pNext,
-                                            VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
-                                            VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
-                                            VkDebugUtilsMessageTypeFlagsEXT      messageType,
-                                            PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
-                                            void*                                pUserData,
-                                            VkInstanceCreateFlags                flags,
-                                            const VkApplicationInfo*             pApplicationInfo,
-                                            uint32_t                             enabledLayerCount,
-                                            const char* const*                   ppEnabledLayerNames,
-                                            uint32_t                             enabledExtensionCount,
-                                            const char* const*                   ppEnabledExtensionNames,
-                                            const VkAllocationCallbacks*         pAllocator,
-                                            VkInstance*                          pInstance);
+void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                          pNext,
+                                                  VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
+                                                  VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
+                                                  VkDebugUtilsMessageTypeFlagsEXT      messageType,
+                                                  PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
+                                                  void*                                pUserData,
+                                                  VkInstanceCreateFlags                flags,
+                                                  const VkApplicationInfo*             pApplicationInfo,
+                                                  uint32_t                             enabledLayerCount,
+                                                  const char* const*                   ppEnabledLayerNames,
+                                                  uint32_t                             enabledExtensionCount,
+                                                  const char* const*                   ppEnabledExtensionNames,
+                                                  const VkAllocationCallbacks*         pAllocator,
+                                                  VkInstance*                          pInstance);
 /**
  * \brief Creates a render pass with VkRenderPassInputAttachmentAspectCreateInfo chained.
  *
@@ -7555,19 +7210,19 @@ void cvkCreateDebugUtilsMessengerCreateInfo(const void*                         
  *
  * \retval None
  */
-void cvkCreateRenderPassInputAttachmentAspectCreateInfo(VkDevice                                device,
-                                                        const void*                             pNext,
-                                                        uint32_t                                aspectReferenceCount,
-                                                        const VkInputAttachmentAspectReference* pAspectReferences,
-                                                        VkRenderPassCreateFlags                 flags,
-                                                        uint32_t                                attachmentCount,
-                                                        const VkAttachmentDescription*          pAttachments,
-                                                        uint32_t                                subpassCount,
-                                                        const VkSubpassDescription*             pSubpasses,
-                                                        uint32_t                                dependencyCount,
-                                                        const VkSubpassDependency*              pDependencies,
-                                                        const VkAllocationCallbacks*            pAllocator,
-                                                        VkRenderPass*                           pRenderPass);
+void cvkCreateRenderPassWithInputAttachmentAspectInfo(VkDevice                                device,
+                                                      const void*                             pNext,
+                                                      uint32_t                                aspectReferenceCount,
+                                                      const VkInputAttachmentAspectReference* pAspectReferences,
+                                                      VkRenderPassCreateFlags                 flags,
+                                                      uint32_t                                attachmentCount,
+                                                      const VkAttachmentDescription*          pAttachments,
+                                                      uint32_t                                subpassCount,
+                                                      const VkSubpassDescription*             pSubpasses,
+                                                      uint32_t                                dependencyCount,
+                                                      const VkSubpassDependency*              pDependencies,
+                                                      const VkAllocationCallbacks*            pAllocator,
+                                                      VkRenderPass*                           pRenderPass);
 /**
  * \brief Creates a render pass with VkRenderPassMultiviewCreateInfo chained.
  *
@@ -7591,23 +7246,23 @@ void cvkCreateRenderPassInputAttachmentAspectCreateInfo(VkDevice                
  *
  * \retval None
  */
-void cvkCreateRenderPassMultiviewCreateInfo(VkDevice                       device,
-                                            const void*                    pNext,
-                                            uint32_t                       multiviewSubpassCount,
-                                            const uint32_t*                pViewMasks,
-                                            uint32_t                       multiviewDependencyCount,
-                                            const int32_t*                 pViewOffsets,
-                                            uint32_t                       correlationMaskCount,
-                                            const uint32_t*                pCorrelationMasks,
-                                            VkRenderPassCreateFlags        flags,
-                                            uint32_t                       attachmentCount,
-                                            const VkAttachmentDescription* pAttachments,
-                                            uint32_t                       subpassCount,
-                                            const VkSubpassDescription*    pSubpasses,
-                                            uint32_t                       dependencyCount,
-                                            const VkSubpassDependency*     pDependencies,
-                                            const VkAllocationCallbacks*   pAllocator,
-                                            VkRenderPass*                  pRenderPass);
+void cvkCreateRenderPassWithMultiviewInfo(VkDevice                       device,
+                                          const void*                    pNext,
+                                          uint32_t                       multiviewSubpassCount,
+                                          const uint32_t*                pViewMasks,
+                                          uint32_t                       multiviewDependencyCount,
+                                          const int32_t*                 pViewOffsets,
+                                          uint32_t                       correlationMaskCount,
+                                          const uint32_t*                pCorrelationMasks,
+                                          VkRenderPassCreateFlags        flags,
+                                          uint32_t                       attachmentCount,
+                                          const VkAttachmentDescription* pAttachments,
+                                          uint32_t                       subpassCount,
+                                          const VkSubpassDescription*    pSubpasses,
+                                          uint32_t                       dependencyCount,
+                                          const VkSubpassDependency*     pDependencies,
+                                          const VkAllocationCallbacks*   pAllocator,
+                                          VkRenderPass*                  pRenderPass);
 /**
  * \brief Creates a sampler with VkDebugUtilsObjectNameInfoEXT chained.
  *
@@ -7637,29 +7292,29 @@ void cvkCreateRenderPassMultiviewCreateInfo(VkDevice                       devic
  *
  * \retval None
  */
-void cvkCreateDebugUtilsObjectNameInfo(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkObjectType                 objectType,
-                                       uint64_t                     objectHandle,
-                                       const char*                  pObjectName,
-                                       VkSamplerCreateFlags         flags,
-                                       VkFilter                     magFilter,
-                                       VkFilter                     minFilter,
-                                       VkSamplerMipmapMode          mipmapMode,
-                                       VkSamplerAddressMode         addressModeU,
-                                       VkSamplerAddressMode         addressModeV,
-                                       VkSamplerAddressMode         addressModeW,
-                                       float                        mipLodBias,
-                                       VkBool32                     anisotropyEnable,
-                                       float                        maxAnisotropy,
-                                       VkBool32                     compareEnable,
-                                       VkCompareOp                  compareOp,
-                                       float                        minLod,
-                                       float                        maxLod,
-                                       VkBorderColor                borderColor,
-                                       VkBool32                     unnormalizedCoordinates,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkSampler*                   pSampler);
+void cvkCreateSamplerWithDebugUtilsObjectNameInfo(VkDevice                     device,
+                                                  const void*                  pNext,
+                                                  VkObjectType                 objectType,
+                                                  uint64_t                     objectHandle,
+                                                  const char*                  pObjectName,
+                                                  VkSamplerCreateFlags         flags,
+                                                  VkFilter                     magFilter,
+                                                  VkFilter                     minFilter,
+                                                  VkSamplerMipmapMode          mipmapMode,
+                                                  VkSamplerAddressMode         addressModeU,
+                                                  VkSamplerAddressMode         addressModeV,
+                                                  VkSamplerAddressMode         addressModeW,
+                                                  float                        mipLodBias,
+                                                  VkBool32                     anisotropyEnable,
+                                                  float                        maxAnisotropy,
+                                                  VkBool32                     compareEnable,
+                                                  VkCompareOp                  compareOp,
+                                                  float                        minLod,
+                                                  float                        maxLod,
+                                                  VkBorderColor                borderColor,
+                                                  VkBool32                     unnormalizedCoordinates,
+                                                  const VkAllocationCallbacks* pAllocator,
+                                                  VkSampler*                   pSampler);
 /**
  * \brief Creates a sampler with VkSamplerReductionModeCreateInfo chained.
  *
@@ -7687,27 +7342,27 @@ void cvkCreateDebugUtilsObjectNameInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkCreateSamplerReductionModeCreateInfo(VkDevice                     device,
-                                             const void*                  pNext,
-                                             VkSamplerReductionMode       reductionMode,
-                                             VkSamplerCreateFlags         flags,
-                                             VkFilter                     magFilter,
-                                             VkFilter                     minFilter,
-                                             VkSamplerMipmapMode          mipmapMode,
-                                             VkSamplerAddressMode         addressModeU,
-                                             VkSamplerAddressMode         addressModeV,
-                                             VkSamplerAddressMode         addressModeW,
-                                             float                        mipLodBias,
-                                             VkBool32                     anisotropyEnable,
-                                             float                        maxAnisotropy,
-                                             VkBool32                     compareEnable,
-                                             VkCompareOp                  compareOp,
-                                             float                        minLod,
-                                             float                        maxLod,
-                                             VkBorderColor                borderColor,
-                                             VkBool32                     unnormalizedCoordinates,
-                                             const VkAllocationCallbacks* pAllocator,
-                                             VkSampler*                   pSampler);
+void cvkCreateSamplerWithReductionModeInfo(VkDevice                     device,
+                                           const void*                  pNext,
+                                           VkSamplerReductionMode       reductionMode,
+                                           VkSamplerCreateFlags         flags,
+                                           VkFilter                     magFilter,
+                                           VkFilter                     minFilter,
+                                           VkSamplerMipmapMode          mipmapMode,
+                                           VkSamplerAddressMode         addressModeU,
+                                           VkSamplerAddressMode         addressModeV,
+                                           VkSamplerAddressMode         addressModeW,
+                                           float                        mipLodBias,
+                                           VkBool32                     anisotropyEnable,
+                                           float                        maxAnisotropy,
+                                           VkBool32                     compareEnable,
+                                           VkCompareOp                  compareOp,
+                                           float                        minLod,
+                                           float                        maxLod,
+                                           VkBorderColor                borderColor,
+                                           VkBool32                     unnormalizedCoordinates,
+                                           const VkAllocationCallbacks* pAllocator,
+                                           VkSampler*                   pSampler);
 /**
  * \brief Creates a sampler with VkSamplerYcbcrConversionInfo chained.
  *
@@ -7735,27 +7390,27 @@ void cvkCreateSamplerReductionModeCreateInfo(VkDevice                     device
  *
  * \retval None
  */
-void cvkCreateSamplerWithSamplerYcbcrConversionInfo(VkDevice                     device,
-                                                    const void*                  pNext,
-                                                    VkSamplerYcbcrConversion     conversion,
-                                                    VkSamplerCreateFlags         flags,
-                                                    VkFilter                     magFilter,
-                                                    VkFilter                     minFilter,
-                                                    VkSamplerMipmapMode          mipmapMode,
-                                                    VkSamplerAddressMode         addressModeU,
-                                                    VkSamplerAddressMode         addressModeV,
-                                                    VkSamplerAddressMode         addressModeW,
-                                                    float                        mipLodBias,
-                                                    VkBool32                     anisotropyEnable,
-                                                    float                        maxAnisotropy,
-                                                    VkBool32                     compareEnable,
-                                                    VkCompareOp                  compareOp,
-                                                    float                        minLod,
-                                                    float                        maxLod,
-                                                    VkBorderColor                borderColor,
-                                                    VkBool32                     unnormalizedCoordinates,
-                                                    const VkAllocationCallbacks* pAllocator,
-                                                    VkSampler*                   pSampler);
+void cvkCreateSamplerWithYcbcrConversionInfo(VkDevice                     device,
+                                             const void*                  pNext,
+                                             VkSamplerYcbcrConversion     conversion,
+                                             VkSamplerCreateFlags         flags,
+                                             VkFilter                     magFilter,
+                                             VkFilter                     minFilter,
+                                             VkSamplerMipmapMode          mipmapMode,
+                                             VkSamplerAddressMode         addressModeU,
+                                             VkSamplerAddressMode         addressModeV,
+                                             VkSamplerAddressMode         addressModeW,
+                                             float                        mipLodBias,
+                                             VkBool32                     anisotropyEnable,
+                                             float                        maxAnisotropy,
+                                             VkBool32                     compareEnable,
+                                             VkCompareOp                  compareOp,
+                                             float                        minLod,
+                                             float                        maxLod,
+                                             VkBorderColor                borderColor,
+                                             VkBool32                     unnormalizedCoordinates,
+                                             const VkAllocationCallbacks* pAllocator,
+                                             VkSampler*                   pSampler);
 /**
  * \brief Creates a semaphore with VkExportSemaphoreCreateInfo chained.
  *
@@ -7768,36 +7423,12 @@ void cvkCreateSamplerWithSamplerYcbcrConversionInfo(VkDevice                    
  *
  * \retval None
  */
-void cvkCreateExportSemaphoreCreateInfo(VkDevice                           device,
-                                        const void*                        pNext,
-                                        VkExternalSemaphoreHandleTypeFlags handleTypes,
-                                        VkSemaphoreCreateFlags             flags,
-                                        const VkAllocationCallbacks*       pAllocator,
-                                        VkSemaphore*                       pSemaphore);
-#if (defined(VK_USE_PLATFORM_WIN32_KHR))
-/**
- * \brief Creates a semaphore with VkExportSemaphoreWin32HandleInfoKHR chained.
- *
- * \param[in] device       See cvkCreateSemaphore
- * \param[in] pNext        See cvkCreateSemaphore
- * \param[in] pAttributes  VkExportSemaphoreWin32HandleInfoKHR::pAttributes
- * \param[in] dwAccess     VkExportSemaphoreWin32HandleInfoKHR::dwAccess
- * \param[in] name         VkExportSemaphoreWin32HandleInfoKHR::name
- * \param[in] flags        See cvkCreateSemaphore
- * \param[in] pAllocator   See cvkCreateSemaphore
- * \param[out] pSemaphore   See cvkCreateSemaphore
- *
- * \retval None
- */
-void cvkCreateExportSemaphoreWin32HandleInfo(VkDevice                     device,
-                                             const void*                  pNext,
-                                             const SECURITY_ATTRIBUTES*   pAttributes,
-                                             DWORD                        dwAccess,
-                                             LPCWSTR                      name,
-                                             VkSemaphoreCreateFlags       flags,
-                                             const VkAllocationCallbacks* pAllocator,
-                                             VkSemaphore*                 pSemaphore);
-#endif
+void cvkCreateSemaphoreWithExportInfo(VkDevice                           device,
+                                      const void*                        pNext,
+                                      VkExternalSemaphoreHandleTypeFlags handleTypes,
+                                      VkSemaphoreCreateFlags             flags,
+                                      const VkAllocationCallbacks*       pAllocator,
+                                      VkSemaphore*                       pSemaphore);
 /**
  * \brief Creates a semaphore with VkSemaphoreTypeCreateInfo chained.
  *
@@ -7811,13 +7442,13 @@ void cvkCreateExportSemaphoreWin32HandleInfo(VkDevice                     device
  *
  * \retval None
  */
-void cvkCreateSemaphoreTypeCreateInfo(VkDevice                     device,
-                                      const void*                  pNext,
-                                      VkSemaphoreType              semaphoreType,
-                                      uint64_t                     initialValue,
-                                      VkSemaphoreCreateFlags       flags,
-                                      const VkAllocationCallbacks* pAllocator,
-                                      VkSemaphore*                 pSemaphore);
+void cvkCreateSemaphoreWithTypeInfo(VkDevice                     device,
+                                    const void*                  pNext,
+                                    VkSemaphoreType              semaphoreType,
+                                    uint64_t                     initialValue,
+                                    VkSemaphoreCreateFlags       flags,
+                                    const VkAllocationCallbacks* pAllocator,
+                                    VkSemaphore*                 pSemaphore);
 /**
  * \brief Creates a swapchain with VkDeviceGroupSwapchainCreateInfoKHR chained.
  *
@@ -7845,27 +7476,27 @@ void cvkCreateSemaphoreTypeCreateInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkCreateDeviceGroupSwapchainCreateInfo(VkDevice                         device,
-                                             const void*                      pNext,
-                                             VkDeviceGroupPresentModeFlagsKHR modes,
-                                             VkSwapchainCreateFlagsKHR        flags,
-                                             VkSurfaceKHR                     surface,
-                                             uint32_t                         minImageCount,
-                                             VkFormat                         imageFormat,
-                                             VkColorSpaceKHR                  imageColorSpace,
-                                             VkExtent2D                       imageExtent,
-                                             uint32_t                         imageArrayLayers,
-                                             VkImageUsageFlags                imageUsage,
-                                             VkSharingMode                    imageSharingMode,
-                                             uint32_t                         queueFamilyIndexCount,
-                                             const uint32_t*                  pQueueFamilyIndices,
-                                             VkSurfaceTransformFlagBitsKHR    preTransform,
-                                             VkCompositeAlphaFlagBitsKHR      compositeAlpha,
-                                             VkPresentModeKHR                 presentMode,
-                                             VkBool32                         clipped,
-                                             VkSwapchainKHR                   oldSwapchain,
-                                             const VkAllocationCallbacks*     pAllocator,
-                                             VkSwapchainKHR*                  pSwapchain);
+void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         device,
+                                           const void*                      pNext,
+                                           VkDeviceGroupPresentModeFlagsKHR modes,
+                                           VkSwapchainCreateFlagsKHR        flags,
+                                           VkSurfaceKHR                     surface,
+                                           uint32_t                         minImageCount,
+                                           VkFormat                         imageFormat,
+                                           VkColorSpaceKHR                  imageColorSpace,
+                                           VkExtent2D                       imageExtent,
+                                           uint32_t                         imageArrayLayers,
+                                           VkImageUsageFlags                imageUsage,
+                                           VkSharingMode                    imageSharingMode,
+                                           uint32_t                         queueFamilyIndexCount,
+                                           const uint32_t*                  pQueueFamilyIndices,
+                                           VkSurfaceTransformFlagBitsKHR    preTransform,
+                                           VkCompositeAlphaFlagBitsKHR      compositeAlpha,
+                                           VkPresentModeKHR                 presentMode,
+                                           VkBool32                         clipped,
+                                           VkSwapchainKHR                   oldSwapchain,
+                                           const VkAllocationCallbacks*     pAllocator,
+                                           VkSwapchainKHR*                  pSwapchain);
 /**
  * \brief Creates a swapchain with VkImageFormatListCreateInfo chained.
  *
@@ -7894,28 +7525,28 @@ void cvkCreateDeviceGroupSwapchainCreateInfo(VkDevice                         de
  *
  * \retval None
  */
-void cvkCreateSwapchainWithImageFormatListCreateInfo(VkDevice                      device,
-                                                     const void*                   pNext,
-                                                     uint32_t                      viewFormatCount,
-                                                     const VkFormat*               pViewFormats,
-                                                     VkSwapchainCreateFlagsKHR     flags,
-                                                     VkSurfaceKHR                  surface,
-                                                     uint32_t                      minImageCount,
-                                                     VkFormat                      imageFormat,
-                                                     VkColorSpaceKHR               imageColorSpace,
-                                                     VkExtent2D                    imageExtent,
-                                                     uint32_t                      imageArrayLayers,
-                                                     VkImageUsageFlags             imageUsage,
-                                                     VkSharingMode                 imageSharingMode,
-                                                     uint32_t                      queueFamilyIndexCount,
-                                                     const uint32_t*               pQueueFamilyIndices,
-                                                     VkSurfaceTransformFlagBitsKHR preTransform,
-                                                     VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                     VkPresentModeKHR              presentMode,
-                                                     VkBool32                      clipped,
-                                                     VkSwapchainKHR                oldSwapchain,
-                                                     const VkAllocationCallbacks*  pAllocator,
-                                                     VkSwapchainKHR*               pSwapchain);
+void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      device,
+                                               const void*                   pNext,
+                                               uint32_t                      viewFormatCount,
+                                               const VkFormat*               pViewFormats,
+                                               VkSwapchainCreateFlagsKHR     flags,
+                                               VkSurfaceKHR                  surface,
+                                               uint32_t                      minImageCount,
+                                               VkFormat                      imageFormat,
+                                               VkColorSpaceKHR               imageColorSpace,
+                                               VkExtent2D                    imageExtent,
+                                               uint32_t                      imageArrayLayers,
+                                               VkImageUsageFlags             imageUsage,
+                                               VkSharingMode                 imageSharingMode,
+                                               uint32_t                      queueFamilyIndexCount,
+                                               const uint32_t*               pQueueFamilyIndices,
+                                               VkSurfaceTransformFlagBitsKHR preTransform,
+                                               VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                               VkPresentModeKHR              presentMode,
+                                               VkBool32                      clipped,
+                                               VkSwapchainKHR                oldSwapchain,
+                                               const VkAllocationCallbacks*  pAllocator,
+                                               VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Retrieves descriptor set layout support with VkDescriptorSetLayoutBindingFlagsCreateInfo chained.
  *
@@ -7931,15 +7562,15 @@ void cvkCreateSwapchainWithImageFormatListCreateInfo(VkDevice                   
  *
  * \retval None
  */
-void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
-                                                     const void*                         pCreateInfoNext,
-                                                     uint32_t                            bindingFlagsBindingCount,
-                                                     const VkDescriptorBindingFlags*     pBindingFlags,
-                                                     VkDescriptorSetLayoutCreateFlags    flags,
-                                                     uint32_t                            bindingCount,
-                                                     const VkDescriptorSetLayoutBinding* pBindings,
-                                                     void*                               pSupportNext,
-                                                     VkDescriptorSetLayoutSupport*       pSupport);
+void cvkGetDescriptorSetLayoutSupportWithBindingFlagsInfo(VkDevice                            device,
+                                                          const void*                         pCreateInfoNext,
+                                                          uint32_t                            bindingFlagsBindingCount,
+                                                          const VkDescriptorBindingFlags*     pBindingFlags,
+                                                          VkDescriptorSetLayoutCreateFlags    flags,
+                                                          uint32_t                            bindingCount,
+                                                          const VkDescriptorSetLayoutBinding* pBindings,
+                                                          void*                               pSupportNext,
+                                                          VkDescriptorSetLayoutSupport*       pSupport);
 /**
  * \brief Retrieves image memory requirements 2 with VkImagePlaneMemoryRequirementsInfo chained.
  *
@@ -7952,12 +7583,12 @@ void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                   
  *
  * \retval None
  */
-void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
-                                            const void*            pInfoNext,
-                                            VkImageAspectFlagBits  planeAspect,
-                                            VkImage                image,
-                                            void*                  pMemoryRequirementsNext,
-                                            VkMemoryRequirements2* pMemoryRequirements);
+void cvkGetImageMemoryRequirements2WithPlaneMemoryRequirementsInfo(VkDevice               device,
+                                                                   const void*            pInfoNext,
+                                                                   VkImageAspectFlagBits  planeAspect,
+                                                                   VkImage                image,
+                                                                   void*                  pMemoryRequirementsNext,
+                                                                   VkMemoryRequirements2* pMemoryRequirements);
 /**
  * \brief Retrieves physical device external semaphore properties with VkSemaphoreTypeCreateInfo chained.
  *
@@ -7971,13 +7602,13 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
  *
  * \retval None
  */
-void cvkGetSemaphoreTypeCreateInfo(VkPhysicalDevice                      physicalDevice,
-                                   const void*                           pExternalSemaphoreInfoNext,
-                                   VkSemaphoreType                       semaphoreType,
-                                   uint64_t                              initialValue,
-                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                   void*                                 pExternalSemaphorePropertiesNext,
-                                   VkExternalSemaphoreProperties*        pExternalSemaphoreProperties);
+void cvkGetPhysicalDeviceExternalSemaphorePropertiesWithSemaphoreTypeInfo(VkPhysicalDevice                      physicalDevice,
+                                                                          const void*                           pExternalSemaphoreInfoNext,
+                                                                          VkSemaphoreType                       semaphoreType,
+                                                                          uint64_t                              initialValue,
+                                                                          VkExternalSemaphoreHandleTypeFlagBits handleType,
+                                                                          void*                                 pExternalSemaphorePropertiesNext,
+                                                                          VkExternalSemaphoreProperties*        pExternalSemaphoreProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageFormatListCreateInfo chained.
  *
@@ -7995,17 +7626,17 @@ void cvkGetSemaphoreTypeCreateInfo(VkPhysicalDevice                      physica
  *
  * \retval None
  */
-void cvkGetImageFormatListCreateInfo(VkPhysicalDevice          physicalDevice,
-                                     const void*               pImageFormatInfoNext,
-                                     uint32_t                  viewFormatCount,
-                                     const VkFormat*           pViewFormats,
-                                     VkFormat                  format,
-                                     VkImageType               type,
-                                     VkImageTiling             tiling,
-                                     VkImageUsageFlags         usage,
-                                     VkImageCreateFlags        flags,
-                                     void*                     pImageFormatPropertiesNext,
-                                     VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageFormatProperties2WithImageFormatListInfo(VkPhysicalDevice          physicalDevice,
+                                                                       const void*               pImageFormatInfoNext,
+                                                                       uint32_t                  viewFormatCount,
+                                                                       const VkFormat*           pViewFormats,
+                                                                       VkFormat                  format,
+                                                                       VkImageType               type,
+                                                                       VkImageTiling             tiling,
+                                                                       VkImageUsageFlags         usage,
+                                                                       VkImageCreateFlags        flags,
+                                                                       void*                     pImageFormatPropertiesNext,
+                                                                       VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsageCreateInfo chained.
  *
@@ -8022,16 +7653,16 @@ void cvkGetImageFormatListCreateInfo(VkPhysicalDevice          physicalDevice,
  *
  * \retval None
  */
-void cvkGetImageStencilUsageCreateInfo(VkPhysicalDevice          physicalDevice,
-                                       const void*               pImageFormatInfoNext,
-                                       VkImageUsageFlags         stencilUsage,
-                                       VkFormat                  format,
-                                       VkImageType               type,
-                                       VkImageTiling             tiling,
-                                       VkImageUsageFlags         usage,
-                                       VkImageCreateFlags        flags,
-                                       void*                     pImageFormatPropertiesNext,
-                                       VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageFormatProperties2WithImageStencilUsageInfo(VkPhysicalDevice          physicalDevice,
+                                                                         const void*               pImageFormatInfoNext,
+                                                                         VkImageUsageFlags         stencilUsage,
+                                                                         VkFormat                  format,
+                                                                         VkImageType               type,
+                                                                         VkImageTiling             tiling,
+                                                                         VkImageUsageFlags         usage,
+                                                                         VkImageCreateFlags        flags,
+                                                                         void*                     pImageFormatPropertiesNext,
+                                                                         VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceExternalImageFormatInfo chained.
  *
@@ -8048,16 +7679,16 @@ void cvkGetImageStencilUsageCreateInfo(VkPhysicalDevice          physicalDevice,
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
-                                                 const void*                        pImageFormatInfoNext,
-                                                 VkExternalMemoryHandleTypeFlagBits handleType,
-                                                 VkFormat                           format,
-                                                 VkImageType                        type,
-                                                 VkImageTiling                      tiling,
-                                                 VkImageUsageFlags                  usage,
-                                                 VkImageCreateFlags                 flags,
-                                                 void*                              pImageFormatPropertiesNext,
-                                                 VkImageFormatProperties2*          pImageFormatProperties);
+void cvkGetPhysicalDeviceImageFormatProperties2WithExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
+                                                                           const void*                        pImageFormatInfoNext,
+                                                                           VkExternalMemoryHandleTypeFlagBits handleType,
+                                                                           VkFormat                           format,
+                                                                           VkImageType                        type,
+                                                                           VkImageTiling                      tiling,
+                                                                           VkImageUsageFlags                  usage,
+                                                                           VkImageCreateFlags                 flags,
+                                                                           void*                              pImageFormatPropertiesNext,
+                                                                           VkImageFormatProperties2*          pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageDrmFormatModifierInfoEXT chained.
  *
@@ -8077,19 +7708,19 @@ void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice               
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
-                                                    const void*               pImageFormatInfoNext,
-                                                    uint64_t                  drmFormatModifier,
-                                                    VkSharingMode             sharingMode,
-                                                    uint32_t                  queueFamilyIndexCount,
-                                                    const uint32_t*           pQueueFamilyIndices,
-                                                    VkFormat                  format,
-                                                    VkImageType               type,
-                                                    VkImageTiling             tiling,
-                                                    VkImageUsageFlags         usage,
-                                                    VkImageCreateFlags        flags,
-                                                    void*                     pImageFormatPropertiesNext,
-                                                    VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageFormatProperties2WithDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
+                                                                         const void*               pImageFormatInfoNext,
+                                                                         uint64_t                  drmFormatModifier,
+                                                                         VkSharingMode             sharingMode,
+                                                                         uint32_t                  queueFamilyIndexCount,
+                                                                         const uint32_t*           pQueueFamilyIndices,
+                                                                         VkFormat                  format,
+                                                                         VkImageType               type,
+                                                                         VkImageTiling             tiling,
+                                                                         VkImageUsageFlags         usage,
+                                                                         VkImageCreateFlags        flags,
+                                                                         void*                     pImageFormatPropertiesNext,
+                                                                         VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Queues present with VkDeviceGroupPresentInfoKHR chained.
  *
@@ -8107,17 +7738,17 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
-VkResult cvkQueueDeviceGroupPresentInfo(VkQueue                             queue,
-                                        const void*                         pNext,
-                                        uint32_t                            deviceGroupSwapchainCount,
-                                        const uint32_t*                     pDeviceMasks,
-                                        VkDeviceGroupPresentModeFlagBitsKHR mode,
-                                        uint32_t                            waitSemaphoreCount,
-                                        const VkSemaphore*                  pWaitSemaphores,
-                                        uint32_t                            swapchainCount,
-                                        const VkSwapchainKHR*               pSwapchains,
-                                        const uint32_t*                     pImageIndices,
-                                        VkResult*                           pResults);
+VkResult cvkQueuePresentWithDeviceGroupInfo(VkQueue                             queue,
+                                            const void*                         pNext,
+                                            uint32_t                            deviceGroupSwapchainCount,
+                                            const uint32_t*                     pDeviceMasks,
+                                            VkDeviceGroupPresentModeFlagBitsKHR mode,
+                                            uint32_t                            waitSemaphoreCount,
+                                            const VkSemaphore*                  pWaitSemaphores,
+                                            uint32_t                            swapchainCount,
+                                            const VkSwapchainKHR*               pSwapchains,
+                                            const uint32_t*                     pImageIndices,
+                                            VkResult*                           pResults);
 
 #ifdef __cplusplus
 }
