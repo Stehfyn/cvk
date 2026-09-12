@@ -5171,17 +5171,17 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
     semaphore_type_create_info.initialValue  = initialValue;
     cvkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &semaphore_type_create_info, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
-void cvkGetPhysicalDeviceImageFormatListProperties2(VkPhysicalDevice          physicalDevice,
-                                                    const void*               pImageFormatInfoNext,
-                                                    uint32_t                  viewFormatCount,
-                                                    const VkFormat*           pViewFormats,
-                                                    VkFormat                  format,
-                                                    VkImageType               type,
-                                                    VkImageTiling             tiling,
-                                                    VkImageUsageFlags         usage,
-                                                    VkImageCreateFlags        flags,
-                                                    void*                     pImageFormatPropertiesNext,
-                                                    VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
+                                                   const void*               pImageFormatInfoNext,
+                                                   uint32_t                  viewFormatCount,
+                                                   const VkFormat*           pViewFormats,
+                                                   VkFormat                  format,
+                                                   VkImageType               type,
+                                                   VkImageTiling             tiling,
+                                                   VkImageUsageFlags         usage,
+                                                   VkImageCreateFlags        flags,
+                                                   void*                     pImageFormatPropertiesNext,
+                                                   VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageFormatListCreateInfo image_format_list_create_info;
 
@@ -5191,16 +5191,16 @@ void cvkGetPhysicalDeviceImageFormatListProperties2(VkPhysicalDevice          ph
     image_format_list_create_info.pViewFormats    = pViewFormats;
     cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageStencilUsageFormatProperties2(VkPhysicalDevice          physicalDevice,
-                                                            const void*               pImageFormatInfoNext,
-                                                            VkImageUsageFlags         stencilUsage,
-                                                            VkFormat                  format,
-                                                            VkImageType               type,
-                                                            VkImageTiling             tiling,
-                                                            VkImageUsageFlags         usage,
-                                                            VkImageCreateFlags        flags,
-                                                            void*                     pImageFormatPropertiesNext,
-                                                            VkImageFormatProperties2* pImageFormatProperties)
+void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice          physicalDevice,
+                                                           const void*               pImageFormatInfoNext,
+                                                           VkImageUsageFlags         stencilUsage,
+                                                           VkFormat                  format,
+                                                           VkImageType               type,
+                                                           VkImageTiling             tiling,
+                                                           VkImageUsageFlags         usage,
+                                                           VkImageCreateFlags        flags,
+                                                           void*                     pImageFormatPropertiesNext,
+                                                           VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 

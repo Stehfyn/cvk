@@ -167,10 +167,10 @@ class Generator:
         one-token block strictly inside E, which stays (compound-term protection: the Format
         inside DrmFormatModifier). Strip the struct-kind word and Info/version tokens from D.
 
-        Placement: locate B's noun run (B minus kind/Info/version) in the command name after
-        the verb. If it is followed by a word (Properties, Support, ...), D is spliced into the
-        command name after the last matched block that precedes or overlaps D in E, or before
-        the first block when D leads. Otherwise the name is <tier-0>With<D>Info."""
+        Placement: constructors and non-queries -> <tier-0>With<D>Info. Queries: a plain Info
+        extender covering B's noun run is the subject -> cvk<Verb><ExtenderStruct>; an add-on
+        (CreateInfo/AllocateInfo/BeginInfo) is spliced between B's noun run and the command's
+        tail, with the command's version digit dropped."""
         import difflib
 
         kind = ("Info", "Create", "Allocate", "Begin", "Bind", "Submit")
@@ -205,23 +205,21 @@ class Generator:
         plain_info = len(e) >= 2 and e[-1] == "Info" and e[-2] not in kind
         if plain_info and all(t in ne for t in nrun):
             return "cvk" + verb + self.struct_short(ext)
+        # A chained extender already implies the extensible (X2) form: drop the version digit.
+        while rest and rest[-1].isdigit():
+            rest.pop()
         nrest = [norm(t) for t in rest]
         start = next((i for i in range(len(nrest) - len(nrun) + 1) if nrest[i:i + len(nrun)] == nrun), -1)
         if start < 0:
             return self.cmd_name(cmd) + "With" + "".join(d) + "Info"
 
-        # Splice: anchor on the base token at which D ends in E, mapped into the command name.
-        first_d, last_d = d_idx[0], d_idx[-1]
-        preceding = [m for m in blocks if m.a < last_d]
-        if preceding:
-            m = preceding[-1]
-            b_end = m.b + min(m.size, last_d - m.a + 1)          # base index just after the overlap
-            b_end = min(b_end, len(run))
-            insert_at = start + b_end
-        else:
-            following = [m for m in blocks if m.a > first_d]
-            insert_at = start + (following[0].b if following else 0)
-        spliced = rest[:insert_at] + d + rest[insert_at:]
+        # Splice: the distinct part wraps the base run's unmatched remainder. Its first word
+        # follows the last matched base word; the remainder of the run follows; then the rest
+        # of the distinct part; then the command's tail.
+        matched_norm = {norm(e[i]) for i in matched}
+        last = max((i for i, t in enumerate(run) if norm(t) in matched_norm), default=len(run) - 1)
+        head, run_rest = run[: last + 1], run[last + 1:]
+        spliced = rest[:start] + head + d[:1] + run_rest + d[1:] + rest[start + len(run):]
         return "cvk" + verb + "".join(spliced)
 
     def capacity_name(self, array_param: str) -> str:

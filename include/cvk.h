@@ -7626,17 +7626,17 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageFormatListProperties2(VkPhysicalDevice          physicalDevice,
-                                                    const void*               pImageFormatInfoNext,
-                                                    uint32_t                  viewFormatCount,
-                                                    const VkFormat*           pViewFormats,
-                                                    VkFormat                  format,
-                                                    VkImageType               type,
-                                                    VkImageTiling             tiling,
-                                                    VkImageUsageFlags         usage,
-                                                    VkImageCreateFlags        flags,
-                                                    void*                     pImageFormatPropertiesNext,
-                                                    VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
+                                                   const void*               pImageFormatInfoNext,
+                                                   uint32_t                  viewFormatCount,
+                                                   const VkFormat*           pViewFormats,
+                                                   VkFormat                  format,
+                                                   VkImageType               type,
+                                                   VkImageTiling             tiling,
+                                                   VkImageUsageFlags         usage,
+                                                   VkImageCreateFlags        flags,
+                                                   void*                     pImageFormatPropertiesNext,
+                                                   VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsageCreateInfo chained.
  *
@@ -7653,16 +7653,16 @@ void cvkGetPhysicalDeviceImageFormatListProperties2(VkPhysicalDevice          ph
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageStencilUsageFormatProperties2(VkPhysicalDevice          physicalDevice,
-                                                            const void*               pImageFormatInfoNext,
-                                                            VkImageUsageFlags         stencilUsage,
-                                                            VkFormat                  format,
-                                                            VkImageType               type,
-                                                            VkImageTiling             tiling,
-                                                            VkImageUsageFlags         usage,
-                                                            VkImageCreateFlags        flags,
-                                                            void*                     pImageFormatPropertiesNext,
-                                                            VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice          physicalDevice,
+                                                           const void*               pImageFormatInfoNext,
+                                                           VkImageUsageFlags         stencilUsage,
+                                                           VkFormat                  format,
+                                                           VkImageType               type,
+                                                           VkImageTiling             tiling,
+                                                           VkImageUsageFlags         usage,
+                                                           VkImageCreateFlags        flags,
+                                                           void*                     pImageFormatPropertiesNext,
+                                                           VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceExternalImageFormatInfo chained.
  *
