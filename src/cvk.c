@@ -5384,12 +5384,12 @@ void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFl
 {
     cvkBindPlaneImageMemories(device, 1, &pNext, &planeAspect, &image, &memory, &memoryOffset);
 }
-void cvkGetBufferMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice                       device,
-                                                                  const void*                    pInfoNext,
-                                                                  VkBuffer                       buffer,
-                                                                  void*                          pDedicatedRequirementsNext,
-                                                                  VkMemoryRequirements2*         pMemoryRequirements,
-                                                                  VkMemoryDedicatedRequirements* pDedicatedRequirements)
+void cvkGetBufferMemoryDedicatedRequirements(VkDevice                       device,
+                                             const void*                    pInfoNext,
+                                             VkBuffer                       buffer,
+                                             void*                          pDedicatedRequirementsNext,
+                                             VkMemoryRequirements2*         pMemoryRequirements,
+                                             VkMemoryDedicatedRequirements* pDedicatedRequirements)
 {
     VkMemoryDedicatedRequirements dedicated_requirements;
 
@@ -5414,12 +5414,12 @@ void cvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice           
     cvkGetDescriptorSetLayoutSupport(device, pCreateInfoNext, flags, bindingCount, pBindings, &variable_descriptor_count_support, pSupport);
     (*pVariableDescriptorCountSupport) = variable_descriptor_count_support;
 }
-void cvkGetImageMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice                       device,
-                                                                 const void*                    pInfoNext,
-                                                                 VkImage                        image,
-                                                                 void*                          pDedicatedRequirementsNext,
-                                                                 VkMemoryRequirements2*         pMemoryRequirements,
-                                                                 VkMemoryDedicatedRequirements* pDedicatedRequirements)
+void cvkGetImageMemoryDedicatedRequirements(VkDevice                       device,
+                                            const void*                    pInfoNext,
+                                            VkImage                        image,
+                                            void*                          pDedicatedRequirementsNext,
+                                            VkMemoryRequirements2*         pMemoryRequirements,
+                                            VkMemoryDedicatedRequirements* pDedicatedRequirements)
 {
     VkMemoryDedicatedRequirements dedicated_requirements;
 
@@ -5671,11 +5671,11 @@ void cvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice             
     cvkGetPhysicalDeviceFeatures2(physicalDevice, &vulkan_memory_model_features, pFeatures);
     (*pVulkanMemoryModelFeatures) = vulkan_memory_model_features;
 }
-void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList2(VkPhysicalDevice                       physicalDevice,
-                                                                              VkFormat                               format,
-                                                                              void*                                  pDrmFormatModifierPropertiesList2Next,
-                                                                              VkFormatProperties2*                   pFormatProperties,
-                                                                              VkDrmFormatModifierPropertiesList2EXT* pDrmFormatModifierPropertiesList2)
+void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2(VkPhysicalDevice                       physicalDevice,
+                                                          VkFormat                               format,
+                                                          void*                                  pDrmFormatModifierPropertiesList2Next,
+                                                          VkFormatProperties2*                   pFormatProperties,
+                                                          VkDrmFormatModifierPropertiesList2EXT* pDrmFormatModifierPropertiesList2)
 {
     VkDrmFormatModifierPropertiesList2EXT drm_format_modifier_properties_list2;
 
@@ -5684,11 +5684,11 @@ void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList2(Vk
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &drm_format_modifier_properties_list2, pFormatProperties);
     (*pDrmFormatModifierPropertiesList2) = drm_format_modifier_properties_list2;
 }
-void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList(VkPhysicalDevice                      physicalDevice,
-                                                                             VkFormat                              format,
-                                                                             void*                                 pDrmFormatModifierPropertiesListNext,
-                                                                             VkFormatProperties2*                  pFormatProperties,
-                                                                             VkDrmFormatModifierPropertiesListEXT* pDrmFormatModifierPropertiesList)
+void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(VkPhysicalDevice                      physicalDevice,
+                                                         VkFormat                              format,
+                                                         void*                                 pDrmFormatModifierPropertiesListNext,
+                                                         VkFormatProperties2*                  pFormatProperties,
+                                                         VkDrmFormatModifierPropertiesListEXT* pDrmFormatModifierPropertiesList)
 {
     VkDrmFormatModifierPropertiesListEXT drm_format_modifier_properties_list;
 
@@ -5697,16 +5697,16 @@ void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList(VkP
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &drm_format_modifier_properties_list, pFormatProperties);
     (*pDrmFormatModifierPropertiesList) = drm_format_modifier_properties_list;
 }
-void cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties(VkPhysicalDevice                 physicalDevice,
-                                                                const void*                      pImageFormatInfoNext,
-                                                                VkFormat                         format,
-                                                                VkImageType                      type,
-                                                                VkImageTiling                    tiling,
-                                                                VkImageUsageFlags                usage,
-                                                                VkImageCreateFlags               flags,
-                                                                void*                            pExternalPropertiesNext,
-                                                                VkImageFormatProperties2*        pImageFormatProperties,
-                                                                VkExternalImageFormatProperties* pExternalProperties)
+void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
+                                                       const void*                      pImageFormatInfoNext,
+                                                       VkFormat                         format,
+                                                       VkImageType                      type,
+                                                       VkImageTiling                    tiling,
+                                                       VkImageUsageFlags                usage,
+                                                       VkImageCreateFlags               flags,
+                                                       void*                            pExternalPropertiesNext,
+                                                       VkImageFormatProperties2*        pImageFormatProperties,
+                                                       VkExternalImageFormatProperties* pExternalProperties)
 {
     VkExternalImageFormatProperties external_properties;
 
@@ -5715,16 +5715,16 @@ void cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties(VkPhysicalDevice
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &external_properties, pImageFormatProperties);
     (*pExternalProperties) = external_properties;
 }
-void cvkGetPhysicalDeviceImageFormatInfo2WithSamplerYcbcrConversionProperties(VkPhysicalDevice                               physicalDevice,
-                                                                              const void*                                    pImageFormatInfoNext,
-                                                                              VkFormat                                       format,
-                                                                              VkImageType                                    type,
-                                                                              VkImageTiling                                  tiling,
-                                                                              VkImageUsageFlags                              usage,
-                                                                              VkImageCreateFlags                             flags,
-                                                                              void*                                          pSamplerYcbcrConversionPropertiesNext,
-                                                                              VkImageFormatProperties2*                      pImageFormatProperties,
-                                                                              VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionProperties)
+void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
+                                                                     const void*                                    pImageFormatInfoNext,
+                                                                     VkFormat                                       format,
+                                                                     VkImageType                                    type,
+                                                                     VkImageTiling                                  tiling,
+                                                                     VkImageUsageFlags                              usage,
+                                                                     VkImageCreateFlags                             flags,
+                                                                     void*                                          pSamplerYcbcrConversionPropertiesNext,
+                                                                     VkImageFormatProperties2*                      pImageFormatProperties,
+                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionProperties)
 {
     VkSamplerYcbcrConversionImageFormatProperties sampler_ycbcr_conversion_properties;
 

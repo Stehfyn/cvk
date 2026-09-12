@@ -775,38 +775,16 @@ class Generator:
         self.place(plats, s_doc + s_sig + ";", s_sig + "\n{\n" + indent("\n".join(s_body)) + "\n}")
 
     def splice_output_name(self, prefix: str, ext: Struct, base: Struct, d_tokens: List[str]) -> Optional[str]:
-        """When the target name ends with the kind word the extender qualifies (Features,
-        Properties, Support, Requirements), splice D into the target at the position the
-        extender gives it: after the base token that precedes D in the extender, or before the
-        one that follows. cvkGetPhysicalDeviceFeatures + VkPhysicalDeviceHostQueryResetFeatures
-        -> cvkGetPhysicalDeviceHostQueryResetFeatures. None when the target's tail is not the
-        kind (a flattened sibling ending in Info2) or D has no anchor."""
-        import difflib
+        """When the target name ends with the base struct's noun run, the extender's full name
+        replaces that run: cvkGetPhysicalDeviceFeatures + VkPhysicalDeviceHostQueryResetFeatures
+        -> cvkGetPhysicalDeviceHostQueryResetFeatures; cvkGetPhysicalDeviceFormatProperties +
+        VkDrmFormatModifierPropertiesList2EXT -> cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2.
+        None when the target's tail is not the run (a flattened sibling ending in Info2)."""
         t = tokens(prefix[3:])
-        base_kind = [x for x in tokens(self.struct_short(base)) if not x.isdigit()][-1]
-        if not t or t[-1] != base_kind or not d_tokens:
+        run = [x for x in tokens(self.struct_short(base)) if not x.isdigit()]
+        if len(t) <= len(run) or t[-len(run):] != run:
             return None
-        e = tokens(self.struct_short(ext))
-        if len(e) >= 2 and e[-1].isdigit() and (e[-2] in self.KINDS_OUT or e[-2] == "Info"):
-            e.pop()
-        b = tokens(self.struct_short(base))
-        # Same block set as distinct_part: interior one-token matches and lone digits are not anchors.
-        blocks = [m for m in difflib.SequenceMatcher(None, e, b, autojunk=False).get_matching_blocks()
-                  if m.size and not (m.size == 1 and (e[m.a].isdigit() or 0 < m.a < len(e) - 1))]
-        first_d = next(i for i, x in enumerate(e) if x == d_tokens[0])
-        preceding = [m for m in blocks if m.a + m.size <= first_d]
-        following = [m for m in blocks if m.a > first_d]
-        if preceding:
-            anchor = e[preceding[-1].a + preceding[-1].size - 1]
-            idx = max(i for i, x in enumerate(t) if x == anchor) + 1 if anchor in t else None
-        elif following:
-            anchor = e[following[0].a]
-            idx = min(i for i, x in enumerate(t) if x == anchor) if anchor in t else None
-        else:
-            idx = None
-        if idx is None:
-            return None
-        return "cvk" + "".join(t[:idx] + d_tokens + t[idx:])
+        return "cvk" + "".join(t[: -len(run)] + tokens(self.struct_short(ext)))
 
     def emit_output_convenience(self, cmd: Command, op: Param, ext: Struct) -> None:
         """SPEC.md section 6: <target>With<D><Kind> chains an extender onto the output struct
@@ -823,9 +801,11 @@ class Generator:
         if kind in d_tokens:
             kind = ""
         target = self.flat_name(cmd, self.reg.struct_of(self.flip_param(cmd).type)) if self.flip_param(cmd) is not None else self.cmd_name(cmd)
-        prefix = target if self.flip_param(cmd) is not None else self.with_base(cmd)
+        # The name is derived from the command's name (its tail is the output run); the call
+        # goes to the flattened sibling when one exists so the input stays flattened.
+        prefix = self.with_base(cmd)
         spliced = self.splice_output_name(prefix, ext, base, d_tokens)
-        name = self.register(spliced if spliced else prefix + "With" + d + kind, f"{cmd.name}+{ext.name}:out")
+        name = self.register(spliced if spliced else target + "With" + d + kind, f"{cmd.name}+{ext.name}:out")
         ret, t_params = self.sigs[target]
         out_stem = op.name[1:] if op.name.startswith("p") else op.name
         chain_param = next((p for p in t_params if p.name in (f"p{out_stem}Next", "pNext") and p.text.startswith("void*")), None)

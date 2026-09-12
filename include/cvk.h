@@ -7938,12 +7938,12 @@ void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFl
  *
  * \retval None
  */
-void cvkGetBufferMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice                       device,
-                                                                  const void*                    pInfoNext,
-                                                                  VkBuffer                       buffer,
-                                                                  void*                          pDedicatedRequirementsNext,
-                                                                  VkMemoryRequirements2*         pMemoryRequirements,
-                                                                  VkMemoryDedicatedRequirements* pDedicatedRequirements);
+void cvkGetBufferMemoryDedicatedRequirements(VkDevice                       device,
+                                             const void*                    pInfoNext,
+                                             VkBuffer                       buffer,
+                                             void*                          pDedicatedRequirementsNext,
+                                             VkMemoryRequirements2*         pMemoryRequirements,
+                                             VkMemoryDedicatedRequirements* pDedicatedRequirements);
 /**
  * \brief Retrieves descriptor set layout support with VkDescriptorSetVariableDescriptorCountLayoutSupport chained to the output.
  *
@@ -7978,12 +7978,12 @@ void cvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice           
  *
  * \retval None
  */
-void cvkGetImageMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice                       device,
-                                                                 const void*                    pInfoNext,
-                                                                 VkImage                        image,
-                                                                 void*                          pDedicatedRequirementsNext,
-                                                                 VkMemoryRequirements2*         pMemoryRequirements,
-                                                                 VkMemoryDedicatedRequirements* pDedicatedRequirements);
+void cvkGetImageMemoryDedicatedRequirements(VkDevice                       device,
+                                            const void*                    pInfoNext,
+                                            VkImage                        image,
+                                            void*                          pDedicatedRequirementsNext,
+                                            VkMemoryRequirements2*         pMemoryRequirements,
+                                            VkMemoryDedicatedRequirements* pDedicatedRequirements);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice16BitStorageFeatures chained to the output.
  *
@@ -8280,11 +8280,11 @@ void cvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice             
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList2(VkPhysicalDevice                       physicalDevice,
-                                                                              VkFormat                               format,
-                                                                              void*                                  pDrmFormatModifierPropertiesList2Next,
-                                                                              VkFormatProperties2*                   pFormatProperties,
-                                                                              VkDrmFormatModifierPropertiesList2EXT* pDrmFormatModifierPropertiesList2);
+void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2(VkPhysicalDevice                       physicalDevice,
+                                                          VkFormat                               format,
+                                                          void*                                  pDrmFormatModifierPropertiesList2Next,
+                                                          VkFormatProperties2*                   pFormatProperties,
+                                                          VkDrmFormatModifierPropertiesList2EXT* pDrmFormatModifierPropertiesList2);
 /**
  * \brief Retrieves physical device format properties 2 with VkDrmFormatModifierPropertiesListEXT chained to the output.
  *
@@ -8296,11 +8296,11 @@ void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList2(Vk
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList(VkPhysicalDevice                      physicalDevice,
-                                                                             VkFormat                              format,
-                                                                             void*                                 pDrmFormatModifierPropertiesListNext,
-                                                                             VkFormatProperties2*                  pFormatProperties,
-                                                                             VkDrmFormatModifierPropertiesListEXT* pDrmFormatModifierPropertiesList);
+void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(VkPhysicalDevice                      physicalDevice,
+                                                         VkFormat                              format,
+                                                         void*                                 pDrmFormatModifierPropertiesListNext,
+                                                         VkFormatProperties2*                  pFormatProperties,
+                                                         VkDrmFormatModifierPropertiesListEXT* pDrmFormatModifierPropertiesList);
 /**
  * \brief Retrieves physical device image format properties 2 with VkExternalImageFormatProperties chained to the output.
  *
@@ -8317,16 +8317,16 @@ void cvkGetPhysicalDeviceFormatPropertiesWithDrmFormatModifierPropertiesList(VkP
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties(VkPhysicalDevice                 physicalDevice,
-                                                                const void*                      pImageFormatInfoNext,
-                                                                VkFormat                         format,
-                                                                VkImageType                      type,
-                                                                VkImageTiling                    tiling,
-                                                                VkImageUsageFlags                usage,
-                                                                VkImageCreateFlags               flags,
-                                                                void*                            pExternalPropertiesNext,
-                                                                VkImageFormatProperties2*        pImageFormatProperties,
-                                                                VkExternalImageFormatProperties* pExternalProperties);
+void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
+                                                       const void*                      pImageFormatInfoNext,
+                                                       VkFormat                         format,
+                                                       VkImageType                      type,
+                                                       VkImageTiling                    tiling,
+                                                       VkImageUsageFlags                usage,
+                                                       VkImageCreateFlags               flags,
+                                                       void*                            pExternalPropertiesNext,
+                                                       VkImageFormatProperties2*        pImageFormatProperties,
+                                                       VkExternalImageFormatProperties* pExternalProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkSamplerYcbcrConversionImageFormatProperties chained to the output.
  *
@@ -8343,16 +8343,16 @@ void cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties(VkPhysicalDevice
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageFormatInfo2WithSamplerYcbcrConversionProperties(VkPhysicalDevice                               physicalDevice,
-                                                                              const void*                                    pImageFormatInfoNext,
-                                                                              VkFormat                                       format,
-                                                                              VkImageType                                    type,
-                                                                              VkImageTiling                                  tiling,
-                                                                              VkImageUsageFlags                              usage,
-                                                                              VkImageCreateFlags                             flags,
-                                                                              void*                                          pSamplerYcbcrConversionPropertiesNext,
-                                                                              VkImageFormatProperties2*                      pImageFormatProperties,
-                                                                              VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionProperties);
+void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
+                                                                     const void*                                    pImageFormatInfoNext,
+                                                                     VkFormat                                       format,
+                                                                     VkImageType                                    type,
+                                                                     VkImageTiling                                  tiling,
+                                                                     VkImageUsageFlags                              usage,
+                                                                     VkImageCreateFlags                             flags,
+                                                                     void*                                          pSamplerYcbcrConversionPropertiesNext,
+                                                                     VkImageFormatProperties2*                      pImageFormatProperties,
+                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDepthStencilResolveProperties chained to the output.
  *
