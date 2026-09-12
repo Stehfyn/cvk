@@ -5322,14 +5322,14 @@ VkResult cvkQueuePresentWithDeviceGroupInfo(VkQueue                             
     device_group_present_info.mode           = mode;
     return cvkQueuePresent(queue, &device_group_present_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
-void cvkBindImageMemoryWithSwapchainInfo(VkDevice              device,
-                                         uint32_t              bindInfoCount,
-                                         const void* const*    ppNexts,
-                                         const VkSwapchainKHR* pSwapchains,
-                                         const uint32_t*       pImageIndices,
-                                         const VkImage*        pImages,
-                                         const VkDeviceMemory* pMemories,
-                                         const VkDeviceSize*   pMemoryOffsets)
+void cvkBindSwapchainImageMemories(VkDevice              device,
+                                   uint32_t              bindInfoCount,
+                                   const void* const*    ppNexts,
+                                   const VkSwapchainKHR* pSwapchains,
+                                   const uint32_t*       pImageIndices,
+                                   const VkImage*        pImages,
+                                   const VkDeviceMemory* pMemories,
+                                   const VkDeviceSize*   pMemoryOffsets)
 {
     VkBindImageMemoryInfo             bind_infos[CVK_MAX_BIND_INFOS];
     VkBindImageMemorySwapchainInfoKHR bind_image_memory_swapchain_infos[CVK_MAX_BIND_INFOS];
@@ -5350,13 +5350,17 @@ void cvkBindImageMemoryWithSwapchainInfo(VkDevice              device,
     }
     cvkBindImageMemory2(device, bindInfoCount, bind_infos);
 }
-void cvkBindImageMemoryWithPlaneInfo(VkDevice                     device,
-                                     uint32_t                     bindInfoCount,
-                                     const void* const*           ppNexts,
-                                     const VkImageAspectFlagBits* pPlaneAspects,
-                                     const VkImage*               pImages,
-                                     const VkDeviceMemory*        pMemories,
-                                     const VkDeviceSize*          pMemoryOffsets)
+void cvkBindSwapchainImageMemory(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndex, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    cvkBindSwapchainImageMemories(device, 1, &pNext, &swapchain, &imageIndex, &image, &memory, &memoryOffset);
+}
+void cvkBindPlaneImageMemories(VkDevice                     device,
+                               uint32_t                     bindInfoCount,
+                               const void* const*           ppNexts,
+                               const VkImageAspectFlagBits* pPlaneAspects,
+                               const VkImage*               pImages,
+                               const VkDeviceMemory*        pMemories,
+                               const VkDeviceSize*          pMemoryOffsets)
 {
     VkBindImageMemoryInfo      bind_infos[CVK_MAX_BIND_INFOS];
     VkBindImagePlaneMemoryInfo bind_image_plane_memory_infos[CVK_MAX_BIND_INFOS];
@@ -5375,6 +5379,10 @@ void cvkBindImageMemoryWithPlaneInfo(VkDevice                     device,
         bind_infos[index].memoryOffset                   = pMemoryOffsets[index];
     }
     cvkBindImageMemory2(device, bindInfoCount, bind_infos);
+}
+void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFlagBits planeAspect, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    cvkBindPlaneImageMemories(device, 1, &pNext, &planeAspect, &image, &memory, &memoryOffset);
 }
 void cvkGetBufferMemoryRequirementsInfo2WithDedicatedRequirements(VkDevice                       device,
                                                                   const void*                    pInfoNext,

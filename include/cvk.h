@@ -7871,14 +7871,28 @@ VkResult cvkQueuePresentWithDeviceGroupInfo(VkQueue                             
  *
  * \retval None
  */
-void cvkBindImageMemoryWithSwapchainInfo(VkDevice              device,
-                                         uint32_t              bindInfoCount,
-                                         const void* const*    ppNexts,
-                                         const VkSwapchainKHR* pSwapchains,
-                                         const uint32_t*       pImageIndices,
-                                         const VkImage*        pImages,
-                                         const VkDeviceMemory* pMemories,
-                                         const VkDeviceSize*   pMemoryOffsets);
+void cvkBindSwapchainImageMemories(VkDevice              device,
+                                   uint32_t              bindInfoCount,
+                                   const void* const*    ppNexts,
+                                   const VkSwapchainKHR* pSwapchains,
+                                   const uint32_t*       pImageIndices,
+                                   const VkImage*        pImages,
+                                   const VkDeviceMemory* pMemories,
+                                   const VkDeviceSize*   pMemoryOffsets);
+/**
+ * \brief Binds image memory 2 for one element with VkBindImageMemorySwapchainInfoKHR chained.
+ *
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkBindImageMemorySwapchainInfoKHR, or NULL
+ * \param[in] swapchain     VkBindImageMemorySwapchainInfoKHR::swapchain
+ * \param[in] imageIndex    VkBindImageMemorySwapchainInfoKHR::imageIndex
+ * \param[in] image         VkBindImageMemoryInfo::image
+ * \param[in] memory        VkBindImageMemoryInfo::memory
+ * \param[in] memoryOffset  VkBindImageMemoryInfo::memoryOffset
+ *
+ * \retval None
+ */
+void cvkBindSwapchainImageMemory(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndex, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
 /**
  * \brief Binds image memory 2 with VkBindImagePlaneMemoryInfo chained to every element.
  *
@@ -7892,13 +7906,26 @@ void cvkBindImageMemoryWithSwapchainInfo(VkDevice              device,
  *
  * \retval None
  */
-void cvkBindImageMemoryWithPlaneInfo(VkDevice                     device,
-                                     uint32_t                     bindInfoCount,
-                                     const void* const*           ppNexts,
-                                     const VkImageAspectFlagBits* pPlaneAspects,
-                                     const VkImage*               pImages,
-                                     const VkDeviceMemory*        pMemories,
-                                     const VkDeviceSize*          pMemoryOffsets);
+void cvkBindPlaneImageMemories(VkDevice                     device,
+                               uint32_t                     bindInfoCount,
+                               const void* const*           ppNexts,
+                               const VkImageAspectFlagBits* pPlaneAspects,
+                               const VkImage*               pImages,
+                               const VkDeviceMemory*        pMemories,
+                               const VkDeviceSize*          pMemoryOffsets);
+/**
+ * \brief Binds image memory 2 for one element with VkBindImagePlaneMemoryInfo chained.
+ *
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkBindImagePlaneMemoryInfo, or NULL
+ * \param[in] planeAspect   VkBindImagePlaneMemoryInfo::planeAspect
+ * \param[in] image         VkBindImageMemoryInfo::image
+ * \param[in] memory        VkBindImageMemoryInfo::memory
+ * \param[in] memoryOffset  VkBindImageMemoryInfo::memoryOffset
+ *
+ * \retval None
+ */
+void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFlagBits planeAspect, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
 /**
  * \brief Retrieves buffer memory requirements 2 with VkMemoryDedicatedRequirements chained to the output.
  *

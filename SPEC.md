@@ -33,6 +33,11 @@ wrong by definition.
 | capacity constant for enumeration array `pFooBars` | `CVK_MAX_FOO_BARS` |
 
 Collisions after suffix stripping are a generation error, never silently resolved.
+
+**Declared exceptions.** `name_overrides` in the policy file maps a rule-derived name to the
+name to emit instead. The generator applies it at name registration, so callers and bodies
+use the final name, and it fails if an entry never matches a generated name (stale entries
+are errors). Every entry is a recorded decision, never an edit. The table is currently empty.
 `Enumerate` is kept: it is Vulkan's marker for the two-call protocol.
 
 ## 4. Tier 0: one function per profile command (derived)
@@ -120,12 +125,16 @@ multi-qualifier function is generated (policy: 2^n explosion; see `study/MEMORY.
 
 **Per-element extenders on array inputs** (`VkBindImagePlaneMemoryInfo` on
 `VkBindImageMemoryInfo`) are emitted as the parallel-array form
-`<tier-0>With<D>Info(handle, count, ppNexts, <extender member arrays>, <base member arrays>)`:
-`cvkBindImageMemory2WithPlaneInfo(device, bindInfoCount, ppNexts, pPlaneAspects, pImages, pMemories, pMemoryOffsets)`.
+`(handle, count, ppNexts, <extender member arrays>, <base member arrays>)`, named as the
+**plural of the singular** (last word pluralized):
+`cvkBindPlaneImageMemories(device, bindInfoCount, ppNexts, pPlaneAspects, pImages, pMemories, pMemoryOffsets)`.
 Array parameter names pluralize the member (`memory` → `pMemories`, `imageIndex` → `pImageIndices`).
 Only generated when neither the base nor the extender has pointer or array members, since
 parallel arrays would otherwise nest; the caller builds such arrays with the builders. The
-element array is sized by `CVK_MAX_<ArrayParam>` and the count is asserted against it.
+element array is sized by `CVK_MAX_<ArrayParam>` and the count is asserted against it. The
+**singular** (count = 1) flattens one element and forwards to the plural; it is named
+`cvk<Verb><D><base noun run>`: `cvkBindPlaneImageMemory(device, pNext, planeAspect, image, memory, memoryOffset)`,
+`cvkBindSwapchainImageMemory`. The plural pluralizes the last word: `cvkBindPlaneImageMemories`.
 
 **Extenders on the output sType struct** (`VkMemoryDedicatedRequirements` on
 `VkMemoryRequirements2`, `VkExternalImageFormatProperties` on `VkImageFormatProperties2`,
@@ -210,8 +219,8 @@ parameter of the import protocol, never a name and never part of a plain allocat
   follows the registry order of `VkImageDrmFormatModifierExplicitCreateInfoEXT`;
   `…WithExplicitDrmFormatModifierInfo` reads better as English. Tabled: no rule can tell an
   adjective (`Explicit`) from a noun (`List`), and the registry order keeps the pair on one
-  stem and greppable against the struct and enum names. If adopted, it goes in as a
-  `name_overrides` table in `cvk.policy.json` applied by the generator, never as an edit.
+  stem and greppable against the struct and enum names. If adopted, it goes in the
+  `name_overrides` table in `cvk.policy.json` (section 3), never as an edit.
   Related idea, same table: conceptually `cvkCreateImageWithExternalMemoryInfo` could be
   encoded as `cvkCreateExternalImage`, the reference module's name, where the qualifier
   becomes an adjective on the created object instead of a chained-struct suffix. Same

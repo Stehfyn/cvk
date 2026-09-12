@@ -115,6 +115,7 @@ class Generator:
         self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
         self.defs: Dict[str, List[str]] = defaultdict(list)
         self.sigs: Dict[str, Tuple[str, List[EmittedParam]]] = {}   # every emitted signature, for chains
+        self.used_overrides: Set[str] = set()
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
@@ -142,6 +143,12 @@ class Generator:
 
     # -------------------------------------------------------------- names
     def register(self, name: str, origin: str) -> str:
+        """Final name of an emitted function. Declared exceptions in the policy's
+        `name_overrides` table are applied here, so every caller uses the overridden name."""
+        override = self.policy.get("name_overrides", {}).get(name)
+        if override:
+            self.used_overrides.add(name)
+            name = override
         if name in self.names and self.names[name] != origin:
             self.errors.append(f"name collision: {name} from {origin} and {self.names[name]}")
         self.names[name] = origin
@@ -695,7 +702,12 @@ class Generator:
         extender members become parallel arrays sized by the command's count parameter."""
         base = self.reg.struct_of(ap.type)
         d = "".join(self.distinct_part(ext, base))
-        name = self.register(self.with_base(cmd) + "With" + d + "Info", f"{cmd.name}+{ext.name}[]")
+        # Singular first: cvk<Verb><D><base noun run> (cvkBindPlaneImageMemory,
+        # cvkBindSwapchainImageMemory). The plural is the singular with its last word pluralized.
+        run = [t for t in tokens(self.struct_short(base)) if t not in self.KIND and t != "Info" and not t.isdigit() and t != cmd.verb]
+        single = self.register("cvk" + cmd.verb + d + "".join(run), f"{cmd.name}+{ext.name}[1]")
+        last = tokens(single[3:])[-1]
+        name = self.register(single[: -len(last)] + self.plural(last)[1:], f"{cmd.name}+{ext.name}[]")
         t0 = self.cmd_name(cmd)
         ret, t0_params = self.sigs[t0]
         count = ap.len.split(",")[0]
@@ -738,6 +750,29 @@ class Generator:
         self.sigs[name] = (ret, params)
         plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
         self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+
+        # Singular (count = 1): one element flattened; forwards to the plural.
+        s_params: List[EmittedParam] = []
+        s_args: List[str] = []
+        for p in params:
+            if p.name == count:
+                s_args.append("1")
+            elif p.name == "ppNexts":
+                s_params.append(EmittedParam("const void* pNext", "pNext", f"Optional extension chain attached to {ext.name}, or NULL", False))
+                s_args.append("&pNext")
+            elif p.text.startswith("const ") and p.text.rstrip(p.name).rstrip().endswith("*") and p.name.startswith("p") and p.name[1:2].isupper() and p.doc.endswith("per element"):
+                elem_type = p.text.rsplit(" ", 1)[0][len("const "):].rstrip("*").strip()
+                member = p.doc.split("::")[1].split(" ")[0]
+                s_params.append(EmittedParam(f"{elem_type} {member}", member, p.doc[: -len(" per element")], False))
+                s_args.append(f"&{member}")
+            else:
+                s_params.append(p)
+                s_args.append(p.name)
+        s_body = [("return " if ret != "void" else "") + f"{name}({', '.join(s_args)});"]
+        s_doc = self.doc_block(f"{self.brief(cmd)[:-1]} for one element with {ext.name} chained.", s_params, ret, None, [])
+        s_sig = self.signature(ret, single, s_params)
+        self.sigs[single] = (ret, s_params)
+        self.place(plats, s_doc + s_sig + ";", s_sig + "\n{\n" + indent("\n".join(s_body)) + "\n}")
 
     def emit_output_convenience(self, cmd: Command, op: Param, ext: Struct) -> None:
         """SPEC.md section 6: <target>With<D><Kind> chains an extender onto the output struct
@@ -1107,6 +1142,8 @@ def main() -> None:
     reg = Registry.load()
     g = Generator(reg, policy)
     g.run()
+    for stale in sorted(set(policy.get("name_overrides", {})) - g.used_overrides):
+        g.errors.append(f"name_overrides entry never matched a generated name: {stale}")
     if g.errors:
         for e in g.errors:
             print("error:", e)
