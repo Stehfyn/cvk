@@ -75,6 +75,69 @@ void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
                       const VkAllocationCallbacks*       pAllocator,
                       VkImage*                           pImage,
                       VkDeviceMemory*                    pMemory);
+/**
+ * \brief Imports a DRM PRIME layout (modifier, plane layouts, memory objects) as a new 2D image.
+ *
+ * \par Details:
+ *  Runs the specification's import chain for VK_EXT_image_drm_format_modifier: the modifier's
+ *  properties (its memory plane count must match the layout), capability with the modifier
+ *  info chained (DISJOINT when several memory objects back the image; DEDICATED_ONLY is then
+ *  impossible), creation with the handle type declared and the explicit plane layouts, the
+ *  descriptors' memory types, requirements (whole image for one memory object, per memory
+ *  plane otherwise, intersected per object), selection within each object's memory types,
+ *  duplication of every descriptor because a successful import consumes it, allocation with
+ *  the import info chained (dedicated info in front for one object when required), and
+ *  binding (whole image, or every memory plane at once). Caller descriptors stay valid.
+ *
+ * \param[in]  physicalDevice             Physical device the image is created for
+ * \param[in]  device                     Logical device owning the image and memory
+ * \param[in]  pImageNext                 Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  format                     VkImageCreateInfo::format
+ * \param[in]  extent                     VkImageCreateInfo::extent; depth must be one
+ * \param[in]  usage                      VkImageCreateInfo::usage
+ * \param[in]  sharingMode                VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount      VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices        VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout              VkImageCreateInfo::initialLayout
+ * \param[in]  drmFormatModifier          DRM format modifier of the layout
+ * \param[in]  planeCount                 Number of memory planes in the layout, at most CVK_MAX_DRM_FORMAT_MODIFIER_PLANES
+ * \param[in]  pPlaneOffsets              Byte offset of each memory plane within its memory object
+ * \param[in]  pPlaneRowPitches           Row pitch in bytes of each memory plane
+ * \param[in]  pPlaneMemoryObjectIndices  Memory object backing each memory plane
+ * \param[in]  memoryObjectCount          Number of memory objects, at most planeCount
+ * \param[in]  pMemoryObjectSizes         Size in bytes of each memory object
+ * \param[in]  pMemoryObjectFds           DMA-BUF descriptor of each memory object; remain owned by the caller
+ * \param[in]  requiredProperties         Memory property flags every selected type must cover
+ * \param[in]  pMemoryNext                Optional extension chain behind each import info, or NULL
+ * \param[in]  pAllocator                 Optional allocation callbacks, or NULL
+ * \param[out] pImage                     Receives the created VkImage
+ * \param[out] pMemories                  Receives one VkDeviceMemory per memory object; memoryObjectCount entries
+ *
+ * \retval None
+ */
+void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
+                          VkDevice                     device,
+                          const void*                  pImageNext,
+                          VkFormat                     format,
+                          VkExtent3D                   extent,
+                          VkImageUsageFlags            usage,
+                          VkSharingMode                sharingMode,
+                          uint32_t                     queueFamilyIndexCount,
+                          const uint32_t*              pQueueFamilyIndices,
+                          VkImageLayout                initialLayout,
+                          uint64_t                     drmFormatModifier,
+                          uint32_t                     planeCount,
+                          const uint32_t*              pPlaneOffsets,
+                          const uint32_t*              pPlaneRowPitches,
+                          const uint32_t*              pPlaneMemoryObjectIndices,
+                          uint32_t                     memoryObjectCount,
+                          const VkDeviceSize*          pMemoryObjectSizes,
+                          const int*                   pMemoryObjectFds,
+                          VkMemoryPropertyFlags        requiredProperties,
+                          const void*                  pMemoryNext,
+                          const VkAllocationCallbacks* pAllocator,
+                          VkImage*                     pImage,
+                          VkDeviceMemory*              pMemories);
 
 #ifdef __cplusplus
 }

@@ -848,8 +848,15 @@ class Generator:
             else:
                 params.append(p)
                 args.append(p.name)
-        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out, f"Receives the {ext.name}", True))
-        body = [f"{base.name} {base_var};", f"{ext.name} {var};", "", f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
+        # An output extender with pointer members carries caller-provided storage (a count and
+        # an array to fill): it is in/out, so the caller's struct seeds the local before the call.
+        inout = any(m.is_pointer for m in ext.members if m.name not in ("sType", "pNext"))
+        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out,
+                                   f"In/out: receiving storage selected by the caller, receives the {ext.name}" if inout else f"Receives the {ext.name}", True))
+        body = [f"{base.name} {base_var};", f"{ext.name} {var};", ""]
+        if inout:
+            body.append(f"{var} = (*{ext_out});")
+        body += [f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
         call = f"{target}({', '.join(args)})"
         if ret != "void":
             body.insert(0, f"{ret} result;")
@@ -1154,7 +1161,10 @@ class Generator:
                 f"#include \"cvk_{plat}.h\"\n#include <string.h>\n{includes}\n{defs}\n")
 
     def header(self) -> str:
-        caps = "\n".join(f"#ifndef {k}\n#define {k} ({v}U)\n#endif" for k, v in sorted(self.used_capacities.items()))
+        # Every policy capacity is emitted (protocols use some that no enumeration does), plus any derived.
+        all_caps = dict(self.capacities)
+        all_caps.update(self.used_capacities)
+        caps = "\n".join(f"#ifndef {k}\n#define {k} ({v}U)\n#endif" for k, v in sorted(all_caps.items()))
         return f"""#ifndef CVK_H
 #define CVK_H
 

@@ -5679,6 +5679,7 @@ void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2(VkPhysicalDevice      
     VkFormatProperties2                   format_properties;
     VkDrmFormatModifierPropertiesList2EXT drm_format_modifier_properties_list2;
 
+    drm_format_modifier_properties_list2       = (*pDrmFormatModifierPropertiesList2);
     drm_format_modifier_properties_list2.sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT;
     drm_format_modifier_properties_list2.pNext = pDrmFormatModifierPropertiesList2Next;
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &drm_format_modifier_properties_list2, &format_properties);
@@ -5692,6 +5693,7 @@ void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(VkPhysicalDevice       
     VkFormatProperties2                  format_properties;
     VkDrmFormatModifierPropertiesListEXT drm_format_modifier_properties_list;
 
+    drm_format_modifier_properties_list       = (*pDrmFormatModifierPropertiesList);
     drm_format_modifier_properties_list.sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
     drm_format_modifier_properties_list.pNext = pDrmFormatModifierPropertiesListNext;
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &drm_format_modifier_properties_list, &format_properties);

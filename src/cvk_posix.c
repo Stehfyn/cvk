@@ -103,3 +103,177 @@ void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
     /* bind */
     cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
 }
+void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
+                          VkDevice                     device,
+                          const void*                  pImageNext,
+                          VkFormat                     format,
+                          VkExtent3D                   extent,
+                          VkImageUsageFlags            usage,
+                          VkSharingMode                sharingMode,
+                          uint32_t                     queueFamilyIndexCount,
+                          const uint32_t*              pQueueFamilyIndices,
+                          VkImageLayout                initialLayout,
+                          uint64_t                     drmFormatModifier,
+                          uint32_t                     planeCount,
+                          const uint32_t*              pPlaneOffsets,
+                          const uint32_t*              pPlaneRowPitches,
+                          const uint32_t*              pPlaneMemoryObjectIndices,
+                          uint32_t                     memoryObjectCount,
+                          const VkDeviceSize*          pMemoryObjectSizes,
+                          const int*                   pMemoryObjectFds,
+                          VkMemoryPropertyFlags        requiredProperties,
+                          const void*                  pMemoryNext,
+                          const VkAllocationCallbacks* pAllocator,
+                          VkImage*                     pImage,
+                          VkDeviceMemory*              pMemories)
+{
+    VkDrmFormatModifierPropertiesEXT              drm_format_modifier_properties[CVK_MAX_DRM_FORMAT_MODIFIERS];
+    VkDrmFormatModifierPropertiesListEXT          drm_format_modifier_properties_list;
+    VkPhysicalDeviceImageDrmFormatModifierInfoEXT physical_device_image_drm_format_modifier_info;
+    VkSubresourceLayout                           plane_layouts[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    VkImageDrmFormatModifierExplicitCreateInfoEXT image_drm_format_modifier_explicit_create_info;
+    VkMemoryFdPropertiesKHR                       memory_fd_properties;
+    VkMemoryDedicatedRequirements                 memory_dedicated_requirements;
+    VkMemoryRequirements2                         memory_requirements;
+    VkImportMemoryFdInfoKHR                       import_memory_fd_info;
+    VkMemoryDedicatedAllocateInfo                 memory_dedicated_allocate_info;
+    VkImageAspectFlagBits                         plane_aspects[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    VkImage                                       plane_images[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    VkDeviceMemory                                plane_memories[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    VkDeviceSize                                  plane_offsets[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    uint32_t                                      object_memory_type_bits[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    const void*                                   allocate_next;
+    VkImageCreateFlags                            flags;
+    VkBool32                                      importable;
+    VkBool32                                      dedicated;
+    uint32_t                                      modifier_index;
+    uint32_t                                      modifier_plane_count;
+    uint32_t                                      plane_index;
+    uint32_t                                      object_index;
+    uint32_t                                      memory_type_index;
+    int                                           imported_fd;
+
+    CVK_ASSERT(1 == extent.depth);
+    CVK_ASSERT((0 != planeCount) && (CVK_MAX_DRM_FORMAT_MODIFIER_PLANES >= planeCount));
+    CVK_ASSERT((0 != memoryObjectCount) && (planeCount >= memoryObjectCount));
+
+    /* modifier: the layout's plane count must be the modifier's memory plane count */
+    drm_format_modifier_properties_list.drmFormatModifierCount       = CVK_MAX_DRM_FORMAT_MODIFIERS;
+    drm_format_modifier_properties_list.pDrmFormatModifierProperties = drm_format_modifier_properties;
+    cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(physicalDevice, format, NULL, &drm_format_modifier_properties_list);
+    modifier_plane_count = 0;
+    for (modifier_index = 0; modifier_index < drm_format_modifier_properties_list.drmFormatModifierCount; ++modifier_index)
+    {
+        if (drmFormatModifier == drm_format_modifier_properties[modifier_index].drmFormatModifier)
+        {
+            modifier_plane_count = drm_format_modifier_properties[modifier_index].drmFormatModifierPlaneCount;
+        }
+    }
+    CVK_ASSERT(planeCount == modifier_plane_count);
+
+    /* capability: importable with this modifier; several memory objects need a disjoint image, which cannot be dedicated-only */
+    flags = (1u < memoryObjectCount) ? VK_IMAGE_CREATE_DISJOINT_BIT : 0;
+    cvkInitPhysicalDeviceImageDrmFormatModifierInfo(&physical_device_image_drm_format_modifier_info, NULL, drmFormatModifier, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices);
+    importable = cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
+                                                                VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
+                                                                format,
+                                                                VK_IMAGE_TYPE_2D,
+                                                                VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT,
+                                                                usage,
+                                                                flags,
+                                                                &physical_device_image_drm_format_modifier_info,
+                                                                &dedicated);
+    CVK_ASSERT(importable);
+    CVK_ASSERT((1u == memoryObjectCount) || !dedicated);
+
+    /* create, with the handle type declared and the explicit plane layouts */
+    for (plane_index = 0; plane_index < planeCount; ++plane_index)
+    {
+        plane_layouts[plane_index].offset     = pPlaneOffsets[plane_index];
+        plane_layouts[plane_index].size       = 0;
+        plane_layouts[plane_index].rowPitch   = pPlaneRowPitches[plane_index];
+        plane_layouts[plane_index].arrayPitch = 0;
+        plane_layouts[plane_index].depthPitch = 0;
+    }
+    cvkInitImageDrmFormatModifierExplicitCreateInfo(&image_drm_format_modifier_explicit_create_info, pImageNext, drmFormatModifier, planeCount, plane_layouts);
+    cvkCreateImageWithExternalMemoryInfo(device,
+                                         &image_drm_format_modifier_explicit_create_info,
+                                         VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
+                                         flags,
+                                         VK_IMAGE_TYPE_2D,
+                                         format,
+                                         extent,
+                                         1,
+                                         1,
+                                         VK_SAMPLE_COUNT_1_BIT,
+                                         VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT,
+                                         usage,
+                                         sharingMode,
+                                         queueFamilyIndexCount,
+                                         pQueueFamilyIndices,
+                                         initialLayout,
+                                         pAllocator,
+                                         pImage);
+
+    /* constraint: each memory object's memory types */
+    for (object_index = 0; object_index < memoryObjectCount; ++object_index)
+    {
+        cvkGetMemoryFdProperties(device, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, pMemoryObjectFds[object_index], NULL, &memory_fd_properties);
+        object_memory_type_bits[object_index] = memory_fd_properties.memoryTypeBits;
+    }
+
+    if (1u == memoryObjectCount)
+    {
+        /* one memory object: whole-image requirements with dedicated requirements chained */
+        cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
+        cvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
+        CVK_ASSERT(pMemoryObjectSizes[0] >= memory_requirements.memoryRequirements.size);
+        if (memory_dedicated_requirements.requiresDedicatedAllocation)
+        {
+            dedicated = VK_TRUE;
+        }
+        memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & object_memory_type_bits[0], requiredProperties);
+        CVK_ASSERT(VK_INVALID != memory_type_index);
+
+        imported_fd = dup(pMemoryObjectFds[0]);
+        CVK_ASSERT(0 <= imported_fd);
+        cvkInitImportMemoryFdInfo(&import_memory_fd_info, pMemoryNext, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, imported_fd);
+        allocate_next = &import_memory_fd_info;
+        if (dedicated)
+        {
+            cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_fd_info, (*pImage), VK_NULL_HANDLE);
+            allocate_next = &memory_dedicated_allocate_info;
+        }
+        cvkAllocateMemory(device, allocate_next, pMemoryObjectSizes[0], memory_type_index, pAllocator, &pMemories[0]);
+        cvkBindImageMemory(device, (*pImage), pMemories[0], 0);
+        return;
+    }
+
+    /* several memory objects: per-plane requirements, intersected into the object that backs each plane */
+    for (plane_index = 0; plane_index < planeCount; ++plane_index)
+    {
+        object_index = pPlaneMemoryObjectIndices[plane_index];
+        CVK_ASSERT(memoryObjectCount > object_index);
+        /* memory plane aspects are consecutive bits from VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT */
+        plane_aspects[plane_index] = (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT << plane_index);
+        cvkGetImagePlaneMemoryRequirementsInfo(device, NULL, plane_aspects[plane_index], (*pImage), NULL, &memory_requirements);
+        CVK_ASSERT(pMemoryObjectSizes[object_index] >= memory_requirements.memoryRequirements.size);
+        object_memory_type_bits[object_index] &= memory_requirements.memoryRequirements.memoryTypeBits;
+    }
+    for (object_index = 0; object_index < memoryObjectCount; ++object_index)
+    {
+        memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, object_memory_type_bits[object_index], requiredProperties);
+        CVK_ASSERT(VK_INVALID != memory_type_index);
+        imported_fd = dup(pMemoryObjectFds[object_index]);
+        CVK_ASSERT(0 <= imported_fd);
+        cvkInitImportMemoryFdInfo(&import_memory_fd_info, pMemoryNext, VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT, imported_fd);
+        cvkAllocateMemory(device, &import_memory_fd_info, pMemoryObjectSizes[object_index], memory_type_index, pAllocator, &pMemories[object_index]);
+    }
+    for (plane_index = 0; plane_index < planeCount; ++plane_index)
+    {
+        plane_images[plane_index]   = (*pImage);
+        plane_memories[plane_index] = pMemories[pPlaneMemoryObjectIndices[plane_index]];
+        plane_offsets[plane_index]  = 0;
+    }
+    cvkBindPlaneImageMemories(device, planeCount, NULL, plane_aspects, plane_images, plane_memories, plane_offsets);
+}

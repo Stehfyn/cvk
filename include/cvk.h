@@ -31,6 +31,12 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #ifndef CVK_MAX_DISPLAYS
 #define CVK_MAX_DISPLAYS (32U)
 #endif
+#ifndef CVK_MAX_DRM_FORMAT_MODIFIERS
+#define CVK_MAX_DRM_FORMAT_MODIFIERS (64U)
+#endif
+#ifndef CVK_MAX_DRM_FORMAT_MODIFIER_PLANES
+#define CVK_MAX_DRM_FORMAT_MODIFIER_PLANES (4U)
+#endif
 #ifndef CVK_MAX_PHYSICAL_DEVICES
 #define CVK_MAX_PHYSICAL_DEVICES (32U)
 #endif
@@ -8224,7 +8230,7 @@ void cvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice             
  * \param[in] physicalDevice                         VkPhysicalDevice value
  * \param[in] format                                 VkFormat value
  * \param[in] pDrmFormatModifierPropertiesList2Next  Optional output extension chain attached to VkDrmFormatModifierPropertiesList2EXT, or NULL
- * \param[out] pDrmFormatModifierPropertiesList2      Receives the VkDrmFormatModifierPropertiesList2EXT
+ * \param[out] pDrmFormatModifierPropertiesList2      In/out: receiving storage selected by the caller, receives the VkDrmFormatModifierPropertiesList2EXT
  *
  * \retval None
  */
@@ -8238,7 +8244,7 @@ void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2(VkPhysicalDevice      
  * \param[in] physicalDevice                        VkPhysicalDevice value
  * \param[in] format                                VkFormat value
  * \param[in] pDrmFormatModifierPropertiesListNext  Optional output extension chain attached to VkDrmFormatModifierPropertiesListEXT, or NULL
- * \param[out] pDrmFormatModifierPropertiesList      Receives the VkDrmFormatModifierPropertiesListEXT
+ * \param[out] pDrmFormatModifierPropertiesList      In/out: receiving storage selected by the caller, receives the VkDrmFormatModifierPropertiesListEXT
  *
  * \retval None
  */

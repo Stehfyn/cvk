@@ -157,7 +157,9 @@ sibling when one exists, so the input stays flattened. `<target>With<D><Kind>` i
 when the command's tail is not the run; no profile command needs it today.
 The function takes `p<ExtenderStruct>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
 chains it into the base output struct, which stays a local, and returns exactly the struct it is
-named after through the out-parameter `p<ExtenderStruct>` (`pExternalImageFormatProperties`,
+named after through the out-parameter `p<ExtenderStruct>`. An output extender with pointer
+members carries caller-provided storage (`VkDrmFormatModifierPropertiesListEXT`: a count and an
+array), so that parameter is in/out and seeds the local before the call (`pExternalImageFormatProperties`,
 `pMemoryDedicatedRequirements`). A caller who also wants the base struct calls the base query.
 
 ## 7. Tier 1': specializations (policy table)
@@ -224,7 +226,14 @@ acceptance test of the surface: anything they cannot express is a generator defe
   a `dup` so the caller's stays valid. A handle-agnostic core was tried and removed: an import
   is per handle kind, and a protocol should read as the specification's list in one place.
 
-Not yet written: buffer import, export, and the disjoint (per-plane, DRM modifier) image import.
+- `cvkImportDmaBufImage` (`cvk_protocol_posix.c`): the disjoint DRM modifier import. Modifier
+  properties list (in/out) -> the modifier's memory plane count -> capability with the modifier
+  info chained (`DISJOINT` when several memory objects) -> create with explicit plane layouts ->
+  per memory object: descriptor memory types; single object: requirements with dedicated,
+  select, `dup`, allocate (dedicated when required), bind; several objects: per-plane
+  requirements intersected per object, select, `dup`, allocate, bind all planes at once.
+
+Not yet written: buffer import and export.
 
 ## 9. Documentation phrasing (derived)
 

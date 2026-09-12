@@ -23,7 +23,9 @@
     "CVK_MAX_SURFACE_FORMATS": 64,
     "CVK_MAX_PRESENT_MODES": 16,
     "CVK_MAX_SWAPCHAIN_IMAGES": 16,
-    "CVK_MAX_DISPLAYS": 32
+    "CVK_MAX_DISPLAYS": 32,
+    "CVK_MAX_DRM_FORMAT_MODIFIERS": 64,
+    "CVK_MAX_DRM_FORMAT_MODIFIER_PLANES": 4
   },
   "default_capacity": 64,
   "input_asserts": false,
