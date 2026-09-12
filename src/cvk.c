@@ -5123,15 +5123,15 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
                        pAllocator,
                        pSwapchain);
 }
-void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
-                                                     const void*                         pCreateInfoNext,
-                                                     uint32_t                            bindingFlagsBindingCount,
-                                                     const VkDescriptorBindingFlags*     pBindingFlags,
-                                                     VkDescriptorSetLayoutCreateFlags    flags,
-                                                     uint32_t                            bindingCount,
-                                                     const VkDescriptorSetLayoutBinding* pBindings,
-                                                     void*                               pSupportNext,
-                                                     VkDescriptorSetLayoutSupport*       pSupport)
+void cvkGetDescriptorSetLayoutBindingFlagsSupport(VkDevice                            device,
+                                                  const void*                         pCreateInfoNext,
+                                                  uint32_t                            bindingFlagsBindingCount,
+                                                  const VkDescriptorBindingFlags*     pBindingFlags,
+                                                  VkDescriptorSetLayoutCreateFlags    flags,
+                                                  uint32_t                            bindingCount,
+                                                  const VkDescriptorSetLayoutBinding* pBindings,
+                                                  void*                               pSupportNext,
+                                                  VkDescriptorSetLayoutSupport*       pSupport)
 {
     VkDescriptorSetLayoutBindingFlagsCreateInfo descriptor_set_layout_binding_flags_create_info;
 

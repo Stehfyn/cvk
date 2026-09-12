@@ -7562,15 +7562,15 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
  *
  * \retval None
  */
-void cvkGetDescriptorSetLayoutBindingFlagsCreateInfo(VkDevice                            device,
-                                                     const void*                         pCreateInfoNext,
-                                                     uint32_t                            bindingFlagsBindingCount,
-                                                     const VkDescriptorBindingFlags*     pBindingFlags,
-                                                     VkDescriptorSetLayoutCreateFlags    flags,
-                                                     uint32_t                            bindingCount,
-                                                     const VkDescriptorSetLayoutBinding* pBindings,
-                                                     void*                               pSupportNext,
-                                                     VkDescriptorSetLayoutSupport*       pSupport);
+void cvkGetDescriptorSetLayoutBindingFlagsSupport(VkDevice                            device,
+                                                  const void*                         pCreateInfoNext,
+                                                  uint32_t                            bindingFlagsBindingCount,
+                                                  const VkDescriptorBindingFlags*     pBindingFlags,
+                                                  VkDescriptorSetLayoutCreateFlags    flags,
+                                                  uint32_t                            bindingCount,
+                                                  const VkDescriptorSetLayoutBinding* pBindings,
+                                                  void*                               pSupportNext,
+                                                  VkDescriptorSetLayoutSupport*       pSupport);
 /**
  * \brief Retrieves image memory requirements 2 with VkImagePlaneMemoryRequirementsInfo chained.
  *

@@ -199,9 +199,11 @@ class Generator:
         run = [t for t in b if t not in kind and not t.isdigit()]
         if verb not in ("Get", "Enumerate"):
             return self.cmd_name(cmd) + "With" + "".join(d) + "Info"
-        # Query: an extender whose name covers the base noun run is the subject of the query.
+        # Query: a plain Info extender whose name covers the base noun run is the subject of
+        # the query. A CreateInfo/AllocateInfo/BeginInfo extender is an add-on and is spliced.
         ne, nrun = [norm(t) for t in e], [norm(t) for t in run]
-        if all(t in ne for t in nrun):
+        plain_info = len(e) >= 2 and e[-1] == "Info" and e[-2] not in kind
+        if plain_info and all(t in ne for t in nrun):
             return "cvk" + verb + self.struct_short(ext)
         nrest = [norm(t) for t in rest]
         start = next((i for i in range(len(nrest) - len(nrun) + 1) if nrest[i:i + len(nrun)] == nrun), -1)
