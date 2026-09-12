@@ -17161,7 +17161,7 @@ void cvkAcquireDrmDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, 
  * \param[in] deviceMask   VkAcquireNextImageInfoKHR::deviceMask
  * \param[out] pImageIndex  Receives the uint32_t
  *
- * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_NOT_READY, VK_SUBOPTIMAL_KHR. Error results abort.
+ * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_NOT_READY, VK_SUBOPTIMAL_KHR, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR, VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT. Error results abort.
  */
 VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex);
 /**
@@ -17177,7 +17177,7 @@ VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR
  * \param[in] fence        VkFence value
  * \param[out] pImageIndex  Receives the uint32_t
  *
- * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_NOT_READY, VK_SUBOPTIMAL_KHR. Error results abort.
+ * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_NOT_READY, VK_SUBOPTIMAL_KHR, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR, VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT. Error results abort.
  */
 VkResult cvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
 /**
@@ -23473,9 +23473,9 @@ VkResult cvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkSha
  * \param[in] pAllocator      Optional allocation callbacks, or NULL
  * \param[out] pSwapchains     Receives the VkSwapchainKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
+VkResult cvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains);
 /**
  * \brief Creates a swapchain.
  *
@@ -23503,28 +23503,28 @@ void cvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, const V
  * \param[in] pAllocator             Optional allocation callbacks, or NULL
  * \param[out] pSwapchain             Receives the created VkSwapchainKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkCreateSwapchain(VkDevice                      device,
-                        const void*                   pNext,
-                        VkSwapchainCreateFlagsKHR     flags,
-                        VkSurfaceKHR                  surface,
-                        uint32_t                      minImageCount,
-                        VkFormat                      imageFormat,
-                        VkColorSpaceKHR               imageColorSpace,
-                        VkExtent2D                    imageExtent,
-                        uint32_t                      imageArrayLayers,
-                        VkImageUsageFlags             imageUsage,
-                        VkSharingMode                 imageSharingMode,
-                        uint32_t                      queueFamilyIndexCount,
-                        const uint32_t*               pQueueFamilyIndices,
-                        VkSurfaceTransformFlagBitsKHR preTransform,
-                        VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                        VkPresentModeKHR              presentMode,
-                        VkBool32                      clipped,
-                        VkSwapchainKHR                oldSwapchain,
-                        const VkAllocationCallbacks*  pAllocator,
-                        VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchain(VkDevice                      device,
+                            const void*                   pNext,
+                            VkSwapchainCreateFlagsKHR     flags,
+                            VkSurfaceKHR                  surface,
+                            uint32_t                      minImageCount,
+                            VkFormat                      imageFormat,
+                            VkColorSpaceKHR               imageColorSpace,
+                            VkExtent2D                    imageExtent,
+                            uint32_t                      imageArrayLayers,
+                            VkImageUsageFlags             imageUsage,
+                            VkSharingMode                 imageSharingMode,
+                            uint32_t                      queueFamilyIndexCount,
+                            const uint32_t*               pQueueFamilyIndices,
+                            VkSurfaceTransformFlagBitsKHR preTransform,
+                            VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                            VkPresentModeKHR              presentMode,
+                            VkBool32                      clipped,
+                            VkSwapchainKHR                oldSwapchain,
+                            const VkAllocationCallbacks*  pAllocator,
+                            VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a tensor.
  *
@@ -25044,9 +25044,9 @@ void cvkGetDeviceGroupPresentCapabilities(VkDevice device, void* pNext, VkDevice
  * \param[in] surface  VkSurfaceKHR value
  * \param[out] pModes   Receives the VkDeviceGroupPresentModeFlagsKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes);
+VkResult cvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes);
 /**
  * \brief Retrieves device image memory requirements.
  *
@@ -25193,9 +25193,9 @@ void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateF
  * \param[in] renderpass         VkRenderPass value
  * \param[out] pMaxWorkgroupSize  Receives the VkExtent2D
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetDeviceSubpassShadingMaxWorkgroupSize(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize);
+VkResult cvkGetDeviceSubpassShadingMaxWorkgroupSize(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize);
 /**
  * \brief Retrieves device tensor memory requirements.
  *
@@ -25814,7 +25814,7 @@ void cvkGetPartitionedAccelerationStructuresBuildSizes(VkDevice                 
  * \param[in] pNext                              Optional output extension chain attached to VkPastPresentationTimingPropertiesEXT, or NULL
  * \param[out] pPastPresentationTimingProperties  Receives the VkPastPresentationTimingPropertiesEXT
  *
- * \return VK_SUCCESS or one of: VK_INCOMPLETE. Error results abort.
+ * \return VK_SUCCESS or one of: VK_INCOMPLETE, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
 VkResult cvkGetPastPresentationTiming(VkDevice                               device,
                                       const VkPastPresentationTimingInfoEXT* pPastPresentationTimingInfo,
@@ -26041,17 +26041,17 @@ void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice               
  * \param[in] externalHandleType              VkExternalMemoryHandleTypeFlagsNV value
  * \param[out] pExternalImageFormatProperties  Receives the VkExternalImageFormatPropertiesNV
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_FORMAT_NOT_SUPPORTED. Error results abort.
  */
-void cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance                         instance,
-                                                         VkPhysicalDevice                   physicalDevice,
-                                                         VkFormat                           format,
-                                                         VkImageType                        type,
-                                                         VkImageTiling                      tiling,
-                                                         VkImageUsageFlags                  usage,
-                                                         VkImageCreateFlags                 flags,
-                                                         VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
-                                                         VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
+VkResult cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance                         instance,
+                                                             VkPhysicalDevice                   physicalDevice,
+                                                             VkFormat                           format,
+                                                             VkImageType                        type,
+                                                             VkImageTiling                      tiling,
+                                                             VkImageUsageFlags                  usage,
+                                                             VkImageCreateFlags                 flags,
+                                                             VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
+                                                             VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
 /**
  * \brief Retrieves physical device external semaphore properties.
  *
@@ -26167,15 +26167,15 @@ uint32_t cvkGetPhysicalDeviceFragmentShadingRates(VkInstance instance, VkPhysica
  * \param[in] flags                   VkImageCreateFlags value
  * \param[out] pImageFormatProperties  Receives the VkImageFormatProperties
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_FORMAT_NOT_SUPPORTED. Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physicalDevice,
-                                               VkFormat                 format,
-                                               VkImageType              type,
-                                               VkImageTiling            tiling,
-                                               VkImageUsageFlags        usage,
-                                               VkImageCreateFlags       flags,
-                                               VkImageFormatProperties* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physicalDevice,
+                                                   VkFormat                 format,
+                                                   VkImageType              type,
+                                                   VkImageTiling            tiling,
+                                                   VkImageUsageFlags        usage,
+                                                   VkImageCreateFlags       flags,
+                                                   VkImageFormatProperties* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2.
  *
@@ -26187,12 +26187,12 @@ void cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physical
  * \param[in] pNext                   Optional output extension chain attached to VkImageFormatProperties2, or NULL
  * \param[out] pImageFormatProperties  Receives the VkImageFormatProperties2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_FORMAT_NOT_SUPPORTED, VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
-                                                const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-                                                void*                                   pNext,
-                                                VkImageFormatProperties2*               pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
+                                                    const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+                                                    void*                                   pNext,
+                                                    VkImageFormatProperties2*               pImageFormatProperties);
 /**
  * \brief Retrieves physical device memory properties.
  *
@@ -26485,9 +26485,9 @@ uint32_t cvkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinations(VkInst
  * \param[in] pNext                 Optional output extension chain attached to VkSurfaceCapabilities2EXT, or NULL
  * \param[out] pSurfaceCapabilities  Receives the VkSurfaceCapabilities2EXT
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2.
  *
@@ -26499,9 +26499,9 @@ void cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice
  * \param[in] pNext                 Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
  * \param[out] pSurfaceCapabilities  Receives the VkSurfaceCapabilities2KHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, void* pNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, void* pNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities.
  *
@@ -26512,9 +26512,9 @@ void cvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevice, c
  * \param[in] surface               VkSurfaceKHR value
  * \param[out] pSurfaceCapabilities  Receives the VkSurfaceCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface formats 2.
  *
@@ -26565,9 +26565,9 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice
  * \param[in] surface           VkSurfaceKHR value
  * \param[out] pSupported        Receives the VkBool32
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported);
+VkResult cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported);
 /**
  * \brief Retrieves physical device tool properties.
  *
@@ -26592,9 +26592,9 @@ uint32_t cvkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, VkP
  * \param[in] pNext           Optional output extension chain attached to VkVideoCapabilitiesKHR, or NULL
  * \param[out] pCapabilities   Receives the VkVideoCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities);
+VkResult cvkGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities);
 /**
  * \brief Retrieves physical device video encode quality level properties.
  *
@@ -26607,13 +26607,13 @@ void cvkGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice
  * \param[in] pNext                    Optional output extension chain attached to VkVideoEncodeQualityLevelPropertiesKHR, or NULL
  * \param[out] pQualityLevelProperties  Receives the VkVideoEncodeQualityLevelPropertiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR. Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
-                                                           VkPhysicalDevice                                      physicalDevice,
-                                                           const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
-                                                           void*                                                 pNext,
-                                                           VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties);
+VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
+                                                               VkPhysicalDevice                                      physicalDevice,
+                                                               const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
+                                                               void*                                                 pNext,
+                                                               VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties);
 /**
  * \brief Retrieves physical device video format properties.
  *
@@ -26891,9 +26891,9 @@ VkDeviceSize cvkGetRayTracingShaderGroupStackSize(VkDevice device, VkPipeline pi
  * \param[in] swapchain                 VkSwapchainKHR value
  * \param[out] pDisplayTimingProperties  Receives the VkRefreshCycleDurationGOOGLE
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkGetRefreshCycleDuration(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties);
+VkResult cvkGetRefreshCycleDuration(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties);
 /**
  * \brief Retrieves render area granularity.
  *
@@ -27079,9 +27079,9 @@ void cvkGetSleepStatusLegacy(VkDevice device, VkBool32* pLowLatencyMode);
  * \param[in] counter        VkSurfaceCounterFlagBitsEXT value
  * \param[out] pCounterValue  Receives the uint64_t
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_DATE_KHR. Error results abort.
  */
-void cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue);
+VkResult cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue);
 /**
  * \brief Retrieves swapchain images.
  *
@@ -27104,7 +27104,7 @@ uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImag
  * \param[in] device     VkDevice value
  * \param[in] swapchain  VkSwapchainKHR value
  *
- * \return VK_SUCCESS or one of: VK_SUBOPTIMAL_KHR. Error results abort.
+ * \return VK_SUCCESS or one of: VK_SUBOPTIMAL_KHR, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR, VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT. Error results abort.
  */
 VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain);
 /**
@@ -27119,7 +27119,7 @@ VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain);
  * \param[out] pSwapchainTimeDomainProperties  Receives the VkSwapchainTimeDomainPropertiesEXT
  * \param[out] pTimeDomainsCounter             Receives the uint64_t
  *
- * \return VK_SUCCESS or one of: VK_INCOMPLETE. Error results abort.
+ * \return VK_SUCCESS or one of: VK_INCOMPLETE, VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
 VkResult cvkGetSwapchainTimeDomainProperties(VkDevice device, VkSwapchainKHR swapchain, void* pNext, VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties, uint64_t* pTimeDomainsCounter);
 /**
@@ -27134,7 +27134,7 @@ VkResult cvkGetSwapchainTimeDomainProperties(VkDevice device, VkSwapchainKHR swa
  * \param[out] pSwapchainTimingProperties         Receives the VkSwapchainTimingPropertiesEXT
  * \param[out] pSwapchainTimingPropertiesCounter  Receives the uint64_t
  *
- * \return VK_SUCCESS or one of: VK_NOT_READY. Error results abort.
+ * \return VK_SUCCESS or one of: VK_NOT_READY, VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
 VkResult cvkGetSwapchainTimingProperties(VkDevice                        device,
                                          VkSwapchainKHR                  swapchain,
@@ -27466,7 +27466,7 @@ void cvkQueueNotifyOutOfBand(VkDevice device, VkQueue queue, const void* pNext, 
  * \param[in] pImageIndices       VkPresentInfoKHR::pImageIndices
  * \param[in] pResults            VkPresentInfoKHR::pResults
  *
- * \return VK_SUCCESS or one of: VK_SUBOPTIMAL_KHR. Error results abort.
+ * \return VK_SUCCESS or one of: VK_SUBOPTIMAL_KHR, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR, VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT. Error results abort.
  */
 VkResult cvkQueuePresent(VkQueue               queue,
                          const void*           pNext,
@@ -27651,9 +27651,9 @@ void cvkReleaseProfilingLock(VkDevice device);
  * \param[in] imageIndexCount  VkReleaseSwapchainImagesInfoKHR::imageIndexCount
  * \param[in] pImageIndices    VkReleaseSwapchainImagesInfoKHR::pImageIndices
  *
- * \retval None
+ * \return VK_SUCCESS or one of: VK_ERROR_SURFACE_LOST_KHR. Error results abort.
  */
-void cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndexCount, const uint32_t* pImageIndices);
+VkResult cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndexCount, const uint32_t* pImageIndices);
 /**
  * \brief Resets command buffer.
  *
@@ -28169,7 +28169,7 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
  * \param[in] presentId  VkPresentWait2InfoKHR::presentId
  * \param[in] timeout    VkPresentWait2InfoKHR::timeout
  *
- * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_SUBOPTIMAL_KHR. Error results abort.
+ * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_SUBOPTIMAL_KHR, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR, VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT. Error results abort.
  */
 VkResult cvkWaitForPresent2(VkDevice device, VkSwapchainKHR swapchain, const void* pNext, uint64_t presentId, uint64_t timeout);
 /**
@@ -28183,7 +28183,7 @@ VkResult cvkWaitForPresent2(VkDevice device, VkSwapchainKHR swapchain, const voi
  * \param[in] presentId  uint64_t value
  * \param[in] timeout    uint64_t value
  *
- * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_SUBOPTIMAL_KHR. Error results abort.
+ * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_SUBOPTIMAL_KHR, VK_ERROR_OUT_OF_DATE_KHR, VK_ERROR_SURFACE_LOST_KHR, VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT. Error results abort.
  */
 VkResult cvkWaitForPresent(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout);
 /**
@@ -28703,17 +28703,17 @@ void cvkGetPhysicalDeviceExternalTensorInfo(VkInstance                         i
  * \param[in] pImageFormatPropertiesNext  Optional output extension chain attached to VkImageFormatProperties2, or NULL
  * \param[out] pImageFormatProperties      Receives the VkImageFormatProperties2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physicalDevice,
-                                          const void*               pImageFormatInfoNext,
-                                          VkFormat                  format,
-                                          VkImageType               type,
-                                          VkImageTiling             tiling,
-                                          VkImageUsageFlags         usage,
-                                          VkImageCreateFlags        flags,
-                                          void*                     pImageFormatPropertiesNext,
-                                          VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physicalDevice,
+                                              const void*               pImageFormatInfoNext,
+                                              VkFormat                  format,
+                                              VkImageType               type,
+                                              VkImageTiling             tiling,
+                                              VkImageUsageFlags         usage,
+                                              VkImageCreateFlags        flags,
+                                              void*                     pImageFormatPropertiesNext,
+                                              VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device optical flow image formats from the fields of VkOpticalFlowImageFormatInfoNV.
  *
@@ -28781,13 +28781,13 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
  * \param[in] pSurfaceCapabilitiesNext  Optional output extension chain attached to VkSurfaceCapabilities2KHR, or NULL
  * \param[out] pSurfaceCapabilities      Receives the VkSurfaceCapabilities2KHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice           physicalDevice,
-                                                  const void*                pSurfaceInfoNext,
-                                                  VkSurfaceKHR               surface,
-                                                  void*                      pSurfaceCapabilitiesNext,
-                                                  VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice           physicalDevice,
+                                                      const void*                pSurfaceInfoNext,
+                                                      VkSurfaceKHR               surface,
+                                                      void*                      pSurfaceCapabilitiesNext,
+                                                      VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface formats 2 from the fields of VkPhysicalDeviceSurfaceInfo2KHR.
  *
@@ -28812,17 +28812,17 @@ uint32_t cvkGetPhysicalDeviceSurfaceFormats2Info(VkPhysicalDevice physicalDevice
  * \param[in] pCapabilitiesNext    Optional output extension chain attached to VkVideoCapabilitiesKHR, or NULL
  * \param[out] pCapabilities        Receives the VkVideoCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoProfileInfo(VkInstance                       instance,
-                            VkPhysicalDevice                 physicalDevice,
-                            const void*                      pVideoProfileNext,
-                            VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                            VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                            VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                            VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                            void*                            pCapabilitiesNext,
-                            VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoProfileInfo(VkInstance                       instance,
+                                VkPhysicalDevice                 physicalDevice,
+                                const void*                      pVideoProfileNext,
+                                VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                void*                            pCapabilitiesNext,
+                                VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video encode quality level properties from the fields of VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR.
  *
@@ -28834,15 +28834,15 @@ void cvkGetVideoProfileInfo(VkInstance                       instance,
  * \param[in] pQualityLevelPropertiesNext  Optional output extension chain attached to VkVideoEncodeQualityLevelPropertiesKHR, or NULL
  * \param[out] pQualityLevelProperties      Receives the VkVideoEncodeQualityLevelPropertiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(VkInstance                              instance,
-                                                     VkPhysicalDevice                        physicalDevice,
-                                                     const void*                             pQualityLevelInfoNext,
-                                                     const VkVideoProfileInfoKHR*            pVideoProfile,
-                                                     uint32_t                                qualityLevel,
-                                                     void*                                   pQualityLevelPropertiesNext,
-                                                     VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties);
+VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(VkInstance                              instance,
+                                                         VkPhysicalDevice                        physicalDevice,
+                                                         const void*                             pQualityLevelInfoNext,
+                                                         const VkVideoProfileInfoKHR*            pVideoProfile,
+                                                         uint32_t                                qualityLevel,
+                                                         void*                                   pQualityLevelPropertiesNext,
+                                                         VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties);
 /**
  * \brief Retrieves physical device video format properties from the fields of VkPhysicalDeviceVideoFormatInfoKHR.
  *
@@ -29537,28 +29537,28 @@ VkResult cvkCreateShader(VkDevice                     device,
  * \param[in] pAllocator             Optional allocation callbacks, or NULL
  * \param[out] pSwapchain             Receives the created VkSwapchainKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSharedSwapchain(VkDevice                      device,
-                              const void*                   pNext,
-                              VkSwapchainCreateFlagsKHR     flags,
-                              VkSurfaceKHR                  surface,
-                              uint32_t                      minImageCount,
-                              VkFormat                      imageFormat,
-                              VkColorSpaceKHR               imageColorSpace,
-                              VkExtent2D                    imageExtent,
-                              uint32_t                      imageArrayLayers,
-                              VkImageUsageFlags             imageUsage,
-                              VkSharingMode                 imageSharingMode,
-                              uint32_t                      queueFamilyIndexCount,
-                              const uint32_t*               pQueueFamilyIndices,
-                              VkSurfaceTransformFlagBitsKHR preTransform,
-                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                              VkPresentModeKHR              presentMode,
-                              VkBool32                      clipped,
-                              VkSwapchainKHR                oldSwapchain,
-                              const VkAllocationCallbacks*  pAllocator,
-                              VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSharedSwapchain(VkDevice                      device,
+                                  const void*                   pNext,
+                                  VkSwapchainCreateFlagsKHR     flags,
+                                  VkSurfaceKHR                  surface,
+                                  uint32_t                      minImageCount,
+                                  VkFormat                      imageFormat,
+                                  VkColorSpaceKHR               imageColorSpace,
+                                  VkExtent2D                    imageExtent,
+                                  uint32_t                      imageArrayLayers,
+                                  VkImageUsageFlags             imageUsage,
+                                  VkSharingMode                 imageSharingMode,
+                                  uint32_t                      queueFamilyIndexCount,
+                                  const uint32_t*               pQueueFamilyIndices,
+                                  VkSurfaceTransformFlagBitsKHR preTransform,
+                                  VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                  VkPresentModeKHR              presentMode,
+                                  VkBool32                      clipped,
+                                  VkSwapchainKHR                oldSwapchain,
+                                  const VkAllocationCallbacks*  pAllocator,
+                                  VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Calls vkFlushMappedMemoryRanges for one element.
  *
@@ -35578,29 +35578,29 @@ void cvkCreateShaderModuleWithValidationFeaturesInfo(VkDevice                   
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         device,
-                                           const void*                      pNext,
-                                           VkDeviceGroupPresentModeFlagsKHR modes,
-                                           VkSwapchainCreateFlagsKHR        flags,
-                                           VkSurfaceKHR                     surface,
-                                           uint32_t                         minImageCount,
-                                           VkFormat                         imageFormat,
-                                           VkColorSpaceKHR                  imageColorSpace,
-                                           VkExtent2D                       imageExtent,
-                                           uint32_t                         imageArrayLayers,
-                                           VkImageUsageFlags                imageUsage,
-                                           VkSharingMode                    imageSharingMode,
-                                           uint32_t                         queueFamilyIndexCount,
-                                           const uint32_t*                  pQueueFamilyIndices,
-                                           VkSurfaceTransformFlagBitsKHR    preTransform,
-                                           VkCompositeAlphaFlagBitsKHR      compositeAlpha,
-                                           VkPresentModeKHR                 presentMode,
-                                           VkBool32                         clipped,
-                                           VkSwapchainKHR                   oldSwapchain,
-                                           const VkAllocationCallbacks*     pAllocator,
-                                           VkSwapchainKHR*                  pSwapchain);
+VkResult cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         device,
+                                               const void*                      pNext,
+                                               VkDeviceGroupPresentModeFlagsKHR modes,
+                                               VkSwapchainCreateFlagsKHR        flags,
+                                               VkSurfaceKHR                     surface,
+                                               uint32_t                         minImageCount,
+                                               VkFormat                         imageFormat,
+                                               VkColorSpaceKHR                  imageColorSpace,
+                                               VkExtent2D                       imageExtent,
+                                               uint32_t                         imageArrayLayers,
+                                               VkImageUsageFlags                imageUsage,
+                                               VkSharingMode                    imageSharingMode,
+                                               uint32_t                         queueFamilyIndexCount,
+                                               const uint32_t*                  pQueueFamilyIndices,
+                                               VkSurfaceTransformFlagBitsKHR    preTransform,
+                                               VkCompositeAlphaFlagBitsKHR      compositeAlpha,
+                                               VkPresentModeKHR                 presentMode,
+                                               VkBool32                         clipped,
+                                               VkSwapchainKHR                   oldSwapchain,
+                                               const VkAllocationCallbacks*     pAllocator,
+                                               VkSwapchainKHR*                  pSwapchain);
 /**
  * \brief Creates a swapchain with VkImageCompressionControlEXT chained.
  *
@@ -35628,31 +35628,31 @@ void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         devi
  * \param[in] pAllocator                    See cvkCreateSwapchain
  * \param[out] pSwapchain                    See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
-                                                       const void*                          pNext,
-                                                       VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
-                                                       uint32_t                             compressionControlPlaneCount,
-                                                       VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
-                                                       VkSwapchainCreateFlagsKHR            flags,
-                                                       VkSurfaceKHR                         surface,
-                                                       uint32_t                             minImageCount,
-                                                       VkFormat                             imageFormat,
-                                                       VkColorSpaceKHR                      imageColorSpace,
-                                                       VkExtent2D                           imageExtent,
-                                                       uint32_t                             imageArrayLayers,
-                                                       VkImageUsageFlags                    imageUsage,
-                                                       VkSharingMode                        imageSharingMode,
-                                                       uint32_t                             queueFamilyIndexCount,
-                                                       const uint32_t*                      pQueueFamilyIndices,
-                                                       VkSurfaceTransformFlagBitsKHR        preTransform,
-                                                       VkCompositeAlphaFlagBitsKHR          compositeAlpha,
-                                                       VkPresentModeKHR                     presentMode,
-                                                       VkBool32                             clipped,
-                                                       VkSwapchainKHR                       oldSwapchain,
-                                                       const VkAllocationCallbacks*         pAllocator,
-                                                       VkSwapchainKHR*                      pSwapchain);
+VkResult cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
+                                                           const void*                          pNext,
+                                                           VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
+                                                           uint32_t                             compressionControlPlaneCount,
+                                                           VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
+                                                           VkSwapchainCreateFlagsKHR            flags,
+                                                           VkSurfaceKHR                         surface,
+                                                           uint32_t                             minImageCount,
+                                                           VkFormat                             imageFormat,
+                                                           VkColorSpaceKHR                      imageColorSpace,
+                                                           VkExtent2D                           imageExtent,
+                                                           uint32_t                             imageArrayLayers,
+                                                           VkImageUsageFlags                    imageUsage,
+                                                           VkSharingMode                        imageSharingMode,
+                                                           uint32_t                             queueFamilyIndexCount,
+                                                           const uint32_t*                      pQueueFamilyIndices,
+                                                           VkSurfaceTransformFlagBitsKHR        preTransform,
+                                                           VkCompositeAlphaFlagBitsKHR          compositeAlpha,
+                                                           VkPresentModeKHR                     presentMode,
+                                                           VkBool32                             clipped,
+                                                           VkSwapchainKHR                       oldSwapchain,
+                                                           const VkAllocationCallbacks*         pAllocator,
+                                                           VkSwapchainKHR*                      pSwapchain);
 /**
  * \brief Creates a swapchain with VkImageFormatListCreateInfo chained.
  *
@@ -35679,30 +35679,30 @@ void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                 
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      device,
-                                               const void*                   pNext,
-                                               uint32_t                      viewFormatCount,
-                                               const VkFormat*               pViewFormats,
-                                               VkSwapchainCreateFlagsKHR     flags,
-                                               VkSurfaceKHR                  surface,
-                                               uint32_t                      minImageCount,
-                                               VkFormat                      imageFormat,
-                                               VkColorSpaceKHR               imageColorSpace,
-                                               VkExtent2D                    imageExtent,
-                                               uint32_t                      imageArrayLayers,
-                                               VkImageUsageFlags             imageUsage,
-                                               VkSharingMode                 imageSharingMode,
-                                               uint32_t                      queueFamilyIndexCount,
-                                               const uint32_t*               pQueueFamilyIndices,
-                                               VkSurfaceTransformFlagBitsKHR preTransform,
-                                               VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                               VkPresentModeKHR              presentMode,
-                                               VkBool32                      clipped,
-                                               VkSwapchainKHR                oldSwapchain,
-                                               const VkAllocationCallbacks*  pAllocator,
-                                               VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      device,
+                                                   const void*                   pNext,
+                                                   uint32_t                      viewFormatCount,
+                                                   const VkFormat*               pViewFormats,
+                                                   VkSwapchainCreateFlagsKHR     flags,
+                                                   VkSurfaceKHR                  surface,
+                                                   uint32_t                      minImageCount,
+                                                   VkFormat                      imageFormat,
+                                                   VkColorSpaceKHR               imageColorSpace,
+                                                   VkExtent2D                    imageExtent,
+                                                   uint32_t                      imageArrayLayers,
+                                                   VkImageUsageFlags             imageUsage,
+                                                   VkSharingMode                 imageSharingMode,
+                                                   uint32_t                      queueFamilyIndexCount,
+                                                   const uint32_t*               pQueueFamilyIndices,
+                                                   VkSurfaceTransformFlagBitsKHR preTransform,
+                                                   VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                   VkPresentModeKHR              presentMode,
+                                                   VkBool32                      clipped,
+                                                   VkSwapchainKHR                oldSwapchain,
+                                                   const VkAllocationCallbacks*  pAllocator,
+                                                   VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkImageUsageFlags2CreateInfoKHR chained.
  *
@@ -35728,29 +35728,29 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
-                                                   void*                         pNext,
-                                                   VkImageUsageFlags2KHR         usage,
-                                                   VkSwapchainCreateFlagsKHR     flags,
-                                                   VkSurfaceKHR                  surface,
-                                                   uint32_t                      minImageCount,
-                                                   VkFormat                      imageFormat,
-                                                   VkColorSpaceKHR               imageColorSpace,
-                                                   VkExtent2D                    imageExtent,
-                                                   uint32_t                      imageArrayLayers,
-                                                   VkImageUsageFlags             imageUsage,
-                                                   VkSharingMode                 imageSharingMode,
-                                                   uint32_t                      queueFamilyIndexCount,
-                                                   const uint32_t*               pQueueFamilyIndices,
-                                                   VkSurfaceTransformFlagBitsKHR preTransform,
-                                                   VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                   VkPresentModeKHR              presentMode,
-                                                   VkBool32                      clipped,
-                                                   VkSwapchainKHR                oldSwapchain,
-                                                   const VkAllocationCallbacks*  pAllocator,
-                                                   VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
+                                                       void*                         pNext,
+                                                       VkImageUsageFlags2KHR         usage,
+                                                       VkSwapchainCreateFlagsKHR     flags,
+                                                       VkSurfaceKHR                  surface,
+                                                       uint32_t                      minImageCount,
+                                                       VkFormat                      imageFormat,
+                                                       VkColorSpaceKHR               imageColorSpace,
+                                                       VkExtent2D                    imageExtent,
+                                                       uint32_t                      imageArrayLayers,
+                                                       VkImageUsageFlags             imageUsage,
+                                                       VkSharingMode                 imageSharingMode,
+                                                       uint32_t                      queueFamilyIndexCount,
+                                                       const uint32_t*               pQueueFamilyIndices,
+                                                       VkSurfaceTransformFlagBitsKHR preTransform,
+                                                       VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                       VkPresentModeKHR              presentMode,
+                                                       VkBool32                      clipped,
+                                                       VkSwapchainKHR                oldSwapchain,
+                                                       const VkAllocationCallbacks*  pAllocator,
+                                                       VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainCounterCreateInfoEXT chained.
  *
@@ -35776,29 +35776,29 @@ void cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                     
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithCounterInfo(VkDevice                      device,
-                                       const void*                   pNext,
-                                       VkSurfaceCounterFlagsEXT      surfaceCounters,
-                                       VkSwapchainCreateFlagsKHR     flags,
-                                       VkSurfaceKHR                  surface,
-                                       uint32_t                      minImageCount,
-                                       VkFormat                      imageFormat,
-                                       VkColorSpaceKHR               imageColorSpace,
-                                       VkExtent2D                    imageExtent,
-                                       uint32_t                      imageArrayLayers,
-                                       VkImageUsageFlags             imageUsage,
-                                       VkSharingMode                 imageSharingMode,
-                                       uint32_t                      queueFamilyIndexCount,
-                                       const uint32_t*               pQueueFamilyIndices,
-                                       VkSurfaceTransformFlagBitsKHR preTransform,
-                                       VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                       VkPresentModeKHR              presentMode,
-                                       VkBool32                      clipped,
-                                       VkSwapchainKHR                oldSwapchain,
-                                       const VkAllocationCallbacks*  pAllocator,
-                                       VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithCounterInfo(VkDevice                      device,
+                                           const void*                   pNext,
+                                           VkSurfaceCounterFlagsEXT      surfaceCounters,
+                                           VkSwapchainCreateFlagsKHR     flags,
+                                           VkSurfaceKHR                  surface,
+                                           uint32_t                      minImageCount,
+                                           VkFormat                      imageFormat,
+                                           VkColorSpaceKHR               imageColorSpace,
+                                           VkExtent2D                    imageExtent,
+                                           uint32_t                      imageArrayLayers,
+                                           VkImageUsageFlags             imageUsage,
+                                           VkSharingMode                 imageSharingMode,
+                                           uint32_t                      queueFamilyIndexCount,
+                                           const uint32_t*               pQueueFamilyIndices,
+                                           VkSurfaceTransformFlagBitsKHR preTransform,
+                                           VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                           VkPresentModeKHR              presentMode,
+                                           VkBool32                      clipped,
+                                           VkSwapchainKHR                oldSwapchain,
+                                           const VkAllocationCallbacks*  pAllocator,
+                                           VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainDisplayNativeHdrCreateInfoAMD chained.
  *
@@ -35824,29 +35824,29 @@ void cvkCreateSwapchainWithCounterInfo(VkDevice                      device,
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithDisplayNativeHdrInfo(VkDevice                      device,
-                                                const void*                   pNext,
-                                                VkBool32                      localDimmingEnable,
-                                                VkSwapchainCreateFlagsKHR     flags,
-                                                VkSurfaceKHR                  surface,
-                                                uint32_t                      minImageCount,
-                                                VkFormat                      imageFormat,
-                                                VkColorSpaceKHR               imageColorSpace,
-                                                VkExtent2D                    imageExtent,
-                                                uint32_t                      imageArrayLayers,
-                                                VkImageUsageFlags             imageUsage,
-                                                VkSharingMode                 imageSharingMode,
-                                                uint32_t                      queueFamilyIndexCount,
-                                                const uint32_t*               pQueueFamilyIndices,
-                                                VkSurfaceTransformFlagBitsKHR preTransform,
-                                                VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                VkPresentModeKHR              presentMode,
-                                                VkBool32                      clipped,
-                                                VkSwapchainKHR                oldSwapchain,
-                                                const VkAllocationCallbacks*  pAllocator,
-                                                VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithDisplayNativeHdrInfo(VkDevice                      device,
+                                                    const void*                   pNext,
+                                                    VkBool32                      localDimmingEnable,
+                                                    VkSwapchainCreateFlagsKHR     flags,
+                                                    VkSurfaceKHR                  surface,
+                                                    uint32_t                      minImageCount,
+                                                    VkFormat                      imageFormat,
+                                                    VkColorSpaceKHR               imageColorSpace,
+                                                    VkExtent2D                    imageExtent,
+                                                    uint32_t                      imageArrayLayers,
+                                                    VkImageUsageFlags             imageUsage,
+                                                    VkSharingMode                 imageSharingMode,
+                                                    uint32_t                      queueFamilyIndexCount,
+                                                    const uint32_t*               pQueueFamilyIndices,
+                                                    VkSurfaceTransformFlagBitsKHR preTransform,
+                                                    VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                    VkPresentModeKHR              presentMode,
+                                                    VkBool32                      clipped,
+                                                    VkSwapchainKHR                oldSwapchain,
+                                                    const VkAllocationCallbacks*  pAllocator,
+                                                    VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainLatencyCreateInfoNV chained.
  *
@@ -35872,29 +35872,29 @@ void cvkCreateSwapchainWithDisplayNativeHdrInfo(VkDevice                      de
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
-                                       const void*                   pNext,
-                                       VkBool32                      latencyModeEnable,
-                                       VkSwapchainCreateFlagsKHR     flags,
-                                       VkSurfaceKHR                  surface,
-                                       uint32_t                      minImageCount,
-                                       VkFormat                      imageFormat,
-                                       VkColorSpaceKHR               imageColorSpace,
-                                       VkExtent2D                    imageExtent,
-                                       uint32_t                      imageArrayLayers,
-                                       VkImageUsageFlags             imageUsage,
-                                       VkSharingMode                 imageSharingMode,
-                                       uint32_t                      queueFamilyIndexCount,
-                                       const uint32_t*               pQueueFamilyIndices,
-                                       VkSurfaceTransformFlagBitsKHR preTransform,
-                                       VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                       VkPresentModeKHR              presentMode,
-                                       VkBool32                      clipped,
-                                       VkSwapchainKHR                oldSwapchain,
-                                       const VkAllocationCallbacks*  pAllocator,
-                                       VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
+                                           const void*                   pNext,
+                                           VkBool32                      latencyModeEnable,
+                                           VkSwapchainCreateFlagsKHR     flags,
+                                           VkSurfaceKHR                  surface,
+                                           uint32_t                      minImageCount,
+                                           VkFormat                      imageFormat,
+                                           VkColorSpaceKHR               imageColorSpace,
+                                           VkExtent2D                    imageExtent,
+                                           uint32_t                      imageArrayLayers,
+                                           VkImageUsageFlags             imageUsage,
+                                           VkSharingMode                 imageSharingMode,
+                                           uint32_t                      queueFamilyIndexCount,
+                                           const uint32_t*               pQueueFamilyIndices,
+                                           VkSurfaceTransformFlagBitsKHR preTransform,
+                                           VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                           VkPresentModeKHR              presentMode,
+                                           VkBool32                      clipped,
+                                           VkSwapchainKHR                oldSwapchain,
+                                           const VkAllocationCallbacks*  pAllocator,
+                                           VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainPresentBarrierCreateInfoNV chained.
  *
@@ -35920,29 +35920,29 @@ void cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      device,
-                                              void*                         pNext,
-                                              VkBool32                      presentBarrierEnable,
-                                              VkSwapchainCreateFlagsKHR     flags,
-                                              VkSurfaceKHR                  surface,
-                                              uint32_t                      minImageCount,
-                                              VkFormat                      imageFormat,
-                                              VkColorSpaceKHR               imageColorSpace,
-                                              VkExtent2D                    imageExtent,
-                                              uint32_t                      imageArrayLayers,
-                                              VkImageUsageFlags             imageUsage,
-                                              VkSharingMode                 imageSharingMode,
-                                              uint32_t                      queueFamilyIndexCount,
-                                              const uint32_t*               pQueueFamilyIndices,
-                                              VkSurfaceTransformFlagBitsKHR preTransform,
-                                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                              VkPresentModeKHR              presentMode,
-                                              VkBool32                      clipped,
-                                              VkSwapchainKHR                oldSwapchain,
-                                              const VkAllocationCallbacks*  pAllocator,
-                                              VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      device,
+                                                  void*                         pNext,
+                                                  VkBool32                      presentBarrierEnable,
+                                                  VkSwapchainCreateFlagsKHR     flags,
+                                                  VkSurfaceKHR                  surface,
+                                                  uint32_t                      minImageCount,
+                                                  VkFormat                      imageFormat,
+                                                  VkColorSpaceKHR               imageColorSpace,
+                                                  VkExtent2D                    imageExtent,
+                                                  uint32_t                      imageArrayLayers,
+                                                  VkImageUsageFlags             imageUsage,
+                                                  VkSharingMode                 imageSharingMode,
+                                                  uint32_t                      queueFamilyIndexCount,
+                                                  const uint32_t*               pQueueFamilyIndices,
+                                                  VkSurfaceTransformFlagBitsKHR preTransform,
+                                                  VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                  VkPresentModeKHR              presentMode,
+                                                  VkBool32                      clipped,
+                                                  VkSwapchainKHR                oldSwapchain,
+                                                  const VkAllocationCallbacks*  pAllocator,
+                                                  VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainPresentModesCreateInfoKHR chained.
  *
@@ -35969,30 +35969,30 @@ void cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      devi
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithPresentModesInfo(VkDevice                      device,
-                                            const void*                   pNext,
-                                            uint32_t                      presentModeCount,
-                                            const VkPresentModeKHR*       pPresentModes,
-                                            VkSwapchainCreateFlagsKHR     flags,
-                                            VkSurfaceKHR                  surface,
-                                            uint32_t                      minImageCount,
-                                            VkFormat                      imageFormat,
-                                            VkColorSpaceKHR               imageColorSpace,
-                                            VkExtent2D                    imageExtent,
-                                            uint32_t                      imageArrayLayers,
-                                            VkImageUsageFlags             imageUsage,
-                                            VkSharingMode                 imageSharingMode,
-                                            uint32_t                      queueFamilyIndexCount,
-                                            const uint32_t*               pQueueFamilyIndices,
-                                            VkSurfaceTransformFlagBitsKHR preTransform,
-                                            VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                            VkPresentModeKHR              presentMode,
-                                            VkBool32                      clipped,
-                                            VkSwapchainKHR                oldSwapchain,
-                                            const VkAllocationCallbacks*  pAllocator,
-                                            VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithPresentModesInfo(VkDevice                      device,
+                                                const void*                   pNext,
+                                                uint32_t                      presentModeCount,
+                                                const VkPresentModeKHR*       pPresentModes,
+                                                VkSwapchainCreateFlagsKHR     flags,
+                                                VkSurfaceKHR                  surface,
+                                                uint32_t                      minImageCount,
+                                                VkFormat                      imageFormat,
+                                                VkColorSpaceKHR               imageColorSpace,
+                                                VkExtent2D                    imageExtent,
+                                                uint32_t                      imageArrayLayers,
+                                                VkImageUsageFlags             imageUsage,
+                                                VkSharingMode                 imageSharingMode,
+                                                uint32_t                      queueFamilyIndexCount,
+                                                const uint32_t*               pQueueFamilyIndices,
+                                                VkSurfaceTransformFlagBitsKHR preTransform,
+                                                VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                VkPresentModeKHR              presentMode,
+                                                VkBool32                      clipped,
+                                                VkSwapchainKHR                oldSwapchain,
+                                                const VkAllocationCallbacks*  pAllocator,
+                                                VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainPresentScalingCreateInfoKHR chained.
  *
@@ -36020,31 +36020,31 @@ void cvkCreateSwapchainWithPresentModesInfo(VkDevice                      device
  * \param[in] pAllocator             See cvkCreateSwapchain
  * \param[out] pSwapchain             See cvkCreateSwapchain
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkCreateSwapchainWithPresentScalingInfo(VkDevice                      device,
-                                              const void*                   pNext,
-                                              VkPresentScalingFlagsKHR      scalingBehavior,
-                                              VkPresentGravityFlagsKHR      presentGravityX,
-                                              VkPresentGravityFlagsKHR      presentGravityY,
-                                              VkSwapchainCreateFlagsKHR     flags,
-                                              VkSurfaceKHR                  surface,
-                                              uint32_t                      minImageCount,
-                                              VkFormat                      imageFormat,
-                                              VkColorSpaceKHR               imageColorSpace,
-                                              VkExtent2D                    imageExtent,
-                                              uint32_t                      imageArrayLayers,
-                                              VkImageUsageFlags             imageUsage,
-                                              VkSharingMode                 imageSharingMode,
-                                              uint32_t                      queueFamilyIndexCount,
-                                              const uint32_t*               pQueueFamilyIndices,
-                                              VkSurfaceTransformFlagBitsKHR preTransform,
-                                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                              VkPresentModeKHR              presentMode,
-                                              VkBool32                      clipped,
-                                              VkSwapchainKHR                oldSwapchain,
-                                              const VkAllocationCallbacks*  pAllocator,
-                                              VkSwapchainKHR*               pSwapchain);
+VkResult cvkCreateSwapchainWithPresentScalingInfo(VkDevice                      device,
+                                                  const void*                   pNext,
+                                                  VkPresentScalingFlagsKHR      scalingBehavior,
+                                                  VkPresentGravityFlagsKHR      presentGravityX,
+                                                  VkPresentGravityFlagsKHR      presentGravityY,
+                                                  VkSwapchainCreateFlagsKHR     flags,
+                                                  VkSurfaceKHR                  surface,
+                                                  uint32_t                      minImageCount,
+                                                  VkFormat                      imageFormat,
+                                                  VkColorSpaceKHR               imageColorSpace,
+                                                  VkExtent2D                    imageExtent,
+                                                  uint32_t                      imageArrayLayers,
+                                                  VkImageUsageFlags             imageUsage,
+                                                  VkSharingMode                 imageSharingMode,
+                                                  uint32_t                      queueFamilyIndexCount,
+                                                  const uint32_t*               pQueueFamilyIndices,
+                                                  VkSurfaceTransformFlagBitsKHR preTransform,
+                                                  VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                  VkPresentModeKHR              presentMode,
+                                                  VkBool32                      clipped,
+                                                  VkSwapchainKHR                oldSwapchain,
+                                                  const VkAllocationCallbacks*  pAllocator,
+                                                  VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a tensor with VkExternalMemoryTensorCreateInfoARM chained.
  *
@@ -37175,18 +37175,18 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
  * \param[out] pImageFormatPropertiesNext    See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties        See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
-                                                                   const void*                              pImageFormatInfoNext,
-                                                                   VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
-                                                                   VkFormat                                 format,
-                                                                   VkImageType                              type,
-                                                                   VkImageTiling                            tiling,
-                                                                   VkImageUsageFlags                        usage,
-                                                                   VkImageCreateFlags                       flags,
-                                                                   void*                                    pImageFormatPropertiesNext,
-                                                                   VkImageFormatProperties2*                pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
+                                                                       const void*                              pImageFormatInfoNext,
+                                                                       VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
+                                                                       VkFormat                                 format,
+                                                                       VkImageType                              type,
+                                                                       VkImageTiling                            tiling,
+                                                                       VkImageUsageFlags                        usage,
+                                                                       VkImageCreateFlags                       flags,
+                                                                       void*                                    pImageFormatPropertiesNext,
+                                                                       VkImageFormatProperties2*                pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageCompressionControlEXT chained.
  *
@@ -37203,20 +37203,20 @@ void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDev
  * \param[out] pImageFormatPropertiesNext    See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties        See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
-                                                                 const void*                          pImageFormatInfoNext,
-                                                                 VkImageCompressionFlagsEXT           flagsCompressionEXT,
-                                                                 uint32_t                             compressionControlPlaneCount,
-                                                                 VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
-                                                                 VkFormat                             format,
-                                                                 VkImageType                          type,
-                                                                 VkImageTiling                        tiling,
-                                                                 VkImageUsageFlags                    usage,
-                                                                 VkImageCreateFlags                   flags,
-                                                                 void*                                pImageFormatPropertiesNext,
-                                                                 VkImageFormatProperties2*            pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
+                                                                     const void*                          pImageFormatInfoNext,
+                                                                     VkImageCompressionFlagsEXT           flagsCompressionEXT,
+                                                                     uint32_t                             compressionControlPlaneCount,
+                                                                     VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
+                                                                     VkFormat                             format,
+                                                                     VkImageType                          type,
+                                                                     VkImageTiling                        tiling,
+                                                                     VkImageUsageFlags                    usage,
+                                                                     VkImageCreateFlags                   flags,
+                                                                     void*                                pImageFormatPropertiesNext,
+                                                                     VkImageFormatProperties2*            pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageCreateFlags2CreateInfoKHR chained.
  *
@@ -37231,18 +37231,18 @@ void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevic
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                           void*                     pImageFormatInfoNext,
-                                                           VkImageCreateFlags2KHR    flags2KHR,
-                                                           VkFormat                  format,
-                                                           VkImageType               type,
-                                                           VkImageTiling             tiling,
-                                                           VkImageUsageFlags         usage,
-                                                           VkImageCreateFlags        flags,
-                                                           void*                     pImageFormatPropertiesNext,
-                                                           VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
+                                                               void*                     pImageFormatInfoNext,
+                                                               VkImageCreateFlags2KHR    flags2KHR,
+                                                               VkFormat                  format,
+                                                               VkImageType               type,
+                                                               VkImageTiling             tiling,
+                                                               VkImageUsageFlags         usage,
+                                                               VkImageCreateFlags        flags,
+                                                               void*                     pImageFormatPropertiesNext,
+                                                               VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageFormatListCreateInfo chained.
  *
@@ -37258,19 +37258,19 @@ void cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice     
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
-                                                   const void*               pImageFormatInfoNext,
-                                                   uint32_t                  viewFormatCount,
-                                                   const VkFormat*           pViewFormats,
-                                                   VkFormat                  format,
-                                                   VkImageType               type,
-                                                   VkImageTiling             tiling,
-                                                   VkImageUsageFlags         usage,
-                                                   VkImageCreateFlags        flags,
-                                                   void*                     pImageFormatPropertiesNext,
-                                                   VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
+                                                       const void*               pImageFormatInfoNext,
+                                                       uint32_t                  viewFormatCount,
+                                                       const VkFormat*           pViewFormats,
+                                                       VkFormat                  format,
+                                                       VkImageType               type,
+                                                       VkImageTiling             tiling,
+                                                       VkImageUsageFlags         usage,
+                                                       VkImageCreateFlags        flags,
+                                                       void*                     pImageFormatPropertiesNext,
+                                                       VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsage2CreateInfoKHR chained.
  *
@@ -37285,18 +37285,18 @@ void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          phy
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice          physicalDevice,
-                                                            void*                     pImageFormatInfoNext,
-                                                            VkImageUsageFlags2KHR     stencilUsage,
-                                                            VkFormat                  format,
-                                                            VkImageType               type,
-                                                            VkImageTiling             tiling,
-                                                            VkImageUsageFlags         usage,
-                                                            VkImageCreateFlags        flags,
-                                                            void*                     pImageFormatPropertiesNext,
-                                                            VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice          physicalDevice,
+                                                                void*                     pImageFormatInfoNext,
+                                                                VkImageUsageFlags2KHR     stencilUsage,
+                                                                VkFormat                  format,
+                                                                VkImageType               type,
+                                                                VkImageTiling             tiling,
+                                                                VkImageUsageFlags         usage,
+                                                                VkImageCreateFlags        flags,
+                                                                void*                     pImageFormatPropertiesNext,
+                                                                VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsageCreateInfo chained.
  *
@@ -37311,18 +37311,18 @@ void cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice    
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice          physicalDevice,
-                                                           const void*               pImageFormatInfoNext,
-                                                           VkImageUsageFlags         stencilUsage,
-                                                           VkFormat                  format,
-                                                           VkImageType               type,
-                                                           VkImageTiling             tiling,
-                                                           VkImageUsageFlags         usage,
-                                                           VkImageCreateFlags        flags,
-                                                           void*                     pImageFormatPropertiesNext,
-                                                           VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice          physicalDevice,
+                                                               const void*               pImageFormatInfoNext,
+                                                               VkImageUsageFlags         stencilUsage,
+                                                               VkFormat                  format,
+                                                               VkImageType               type,
+                                                               VkImageTiling             tiling,
+                                                               VkImageUsageFlags         usage,
+                                                               VkImageCreateFlags        flags,
+                                                               void*                     pImageFormatPropertiesNext,
+                                                               VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageUsageFlags2CreateInfoKHR chained.
  *
@@ -37337,18 +37337,18 @@ void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice     
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
-                                                                       void*                     pImageFormatInfoNext,
-                                                                       VkImageUsageFlags2KHR     usage2KHR,
-                                                                       VkFormat                  format,
-                                                                       VkImageType               type,
-                                                                       VkImageTiling             tiling,
-                                                                       VkImageUsageFlags         usage,
-                                                                       VkImageCreateFlags        flags,
-                                                                       void*                     pImageFormatPropertiesNext,
-                                                                       VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
+                                                                           void*                     pImageFormatInfoNext,
+                                                                           VkImageUsageFlags2KHR     usage2KHR,
+                                                                           VkFormat                  format,
+                                                                           VkImageType               type,
+                                                                           VkImageTiling             tiling,
+                                                                           VkImageUsageFlags         usage,
+                                                                           VkImageCreateFlags        flags,
+                                                                           void*                     pImageFormatPropertiesNext,
+                                                                           VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkOpticalFlowImageFormatInfoNV chained.
  *
@@ -37363,18 +37363,18 @@ void cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysica
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
-                                                          const void*               pImageFormatInfoNext,
-                                                          VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
-                                                          VkFormat                  format,
-                                                          VkImageType               type,
-                                                          VkImageTiling             tiling,
-                                                          VkImageUsageFlags         usage,
-                                                          VkImageCreateFlags        flags,
-                                                          void*                     pImageFormatPropertiesNext,
-                                                          VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
+                                                              const void*               pImageFormatInfoNext,
+                                                              VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
+                                                              VkFormat                  format,
+                                                              VkImageType               type,
+                                                              VkImageTiling             tiling,
+                                                              VkImageUsageFlags         usage,
+                                                              VkImageCreateFlags        flags,
+                                                              void*                     pImageFormatPropertiesNext,
+                                                              VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceExternalImageFormatInfo chained.
  *
@@ -37389,18 +37389,18 @@ void cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice      
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
-                                                 const void*                        pImageFormatInfoNext,
-                                                 VkExternalMemoryHandleTypeFlagBits handleType,
-                                                 VkFormat                           format,
-                                                 VkImageType                        type,
-                                                 VkImageTiling                      tiling,
-                                                 VkImageUsageFlags                  usage,
-                                                 VkImageCreateFlags                 flags,
-                                                 void*                              pImageFormatPropertiesNext,
-                                                 VkImageFormatProperties2*          pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
+                                                     const void*                        pImageFormatInfoNext,
+                                                     VkExternalMemoryHandleTypeFlagBits handleType,
+                                                     VkFormat                           format,
+                                                     VkImageType                        type,
+                                                     VkImageTiling                      tiling,
+                                                     VkImageUsageFlags                  usage,
+                                                     VkImageCreateFlags                 flags,
+                                                     void*                              pImageFormatPropertiesNext,
+                                                     VkImageFormatProperties2*          pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageDrmFormatModifierInfoEXT chained.
  *
@@ -37418,21 +37418,21 @@ void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice               
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
-                                                    const void*               pImageFormatInfoNext,
-                                                    uint64_t                  drmFormatModifier,
-                                                    VkSharingMode             sharingMode,
-                                                    uint32_t                  queueFamilyIndexCount,
-                                                    const uint32_t*           pQueueFamilyIndices,
-                                                    VkFormat                  format,
-                                                    VkImageType               type,
-                                                    VkImageTiling             tiling,
-                                                    VkImageUsageFlags         usage,
-                                                    VkImageCreateFlags        flags,
-                                                    void*                     pImageFormatPropertiesNext,
-                                                    VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
+                                                        const void*               pImageFormatInfoNext,
+                                                        uint64_t                  drmFormatModifier,
+                                                        VkSharingMode             sharingMode,
+                                                        uint32_t                  queueFamilyIndexCount,
+                                                        const uint32_t*           pQueueFamilyIndices,
+                                                        VkFormat                  format,
+                                                        VkImageType               type,
+                                                        VkImageTiling             tiling,
+                                                        VkImageUsageFlags         usage,
+                                                        VkImageCreateFlags        flags,
+                                                        void*                     pImageFormatPropertiesNext,
+                                                        VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageViewImageFormatInfoEXT chained.
  *
@@ -37447,18 +37447,18 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          physicalDevice,
-                                                  void*                     pImageFormatInfoNext,
-                                                  VkImageViewType           imageViewType,
-                                                  VkFormat                  format,
-                                                  VkImageType               type,
-                                                  VkImageTiling             tiling,
-                                                  VkImageUsageFlags         usage,
-                                                  VkImageCreateFlags        flags,
-                                                  void*                     pImageFormatPropertiesNext,
-                                                  VkImageFormatProperties2* pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          physicalDevice,
+                                                      void*                     pImageFormatInfoNext,
+                                                      VkImageViewType           imageViewType,
+                                                      VkFormat                  format,
+                                                      VkImageType               type,
+                                                      VkImageTiling             tiling,
+                                                      VkImageUsageFlags         usage,
+                                                      VkImageCreateFlags        flags,
+                                                      void*                     pImageFormatPropertiesNext,
+                                                      VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkVideoProfileListInfoKHR chained.
  *
@@ -37474,19 +37474,19 @@ void cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          phys
  * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice             physicalDevice,
-                                                               const void*                  pImageFormatInfoNext,
-                                                               uint32_t                     profileCount,
-                                                               const VkVideoProfileInfoKHR* pProfiles,
-                                                               VkFormat                     format,
-                                                               VkImageType                  type,
-                                                               VkImageTiling                tiling,
-                                                               VkImageUsageFlags            usage,
-                                                               VkImageCreateFlags           flags,
-                                                               void*                        pImageFormatPropertiesNext,
-                                                               VkImageFormatProperties2*    pImageFormatProperties);
+VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice             physicalDevice,
+                                                                   const void*                  pImageFormatInfoNext,
+                                                                   uint32_t                     profileCount,
+                                                                   const VkVideoProfileInfoKHR* pProfiles,
+                                                                   VkFormat                     format,
+                                                                   VkImageType                  type,
+                                                                   VkImageTiling                tiling,
+                                                                   VkImageUsageFlags            usage,
+                                                                   VkImageCreateFlags           flags,
+                                                                   void*                        pImageFormatPropertiesNext,
+                                                                   VkImageFormatProperties2*    pImageFormatProperties);
 /**
  * \brief Retrieves physical device sparse image format properties 2 with VkImageUsageFlags2CreateInfoKHR chained.
  *
@@ -37521,14 +37521,14 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR
  * \param[out] pSurfaceCapabilitiesNext  See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilities      See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
-                                                        void*                      pSurfaceInfoNext,
-                                                        VkPresentModeKHR           presentMode,
-                                                        VkSurfaceKHR               surface,
-                                                        void*                      pSurfaceCapabilitiesNext,
-                                                        VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
+                                                            void*                      pSurfaceInfoNext,
+                                                            VkPresentModeKHR           presentMode,
+                                                            VkSurfaceKHR               surface,
+                                                            void*                      pSurfaceCapabilitiesNext,
+                                                            VkSurfaceCapabilities2KHR* pSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface formats 2 with VkSurfacePresentModeKHR chained.
  *
@@ -37560,19 +37560,19 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physi
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoDecodeAV1ProfileInfo(VkInstance                       instance,
-                                     VkPhysicalDevice                 physicalDevice,
-                                     const void*                      pVideoProfileNext,
-                                     StdVideoAV1Profile               stdProfile,
-                                     VkBool32                         filmGrainSupport,
-                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                     void*                            pCapabilitiesNext,
-                                     VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoDecodeAV1ProfileInfo(VkInstance                       instance,
+                                         VkPhysicalDevice                 physicalDevice,
+                                         const void*                      pVideoProfileNext,
+                                         StdVideoAV1Profile               stdProfile,
+                                         VkBool32                         filmGrainSupport,
+                                         VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                         VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                         VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                         VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                         void*                            pCapabilitiesNext,
+                                         VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeH264ProfileInfoKHR chained.
  *
@@ -37588,19 +37588,19 @@ void cvkGetVideoDecodeAV1ProfileInfo(VkInstance                       instance,
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoDecodeH264ProfileInfo(VkInstance                                instance,
-                                      VkPhysicalDevice                          physicalDevice,
-                                      const void*                               pVideoProfileNext,
-                                      StdVideoH264ProfileIdc                    stdProfileIdc,
-                                      VkVideoDecodeH264PictureLayoutFlagBitsKHR pictureLayout,
-                                      VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
-                                      void*                                     pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*                   pCapabilities);
+VkResult cvkGetVideoDecodeH264ProfileInfo(VkInstance                                instance,
+                                          VkPhysicalDevice                          physicalDevice,
+                                          const void*                               pVideoProfileNext,
+                                          StdVideoH264ProfileIdc                    stdProfileIdc,
+                                          VkVideoDecodeH264PictureLayoutFlagBitsKHR pictureLayout,
+                                          VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
+                                          void*                                     pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*                   pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeH265ProfileInfoKHR chained.
  *
@@ -37615,18 +37615,18 @@ void cvkGetVideoDecodeH264ProfileInfo(VkInstance                                
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoDecodeH265ProfileInfo(VkInstance                       instance,
-                                      VkPhysicalDevice                 physicalDevice,
-                                      const void*                      pVideoProfileNext,
-                                      StdVideoH265ProfileIdc           stdProfileIdc,
-                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                      void*                            pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoDecodeH265ProfileInfo(VkInstance                       instance,
+                                          VkPhysicalDevice                 physicalDevice,
+                                          const void*                      pVideoProfileNext,
+                                          StdVideoH265ProfileIdc           stdProfileIdc,
+                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                          void*                            pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeUsageInfoKHR chained.
  *
@@ -37641,18 +37641,18 @@ void cvkGetVideoDecodeH265ProfileInfo(VkInstance                       instance,
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoCapabilitiesWithDecodeUsageInfo(VkInstance                       instance,
-                                                              VkPhysicalDevice                 physicalDevice,
-                                                              const void*                      pVideoProfileNext,
-                                                              VkVideoDecodeUsageFlagsKHR       videoUsageHints,
-                                                              VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                              VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                              VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                              VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                              void*                            pCapabilitiesNext,
-                                                              VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithDecodeUsageInfo(VkInstance                       instance,
+                                                                  VkPhysicalDevice                 physicalDevice,
+                                                                  const void*                      pVideoProfileNext,
+                                                                  VkVideoDecodeUsageFlagsKHR       videoUsageHints,
+                                                                  VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                                  VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                                  VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                                  VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                                  void*                            pCapabilitiesNext,
+                                                                  VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeVP9ProfileInfoKHR chained.
  *
@@ -37667,18 +37667,18 @@ void cvkGetPhysicalDeviceVideoCapabilitiesWithDecodeUsageInfo(VkInstance        
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoDecodeVP9ProfileInfo(VkInstance                       instance,
-                                     VkPhysicalDevice                 physicalDevice,
-                                     const void*                      pVideoProfileNext,
-                                     StdVideoVP9Profile               stdProfile,
-                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                     void*                            pCapabilitiesNext,
-                                     VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoDecodeVP9ProfileInfo(VkInstance                       instance,
+                                         VkPhysicalDevice                 physicalDevice,
+                                         const void*                      pVideoProfileNext,
+                                         StdVideoVP9Profile               stdProfile,
+                                         VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                         VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                         VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                         VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                         void*                            pCapabilitiesNext,
+                                         VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeAV1ProfileInfoKHR chained.
  *
@@ -37693,18 +37693,18 @@ void cvkGetVideoDecodeVP9ProfileInfo(VkInstance                       instance,
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoEncodeAV1ProfileInfo(VkInstance                       instance,
-                                     VkPhysicalDevice                 physicalDevice,
-                                     const void*                      pVideoProfileNext,
-                                     StdVideoAV1Profile               stdProfile,
-                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                     void*                            pCapabilitiesNext,
-                                     VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoEncodeAV1ProfileInfo(VkInstance                       instance,
+                                         VkPhysicalDevice                 physicalDevice,
+                                         const void*                      pVideoProfileNext,
+                                         StdVideoAV1Profile               stdProfile,
+                                         VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                         VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                         VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                         VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                         void*                            pCapabilitiesNext,
+                                         VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeH264ProfileInfoKHR chained.
  *
@@ -37719,18 +37719,18 @@ void cvkGetVideoEncodeAV1ProfileInfo(VkInstance                       instance,
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoEncodeH264ProfileInfo(VkInstance                       instance,
-                                      VkPhysicalDevice                 physicalDevice,
-                                      const void*                      pVideoProfileNext,
-                                      StdVideoH264ProfileIdc           stdProfileIdc,
-                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                      void*                            pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoEncodeH264ProfileInfo(VkInstance                       instance,
+                                          VkPhysicalDevice                 physicalDevice,
+                                          const void*                      pVideoProfileNext,
+                                          StdVideoH264ProfileIdc           stdProfileIdc,
+                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                          void*                            pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeH265ProfileInfoKHR chained.
  *
@@ -37745,18 +37745,18 @@ void cvkGetVideoEncodeH264ProfileInfo(VkInstance                       instance,
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoEncodeH265ProfileInfo(VkInstance                       instance,
-                                      VkPhysicalDevice                 physicalDevice,
-                                      const void*                      pVideoProfileNext,
-                                      StdVideoH265ProfileIdc           stdProfileIdc,
-                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                      void*                            pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoEncodeH265ProfileInfo(VkInstance                       instance,
+                                          VkPhysicalDevice                 physicalDevice,
+                                          const void*                      pVideoProfileNext,
+                                          StdVideoH265ProfileIdc           stdProfileIdc,
+                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                          void*                            pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeProfileRgbConversionInfoVALVE chained.
  *
@@ -37771,18 +37771,18 @@ void cvkGetVideoEncodeH265ProfileInfo(VkInstance                       instance,
  * \param[out] pCapabilitiesNext           See cvkGetVideoProfileInfo
  * \param[out] pCapabilities               See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetVideoEncodeProfileRgbConversionInfo(VkInstance                       instance,
-                                               VkPhysicalDevice                 physicalDevice,
-                                               const void*                      pVideoProfileNext,
-                                               VkBool32                         performEncodeRgbConversion,
-                                               VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                               VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                               VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                               VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                               void*                            pCapabilitiesNext,
-                                               VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetVideoEncodeProfileRgbConversionInfo(VkInstance                       instance,
+                                                   VkPhysicalDevice                 physicalDevice,
+                                                   const void*                      pVideoProfileNext,
+                                                   VkBool32                         performEncodeRgbConversion,
+                                                   VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                   VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                   VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                   VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                   void*                            pCapabilitiesNext,
+                                                   VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeUsageInfoKHR chained.
  *
@@ -37799,20 +37799,20 @@ void cvkGetVideoEncodeProfileRgbConversionInfo(VkInstance                       
  * \param[out] pCapabilitiesNext    See cvkGetVideoProfileInfo
  * \param[out] pCapabilities        See cvkGetVideoProfileInfo
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance                       instance,
-                                                              VkPhysicalDevice                 physicalDevice,
-                                                              const void*                      pVideoProfileNext,
-                                                              VkVideoEncodeUsageFlagsKHR       videoUsageHints,
-                                                              VkVideoEncodeContentFlagsKHR     videoContentHints,
-                                                              VkVideoEncodeTuningModeKHR       tuningMode,
-                                                              VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                              VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                              VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                              VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                              void*                            pCapabilitiesNext,
-                                                              VkVideoCapabilitiesKHR*          pCapabilities);
+VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance                       instance,
+                                                                  VkPhysicalDevice                 physicalDevice,
+                                                                  const void*                      pVideoProfileNext,
+                                                                  VkVideoEncodeUsageFlagsKHR       videoUsageHints,
+                                                                  VkVideoEncodeContentFlagsKHR     videoContentHints,
+                                                                  VkVideoEncodeTuningModeKHR       tuningMode,
+                                                                  VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                                  VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                                  VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                                  VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                                  void*                            pCapabilitiesNext,
+                                                                  VkVideoCapabilitiesKHR*          pCapabilities);
 /**
  * \brief Retrieves physical device video format properties with VkImageUsageFlags2CreateInfoKHR chained.
  *
@@ -43526,17 +43526,17 @@ void cvkGetPhysicalDeviceTensorFormatProperties(VkPhysicalDevice physicalDevice,
  * \param[in] pExternalImageFormatPropertiesNext  Optional output extension chain attached to VkExternalImageFormatProperties, or NULL
  * \param[out] pExternalImageFormatProperties      Receives the VkExternalImageFormatProperties
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
-                                                       const void*                      pImageFormatInfoNext,
-                                                       VkFormat                         format,
-                                                       VkImageType                      type,
-                                                       VkImageTiling                    tiling,
-                                                       VkImageUsageFlags                usage,
-                                                       VkImageCreateFlags               flags,
-                                                       void*                            pExternalImageFormatPropertiesNext,
-                                                       VkExternalImageFormatProperties* pExternalImageFormatProperties);
+VkResult cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
+                                                           const void*                      pImageFormatInfoNext,
+                                                           VkFormat                         format,
+                                                           VkImageType                      type,
+                                                           VkImageTiling                    tiling,
+                                                           VkImageUsageFlags                usage,
+                                                           VkImageCreateFlags               flags,
+                                                           void*                            pExternalImageFormatPropertiesNext,
+                                                           VkExternalImageFormatProperties* pExternalImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkFilterCubicImageViewImageFormatPropertiesEXT chained to the output.
  *
@@ -43550,17 +43550,17 @@ void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice         
  * \param[in] pFilterCubicImageViewImageFormatPropertiesNext  Optional output extension chain attached to VkFilterCubicImageViewImageFormatPropertiesEXT, or NULL
  * \param[out] pFilterCubicImageViewImageFormatProperties      Receives the VkFilterCubicImageViewImageFormatPropertiesEXT
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDevice                                physicalDevice,
-                                                                   const void*                                     pImageFormatInfoNext,
-                                                                   VkFormat                                        format,
-                                                                   VkImageType                                     type,
-                                                                   VkImageTiling                                   tiling,
-                                                                   VkImageUsageFlags                               usage,
-                                                                   VkImageCreateFlags                              flags,
-                                                                   void*                                           pFilterCubicImageViewImageFormatPropertiesNext,
-                                                                   VkFilterCubicImageViewImageFormatPropertiesEXT* pFilterCubicImageViewImageFormatProperties);
+VkResult cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDevice                                physicalDevice,
+                                                                       const void*                                     pImageFormatInfoNext,
+                                                                       VkFormat                                        format,
+                                                                       VkImageType                                     type,
+                                                                       VkImageTiling                                   tiling,
+                                                                       VkImageUsageFlags                               usage,
+                                                                       VkImageCreateFlags                              flags,
+                                                                       void*                                           pFilterCubicImageViewImageFormatPropertiesNext,
+                                                                       VkFilterCubicImageViewImageFormatPropertiesEXT* pFilterCubicImageViewImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkHostImageCopyDevicePerformanceQuery chained to the output.
  *
@@ -43574,17 +43574,17 @@ void cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDev
  * \param[in] pHostImageCopyDevicePerformanceQueryNext  Optional output extension chain attached to VkHostImageCopyDevicePerformanceQuery, or NULL
  * \param[out] pHostImageCopyDevicePerformanceQuery      Receives the VkHostImageCopyDevicePerformanceQuery
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
-                                                                                      const void*                            pImageFormatInfoNext,
-                                                                                      VkFormat                               format,
-                                                                                      VkImageType                            type,
-                                                                                      VkImageTiling                          tiling,
-                                                                                      VkImageUsageFlags                      usage,
-                                                                                      VkImageCreateFlags                     flags,
-                                                                                      void*                                  pHostImageCopyDevicePerformanceQueryNext,
-                                                                                      VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery);
+VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
+                                                                                          const void*                            pImageFormatInfoNext,
+                                                                                          VkFormat                               format,
+                                                                                          VkImageType                            type,
+                                                                                          VkImageTiling                          tiling,
+                                                                                          VkImageUsageFlags                      usage,
+                                                                                          VkImageCreateFlags                     flags,
+                                                                                          void*                                  pHostImageCopyDevicePerformanceQueryNext,
+                                                                                          VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageCompressionPropertiesEXT chained to the output.
  *
@@ -43598,17 +43598,17 @@ void cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformance
  * \param[in] pImageCompressionPropertiesNext  Optional output extension chain attached to VkImageCompressionPropertiesEXT, or NULL
  * \param[out] pImageCompressionProperties      Receives the VkImageCompressionPropertiesEXT
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceImageCompressionProperties(VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pImageFormatInfoNext,
-                                                    VkFormat                         format,
-                                                    VkImageType                      type,
-                                                    VkImageTiling                    tiling,
-                                                    VkImageUsageFlags                usage,
-                                                    VkImageCreateFlags               flags,
-                                                    void*                            pImageCompressionPropertiesNext,
-                                                    VkImageCompressionPropertiesEXT* pImageCompressionProperties);
+VkResult cvkGetPhysicalDeviceImageCompressionProperties(VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pImageFormatInfoNext,
+                                                        VkFormat                         format,
+                                                        VkImageType                      type,
+                                                        VkImageTiling                    tiling,
+                                                        VkImageUsageFlags                usage,
+                                                        VkImageCreateFlags               flags,
+                                                        void*                            pImageCompressionPropertiesNext,
+                                                        VkImageCompressionPropertiesEXT* pImageCompressionProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkSamplerYcbcrConversionImageFormatProperties chained to the output.
  *
@@ -43622,17 +43622,17 @@ void cvkGetPhysicalDeviceImageCompressionProperties(VkPhysicalDevice            
  * \param[in] pSamplerYcbcrConversionImageFormatPropertiesNext  Optional output extension chain attached to VkSamplerYcbcrConversionImageFormatProperties, or NULL
  * \param[out] pSamplerYcbcrConversionImageFormatProperties      Receives the VkSamplerYcbcrConversionImageFormatProperties
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
-                                                                     const void*                                    pImageFormatInfoNext,
-                                                                     VkFormat                                       format,
-                                                                     VkImageType                                    type,
-                                                                     VkImageTiling                                  tiling,
-                                                                     VkImageUsageFlags                              usage,
-                                                                     VkImageCreateFlags                             flags,
-                                                                     void*                                          pSamplerYcbcrConversionImageFormatPropertiesNext,
-                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties);
+VkResult cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
+                                                                         const void*                                    pImageFormatInfoNext,
+                                                                         VkFormat                                       format,
+                                                                         VkImageType                                    type,
+                                                                         VkImageTiling                                  tiling,
+                                                                         VkImageUsageFlags                              usage,
+                                                                         VkImageCreateFlags                             flags,
+                                                                         void*                                          pSamplerYcbcrConversionImageFormatPropertiesNext,
+                                                                         VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkSubsampledImageFormatPropertiesEXT chained to the output.
  *
@@ -43646,17 +43646,17 @@ void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalD
  * \param[in] pSubsampledImageFormatPropertiesNext  Optional output extension chain attached to VkSubsampledImageFormatPropertiesEXT, or NULL
  * \param[out] pSubsampledImageFormatProperties      Receives the VkSubsampledImageFormatPropertiesEXT
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSubsampledImageFormatProperties(VkPhysicalDevice                      physicalDevice,
-                                                         const void*                           pImageFormatInfoNext,
-                                                         VkFormat                              format,
-                                                         VkImageType                           type,
-                                                         VkImageTiling                         tiling,
-                                                         VkImageUsageFlags                     usage,
-                                                         VkImageCreateFlags                    flags,
-                                                         void*                                 pSubsampledImageFormatPropertiesNext,
-                                                         VkSubsampledImageFormatPropertiesEXT* pSubsampledImageFormatProperties);
+VkResult cvkGetPhysicalDeviceSubsampledImageFormatProperties(VkPhysicalDevice                      physicalDevice,
+                                                             const void*                           pImageFormatInfoNext,
+                                                             VkFormat                              format,
+                                                             VkImageType                           type,
+                                                             VkImageTiling                         tiling,
+                                                             VkImageUsageFlags                     usage,
+                                                             VkImageCreateFlags                    flags,
+                                                             void*                                 pSubsampledImageFormatPropertiesNext,
+                                                             VkSubsampledImageFormatPropertiesEXT* pSubsampledImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkTextureLODGatherFormatPropertiesAMD chained to the output.
  *
@@ -43670,17 +43670,17 @@ void cvkGetPhysicalDeviceSubsampledImageFormatProperties(VkPhysicalDevice       
  * \param[in] pTextureLODGatherFormatPropertiesNext  Optional output extension chain attached to VkTextureLODGatherFormatPropertiesAMD, or NULL
  * \param[out] pTextureLODGatherFormatProperties      Receives the VkTextureLODGatherFormatPropertiesAMD
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceTextureLODGatherFormatProperties(VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pImageFormatInfoNext,
-                                                          VkFormat                               format,
-                                                          VkImageType                            type,
-                                                          VkImageTiling                          tiling,
-                                                          VkImageUsageFlags                      usage,
-                                                          VkImageCreateFlags                     flags,
-                                                          void*                                  pTextureLODGatherFormatPropertiesNext,
-                                                          VkTextureLODGatherFormatPropertiesAMD* pTextureLODGatherFormatProperties);
+VkResult cvkGetPhysicalDeviceTextureLODGatherFormatProperties(VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pImageFormatInfoNext,
+                                                              VkFormat                               format,
+                                                              VkImageType                            type,
+                                                              VkImageTiling                          tiling,
+                                                              VkImageUsageFlags                      usage,
+                                                              VkImageCreateFlags                     flags,
+                                                              void*                                  pTextureLODGatherFormatPropertiesNext,
+                                                              VkTextureLODGatherFormatPropertiesAMD* pTextureLODGatherFormatProperties);
 /**
  * \brief Retrieves physical device memory properties 2 with VkPhysicalDeviceMemoryBudgetPropertiesEXT chained to the output.
  *
@@ -45128,13 +45128,13 @@ void cvkGetPhysicalDeviceVulkan14Properties(VkPhysicalDevice physicalDevice, voi
  * \param[in] pDisplayNativeHdrSurfaceCapabilitiesNext  Optional output extension chain attached to VkDisplayNativeHdrSurfaceCapabilitiesAMD, or NULL
  * \param[out] pDisplayNativeHdrSurfaceCapabilities      Receives the VkDisplayNativeHdrSurfaceCapabilitiesAMD
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice                          physicalDevice,
-                                                             const void*                               pSurfaceInfoNext,
-                                                             VkSurfaceKHR                              surface,
-                                                             void*                                     pDisplayNativeHdrSurfaceCapabilitiesNext,
-                                                             VkDisplayNativeHdrSurfaceCapabilitiesAMD* pDisplayNativeHdrSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice                          physicalDevice,
+                                                                 const void*                               pSurfaceInfoNext,
+                                                                 VkSurfaceKHR                              surface,
+                                                                 void*                                     pDisplayNativeHdrSurfaceCapabilitiesNext,
+                                                                 VkDisplayNativeHdrSurfaceCapabilitiesAMD* pDisplayNativeHdrSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkImageUsageFlags2CreateInfoKHR chained to the output.
  *
@@ -45144,13 +45144,13 @@ void cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice   
  * \param[in] pImageUsageFlags2CreateInfoKHRNext  Optional output extension chain attached to VkImageUsageFlags2CreateInfoKHR, or NULL
  * \param[out] pImageUsageFlags2CreateInfoKHR      Receives the VkImageUsageFlags2CreateInfoKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKHR(VkPhysicalDevice                 physicalDevice,
-                                                                                  const void*                      pSurfaceInfoNext,
-                                                                                  VkSurfaceKHR                     surface,
-                                                                                  void*                            pImageUsageFlags2CreateInfoKHRNext,
-                                                                                  VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKHR(VkPhysicalDevice                 physicalDevice,
+                                                                                      const void*                      pSurfaceInfoNext,
+                                                                                      VkSurfaceKHR                     surface,
+                                                                                      void*                            pImageUsageFlags2CreateInfoKHRNext,
+                                                                                      VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkLatencySurfaceCapabilitiesNV chained to the output.
  *
@@ -45160,13 +45160,13 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKH
  * \param[in] pLatencySurfaceCapabilitiesNext  Optional output extension chain attached to VkLatencySurfaceCapabilitiesNV, or NULL
  * \param[out] pLatencySurfaceCapabilities      In/out: receiving storage selected by the caller, receives the VkLatencySurfaceCapabilitiesNV
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceLatencySurfaceCapabilities(VkPhysicalDevice                physicalDevice,
-                                                    const void*                     pSurfaceInfoNext,
-                                                    VkSurfaceKHR                    surface,
-                                                    void*                           pLatencySurfaceCapabilitiesNext,
-                                                    VkLatencySurfaceCapabilitiesNV* pLatencySurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceLatencySurfaceCapabilities(VkPhysicalDevice                physicalDevice,
+                                                        const void*                     pSurfaceInfoNext,
+                                                        VkSurfaceKHR                    surface,
+                                                        void*                           pLatencySurfaceCapabilitiesNext,
+                                                        VkLatencySurfaceCapabilitiesNV* pLatencySurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkPresentTimingSurfaceCapabilitiesEXT chained to the output.
  *
@@ -45176,13 +45176,13 @@ void cvkGetPhysicalDeviceLatencySurfaceCapabilities(VkPhysicalDevice            
  * \param[in] pPresentTimingSurfaceCapabilitiesNext  Optional output extension chain attached to VkPresentTimingSurfaceCapabilitiesEXT, or NULL
  * \param[out] pPresentTimingSurfaceCapabilities      Receives the VkPresentTimingSurfaceCapabilitiesEXT
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDevicePresentTimingSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pSurfaceInfoNext,
-                                                          VkSurfaceKHR                           surface,
-                                                          void*                                  pPresentTimingSurfaceCapabilitiesNext,
-                                                          VkPresentTimingSurfaceCapabilitiesEXT* pPresentTimingSurfaceCapabilities);
+VkResult cvkGetPhysicalDevicePresentTimingSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pSurfaceInfoNext,
+                                                              VkSurfaceKHR                           surface,
+                                                              void*                                  pPresentTimingSurfaceCapabilitiesNext,
+                                                              VkPresentTimingSurfaceCapabilitiesEXT* pPresentTimingSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSharedPresentSurfaceCapabilities2KHR chained to the output.
  *
@@ -45192,13 +45192,13 @@ void cvkGetPhysicalDevicePresentTimingSurfaceCapabilities(VkPhysicalDevice      
  * \param[in] pSharedPresentSurfaceCapabilities2Next  Optional output extension chain attached to VkSharedPresentSurfaceCapabilities2KHR, or NULL
  * \param[out] pSharedPresentSurfaceCapabilities2      Receives the VkSharedPresentSurfaceCapabilities2KHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities2(VkPhysicalDevice                        physicalDevice,
-                                                           const void*                             pSurfaceInfoNext,
-                                                           VkSurfaceKHR                            surface,
-                                                           void*                                   pSharedPresentSurfaceCapabilities2Next,
-                                                           VkSharedPresentSurfaceCapabilities2KHR* pSharedPresentSurfaceCapabilities2);
+VkResult cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities2(VkPhysicalDevice                        physicalDevice,
+                                                               const void*                             pSurfaceInfoNext,
+                                                               VkSurfaceKHR                            surface,
+                                                               void*                                   pSharedPresentSurfaceCapabilities2Next,
+                                                               VkSharedPresentSurfaceCapabilities2KHR* pSharedPresentSurfaceCapabilities2);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSharedPresentSurfaceCapabilitiesKHR chained to the output.
  *
@@ -45208,13 +45208,13 @@ void cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities2(VkPhysicalDevice     
  * \param[in] pSharedPresentSurfaceCapabilitiesNext  Optional output extension chain attached to VkSharedPresentSurfaceCapabilitiesKHR, or NULL
  * \param[out] pSharedPresentSurfaceCapabilities      Receives the VkSharedPresentSurfaceCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pSurfaceInfoNext,
-                                                          VkSurfaceKHR                           surface,
-                                                          void*                                  pSharedPresentSurfaceCapabilitiesNext,
-                                                          VkSharedPresentSurfaceCapabilitiesKHR* pSharedPresentSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pSurfaceInfoNext,
+                                                              VkSurfaceKHR                           surface,
+                                                              void*                                  pSharedPresentSurfaceCapabilitiesNext,
+                                                              VkSharedPresentSurfaceCapabilitiesKHR* pSharedPresentSurfaceCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesPresentBarrierNV chained to the output.
  *
@@ -45224,13 +45224,13 @@ void cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(VkPhysicalDevice      
  * \param[in] pSurfaceCapabilitiesPresentBarrierNext  Optional output extension chain attached to VkSurfaceCapabilitiesPresentBarrierNV, or NULL
  * \param[out] pSurfaceCapabilitiesPresentBarrier      Receives the VkSurfaceCapabilitiesPresentBarrierNV
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentBarrier(VkPhysicalDevice                       physicalDevice,
-                                                           const void*                            pSurfaceInfoNext,
-                                                           VkSurfaceKHR                           surface,
-                                                           void*                                  pSurfaceCapabilitiesPresentBarrierNext,
-                                                           VkSurfaceCapabilitiesPresentBarrierNV* pSurfaceCapabilitiesPresentBarrier);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesPresentBarrier(VkPhysicalDevice                       physicalDevice,
+                                                               const void*                            pSurfaceInfoNext,
+                                                               VkSurfaceKHR                           surface,
+                                                               void*                                  pSurfaceCapabilitiesPresentBarrierNext,
+                                                               VkSurfaceCapabilitiesPresentBarrierNV* pSurfaceCapabilitiesPresentBarrier);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesPresentId2KHR chained to the output.
  *
@@ -45240,13 +45240,13 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentBarrier(VkPhysicalDevice     
  * \param[in] pSurfaceCapabilitiesPresentId2Next  Optional output extension chain attached to VkSurfaceCapabilitiesPresentId2KHR, or NULL
  * \param[out] pSurfaceCapabilitiesPresentId2      Receives the VkSurfaceCapabilitiesPresentId2KHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentId2(VkPhysicalDevice                    physicalDevice,
-                                                       const void*                         pSurfaceInfoNext,
-                                                       VkSurfaceKHR                        surface,
-                                                       void*                               pSurfaceCapabilitiesPresentId2Next,
-                                                       VkSurfaceCapabilitiesPresentId2KHR* pSurfaceCapabilitiesPresentId2);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesPresentId2(VkPhysicalDevice                    physicalDevice,
+                                                           const void*                         pSurfaceInfoNext,
+                                                           VkSurfaceKHR                        surface,
+                                                           void*                               pSurfaceCapabilitiesPresentId2Next,
+                                                           VkSurfaceCapabilitiesPresentId2KHR* pSurfaceCapabilitiesPresentId2);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesPresentWait2KHR chained to the output.
  *
@@ -45256,13 +45256,13 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentId2(VkPhysicalDevice         
  * \param[in] pSurfaceCapabilitiesPresentWait2Next  Optional output extension chain attached to VkSurfaceCapabilitiesPresentWait2KHR, or NULL
  * \param[out] pSurfaceCapabilitiesPresentWait2      Receives the VkSurfaceCapabilitiesPresentWait2KHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice                      physicalDevice,
-                                                         const void*                           pSurfaceInfoNext,
-                                                         VkSurfaceKHR                          surface,
-                                                         void*                                 pSurfaceCapabilitiesPresentWait2Next,
-                                                         VkSurfaceCapabilitiesPresentWait2KHR* pSurfaceCapabilitiesPresentWait2);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice                      physicalDevice,
+                                                             const void*                           pSurfaceInfoNext,
+                                                             VkSurfaceKHR                          surface,
+                                                             void*                                 pSurfaceCapabilitiesPresentWait2Next,
+                                                             VkSurfaceCapabilitiesPresentWait2KHR* pSurfaceCapabilitiesPresentWait2);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfacePresentModeCompatibilityKHR chained to the output.
  *
@@ -45272,13 +45272,13 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice       
  * \param[in] pSurfacePresentModeCompatibilityNext  Optional output extension chain attached to VkSurfacePresentModeCompatibilityKHR, or NULL
  * \param[out] pSurfacePresentModeCompatibility      In/out: receiving storage selected by the caller, receives the VkSurfacePresentModeCompatibilityKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
-                                                                         const void*                           pSurfaceInfoNext,
-                                                                         VkSurfaceKHR                          surface,
-                                                                         void*                                 pSurfacePresentModeCompatibilityNext,
-                                                                         VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility);
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
+                                                                             const void*                           pSurfaceInfoNext,
+                                                                             VkSurfaceKHR                          surface,
+                                                                             void*                                 pSurfacePresentModeCompatibilityNext,
+                                                                             VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfacePresentScalingCapabilitiesKHR chained to the output.
  *
@@ -45288,13 +45288,13 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysi
  * \param[in] pSurfacePresentScalingCapabilitiesNext  Optional output extension chain attached to VkSurfacePresentScalingCapabilitiesKHR, or NULL
  * \param[out] pSurfacePresentScalingCapabilities      Receives the VkSurfacePresentScalingCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfacePresentScalingCapabilities(VkPhysicalDevice                        physicalDevice,
-                                                           const void*                             pSurfaceInfoNext,
-                                                           VkSurfaceKHR                            surface,
-                                                           void*                                   pSurfacePresentScalingCapabilitiesNext,
-                                                           VkSurfacePresentScalingCapabilitiesKHR* pSurfacePresentScalingCapabilities);
+VkResult cvkGetPhysicalDeviceSurfacePresentScalingCapabilities(VkPhysicalDevice                        physicalDevice,
+                                                               const void*                             pSurfaceInfoNext,
+                                                               VkSurfaceKHR                            surface,
+                                                               void*                                   pSurfacePresentScalingCapabilitiesNext,
+                                                               VkSurfacePresentScalingCapabilitiesKHR* pSurfacePresentScalingCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceProtectedCapabilitiesKHR chained to the output.
  *
@@ -45304,13 +45304,13 @@ void cvkGetPhysicalDeviceSurfacePresentScalingCapabilities(VkPhysicalDevice     
  * \param[in] pSurfaceProtectedCapabilitiesNext  Optional output extension chain attached to VkSurfaceProtectedCapabilitiesKHR, or NULL
  * \param[out] pSurfaceProtectedCapabilities      Receives the VkSurfaceProtectedCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSurfaceProtectedCapabilities(VkPhysicalDevice                   physicalDevice,
-                                                      const void*                        pSurfaceInfoNext,
-                                                      VkSurfaceKHR                       surface,
-                                                      void*                              pSurfaceProtectedCapabilitiesNext,
-                                                      VkSurfaceProtectedCapabilitiesKHR* pSurfaceProtectedCapabilities);
+VkResult cvkGetPhysicalDeviceSurfaceProtectedCapabilities(VkPhysicalDevice                   physicalDevice,
+                                                          const void*                        pSurfaceInfoNext,
+                                                          VkSurfaceKHR                       surface,
+                                                          void*                              pSurfaceProtectedCapabilitiesNext,
+                                                          VkSurfaceProtectedCapabilitiesKHR* pSurfaceProtectedCapabilities);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSwapchainFlagsSurfaceCapabilitiesEXT chained to the output.
  *
@@ -45320,13 +45320,13 @@ void cvkGetPhysicalDeviceSurfaceProtectedCapabilities(VkPhysicalDevice          
  * \param[in] pSwapchainFlagsSurfaceCapabilitiesNext  Optional output extension chain attached to VkSwapchainFlagsSurfaceCapabilitiesEXT, or NULL
  * \param[out] pSwapchainFlagsSurfaceCapabilities      Receives the VkSwapchainFlagsSurfaceCapabilitiesEXT
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceSwapchainFlagsSurfaceCapabilities(VkPhysicalDevice                        physicalDevice,
-                                                           const void*                             pSurfaceInfoNext,
-                                                           VkSurfaceKHR                            surface,
-                                                           void*                                   pSwapchainFlagsSurfaceCapabilitiesNext,
-                                                           VkSwapchainFlagsSurfaceCapabilitiesEXT* pSwapchainFlagsSurfaceCapabilities);
+VkResult cvkGetPhysicalDeviceSwapchainFlagsSurfaceCapabilities(VkPhysicalDevice                        physicalDevice,
+                                                               const void*                             pSurfaceInfoNext,
+                                                               VkSurfaceKHR                            surface,
+                                                               void*                                   pSwapchainFlagsSurfaceCapabilitiesNext,
+                                                               VkSwapchainFlagsSurfaceCapabilitiesEXT* pSwapchainFlagsSurfaceCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeAV1CapabilitiesKHR chained to the output.
  *
@@ -45340,17 +45340,17 @@ void cvkGetPhysicalDeviceSwapchainFlagsSurfaceCapabilities(VkPhysicalDevice     
  * \param[in] pVideoDecodeAV1CapabilitiesNext  Optional output extension chain attached to VkVideoDecodeAV1CapabilitiesKHR, or NULL
  * \param[out] pVideoDecodeAV1Capabilities      Receives the VkVideoDecodeAV1CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoDecodeAV1Capabilities(VkInstance                       instance,
-                                                    VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pVideoProfileNext,
-                                                    VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                    VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                    VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                    VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                    void*                            pVideoDecodeAV1CapabilitiesNext,
-                                                    VkVideoDecodeAV1CapabilitiesKHR* pVideoDecodeAV1Capabilities);
+VkResult cvkGetPhysicalDeviceVideoDecodeAV1Capabilities(VkInstance                       instance,
+                                                        VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pVideoProfileNext,
+                                                        VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                        VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                        VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                        VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                        void*                            pVideoDecodeAV1CapabilitiesNext,
+                                                        VkVideoDecodeAV1CapabilitiesKHR* pVideoDecodeAV1Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeCapabilitiesKHR chained to the output.
  *
@@ -45364,17 +45364,17 @@ void cvkGetPhysicalDeviceVideoDecodeAV1Capabilities(VkInstance                  
  * \param[in] pVideoDecodeCapabilitiesNext  Optional output extension chain attached to VkVideoDecodeCapabilitiesKHR, or NULL
  * \param[out] pVideoDecodeCapabilities      Receives the VkVideoDecodeCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoDecodeCapabilities(VkInstance                       instance,
-                                                 VkPhysicalDevice                 physicalDevice,
-                                                 const void*                      pVideoProfileNext,
-                                                 VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                 VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                 VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                 VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                 void*                            pVideoDecodeCapabilitiesNext,
-                                                 VkVideoDecodeCapabilitiesKHR*    pVideoDecodeCapabilities);
+VkResult cvkGetPhysicalDeviceVideoDecodeCapabilities(VkInstance                       instance,
+                                                     VkPhysicalDevice                 physicalDevice,
+                                                     const void*                      pVideoProfileNext,
+                                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                     void*                            pVideoDecodeCapabilitiesNext,
+                                                     VkVideoDecodeCapabilitiesKHR*    pVideoDecodeCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeH264CapabilitiesKHR chained to the output.
  *
@@ -45388,17 +45388,17 @@ void cvkGetPhysicalDeviceVideoDecodeCapabilities(VkInstance                     
  * \param[in] pVideoDecodeH264CapabilitiesNext  Optional output extension chain attached to VkVideoDecodeH264CapabilitiesKHR, or NULL
  * \param[out] pVideoDecodeH264Capabilities      Receives the VkVideoDecodeH264CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoDecodeH264Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoDecodeH264CapabilitiesNext,
-                                                     VkVideoDecodeH264CapabilitiesKHR* pVideoDecodeH264Capabilities);
+VkResult cvkGetPhysicalDeviceVideoDecodeH264Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoDecodeH264CapabilitiesNext,
+                                                         VkVideoDecodeH264CapabilitiesKHR* pVideoDecodeH264Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeH265CapabilitiesKHR chained to the output.
  *
@@ -45412,17 +45412,17 @@ void cvkGetPhysicalDeviceVideoDecodeH264Capabilities(VkInstance                 
  * \param[in] pVideoDecodeH265CapabilitiesNext  Optional output extension chain attached to VkVideoDecodeH265CapabilitiesKHR, or NULL
  * \param[out] pVideoDecodeH265Capabilities      Receives the VkVideoDecodeH265CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoDecodeH265Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoDecodeH265CapabilitiesNext,
-                                                     VkVideoDecodeH265CapabilitiesKHR* pVideoDecodeH265Capabilities);
+VkResult cvkGetPhysicalDeviceVideoDecodeH265Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoDecodeH265CapabilitiesNext,
+                                                         VkVideoDecodeH265CapabilitiesKHR* pVideoDecodeH265Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoDecodeVP9CapabilitiesKHR chained to the output.
  *
@@ -45436,17 +45436,17 @@ void cvkGetPhysicalDeviceVideoDecodeH265Capabilities(VkInstance                 
  * \param[in] pVideoDecodeVP9CapabilitiesNext  Optional output extension chain attached to VkVideoDecodeVP9CapabilitiesKHR, or NULL
  * \param[out] pVideoDecodeVP9Capabilities      Receives the VkVideoDecodeVP9CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoDecodeVP9Capabilities(VkInstance                       instance,
-                                                    VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pVideoProfileNext,
-                                                    VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                    VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                    VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                    VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                    void*                            pVideoDecodeVP9CapabilitiesNext,
-                                                    VkVideoDecodeVP9CapabilitiesKHR* pVideoDecodeVP9Capabilities);
+VkResult cvkGetPhysicalDeviceVideoDecodeVP9Capabilities(VkInstance                       instance,
+                                                        VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pVideoProfileNext,
+                                                        VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                        VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                        VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                        VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                        void*                            pVideoDecodeVP9CapabilitiesNext,
+                                                        VkVideoDecodeVP9CapabilitiesKHR* pVideoDecodeVP9Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeAV1CapabilitiesKHR chained to the output.
  *
@@ -45460,17 +45460,17 @@ void cvkGetPhysicalDeviceVideoDecodeVP9Capabilities(VkInstance                  
  * \param[in] pVideoEncodeAV1CapabilitiesNext  Optional output extension chain attached to VkVideoEncodeAV1CapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeAV1Capabilities      Receives the VkVideoEncodeAV1CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeAV1Capabilities(VkInstance                       instance,
-                                                    VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pVideoProfileNext,
-                                                    VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                    VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                    VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                    VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                    void*                            pVideoEncodeAV1CapabilitiesNext,
-                                                    VkVideoEncodeAV1CapabilitiesKHR* pVideoEncodeAV1Capabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeAV1Capabilities(VkInstance                       instance,
+                                                        VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pVideoProfileNext,
+                                                        VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                        VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                        VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                        VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                        void*                            pVideoEncodeAV1CapabilitiesNext,
+                                                        VkVideoEncodeAV1CapabilitiesKHR* pVideoEncodeAV1Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeAV1QuantizationMapCapabilitiesKHR chained to the output.
  *
@@ -45484,17 +45484,17 @@ void cvkGetPhysicalDeviceVideoEncodeAV1Capabilities(VkInstance                  
  * \param[in] pVideoEncodeAV1QuantizationMapCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeAV1QuantizationMapCapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeAV1QuantizationMapCapabilities      Receives the VkVideoEncodeAV1QuantizationMapCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeAV1QuantizationMapCapabilities(VkInstance                                      instance,
-                                                                   VkPhysicalDevice                                physicalDevice,
-                                                                   const void*                                     pVideoProfileNext,
-                                                                   VkVideoCodecOperationFlagBitsKHR                videoCodecOperation,
-                                                                   VkVideoChromaSubsamplingFlagsKHR                chromaSubsampling,
-                                                                   VkVideoComponentBitDepthFlagsKHR                lumaBitDepth,
-                                                                   VkVideoComponentBitDepthFlagsKHR                chromaBitDepth,
-                                                                   void*                                           pVideoEncodeAV1QuantizationMapCapabilitiesNext,
-                                                                   VkVideoEncodeAV1QuantizationMapCapabilitiesKHR* pVideoEncodeAV1QuantizationMapCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeAV1QuantizationMapCapabilities(VkInstance                                      instance,
+                                                                       VkPhysicalDevice                                physicalDevice,
+                                                                       const void*                                     pVideoProfileNext,
+                                                                       VkVideoCodecOperationFlagBitsKHR                videoCodecOperation,
+                                                                       VkVideoChromaSubsamplingFlagsKHR                chromaSubsampling,
+                                                                       VkVideoComponentBitDepthFlagsKHR                lumaBitDepth,
+                                                                       VkVideoComponentBitDepthFlagsKHR                chromaBitDepth,
+                                                                       void*                                           pVideoEncodeAV1QuantizationMapCapabilitiesNext,
+                                                                       VkVideoEncodeAV1QuantizationMapCapabilitiesKHR* pVideoEncodeAV1QuantizationMapCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeCapabilitiesKHR chained to the output.
  *
@@ -45508,17 +45508,17 @@ void cvkGetPhysicalDeviceVideoEncodeAV1QuantizationMapCapabilities(VkInstance   
  * \param[in] pVideoEncodeCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeCapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeCapabilities      Receives the VkVideoEncodeCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeCapabilities(VkInstance                       instance,
-                                                 VkPhysicalDevice                 physicalDevice,
-                                                 const void*                      pVideoProfileNext,
-                                                 VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                 VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                 VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                 VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                 void*                            pVideoEncodeCapabilitiesNext,
-                                                 VkVideoEncodeCapabilitiesKHR*    pVideoEncodeCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeCapabilities(VkInstance                       instance,
+                                                     VkPhysicalDevice                 physicalDevice,
+                                                     const void*                      pVideoProfileNext,
+                                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                     void*                            pVideoEncodeCapabilitiesNext,
+                                                     VkVideoEncodeCapabilitiesKHR*    pVideoEncodeCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeFeedback2CapabilitiesKHR chained to the output.
  *
@@ -45532,17 +45532,17 @@ void cvkGetPhysicalDeviceVideoEncodeCapabilities(VkInstance                     
  * \param[in] pVideoEncodeFeedback2CapabilitiesNext  Optional output extension chain attached to VkVideoEncodeFeedback2CapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeFeedback2Capabilities      Receives the VkVideoEncodeFeedback2CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeFeedback2Capabilities(VkInstance                             instance,
-                                                          VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pVideoProfileNext,
-                                                          VkVideoCodecOperationFlagBitsKHR       videoCodecOperation,
-                                                          VkVideoChromaSubsamplingFlagsKHR       chromaSubsampling,
-                                                          VkVideoComponentBitDepthFlagsKHR       lumaBitDepth,
-                                                          VkVideoComponentBitDepthFlagsKHR       chromaBitDepth,
-                                                          void*                                  pVideoEncodeFeedback2CapabilitiesNext,
-                                                          VkVideoEncodeFeedback2CapabilitiesKHR* pVideoEncodeFeedback2Capabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeFeedback2Capabilities(VkInstance                             instance,
+                                                              VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pVideoProfileNext,
+                                                              VkVideoCodecOperationFlagBitsKHR       videoCodecOperation,
+                                                              VkVideoChromaSubsamplingFlagsKHR       chromaSubsampling,
+                                                              VkVideoComponentBitDepthFlagsKHR       lumaBitDepth,
+                                                              VkVideoComponentBitDepthFlagsKHR       chromaBitDepth,
+                                                              void*                                  pVideoEncodeFeedback2CapabilitiesNext,
+                                                              VkVideoEncodeFeedback2CapabilitiesKHR* pVideoEncodeFeedback2Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeH264CapabilitiesKHR chained to the output.
  *
@@ -45556,17 +45556,17 @@ void cvkGetPhysicalDeviceVideoEncodeFeedback2Capabilities(VkInstance            
  * \param[in] pVideoEncodeH264CapabilitiesNext  Optional output extension chain attached to VkVideoEncodeH264CapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeH264Capabilities      Receives the VkVideoEncodeH264CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeH264Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoEncodeH264CapabilitiesNext,
-                                                     VkVideoEncodeH264CapabilitiesKHR* pVideoEncodeH264Capabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeH264Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoEncodeH264CapabilitiesNext,
+                                                         VkVideoEncodeH264CapabilitiesKHR* pVideoEncodeH264Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeH264QuantizationMapCapabilitiesKHR chained to the output.
  *
@@ -45580,17 +45580,17 @@ void cvkGetPhysicalDeviceVideoEncodeH264Capabilities(VkInstance                 
  * \param[in] pVideoEncodeH264QuantizationMapCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeH264QuantizationMapCapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeH264QuantizationMapCapabilities      Receives the VkVideoEncodeH264QuantizationMapCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeH264QuantizationMapCapabilities(VkInstance                                       instance,
-                                                                    VkPhysicalDevice                                 physicalDevice,
-                                                                    const void*                                      pVideoProfileNext,
-                                                                    VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
-                                                                    VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
-                                                                    void*                                            pVideoEncodeH264QuantizationMapCapabilitiesNext,
-                                                                    VkVideoEncodeH264QuantizationMapCapabilitiesKHR* pVideoEncodeH264QuantizationMapCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeH264QuantizationMapCapabilities(VkInstance                                       instance,
+                                                                        VkPhysicalDevice                                 physicalDevice,
+                                                                        const void*                                      pVideoProfileNext,
+                                                                        VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
+                                                                        VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
+                                                                        void*                                            pVideoEncodeH264QuantizationMapCapabilitiesNext,
+                                                                        VkVideoEncodeH264QuantizationMapCapabilitiesKHR* pVideoEncodeH264QuantizationMapCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeH265CapabilitiesKHR chained to the output.
  *
@@ -45604,17 +45604,17 @@ void cvkGetPhysicalDeviceVideoEncodeH264QuantizationMapCapabilities(VkInstance  
  * \param[in] pVideoEncodeH265CapabilitiesNext  Optional output extension chain attached to VkVideoEncodeH265CapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeH265Capabilities      Receives the VkVideoEncodeH265CapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeH265Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoEncodeH265CapabilitiesNext,
-                                                     VkVideoEncodeH265CapabilitiesKHR* pVideoEncodeH265Capabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeH265Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoEncodeH265CapabilitiesNext,
+                                                         VkVideoEncodeH265CapabilitiesKHR* pVideoEncodeH265Capabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeH265QuantizationMapCapabilitiesKHR chained to the output.
  *
@@ -45628,17 +45628,17 @@ void cvkGetPhysicalDeviceVideoEncodeH265Capabilities(VkInstance                 
  * \param[in] pVideoEncodeH265QuantizationMapCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeH265QuantizationMapCapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeH265QuantizationMapCapabilities      Receives the VkVideoEncodeH265QuantizationMapCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeH265QuantizationMapCapabilities(VkInstance                                       instance,
-                                                                    VkPhysicalDevice                                 physicalDevice,
-                                                                    const void*                                      pVideoProfileNext,
-                                                                    VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
-                                                                    VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
-                                                                    void*                                            pVideoEncodeH265QuantizationMapCapabilitiesNext,
-                                                                    VkVideoEncodeH265QuantizationMapCapabilitiesKHR* pVideoEncodeH265QuantizationMapCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeH265QuantizationMapCapabilities(VkInstance                                       instance,
+                                                                        VkPhysicalDevice                                 physicalDevice,
+                                                                        const void*                                      pVideoProfileNext,
+                                                                        VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
+                                                                        VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
+                                                                        void*                                            pVideoEncodeH265QuantizationMapCapabilitiesNext,
+                                                                        VkVideoEncodeH265QuantizationMapCapabilitiesKHR* pVideoEncodeH265QuantizationMapCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeIntraRefreshCapabilitiesKHR chained to the output.
  *
@@ -45652,17 +45652,17 @@ void cvkGetPhysicalDeviceVideoEncodeH265QuantizationMapCapabilities(VkInstance  
  * \param[in] pVideoEncodeIntraRefreshCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeIntraRefreshCapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeIntraRefreshCapabilities      Receives the VkVideoEncodeIntraRefreshCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeIntraRefreshCapabilities(VkInstance                                instance,
-                                                             VkPhysicalDevice                          physicalDevice,
-                                                             const void*                               pVideoProfileNext,
-                                                             VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
-                                                             VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
-                                                             VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
-                                                             VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
-                                                             void*                                     pVideoEncodeIntraRefreshCapabilitiesNext,
-                                                             VkVideoEncodeIntraRefreshCapabilitiesKHR* pVideoEncodeIntraRefreshCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeIntraRefreshCapabilities(VkInstance                                instance,
+                                                                 VkPhysicalDevice                          physicalDevice,
+                                                                 const void*                               pVideoProfileNext,
+                                                                 VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
+                                                                 VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
+                                                                 VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
+                                                                 VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
+                                                                 void*                                     pVideoEncodeIntraRefreshCapabilitiesNext,
+                                                                 VkVideoEncodeIntraRefreshCapabilitiesKHR* pVideoEncodeIntraRefreshCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeQuantizationMapCapabilitiesKHR chained to the output.
  *
@@ -45676,17 +45676,17 @@ void cvkGetPhysicalDeviceVideoEncodeIntraRefreshCapabilities(VkInstance         
  * \param[in] pVideoEncodeQuantizationMapCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeQuantizationMapCapabilitiesKHR, or NULL
  * \param[out] pVideoEncodeQuantizationMapCapabilities      Receives the VkVideoEncodeQuantizationMapCapabilitiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeQuantizationMapCapabilities(VkInstance                                   instance,
-                                                                VkPhysicalDevice                             physicalDevice,
-                                                                const void*                                  pVideoProfileNext,
-                                                                VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
-                                                                VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
-                                                                VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
-                                                                VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
-                                                                void*                                        pVideoEncodeQuantizationMapCapabilitiesNext,
-                                                                VkVideoEncodeQuantizationMapCapabilitiesKHR* pVideoEncodeQuantizationMapCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeQuantizationMapCapabilities(VkInstance                                   instance,
+                                                                    VkPhysicalDevice                             physicalDevice,
+                                                                    const void*                                  pVideoProfileNext,
+                                                                    VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
+                                                                    VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
+                                                                    VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
+                                                                    VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
+                                                                    void*                                        pVideoEncodeQuantizationMapCapabilitiesNext,
+                                                                    VkVideoEncodeQuantizationMapCapabilitiesKHR* pVideoEncodeQuantizationMapCapabilities);
 /**
  * \brief Retrieves physical device video capabilities with VkVideoEncodeRgbConversionCapabilitiesVALVE chained to the output.
  *
@@ -45700,17 +45700,17 @@ void cvkGetPhysicalDeviceVideoEncodeQuantizationMapCapabilities(VkInstance      
  * \param[in] pVideoEncodeRgbConversionCapabilitiesNext  Optional output extension chain attached to VkVideoEncodeRgbConversionCapabilitiesVALVE, or NULL
  * \param[out] pVideoEncodeRgbConversionCapabilities      Receives the VkVideoEncodeRgbConversionCapabilitiesVALVE
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeRgbConversionCapabilities(VkInstance                                   instance,
-                                                              VkPhysicalDevice                             physicalDevice,
-                                                              const void*                                  pVideoProfileNext,
-                                                              VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
-                                                              VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
-                                                              VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
-                                                              VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
-                                                              void*                                        pVideoEncodeRgbConversionCapabilitiesNext,
-                                                              VkVideoEncodeRgbConversionCapabilitiesVALVE* pVideoEncodeRgbConversionCapabilities);
+VkResult cvkGetPhysicalDeviceVideoEncodeRgbConversionCapabilities(VkInstance                                   instance,
+                                                                  VkPhysicalDevice                             physicalDevice,
+                                                                  const void*                                  pVideoProfileNext,
+                                                                  VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
+                                                                  VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
+                                                                  VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
+                                                                  VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
+                                                                  void*                                        pVideoEncodeRgbConversionCapabilitiesNext,
+                                                                  VkVideoEncodeRgbConversionCapabilitiesVALVE* pVideoEncodeRgbConversionCapabilities);
 /**
  * \brief Retrieves physical device video encode quality level properties with VkVideoEncodeAV1QualityLevelPropertiesKHR chained to the output.
  *
@@ -45722,15 +45722,15 @@ void cvkGetPhysicalDeviceVideoEncodeRgbConversionCapabilities(VkInstance        
  * \param[in] pVideoEncodeAV1QualityLevelPropertiesNext  Optional output extension chain attached to VkVideoEncodeAV1QualityLevelPropertiesKHR, or NULL
  * \param[out] pVideoEncodeAV1QualityLevelProperties      Receives the VkVideoEncodeAV1QualityLevelPropertiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeAV1QualityLevelProperties(VkInstance                                 instance,
-                                                              VkPhysicalDevice                           physicalDevice,
-                                                              const void*                                pQualityLevelInfoNext,
-                                                              const VkVideoProfileInfoKHR*               pVideoProfile,
-                                                              uint32_t                                   qualityLevel,
-                                                              void*                                      pVideoEncodeAV1QualityLevelPropertiesNext,
-                                                              VkVideoEncodeAV1QualityLevelPropertiesKHR* pVideoEncodeAV1QualityLevelProperties);
+VkResult cvkGetPhysicalDeviceVideoEncodeAV1QualityLevelProperties(VkInstance                                 instance,
+                                                                  VkPhysicalDevice                           physicalDevice,
+                                                                  const void*                                pQualityLevelInfoNext,
+                                                                  const VkVideoProfileInfoKHR*               pVideoProfile,
+                                                                  uint32_t                                   qualityLevel,
+                                                                  void*                                      pVideoEncodeAV1QualityLevelPropertiesNext,
+                                                                  VkVideoEncodeAV1QualityLevelPropertiesKHR* pVideoEncodeAV1QualityLevelProperties);
 /**
  * \brief Retrieves physical device video encode quality level properties with VkVideoEncodeH264QualityLevelPropertiesKHR chained to the output.
  *
@@ -45742,15 +45742,15 @@ void cvkGetPhysicalDeviceVideoEncodeAV1QualityLevelProperties(VkInstance        
  * \param[in] pVideoEncodeH264QualityLevelPropertiesNext  Optional output extension chain attached to VkVideoEncodeH264QualityLevelPropertiesKHR, or NULL
  * \param[out] pVideoEncodeH264QualityLevelProperties      Receives the VkVideoEncodeH264QualityLevelPropertiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeH264QualityLevelProperties(VkInstance                                  instance,
-                                                               VkPhysicalDevice                            physicalDevice,
-                                                               const void*                                 pQualityLevelInfoNext,
-                                                               const VkVideoProfileInfoKHR*                pVideoProfile,
-                                                               uint32_t                                    qualityLevel,
-                                                               void*                                       pVideoEncodeH264QualityLevelPropertiesNext,
-                                                               VkVideoEncodeH264QualityLevelPropertiesKHR* pVideoEncodeH264QualityLevelProperties);
+VkResult cvkGetPhysicalDeviceVideoEncodeH264QualityLevelProperties(VkInstance                                  instance,
+                                                                   VkPhysicalDevice                            physicalDevice,
+                                                                   const void*                                 pQualityLevelInfoNext,
+                                                                   const VkVideoProfileInfoKHR*                pVideoProfile,
+                                                                   uint32_t                                    qualityLevel,
+                                                                   void*                                       pVideoEncodeH264QualityLevelPropertiesNext,
+                                                                   VkVideoEncodeH264QualityLevelPropertiesKHR* pVideoEncodeH264QualityLevelProperties);
 /**
  * \brief Retrieves physical device video encode quality level properties with VkVideoEncodeH265QualityLevelPropertiesKHR chained to the output.
  *
@@ -45762,15 +45762,15 @@ void cvkGetPhysicalDeviceVideoEncodeH264QualityLevelProperties(VkInstance       
  * \param[in] pVideoEncodeH265QualityLevelPropertiesNext  Optional output extension chain attached to VkVideoEncodeH265QualityLevelPropertiesKHR, or NULL
  * \param[out] pVideoEncodeH265QualityLevelProperties      Receives the VkVideoEncodeH265QualityLevelPropertiesKHR
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkGetPhysicalDeviceVideoEncodeH265QualityLevelProperties(VkInstance                                  instance,
-                                                               VkPhysicalDevice                            physicalDevice,
-                                                               const void*                                 pQualityLevelInfoNext,
-                                                               const VkVideoProfileInfoKHR*                pVideoProfile,
-                                                               uint32_t                                    qualityLevel,
-                                                               void*                                       pVideoEncodeH265QualityLevelPropertiesNext,
-                                                               VkVideoEncodeH265QualityLevelPropertiesKHR* pVideoEncodeH265QualityLevelProperties);
+VkResult cvkGetPhysicalDeviceVideoEncodeH265QualityLevelProperties(VkInstance                                  instance,
+                                                                   VkPhysicalDevice                            physicalDevice,
+                                                                   const void*                                 pQualityLevelInfoNext,
+                                                                   const VkVideoProfileInfoKHR*                pVideoProfile,
+                                                                   uint32_t                                    qualityLevel,
+                                                                   void*                                       pVideoEncodeH265QualityLevelPropertiesNext,
+                                                                   VkVideoEncodeH265QualityLevelPropertiesKHR* pVideoEncodeH265QualityLevelProperties);
 /**
  * \brief Retrieves pipeline indirect memory requirements with VkMemoryDedicatedRequirements chained to the output.
  *
@@ -46054,57 +46054,6 @@ uint32_t cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkInstance    
                                                                   const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
                                                                   VkVideoFormatQuantizationMapPropertiesKHR pVideoFormatQuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
 /**
- * \brief Retrieves physical device video capabilities, returning the result instead of aborting on failure.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceVideoCapabilitiesKHR. Aborts on any error result.
- *
- * \param[in] instance        Parent handle used to resolve the extension command
- * \param[in] physicalDevice  VkPhysicalDevice value
- * \param[in] pVideoProfile   VkVideoProfileInfoKHR value
- * \param[in] pNext           Optional output extension chain attached to VkVideoCapabilitiesKHR, or NULL
- * \param[out] pCapabilities   Receives the VkVideoCapabilitiesKHR
- *
- * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR, VK_ERROR_UNKNOWN, VK_ERROR_VALIDATION_FAILED. Error results abort.
- */
-VkResult cvkTryGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities);
-/**
- * \brief Retrieves physical device image format properties 2, returning the result instead of aborting on failure.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceImageFormatProperties2. Aborts on any error result.
- *
- * \param[in] physicalDevice          VkPhysicalDevice value
- * \param[in] pImageFormatInfo        VkPhysicalDeviceImageFormatInfo2 value
- * \param[in] pNext                   Optional output extension chain attached to VkImageFormatProperties2, or NULL
- * \param[out] pImageFormatProperties  Receives the VkImageFormatProperties2
- *
- * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_FORMAT_NOT_SUPPORTED, VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR, VK_ERROR_UNKNOWN, VK_ERROR_VALIDATION_FAILED. Error results abort.
- */
-VkResult cvkTryGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
-                                                       const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-                                                       void*                                   pNext,
-                                                       VkImageFormatProperties2*               pImageFormatProperties);
-/**
- * \brief Retrieves physical device video encode quality level properties, returning the result instead of aborting on failure.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR. Aborts on any error result.
- *
- * \param[in] instance                 Parent handle used to resolve the extension command
- * \param[in] physicalDevice           VkPhysicalDevice value
- * \param[in] pQualityLevelInfo        VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR value
- * \param[in] pNext                    Optional output extension chain attached to VkVideoEncodeQualityLevelPropertiesKHR, or NULL
- * \param[out] pQualityLevelProperties  Receives the VkVideoEncodeQualityLevelPropertiesKHR
- *
- * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR, VK_ERROR_UNKNOWN, VK_ERROR_VALIDATION_FAILED. Error results abort.
- */
-VkResult cvkTryGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
-                                                                  VkPhysicalDevice                                      physicalDevice,
-                                                                  const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
-                                                                  void*                                                 pNext,
-                                                                  VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties);
-/**
  * \brief Returns the first memory type in the mask whose property flags equal the given flags exactly, or VK_INVALID.
  *
  * \param[in] memoryTypeCount  memoryTypeCount value
@@ -46218,7 +46167,7 @@ VkBool32 cvkGetPhysicalDeviceExtensionSupport(VkPhysicalDevice physicalDevice, c
  */
 uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkQueueFlags requiredFlags);
 /**
- * \brief Reports whether an image description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.
+ * \brief Reports whether the format is supported and an image description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.
  *
  * \param[in] physicalDevice        See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] handleType            See cvkInitPhysicalDeviceExternalImageFormatInfo
@@ -46242,7 +46191,7 @@ VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice        
                                                         const void*                        pImageFormatInfoNext,
                                                         VkBool32*                          pDedicatedOnly);
 /**
- * \brief Reports whether an image description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.
+ * \brief Reports whether the format is supported and an image description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.
  *
  * \param[in] physicalDevice        See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] handleType            See cvkInitPhysicalDeviceExternalImageFormatInfo
@@ -46795,32 +46744,32 @@ void cvkCreateComputePipelineLayout(VkDevice                     device,
  * \param[out] pPipelineLayout      Receives the created VkPipelineLayout
  * \param[out] pPipeline            Receives the created VkPipeline
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkSetupComputePipeline(VkDevice                         device,
-                             const void*                      pShaderModuleNext,
-                             size_t                           codeSize,
-                             const uint32_t*                  pCode,
-                             const VkSpecializationInfo*      pSpecializationInfo,
-                             const void*                      pPipelineLayoutNext,
-                             uint32_t                         setLayoutCount,
-                             const VkDescriptorSetLayout*     pSetLayouts,
-                             uint32_t                         pushConstantOffset,
-                             uint32_t                         pushConstantSize,
-                             VkPipelineCache                  pipelineCache,
-                             const void*                      pPipelineNext,
-                             VkPipelineCreateFlags            flags,
-                             VkPipeline                       basePipelineHandle,
-                             int32_t                          basePipelineIndex,
-                             VkShaderModuleCreateFlags        shaderModuleFlags,
-                             VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
-                             const void*                      pStageNext,
-                             VkPipelineShaderStageCreateFlags stageFlags,
-                             const char*                      pEntryPoint,
-                             const VkAllocationCallbacks*     pAllocator,
-                             VkShaderModule*                  pShaderModule,
-                             VkPipelineLayout*                pPipelineLayout,
-                             VkPipeline*                      pPipeline);
+VkResult cvkSetupComputePipeline(VkDevice                         device,
+                                 const void*                      pShaderModuleNext,
+                                 size_t                           codeSize,
+                                 const uint32_t*                  pCode,
+                                 const VkSpecializationInfo*      pSpecializationInfo,
+                                 const void*                      pPipelineLayoutNext,
+                                 uint32_t                         setLayoutCount,
+                                 const VkDescriptorSetLayout*     pSetLayouts,
+                                 uint32_t                         pushConstantOffset,
+                                 uint32_t                         pushConstantSize,
+                                 VkPipelineCache                  pipelineCache,
+                                 const void*                      pPipelineNext,
+                                 VkPipelineCreateFlags            flags,
+                                 VkPipeline                       basePipelineHandle,
+                                 int32_t                          basePipelineIndex,
+                                 VkShaderModuleCreateFlags        shaderModuleFlags,
+                                 VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
+                                 const void*                      pStageNext,
+                                 VkPipelineShaderStageCreateFlags stageFlags,
+                                 const char*                      pEntryPoint,
+                                 const VkAllocationCallbacks*     pAllocator,
+                                 VkShaderModule*                  pShaderModule,
+                                 VkPipelineLayout*                pPipelineLayout,
+                                 VkPipeline*                      pPipeline);
 /**
  * \brief Writes one descriptor binding.
  *
@@ -48650,48 +48599,48 @@ void cvkCmdSetFirstViewportAndScissor2D(VkCommandBuffer commandBuffer, VkExtent2
  * \param[out] pPipelineLayout              Receives the created VkPipelineLayout
  * \param[out] pPipeline                    Receives the created VkPipeline
  *
- * \retval None
+ * \return VK_SUCCESS or one of: . Error results abort.
  */
-void cvkSetupGraphicsPipeline(VkDevice                                      device,
-                              const void*                                   pPipelineLayoutNext,
-                              uint32_t                                      setLayoutCount,
-                              const VkDescriptorSetLayout*                  pSetLayouts,
-                              uint32_t                                      pushConstantOffset,
-                              uint32_t                                      pushConstantSize,
-                              VkPipelineCache                               pipelineCache,
-                              const void*                                   pPipelineNext,
-                              VkPipelineCreateFlags                         flags,
-                              const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
-                              const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
-                              const VkPipelineTessellationStateCreateInfo*  pTessellationState,
-                              const VkPipelineViewportStateCreateInfo*      pViewportState,
-                              const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
-                              const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
-                              const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
-                              const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
-                              const VkPipelineDynamicStateCreateInfo*       pDynamicState,
-                              VkRenderPass                                  renderPass,
-                              uint32_t                                      subpass,
-                              VkShaderModuleCreateFlags                     shaderModuleFlags,
-                              VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
-                              const void*                                   pVertexShaderModuleNext,
-                              size_t                                        vertexCodeSize,
-                              const uint32_t*                               pVertexCode,
-                              const void*                                   pFragmentShaderModuleNext,
-                              size_t                                        fragmentCodeSize,
-                              const uint32_t*                               pFragmentCode,
-                              const void*                                   pVertexStageNext,
-                              const void*                                   pFragmentStageNext,
-                              VkPipelineShaderStageCreateFlags              stageFlags,
-                              const char*                                   pVertexEntryPoint,
-                              const VkSpecializationInfo*                   pVertexSpecializationInfo,
-                              const char*                                   pFragmentEntryPoint,
-                              const VkSpecializationInfo*                   pFragmentSpecializationInfo,
-                              const VkAllocationCallbacks*                  pAllocator,
-                              VkShaderModule*                               pVertexShaderModule,
-                              VkShaderModule*                               pFragmentShaderModule,
-                              VkPipelineLayout*                             pPipelineLayout,
-                              VkPipeline*                                   pPipeline);
+VkResult cvkSetupGraphicsPipeline(VkDevice                                      device,
+                                  const void*                                   pPipelineLayoutNext,
+                                  uint32_t                                      setLayoutCount,
+                                  const VkDescriptorSetLayout*                  pSetLayouts,
+                                  uint32_t                                      pushConstantOffset,
+                                  uint32_t                                      pushConstantSize,
+                                  VkPipelineCache                               pipelineCache,
+                                  const void*                                   pPipelineNext,
+                                  VkPipelineCreateFlags                         flags,
+                                  const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                  const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                  const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                  const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                  const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                  const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                  const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                  const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                  const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                  VkRenderPass                                  renderPass,
+                                  uint32_t                                      subpass,
+                                  VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                  VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                  const void*                                   pVertexShaderModuleNext,
+                                  size_t                                        vertexCodeSize,
+                                  const uint32_t*                               pVertexCode,
+                                  const void*                                   pFragmentShaderModuleNext,
+                                  size_t                                        fragmentCodeSize,
+                                  const uint32_t*                               pFragmentCode,
+                                  const void*                                   pVertexStageNext,
+                                  const void*                                   pFragmentStageNext,
+                                  VkPipelineShaderStageCreateFlags              stageFlags,
+                                  const char*                                   pVertexEntryPoint,
+                                  const VkSpecializationInfo*                   pVertexSpecializationInfo,
+                                  const char*                                   pFragmentEntryPoint,
+                                  const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                  const VkAllocationCallbacks*                  pAllocator,
+                                  VkShaderModule*                               pVertexShaderModule,
+                                  VkShaderModule*                               pFragmentShaderModule,
+                                  VkPipelineLayout*                             pPipelineLayout,
+                                  VkPipeline*                                   pPipeline);
 /**
  * \brief Binds a graphics pipeline, its descriptor sets, and push constants, then draws vertices.
  *
@@ -48936,11 +48885,11 @@ uint32_t cvkGetPhysicalDeviceVideoDecodeQueueFamilyIndex(VkPhysicalDevice physic
  */
 uint32_t cvkGetPhysicalDeviceVideoEncodeQueueFamilyIndex(VkPhysicalDevice physicalDevice);
 /**
- * \brief Reports whether a video profile is supported, without aborting when it is not.
+ * \brief Reports whether a video profile is supported.
  *
- * \param[in] instance        See cvkTryGetPhysicalDeviceVideoCapabilities
- * \param[in] physicalDevice  See cvkTryGetPhysicalDeviceVideoCapabilities
- * \param[in] pVideoProfile   See cvkTryGetPhysicalDeviceVideoCapabilities
+ * \param[in] instance        See cvkGetPhysicalDeviceVideoCapabilities
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceVideoCapabilities
+ * \param[in] pVideoProfile   See cvkGetPhysicalDeviceVideoCapabilities
  *
  * \return The VkBool32 returned by the command.
  */

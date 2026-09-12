@@ -124,6 +124,7 @@ class Generator:
         self.sigs: Dict[str, Tuple[str, List[EmittedParam]]] = {}   # every emitted signature, for chains
         self.used_overrides: Set[str] = set()
         self.keep_suffix: Set[str] = set()
+        self.recoverable: Set[str] = set(policy.get("recoverable_errors", []))
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
@@ -469,17 +470,13 @@ class Generator:
                     out.append((cmd, arrays[0], ext))
         return out
 
-    def emit_tier0(self, cmd: Command, out_ext: Optional[Struct] = None, probe: bool = False) -> None:
-        """Tier 0 (SPEC.md section 4). With `probe`, the cvkTry twin of a VkResult command from
-        the policy's `try_commands`: it returns the result instead of aborting, so a caller can
-        test support that Vulkan reports as an error code. With `out_ext`, the output-array
-        extender form (section 6): the enumeration's element array is a local with the
-        extender chained to every element, and the extender array is the out-parameter."""
+    def emit_tier0(self, cmd: Command, out_ext: Optional[Struct] = None) -> None:
+        """Tier 0 (SPEC.md section 4). With `out_ext`, the output-array extender form
+        (section 6): the enumeration's element array is a local with the extender chained to
+        every element, and the extender array is the out-parameter."""
         reg = self.reg
         roles = self.roles(cmd)
-        if probe:
-            name = self.register("cvkTry" + self.cmd_name(cmd)[3:], cmd.name + ":try")
-        elif out_ext is not None:
+        if out_ext is not None:
             ap = next(p for p, r in zip(cmd.params, roles) if r == "P[]")
             name = self.register(self.output_array_name(cmd, ap, out_ext), f"{cmd.name}+{out_ext.name}:out[]")
         else:
@@ -595,6 +592,7 @@ class Generator:
         enum_args = {ext_arrays.get(q.name) and snake(q.name) or q.name for q, _ in enum_arrays}
 
         informational = [c for c in cmd.successcodes if c not in ("VK_SUCCESS",)]
+        recoverable = [c for c in cmd.errorcodes if c in self.recoverable] if not enum_count else []
         if enum_count:
             informational = [c for c in informational if c != "VK_INCOMPLETE"]
         ret = "void"
@@ -633,18 +631,17 @@ class Generator:
                 body.append(f"{call};")
             body += post
             body.append(f"return {count_var};")
-        elif cmd.return_type == "VkResult" and probe:
+        elif cmd.return_type == "VkResult" and (informational or recoverable):
+            # Result policy: an informational success code or a recoverable error (policy list:
+            # a support query's NOT_SUPPORTED, a swapchain's OUT_OF_DATE) is the caller's to read.
             ret = "VkResult"
             body.insert(0, "VkResult result;")
             body.append(f"result = {call};")
-            body += post
-            body.append("return result;")
-        elif cmd.return_type == "VkResult" and informational:
-            ret = "VkResult"
-            body.insert(0, "VkResult result;")
-            body.append(f"result = {call};")
-            body.append("CVK_ASSERT(0 <= result);")
-            body += post
+            body.append("CVK_ASSERT(" + " || ".join(["(0 <= result)"] + [f"({c} == result)" for c in recoverable]) + ");")
+            if post and recoverable:
+                body += ["if (0 <= result)", "{"] + ["    " + l for l in post] + ["}"]
+            else:
+                body += post
             body.append("return result;")
         elif cmd.return_type == "VkResult":
             body.append(f"CVK_CHECK({call});")
@@ -688,13 +685,10 @@ class Generator:
 
         brief = self.brief(cmd)
         plats = self.platforms_for(cmd.extensions, cmd.core_version)
-        if probe:
-            brief = f"{brief[:-1]}, returning the result instead of aborting on failure."
-            informational = [c for c in cmd.errorcodes + cmd.successcodes if c != "VK_SUCCESS"]
-        elif out_ext is not None:
+        if out_ext is not None:
             brief = f"{brief[:-1]} with {out_ext.name} chained to every element."
             plats = plats | self.platforms_for(out_ext.extensions, out_ext.core_version)
-        doc = self.doc_block(brief, params, ret, cmd, informational if ret == "VkResult" else [])
+        doc = self.doc_block(brief, params, ret, cmd, informational + recoverable if ret == "VkResult" else [])
         sig = self.signature(ret, name, params)
         self.sigs[name] = (ret, params)
         self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
@@ -1492,6 +1486,8 @@ class Generator:
                 available[var.replace("_", "")] = var          # matched by stem below
                 available[stem("p" + "".join(w.capitalize() for w in var.split("_")))] = var
                 body.append(f"{var} = {call};")
+            elif sret == "VkResult":
+                self.errors.append(f"chain {name}: step {fn} returns VkResult; route it with return, into, or store")
             else:
                 body.append(f"{call};")
 
@@ -1591,14 +1587,6 @@ class Generator:
         # Gap 3: extenders on the element struct of a two-call enumeration (chained output array).
         for cmd, ap, ext in self.output_array_pairs():
             self.emit_tier0(cmd, out_ext=ext)
-        # Probe twins: policy-listed VkResult commands whose failure a caller may test.
-        by_name = {c.name: c for c in self.cmds}
-        for vk_name in self.policy.get("try_commands", []):
-            cmd = by_name.get(vk_name)
-            if cmd is None or cmd.return_type != "VkResult" or any(r == "n*" for r in self.roles(cmd)):
-                self.errors.append(f"try_commands: {vk_name} is not an in-profile, non-enumerating VkResult command")
-                continue
-            self.emit_tier0(cmd, probe=True)
         for f in self.FIXED:
             self.emit_fixed(f)
         # Chains and protocols compose each other: emit every chain whose steps are known,

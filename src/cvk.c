@@ -11787,7 +11787,7 @@ VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR
     acquire_info.fence      = fence;
     acquire_info.deviceMask = deviceMask;
     result                  = vkAcquireNextImage2KHR(device, &acquire_info, pImageIndex);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 VkResult cvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
@@ -11795,7 +11795,7 @@ VkResult cvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_t
     VkResult result;
 
     result = vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 void cvkAcquirePerformanceConfiguration(VkDevice device, const void* pNext, VkPerformanceConfigurationTypeINTEL type, VkPerformanceConfigurationINTEL* pConfiguration)
@@ -11948,7 +11948,7 @@ VkResult cvkBuildAccelerationStructures(VkDevice                                
 
     function = (PFN_vkBuildAccelerationStructuresKHR)cvkGetDeviceProcAddr(device, "vkBuildAccelerationStructuresKHR");
     result   = function(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkBuildMicromaps(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos)
@@ -11958,7 +11958,7 @@ VkResult cvkBuildMicromaps(VkDevice device, VkDeferredOperationKHR deferredOpera
 
     function = (PFN_vkBuildMicromapsEXT)cvkGetDeviceProcAddr(device, "vkBuildMicromapsEXT");
     result   = function(device, deferredOperation, infoCount, pInfos);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkClearShaderInstrumentationMetrics(VkDevice device, VkShaderInstrumentationARM instrumentation)
@@ -14829,7 +14829,7 @@ VkResult cvkConvertCooperativeVectorMatrix(VkDevice                          dev
 
     function = (PFN_vkConvertCooperativeVectorMatrixNV)cvkGetDeviceProcAddr(device, "vkConvertCooperativeVectorMatrixNV");
     result   = function(device, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCopyAccelerationStructure(VkDevice                           device,
@@ -14851,7 +14851,7 @@ VkResult cvkCopyAccelerationStructure(VkDevice                           device,
 
     function = (PFN_vkCopyAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCopyAccelerationStructureKHR");
     result   = function(device, deferredOperation, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCopyAccelerationStructureToMemory(VkDevice                           device,
@@ -14873,7 +14873,7 @@ VkResult cvkCopyAccelerationStructureToMemory(VkDevice                          
 
     function = (PFN_vkCopyAccelerationStructureToMemoryKHR)cvkGetDeviceProcAddr(device, "vkCopyAccelerationStructureToMemoryKHR");
     result   = function(device, deferredOperation, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCopyImageToImage(VkDevice             device,
@@ -14931,7 +14931,7 @@ VkResult cvkCopyMemoryToAccelerationStructure(VkDevice                          
 
     function = (PFN_vkCopyMemoryToAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCopyMemoryToAccelerationStructureKHR");
     result   = function(device, deferredOperation, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCopyMemoryToImage(VkDevice device, const void* pNext, VkHostImageCopyFlags flags, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkMemoryToImageCopy* pRegions)
@@ -14961,7 +14961,7 @@ VkResult cvkCopyMemoryToMicromap(VkDevice device, VkDeferredOperationKHR deferre
 
     function = (PFN_vkCopyMemoryToMicromapEXT)cvkGetDeviceProcAddr(device, "vkCopyMemoryToMicromapEXT");
     result   = function(device, deferredOperation, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCopyMicromap(VkDevice device, VkDeferredOperationKHR deferredOperation, const void* pNext, VkMicromapEXT src, VkMicromapEXT dst, VkCopyMicromapModeEXT mode)
@@ -14978,7 +14978,7 @@ VkResult cvkCopyMicromap(VkDevice device, VkDeferredOperationKHR deferredOperati
 
     function = (PFN_vkCopyMicromapEXT)cvkGetDeviceProcAddr(device, "vkCopyMicromapEXT");
     result   = function(device, deferredOperation, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCopyMicromapToMemory(VkDevice device, VkDeferredOperationKHR deferredOperation, const void* pNext, VkMicromapEXT src, VkDeviceOrHostAddressKHR dst, VkCopyMicromapModeEXT mode)
@@ -14995,7 +14995,7 @@ VkResult cvkCopyMicromapToMemory(VkDevice device, VkDeferredOperationKHR deferre
 
     function = (PFN_vkCopyMicromapToMemoryEXT)cvkGetDeviceProcAddr(device, "vkCopyMicromapToMemoryEXT");
     result   = function(device, deferredOperation, &info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCreateAccelerationStructure2(VkDevice                              device,
@@ -15134,7 +15134,7 @@ VkResult cvkCreateComputePipelines(VkDevice                           device,
     VkResult result;
 
     result = vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCreateCuFunction(VkDevice device, const void* pNext, VkCuModuleNVX module, const char* pName, const VkAllocationCallbacks* pAllocator, VkCuFunctionNVX* pFunction)
@@ -15197,7 +15197,7 @@ VkResult cvkCreateDataGraphPipelines(VkDevice                                dev
 
     function = (PFN_vkCreateDataGraphPipelinesARM)cvkGetDeviceProcAddr(device, "vkCreateDataGraphPipelinesARM");
     result   = function(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCreateDebugReportCallback(VkInstance                   instance,
@@ -15469,7 +15469,7 @@ VkResult cvkCreateGraphicsPipelines(VkDevice                            device,
     VkResult result;
 
     result = vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCreateHeadlessSurface(VkInstance instance, const void* pNext, VkHeadlessSurfaceCreateFlagsEXT flags, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
@@ -15725,7 +15725,7 @@ VkResult cvkCreatePipelineBinaries(VkDevice                              device,
 
     function = (PFN_vkCreatePipelineBinariesKHR)cvkGetDeviceProcAddr(device, "vkCreatePipelineBinariesKHR");
     result   = function(device, &create_info, pAllocator, &binaries);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     (*pBinaries) = binaries;
     return result;
 }
@@ -15812,7 +15812,7 @@ VkResult cvkCreateRayTracingPipelines(VkDevice                                 d
 
     function = (PFN_vkCreateRayTracingPipelinesKHR)cvkGetDeviceProcAddr(device, "vkCreateRayTracingPipelinesKHR");
     result   = function(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCreateRayTracingPipelinesNV(VkDevice                                device,
@@ -15827,7 +15827,7 @@ VkResult cvkCreateRayTracingPipelinesNV(VkDevice                                
 
     function = (PFN_vkCreateRayTracingPipelinesNV)cvkGetDeviceProcAddr(device, "vkCreateRayTracingPipelinesNV");
     result   = function(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkCreateRenderPass(VkDevice                       device,
@@ -16005,35 +16005,40 @@ VkResult cvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkSha
 
     function = (PFN_vkCreateShadersEXT)cvkGetDeviceProcAddr(device, "vkCreateShadersEXT");
     result   = function(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
-void cvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains)
+VkResult cvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, const VkSwapchainCreateInfoKHR* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkSwapchainKHR* pSwapchains)
 {
-    CVK_CHECK(vkCreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains));
+    VkResult result;
+
+    result = vkCreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
-void cvkCreateSwapchain(VkDevice                      device,
-                        const void*                   pNext,
-                        VkSwapchainCreateFlagsKHR     flags,
-                        VkSurfaceKHR                  surface,
-                        uint32_t                      minImageCount,
-                        VkFormat                      imageFormat,
-                        VkColorSpaceKHR               imageColorSpace,
-                        VkExtent2D                    imageExtent,
-                        uint32_t                      imageArrayLayers,
-                        VkImageUsageFlags             imageUsage,
-                        VkSharingMode                 imageSharingMode,
-                        uint32_t                      queueFamilyIndexCount,
-                        const uint32_t*               pQueueFamilyIndices,
-                        VkSurfaceTransformFlagBitsKHR preTransform,
-                        VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                        VkPresentModeKHR              presentMode,
-                        VkBool32                      clipped,
-                        VkSwapchainKHR                oldSwapchain,
-                        const VkAllocationCallbacks*  pAllocator,
-                        VkSwapchainKHR*               pSwapchain)
+VkResult cvkCreateSwapchain(VkDevice                      device,
+                            const void*                   pNext,
+                            VkSwapchainCreateFlagsKHR     flags,
+                            VkSurfaceKHR                  surface,
+                            uint32_t                      minImageCount,
+                            VkFormat                      imageFormat,
+                            VkColorSpaceKHR               imageColorSpace,
+                            VkExtent2D                    imageExtent,
+                            uint32_t                      imageArrayLayers,
+                            VkImageUsageFlags             imageUsage,
+                            VkSharingMode                 imageSharingMode,
+                            uint32_t                      queueFamilyIndexCount,
+                            const uint32_t*               pQueueFamilyIndices,
+                            VkSurfaceTransformFlagBitsKHR preTransform,
+                            VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                            VkPresentModeKHR              presentMode,
+                            VkBool32                      clipped,
+                            VkSwapchainKHR                oldSwapchain,
+                            const VkAllocationCallbacks*  pAllocator,
+                            VkSwapchainKHR*               pSwapchain)
 {
     VkSwapchainCreateInfoKHR create_info;
+    VkResult                 result;
 
     create_info.sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     create_info.pNext                 = pNext;
@@ -16053,8 +16058,13 @@ void cvkCreateSwapchain(VkDevice                      device,
     create_info.presentMode           = presentMode;
     create_info.clipped               = clipped;
     create_info.oldSwapchain          = oldSwapchain;
-    CVK_CHECK(vkCreateSwapchainKHR(device, &create_info, pAllocator, pSwapchain));
-    CVK_ASSERT(VK_NULL_HANDLE != (*pSwapchain));
+    result                            = vkCreateSwapchainKHR(device, &create_info, pAllocator, pSwapchain);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    if (0 <= result)
+    {
+        CVK_ASSERT(VK_NULL_HANDLE != (*pSwapchain));
+    }
+    return result;
 }
 void cvkCreateTensor(VkDevice                      device,
                      const void*                   pNext,
@@ -16219,7 +16229,7 @@ VkResult cvkDeferredOperationJoin(VkDevice device, VkDeferredOperationKHR operat
 
     function = (PFN_vkDeferredOperationJoinKHR)cvkGetDeviceProcAddr(device, "vkDeferredOperationJoinKHR");
     result   = function(device, operation);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkDestroyAccelerationStructure(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator)
@@ -16812,7 +16822,7 @@ VkResult cvkGetDataGraphPipelineProperties(VkDevice device, const VkDataGraphPip
 
     function = (PFN_vkGetDataGraphPipelinePropertiesARM)cvkGetDeviceProcAddr(device, "vkGetDataGraphPipelinePropertiesARM");
     result   = function(device, pPipelineInfo, propertiesCount, pProperties);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 uint32_t cvkGetDataGraphPipelineSessionBindPointRequirements(VkDevice                                                      device,
@@ -16862,7 +16872,7 @@ VkResult cvkGetDeferredOperationResult(VkDevice device, VkDeferredOperationKHR o
 
     function = (PFN_vkGetDeferredOperationResultKHR)cvkGetDeviceProcAddr(device, "vkGetDeferredOperationResultKHR");
     result   = function(device, operation);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkGetDescriptor(VkDevice device, const void* pNext, VkDescriptorType type, VkDescriptorDataEXT data, size_t dataSize, void* pDescriptor)
@@ -16988,7 +16998,7 @@ VkResult cvkGetDeviceFaultDebugInfo(VkDevice device, void* pNext, VkDeviceFaultD
 
     function = (PFN_vkGetDeviceFaultDebugInfoKHR)cvkGetDeviceProcAddr(device, "vkGetDeviceFaultDebugInfoKHR");
     result   = function(device, &debug_info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     (*pDebugInfo) = debug_info;
     return result;
 }
@@ -17007,7 +17017,7 @@ VkResult cvkGetDeviceFaultInfo(VkDevice device, void* pFaultCountsNext, VkDevice
 
     function = (PFN_vkGetDeviceFaultInfoEXT)cvkGetDeviceProcAddr(device, "vkGetDeviceFaultInfoEXT");
     result   = function(device, &fault_counts, &fault_info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     (*pFaultCounts) = fault_counts;
     (*pFaultInfo)   = fault_info;
     return result;
@@ -17044,9 +17054,13 @@ void cvkGetDeviceGroupPresentCapabilities(VkDevice device, void* pNext, VkDevice
     CVK_CHECK(vkGetDeviceGroupPresentCapabilitiesKHR(device, &device_group_present_capabilities));
     (*pDeviceGroupPresentCapabilities) = device_group_present_capabilities;
 }
-void cvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+VkResult cvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
-    CVK_CHECK(vkGetDeviceGroupSurfacePresentModesKHR(device, surface, pModes));
+    VkResult result;
+
+    result = vkGetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkGetDeviceImageMemoryRequirements(VkDevice                 device,
                                          const void*              pInfoNext,
@@ -17153,12 +17167,15 @@ void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateF
     vkGetDeviceQueue2(device, &queue_info, pQueue);
     CVK_ASSERT(VK_NULL_HANDLE != (*pQueue));
 }
-void cvkGetDeviceSubpassShadingMaxWorkgroupSize(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize)
+VkResult cvkGetDeviceSubpassShadingMaxWorkgroupSize(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize)
 {
     PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI function;
+    VkResult                                            result;
 
     function = (PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI)cvkGetDeviceProcAddr(device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI");
-    CVK_CHECK(function(device, renderpass, pMaxWorkgroupSize));
+    result   = function(device, renderpass, pMaxWorkgroupSize);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkGetDeviceTensorMemoryRequirements(VkDevice device, const void* pInfoNext, const VkTensorCreateInfoARM* pCreateInfo, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
 {
@@ -17261,7 +17278,7 @@ VkResult cvkGetEncodedVideoSessionParameters(VkDevice                           
 
     function = (PFN_vkGetEncodedVideoSessionParametersKHR)cvkGetDeviceProcAddr(device, "vkGetEncodedVideoSessionParametersKHR");
     result   = function(device, pVideoSessionParametersInfo, &feedback_info, pDataSize, pData);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     (*pFeedbackInfo) = feedback_info;
     return result;
 }
@@ -17270,7 +17287,7 @@ VkResult cvkGetEventStatus(VkDevice device, VkEvent event)
     VkResult result;
 
     result = vkGetEventStatus(device, event);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkGetExternalComputeQueueData(VkDevice device, VkExternalComputeQueueNV externalQueue, const void* pNext, uint32_t deviceIndex, void* pData)
@@ -17303,7 +17320,7 @@ VkResult cvkGetFenceStatus(VkDevice device, VkFence fence)
     VkResult result;
 
     result = vkGetFenceStatus(device, fence);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 uint32_t cvkGetFramebufferTileProperties(VkDevice device, VkFramebuffer framebuffer, VkTilePropertiesQCOM pProperties[CVK_MAX_PROPERTIES])
@@ -17668,8 +17685,11 @@ VkResult cvkGetPastPresentationTiming(VkDevice                               dev
 
     function = (PFN_vkGetPastPresentationTimingEXT)cvkGetDeviceProcAddr(device, "vkGetPastPresentationTimingEXT");
     result   = function(device, pPastPresentationTimingInfo, &past_presentation_timing_properties);
-    CVK_ASSERT(0 <= result);
-    (*pPastPresentationTimingProperties) = past_presentation_timing_properties;
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    if (0 <= result)
+    {
+        (*pPastPresentationTimingProperties) = past_presentation_timing_properties;
+    }
     return result;
 }
 uint32_t cvkGetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkPastPresentationTimingGOOGLE pPresentationTimings[CVK_MAX_PRESENTATION_TIMINGS])
@@ -17884,20 +17904,23 @@ void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice               
     vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, &external_fence_properties);
     (*pExternalFenceProperties) = external_fence_properties;
 }
-void cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance                         instance,
-                                                         VkPhysicalDevice                   physicalDevice,
-                                                         VkFormat                           format,
-                                                         VkImageType                        type,
-                                                         VkImageTiling                      tiling,
-                                                         VkImageUsageFlags                  usage,
-                                                         VkImageCreateFlags                 flags,
-                                                         VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
-                                                         VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties)
+VkResult cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance                         instance,
+                                                             VkPhysicalDevice                   physicalDevice,
+                                                             VkFormat                           format,
+                                                             VkImageType                        type,
+                                                             VkImageTiling                      tiling,
+                                                             VkImageUsageFlags                  usage,
+                                                             VkImageCreateFlags                 flags,
+                                                             VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
+                                                             VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties)
 {
     PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV function;
+    VkResult                                               result;
 
     function = (PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV");
-    CVK_CHECK(function(physicalDevice, format, type, tiling, usage, flags, externalHandleType, pExternalImageFormatProperties));
+    result   = function(physicalDevice, format, type, tiling, usage, flags, externalHandleType, pExternalImageFormatProperties);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
+    return result;
 }
 void cvkGetPhysicalDeviceExternalSemaphoreProperties(VkPhysicalDevice                             physicalDevice,
                                                      const VkPhysicalDeviceExternalSemaphoreInfo* pExternalSemaphoreInfo,
@@ -17972,27 +17995,39 @@ uint32_t cvkGetPhysicalDeviceFragmentShadingRates(VkInstance instance, VkPhysica
     CVK_CHECK(function(physicalDevice, &fragment_shading_rate_count, pFragmentShadingRates));
     return fragment_shading_rate_count;
 }
-void cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physicalDevice,
-                                               VkFormat                 format,
-                                               VkImageType              type,
-                                               VkImageTiling            tiling,
-                                               VkImageUsageFlags        usage,
-                                               VkImageCreateFlags       flags,
-                                               VkImageFormatProperties* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physicalDevice,
+                                                   VkFormat                 format,
+                                                   VkImageType              type,
+                                                   VkImageTiling            tiling,
+                                                   VkImageUsageFlags        usage,
+                                                   VkImageCreateFlags       flags,
+                                                   VkImageFormatProperties* pImageFormatProperties)
 {
-    CVK_CHECK(vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties));
+    VkResult result;
+
+    result = vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
+    return result;
 }
-void cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
-                                                const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-                                                void*                                   pNext,
-                                                VkImageFormatProperties2*               pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
+                                                    const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+                                                    void*                                   pNext,
+                                                    VkImageFormatProperties2*               pImageFormatProperties)
 {
     VkImageFormatProperties2 image_format_properties;
+    VkResult                 result;
 
     image_format_properties.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
     image_format_properties.pNext = pNext;
-    CVK_CHECK(vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties));
-    (*pImageFormatProperties) = image_format_properties;
+    result                        = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result) || (VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) ||
+               (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) ||
+               (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
+    if (0 <= result)
+    {
+        (*pImageFormatProperties) = image_format_properties;
+    }
+    return result;
 }
 void cvkGetPhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceMemoryProperties* pMemoryProperties)
 {
@@ -18259,27 +18294,43 @@ uint32_t cvkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinations(VkInst
     CVK_CHECK(function(physicalDevice, &combination_count, pCombinations));
     return combination_count;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities)
 {
     VkSurfaceCapabilities2EXT surface_capabilities;
+    VkResult                  result;
 
     surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
     surface_capabilities.pNext = pNext;
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &surface_capabilities));
-    (*pSurfaceCapabilities) = surface_capabilities;
+    result                     = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &surface_capabilities);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    if (0 <= result)
+    {
+        (*pSurfaceCapabilities) = surface_capabilities;
+    }
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, void* pNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, void* pNext, VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
 {
     VkSurfaceCapabilities2KHR surface_capabilities;
+    VkResult                  result;
 
     surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
     surface_capabilities.pNext = pNext;
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, &surface_capabilities));
-    (*pSurfaceCapabilities) = surface_capabilities;
+    result                     = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, &surface_capabilities);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    if (0 <= result)
+    {
+        (*pSurfaceCapabilities) = surface_capabilities;
+    }
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR* pSurfaceCapabilities)
 {
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities));
+    VkResult result;
+
+    result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFormats2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
@@ -18316,9 +18367,13 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice
     CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &present_mode_count, pPresentModes));
     return present_mode_count;
 }
-void cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
+VkResult cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
 {
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported));
+    VkResult result;
+
+    result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 uint32_t cvkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceToolProperties pToolProperties[CVK_MAX_TOOL_PROPERTIES])
 {
@@ -18337,33 +18392,47 @@ uint32_t cvkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, VkP
     CVK_CHECK(vkGetPhysicalDeviceToolProperties(physicalDevice, &tool_count, pToolProperties));
     return tool_count;
 }
-void cvkGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities)
+VkResult cvkGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities)
 {
     VkVideoCapabilitiesKHR                      capabilities;
     PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR function;
+    VkResult                                    result;
 
     capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
     capabilities.pNext = pNext;
 
     function = (PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR");
-    CVK_CHECK(function(physicalDevice, pVideoProfile, &capabilities));
-    (*pCapabilities) = capabilities;
+    result   = function(physicalDevice, pVideoProfile, &capabilities);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) ||
+               (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
+    if (0 <= result)
+    {
+        (*pCapabilities) = capabilities;
+    }
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
-                                                           VkPhysicalDevice                                      physicalDevice,
-                                                           const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
-                                                           void*                                                 pNext,
-                                                           VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties)
+VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
+                                                               VkPhysicalDevice                                      physicalDevice,
+                                                               const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
+                                                               void*                                                 pNext,
+                                                               VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties)
 {
     VkVideoEncodeQualityLevelPropertiesKHR                      quality_level_properties;
     PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR function;
+    VkResult                                                    result;
 
     quality_level_properties.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUALITY_LEVEL_PROPERTIES_KHR;
     quality_level_properties.pNext = pNext;
 
     function = (PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
-    CVK_CHECK(function(physicalDevice, pQualityLevelInfo, &quality_level_properties));
-    (*pQualityLevelProperties) = quality_level_properties;
+    result   = function(physicalDevice, pQualityLevelInfo, &quality_level_properties);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) ||
+               (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
+    if (0 <= result)
+    {
+        (*pQualityLevelProperties) = quality_level_properties;
+    }
+    return result;
 }
 uint32_t cvkGetPhysicalDeviceVideoFormatProperties(VkInstance                                instance,
                                                    VkPhysicalDevice                          physicalDevice,
@@ -18409,7 +18478,7 @@ VkResult cvkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache,
     VkResult result;
 
     result = vkGetPipelineCacheData(device, pipelineCache, pDataSize, pData);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 uint32_t cvkGetPipelineExecutableInternalRepresentations(VkDevice                                      device,
@@ -18550,7 +18619,7 @@ VkResult cvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t
     VkResult result;
 
     result = vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 uint32_t cvkGetQueueCheckpointData2(VkDevice device, VkQueue queue, VkCheckpointData2NV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
@@ -18612,12 +18681,15 @@ VkDeviceSize cvkGetRayTracingShaderGroupStackSize(VkDevice device, VkPipeline pi
     function = (PFN_vkGetRayTracingShaderGroupStackSizeKHR)cvkGetDeviceProcAddr(device, "vkGetRayTracingShaderGroupStackSizeKHR");
     return function(device, pipeline, group, groupShader);
 }
-void cvkGetRefreshCycleDuration(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties)
+VkResult cvkGetRefreshCycleDuration(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties)
 {
     PFN_vkGetRefreshCycleDurationGOOGLE function;
+    VkResult                            result;
 
     function = (PFN_vkGetRefreshCycleDurationGOOGLE)cvkGetDeviceProcAddr(device, "vkGetRefreshCycleDurationGOOGLE");
-    CVK_CHECK(function(device, swapchain, pDisplayTimingProperties));
+    result   = function(device, swapchain, pDisplayTimingProperties);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkGetRenderAreaGranularity(VkDevice device, VkRenderPass renderPass, VkExtent2D* pGranularity)
 {
@@ -18679,7 +18751,7 @@ VkResult cvkGetShaderBinaryData(VkDevice device, VkShaderEXT shader, size_t* pDa
 
     function = (PFN_vkGetShaderBinaryDataEXT)cvkGetDeviceProcAddr(device, "vkGetShaderBinaryDataEXT");
     result   = function(device, shader, pDataSize, pData);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkGetShaderInfo(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage, VkShaderInfoTypeAMD infoType, size_t* pInfoSize, void* pInfo)
@@ -18689,7 +18761,7 @@ VkResult cvkGetShaderInfo(VkDevice device, VkPipeline pipeline, VkShaderStageFla
 
     function = (PFN_vkGetShaderInfoAMD)cvkGetDeviceProcAddr(device, "vkGetShaderInfoAMD");
     result   = function(device, pipeline, shaderStage, infoType, pInfoSize, pInfo);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkGetShaderInstrumentationValues(VkDevice device, VkShaderInstrumentationARM instrumentation, uint32_t* pMetricBlockCount, void* pMetricValues, VkShaderInstrumentationValuesFlagsARM flags)
@@ -18699,7 +18771,7 @@ VkResult cvkGetShaderInstrumentationValues(VkDevice device, VkShaderInstrumentat
 
     function = (PFN_vkGetShaderInstrumentationValuesARM)cvkGetDeviceProcAddr(device, "vkGetShaderInstrumentationValuesARM");
     result   = function(device, instrumentation, pMetricBlockCount, pMetricValues, flags);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkGetShaderModuleCreateInfoIdentifier(VkDevice                     device,
@@ -18746,12 +18818,15 @@ void cvkGetSleepStatusLegacy(VkDevice device, VkBool32* pLowLatencyMode)
     function = (PFN_vkGetSleepStatusLegacyNV)cvkGetDeviceProcAddr(device, "vkGetSleepStatusLegacyNV");
     function(device, pLowLatencyMode);
 }
-void cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue)
+VkResult cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue)
 {
     PFN_vkGetSwapchainCounterEXT function;
+    VkResult                     result;
 
     function = (PFN_vkGetSwapchainCounterEXT)cvkGetDeviceProcAddr(device, "vkGetSwapchainCounterEXT");
-    CVK_CHECK(function(device, swapchain, counter, pCounterValue));
+    result   = function(device, swapchain, counter, pCounterValue);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result));
+    return result;
 }
 uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImage pSwapchainImages[CVK_MAX_SWAPCHAIN_IMAGES])
 {
@@ -18769,7 +18844,7 @@ VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
 
     function = (PFN_vkGetSwapchainStatusKHR)cvkGetDeviceProcAddr(device, "vkGetSwapchainStatusKHR");
     result   = function(device, swapchain);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 VkResult cvkGetSwapchainTimeDomainProperties(VkDevice device, VkSwapchainKHR swapchain, void* pNext, VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties, uint64_t* pTimeDomainsCounter)
@@ -18783,8 +18858,11 @@ VkResult cvkGetSwapchainTimeDomainProperties(VkDevice device, VkSwapchainKHR swa
 
     function = (PFN_vkGetSwapchainTimeDomainPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetSwapchainTimeDomainPropertiesEXT");
     result   = function(device, swapchain, &swapchain_time_domain_properties, pTimeDomainsCounter);
-    CVK_ASSERT(0 <= result);
-    (*pSwapchainTimeDomainProperties) = swapchain_time_domain_properties;
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    if (0 <= result)
+    {
+        (*pSwapchainTimeDomainProperties) = swapchain_time_domain_properties;
+    }
     return result;
 }
 VkResult cvkGetSwapchainTimingProperties(VkDevice                        device,
@@ -18802,8 +18880,11 @@ VkResult cvkGetSwapchainTimingProperties(VkDevice                        device,
 
     function = (PFN_vkGetSwapchainTimingPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetSwapchainTimingPropertiesEXT");
     result   = function(device, swapchain, &swapchain_timing_properties, pSwapchainTimingPropertiesCounter);
-    CVK_ASSERT(0 <= result);
-    (*pSwapchainTimingProperties) = swapchain_timing_properties;
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    if (0 <= result)
+    {
+        (*pSwapchainTimingProperties) = swapchain_timing_properties;
+    }
     return result;
 }
 void cvkGetTensorMemoryRequirements(VkDevice device, const VkTensorMemoryRequirementsInfoARM* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements)
@@ -18856,7 +18937,7 @@ VkResult cvkGetValidationCacheData(VkDevice device, VkValidationCacheEXT validat
 
     function = (PFN_vkGetValidationCacheDataEXT)cvkGetDeviceProcAddr(device, "vkGetValidationCacheDataEXT");
     result   = function(device, validationCache, pDataSize, pData);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 uint32_t cvkGetVideoSessionMemoryRequirements(VkDevice device, VkVideoSessionKHR videoSession, VkVideoSessionMemoryRequirementsKHR pMemoryRequirements[CVK_MAX_MEMORY_REQUIREMENTS])
@@ -19039,7 +19120,7 @@ VkResult cvkQueuePresent(VkQueue               queue,
     present_info.pImageIndices      = pImageIndices;
     present_info.pResults           = pResults;
     result                          = vkQueuePresentKHR(queue, &present_info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 void cvkQueueSetPerfHint(VkDevice device, VkQueue queue, void* pNext, VkPerfHintTypeQCOM type, uint32_t scale)
@@ -19143,10 +19224,11 @@ void cvkReleaseProfilingLock(VkDevice device)
     function = (PFN_vkReleaseProfilingLockKHR)cvkGetDeviceProcAddr(device, "vkReleaseProfilingLockKHR");
     function(device);
 }
-void cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndexCount, const uint32_t* pImageIndices)
+VkResult cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndexCount, const uint32_t* pImageIndices)
 {
     VkReleaseSwapchainImagesInfoKHR release_info;
     PFN_vkReleaseSwapchainImagesKHR function;
+    VkResult                        result;
 
     release_info.sType           = VK_STRUCTURE_TYPE_RELEASE_SWAPCHAIN_IMAGES_INFO_KHR;
     release_info.pNext           = pNext;
@@ -19155,7 +19237,9 @@ void cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapchainKH
     release_info.pImageIndices   = pImageIndices;
 
     function = (PFN_vkReleaseSwapchainImagesKHR)cvkGetDeviceProcAddr(device, "vkReleaseSwapchainImagesKHR");
-    CVK_CHECK(function(device, &release_info));
+    result   = function(device, &release_info);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags)
 {
@@ -19303,7 +19387,7 @@ VkResult cvkSetSwapchainPresentTimingQueueSize(VkDevice device, VkSwapchainKHR s
 
     function = (PFN_vkSetSwapchainPresentTimingQueueSizeEXT)cvkGetDeviceProcAddr(device, "vkSetSwapchainPresentTimingQueueSizeEXT");
     result   = function(device, swapchain, size);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkShutdownLatencyDeviceLegacy(VkDevice device)
@@ -19435,7 +19519,7 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
     VkResult result;
 
     result = vkWaitForFences(device, fenceCount, pFences, waitAll, timeout);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkWaitForPresent2(VkDevice device, VkSwapchainKHR swapchain, const void* pNext, uint64_t presentId, uint64_t timeout)
@@ -19451,7 +19535,7 @@ VkResult cvkWaitForPresent2(VkDevice device, VkSwapchainKHR swapchain, const voi
 
     function = (PFN_vkWaitForPresent2KHR)cvkGetDeviceProcAddr(device, "vkWaitForPresent2KHR");
     result   = function(device, swapchain, &present_wait2_info);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 VkResult cvkWaitForPresent(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout)
@@ -19461,7 +19545,7 @@ VkResult cvkWaitForPresent(VkDevice device, VkSwapchainKHR swapchain, uint64_t p
 
     function = (PFN_vkWaitForPresentKHR)cvkGetDeviceProcAddr(device, "vkWaitForPresentKHR");
     result   = function(device, swapchain, presentId, timeout);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout)
@@ -19476,7 +19560,7 @@ VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFl
     wait_info.pSemaphores    = pSemaphores;
     wait_info.pValues        = pValues;
     result                   = vkWaitSemaphores(device, &wait_info, timeout);
-    CVK_ASSERT(0 <= result);
+    CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkWriteAccelerationStructuresProperties(VkDevice                          device,
@@ -19865,15 +19949,15 @@ void cvkGetPhysicalDeviceExternalTensorInfo(VkInstance                         i
     external_tensor_info.handleType   = handleType;
     cvkGetPhysicalDeviceExternalTensorProperties(instance, physicalDevice, &external_tensor_info, pExternalTensorPropertiesNext, pExternalTensorProperties);
 }
-void cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physicalDevice,
-                                          const void*               pImageFormatInfoNext,
-                                          VkFormat                  format,
-                                          VkImageType               type,
-                                          VkImageTiling             tiling,
-                                          VkImageUsageFlags         usage,
-                                          VkImageCreateFlags        flags,
-                                          void*                     pImageFormatPropertiesNext,
-                                          VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physicalDevice,
+                                              const void*               pImageFormatInfoNext,
+                                              VkFormat                  format,
+                                              VkImageType               type,
+                                              VkImageTiling             tiling,
+                                              VkImageUsageFlags         usage,
+                                              VkImageCreateFlags        flags,
+                                              void*                     pImageFormatPropertiesNext,
+                                              VkImageFormatProperties2* pImageFormatProperties)
 {
     VkPhysicalDeviceImageFormatInfo2 image_format_info;
 
@@ -19884,7 +19968,7 @@ void cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physicalDevi
     image_format_info.tiling = tiling;
     image_format_info.usage  = usage;
     image_format_info.flags  = flags;
-    cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_info, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_info, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 uint32_t cvkGetOpticalFlowImageFormatInfo(VkInstance                           instance,
                                           VkPhysicalDevice                     physicalDevice,
@@ -19939,18 +20023,18 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
     format_info.tiling  = tiling;
     return cvkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, pProperties);
 }
-void cvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice           physicalDevice,
-                                                  const void*                pSurfaceInfoNext,
-                                                  VkSurfaceKHR               surface,
-                                                  void*                      pSurfaceCapabilitiesNext,
-                                                  VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice           physicalDevice,
+                                                      const void*                pSurfaceInfoNext,
+                                                      VkSurfaceKHR               surface,
+                                                      void*                      pSurfaceCapabilitiesNext,
+                                                      VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
 {
     VkPhysicalDeviceSurfaceInfo2KHR surface_info;
 
     surface_info.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
     surface_info.pNext   = pSurfaceInfoNext;
     surface_info.surface = surface;
-    cvkGetPhysicalDeviceSurfaceCapabilities2(physicalDevice, &surface_info, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
+    return cvkGetPhysicalDeviceSurfaceCapabilities2(physicalDevice, &surface_info, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFormats2Info(VkPhysicalDevice physicalDevice, const void* pNext, VkSurfaceKHR surface, VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
@@ -19961,15 +20045,15 @@ uint32_t cvkGetPhysicalDeviceSurfaceFormats2Info(VkPhysicalDevice physicalDevice
     surface_info.surface = surface;
     return cvkGetPhysicalDeviceSurfaceFormats2(physicalDevice, &surface_info, pSurfaceFormats);
 }
-void cvkGetVideoProfileInfo(VkInstance                       instance,
-                            VkPhysicalDevice                 physicalDevice,
-                            const void*                      pVideoProfileNext,
-                            VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                            VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                            VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                            VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                            void*                            pCapabilitiesNext,
-                            VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoProfileInfo(VkInstance                       instance,
+                                VkPhysicalDevice                 physicalDevice,
+                                const void*                      pVideoProfileNext,
+                                VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                void*                            pCapabilitiesNext,
+                                VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoProfileInfoKHR video_profile;
 
@@ -19979,15 +20063,15 @@ void cvkGetVideoProfileInfo(VkInstance                       instance,
     video_profile.chromaSubsampling   = chromaSubsampling;
     video_profile.lumaBitDepth        = lumaBitDepth;
     video_profile.chromaBitDepth      = chromaBitDepth;
-    cvkGetPhysicalDeviceVideoCapabilities(instance, physicalDevice, &video_profile, pCapabilitiesNext, pCapabilities);
+    return cvkGetPhysicalDeviceVideoCapabilities(instance, physicalDevice, &video_profile, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(VkInstance                              instance,
-                                                     VkPhysicalDevice                        physicalDevice,
-                                                     const void*                             pQualityLevelInfoNext,
-                                                     const VkVideoProfileInfoKHR*            pVideoProfile,
-                                                     uint32_t                                qualityLevel,
-                                                     void*                                   pQualityLevelPropertiesNext,
-                                                     VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties)
+VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(VkInstance                              instance,
+                                                         VkPhysicalDevice                        physicalDevice,
+                                                         const void*                             pQualityLevelInfoNext,
+                                                         const VkVideoProfileInfoKHR*            pVideoProfile,
+                                                         uint32_t                                qualityLevel,
+                                                         void*                                   pQualityLevelPropertiesNext,
+                                                         VkVideoEncodeQualityLevelPropertiesKHR* pQualityLevelProperties)
 {
     VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR quality_level_info;
 
@@ -19995,7 +20079,7 @@ void cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(VkInstance                 
     quality_level_info.pNext         = pQualityLevelInfoNext;
     quality_level_info.pVideoProfile = pVideoProfile;
     quality_level_info.qualityLevel  = qualityLevel;
-    cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(instance, physicalDevice, &quality_level_info, pQualityLevelPropertiesNext, pQualityLevelProperties);
+    return cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(instance, physicalDevice, &quality_level_info, pQualityLevelPropertiesNext, pQualityLevelProperties);
 }
 uint32_t cvkGetPhysicalDeviceVideoFormatInfo(VkInstance                 instance,
                                              VkPhysicalDevice           physicalDevice,
@@ -20567,26 +20651,26 @@ VkResult cvkCreateShader(VkDevice                     device,
     create_info.pSpecializationInfo    = pSpecializationInfo;
     return cvkCreateShaders(device, 1, &create_info, pAllocator, pShader);
 }
-void cvkCreateSharedSwapchain(VkDevice                      device,
-                              const void*                   pNext,
-                              VkSwapchainCreateFlagsKHR     flags,
-                              VkSurfaceKHR                  surface,
-                              uint32_t                      minImageCount,
-                              VkFormat                      imageFormat,
-                              VkColorSpaceKHR               imageColorSpace,
-                              VkExtent2D                    imageExtent,
-                              uint32_t                      imageArrayLayers,
-                              VkImageUsageFlags             imageUsage,
-                              VkSharingMode                 imageSharingMode,
-                              uint32_t                      queueFamilyIndexCount,
-                              const uint32_t*               pQueueFamilyIndices,
-                              VkSurfaceTransformFlagBitsKHR preTransform,
-                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                              VkPresentModeKHR              presentMode,
-                              VkBool32                      clipped,
-                              VkSwapchainKHR                oldSwapchain,
-                              const VkAllocationCallbacks*  pAllocator,
-                              VkSwapchainKHR*               pSwapchain)
+VkResult cvkCreateSharedSwapchain(VkDevice                      device,
+                                  const void*                   pNext,
+                                  VkSwapchainCreateFlagsKHR     flags,
+                                  VkSurfaceKHR                  surface,
+                                  uint32_t                      minImageCount,
+                                  VkFormat                      imageFormat,
+                                  VkColorSpaceKHR               imageColorSpace,
+                                  VkExtent2D                    imageExtent,
+                                  uint32_t                      imageArrayLayers,
+                                  VkImageUsageFlags             imageUsage,
+                                  VkSharingMode                 imageSharingMode,
+                                  uint32_t                      queueFamilyIndexCount,
+                                  const uint32_t*               pQueueFamilyIndices,
+                                  VkSurfaceTransformFlagBitsKHR preTransform,
+                                  VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                  VkPresentModeKHR              presentMode,
+                                  VkBool32                      clipped,
+                                  VkSwapchainKHR                oldSwapchain,
+                                  const VkAllocationCallbacks*  pAllocator,
+                                  VkSwapchainKHR*               pSwapchain)
 {
     VkSwapchainCreateInfoKHR create_info;
 
@@ -20608,7 +20692,7 @@ void cvkCreateSharedSwapchain(VkDevice                      device,
     create_info.presentMode           = presentMode;
     create_info.clipped               = clipped;
     create_info.oldSwapchain          = oldSwapchain;
-    cvkCreateSharedSwapchains(device, 1, &create_info, pAllocator, pSwapchain);
+    return cvkCreateSharedSwapchains(device, 1, &create_info, pAllocator, pSwapchain);
 }
 void cvkFlushMappedMemoryRange(VkDevice device, const void* pNext, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size)
 {
@@ -25742,77 +25826,77 @@ void cvkCreateShaderModuleWithValidationFeaturesInfo(VkDevice                   
     validation_features.pDisabledValidationFeatures    = pDisabledValidationFeatures;
     cvkCreateShaderModule(device, &validation_features, flags, codeSize, pCode, pAllocator, pShaderModule);
 }
-void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         device,
-                                           const void*                      pNext,
-                                           VkDeviceGroupPresentModeFlagsKHR modes,
-                                           VkSwapchainCreateFlagsKHR        flags,
-                                           VkSurfaceKHR                     surface,
-                                           uint32_t                         minImageCount,
-                                           VkFormat                         imageFormat,
-                                           VkColorSpaceKHR                  imageColorSpace,
-                                           VkExtent2D                       imageExtent,
-                                           uint32_t                         imageArrayLayers,
-                                           VkImageUsageFlags                imageUsage,
-                                           VkSharingMode                    imageSharingMode,
-                                           uint32_t                         queueFamilyIndexCount,
-                                           const uint32_t*                  pQueueFamilyIndices,
-                                           VkSurfaceTransformFlagBitsKHR    preTransform,
-                                           VkCompositeAlphaFlagBitsKHR      compositeAlpha,
-                                           VkPresentModeKHR                 presentMode,
-                                           VkBool32                         clipped,
-                                           VkSwapchainKHR                   oldSwapchain,
-                                           const VkAllocationCallbacks*     pAllocator,
-                                           VkSwapchainKHR*                  pSwapchain)
+VkResult cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         device,
+                                               const void*                      pNext,
+                                               VkDeviceGroupPresentModeFlagsKHR modes,
+                                               VkSwapchainCreateFlagsKHR        flags,
+                                               VkSurfaceKHR                     surface,
+                                               uint32_t                         minImageCount,
+                                               VkFormat                         imageFormat,
+                                               VkColorSpaceKHR                  imageColorSpace,
+                                               VkExtent2D                       imageExtent,
+                                               uint32_t                         imageArrayLayers,
+                                               VkImageUsageFlags                imageUsage,
+                                               VkSharingMode                    imageSharingMode,
+                                               uint32_t                         queueFamilyIndexCount,
+                                               const uint32_t*                  pQueueFamilyIndices,
+                                               VkSurfaceTransformFlagBitsKHR    preTransform,
+                                               VkCompositeAlphaFlagBitsKHR      compositeAlpha,
+                                               VkPresentModeKHR                 presentMode,
+                                               VkBool32                         clipped,
+                                               VkSwapchainKHR                   oldSwapchain,
+                                               const VkAllocationCallbacks*     pAllocator,
+                                               VkSwapchainKHR*                  pSwapchain)
 {
     VkDeviceGroupSwapchainCreateInfoKHR device_group_swapchain_create_info;
 
     device_group_swapchain_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
     device_group_swapchain_create_info.pNext = pNext;
     device_group_swapchain_create_info.modes = modes;
-    cvkCreateSwapchain(device,
-                       &device_group_swapchain_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &device_group_swapchain_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
-                                                       const void*                          pNext,
-                                                       VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
-                                                       uint32_t                             compressionControlPlaneCount,
-                                                       VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
-                                                       VkSwapchainCreateFlagsKHR            flags,
-                                                       VkSurfaceKHR                         surface,
-                                                       uint32_t                             minImageCount,
-                                                       VkFormat                             imageFormat,
-                                                       VkColorSpaceKHR                      imageColorSpace,
-                                                       VkExtent2D                           imageExtent,
-                                                       uint32_t                             imageArrayLayers,
-                                                       VkImageUsageFlags                    imageUsage,
-                                                       VkSharingMode                        imageSharingMode,
-                                                       uint32_t                             queueFamilyIndexCount,
-                                                       const uint32_t*                      pQueueFamilyIndices,
-                                                       VkSurfaceTransformFlagBitsKHR        preTransform,
-                                                       VkCompositeAlphaFlagBitsKHR          compositeAlpha,
-                                                       VkPresentModeKHR                     presentMode,
-                                                       VkBool32                             clipped,
-                                                       VkSwapchainKHR                       oldSwapchain,
-                                                       const VkAllocationCallbacks*         pAllocator,
-                                                       VkSwapchainKHR*                      pSwapchain)
+VkResult cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
+                                                           const void*                          pNext,
+                                                           VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
+                                                           uint32_t                             compressionControlPlaneCount,
+                                                           VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
+                                                           VkSwapchainCreateFlagsKHR            flags,
+                                                           VkSurfaceKHR                         surface,
+                                                           uint32_t                             minImageCount,
+                                                           VkFormat                             imageFormat,
+                                                           VkColorSpaceKHR                      imageColorSpace,
+                                                           VkExtent2D                           imageExtent,
+                                                           uint32_t                             imageArrayLayers,
+                                                           VkImageUsageFlags                    imageUsage,
+                                                           VkSharingMode                        imageSharingMode,
+                                                           uint32_t                             queueFamilyIndexCount,
+                                                           const uint32_t*                      pQueueFamilyIndices,
+                                                           VkSurfaceTransformFlagBitsKHR        preTransform,
+                                                           VkCompositeAlphaFlagBitsKHR          compositeAlpha,
+                                                           VkPresentModeKHR                     presentMode,
+                                                           VkBool32                             clipped,
+                                                           VkSwapchainKHR                       oldSwapchain,
+                                                           const VkAllocationCallbacks*         pAllocator,
+                                                           VkSwapchainKHR*                      pSwapchain)
 {
     VkImageCompressionControlEXT image_compression_control;
 
@@ -25821,80 +25905,31 @@ void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                 
     image_compression_control.flags                        = flagsImageCompressionEXT;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
-    cvkCreateSwapchain(device,
-                       &image_compression_control,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &image_compression_control,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      device,
-                                               const void*                   pNext,
-                                               uint32_t                      viewFormatCount,
-                                               const VkFormat*               pViewFormats,
-                                               VkSwapchainCreateFlagsKHR     flags,
-                                               VkSurfaceKHR                  surface,
-                                               uint32_t                      minImageCount,
-                                               VkFormat                      imageFormat,
-                                               VkColorSpaceKHR               imageColorSpace,
-                                               VkExtent2D                    imageExtent,
-                                               uint32_t                      imageArrayLayers,
-                                               VkImageUsageFlags             imageUsage,
-                                               VkSharingMode                 imageSharingMode,
-                                               uint32_t                      queueFamilyIndexCount,
-                                               const uint32_t*               pQueueFamilyIndices,
-                                               VkSurfaceTransformFlagBitsKHR preTransform,
-                                               VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                               VkPresentModeKHR              presentMode,
-                                               VkBool32                      clipped,
-                                               VkSwapchainKHR                oldSwapchain,
-                                               const VkAllocationCallbacks*  pAllocator,
-                                               VkSwapchainKHR*               pSwapchain)
-{
-    VkImageFormatListCreateInfo image_format_list_create_info;
-
-    image_format_list_create_info.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
-    image_format_list_create_info.pNext           = pNext;
-    image_format_list_create_info.viewFormatCount = viewFormatCount;
-    image_format_list_create_info.pViewFormats    = pViewFormats;
-    cvkCreateSwapchain(device,
-                       &image_format_list_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
-}
-void cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
-                                                   void*                         pNext,
-                                                   VkImageUsageFlags2KHR         usage,
+VkResult cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      device,
+                                                   const void*                   pNext,
+                                                   uint32_t                      viewFormatCount,
+                                                   const VkFormat*               pViewFormats,
                                                    VkSwapchainCreateFlagsKHR     flags,
                                                    VkSurfaceKHR                  surface,
                                                    uint32_t                      minImageCount,
@@ -25914,83 +25949,277 @@ void cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                     
                                                    const VkAllocationCallbacks*  pAllocator,
                                                    VkSwapchainKHR*               pSwapchain)
 {
+    VkImageFormatListCreateInfo image_format_list_create_info;
+
+    image_format_list_create_info.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
+    image_format_list_create_info.pNext           = pNext;
+    image_format_list_create_info.viewFormatCount = viewFormatCount;
+    image_format_list_create_info.pViewFormats    = pViewFormats;
+    return cvkCreateSwapchain(device,
+                              &image_format_list_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
+}
+VkResult cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
+                                                       void*                         pNext,
+                                                       VkImageUsageFlags2KHR         usage,
+                                                       VkSwapchainCreateFlagsKHR     flags,
+                                                       VkSurfaceKHR                  surface,
+                                                       uint32_t                      minImageCount,
+                                                       VkFormat                      imageFormat,
+                                                       VkColorSpaceKHR               imageColorSpace,
+                                                       VkExtent2D                    imageExtent,
+                                                       uint32_t                      imageArrayLayers,
+                                                       VkImageUsageFlags             imageUsage,
+                                                       VkSharingMode                 imageSharingMode,
+                                                       uint32_t                      queueFamilyIndexCount,
+                                                       const uint32_t*               pQueueFamilyIndices,
+                                                       VkSurfaceTransformFlagBitsKHR preTransform,
+                                                       VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                       VkPresentModeKHR              presentMode,
+                                                       VkBool32                      clipped,
+                                                       VkSwapchainKHR                oldSwapchain,
+                                                       const VkAllocationCallbacks*  pAllocator,
+                                                       VkSwapchainKHR*               pSwapchain)
+{
     VkImageUsageFlags2CreateInfoKHR image_usage_flags2_create_info_khr;
 
     image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info_khr.pNext = pNext;
     image_usage_flags2_create_info_khr.usage = usage;
-    cvkCreateSwapchain(device,
-                       &image_usage_flags2_create_info_khr,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &image_usage_flags2_create_info_khr,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkCreateSwapchainWithCounterInfo(VkDevice                      device,
-                                       const void*                   pNext,
-                                       VkSurfaceCounterFlagsEXT      surfaceCounters,
-                                       VkSwapchainCreateFlagsKHR     flags,
-                                       VkSurfaceKHR                  surface,
-                                       uint32_t                      minImageCount,
-                                       VkFormat                      imageFormat,
-                                       VkColorSpaceKHR               imageColorSpace,
-                                       VkExtent2D                    imageExtent,
-                                       uint32_t                      imageArrayLayers,
-                                       VkImageUsageFlags             imageUsage,
-                                       VkSharingMode                 imageSharingMode,
-                                       uint32_t                      queueFamilyIndexCount,
-                                       const uint32_t*               pQueueFamilyIndices,
-                                       VkSurfaceTransformFlagBitsKHR preTransform,
-                                       VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                       VkPresentModeKHR              presentMode,
-                                       VkBool32                      clipped,
-                                       VkSwapchainKHR                oldSwapchain,
-                                       const VkAllocationCallbacks*  pAllocator,
-                                       VkSwapchainKHR*               pSwapchain)
+VkResult cvkCreateSwapchainWithCounterInfo(VkDevice                      device,
+                                           const void*                   pNext,
+                                           VkSurfaceCounterFlagsEXT      surfaceCounters,
+                                           VkSwapchainCreateFlagsKHR     flags,
+                                           VkSurfaceKHR                  surface,
+                                           uint32_t                      minImageCount,
+                                           VkFormat                      imageFormat,
+                                           VkColorSpaceKHR               imageColorSpace,
+                                           VkExtent2D                    imageExtent,
+                                           uint32_t                      imageArrayLayers,
+                                           VkImageUsageFlags             imageUsage,
+                                           VkSharingMode                 imageSharingMode,
+                                           uint32_t                      queueFamilyIndexCount,
+                                           const uint32_t*               pQueueFamilyIndices,
+                                           VkSurfaceTransformFlagBitsKHR preTransform,
+                                           VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                           VkPresentModeKHR              presentMode,
+                                           VkBool32                      clipped,
+                                           VkSwapchainKHR                oldSwapchain,
+                                           const VkAllocationCallbacks*  pAllocator,
+                                           VkSwapchainKHR*               pSwapchain)
 {
     VkSwapchainCounterCreateInfoEXT swapchain_counter_create_info;
 
     swapchain_counter_create_info.sType           = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT;
     swapchain_counter_create_info.pNext           = pNext;
     swapchain_counter_create_info.surfaceCounters = surfaceCounters;
-    cvkCreateSwapchain(device,
-                       &swapchain_counter_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &swapchain_counter_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkCreateSwapchainWithDisplayNativeHdrInfo(VkDevice                      device,
+VkResult cvkCreateSwapchainWithDisplayNativeHdrInfo(VkDevice                      device,
+                                                    const void*                   pNext,
+                                                    VkBool32                      localDimmingEnable,
+                                                    VkSwapchainCreateFlagsKHR     flags,
+                                                    VkSurfaceKHR                  surface,
+                                                    uint32_t                      minImageCount,
+                                                    VkFormat                      imageFormat,
+                                                    VkColorSpaceKHR               imageColorSpace,
+                                                    VkExtent2D                    imageExtent,
+                                                    uint32_t                      imageArrayLayers,
+                                                    VkImageUsageFlags             imageUsage,
+                                                    VkSharingMode                 imageSharingMode,
+                                                    uint32_t                      queueFamilyIndexCount,
+                                                    const uint32_t*               pQueueFamilyIndices,
+                                                    VkSurfaceTransformFlagBitsKHR preTransform,
+                                                    VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                    VkPresentModeKHR              presentMode,
+                                                    VkBool32                      clipped,
+                                                    VkSwapchainKHR                oldSwapchain,
+                                                    const VkAllocationCallbacks*  pAllocator,
+                                                    VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainDisplayNativeHdrCreateInfoAMD swapchain_display_native_hdr_create_info;
+
+    swapchain_display_native_hdr_create_info.sType              = VK_STRUCTURE_TYPE_SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD;
+    swapchain_display_native_hdr_create_info.pNext              = pNext;
+    swapchain_display_native_hdr_create_info.localDimmingEnable = localDimmingEnable;
+    return cvkCreateSwapchain(device,
+                              &swapchain_display_native_hdr_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
+}
+VkResult cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
+                                           const void*                   pNext,
+                                           VkBool32                      latencyModeEnable,
+                                           VkSwapchainCreateFlagsKHR     flags,
+                                           VkSurfaceKHR                  surface,
+                                           uint32_t                      minImageCount,
+                                           VkFormat                      imageFormat,
+                                           VkColorSpaceKHR               imageColorSpace,
+                                           VkExtent2D                    imageExtent,
+                                           uint32_t                      imageArrayLayers,
+                                           VkImageUsageFlags             imageUsage,
+                                           VkSharingMode                 imageSharingMode,
+                                           uint32_t                      queueFamilyIndexCount,
+                                           const uint32_t*               pQueueFamilyIndices,
+                                           VkSurfaceTransformFlagBitsKHR preTransform,
+                                           VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                           VkPresentModeKHR              presentMode,
+                                           VkBool32                      clipped,
+                                           VkSwapchainKHR                oldSwapchain,
+                                           const VkAllocationCallbacks*  pAllocator,
+                                           VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainLatencyCreateInfoNV swapchain_latency_create_info;
+
+    swapchain_latency_create_info.sType             = VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV;
+    swapchain_latency_create_info.pNext             = pNext;
+    swapchain_latency_create_info.latencyModeEnable = latencyModeEnable;
+    return cvkCreateSwapchain(device,
+                              &swapchain_latency_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
+}
+VkResult cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      device,
+                                                  void*                         pNext,
+                                                  VkBool32                      presentBarrierEnable,
+                                                  VkSwapchainCreateFlagsKHR     flags,
+                                                  VkSurfaceKHR                  surface,
+                                                  uint32_t                      minImageCount,
+                                                  VkFormat                      imageFormat,
+                                                  VkColorSpaceKHR               imageColorSpace,
+                                                  VkExtent2D                    imageExtent,
+                                                  uint32_t                      imageArrayLayers,
+                                                  VkImageUsageFlags             imageUsage,
+                                                  VkSharingMode                 imageSharingMode,
+                                                  uint32_t                      queueFamilyIndexCount,
+                                                  const uint32_t*               pQueueFamilyIndices,
+                                                  VkSurfaceTransformFlagBitsKHR preTransform,
+                                                  VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                  VkPresentModeKHR              presentMode,
+                                                  VkBool32                      clipped,
+                                                  VkSwapchainKHR                oldSwapchain,
+                                                  const VkAllocationCallbacks*  pAllocator,
+                                                  VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainPresentBarrierCreateInfoNV swapchain_present_barrier_create_info;
+
+    swapchain_present_barrier_create_info.sType                = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_BARRIER_CREATE_INFO_NV;
+    swapchain_present_barrier_create_info.pNext                = pNext;
+    swapchain_present_barrier_create_info.presentBarrierEnable = presentBarrierEnable;
+    return cvkCreateSwapchain(device,
+                              &swapchain_present_barrier_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
+}
+VkResult cvkCreateSwapchainWithPresentModesInfo(VkDevice                      device,
                                                 const void*                   pNext,
-                                                VkBool32                      localDimmingEnable,
+                                                uint32_t                      presentModeCount,
+                                                const VkPresentModeKHR*       pPresentModes,
                                                 VkSwapchainCreateFlagsKHR     flags,
                                                 VkSurfaceKHR                  surface,
                                                 uint32_t                      minImageCount,
@@ -26010,201 +26239,56 @@ void cvkCreateSwapchainWithDisplayNativeHdrInfo(VkDevice                      de
                                                 const VkAllocationCallbacks*  pAllocator,
                                                 VkSwapchainKHR*               pSwapchain)
 {
-    VkSwapchainDisplayNativeHdrCreateInfoAMD swapchain_display_native_hdr_create_info;
-
-    swapchain_display_native_hdr_create_info.sType              = VK_STRUCTURE_TYPE_SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD;
-    swapchain_display_native_hdr_create_info.pNext              = pNext;
-    swapchain_display_native_hdr_create_info.localDimmingEnable = localDimmingEnable;
-    cvkCreateSwapchain(device,
-                       &swapchain_display_native_hdr_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
-}
-void cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
-                                       const void*                   pNext,
-                                       VkBool32                      latencyModeEnable,
-                                       VkSwapchainCreateFlagsKHR     flags,
-                                       VkSurfaceKHR                  surface,
-                                       uint32_t                      minImageCount,
-                                       VkFormat                      imageFormat,
-                                       VkColorSpaceKHR               imageColorSpace,
-                                       VkExtent2D                    imageExtent,
-                                       uint32_t                      imageArrayLayers,
-                                       VkImageUsageFlags             imageUsage,
-                                       VkSharingMode                 imageSharingMode,
-                                       uint32_t                      queueFamilyIndexCount,
-                                       const uint32_t*               pQueueFamilyIndices,
-                                       VkSurfaceTransformFlagBitsKHR preTransform,
-                                       VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                       VkPresentModeKHR              presentMode,
-                                       VkBool32                      clipped,
-                                       VkSwapchainKHR                oldSwapchain,
-                                       const VkAllocationCallbacks*  pAllocator,
-                                       VkSwapchainKHR*               pSwapchain)
-{
-    VkSwapchainLatencyCreateInfoNV swapchain_latency_create_info;
-
-    swapchain_latency_create_info.sType             = VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV;
-    swapchain_latency_create_info.pNext             = pNext;
-    swapchain_latency_create_info.latencyModeEnable = latencyModeEnable;
-    cvkCreateSwapchain(device,
-                       &swapchain_latency_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
-}
-void cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      device,
-                                              void*                         pNext,
-                                              VkBool32                      presentBarrierEnable,
-                                              VkSwapchainCreateFlagsKHR     flags,
-                                              VkSurfaceKHR                  surface,
-                                              uint32_t                      minImageCount,
-                                              VkFormat                      imageFormat,
-                                              VkColorSpaceKHR               imageColorSpace,
-                                              VkExtent2D                    imageExtent,
-                                              uint32_t                      imageArrayLayers,
-                                              VkImageUsageFlags             imageUsage,
-                                              VkSharingMode                 imageSharingMode,
-                                              uint32_t                      queueFamilyIndexCount,
-                                              const uint32_t*               pQueueFamilyIndices,
-                                              VkSurfaceTransformFlagBitsKHR preTransform,
-                                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                              VkPresentModeKHR              presentMode,
-                                              VkBool32                      clipped,
-                                              VkSwapchainKHR                oldSwapchain,
-                                              const VkAllocationCallbacks*  pAllocator,
-                                              VkSwapchainKHR*               pSwapchain)
-{
-    VkSwapchainPresentBarrierCreateInfoNV swapchain_present_barrier_create_info;
-
-    swapchain_present_barrier_create_info.sType                = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_BARRIER_CREATE_INFO_NV;
-    swapchain_present_barrier_create_info.pNext                = pNext;
-    swapchain_present_barrier_create_info.presentBarrierEnable = presentBarrierEnable;
-    cvkCreateSwapchain(device,
-                       &swapchain_present_barrier_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
-}
-void cvkCreateSwapchainWithPresentModesInfo(VkDevice                      device,
-                                            const void*                   pNext,
-                                            uint32_t                      presentModeCount,
-                                            const VkPresentModeKHR*       pPresentModes,
-                                            VkSwapchainCreateFlagsKHR     flags,
-                                            VkSurfaceKHR                  surface,
-                                            uint32_t                      minImageCount,
-                                            VkFormat                      imageFormat,
-                                            VkColorSpaceKHR               imageColorSpace,
-                                            VkExtent2D                    imageExtent,
-                                            uint32_t                      imageArrayLayers,
-                                            VkImageUsageFlags             imageUsage,
-                                            VkSharingMode                 imageSharingMode,
-                                            uint32_t                      queueFamilyIndexCount,
-                                            const uint32_t*               pQueueFamilyIndices,
-                                            VkSurfaceTransformFlagBitsKHR preTransform,
-                                            VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                            VkPresentModeKHR              presentMode,
-                                            VkBool32                      clipped,
-                                            VkSwapchainKHR                oldSwapchain,
-                                            const VkAllocationCallbacks*  pAllocator,
-                                            VkSwapchainKHR*               pSwapchain)
-{
     VkSwapchainPresentModesCreateInfoKHR swapchain_present_modes_create_info;
 
     swapchain_present_modes_create_info.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_KHR;
     swapchain_present_modes_create_info.pNext            = pNext;
     swapchain_present_modes_create_info.presentModeCount = presentModeCount;
     swapchain_present_modes_create_info.pPresentModes    = pPresentModes;
-    cvkCreateSwapchain(device,
-                       &swapchain_present_modes_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &swapchain_present_modes_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkCreateSwapchainWithPresentScalingInfo(VkDevice                      device,
-                                              const void*                   pNext,
-                                              VkPresentScalingFlagsKHR      scalingBehavior,
-                                              VkPresentGravityFlagsKHR      presentGravityX,
-                                              VkPresentGravityFlagsKHR      presentGravityY,
-                                              VkSwapchainCreateFlagsKHR     flags,
-                                              VkSurfaceKHR                  surface,
-                                              uint32_t                      minImageCount,
-                                              VkFormat                      imageFormat,
-                                              VkColorSpaceKHR               imageColorSpace,
-                                              VkExtent2D                    imageExtent,
-                                              uint32_t                      imageArrayLayers,
-                                              VkImageUsageFlags             imageUsage,
-                                              VkSharingMode                 imageSharingMode,
-                                              uint32_t                      queueFamilyIndexCount,
-                                              const uint32_t*               pQueueFamilyIndices,
-                                              VkSurfaceTransformFlagBitsKHR preTransform,
-                                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                              VkPresentModeKHR              presentMode,
-                                              VkBool32                      clipped,
-                                              VkSwapchainKHR                oldSwapchain,
-                                              const VkAllocationCallbacks*  pAllocator,
-                                              VkSwapchainKHR*               pSwapchain)
+VkResult cvkCreateSwapchainWithPresentScalingInfo(VkDevice                      device,
+                                                  const void*                   pNext,
+                                                  VkPresentScalingFlagsKHR      scalingBehavior,
+                                                  VkPresentGravityFlagsKHR      presentGravityX,
+                                                  VkPresentGravityFlagsKHR      presentGravityY,
+                                                  VkSwapchainCreateFlagsKHR     flags,
+                                                  VkSurfaceKHR                  surface,
+                                                  uint32_t                      minImageCount,
+                                                  VkFormat                      imageFormat,
+                                                  VkColorSpaceKHR               imageColorSpace,
+                                                  VkExtent2D                    imageExtent,
+                                                  uint32_t                      imageArrayLayers,
+                                                  VkImageUsageFlags             imageUsage,
+                                                  VkSharingMode                 imageSharingMode,
+                                                  uint32_t                      queueFamilyIndexCount,
+                                                  const uint32_t*               pQueueFamilyIndices,
+                                                  VkSurfaceTransformFlagBitsKHR preTransform,
+                                                  VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                  VkPresentModeKHR              presentMode,
+                                                  VkBool32                      clipped,
+                                                  VkSwapchainKHR                oldSwapchain,
+                                                  const VkAllocationCallbacks*  pAllocator,
+                                                  VkSwapchainKHR*               pSwapchain)
 {
     VkSwapchainPresentScalingCreateInfoKHR swapchain_present_scaling_create_info;
 
@@ -26213,26 +26297,26 @@ void cvkCreateSwapchainWithPresentScalingInfo(VkDevice                      devi
     swapchain_present_scaling_create_info.scalingBehavior = scalingBehavior;
     swapchain_present_scaling_create_info.presentGravityX = presentGravityX;
     swapchain_present_scaling_create_info.presentGravityY = presentGravityY;
-    cvkCreateSwapchain(device,
-                       &swapchain_present_scaling_create_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &swapchain_present_scaling_create_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
 void cvkCreateTensorWithExternalMemoryInfo(VkDevice                        device,
                                            const void*                     pNext,
@@ -27221,36 +27305,36 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
     semaphore_type_create_info.initialValue  = initialValue;
     cvkGetPhysicalDeviceExternalSemaphoreInfo(physicalDevice, &semaphore_type_create_info, handleType, pExternalSemaphorePropertiesNext, pExternalSemaphoreProperties);
 }
-void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
-                                                                   const void*                              pImageFormatInfoNext,
-                                                                   VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
-                                                                   VkFormat                                 format,
-                                                                   VkImageType                              type,
-                                                                   VkImageTiling                            tiling,
-                                                                   VkImageUsageFlags                        usage,
-                                                                   VkImageCreateFlags                       flags,
-                                                                   void*                                    pImageFormatPropertiesNext,
-                                                                   VkImageFormatProperties2*                pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
+                                                                       const void*                              pImageFormatInfoNext,
+                                                                       VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
+                                                                       VkFormat                                 format,
+                                                                       VkImageType                              type,
+                                                                       VkImageTiling                            tiling,
+                                                                       VkImageUsageFlags                        usage,
+                                                                       VkImageCreateFlags                       flags,
+                                                                       void*                                    pImageFormatPropertiesNext,
+                                                                       VkImageFormatProperties2*                pImageFormatProperties)
 {
     VkDataGraphOpticalFlowImageFormatInfoARM data_graph_optical_flow_image_format_info;
 
     data_graph_optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
     data_graph_optical_flow_image_format_info.pNext = pImageFormatInfoNext;
     data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlowARM;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &data_graph_optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &data_graph_optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
-                                                                 const void*                          pImageFormatInfoNext,
-                                                                 VkImageCompressionFlagsEXT           flagsCompressionEXT,
-                                                                 uint32_t                             compressionControlPlaneCount,
-                                                                 VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
-                                                                 VkFormat                             format,
-                                                                 VkImageType                          type,
-                                                                 VkImageTiling                        tiling,
-                                                                 VkImageUsageFlags                    usage,
-                                                                 VkImageCreateFlags                   flags,
-                                                                 void*                                pImageFormatPropertiesNext,
-                                                                 VkImageFormatProperties2*            pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
+                                                                     const void*                          pImageFormatInfoNext,
+                                                                     VkImageCompressionFlagsEXT           flagsCompressionEXT,
+                                                                     uint32_t                             compressionControlPlaneCount,
+                                                                     VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
+                                                                     VkFormat                             format,
+                                                                     VkImageType                          type,
+                                                                     VkImageTiling                        tiling,
+                                                                     VkImageUsageFlags                    usage,
+                                                                     VkImageCreateFlags                   flags,
+                                                                     void*                                pImageFormatPropertiesNext,
+                                                                     VkImageFormatProperties2*            pImageFormatProperties)
 {
     VkImageCompressionControlEXT image_compression_control;
 
@@ -27259,37 +27343,37 @@ void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevic
     image_compression_control.flags                        = flagsCompressionEXT;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_compression_control, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_compression_control, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                           void*                     pImageFormatInfoNext,
-                                                           VkImageCreateFlags2KHR    flags2KHR,
-                                                           VkFormat                  format,
-                                                           VkImageType               type,
-                                                           VkImageTiling             tiling,
-                                                           VkImageUsageFlags         usage,
-                                                           VkImageCreateFlags        flags,
-                                                           void*                     pImageFormatPropertiesNext,
-                                                           VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
+                                                               void*                     pImageFormatInfoNext,
+                                                               VkImageCreateFlags2KHR    flags2KHR,
+                                                               VkFormat                  format,
+                                                               VkImageType               type,
+                                                               VkImageTiling             tiling,
+                                                               VkImageUsageFlags         usage,
+                                                               VkImageCreateFlags        flags,
+                                                               void*                     pImageFormatPropertiesNext,
+                                                               VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageCreateFlags2CreateInfoKHR image_create_flags2_create_info;
 
     image_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
     image_create_flags2_create_info.pNext = pImageFormatInfoNext;
     image_create_flags2_create_info.flags = flags2KHR;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_create_flags2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_create_flags2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
-                                                   const void*               pImageFormatInfoNext,
-                                                   uint32_t                  viewFormatCount,
-                                                   const VkFormat*           pViewFormats,
-                                                   VkFormat                  format,
-                                                   VkImageType               type,
-                                                   VkImageTiling             tiling,
-                                                   VkImageUsageFlags         usage,
-                                                   VkImageCreateFlags        flags,
-                                                   void*                     pImageFormatPropertiesNext,
-                                                   VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
+                                                       const void*               pImageFormatInfoNext,
+                                                       uint32_t                  viewFormatCount,
+                                                       const VkFormat*           pViewFormats,
+                                                       VkFormat                  format,
+                                                       VkImageType               type,
+                                                       VkImageTiling             tiling,
+                                                       VkImageUsageFlags         usage,
+                                                       VkImageCreateFlags        flags,
+                                                       void*                     pImageFormatPropertiesNext,
+                                                       VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageFormatListCreateInfo image_format_list_create_info;
 
@@ -27297,111 +27381,111 @@ void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          phy
     image_format_list_create_info.pNext           = pImageFormatInfoNext;
     image_format_list_create_info.viewFormatCount = viewFormatCount;
     image_format_list_create_info.pViewFormats    = pViewFormats;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice          physicalDevice,
-                                                            void*                     pImageFormatInfoNext,
-                                                            VkImageUsageFlags2KHR     stencilUsage,
-                                                            VkFormat                  format,
-                                                            VkImageType               type,
-                                                            VkImageTiling             tiling,
-                                                            VkImageUsageFlags         usage,
-                                                            VkImageCreateFlags        flags,
-                                                            void*                     pImageFormatPropertiesNext,
-                                                            VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice          physicalDevice,
+                                                                void*                     pImageFormatInfoNext,
+                                                                VkImageUsageFlags2KHR     stencilUsage,
+                                                                VkFormat                  format,
+                                                                VkImageType               type,
+                                                                VkImageTiling             tiling,
+                                                                VkImageUsageFlags         usage,
+                                                                VkImageCreateFlags        flags,
+                                                                void*                     pImageFormatPropertiesNext,
+                                                                VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageStencilUsage2CreateInfoKHR image_stencil_usage2_create_info;
 
     image_stencil_usage2_create_info.sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_2_CREATE_INFO_KHR;
     image_stencil_usage2_create_info.pNext        = pImageFormatInfoNext;
     image_stencil_usage2_create_info.stencilUsage = stencilUsage;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_stencil_usage2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_stencil_usage2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice          physicalDevice,
-                                                           const void*               pImageFormatInfoNext,
-                                                           VkImageUsageFlags         stencilUsage,
-                                                           VkFormat                  format,
-                                                           VkImageType               type,
-                                                           VkImageTiling             tiling,
-                                                           VkImageUsageFlags         usage,
-                                                           VkImageCreateFlags        flags,
-                                                           void*                     pImageFormatPropertiesNext,
-                                                           VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice          physicalDevice,
+                                                               const void*               pImageFormatInfoNext,
+                                                               VkImageUsageFlags         stencilUsage,
+                                                               VkFormat                  format,
+                                                               VkImageType               type,
+                                                               VkImageTiling             tiling,
+                                                               VkImageUsageFlags         usage,
+                                                               VkImageCreateFlags        flags,
+                                                               void*                     pImageFormatPropertiesNext,
+                                                               VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageStencilUsageCreateInfo image_stencil_usage_create_info;
 
     image_stencil_usage_create_info.sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
     image_stencil_usage_create_info.pNext        = pImageFormatInfoNext;
     image_stencil_usage_create_info.stencilUsage = stencilUsage;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_stencil_usage_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_stencil_usage_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
-                                                                       void*                     pImageFormatInfoNext,
-                                                                       VkImageUsageFlags2KHR     usage2KHR,
-                                                                       VkFormat                  format,
-                                                                       VkImageType               type,
-                                                                       VkImageTiling             tiling,
-                                                                       VkImageUsageFlags         usage,
-                                                                       VkImageCreateFlags        flags,
-                                                                       void*                     pImageFormatPropertiesNext,
-                                                                       VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
+                                                                           void*                     pImageFormatInfoNext,
+                                                                           VkImageUsageFlags2KHR     usage2KHR,
+                                                                           VkFormat                  format,
+                                                                           VkImageType               type,
+                                                                           VkImageTiling             tiling,
+                                                                           VkImageUsageFlags         usage,
+                                                                           VkImageCreateFlags        flags,
+                                                                           void*                     pImageFormatPropertiesNext,
+                                                                           VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageUsageFlags2CreateInfoKHR image_usage_flags2_create_info_khr;
 
     image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info_khr.pNext = pImageFormatInfoNext;
     image_usage_flags2_create_info_khr.usage = usage2KHR;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info_khr, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info_khr, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
-                                                          const void*               pImageFormatInfoNext,
-                                                          VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
-                                                          VkFormat                  format,
-                                                          VkImageType               type,
-                                                          VkImageTiling             tiling,
-                                                          VkImageUsageFlags         usage,
-                                                          VkImageCreateFlags        flags,
-                                                          void*                     pImageFormatPropertiesNext,
-                                                          VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
+                                                              const void*               pImageFormatInfoNext,
+                                                              VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
+                                                              VkFormat                  format,
+                                                              VkImageType               type,
+                                                              VkImageTiling             tiling,
+                                                              VkImageUsageFlags         usage,
+                                                              VkImageCreateFlags        flags,
+                                                              void*                     pImageFormatPropertiesNext,
+                                                              VkImageFormatProperties2* pImageFormatProperties)
 {
     VkOpticalFlowImageFormatInfoNV optical_flow_image_format_info;
 
     optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV;
     optical_flow_image_format_info.pNext = pImageFormatInfoNext;
     optical_flow_image_format_info.usage = usageOpticalFlowNV;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
-                                                 const void*                        pImageFormatInfoNext,
-                                                 VkExternalMemoryHandleTypeFlagBits handleType,
-                                                 VkFormat                           format,
-                                                 VkImageType                        type,
-                                                 VkImageTiling                      tiling,
-                                                 VkImageUsageFlags                  usage,
-                                                 VkImageCreateFlags                 flags,
-                                                 void*                              pImageFormatPropertiesNext,
-                                                 VkImageFormatProperties2*          pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
+                                                     const void*                        pImageFormatInfoNext,
+                                                     VkExternalMemoryHandleTypeFlagBits handleType,
+                                                     VkFormat                           format,
+                                                     VkImageType                        type,
+                                                     VkImageTiling                      tiling,
+                                                     VkImageUsageFlags                  usage,
+                                                     VkImageCreateFlags                 flags,
+                                                     void*                              pImageFormatPropertiesNext,
+                                                     VkImageFormatProperties2*          pImageFormatProperties)
 {
     VkPhysicalDeviceExternalImageFormatInfo physical_device_external_image_format_info;
 
     physical_device_external_image_format_info.sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
     physical_device_external_image_format_info.pNext      = pImageFormatInfoNext;
     physical_device_external_image_format_info.handleType = handleType;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &physical_device_external_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &physical_device_external_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
-                                                    const void*               pImageFormatInfoNext,
-                                                    uint64_t                  drmFormatModifier,
-                                                    VkSharingMode             sharingMode,
-                                                    uint32_t                  queueFamilyIndexCount,
-                                                    const uint32_t*           pQueueFamilyIndices,
-                                                    VkFormat                  format,
-                                                    VkImageType               type,
-                                                    VkImageTiling             tiling,
-                                                    VkImageUsageFlags         usage,
-                                                    VkImageCreateFlags        flags,
-                                                    void*                     pImageFormatPropertiesNext,
-                                                    VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          physicalDevice,
+                                                        const void*               pImageFormatInfoNext,
+                                                        uint64_t                  drmFormatModifier,
+                                                        VkSharingMode             sharingMode,
+                                                        uint32_t                  queueFamilyIndexCount,
+                                                        const uint32_t*           pQueueFamilyIndices,
+                                                        VkFormat                  format,
+                                                        VkImageType               type,
+                                                        VkImageTiling             tiling,
+                                                        VkImageUsageFlags         usage,
+                                                        VkImageCreateFlags        flags,
+                                                        void*                     pImageFormatPropertiesNext,
+                                                        VkImageFormatProperties2* pImageFormatProperties)
 {
     VkPhysicalDeviceImageDrmFormatModifierInfoEXT physical_device_image_drm_format_modifier_info;
 
@@ -27411,37 +27495,45 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
     physical_device_image_drm_format_modifier_info.sharingMode           = sharingMode;
     physical_device_image_drm_format_modifier_info.queueFamilyIndexCount = queueFamilyIndexCount;
     physical_device_image_drm_format_modifier_info.pQueueFamilyIndices   = pQueueFamilyIndices;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &physical_device_image_drm_format_modifier_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice,
+                                                &physical_device_image_drm_format_modifier_info,
+                                                format,
+                                                type,
+                                                tiling,
+                                                usage,
+                                                flags,
+                                                pImageFormatPropertiesNext,
+                                                pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          physicalDevice,
-                                                  void*                     pImageFormatInfoNext,
-                                                  VkImageViewType           imageViewType,
-                                                  VkFormat                  format,
-                                                  VkImageType               type,
-                                                  VkImageTiling             tiling,
-                                                  VkImageUsageFlags         usage,
-                                                  VkImageCreateFlags        flags,
-                                                  void*                     pImageFormatPropertiesNext,
-                                                  VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          physicalDevice,
+                                                      void*                     pImageFormatInfoNext,
+                                                      VkImageViewType           imageViewType,
+                                                      VkFormat                  format,
+                                                      VkImageType               type,
+                                                      VkImageTiling             tiling,
+                                                      VkImageUsageFlags         usage,
+                                                      VkImageCreateFlags        flags,
+                                                      void*                     pImageFormatPropertiesNext,
+                                                      VkImageFormatProperties2* pImageFormatProperties)
 {
     VkPhysicalDeviceImageViewImageFormatInfoEXT physical_device_image_view_image_format_info;
 
     physical_device_image_view_image_format_info.sType         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT;
     physical_device_image_view_image_format_info.pNext         = pImageFormatInfoNext;
     physical_device_image_view_image_format_info.imageViewType = imageViewType;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &physical_device_image_view_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &physical_device_image_view_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-void cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice             physicalDevice,
-                                                               const void*                  pImageFormatInfoNext,
-                                                               uint32_t                     profileCount,
-                                                               const VkVideoProfileInfoKHR* pProfiles,
-                                                               VkFormat                     format,
-                                                               VkImageType                  type,
-                                                               VkImageTiling                tiling,
-                                                               VkImageUsageFlags            usage,
-                                                               VkImageCreateFlags           flags,
-                                                               void*                        pImageFormatPropertiesNext,
-                                                               VkImageFormatProperties2*    pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice             physicalDevice,
+                                                                   const void*                  pImageFormatInfoNext,
+                                                                   uint32_t                     profileCount,
+                                                                   const VkVideoProfileInfoKHR* pProfiles,
+                                                                   VkFormat                     format,
+                                                                   VkImageType                  type,
+                                                                   VkImageTiling                tiling,
+                                                                   VkImageUsageFlags            usage,
+                                                                   VkImageCreateFlags           flags,
+                                                                   void*                        pImageFormatPropertiesNext,
+                                                                   VkImageFormatProperties2*    pImageFormatProperties)
 {
     VkVideoProfileListInfoKHR video_profile_list_info;
 
@@ -27449,7 +27541,7 @@ void cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice 
     video_profile_list_info.pNext        = pImageFormatInfoNext;
     video_profile_list_info.profileCount = profileCount;
     video_profile_list_info.pProfiles    = pProfiles;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &video_profile_list_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
+    return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &video_profile_list_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice               physicalDevice,
                                                                                  void*                          pNext,
@@ -27468,19 +27560,19 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR
     image_usage_flags2_create_info_khr.usage = usage2KHR;
     return cvkGetPhysicalDeviceSparseImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info_khr, format, type, samples, usage, tiling, pProperties);
 }
-void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
-                                                        void*                      pSurfaceInfoNext,
-                                                        VkPresentModeKHR           presentMode,
-                                                        VkSurfaceKHR               surface,
-                                                        void*                      pSurfaceCapabilitiesNext,
-                                                        VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
+                                                            void*                      pSurfaceInfoNext,
+                                                            VkPresentModeKHR           presentMode,
+                                                            VkSurfaceKHR               surface,
+                                                            void*                      pSurfaceCapabilitiesNext,
+                                                            VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
 {
     VkSurfacePresentModeKHR surface_present_mode;
 
     surface_present_mode.sType       = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_KHR;
     surface_present_mode.pNext       = pSurfaceInfoNext;
     surface_present_mode.presentMode = presentMode;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_present_mode, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
+    return cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_present_mode, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physicalDevice,
                                                        void*               pNext,
@@ -27495,17 +27587,17 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physi
     surface_present_mode.presentMode = presentMode;
     return cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &surface_present_mode, surface, pSurfaceFormats);
 }
-void cvkGetVideoDecodeAV1ProfileInfo(VkInstance                       instance,
-                                     VkPhysicalDevice                 physicalDevice,
-                                     const void*                      pVideoProfileNext,
-                                     StdVideoAV1Profile               stdProfile,
-                                     VkBool32                         filmGrainSupport,
-                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                     void*                            pCapabilitiesNext,
-                                     VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoDecodeAV1ProfileInfo(VkInstance                       instance,
+                                         VkPhysicalDevice                 physicalDevice,
+                                         const void*                      pVideoProfileNext,
+                                         StdVideoAV1Profile               stdProfile,
+                                         VkBool32                         filmGrainSupport,
+                                         VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                         VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                         VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                         VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                         void*                            pCapabilitiesNext,
+                                         VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoDecodeAV1ProfileInfoKHR video_decode_av1_profile_info;
 
@@ -27513,19 +27605,19 @@ void cvkGetVideoDecodeAV1ProfileInfo(VkInstance                       instance,
     video_decode_av1_profile_info.pNext            = pVideoProfileNext;
     video_decode_av1_profile_info.stdProfile       = stdProfile;
     video_decode_av1_profile_info.filmGrainSupport = filmGrainSupport;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_av1_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_av1_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoDecodeH264ProfileInfo(VkInstance                                instance,
-                                      VkPhysicalDevice                          physicalDevice,
-                                      const void*                               pVideoProfileNext,
-                                      StdVideoH264ProfileIdc                    stdProfileIdc,
-                                      VkVideoDecodeH264PictureLayoutFlagBitsKHR pictureLayout,
-                                      VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
-                                      void*                                     pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*                   pCapabilities)
+VkResult cvkGetVideoDecodeH264ProfileInfo(VkInstance                                instance,
+                                          VkPhysicalDevice                          physicalDevice,
+                                          const void*                               pVideoProfileNext,
+                                          StdVideoH264ProfileIdc                    stdProfileIdc,
+                                          VkVideoDecodeH264PictureLayoutFlagBitsKHR pictureLayout,
+                                          VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
+                                          void*                                     pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*                   pCapabilities)
 {
     VkVideoDecodeH264ProfileInfoKHR video_decode_h264_profile_info;
 
@@ -27533,146 +27625,154 @@ void cvkGetVideoDecodeH264ProfileInfo(VkInstance                                
     video_decode_h264_profile_info.pNext         = pVideoProfileNext;
     video_decode_h264_profile_info.stdProfileIdc = stdProfileIdc;
     video_decode_h264_profile_info.pictureLayout = pictureLayout;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_h264_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_h264_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoDecodeH265ProfileInfo(VkInstance                       instance,
-                                      VkPhysicalDevice                 physicalDevice,
-                                      const void*                      pVideoProfileNext,
-                                      StdVideoH265ProfileIdc           stdProfileIdc,
-                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                      void*                            pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoDecodeH265ProfileInfo(VkInstance                       instance,
+                                          VkPhysicalDevice                 physicalDevice,
+                                          const void*                      pVideoProfileNext,
+                                          StdVideoH265ProfileIdc           stdProfileIdc,
+                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                          void*                            pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoDecodeH265ProfileInfoKHR video_decode_h265_profile_info;
 
     video_decode_h265_profile_info.sType         = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_INFO_KHR;
     video_decode_h265_profile_info.pNext         = pVideoProfileNext;
     video_decode_h265_profile_info.stdProfileIdc = stdProfileIdc;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_h265_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_h265_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetPhysicalDeviceVideoCapabilitiesWithDecodeUsageInfo(VkInstance                       instance,
-                                                              VkPhysicalDevice                 physicalDevice,
-                                                              const void*                      pVideoProfileNext,
-                                                              VkVideoDecodeUsageFlagsKHR       videoUsageHints,
-                                                              VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                              VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                              VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                              VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                              void*                            pCapabilitiesNext,
-                                                              VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithDecodeUsageInfo(VkInstance                       instance,
+                                                                  VkPhysicalDevice                 physicalDevice,
+                                                                  const void*                      pVideoProfileNext,
+                                                                  VkVideoDecodeUsageFlagsKHR       videoUsageHints,
+                                                                  VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                                  VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                                  VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                                  VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                                  void*                            pCapabilitiesNext,
+                                                                  VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoDecodeUsageInfoKHR video_decode_usage_info;
 
     video_decode_usage_info.sType           = VK_STRUCTURE_TYPE_VIDEO_DECODE_USAGE_INFO_KHR;
     video_decode_usage_info.pNext           = pVideoProfileNext;
     video_decode_usage_info.videoUsageHints = videoUsageHints;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_usage_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_usage_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoDecodeVP9ProfileInfo(VkInstance                       instance,
-                                     VkPhysicalDevice                 physicalDevice,
-                                     const void*                      pVideoProfileNext,
-                                     StdVideoVP9Profile               stdProfile,
-                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                     void*                            pCapabilitiesNext,
-                                     VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoDecodeVP9ProfileInfo(VkInstance                       instance,
+                                         VkPhysicalDevice                 physicalDevice,
+                                         const void*                      pVideoProfileNext,
+                                         StdVideoVP9Profile               stdProfile,
+                                         VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                         VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                         VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                         VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                         void*                            pCapabilitiesNext,
+                                         VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoDecodeVP9ProfileInfoKHR video_decode_vp9_profile_info;
 
     video_decode_vp9_profile_info.sType      = VK_STRUCTURE_TYPE_VIDEO_DECODE_VP9_PROFILE_INFO_KHR;
     video_decode_vp9_profile_info.pNext      = pVideoProfileNext;
     video_decode_vp9_profile_info.stdProfile = stdProfile;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_vp9_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_decode_vp9_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoEncodeAV1ProfileInfo(VkInstance                       instance,
-                                     VkPhysicalDevice                 physicalDevice,
-                                     const void*                      pVideoProfileNext,
-                                     StdVideoAV1Profile               stdProfile,
-                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                     void*                            pCapabilitiesNext,
-                                     VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoEncodeAV1ProfileInfo(VkInstance                       instance,
+                                         VkPhysicalDevice                 physicalDevice,
+                                         const void*                      pVideoProfileNext,
+                                         StdVideoAV1Profile               stdProfile,
+                                         VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                         VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                         VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                         VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                         void*                            pCapabilitiesNext,
+                                         VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoEncodeAV1ProfileInfoKHR video_encode_av1_profile_info;
 
     video_encode_av1_profile_info.sType      = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR;
     video_encode_av1_profile_info.pNext      = pVideoProfileNext;
     video_encode_av1_profile_info.stdProfile = stdProfile;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_av1_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_av1_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoEncodeH264ProfileInfo(VkInstance                       instance,
-                                      VkPhysicalDevice                 physicalDevice,
-                                      const void*                      pVideoProfileNext,
-                                      StdVideoH264ProfileIdc           stdProfileIdc,
-                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                      void*                            pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoEncodeH264ProfileInfo(VkInstance                       instance,
+                                          VkPhysicalDevice                 physicalDevice,
+                                          const void*                      pVideoProfileNext,
+                                          StdVideoH264ProfileIdc           stdProfileIdc,
+                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                          void*                            pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoEncodeH264ProfileInfoKHR video_encode_h264_profile_info;
 
     video_encode_h264_profile_info.sType         = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_INFO_KHR;
     video_encode_h264_profile_info.pNext         = pVideoProfileNext;
     video_encode_h264_profile_info.stdProfileIdc = stdProfileIdc;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_h264_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_h264_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoEncodeH265ProfileInfo(VkInstance                       instance,
-                                      VkPhysicalDevice                 physicalDevice,
-                                      const void*                      pVideoProfileNext,
-                                      StdVideoH265ProfileIdc           stdProfileIdc,
-                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                      void*                            pCapabilitiesNext,
-                                      VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoEncodeH265ProfileInfo(VkInstance                       instance,
+                                          VkPhysicalDevice                 physicalDevice,
+                                          const void*                      pVideoProfileNext,
+                                          StdVideoH265ProfileIdc           stdProfileIdc,
+                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                          void*                            pCapabilitiesNext,
+                                          VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoEncodeH265ProfileInfoKHR video_encode_h265_profile_info;
 
     video_encode_h265_profile_info.sType         = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_INFO_KHR;
     video_encode_h265_profile_info.pNext         = pVideoProfileNext;
     video_encode_h265_profile_info.stdProfileIdc = stdProfileIdc;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_h265_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_h265_profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-void cvkGetVideoEncodeProfileRgbConversionInfo(VkInstance                       instance,
-                                               VkPhysicalDevice                 physicalDevice,
-                                               const void*                      pVideoProfileNext,
-                                               VkBool32                         performEncodeRgbConversion,
-                                               VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                               VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                               VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                               VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                               void*                            pCapabilitiesNext,
-                                               VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetVideoEncodeProfileRgbConversionInfo(VkInstance                       instance,
+                                                   VkPhysicalDevice                 physicalDevice,
+                                                   const void*                      pVideoProfileNext,
+                                                   VkBool32                         performEncodeRgbConversion,
+                                                   VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                   VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                   VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                   VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                   void*                            pCapabilitiesNext,
+                                                   VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoEncodeProfileRgbConversionInfoVALVE video_encode_profile_rgb_conversion_info;
 
     video_encode_profile_rgb_conversion_info.sType                      = VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE;
     video_encode_profile_rgb_conversion_info.pNext                      = pVideoProfileNext;
     video_encode_profile_rgb_conversion_info.performEncodeRgbConversion = performEncodeRgbConversion;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_profile_rgb_conversion_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance,
+                                  physicalDevice,
+                                  &video_encode_profile_rgb_conversion_info,
+                                  videoCodecOperation,
+                                  chromaSubsampling,
+                                  lumaBitDepth,
+                                  chromaBitDepth,
+                                  pCapabilitiesNext,
+                                  pCapabilities);
 }
-void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance                       instance,
-                                                              VkPhysicalDevice                 physicalDevice,
-                                                              const void*                      pVideoProfileNext,
-                                                              VkVideoEncodeUsageFlagsKHR       videoUsageHints,
-                                                              VkVideoEncodeContentFlagsKHR     videoContentHints,
-                                                              VkVideoEncodeTuningModeKHR       tuningMode,
-                                                              VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                              VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                              VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                              VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                              void*                            pCapabilitiesNext,
-                                                              VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance                       instance,
+                                                                  VkPhysicalDevice                 physicalDevice,
+                                                                  const void*                      pVideoProfileNext,
+                                                                  VkVideoEncodeUsageFlagsKHR       videoUsageHints,
+                                                                  VkVideoEncodeContentFlagsKHR     videoContentHints,
+                                                                  VkVideoEncodeTuningModeKHR       tuningMode,
+                                                                  VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                                  VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                                  VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                                  VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                                  void*                            pCapabilitiesNext,
+                                                                  VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoEncodeUsageInfoKHR video_encode_usage_info;
 
@@ -27681,7 +27781,7 @@ void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance        
     video_encode_usage_info.videoUsageHints   = videoUsageHints;
     video_encode_usage_info.videoContentHints = videoContentHints;
     video_encode_usage_info.tuningMode        = tuningMode;
-    cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_usage_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
+    return cvkGetVideoProfileInfo(instance, physicalDevice, &video_encode_usage_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2CreateInfoPropertiesKHR(VkInstance                 instance,
                                                                                 VkPhysicalDevice           physicalDevice,
@@ -33087,131 +33187,146 @@ void cvkGetPhysicalDeviceTensorFormatProperties(VkPhysicalDevice physicalDevice,
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &tensor_format_properties, &format_properties);
     (*pTensorFormatProperties) = tensor_format_properties;
 }
-void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
-                                                       const void*                      pImageFormatInfoNext,
-                                                       VkFormat                         format,
-                                                       VkImageType                      type,
-                                                       VkImageTiling                    tiling,
-                                                       VkImageUsageFlags                usage,
-                                                       VkImageCreateFlags               flags,
-                                                       void*                            pExternalImageFormatPropertiesNext,
-                                                       VkExternalImageFormatProperties* pExternalImageFormatProperties)
+VkResult cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
+                                                           const void*                      pImageFormatInfoNext,
+                                                           VkFormat                         format,
+                                                           VkImageType                      type,
+                                                           VkImageTiling                    tiling,
+                                                           VkImageUsageFlags                usage,
+                                                           VkImageCreateFlags               flags,
+                                                           void*                            pExternalImageFormatPropertiesNext,
+                                                           VkExternalImageFormatProperties* pExternalImageFormatProperties)
 {
+    VkResult                        result;
     VkImageFormatProperties2        image_format_properties;
     VkExternalImageFormatProperties external_image_format_properties;
 
     external_image_format_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
     external_image_format_properties.pNext = pExternalImageFormatPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &external_image_format_properties, &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &external_image_format_properties, &image_format_properties);
     (*pExternalImageFormatProperties) = external_image_format_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDevice                                physicalDevice,
-                                                                   const void*                                     pImageFormatInfoNext,
-                                                                   VkFormat                                        format,
-                                                                   VkImageType                                     type,
-                                                                   VkImageTiling                                   tiling,
-                                                                   VkImageUsageFlags                               usage,
-                                                                   VkImageCreateFlags                              flags,
-                                                                   void*                                           pFilterCubicImageViewImageFormatPropertiesNext,
-                                                                   VkFilterCubicImageViewImageFormatPropertiesEXT* pFilterCubicImageViewImageFormatProperties)
+VkResult cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDevice                                physicalDevice,
+                                                                       const void*                                     pImageFormatInfoNext,
+                                                                       VkFormat                                        format,
+                                                                       VkImageType                                     type,
+                                                                       VkImageTiling                                   tiling,
+                                                                       VkImageUsageFlags                               usage,
+                                                                       VkImageCreateFlags                              flags,
+                                                                       void*                                           pFilterCubicImageViewImageFormatPropertiesNext,
+                                                                       VkFilterCubicImageViewImageFormatPropertiesEXT* pFilterCubicImageViewImageFormatProperties)
 {
+    VkResult                                       result;
     VkImageFormatProperties2                       image_format_properties;
     VkFilterCubicImageViewImageFormatPropertiesEXT filter_cubic_image_view_image_format_properties;
 
     filter_cubic_image_view_image_format_properties.sType = VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT;
     filter_cubic_image_view_image_format_properties.pNext = pFilterCubicImageViewImageFormatPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &filter_cubic_image_view_image_format_properties, &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &filter_cubic_image_view_image_format_properties, &image_format_properties);
     (*pFilterCubicImageViewImageFormatProperties) = filter_cubic_image_view_image_format_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
-                                                                                      const void*                            pImageFormatInfoNext,
-                                                                                      VkFormat                               format,
-                                                                                      VkImageType                            type,
-                                                                                      VkImageTiling                          tiling,
-                                                                                      VkImageUsageFlags                      usage,
-                                                                                      VkImageCreateFlags                     flags,
-                                                                                      void*                                  pHostImageCopyDevicePerformanceQueryNext,
-                                                                                      VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery)
+VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
+                                                                                          const void*                            pImageFormatInfoNext,
+                                                                                          VkFormat                               format,
+                                                                                          VkImageType                            type,
+                                                                                          VkImageTiling                          tiling,
+                                                                                          VkImageUsageFlags                      usage,
+                                                                                          VkImageCreateFlags                     flags,
+                                                                                          void*                                  pHostImageCopyDevicePerformanceQueryNext,
+                                                                                          VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery)
 {
+    VkResult                              result;
     VkImageFormatProperties2              image_format_properties;
     VkHostImageCopyDevicePerformanceQuery host_image_copy_device_performance_query;
 
     host_image_copy_device_performance_query.sType = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY;
     host_image_copy_device_performance_query.pNext = pHostImageCopyDevicePerformanceQueryNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &host_image_copy_device_performance_query, &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &host_image_copy_device_performance_query, &image_format_properties);
     (*pHostImageCopyDevicePerformanceQuery) = host_image_copy_device_performance_query;
+    return result;
 }
-void cvkGetPhysicalDeviceImageCompressionProperties(VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pImageFormatInfoNext,
-                                                    VkFormat                         format,
-                                                    VkImageType                      type,
-                                                    VkImageTiling                    tiling,
-                                                    VkImageUsageFlags                usage,
-                                                    VkImageCreateFlags               flags,
-                                                    void*                            pImageCompressionPropertiesNext,
-                                                    VkImageCompressionPropertiesEXT* pImageCompressionProperties)
+VkResult cvkGetPhysicalDeviceImageCompressionProperties(VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pImageFormatInfoNext,
+                                                        VkFormat                         format,
+                                                        VkImageType                      type,
+                                                        VkImageTiling                    tiling,
+                                                        VkImageUsageFlags                usage,
+                                                        VkImageCreateFlags               flags,
+                                                        void*                            pImageCompressionPropertiesNext,
+                                                        VkImageCompressionPropertiesEXT* pImageCompressionProperties)
 {
+    VkResult                        result;
     VkImageFormatProperties2        image_format_properties;
     VkImageCompressionPropertiesEXT image_compression_properties;
 
     image_compression_properties.sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT;
     image_compression_properties.pNext = pImageCompressionPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &image_compression_properties, &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &image_compression_properties, &image_format_properties);
     (*pImageCompressionProperties) = image_compression_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
-                                                                     const void*                                    pImageFormatInfoNext,
-                                                                     VkFormat                                       format,
-                                                                     VkImageType                                    type,
-                                                                     VkImageTiling                                  tiling,
-                                                                     VkImageUsageFlags                              usage,
-                                                                     VkImageCreateFlags                             flags,
-                                                                     void*                                          pSamplerYcbcrConversionImageFormatPropertiesNext,
-                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties)
+VkResult cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
+                                                                         const void*                                    pImageFormatInfoNext,
+                                                                         VkFormat                                       format,
+                                                                         VkImageType                                    type,
+                                                                         VkImageTiling                                  tiling,
+                                                                         VkImageUsageFlags                              usage,
+                                                                         VkImageCreateFlags                             flags,
+                                                                         void*                                          pSamplerYcbcrConversionImageFormatPropertiesNext,
+                                                                         VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties)
 {
+    VkResult                                      result;
     VkImageFormatProperties2                      image_format_properties;
     VkSamplerYcbcrConversionImageFormatProperties sampler_ycbcr_conversion_image_format_properties;
 
     sampler_ycbcr_conversion_image_format_properties.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
     sampler_ycbcr_conversion_image_format_properties.pNext = pSamplerYcbcrConversionImageFormatPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &sampler_ycbcr_conversion_image_format_properties, &image_format_properties);
+    result =
+        cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &sampler_ycbcr_conversion_image_format_properties, &image_format_properties);
     (*pSamplerYcbcrConversionImageFormatProperties) = sampler_ycbcr_conversion_image_format_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceSubsampledImageFormatProperties(VkPhysicalDevice                      physicalDevice,
-                                                         const void*                           pImageFormatInfoNext,
-                                                         VkFormat                              format,
-                                                         VkImageType                           type,
-                                                         VkImageTiling                         tiling,
-                                                         VkImageUsageFlags                     usage,
-                                                         VkImageCreateFlags                    flags,
-                                                         void*                                 pSubsampledImageFormatPropertiesNext,
-                                                         VkSubsampledImageFormatPropertiesEXT* pSubsampledImageFormatProperties)
+VkResult cvkGetPhysicalDeviceSubsampledImageFormatProperties(VkPhysicalDevice                      physicalDevice,
+                                                             const void*                           pImageFormatInfoNext,
+                                                             VkFormat                              format,
+                                                             VkImageType                           type,
+                                                             VkImageTiling                         tiling,
+                                                             VkImageUsageFlags                     usage,
+                                                             VkImageCreateFlags                    flags,
+                                                             void*                                 pSubsampledImageFormatPropertiesNext,
+                                                             VkSubsampledImageFormatPropertiesEXT* pSubsampledImageFormatProperties)
 {
+    VkResult                             result;
     VkImageFormatProperties2             image_format_properties;
     VkSubsampledImageFormatPropertiesEXT subsampled_image_format_properties;
 
     subsampled_image_format_properties.sType = VK_STRUCTURE_TYPE_SUBSAMPLED_IMAGE_FORMAT_PROPERTIES_EXT;
     subsampled_image_format_properties.pNext = pSubsampledImageFormatPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &subsampled_image_format_properties, &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &subsampled_image_format_properties, &image_format_properties);
     (*pSubsampledImageFormatProperties) = subsampled_image_format_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceTextureLODGatherFormatProperties(VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pImageFormatInfoNext,
-                                                          VkFormat                               format,
-                                                          VkImageType                            type,
-                                                          VkImageTiling                          tiling,
-                                                          VkImageUsageFlags                      usage,
-                                                          VkImageCreateFlags                     flags,
-                                                          void*                                  pTextureLODGatherFormatPropertiesNext,
-                                                          VkTextureLODGatherFormatPropertiesAMD* pTextureLODGatherFormatProperties)
+VkResult cvkGetPhysicalDeviceTextureLODGatherFormatProperties(VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pImageFormatInfoNext,
+                                                              VkFormat                               format,
+                                                              VkImageType                            type,
+                                                              VkImageTiling                          tiling,
+                                                              VkImageUsageFlags                      usage,
+                                                              VkImageCreateFlags                     flags,
+                                                              void*                                  pTextureLODGatherFormatPropertiesNext,
+                                                              VkTextureLODGatherFormatPropertiesAMD* pTextureLODGatherFormatProperties)
 {
+    VkResult                              result;
     VkImageFormatProperties2              image_format_properties;
     VkTextureLODGatherFormatPropertiesAMD texture_lod_gather_format_properties;
 
     texture_lod_gather_format_properties.sType = VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD;
     texture_lod_gather_format_properties.pNext = pTextureLODGatherFormatPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &texture_lod_gather_format_properties, &image_format_properties);
+    result = cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &texture_lod_gather_format_properties, &image_format_properties);
     (*pTextureLODGatherFormatProperties) = texture_lod_gather_format_properties;
+    return result;
 }
 void cvkGetPhysicalDeviceMemoryBudgetProperties(VkPhysicalDevice                           physicalDevice,
                                                 void*                                      pPhysicalDeviceMemoryBudgetPropertiesNext,
@@ -34655,575 +34770,656 @@ void cvkGetPhysicalDeviceVulkan14Properties(VkPhysicalDevice physicalDevice, voi
     cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_vulkan14_properties, &properties);
     (*pPhysicalDeviceVulkan14Properties) = physical_device_vulkan14_properties;
 }
-void cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice                          physicalDevice,
-                                                             const void*                               pSurfaceInfoNext,
-                                                             VkSurfaceKHR                              surface,
-                                                             void*                                     pDisplayNativeHdrSurfaceCapabilitiesNext,
-                                                             VkDisplayNativeHdrSurfaceCapabilitiesAMD* pDisplayNativeHdrSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice                          physicalDevice,
+                                                                 const void*                               pSurfaceInfoNext,
+                                                                 VkSurfaceKHR                              surface,
+                                                                 void*                                     pDisplayNativeHdrSurfaceCapabilitiesNext,
+                                                                 VkDisplayNativeHdrSurfaceCapabilitiesAMD* pDisplayNativeHdrSurfaceCapabilities)
 {
+    VkResult                                 result;
     VkSurfaceCapabilities2KHR                surface_capabilities;
     VkDisplayNativeHdrSurfaceCapabilitiesAMD display_native_hdr_surface_capabilities;
 
     display_native_hdr_surface_capabilities.sType = VK_STRUCTURE_TYPE_DISPLAY_NATIVE_HDR_SURFACE_CAPABILITIES_AMD;
     display_native_hdr_surface_capabilities.pNext = pDisplayNativeHdrSurfaceCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &display_native_hdr_surface_capabilities, &surface_capabilities);
+    result                                  = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &display_native_hdr_surface_capabilities, &surface_capabilities);
     (*pDisplayNativeHdrSurfaceCapabilities) = display_native_hdr_surface_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKHR(VkPhysicalDevice                 physicalDevice,
-                                                                                  const void*                      pSurfaceInfoNext,
-                                                                                  VkSurfaceKHR                     surface,
-                                                                                  void*                            pImageUsageFlags2CreateInfoKHRNext,
-                                                                                  VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKHR(VkPhysicalDevice                 physicalDevice,
+                                                                                      const void*                      pSurfaceInfoNext,
+                                                                                      VkSurfaceKHR                     surface,
+                                                                                      void*                            pImageUsageFlags2CreateInfoKHRNext,
+                                                                                      VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR)
 {
+    VkResult                        result;
     VkSurfaceCapabilities2KHR       surface_capabilities;
     VkImageUsageFlags2CreateInfoKHR image_usage_flags2_create_info_khr;
 
     image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info_khr.pNext = pImageUsageFlags2CreateInfoKHRNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &image_usage_flags2_create_info_khr, &surface_capabilities);
-    (*pImageUsageFlags2CreateInfoKHR) = image_usage_flags2_create_info_khr;
+    result                                   = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &image_usage_flags2_create_info_khr, &surface_capabilities);
+    (*pImageUsageFlags2CreateInfoKHR)        = image_usage_flags2_create_info_khr;
+    return result;
 }
-void cvkGetPhysicalDeviceLatencySurfaceCapabilities(VkPhysicalDevice                physicalDevice,
-                                                    const void*                     pSurfaceInfoNext,
-                                                    VkSurfaceKHR                    surface,
-                                                    void*                           pLatencySurfaceCapabilitiesNext,
-                                                    VkLatencySurfaceCapabilitiesNV* pLatencySurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceLatencySurfaceCapabilities(VkPhysicalDevice                physicalDevice,
+                                                        const void*                     pSurfaceInfoNext,
+                                                        VkSurfaceKHR                    surface,
+                                                        void*                           pLatencySurfaceCapabilitiesNext,
+                                                        VkLatencySurfaceCapabilitiesNV* pLatencySurfaceCapabilities)
 {
+    VkResult                       result;
     VkSurfaceCapabilities2KHR      surface_capabilities;
     VkLatencySurfaceCapabilitiesNV latency_surface_capabilities;
 
     latency_surface_capabilities       = (*pLatencySurfaceCapabilities);
     latency_surface_capabilities.sType = VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV;
     latency_surface_capabilities.pNext = pLatencySurfaceCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &latency_surface_capabilities, &surface_capabilities);
-    (*pLatencySurfaceCapabilities) = latency_surface_capabilities;
+    result                             = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &latency_surface_capabilities, &surface_capabilities);
+    (*pLatencySurfaceCapabilities)     = latency_surface_capabilities;
+    return result;
 }
-void cvkGetPhysicalDevicePresentTimingSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pSurfaceInfoNext,
-                                                          VkSurfaceKHR                           surface,
-                                                          void*                                  pPresentTimingSurfaceCapabilitiesNext,
-                                                          VkPresentTimingSurfaceCapabilitiesEXT* pPresentTimingSurfaceCapabilities)
+VkResult cvkGetPhysicalDevicePresentTimingSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pSurfaceInfoNext,
+                                                              VkSurfaceKHR                           surface,
+                                                              void*                                  pPresentTimingSurfaceCapabilitiesNext,
+                                                              VkPresentTimingSurfaceCapabilitiesEXT* pPresentTimingSurfaceCapabilities)
 {
+    VkResult                              result;
     VkSurfaceCapabilities2KHR             surface_capabilities;
     VkPresentTimingSurfaceCapabilitiesEXT present_timing_surface_capabilities;
 
     present_timing_surface_capabilities.sType = VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT;
     present_timing_surface_capabilities.pNext = pPresentTimingSurfaceCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &present_timing_surface_capabilities, &surface_capabilities);
-    (*pPresentTimingSurfaceCapabilities) = present_timing_surface_capabilities;
+    result                                    = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &present_timing_surface_capabilities, &surface_capabilities);
+    (*pPresentTimingSurfaceCapabilities)      = present_timing_surface_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities2(VkPhysicalDevice                        physicalDevice,
-                                                           const void*                             pSurfaceInfoNext,
-                                                           VkSurfaceKHR                            surface,
-                                                           void*                                   pSharedPresentSurfaceCapabilities2Next,
-                                                           VkSharedPresentSurfaceCapabilities2KHR* pSharedPresentSurfaceCapabilities2)
+VkResult cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities2(VkPhysicalDevice                        physicalDevice,
+                                                               const void*                             pSurfaceInfoNext,
+                                                               VkSurfaceKHR                            surface,
+                                                               void*                                   pSharedPresentSurfaceCapabilities2Next,
+                                                               VkSharedPresentSurfaceCapabilities2KHR* pSharedPresentSurfaceCapabilities2)
 {
+    VkResult                               result;
     VkSurfaceCapabilities2KHR              surface_capabilities;
     VkSharedPresentSurfaceCapabilities2KHR shared_present_surface_capabilities2;
 
     shared_present_surface_capabilities2.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR;
     shared_present_surface_capabilities2.pNext = pSharedPresentSurfaceCapabilities2Next;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &shared_present_surface_capabilities2, &surface_capabilities);
-    (*pSharedPresentSurfaceCapabilities2) = shared_present_surface_capabilities2;
+    result                                     = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &shared_present_surface_capabilities2, &surface_capabilities);
+    (*pSharedPresentSurfaceCapabilities2)      = shared_present_surface_capabilities2;
+    return result;
 }
-void cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pSurfaceInfoNext,
-                                                          VkSurfaceKHR                           surface,
-                                                          void*                                  pSharedPresentSurfaceCapabilitiesNext,
-                                                          VkSharedPresentSurfaceCapabilitiesKHR* pSharedPresentSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSharedPresentSurfaceCapabilities(VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pSurfaceInfoNext,
+                                                              VkSurfaceKHR                           surface,
+                                                              void*                                  pSharedPresentSurfaceCapabilitiesNext,
+                                                              VkSharedPresentSurfaceCapabilitiesKHR* pSharedPresentSurfaceCapabilities)
 {
+    VkResult                              result;
     VkSurfaceCapabilities2KHR             surface_capabilities;
     VkSharedPresentSurfaceCapabilitiesKHR shared_present_surface_capabilities;
 
     shared_present_surface_capabilities.sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
     shared_present_surface_capabilities.pNext = pSharedPresentSurfaceCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &shared_present_surface_capabilities, &surface_capabilities);
-    (*pSharedPresentSurfaceCapabilities) = shared_present_surface_capabilities;
+    result                                    = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &shared_present_surface_capabilities, &surface_capabilities);
+    (*pSharedPresentSurfaceCapabilities)      = shared_present_surface_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentBarrier(VkPhysicalDevice                       physicalDevice,
-                                                           const void*                            pSurfaceInfoNext,
-                                                           VkSurfaceKHR                           surface,
-                                                           void*                                  pSurfaceCapabilitiesPresentBarrierNext,
-                                                           VkSurfaceCapabilitiesPresentBarrierNV* pSurfaceCapabilitiesPresentBarrier)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesPresentBarrier(VkPhysicalDevice                       physicalDevice,
+                                                               const void*                            pSurfaceInfoNext,
+                                                               VkSurfaceKHR                           surface,
+                                                               void*                                  pSurfaceCapabilitiesPresentBarrierNext,
+                                                               VkSurfaceCapabilitiesPresentBarrierNV* pSurfaceCapabilitiesPresentBarrier)
 {
+    VkResult                              result;
     VkSurfaceCapabilities2KHR             surface_capabilities;
     VkSurfaceCapabilitiesPresentBarrierNV surface_capabilities_present_barrier;
 
     surface_capabilities_present_barrier.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_BARRIER_NV;
     surface_capabilities_present_barrier.pNext = pSurfaceCapabilitiesPresentBarrierNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_barrier, &surface_capabilities);
-    (*pSurfaceCapabilitiesPresentBarrier) = surface_capabilities_present_barrier;
+    result                                     = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_barrier, &surface_capabilities);
+    (*pSurfaceCapabilitiesPresentBarrier)      = surface_capabilities_present_barrier;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentId2(VkPhysicalDevice                    physicalDevice,
-                                                       const void*                         pSurfaceInfoNext,
-                                                       VkSurfaceKHR                        surface,
-                                                       void*                               pSurfaceCapabilitiesPresentId2Next,
-                                                       VkSurfaceCapabilitiesPresentId2KHR* pSurfaceCapabilitiesPresentId2)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesPresentId2(VkPhysicalDevice                    physicalDevice,
+                                                           const void*                         pSurfaceInfoNext,
+                                                           VkSurfaceKHR                        surface,
+                                                           void*                               pSurfaceCapabilitiesPresentId2Next,
+                                                           VkSurfaceCapabilitiesPresentId2KHR* pSurfaceCapabilitiesPresentId2)
 {
+    VkResult                           result;
     VkSurfaceCapabilities2KHR          surface_capabilities;
     VkSurfaceCapabilitiesPresentId2KHR surface_capabilities_present_id2;
 
     surface_capabilities_present_id2.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_ID_2_KHR;
     surface_capabilities_present_id2.pNext = pSurfaceCapabilitiesPresentId2Next;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_id2, &surface_capabilities);
-    (*pSurfaceCapabilitiesPresentId2) = surface_capabilities_present_id2;
+    result                                 = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_id2, &surface_capabilities);
+    (*pSurfaceCapabilitiesPresentId2)      = surface_capabilities_present_id2;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice                      physicalDevice,
-                                                         const void*                           pSurfaceInfoNext,
-                                                         VkSurfaceKHR                          surface,
-                                                         void*                                 pSurfaceCapabilitiesPresentWait2Next,
-                                                         VkSurfaceCapabilitiesPresentWait2KHR* pSurfaceCapabilitiesPresentWait2)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice                      physicalDevice,
+                                                             const void*                           pSurfaceInfoNext,
+                                                             VkSurfaceKHR                          surface,
+                                                             void*                                 pSurfaceCapabilitiesPresentWait2Next,
+                                                             VkSurfaceCapabilitiesPresentWait2KHR* pSurfaceCapabilitiesPresentWait2)
 {
+    VkResult                             result;
     VkSurfaceCapabilities2KHR            surface_capabilities;
     VkSurfaceCapabilitiesPresentWait2KHR surface_capabilities_present_wait2;
 
     surface_capabilities_present_wait2.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_WAIT_2_KHR;
     surface_capabilities_present_wait2.pNext = pSurfaceCapabilitiesPresentWait2Next;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_wait2, &surface_capabilities);
-    (*pSurfaceCapabilitiesPresentWait2) = surface_capabilities_present_wait2;
+    result                                   = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_wait2, &surface_capabilities);
+    (*pSurfaceCapabilitiesPresentWait2)      = surface_capabilities_present_wait2;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
-                                                                         const void*                           pSurfaceInfoNext,
-                                                                         VkSurfaceKHR                          surface,
-                                                                         void*                                 pSurfacePresentModeCompatibilityNext,
-                                                                         VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
+                                                                             const void*                           pSurfaceInfoNext,
+                                                                             VkSurfaceKHR                          surface,
+                                                                             void*                                 pSurfacePresentModeCompatibilityNext,
+                                                                             VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility)
 {
+    VkResult                             result;
     VkSurfaceCapabilities2KHR            surface_capabilities;
     VkSurfacePresentModeCompatibilityKHR surface_present_mode_compatibility;
 
     surface_present_mode_compatibility       = (*pSurfacePresentModeCompatibility);
     surface_present_mode_compatibility.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_KHR;
     surface_present_mode_compatibility.pNext = pSurfacePresentModeCompatibilityNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_present_mode_compatibility, &surface_capabilities);
-    (*pSurfacePresentModeCompatibility) = surface_present_mode_compatibility;
+    result                                   = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_present_mode_compatibility, &surface_capabilities);
+    (*pSurfacePresentModeCompatibility)      = surface_present_mode_compatibility;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfacePresentScalingCapabilities(VkPhysicalDevice                        physicalDevice,
-                                                           const void*                             pSurfaceInfoNext,
-                                                           VkSurfaceKHR                            surface,
-                                                           void*                                   pSurfacePresentScalingCapabilitiesNext,
-                                                           VkSurfacePresentScalingCapabilitiesKHR* pSurfacePresentScalingCapabilities)
+VkResult cvkGetPhysicalDeviceSurfacePresentScalingCapabilities(VkPhysicalDevice                        physicalDevice,
+                                                               const void*                             pSurfaceInfoNext,
+                                                               VkSurfaceKHR                            surface,
+                                                               void*                                   pSurfacePresentScalingCapabilitiesNext,
+                                                               VkSurfacePresentScalingCapabilitiesKHR* pSurfacePresentScalingCapabilities)
 {
+    VkResult                               result;
     VkSurfaceCapabilities2KHR              surface_capabilities;
     VkSurfacePresentScalingCapabilitiesKHR surface_present_scaling_capabilities;
 
     surface_present_scaling_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_SCALING_CAPABILITIES_KHR;
     surface_present_scaling_capabilities.pNext = pSurfacePresentScalingCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_present_scaling_capabilities, &surface_capabilities);
-    (*pSurfacePresentScalingCapabilities) = surface_present_scaling_capabilities;
+    result                                     = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_present_scaling_capabilities, &surface_capabilities);
+    (*pSurfacePresentScalingCapabilities)      = surface_present_scaling_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceSurfaceProtectedCapabilities(VkPhysicalDevice                   physicalDevice,
-                                                      const void*                        pSurfaceInfoNext,
-                                                      VkSurfaceKHR                       surface,
-                                                      void*                              pSurfaceProtectedCapabilitiesNext,
-                                                      VkSurfaceProtectedCapabilitiesKHR* pSurfaceProtectedCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceProtectedCapabilities(VkPhysicalDevice                   physicalDevice,
+                                                          const void*                        pSurfaceInfoNext,
+                                                          VkSurfaceKHR                       surface,
+                                                          void*                              pSurfaceProtectedCapabilitiesNext,
+                                                          VkSurfaceProtectedCapabilitiesKHR* pSurfaceProtectedCapabilities)
 {
+    VkResult                          result;
     VkSurfaceCapabilities2KHR         surface_capabilities;
     VkSurfaceProtectedCapabilitiesKHR surface_protected_capabilities;
 
     surface_protected_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
     surface_protected_capabilities.pNext = pSurfaceProtectedCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_protected_capabilities, &surface_capabilities);
-    (*pSurfaceProtectedCapabilities) = surface_protected_capabilities;
+    result                               = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_protected_capabilities, &surface_capabilities);
+    (*pSurfaceProtectedCapabilities)     = surface_protected_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceSwapchainFlagsSurfaceCapabilities(VkPhysicalDevice                        physicalDevice,
-                                                           const void*                             pSurfaceInfoNext,
-                                                           VkSurfaceKHR                            surface,
-                                                           void*                                   pSwapchainFlagsSurfaceCapabilitiesNext,
-                                                           VkSwapchainFlagsSurfaceCapabilitiesEXT* pSwapchainFlagsSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSwapchainFlagsSurfaceCapabilities(VkPhysicalDevice                        physicalDevice,
+                                                               const void*                             pSurfaceInfoNext,
+                                                               VkSurfaceKHR                            surface,
+                                                               void*                                   pSwapchainFlagsSurfaceCapabilitiesNext,
+                                                               VkSwapchainFlagsSurfaceCapabilitiesEXT* pSwapchainFlagsSurfaceCapabilities)
 {
+    VkResult                               result;
     VkSurfaceCapabilities2KHR              surface_capabilities;
     VkSwapchainFlagsSurfaceCapabilitiesEXT swapchain_flags_surface_capabilities;
 
     swapchain_flags_surface_capabilities.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT;
     swapchain_flags_surface_capabilities.pNext = pSwapchainFlagsSurfaceCapabilitiesNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &swapchain_flags_surface_capabilities, &surface_capabilities);
-    (*pSwapchainFlagsSurfaceCapabilities) = swapchain_flags_surface_capabilities;
+    result                                     = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &swapchain_flags_surface_capabilities, &surface_capabilities);
+    (*pSwapchainFlagsSurfaceCapabilities)      = swapchain_flags_surface_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoDecodeAV1Capabilities(VkInstance                       instance,
-                                                    VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pVideoProfileNext,
-                                                    VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                    VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                    VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                    VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                    void*                            pVideoDecodeAV1CapabilitiesNext,
-                                                    VkVideoDecodeAV1CapabilitiesKHR* pVideoDecodeAV1Capabilities)
+VkResult cvkGetPhysicalDeviceVideoDecodeAV1Capabilities(VkInstance                       instance,
+                                                        VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pVideoProfileNext,
+                                                        VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                        VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                        VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                        VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                        void*                            pVideoDecodeAV1CapabilitiesNext,
+                                                        VkVideoDecodeAV1CapabilitiesKHR* pVideoDecodeAV1Capabilities)
 {
+    VkResult                        result;
     VkVideoCapabilitiesKHR          capabilities;
     VkVideoDecodeAV1CapabilitiesKHR video_decode_av1_capabilities;
 
     video_decode_av1_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR;
     video_decode_av1_capabilities.pNext = pVideoDecodeAV1CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_av1_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_av1_capabilities, &capabilities);
     (*pVideoDecodeAV1Capabilities) = video_decode_av1_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoDecodeCapabilities(VkInstance                       instance,
-                                                 VkPhysicalDevice                 physicalDevice,
-                                                 const void*                      pVideoProfileNext,
-                                                 VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                 VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                 VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                 VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                 void*                            pVideoDecodeCapabilitiesNext,
-                                                 VkVideoDecodeCapabilitiesKHR*    pVideoDecodeCapabilities)
+VkResult cvkGetPhysicalDeviceVideoDecodeCapabilities(VkInstance                       instance,
+                                                     VkPhysicalDevice                 physicalDevice,
+                                                     const void*                      pVideoProfileNext,
+                                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                     void*                            pVideoDecodeCapabilitiesNext,
+                                                     VkVideoDecodeCapabilitiesKHR*    pVideoDecodeCapabilities)
 {
+    VkResult                     result;
     VkVideoCapabilitiesKHR       capabilities;
     VkVideoDecodeCapabilitiesKHR video_decode_capabilities;
 
     video_decode_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
     video_decode_capabilities.pNext = pVideoDecodeCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_capabilities, &capabilities);
     (*pVideoDecodeCapabilities) = video_decode_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoDecodeH264Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoDecodeH264CapabilitiesNext,
-                                                     VkVideoDecodeH264CapabilitiesKHR* pVideoDecodeH264Capabilities)
+VkResult cvkGetPhysicalDeviceVideoDecodeH264Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoDecodeH264CapabilitiesNext,
+                                                         VkVideoDecodeH264CapabilitiesKHR* pVideoDecodeH264Capabilities)
 {
+    VkResult                         result;
     VkVideoCapabilitiesKHR           capabilities;
     VkVideoDecodeH264CapabilitiesKHR video_decode_h264_capabilities;
 
     video_decode_h264_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
     video_decode_h264_capabilities.pNext = pVideoDecodeH264CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_h264_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_h264_capabilities, &capabilities);
     (*pVideoDecodeH264Capabilities) = video_decode_h264_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoDecodeH265Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoDecodeH265CapabilitiesNext,
-                                                     VkVideoDecodeH265CapabilitiesKHR* pVideoDecodeH265Capabilities)
+VkResult cvkGetPhysicalDeviceVideoDecodeH265Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoDecodeH265CapabilitiesNext,
+                                                         VkVideoDecodeH265CapabilitiesKHR* pVideoDecodeH265Capabilities)
 {
+    VkResult                         result;
     VkVideoCapabilitiesKHR           capabilities;
     VkVideoDecodeH265CapabilitiesKHR video_decode_h265_capabilities;
 
     video_decode_h265_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_CAPABILITIES_KHR;
     video_decode_h265_capabilities.pNext = pVideoDecodeH265CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_h265_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_h265_capabilities, &capabilities);
     (*pVideoDecodeH265Capabilities) = video_decode_h265_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoDecodeVP9Capabilities(VkInstance                       instance,
-                                                    VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pVideoProfileNext,
-                                                    VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                    VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                    VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                    VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                    void*                            pVideoDecodeVP9CapabilitiesNext,
-                                                    VkVideoDecodeVP9CapabilitiesKHR* pVideoDecodeVP9Capabilities)
+VkResult cvkGetPhysicalDeviceVideoDecodeVP9Capabilities(VkInstance                       instance,
+                                                        VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pVideoProfileNext,
+                                                        VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                        VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                        VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                        VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                        void*                            pVideoDecodeVP9CapabilitiesNext,
+                                                        VkVideoDecodeVP9CapabilitiesKHR* pVideoDecodeVP9Capabilities)
 {
+    VkResult                        result;
     VkVideoCapabilitiesKHR          capabilities;
     VkVideoDecodeVP9CapabilitiesKHR video_decode_vp9_capabilities;
 
     video_decode_vp9_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_VP9_CAPABILITIES_KHR;
     video_decode_vp9_capabilities.pNext = pVideoDecodeVP9CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_vp9_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_decode_vp9_capabilities, &capabilities);
     (*pVideoDecodeVP9Capabilities) = video_decode_vp9_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeAV1Capabilities(VkInstance                       instance,
-                                                    VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pVideoProfileNext,
-                                                    VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                    VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                    VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                    VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                    void*                            pVideoEncodeAV1CapabilitiesNext,
-                                                    VkVideoEncodeAV1CapabilitiesKHR* pVideoEncodeAV1Capabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeAV1Capabilities(VkInstance                       instance,
+                                                        VkPhysicalDevice                 physicalDevice,
+                                                        const void*                      pVideoProfileNext,
+                                                        VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                        VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                        VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                        VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                        void*                            pVideoEncodeAV1CapabilitiesNext,
+                                                        VkVideoEncodeAV1CapabilitiesKHR* pVideoEncodeAV1Capabilities)
 {
+    VkResult                        result;
     VkVideoCapabilitiesKHR          capabilities;
     VkVideoEncodeAV1CapabilitiesKHR video_encode_av1_capabilities;
 
     video_encode_av1_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR;
     video_encode_av1_capabilities.pNext = pVideoEncodeAV1CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_av1_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_av1_capabilities, &capabilities);
     (*pVideoEncodeAV1Capabilities) = video_encode_av1_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeAV1QuantizationMapCapabilities(VkInstance                                      instance,
-                                                                   VkPhysicalDevice                                physicalDevice,
-                                                                   const void*                                     pVideoProfileNext,
-                                                                   VkVideoCodecOperationFlagBitsKHR                videoCodecOperation,
-                                                                   VkVideoChromaSubsamplingFlagsKHR                chromaSubsampling,
-                                                                   VkVideoComponentBitDepthFlagsKHR                lumaBitDepth,
-                                                                   VkVideoComponentBitDepthFlagsKHR                chromaBitDepth,
-                                                                   void*                                           pVideoEncodeAV1QuantizationMapCapabilitiesNext,
-                                                                   VkVideoEncodeAV1QuantizationMapCapabilitiesKHR* pVideoEncodeAV1QuantizationMapCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeAV1QuantizationMapCapabilities(VkInstance                                      instance,
+                                                                       VkPhysicalDevice                                physicalDevice,
+                                                                       const void*                                     pVideoProfileNext,
+                                                                       VkVideoCodecOperationFlagBitsKHR                videoCodecOperation,
+                                                                       VkVideoChromaSubsamplingFlagsKHR                chromaSubsampling,
+                                                                       VkVideoComponentBitDepthFlagsKHR                lumaBitDepth,
+                                                                       VkVideoComponentBitDepthFlagsKHR                chromaBitDepth,
+                                                                       void*                                           pVideoEncodeAV1QuantizationMapCapabilitiesNext,
+                                                                       VkVideoEncodeAV1QuantizationMapCapabilitiesKHR* pVideoEncodeAV1QuantizationMapCapabilities)
 {
+    VkResult                                       result;
     VkVideoCapabilitiesKHR                         capabilities;
     VkVideoEncodeAV1QuantizationMapCapabilitiesKHR video_encode_av1_quantization_map_capabilities;
 
     video_encode_av1_quantization_map_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR;
     video_encode_av1_quantization_map_capabilities.pNext = pVideoEncodeAV1QuantizationMapCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance,
-                           physicalDevice,
-                           pVideoProfileNext,
-                           videoCodecOperation,
-                           chromaSubsampling,
-                           lumaBitDepth,
-                           chromaBitDepth,
-                           &video_encode_av1_quantization_map_capabilities,
-                           &capabilities);
-    (*pVideoEncodeAV1QuantizationMapCapabilities) = video_encode_av1_quantization_map_capabilities;
+    result                                               = cvkGetVideoProfileInfo(instance,
+                                                                                  physicalDevice,
+                                                                                  pVideoProfileNext,
+                                                                                  videoCodecOperation,
+                                                                                  chromaSubsampling,
+                                                                                  lumaBitDepth,
+                                                                                  chromaBitDepth,
+                                                                                  &video_encode_av1_quantization_map_capabilities,
+                                                                                  &capabilities);
+    (*pVideoEncodeAV1QuantizationMapCapabilities)        = video_encode_av1_quantization_map_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeCapabilities(VkInstance                       instance,
-                                                 VkPhysicalDevice                 physicalDevice,
-                                                 const void*                      pVideoProfileNext,
-                                                 VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                 VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                 VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                 VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                 void*                            pVideoEncodeCapabilitiesNext,
-                                                 VkVideoEncodeCapabilitiesKHR*    pVideoEncodeCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeCapabilities(VkInstance                       instance,
+                                                     VkPhysicalDevice                 physicalDevice,
+                                                     const void*                      pVideoProfileNext,
+                                                     VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                     VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                     VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                     VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                     void*                            pVideoEncodeCapabilitiesNext,
+                                                     VkVideoEncodeCapabilitiesKHR*    pVideoEncodeCapabilities)
 {
+    VkResult                     result;
     VkVideoCapabilitiesKHR       capabilities;
     VkVideoEncodeCapabilitiesKHR video_encode_capabilities;
 
     video_encode_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
     video_encode_capabilities.pNext = pVideoEncodeCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_capabilities, &capabilities);
     (*pVideoEncodeCapabilities) = video_encode_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeFeedback2Capabilities(VkInstance                             instance,
-                                                          VkPhysicalDevice                       physicalDevice,
-                                                          const void*                            pVideoProfileNext,
-                                                          VkVideoCodecOperationFlagBitsKHR       videoCodecOperation,
-                                                          VkVideoChromaSubsamplingFlagsKHR       chromaSubsampling,
-                                                          VkVideoComponentBitDepthFlagsKHR       lumaBitDepth,
-                                                          VkVideoComponentBitDepthFlagsKHR       chromaBitDepth,
-                                                          void*                                  pVideoEncodeFeedback2CapabilitiesNext,
-                                                          VkVideoEncodeFeedback2CapabilitiesKHR* pVideoEncodeFeedback2Capabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeFeedback2Capabilities(VkInstance                             instance,
+                                                              VkPhysicalDevice                       physicalDevice,
+                                                              const void*                            pVideoProfileNext,
+                                                              VkVideoCodecOperationFlagBitsKHR       videoCodecOperation,
+                                                              VkVideoChromaSubsamplingFlagsKHR       chromaSubsampling,
+                                                              VkVideoComponentBitDepthFlagsKHR       lumaBitDepth,
+                                                              VkVideoComponentBitDepthFlagsKHR       chromaBitDepth,
+                                                              void*                                  pVideoEncodeFeedback2CapabilitiesNext,
+                                                              VkVideoEncodeFeedback2CapabilitiesKHR* pVideoEncodeFeedback2Capabilities)
 {
+    VkResult                              result;
     VkVideoCapabilitiesKHR                capabilities;
     VkVideoEncodeFeedback2CapabilitiesKHR video_encode_feedback2_capabilities;
 
     video_encode_feedback2_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
     video_encode_feedback2_capabilities.pNext = pVideoEncodeFeedback2CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_feedback2_capabilities, &capabilities);
+    result =
+        cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_feedback2_capabilities, &capabilities);
     (*pVideoEncodeFeedback2Capabilities) = video_encode_feedback2_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeH264Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoEncodeH264CapabilitiesNext,
-                                                     VkVideoEncodeH264CapabilitiesKHR* pVideoEncodeH264Capabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeH264Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoEncodeH264CapabilitiesNext,
+                                                         VkVideoEncodeH264CapabilitiesKHR* pVideoEncodeH264Capabilities)
 {
+    VkResult                         result;
     VkVideoCapabilitiesKHR           capabilities;
     VkVideoEncodeH264CapabilitiesKHR video_encode_h264_capabilities;
 
     video_encode_h264_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
     video_encode_h264_capabilities.pNext = pVideoEncodeH264CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_h264_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_h264_capabilities, &capabilities);
     (*pVideoEncodeH264Capabilities) = video_encode_h264_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeH264QuantizationMapCapabilities(VkInstance                                       instance,
-                                                                    VkPhysicalDevice                                 physicalDevice,
-                                                                    const void*                                      pVideoProfileNext,
-                                                                    VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
-                                                                    VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
-                                                                    void*                                            pVideoEncodeH264QuantizationMapCapabilitiesNext,
-                                                                    VkVideoEncodeH264QuantizationMapCapabilitiesKHR* pVideoEncodeH264QuantizationMapCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeH264QuantizationMapCapabilities(VkInstance                                       instance,
+                                                                        VkPhysicalDevice                                 physicalDevice,
+                                                                        const void*                                      pVideoProfileNext,
+                                                                        VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
+                                                                        VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
+                                                                        void*                                            pVideoEncodeH264QuantizationMapCapabilitiesNext,
+                                                                        VkVideoEncodeH264QuantizationMapCapabilitiesKHR* pVideoEncodeH264QuantizationMapCapabilities)
 {
+    VkResult                                        result;
     VkVideoCapabilitiesKHR                          capabilities;
     VkVideoEncodeH264QuantizationMapCapabilitiesKHR video_encode_h264_quantization_map_capabilities;
 
     video_encode_h264_quantization_map_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR;
     video_encode_h264_quantization_map_capabilities.pNext = pVideoEncodeH264QuantizationMapCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance,
-                           physicalDevice,
-                           pVideoProfileNext,
-                           videoCodecOperation,
-                           chromaSubsampling,
-                           lumaBitDepth,
-                           chromaBitDepth,
-                           &video_encode_h264_quantization_map_capabilities,
-                           &capabilities);
-    (*pVideoEncodeH264QuantizationMapCapabilities) = video_encode_h264_quantization_map_capabilities;
+    result                                                = cvkGetVideoProfileInfo(instance,
+                                                                                   physicalDevice,
+                                                                                   pVideoProfileNext,
+                                                                                   videoCodecOperation,
+                                                                                   chromaSubsampling,
+                                                                                   lumaBitDepth,
+                                                                                   chromaBitDepth,
+                                                                                   &video_encode_h264_quantization_map_capabilities,
+                                                                                   &capabilities);
+    (*pVideoEncodeH264QuantizationMapCapabilities)        = video_encode_h264_quantization_map_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeH265Capabilities(VkInstance                        instance,
-                                                     VkPhysicalDevice                  physicalDevice,
-                                                     const void*                       pVideoProfileNext,
-                                                     VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
-                                                     VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
-                                                     VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
-                                                     VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
-                                                     void*                             pVideoEncodeH265CapabilitiesNext,
-                                                     VkVideoEncodeH265CapabilitiesKHR* pVideoEncodeH265Capabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeH265Capabilities(VkInstance                        instance,
+                                                         VkPhysicalDevice                  physicalDevice,
+                                                         const void*                       pVideoProfileNext,
+                                                         VkVideoCodecOperationFlagBitsKHR  videoCodecOperation,
+                                                         VkVideoChromaSubsamplingFlagsKHR  chromaSubsampling,
+                                                         VkVideoComponentBitDepthFlagsKHR  lumaBitDepth,
+                                                         VkVideoComponentBitDepthFlagsKHR  chromaBitDepth,
+                                                         void*                             pVideoEncodeH265CapabilitiesNext,
+                                                         VkVideoEncodeH265CapabilitiesKHR* pVideoEncodeH265Capabilities)
 {
+    VkResult                         result;
     VkVideoCapabilitiesKHR           capabilities;
     VkVideoEncodeH265CapabilitiesKHR video_encode_h265_capabilities;
 
     video_encode_h265_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_CAPABILITIES_KHR;
     video_encode_h265_capabilities.pNext = pVideoEncodeH265CapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_h265_capabilities, &capabilities);
+    result = cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_h265_capabilities, &capabilities);
     (*pVideoEncodeH265Capabilities) = video_encode_h265_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeH265QuantizationMapCapabilities(VkInstance                                       instance,
-                                                                    VkPhysicalDevice                                 physicalDevice,
-                                                                    const void*                                      pVideoProfileNext,
-                                                                    VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
-                                                                    VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
-                                                                    VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
-                                                                    void*                                            pVideoEncodeH265QuantizationMapCapabilitiesNext,
-                                                                    VkVideoEncodeH265QuantizationMapCapabilitiesKHR* pVideoEncodeH265QuantizationMapCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeH265QuantizationMapCapabilities(VkInstance                                       instance,
+                                                                        VkPhysicalDevice                                 physicalDevice,
+                                                                        const void*                                      pVideoProfileNext,
+                                                                        VkVideoCodecOperationFlagBitsKHR                 videoCodecOperation,
+                                                                        VkVideoChromaSubsamplingFlagsKHR                 chromaSubsampling,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 lumaBitDepth,
+                                                                        VkVideoComponentBitDepthFlagsKHR                 chromaBitDepth,
+                                                                        void*                                            pVideoEncodeH265QuantizationMapCapabilitiesNext,
+                                                                        VkVideoEncodeH265QuantizationMapCapabilitiesKHR* pVideoEncodeH265QuantizationMapCapabilities)
 {
+    VkResult                                        result;
     VkVideoCapabilitiesKHR                          capabilities;
     VkVideoEncodeH265QuantizationMapCapabilitiesKHR video_encode_h265_quantization_map_capabilities;
 
     video_encode_h265_quantization_map_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR;
     video_encode_h265_quantization_map_capabilities.pNext = pVideoEncodeH265QuantizationMapCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance,
-                           physicalDevice,
-                           pVideoProfileNext,
-                           videoCodecOperation,
-                           chromaSubsampling,
-                           lumaBitDepth,
-                           chromaBitDepth,
-                           &video_encode_h265_quantization_map_capabilities,
-                           &capabilities);
-    (*pVideoEncodeH265QuantizationMapCapabilities) = video_encode_h265_quantization_map_capabilities;
+    result                                                = cvkGetVideoProfileInfo(instance,
+                                                                                   physicalDevice,
+                                                                                   pVideoProfileNext,
+                                                                                   videoCodecOperation,
+                                                                                   chromaSubsampling,
+                                                                                   lumaBitDepth,
+                                                                                   chromaBitDepth,
+                                                                                   &video_encode_h265_quantization_map_capabilities,
+                                                                                   &capabilities);
+    (*pVideoEncodeH265QuantizationMapCapabilities)        = video_encode_h265_quantization_map_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeIntraRefreshCapabilities(VkInstance                                instance,
-                                                             VkPhysicalDevice                          physicalDevice,
-                                                             const void*                               pVideoProfileNext,
-                                                             VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
-                                                             VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
-                                                             VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
-                                                             VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
-                                                             void*                                     pVideoEncodeIntraRefreshCapabilitiesNext,
-                                                             VkVideoEncodeIntraRefreshCapabilitiesKHR* pVideoEncodeIntraRefreshCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeIntraRefreshCapabilities(VkInstance                                instance,
+                                                                 VkPhysicalDevice                          physicalDevice,
+                                                                 const void*                               pVideoProfileNext,
+                                                                 VkVideoCodecOperationFlagBitsKHR          videoCodecOperation,
+                                                                 VkVideoChromaSubsamplingFlagsKHR          chromaSubsampling,
+                                                                 VkVideoComponentBitDepthFlagsKHR          lumaBitDepth,
+                                                                 VkVideoComponentBitDepthFlagsKHR          chromaBitDepth,
+                                                                 void*                                     pVideoEncodeIntraRefreshCapabilitiesNext,
+                                                                 VkVideoEncodeIntraRefreshCapabilitiesKHR* pVideoEncodeIntraRefreshCapabilities)
 {
+    VkResult                                 result;
     VkVideoCapabilitiesKHR                   capabilities;
     VkVideoEncodeIntraRefreshCapabilitiesKHR video_encode_intra_refresh_capabilities;
 
     video_encode_intra_refresh_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_CAPABILITIES_KHR;
     video_encode_intra_refresh_capabilities.pNext = pVideoEncodeIntraRefreshCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_intra_refresh_capabilities, &capabilities);
-    (*pVideoEncodeIntraRefreshCapabilities) = video_encode_intra_refresh_capabilities;
+    result                                        = cvkGetVideoProfileInfo(instance,
+                                                                           physicalDevice,
+                                                                           pVideoProfileNext,
+                                                                           videoCodecOperation,
+                                                                           chromaSubsampling,
+                                                                           lumaBitDepth,
+                                                                           chromaBitDepth,
+                                                                           &video_encode_intra_refresh_capabilities,
+                                                                           &capabilities);
+    (*pVideoEncodeIntraRefreshCapabilities)       = video_encode_intra_refresh_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeQuantizationMapCapabilities(VkInstance                                   instance,
-                                                                VkPhysicalDevice                             physicalDevice,
-                                                                const void*                                  pVideoProfileNext,
-                                                                VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
-                                                                VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
-                                                                VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
-                                                                VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
-                                                                void*                                        pVideoEncodeQuantizationMapCapabilitiesNext,
-                                                                VkVideoEncodeQuantizationMapCapabilitiesKHR* pVideoEncodeQuantizationMapCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeQuantizationMapCapabilities(VkInstance                                   instance,
+                                                                    VkPhysicalDevice                             physicalDevice,
+                                                                    const void*                                  pVideoProfileNext,
+                                                                    VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
+                                                                    VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
+                                                                    VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
+                                                                    VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
+                                                                    void*                                        pVideoEncodeQuantizationMapCapabilitiesNext,
+                                                                    VkVideoEncodeQuantizationMapCapabilitiesKHR* pVideoEncodeQuantizationMapCapabilities)
 {
+    VkResult                                    result;
     VkVideoCapabilitiesKHR                      capabilities;
     VkVideoEncodeQuantizationMapCapabilitiesKHR video_encode_quantization_map_capabilities;
 
     video_encode_quantization_map_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
     video_encode_quantization_map_capabilities.pNext = pVideoEncodeQuantizationMapCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance,
-                           physicalDevice,
-                           pVideoProfileNext,
-                           videoCodecOperation,
-                           chromaSubsampling,
-                           lumaBitDepth,
-                           chromaBitDepth,
-                           &video_encode_quantization_map_capabilities,
-                           &capabilities);
-    (*pVideoEncodeQuantizationMapCapabilities) = video_encode_quantization_map_capabilities;
+    result                                           = cvkGetVideoProfileInfo(instance,
+                                                                              physicalDevice,
+                                                                              pVideoProfileNext,
+                                                                              videoCodecOperation,
+                                                                              chromaSubsampling,
+                                                                              lumaBitDepth,
+                                                                              chromaBitDepth,
+                                                                              &video_encode_quantization_map_capabilities,
+                                                                              &capabilities);
+    (*pVideoEncodeQuantizationMapCapabilities)       = video_encode_quantization_map_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeRgbConversionCapabilities(VkInstance                                   instance,
-                                                              VkPhysicalDevice                             physicalDevice,
-                                                              const void*                                  pVideoProfileNext,
-                                                              VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
-                                                              VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
-                                                              VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
-                                                              VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
-                                                              void*                                        pVideoEncodeRgbConversionCapabilitiesNext,
-                                                              VkVideoEncodeRgbConversionCapabilitiesVALVE* pVideoEncodeRgbConversionCapabilities)
+VkResult cvkGetPhysicalDeviceVideoEncodeRgbConversionCapabilities(VkInstance                                   instance,
+                                                                  VkPhysicalDevice                             physicalDevice,
+                                                                  const void*                                  pVideoProfileNext,
+                                                                  VkVideoCodecOperationFlagBitsKHR             videoCodecOperation,
+                                                                  VkVideoChromaSubsamplingFlagsKHR             chromaSubsampling,
+                                                                  VkVideoComponentBitDepthFlagsKHR             lumaBitDepth,
+                                                                  VkVideoComponentBitDepthFlagsKHR             chromaBitDepth,
+                                                                  void*                                        pVideoEncodeRgbConversionCapabilitiesNext,
+                                                                  VkVideoEncodeRgbConversionCapabilitiesVALVE* pVideoEncodeRgbConversionCapabilities)
 {
+    VkResult                                    result;
     VkVideoCapabilitiesKHR                      capabilities;
     VkVideoEncodeRgbConversionCapabilitiesVALVE video_encode_rgb_conversion_capabilities;
 
     video_encode_rgb_conversion_capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
     video_encode_rgb_conversion_capabilities.pNext = pVideoEncodeRgbConversionCapabilitiesNext;
-    cvkGetVideoProfileInfo(instance, physicalDevice, pVideoProfileNext, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, &video_encode_rgb_conversion_capabilities, &capabilities);
-    (*pVideoEncodeRgbConversionCapabilities) = video_encode_rgb_conversion_capabilities;
+    result                                         = cvkGetVideoProfileInfo(instance,
+                                                                            physicalDevice,
+                                                                            pVideoProfileNext,
+                                                                            videoCodecOperation,
+                                                                            chromaSubsampling,
+                                                                            lumaBitDepth,
+                                                                            chromaBitDepth,
+                                                                            &video_encode_rgb_conversion_capabilities,
+                                                                            &capabilities);
+    (*pVideoEncodeRgbConversionCapabilities)       = video_encode_rgb_conversion_capabilities;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeAV1QualityLevelProperties(VkInstance                                 instance,
-                                                              VkPhysicalDevice                           physicalDevice,
-                                                              const void*                                pQualityLevelInfoNext,
-                                                              const VkVideoProfileInfoKHR*               pVideoProfile,
-                                                              uint32_t                                   qualityLevel,
-                                                              void*                                      pVideoEncodeAV1QualityLevelPropertiesNext,
-                                                              VkVideoEncodeAV1QualityLevelPropertiesKHR* pVideoEncodeAV1QualityLevelProperties)
+VkResult cvkGetPhysicalDeviceVideoEncodeAV1QualityLevelProperties(VkInstance                                 instance,
+                                                                  VkPhysicalDevice                           physicalDevice,
+                                                                  const void*                                pQualityLevelInfoNext,
+                                                                  const VkVideoProfileInfoKHR*               pVideoProfile,
+                                                                  uint32_t                                   qualityLevel,
+                                                                  void*                                      pVideoEncodeAV1QualityLevelPropertiesNext,
+                                                                  VkVideoEncodeAV1QualityLevelPropertiesKHR* pVideoEncodeAV1QualityLevelProperties)
 {
+    VkResult                                  result;
     VkVideoEncodeQualityLevelPropertiesKHR    quality_level_properties;
     VkVideoEncodeAV1QualityLevelPropertiesKHR video_encode_av1_quality_level_properties;
 
     video_encode_av1_quality_level_properties.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUALITY_LEVEL_PROPERTIES_KHR;
     video_encode_av1_quality_level_properties.pNext = pVideoEncodeAV1QualityLevelPropertiesNext;
-    cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(instance,
-                                                    physicalDevice,
-                                                    pQualityLevelInfoNext,
-                                                    pVideoProfile,
-                                                    qualityLevel,
-                                                    &video_encode_av1_quality_level_properties,
-                                                    &quality_level_properties);
-    (*pVideoEncodeAV1QualityLevelProperties) = video_encode_av1_quality_level_properties;
+    result                                          = cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(instance,
+                                                                                                      physicalDevice,
+                                                                                                      pQualityLevelInfoNext,
+                                                                                                      pVideoProfile,
+                                                                                                      qualityLevel,
+                                                                                                      &video_encode_av1_quality_level_properties,
+                                                                                                      &quality_level_properties);
+    (*pVideoEncodeAV1QualityLevelProperties)        = video_encode_av1_quality_level_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeH264QualityLevelProperties(VkInstance                                  instance,
-                                                               VkPhysicalDevice                            physicalDevice,
-                                                               const void*                                 pQualityLevelInfoNext,
-                                                               const VkVideoProfileInfoKHR*                pVideoProfile,
-                                                               uint32_t                                    qualityLevel,
-                                                               void*                                       pVideoEncodeH264QualityLevelPropertiesNext,
-                                                               VkVideoEncodeH264QualityLevelPropertiesKHR* pVideoEncodeH264QualityLevelProperties)
+VkResult cvkGetPhysicalDeviceVideoEncodeH264QualityLevelProperties(VkInstance                                  instance,
+                                                                   VkPhysicalDevice                            physicalDevice,
+                                                                   const void*                                 pQualityLevelInfoNext,
+                                                                   const VkVideoProfileInfoKHR*                pVideoProfile,
+                                                                   uint32_t                                    qualityLevel,
+                                                                   void*                                       pVideoEncodeH264QualityLevelPropertiesNext,
+                                                                   VkVideoEncodeH264QualityLevelPropertiesKHR* pVideoEncodeH264QualityLevelProperties)
 {
+    VkResult                                   result;
     VkVideoEncodeQualityLevelPropertiesKHR     quality_level_properties;
     VkVideoEncodeH264QualityLevelPropertiesKHR video_encode_h264_quality_level_properties;
 
     video_encode_h264_quality_level_properties.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUALITY_LEVEL_PROPERTIES_KHR;
     video_encode_h264_quality_level_properties.pNext = pVideoEncodeH264QualityLevelPropertiesNext;
-    cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(instance,
-                                                    physicalDevice,
-                                                    pQualityLevelInfoNext,
-                                                    pVideoProfile,
-                                                    qualityLevel,
-                                                    &video_encode_h264_quality_level_properties,
-                                                    &quality_level_properties);
-    (*pVideoEncodeH264QualityLevelProperties) = video_encode_h264_quality_level_properties;
+    result                                           = cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(instance,
+                                                                                                       physicalDevice,
+                                                                                                       pQualityLevelInfoNext,
+                                                                                                       pVideoProfile,
+                                                                                                       qualityLevel,
+                                                                                                       &video_encode_h264_quality_level_properties,
+                                                                                                       &quality_level_properties);
+    (*pVideoEncodeH264QualityLevelProperties)        = video_encode_h264_quality_level_properties;
+    return result;
 }
-void cvkGetPhysicalDeviceVideoEncodeH265QualityLevelProperties(VkInstance                                  instance,
-                                                               VkPhysicalDevice                            physicalDevice,
-                                                               const void*                                 pQualityLevelInfoNext,
-                                                               const VkVideoProfileInfoKHR*                pVideoProfile,
-                                                               uint32_t                                    qualityLevel,
-                                                               void*                                       pVideoEncodeH265QualityLevelPropertiesNext,
-                                                               VkVideoEncodeH265QualityLevelPropertiesKHR* pVideoEncodeH265QualityLevelProperties)
+VkResult cvkGetPhysicalDeviceVideoEncodeH265QualityLevelProperties(VkInstance                                  instance,
+                                                                   VkPhysicalDevice                            physicalDevice,
+                                                                   const void*                                 pQualityLevelInfoNext,
+                                                                   const VkVideoProfileInfoKHR*                pVideoProfile,
+                                                                   uint32_t                                    qualityLevel,
+                                                                   void*                                       pVideoEncodeH265QualityLevelPropertiesNext,
+                                                                   VkVideoEncodeH265QualityLevelPropertiesKHR* pVideoEncodeH265QualityLevelProperties)
 {
+    VkResult                                   result;
     VkVideoEncodeQualityLevelPropertiesKHR     quality_level_properties;
     VkVideoEncodeH265QualityLevelPropertiesKHR video_encode_h265_quality_level_properties;
 
     video_encode_h265_quality_level_properties.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUALITY_LEVEL_PROPERTIES_KHR;
     video_encode_h265_quality_level_properties.pNext = pVideoEncodeH265QualityLevelPropertiesNext;
-    cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(instance,
-                                                    physicalDevice,
-                                                    pQualityLevelInfoNext,
-                                                    pVideoProfile,
-                                                    qualityLevel,
-                                                    &video_encode_h265_quality_level_properties,
-                                                    &quality_level_properties);
-    (*pVideoEncodeH265QualityLevelProperties) = video_encode_h265_quality_level_properties;
+    result                                           = cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(instance,
+                                                                                                       physicalDevice,
+                                                                                                       pQualityLevelInfoNext,
+                                                                                                       pVideoProfile,
+                                                                                                       qualityLevel,
+                                                                                                       &video_encode_h265_quality_level_properties,
+                                                                                                       &quality_level_properties);
+    (*pVideoEncodeH265QualityLevelProperties)        = video_encode_h265_quality_level_properties;
+    return result;
 }
 void cvkGetPipelineIndirectMemoryDedicatedRequirements(VkDevice                        device,
                                                        const void*                     pCreateInfoNext,
@@ -35601,52 +35797,6 @@ uint32_t cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkInstance    
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, video_format_properties));
     return video_format_property_count;
 }
-VkResult cvkTryGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities)
-{
-    VkVideoCapabilitiesKHR                      capabilities;
-    PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR function;
-    VkResult                                    result;
-
-    capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
-    capabilities.pNext = pNext;
-
-    function         = (PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR");
-    result           = function(physicalDevice, pVideoProfile, &capabilities);
-    (*pCapabilities) = capabilities;
-    return result;
-}
-VkResult cvkTryGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
-                                                       const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
-                                                       void*                                   pNext,
-                                                       VkImageFormatProperties2*               pImageFormatProperties)
-{
-    VkImageFormatProperties2 image_format_properties;
-    VkResult                 result;
-
-    image_format_properties.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
-    image_format_properties.pNext = pNext;
-    result                        = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties);
-    (*pImageFormatProperties)     = image_format_properties;
-    return result;
-}
-VkResult cvkTryGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
-                                                                  VkPhysicalDevice                                      physicalDevice,
-                                                                  const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
-                                                                  void*                                                 pNext,
-                                                                  VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties)
-{
-    VkVideoEncodeQualityLevelPropertiesKHR                      quality_level_properties;
-    PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR function;
-    VkResult                                                    result;
-
-    quality_level_properties.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUALITY_LEVEL_PROPERTIES_KHR;
-    quality_level_properties.pNext = pNext;
-
-    function                   = (PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
-    result                     = function(physicalDevice, pQualityLevelInfo, &quality_level_properties);
-    (*pQualityLevelProperties) = quality_level_properties;
-    return result;
-}
 uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {
     uint32_t memory_type_index;
@@ -35775,11 +35925,13 @@ VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice        
 {
     VkPhysicalDeviceExternalImageFormatInfo external_image_format_info;
     VkExternalImageFormatProperties         external_image_format_properties;
+    VkResult                                result;
 
     cvkInitPhysicalDeviceExternalImageFormatInfo(&external_image_format_info, pImageFormatInfoNext, handleType);
-    cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
-    (*pDedicatedOnly) = (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
-    return (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
+    result = cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
+    (*pDedicatedOnly) =
+        ((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT)) ? VK_TRUE : VK_FALSE;
+    return ((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT)) ? VK_TRUE : VK_FALSE;
 }
 VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkPhysicalDevice                   physicalDevice,
                                                         VkExternalMemoryHandleTypeFlagBits handleType,
@@ -35793,11 +35945,13 @@ VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkPhysicalDevice        
 {
     VkPhysicalDeviceExternalImageFormatInfo external_image_format_info;
     VkExternalImageFormatProperties         external_image_format_properties;
+    VkResult                                result;
 
     cvkInitPhysicalDeviceExternalImageFormatInfo(&external_image_format_info, pImageFormatInfoNext, handleType);
-    cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
-    (*pDedicatedOnly) = (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
-    return (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
+    result = cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
+    (*pDedicatedOnly) =
+        ((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT)) ? VK_TRUE : VK_FALSE;
+    return ((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT)) ? VK_TRUE : VK_FALSE;
 }
 void cvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
                             VkDevice                     device,
@@ -36174,37 +36328,37 @@ void cvkCreateComputePipelineLayout(VkDevice                     device,
     cvkInitPushConstantRange(&push_constant_range, VK_SHADER_STAGE_COMPUTE_BIT, pushConstantOffset, pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
 }
-void cvkSetupComputePipeline(VkDevice                         device,
-                             const void*                      pShaderModuleNext,
-                             size_t                           codeSize,
-                             const uint32_t*                  pCode,
-                             const VkSpecializationInfo*      pSpecializationInfo,
-                             const void*                      pPipelineLayoutNext,
-                             uint32_t                         setLayoutCount,
-                             const VkDescriptorSetLayout*     pSetLayouts,
-                             uint32_t                         pushConstantOffset,
-                             uint32_t                         pushConstantSize,
-                             VkPipelineCache                  pipelineCache,
-                             const void*                      pPipelineNext,
-                             VkPipelineCreateFlags            flags,
-                             VkPipeline                       basePipelineHandle,
-                             int32_t                          basePipelineIndex,
-                             VkShaderModuleCreateFlags        shaderModuleFlags,
-                             VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
-                             const void*                      pStageNext,
-                             VkPipelineShaderStageCreateFlags stageFlags,
-                             const char*                      pEntryPoint,
-                             const VkAllocationCallbacks*     pAllocator,
-                             VkShaderModule*                  pShaderModule,
-                             VkPipelineLayout*                pPipelineLayout,
-                             VkPipeline*                      pPipeline)
+VkResult cvkSetupComputePipeline(VkDevice                         device,
+                                 const void*                      pShaderModuleNext,
+                                 size_t                           codeSize,
+                                 const uint32_t*                  pCode,
+                                 const VkSpecializationInfo*      pSpecializationInfo,
+                                 const void*                      pPipelineLayoutNext,
+                                 uint32_t                         setLayoutCount,
+                                 const VkDescriptorSetLayout*     pSetLayouts,
+                                 uint32_t                         pushConstantOffset,
+                                 uint32_t                         pushConstantSize,
+                                 VkPipelineCache                  pipelineCache,
+                                 const void*                      pPipelineNext,
+                                 VkPipelineCreateFlags            flags,
+                                 VkPipeline                       basePipelineHandle,
+                                 int32_t                          basePipelineIndex,
+                                 VkShaderModuleCreateFlags        shaderModuleFlags,
+                                 VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
+                                 const void*                      pStageNext,
+                                 VkPipelineShaderStageCreateFlags stageFlags,
+                                 const char*                      pEntryPoint,
+                                 const VkAllocationCallbacks*     pAllocator,
+                                 VkShaderModule*                  pShaderModule,
+                                 VkPipelineLayout*                pPipelineLayout,
+                                 VkPipeline*                      pPipeline)
 {
     VkPipelineShaderStageCreateInfo pipeline_shader_stage_create_info;
 
     cvkCreateShaderModule(device, pShaderModuleNext, shaderModuleFlags, codeSize, pCode, pAllocator, pShaderModule);
     cvkInitPipelineShaderStageCreateInfo(&pipeline_shader_stage_create_info, pStageNext, stageFlags, VK_SHADER_STAGE_COMPUTE_BIT, (*pShaderModule), pEntryPoint, pSpecializationInfo);
     cvkCreateComputePipelineLayout(device, pPipelineLayoutNext, pipelineLayoutFlags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
-    cvkCreateComputePipeline(device, pipelineCache, pPipelineNext, flags, pipeline_shader_stage_create_info, (*pPipelineLayout), basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+    return cvkCreateComputePipeline(device, pipelineCache, pPipelineNext, flags, pipeline_shader_stage_create_info, (*pPipelineLayout), basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
 }
 void cvkUpdateDescriptorSet(VkDevice                      device,
                             const void*                   pNext,
@@ -37409,46 +37563,46 @@ void cvkCmdSetFirstViewportAndScissor2D(VkCommandBuffer commandBuffer, VkExtent2
     cvkCmdSetFirstViewport2D(commandBuffer, extent2D);
     cvkCmdSetFirstScissor2D(commandBuffer, extent2D);
 }
-void cvkSetupGraphicsPipeline(VkDevice                                      device,
-                              const void*                                   pPipelineLayoutNext,
-                              uint32_t                                      setLayoutCount,
-                              const VkDescriptorSetLayout*                  pSetLayouts,
-                              uint32_t                                      pushConstantOffset,
-                              uint32_t                                      pushConstantSize,
-                              VkPipelineCache                               pipelineCache,
-                              const void*                                   pPipelineNext,
-                              VkPipelineCreateFlags                         flags,
-                              const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
-                              const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
-                              const VkPipelineTessellationStateCreateInfo*  pTessellationState,
-                              const VkPipelineViewportStateCreateInfo*      pViewportState,
-                              const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
-                              const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
-                              const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
-                              const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
-                              const VkPipelineDynamicStateCreateInfo*       pDynamicState,
-                              VkRenderPass                                  renderPass,
-                              uint32_t                                      subpass,
-                              VkShaderModuleCreateFlags                     shaderModuleFlags,
-                              VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
-                              const void*                                   pVertexShaderModuleNext,
-                              size_t                                        vertexCodeSize,
-                              const uint32_t*                               pVertexCode,
-                              const void*                                   pFragmentShaderModuleNext,
-                              size_t                                        fragmentCodeSize,
-                              const uint32_t*                               pFragmentCode,
-                              const void*                                   pVertexStageNext,
-                              const void*                                   pFragmentStageNext,
-                              VkPipelineShaderStageCreateFlags              stageFlags,
-                              const char*                                   pVertexEntryPoint,
-                              const VkSpecializationInfo*                   pVertexSpecializationInfo,
-                              const char*                                   pFragmentEntryPoint,
-                              const VkSpecializationInfo*                   pFragmentSpecializationInfo,
-                              const VkAllocationCallbacks*                  pAllocator,
-                              VkShaderModule*                               pVertexShaderModule,
-                              VkShaderModule*                               pFragmentShaderModule,
-                              VkPipelineLayout*                             pPipelineLayout,
-                              VkPipeline*                                   pPipeline)
+VkResult cvkSetupGraphicsPipeline(VkDevice                                      device,
+                                  const void*                                   pPipelineLayoutNext,
+                                  uint32_t                                      setLayoutCount,
+                                  const VkDescriptorSetLayout*                  pSetLayouts,
+                                  uint32_t                                      pushConstantOffset,
+                                  uint32_t                                      pushConstantSize,
+                                  VkPipelineCache                               pipelineCache,
+                                  const void*                                   pPipelineNext,
+                                  VkPipelineCreateFlags                         flags,
+                                  const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                  const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                  const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                  const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                  const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                  const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                  const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                  const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                  const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                  VkRenderPass                                  renderPass,
+                                  uint32_t                                      subpass,
+                                  VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                  VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                  const void*                                   pVertexShaderModuleNext,
+                                  size_t                                        vertexCodeSize,
+                                  const uint32_t*                               pVertexCode,
+                                  const void*                                   pFragmentShaderModuleNext,
+                                  size_t                                        fragmentCodeSize,
+                                  const uint32_t*                               pFragmentCode,
+                                  const void*                                   pVertexStageNext,
+                                  const void*                                   pFragmentStageNext,
+                                  VkPipelineShaderStageCreateFlags              stageFlags,
+                                  const char*                                   pVertexEntryPoint,
+                                  const VkSpecializationInfo*                   pVertexSpecializationInfo,
+                                  const char*                                   pFragmentEntryPoint,
+                                  const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                  const VkAllocationCallbacks*                  pAllocator,
+                                  VkShaderModule*                               pVertexShaderModule,
+                                  VkShaderModule*                               pFragmentShaderModule,
+                                  VkPipelineLayout*                             pPipelineLayout,
+                                  VkPipeline*                                   pPipeline)
 {
     VkPipelineShaderStageCreateInfo shader_stages[2];
 
@@ -37457,28 +37611,28 @@ void cvkSetupGraphicsPipeline(VkDevice                                      devi
     cvkInitPipelineShaderStageCreateInfo(&shader_stages[0], pVertexStageNext, stageFlags, VK_SHADER_STAGE_VERTEX_BIT, (*pVertexShaderModule), pVertexEntryPoint, pVertexSpecializationInfo);
     cvkInitPipelineShaderStageCreateInfo(&shader_stages[1], pFragmentStageNext, stageFlags, VK_SHADER_STAGE_FRAGMENT_BIT, (*pFragmentShaderModule), pFragmentEntryPoint, pFragmentSpecializationInfo);
     cvkCreateGraphicsPipelineLayout(device, pPipelineLayoutNext, pipelineLayoutFlags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
-    cvkCreateGraphicsPipeline(device,
-                              pipelineCache,
-                              pPipelineNext,
-                              flags,
-                              2,
-                              shader_stages,
-                              pVertexInputState,
-                              pInputAssemblyState,
-                              pTessellationState,
-                              pViewportState,
-                              pRasterizationState,
-                              pMultisampleState,
-                              pDepthStencilState,
-                              pColorBlendState,
-                              pDynamicState,
-                              (*pPipelineLayout),
-                              renderPass,
-                              subpass,
-                              VK_NULL_HANDLE,
-                              -1,
-                              pAllocator,
-                              pPipeline);
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     pPipelineNext,
+                                     flags,
+                                     2,
+                                     shader_stages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     (*pPipelineLayout),
+                                     renderPass,
+                                     subpass,
+                                     VK_NULL_HANDLE,
+                                     -1,
+                                     pAllocator,
+                                     pPipeline);
 }
 void cvkCmdDrawGraphicsVertices(VkCommandBuffer        commandBuffer,
                                 VkPipeline             pipeline,
@@ -37680,7 +37834,7 @@ VkBool32 cvkGetPhysicalDeviceVideoProfileSupport(VkInstance instance, VkPhysical
     VkVideoCapabilitiesKHR capabilities;
     VkResult               result;
 
-    result = cvkTryGetPhysicalDeviceVideoCapabilities(instance, physicalDevice, pVideoProfile, NULL, &capabilities);
+    result = cvkGetPhysicalDeviceVideoCapabilities(instance, physicalDevice, pVideoProfile, NULL, &capabilities);
     return (VK_SUCCESS == result) ? VK_TRUE : VK_FALSE;
 }
 void cvkCmdControlResetVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)

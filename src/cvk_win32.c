@@ -186,12 +186,15 @@ void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const voi
     pInfo->hinstance = hinstance;
     pInfo->hwnd      = hwnd;
 }
-void cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
+VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
 {
     PFN_vkAcquireFullScreenExclusiveModeEXT function;
+    VkResult                                result;
 
     function = (PFN_vkAcquireFullScreenExclusiveModeEXT)cvkGetDeviceProcAddr(device, "vkAcquireFullScreenExclusiveModeEXT");
-    CVK_CHECK(function(device, swapchain));
+    result   = function(device, swapchain);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkAcquireWinrtDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
@@ -212,17 +215,20 @@ void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32Surfac
     CVK_CHECK(vkCreateWin32SurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-void cvkGetDeviceGroupSurfacePresentModes2(VkDevice device, const void* pNext, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+VkResult cvkGetDeviceGroupSurfacePresentModes2(VkDevice device, const void* pNext, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkPhysicalDeviceSurfaceInfo2KHR             surface_info;
     PFN_vkGetDeviceGroupSurfacePresentModes2EXT function;
+    VkResult                                    result;
 
     surface_info.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
     surface_info.pNext   = pNext;
     surface_info.surface = surface;
 
     function = (PFN_vkGetDeviceGroupSurfacePresentModes2EXT)cvkGetDeviceProcAddr(device, "vkGetDeviceGroupSurfacePresentModes2EXT");
-    CVK_CHECK(function(device, &surface_info, pModes));
+    result   = function(device, &surface_info, pModes);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkGetFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, HANDLE* pHandle)
 {
@@ -348,12 +354,15 @@ void cvkImportSemaphoreWin32Handle(VkDevice                              device,
     function = (PFN_vkImportSemaphoreWin32HandleKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreWin32HandleKHR");
     CVK_CHECK(function(device, &import_semaphore_win32_handle_info));
 }
-void cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
+VkResult cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
 {
     PFN_vkReleaseFullScreenExclusiveModeEXT function;
+    VkResult                                result;
 
     function = (PFN_vkReleaseFullScreenExclusiveModeEXT)cvkGetDeviceProcAddr(device, "vkReleaseFullScreenExclusiveModeEXT");
-    CVK_CHECK(function(device, swapchain));
+    result   = function(device, swapchain);
+    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    return result;
 }
 void cvkAllocateExportMemoryWin32Handle(VkDevice                     device,
                                         const void*                  pNext,
@@ -463,156 +472,160 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
     export_semaphore_win32_handle_info.name        = name;
     cvkCreateSemaphore(device, &export_semaphore_win32_handle_info, flags, pAllocator, pSemaphore);
 }
-void cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
-                                                          void*                         pNext,
-                                                          VkFullScreenExclusiveEXT      fullScreenExclusive,
-                                                          VkSwapchainCreateFlagsKHR     flags,
-                                                          VkSurfaceKHR                  surface,
-                                                          uint32_t                      minImageCount,
-                                                          VkFormat                      imageFormat,
-                                                          VkColorSpaceKHR               imageColorSpace,
-                                                          VkExtent2D                    imageExtent,
-                                                          uint32_t                      imageArrayLayers,
-                                                          VkImageUsageFlags             imageUsage,
-                                                          VkSharingMode                 imageSharingMode,
-                                                          uint32_t                      queueFamilyIndexCount,
-                                                          const uint32_t*               pQueueFamilyIndices,
-                                                          VkSurfaceTransformFlagBitsKHR preTransform,
-                                                          VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                          VkPresentModeKHR              presentMode,
-                                                          VkBool32                      clipped,
-                                                          VkSwapchainKHR                oldSwapchain,
-                                                          const VkAllocationCallbacks*  pAllocator,
-                                                          VkSwapchainKHR*               pSwapchain)
+VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
+                                                              void*                         pNext,
+                                                              VkFullScreenExclusiveEXT      fullScreenExclusive,
+                                                              VkSwapchainCreateFlagsKHR     flags,
+                                                              VkSurfaceKHR                  surface,
+                                                              uint32_t                      minImageCount,
+                                                              VkFormat                      imageFormat,
+                                                              VkColorSpaceKHR               imageColorSpace,
+                                                              VkExtent2D                    imageExtent,
+                                                              uint32_t                      imageArrayLayers,
+                                                              VkImageUsageFlags             imageUsage,
+                                                              VkSharingMode                 imageSharingMode,
+                                                              uint32_t                      queueFamilyIndexCount,
+                                                              const uint32_t*               pQueueFamilyIndices,
+                                                              VkSurfaceTransformFlagBitsKHR preTransform,
+                                                              VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                              VkPresentModeKHR              presentMode,
+                                                              VkBool32                      clipped,
+                                                              VkSwapchainKHR                oldSwapchain,
+                                                              const VkAllocationCallbacks*  pAllocator,
+                                                              VkSwapchainKHR*               pSwapchain)
 {
     VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
 
     surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
     surface_full_screen_exclusive_info.pNext               = pNext;
     surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
-    cvkCreateSwapchain(device,
-                       &surface_full_screen_exclusive_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &surface_full_screen_exclusive_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice                      device,
-                                                               const void*                   pNext,
-                                                               HMONITOR                      hmonitor,
-                                                               VkSwapchainCreateFlagsKHR     flags,
-                                                               VkSurfaceKHR                  surface,
-                                                               uint32_t                      minImageCount,
-                                                               VkFormat                      imageFormat,
-                                                               VkColorSpaceKHR               imageColorSpace,
-                                                               VkExtent2D                    imageExtent,
-                                                               uint32_t                      imageArrayLayers,
-                                                               VkImageUsageFlags             imageUsage,
-                                                               VkSharingMode                 imageSharingMode,
-                                                               uint32_t                      queueFamilyIndexCount,
-                                                               const uint32_t*               pQueueFamilyIndices,
-                                                               VkSurfaceTransformFlagBitsKHR preTransform,
-                                                               VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                               VkPresentModeKHR              presentMode,
-                                                               VkBool32                      clipped,
-                                                               VkSwapchainKHR                oldSwapchain,
-                                                               const VkAllocationCallbacks*  pAllocator,
-                                                               VkSwapchainKHR*               pSwapchain)
+VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice                      device,
+                                                                   const void*                   pNext,
+                                                                   HMONITOR                      hmonitor,
+                                                                   VkSwapchainCreateFlagsKHR     flags,
+                                                                   VkSurfaceKHR                  surface,
+                                                                   uint32_t                      minImageCount,
+                                                                   VkFormat                      imageFormat,
+                                                                   VkColorSpaceKHR               imageColorSpace,
+                                                                   VkExtent2D                    imageExtent,
+                                                                   uint32_t                      imageArrayLayers,
+                                                                   VkImageUsageFlags             imageUsage,
+                                                                   VkSharingMode                 imageSharingMode,
+                                                                   uint32_t                      queueFamilyIndexCount,
+                                                                   const uint32_t*               pQueueFamilyIndices,
+                                                                   VkSurfaceTransformFlagBitsKHR preTransform,
+                                                                   VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                                   VkPresentModeKHR              presentMode,
+                                                                   VkBool32                      clipped,
+                                                                   VkSwapchainKHR                oldSwapchain,
+                                                                   const VkAllocationCallbacks*  pAllocator,
+                                                                   VkSwapchainKHR*               pSwapchain)
 {
     VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
 
     surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
     surface_full_screen_exclusive_win32_info.pNext    = pNext;
     surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
-    cvkCreateSwapchain(device,
-                       &surface_full_screen_exclusive_win32_info,
-                       flags,
-                       surface,
-                       minImageCount,
-                       imageFormat,
-                       imageColorSpace,
-                       imageExtent,
-                       imageArrayLayers,
-                       imageUsage,
-                       imageSharingMode,
-                       queueFamilyIndexCount,
-                       pQueueFamilyIndices,
-                       preTransform,
-                       compositeAlpha,
-                       presentMode,
-                       clipped,
-                       oldSwapchain,
-                       pAllocator,
-                       pSwapchain);
+    return cvkCreateSwapchain(device,
+                              &surface_full_screen_exclusive_win32_info,
+                              flags,
+                              surface,
+                              minImageCount,
+                              imageFormat,
+                              imageColorSpace,
+                              imageExtent,
+                              imageArrayLayers,
+                              imageUsage,
+                              imageSharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              preTransform,
+                              compositeAlpha,
+                              presentMode,
+                              clipped,
+                              oldSwapchain,
+                              pAllocator,
+                              pSwapchain);
 }
-void cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice device, void* pNext, VkFullScreenExclusiveEXT fullScreenExclusive, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+VkResult cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice                          device,
+                                                                 void*                             pNext,
+                                                                 VkFullScreenExclusiveEXT          fullScreenExclusive,
+                                                                 VkSurfaceKHR                      surface,
+                                                                 VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
 
     surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
     surface_full_screen_exclusive_info.pNext               = pNext;
     surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
-    cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_info, surface, pModes);
+    return cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_info, surface, pModes);
 }
-void cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+VkResult cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
 
     surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
     surface_full_screen_exclusive_win32_info.pNext    = pNext;
     surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
-    cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_win32_info, surface, pModes);
+    return cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_win32_info, surface, pModes);
 }
-void cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+VkResult cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkSurfacePresentModeKHR surface_present_mode;
 
     surface_present_mode.sType       = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_KHR;
     surface_present_mode.pNext       = pNext;
     surface_present_mode.presentMode = presentMode;
-    cvkGetDeviceGroupSurfacePresentModes2(device, &surface_present_mode, surface, pModes);
+    return cvkGetDeviceGroupSurfacePresentModes2(device, &surface_present_mode, surface, pModes);
 }
-void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice           physicalDevice,
-                                                                void*                      pSurfaceInfoNext,
-                                                                VkFullScreenExclusiveEXT   fullScreenExclusive,
-                                                                VkSurfaceKHR               surface,
-                                                                void*                      pSurfaceCapabilitiesNext,
-                                                                VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice           physicalDevice,
+                                                                    void*                      pSurfaceInfoNext,
+                                                                    VkFullScreenExclusiveEXT   fullScreenExclusive,
+                                                                    VkSurfaceKHR               surface,
+                                                                    void*                      pSurfaceCapabilitiesNext,
+                                                                    VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
 {
     VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
 
     surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
     surface_full_screen_exclusive_info.pNext               = pSurfaceInfoNext;
     surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
+    return cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
-void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalDevice           physicalDevice,
-                                                                     const void*                pSurfaceInfoNext,
-                                                                     HMONITOR                   hmonitor,
-                                                                     VkSurfaceKHR               surface,
-                                                                     void*                      pSurfaceCapabilitiesNext,
-                                                                     VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
+VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalDevice           physicalDevice,
+                                                                         const void*                pSurfaceInfoNext,
+                                                                         HMONITOR                   hmonitor,
+                                                                         VkSurfaceKHR               surface,
+                                                                         void*                      pSurfaceCapabilitiesNext,
+                                                                         VkSurfaceCapabilities2KHR* pSurfaceCapabilities)
 {
     VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
 
     surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
     surface_full_screen_exclusive_win32_info.pNext    = pSurfaceInfoNext;
     surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_win32_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
+    return cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_win32_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice         physicalDevice,
                                                                void*                    pNext,
@@ -682,19 +695,21 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkInstance       ins
     surface_present_mode.presentMode = presentMode;
     return cvkGetPhysicalDeviceSurfacePresentModes2(instance, physicalDevice, &surface_present_mode, surface, pPresentModes);
 }
-void cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDevice                             physicalDevice,
-                                                                const void*                                  pSurfaceInfoNext,
-                                                                VkSurfaceKHR                                 surface,
-                                                                void*                                        pSurfaceCapabilitiesFullScreenExclusiveNext,
-                                                                VkSurfaceCapabilitiesFullScreenExclusiveEXT* pSurfaceCapabilitiesFullScreenExclusive)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDevice                             physicalDevice,
+                                                                    const void*                                  pSurfaceInfoNext,
+                                                                    VkSurfaceKHR                                 surface,
+                                                                    void*                                        pSurfaceCapabilitiesFullScreenExclusiveNext,
+                                                                    VkSurfaceCapabilitiesFullScreenExclusiveEXT* pSurfaceCapabilitiesFullScreenExclusive)
 {
+    VkResult                                    result;
     VkSurfaceCapabilities2KHR                   surface_capabilities;
     VkSurfaceCapabilitiesFullScreenExclusiveEXT surface_capabilities_full_screen_exclusive;
 
     surface_capabilities_full_screen_exclusive.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
     surface_capabilities_full_screen_exclusive.pNext = pSurfaceCapabilitiesFullScreenExclusiveNext;
-    cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_full_screen_exclusive, &surface_capabilities);
+    result = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_full_screen_exclusive, &surface_capabilities);
     (*pSurfaceCapabilitiesFullScreenExclusive) = surface_capabilities_full_screen_exclusive;
+    return result;
 }
 void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
                                VkDevice                           device,

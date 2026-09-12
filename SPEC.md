@@ -95,12 +95,20 @@ flattened input struct is named after its parameter minus the `p` (`pCreateInfo`
 and results are `function` and `result`. Declarations are ordered by first access in the
 statements that follow.
 
-**Probe twins (policy).** Vulkan reports some unsupported cases as error codes
-(`VK_ERROR_FORMAT_NOT_SUPPORTED`, `VK_ERROR_VIDEO_PROFILE_*_NOT_SUPPORTED`), which the result
-policy turns into an abort. A command listed in the policy's `try_commands` gets a twin
-`cvkTry<tier-0 minus cvk>` with the tier-0 signature, returning `VkResult` and never
-asserting on it, so a chain can turn the result into a `VkBool32`
-(`cvkGetPhysicalDeviceVideoProfileSupport`). Enumerations are not probed.
+**Recoverable errors (policy).** Vulkan reports some conditions the caller is expected to
+handle as error codes: a support query's `VK_ERROR_FORMAT_NOT_SUPPORTED`,
+`VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR` and `VK_ERROR_VIDEO_PROFILE_*_NOT_SUPPORTED_KHR`,
+a swapchain's `VK_ERROR_OUT_OF_DATE_KHR`, `VK_ERROR_SURFACE_LOST_KHR` and
+`VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT`. The policy's `recoverable_errors` lists them.
+A command whose error codes include one returns `VkResult` under its own name, like a command
+with informational success codes: the wrapper asserts the result is a success code or one of
+the command's recoverable errors, copies its outputs only on success, and returns it. A chain
+reads it (`into: result`) and folds it into a `VkBool32`
+(`cvkGetPhysicalDeviceVideoProfileSupport`, `cvkGetPhysicalDeviceExternalImage{Import,Export}Support`
+report VK_FALSE for an unsupported format instead of aborting). Enumerations keep aborting: a
+count has no room for a result. A chain step returning `VkResult` must route it (`return`,
+`into`, `store`): a discarded result is a generation error, which is how the pipeline setups
+came to return the compile result.
 
 **Registry quirks (policy).** `role_overrides` in the policy file maps `vkCommand::param` to
 a role when the registry's declaration misleads the derivation: an input struct passed through
@@ -308,7 +316,7 @@ counterpart in the others. `<Kind>` is `Compute`, `Graphics`, or `Video`.
 |---|---|---|---|
 | queue family | `cvkGetPhysicalDeviceComputeQueueFamilyIndex` (flags) | `cvkGetPhysicalDeviceGraphicsQueueFamilyIndex` | `cvkGetPhysicalDeviceVideo{Decode,Encode}QueueFamilyIndex` (flags); `cvkGetPhysicalDeviceVideoQueueFamilyIndex(requiredOperations)` on the video properties of every family (output-array extender + `cvkGetVideoQueueFamilyIndex`, policy selector) |
 | device | `cvkSetupComputeDeviceQueue` | `cvkSetupGraphicsDeviceQueue` | `cvkSetupVideoDeviceQueue(requiredOperations)` |
-| capability | features/properties output extenders | same | `cvkGetPhysicalDeviceVideoCapabilities` (+ `cvkGetPhysicalDeviceVideo{Decode,Encode,DecodeH264,...}Capabilities` output extenders), `cvkGetPhysicalDeviceVideoProfileSupport` (probe twin → `VkBool32`), `cvkGetPhysicalDeviceVideoFormatPropertiesByIndex` |
+| capability | features/properties output extenders | same | `cvkGetPhysicalDeviceVideoCapabilities` (+ `cvkGetPhysicalDeviceVideo{Decode,Encode,DecodeH264,...}Capabilities` output extenders), `cvkGetPhysicalDeviceVideoProfileSupport` (recoverable result → `VkBool32`), `cvkGetPhysicalDeviceVideoFormatPropertiesByIndex` |
 | program | `cvkCreateShaderModule`; shader object `cvkCreateComputeShader` | `cvkCreateShaderModule`; `cvkCreate{Vertex,Fragment}Shader` | session parameters: `cvkCreateVideoSessionParameters[With<Codec>Info]`, `cvkUpdateVideoSessionParameters[With<Codec>AddInfo]` |
 | layout | `cvkCreateComputePipelineLayout` (one range, `COMPUTE_BIT`) | `cvkCreateGraphicsPipelineLayout` (one range, `ALL_GRAPHICS`) | — |
 | fixed-function state | — | `cvkInit<Adjective>Pipeline<State>CreateInfo`: the builder with the canonical constants bound (`Empty` vertex input, `TriangleList`/`TriangleStrip`/`PointList`/`LineList` input assembly, `Single` viewport, `Fill` rasterization, `SampleCount` multisample, `Disabled`/`DepthTest` depth stencil, `Opaque`/`AlphaBlend` attachment, `SingleAttachment` color blend). Arrays stay caller-owned: a builder never points into chain storage | picture resources and reference slots: builders only, storage is the caller's |
