@@ -1294,11 +1294,34 @@ class Generator:
                     self.emit_output_convenience(cmd, outs[0], ext)
         for f in self.FIXED:
             self.emit_fixed(f)
-        for chain_name, spec in self.policy.get("chains", {}).items():
-            self.emit_chain(chain_name, spec)
+        # Chains and protocols compose each other: emit every chain whose steps are known,
+        # then the protocol files, then the chains that were waiting on a protocol.
+        pending = list(self.policy.get("chains", {}).items())
+
+        def ready(spec: dict) -> bool:
+            return all(st.get("call", "") in self.sigs or "call" not in st for st in spec["steps"])
+
+        progressed = True
+        while pending and progressed:
+            progressed = False
+            for chain_name, spec in list(pending):
+                if ready(spec):
+                    self.emit_chain(chain_name, spec)
+                    pending.remove((chain_name, spec))
+                    progressed = True
         for path in sorted(os.listdir(self.PROTOCOL_DIR)) if os.path.isdir(self.PROTOCOL_DIR) else []:
             if re.fullmatch(r"cvk_protocol(_\w+)?\.c", path):
                 self.emit_protocol_file(os.path.join(self.PROTOCOL_DIR, path))
+        progressed = True
+        while pending and progressed:
+            progressed = False
+            for chain_name, spec in list(pending):
+                if ready(spec):
+                    self.emit_chain(chain_name, spec)
+                    pending.remove((chain_name, spec))
+                    progressed = True
+        for chain_name, spec in pending:
+            self.emit_chain(chain_name, spec)          # reports the unknown step
 
     # Header includes per platform pair. "posix" is a home the registry does not name:
     # VK_KHR_external_memory_fd is platform-neutral, but descriptor ownership needs dup(2).

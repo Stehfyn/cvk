@@ -263,6 +263,16 @@ acceptance test of the surface: anything they cannot express is a generator defe
   `cvkGetPhysicalDeviceByLuid` and `cvkGetPhysicalDeviceByPciBusInfo`, adapter identity
   matching over the enumerated physical devices (`VK_NULL_HANDLE` when none matches).
 
+- Format and transfer protocols (`cvk_protocol.c`): the plane arithmetic on the Vulkan
+  Utility Libraries format tables (`cvkGetFormatPlaneCount`, `cvkGetFormatPlaneAspect`,
+  `cvkGetMemoryPlaneAspect`, `cvkGetFormatAspectMask`, subresource layers and ranges,
+  `cvkCalculateFormatPlaneLayouts`, `cvkGetFormatSize`, `cvkGetBufferImageCopyRegions`) and
+  the transfer sequences with barriers around the copy (`cvkCmdTransferBufferToImageQueueOwnership`,
+  `cvkCmdTransferImageToBufferQueueOwnership`, `cvkCmdTransferImageToImageQueueOwnership`,
+  `cvkCmdTransferBlitImage`). Their no-ownership, external-owner, compute-source, and 2D forms
+  are chains binding constants or building 3D offsets and extents from 2D ones. Chains and
+  protocols may compose each other: the generator emits in dependency order.
+
 Not yet written: buffer import and export.
 
 ## 9. Documentation phrasing (derived)

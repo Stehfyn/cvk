@@ -832,6 +832,504 @@
           "call": "cvkCmdDispatchItems"
         }
       ]
+    },
+    "cvkCmdTransferBufferToImage": {
+      "brief": "Copies every plane of a subresource from a linear buffer into an image, with barriers and no ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdTransferBufferToImageQueueOwnership",
+          "bind": {
+            "bufferSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "bufferDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageAcquireSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageAcquireDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferBufferToExternalImage": {
+      "brief": "Copies every plane of a subresource from a linear buffer into an externally owned image: acquires it from the external owner, copies, and releases it back.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "queueFamilyIndex",
+          "doc": "Queue family owning the image between acquire and release"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdTransferBufferToImageQueueOwnership",
+          "bind": {
+            "bufferSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "bufferDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageSrcStageMask": "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT",
+            "imageSrcAccessMask": "0",
+            "imageAcquireSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL",
+            "imageAcquireDstQueueFamilyIndex": "queueFamilyIndex",
+            "imageDstStageMask": "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT",
+            "imageDstAccessMask": "0",
+            "imageSrcQueueFamilyIndex": "queueFamilyIndex",
+            "imageDstQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferComputeBufferToExternalImage": {
+      "brief": "Copies a buffer written by compute shaders into an externally owned image.",
+      "steps": [
+        {
+          "call": "cvkCmdTransferBufferToExternalImage",
+          "bind": {
+            "bufferSrcStageMask": "VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT",
+            "bufferSrcAccessMask": "VK_ACCESS_SHADER_WRITE_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferImageToBuffer": {
+      "brief": "Copies every plane of a subresource from an image into a linear buffer, with barriers and no ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdTransferImageToBufferQueueOwnership",
+          "bind": {
+            "imageAcquireSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageAcquireDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "bufferAcquireSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "bufferAcquireDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "imageDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "bufferSrcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "bufferDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferImageToImage": {
+      "brief": "Copies one region between two images, with barriers and no ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdTransferImageToImageQueueOwnership",
+          "bind": {
+            "srcAcquireQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "srcTransferQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstAcquireQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstTransferQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "srcReleaseQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "srcDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstReleaseQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstDstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferBufferToImage2D": {
+      "brief": "2D form of cvkCmdTransferBufferToImage.",
+      "inputs": [
+        {
+          "type": "VkOffset2D",
+          "name": "imageOffset2D",
+          "doc": "imageOffset without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "imageExtent2D",
+          "doc": "imageExtent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "image_offset"
+          },
+          "bind": {
+            "x": "imageOffset2D.x",
+            "y": "imageOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "image_extent"
+          },
+          "bind": {
+            "width": "imageExtent2D.width",
+            "height": "imageExtent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdTransferBufferToImage",
+          "bind": {
+            "imageOffset": "image_offset",
+            "imageExtent": "image_extent"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferComputeBufferToExternalImage2D": {
+      "brief": "2D form of cvkCmdTransferComputeBufferToExternalImage.",
+      "inputs": [
+        {
+          "type": "VkOffset2D",
+          "name": "imageOffset2D",
+          "doc": "imageOffset without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "imageExtent2D",
+          "doc": "imageExtent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "image_offset"
+          },
+          "bind": {
+            "x": "imageOffset2D.x",
+            "y": "imageOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "image_extent"
+          },
+          "bind": {
+            "width": "imageExtent2D.width",
+            "height": "imageExtent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdTransferComputeBufferToExternalImage",
+          "bind": {
+            "imageOffset": "image_offset",
+            "imageExtent": "image_extent"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferImageToBuffer2D": {
+      "brief": "2D form of cvkCmdTransferImageToBuffer.",
+      "inputs": [
+        {
+          "type": "VkOffset2D",
+          "name": "imageOffset2D",
+          "doc": "imageOffset without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "imageExtent2D",
+          "doc": "imageExtent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "image_offset"
+          },
+          "bind": {
+            "x": "imageOffset2D.x",
+            "y": "imageOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "image_extent"
+          },
+          "bind": {
+            "width": "imageExtent2D.width",
+            "height": "imageExtent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdTransferImageToBuffer",
+          "bind": {
+            "imageOffset": "image_offset",
+            "imageExtent": "image_extent"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferImageToImage2D": {
+      "brief": "2D form of cvkCmdTransferImageToImage.",
+      "inputs": [
+        {
+          "type": "VkOffset2D",
+          "name": "srcOffset2D",
+          "doc": "srcOffset without depth"
+        },
+        {
+          "type": "VkOffset2D",
+          "name": "dstOffset2D",
+          "doc": "dstOffset without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "extent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "src_offset"
+          },
+          "bind": {
+            "x": "srcOffset2D.x",
+            "y": "srcOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "dst_offset"
+          },
+          "bind": {
+            "x": "dstOffset2D.x",
+            "y": "dstOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "extent"
+          },
+          "bind": {
+            "width": "extent2D.width",
+            "height": "extent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdTransferImageToImage",
+          "bind": {
+            "srcOffset": "src_offset",
+            "dstOffset": "dst_offset",
+            "extent": "extent"
+          }
+        }
+      ]
+    },
+    "cvkCmdTransferBlitImage2D": {
+      "brief": "2D form of cvkCmdTransferBlitImage.",
+      "inputs": [
+        {
+          "type": "VkOffset2D",
+          "name": "srcOffset2D",
+          "doc": "srcOffset without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "srcExtent2D",
+          "doc": "srcExtent without depth"
+        },
+        {
+          "type": "VkOffset2D",
+          "name": "dstOffset2D",
+          "doc": "dstOffset without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "dstExtent2D",
+          "doc": "dstExtent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "src_offset"
+          },
+          "bind": {
+            "x": "srcOffset2D.x",
+            "y": "srcOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "src_extent"
+          },
+          "bind": {
+            "width": "srcExtent2D.width",
+            "height": "srcExtent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitOffset3D",
+          "local": {
+            "pInfo": "dst_offset"
+          },
+          "bind": {
+            "x": "dstOffset2D.x",
+            "y": "dstOffset2D.y",
+            "z": "0"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "dst_extent"
+          },
+          "bind": {
+            "width": "dstExtent2D.width",
+            "height": "dstExtent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdTransferBlitImage",
+          "bind": {
+            "srcOffset": "src_offset",
+            "srcExtent": "src_extent",
+            "dstOffset": "dst_offset",
+            "dstExtent": "dst_extent"
+          }
+        }
+      ]
+    },
+    "cvkCmdDispatchItems2D": {
+      "brief": "2D form of cvkCmdDispatchItems.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "itemCount2D",
+          "doc": "itemCount without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "itemsPerInvocation2D",
+          "doc": "itemsPerInvocation without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "localSize2D",
+          "doc": "localSize without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "item_count"
+          },
+          "bind": {
+            "width": "itemCount2D.width",
+            "height": "itemCount2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "items_per_invocation"
+          },
+          "bind": {
+            "width": "itemsPerInvocation2D.width",
+            "height": "itemsPerInvocation2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "local_size"
+          },
+          "bind": {
+            "width": "localSize2D.width",
+            "height": "localSize2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdDispatchItems",
+          "bind": {
+            "itemCount": "item_count",
+            "itemsPerInvocation": "items_per_invocation",
+            "localSize": "local_size"
+          }
+        }
+      ]
+    },
+    "cvkCmdDispatchComputeItems2D": {
+      "brief": "2D form of cvkCmdDispatchComputeItems.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "itemCount2D",
+          "doc": "itemCount without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "itemsPerInvocation2D",
+          "doc": "itemsPerInvocation without depth"
+        },
+        {
+          "type": "VkExtent2D",
+          "name": "localSize2D",
+          "doc": "localSize without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "item_count"
+          },
+          "bind": {
+            "width": "itemCount2D.width",
+            "height": "itemCount2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "items_per_invocation"
+          },
+          "bind": {
+            "width": "itemsPerInvocation2D.width",
+            "height": "itemsPerInvocation2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "local_size"
+          },
+          "bind": {
+            "width": "localSize2D.width",
+            "height": "localSize2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCmdDispatchComputeItems",
+          "bind": {
+            "itemCount": "item_count",
+            "itemsPerInvocation": "items_per_invocation",
+            "localSize": "local_size"
+          }
+        }
+      ]
     }
   }
 }

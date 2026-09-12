@@ -5,8 +5,9 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-# Pinned Vulkan headers and registry (git submodule).
+# Pinned Vulkan headers and registry, and the utility headers (format tables) (git submodules).
 add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL)
+add_subdirectory(external/Vulkan-Utility-Libraries EXCLUDE_FROM_ALL)
 
 find_package(Python3 COMPONENTS Interpreter)
 
@@ -42,6 +43,8 @@ endif()
 add_library(cvk STATIC ${CVK_SOURCES})
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(cvk PUBLIC Vulkan::Headers)
+# Utility headers are third-party: a system include so their own pedantic warnings do not surface.
+target_include_directories(cvk SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include)
 
 if(MSVC)
     target_compile_options(cvk PRIVATE /W4)

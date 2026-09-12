@@ -10283,6 +10283,51 @@ void cvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
                                 uint32_t               pushConstantSize,
                                 const void*            pPushConstants);
 /**
+ * \brief 2D form of cvkCmdDispatchItems.
+ *
+ * \param[in] commandBuffer         See cvkCmdDispatchItems
+ * \param[in] itemCount2D           itemCount without depth
+ * \param[in] itemsPerInvocation2D  itemsPerInvocation without depth
+ * \param[in] localSize2D           localSize without depth
+ *
+ * \retval None
+ */
+void cvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D);
+/**
+ * \brief 2D form of cvkCmdDispatchComputeItems.
+ *
+ * \param[in] commandBuffer         See cvkCmdDispatchComputeItems
+ * \param[in] pipeline              See cvkCmdDispatchComputeItems
+ * \param[in] layout                See cvkCmdDispatchComputeItems
+ * \param[in] firstSet              See cvkCmdDispatchComputeItems
+ * \param[in] descriptorSetCount    See cvkCmdDispatchComputeItems
+ * \param[in] pDescriptorSets       See cvkCmdDispatchComputeItems
+ * \param[in] dynamicOffsetCount    See cvkCmdDispatchComputeItems
+ * \param[in] pDynamicOffsets       See cvkCmdDispatchComputeItems
+ * \param[in] pushConstantOffset    See cvkCmdDispatchComputeItems
+ * \param[in] pushConstantSize      See cvkCmdDispatchComputeItems
+ * \param[in] pPushConstants        See cvkCmdDispatchComputeItems
+ * \param[in] itemCount2D           itemCount without depth
+ * \param[in] itemsPerInvocation2D  itemsPerInvocation without depth
+ * \param[in] localSize2D           localSize without depth
+ *
+ * \retval None
+ */
+void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
+                                  VkPipeline             pipeline,
+                                  VkPipelineLayout       layout,
+                                  uint32_t               firstSet,
+                                  uint32_t               descriptorSetCount,
+                                  const VkDescriptorSet* pDescriptorSets,
+                                  uint32_t               dynamicOffsetCount,
+                                  const uint32_t*        pDynamicOffsets,
+                                  uint32_t               pushConstantOffset,
+                                  uint32_t               pushConstantSize,
+                                  const void*            pPushConstants,
+                                  VkExtent2D             itemCount2D,
+                                  VkExtent2D             itemsPerInvocation2D,
+                                  VkExtent2D             localSize2D);
+/**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
  *
  * \par Details:
@@ -10369,6 +10414,964 @@ VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t p
  * \return The matching physical device, or VK_NULL_HANDLE when none matches.
  */
 VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t pciDomain, uint32_t pciBus, uint32_t pciDevice, uint32_t pciFunction);
+/**
+ * \brief Returns the number of format planes of a format (one for single-plane formats).
+ *
+ * \param[in] format  Vulkan format
+ *
+ * \return Plane count from the format tables.
+ */
+uint32_t cvkGetFormatPlaneCount(VkFormat format);
+/**
+ * \brief Returns the aspect addressing one format plane: color for single-plane formats, else the plane bit.
+ *
+ * \param[in] format      Vulkan format
+ * \param[in] planeIndex  Plane index below the format's plane count
+ *
+ * \return The aspect bit for the plane.
+ */
+VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex);
+/**
+ * \brief Returns the aspect addressing one memory plane of a DRM format modifier image.
+ *
+ * \param[in] planeIndex  Memory plane index below CVK_MAX_DRM_FORMAT_MODIFIER_PLANES
+ *
+ * \return The memory plane aspect bit.
+ */
+VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex);
+/**
+ * \brief Returns the aspect mask covering every aspect of a format: depth and stencil, color, or all planes.
+ *
+ * \param[in] format  Vulkan format
+ *
+ * \return The complete aspect mask of the format.
+ */
+VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format);
+/**
+ * \brief Builds subresource layers covering every aspect of a format.
+ *
+ * \param[in] format          Vulkan format
+ * \param[in] mipLevel        Mip level
+ * \param[in] baseArrayLayer  First array layer
+ * \param[in] layerCount      Number of array layers
+ *
+ * \return The subresource layers.
+ */
+VkImageSubresourceLayers cvkGetFormatSubresourceLayers(VkFormat format, uint32_t mipLevel, uint32_t baseArrayLayer, uint32_t layerCount);
+/**
+ * \brief Builds subresource layers for mip level zero and array layer zero of a format.
+ *
+ * \param[in] format  Vulkan format
+ *
+ * \return The subresource layers.
+ */
+VkImageSubresourceLayers cvkGetFormatBaseSubresourceLayers(VkFormat format);
+/**
+ * \brief Builds a subresource range covering every aspect of a format.
+ *
+ * \param[in] format          Vulkan format
+ * \param[in] baseMipLevel    First mip level
+ * \param[in] levelCount      Number of mip levels
+ * \param[in] baseArrayLayer  First array layer
+ * \param[in] layerCount      Number of array layers
+ *
+ * \return The subresource range.
+ */
+VkImageSubresourceRange cvkGetFormatSubresourceRange(VkFormat format, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
+/**
+ * \brief Builds a subresource range for mip level zero and array layer zero of a format.
+ *
+ * \param[in] format  Vulkan format
+ *
+ * \return The subresource range.
+ */
+VkImageSubresourceRange cvkGetFormatBaseSubresourceRange(VkFormat format);
+/**
+ * \brief Lays out every plane of an image linearly in one buffer with aligned rows.
+ *
+ * \par Details:
+ *  Planes follow one another; each plane's rows are rounded up to rowAlignment bytes. Plane
+ *  extents apply the format's chroma divisors; block-compressed planes are measured in
+ *  texel blocks. Outputs have VKU_FORMAT_MAX_PLANES entries and unused entries are zero.
+ *
+ * \param[in]  format         Vulkan format
+ * \param[in]  width          Image width in texels
+ * \param[in]  height         Image height in texels
+ * \param[in]  depth          Image depth in texels
+ * \param[in]  layerCount     Number of array layers laid out consecutively per plane
+ * \param[in]  rowAlignment   Row alignment in bytes, at least one
+ * \param[out] pPlaneOffsets  Receives each plane's byte offset
+ * \param[out] pPlaneStrides  Receives each plane's row pitch in bytes
+ * \param[out] pPlaneExtents  Receives each plane's extent in texels
+ * \param[out] pSize          Receives the total byte count
+ *
+ * \return The format's plane count.
+ */
+uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
+                                        uint32_t      width,
+                                        uint32_t      height,
+                                        uint32_t      depth,
+                                        uint32_t      layerCount,
+                                        VkDeviceSize  rowAlignment,
+                                        VkDeviceSize* pPlaneOffsets,
+                                        uint32_t*     pPlaneStrides,
+                                        VkExtent3D*   pPlaneExtents,
+                                        VkDeviceSize* pSize);
+/**
+ * \brief Returns the tightly packed byte count of a 2D single-layer image of a format.
+ *
+ * \param[in] format  Vulkan format
+ * \param[in] width   Image width in texels
+ * \param[in] height  Image height in texels
+ *
+ * \return Total byte count of every plane laid out with row alignment one.
+ */
+VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height);
+/**
+ * \brief Builds the buffer-image copy regions transferring every plane of a subresource through a linear buffer.
+ *
+ * \par Details:
+ *  One region per format plane, laid out by cvkCalculateFormatPlaneLayouts from bufferOffset.
+ *  A region's bufferRowLength is zero when its rows are tightly packed, else the padded row
+ *  length in texels. Image offsets are divided by the plane's chroma divisors.
+ *
+ * \param[in]  bufferOffset        Byte offset of the first plane in the buffer
+ * \param[in]  bufferRowAlignment  Row alignment in bytes, at least one
+ * \param[in]  imageFormat         Format of the image
+ * \param[in]  imageOffset         Texel offset in the image
+ * \param[in]  imageExtent         Texel extent in the image
+ * \param[in]  imageSubresource    Mip level and array layers; the aspect is set per plane
+ * \param[out] pRegions            Receives one region per plane; VKU_FORMAT_MAX_PLANES entries
+ * \param[out] pTransferByteCount  Receives the byte count covered in the buffer
+ * \param[out] pAspectMask         Receives the union of the plane aspects
+ *
+ * \return The number of regions written.
+ */
+uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
+                                      VkDeviceSize             bufferRowAlignment,
+                                      VkFormat                 imageFormat,
+                                      VkOffset3D               imageOffset,
+                                      VkExtent3D               imageExtent,
+                                      VkImageSubresourceLayers imageSubresource,
+                                      VkBufferImageCopy*       pRegions,
+                                      VkDeviceSize*            pTransferByteCount,
+                                      VkImageAspectFlags*      pAspectMask);
+/**
+ * \brief Copies every plane of a subresource from a linear buffer into an image, with barriers and optional ownership transfers.
+ *
+ * \par Details:
+ *  Records: an image barrier into the transfer layout (acquire, from the caller's stage and
+ *  access), a buffer barrier to transfer read, one copy per plane laid out by
+ *  cvkGetBufferImageCopyRegions, then an image barrier into the final layout (release, to
+ *  the caller's stage and access). Queue family pairs are VK_QUEUE_FAMILY_IGNORED for no
+ *  ownership transfer.
+ *
+ * \param[in] commandBuffer                    Command buffer recording the transfer
+ * \param[in] dependencyFlags                  Dependency flags of every barrier
+ * \param[in] pBufferBarrierNext               Optional extension chain of the buffer barrier, or NULL
+ * \param[in] bufferSrcStageMask               Stage that last wrote the buffer
+ * \param[in] bufferSrcAccessMask              Access that last wrote the buffer
+ * \param[in] bufferSrcQueueFamilyIndex        Buffer ownership source
+ * \param[in] bufferDstQueueFamilyIndex        Buffer ownership destination
+ * \param[in] buffer                           Source buffer
+ * \param[in] bufferOffset                     Byte offset of the first plane in the buffer
+ * \param[in] bufferRowAlignment               Row alignment of the buffer layout in bytes
+ * \param[in] image                            Destination image
+ * \param[in] imageFormat                      Format of the image
+ * \param[in] transferImageLayout              Layout of the image during the copy
+ * \param[in] imageOffset                      Texel offset in the image
+ * \param[in] imageExtent                      Texel extent in the image
+ * \param[in] imageSubresource                 Mip level and array layers
+ * \param[in] pImageAcquireBarrierNext         Optional extension chain of the acquiring image barrier, or NULL
+ * \param[in] imageSrcStageMask                Stage that last used the image
+ * \param[in] imageSrcAccessMask               Access that last used the image
+ * \param[in] initialImageLayout               Layout of the image before the transfer
+ * \param[in] imageAcquireSrcQueueFamilyIndex  Image ownership source before the transfer
+ * \param[in] imageAcquireDstQueueFamilyIndex  Image ownership destination before the transfer
+ * \param[in] pImageBarrierNext                Optional extension chain of the releasing image barrier, or NULL
+ * \param[in] imageDstStageMask                Stage that next uses the image
+ * \param[in] imageDstAccessMask               Access that next uses the image
+ * \param[in] finalImageLayout                 Layout of the image after the transfer
+ * \param[in] imageSrcQueueFamilyIndex         Image ownership source after the transfer
+ * \param[in] imageDstQueueFamilyIndex         Image ownership destination after the transfer
+ *
+ * \retval None
+ */
+void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandBuffer,
+                                               VkDependencyFlags        dependencyFlags,
+                                               const void*              pBufferBarrierNext,
+                                               VkPipelineStageFlags     bufferSrcStageMask,
+                                               VkAccessFlags            bufferSrcAccessMask,
+                                               uint32_t                 bufferSrcQueueFamilyIndex,
+                                               uint32_t                 bufferDstQueueFamilyIndex,
+                                               VkBuffer                 buffer,
+                                               VkDeviceSize             bufferOffset,
+                                               VkDeviceSize             bufferRowAlignment,
+                                               VkImage                  image,
+                                               VkFormat                 imageFormat,
+                                               VkImageLayout            transferImageLayout,
+                                               VkOffset3D               imageOffset,
+                                               VkExtent3D               imageExtent,
+                                               VkImageSubresourceLayers imageSubresource,
+                                               const void*              pImageAcquireBarrierNext,
+                                               VkPipelineStageFlags     imageSrcStageMask,
+                                               VkAccessFlags            imageSrcAccessMask,
+                                               VkImageLayout            initialImageLayout,
+                                               uint32_t                 imageAcquireSrcQueueFamilyIndex,
+                                               uint32_t                 imageAcquireDstQueueFamilyIndex,
+                                               const void*              pImageBarrierNext,
+                                               VkPipelineStageFlags     imageDstStageMask,
+                                               VkAccessFlags            imageDstAccessMask,
+                                               VkImageLayout            finalImageLayout,
+                                               uint32_t                 imageSrcQueueFamilyIndex,
+                                               uint32_t                 imageDstQueueFamilyIndex);
+/**
+ * \brief Copies every plane of a subresource from an image into a linear buffer, with barriers and optional ownership transfers.
+ *
+ * \par Details:
+ *  Records: an image barrier into the transfer layout (acquire), a buffer barrier to transfer
+ *  write (acquire), one copy per plane laid out by cvkGetBufferImageCopyRegions, then an image
+ *  barrier into the final layout and a buffer barrier to the caller's stage and access
+ *  (release). Queue family pairs are VK_QUEUE_FAMILY_IGNORED for no ownership transfer.
+ *
+ * \param[in] commandBuffer                     Command buffer recording the transfer
+ * \param[in] dependencyFlags                   Dependency flags of every barrier
+ * \param[in] pImageAcquireBarrierNext          Optional extension chain of the acquiring image barrier, or NULL
+ * \param[in] imageSrcStageMask                 Stage that last wrote the image
+ * \param[in] imageSrcAccessMask                Access that last wrote the image
+ * \param[in] initialImageLayout                Layout of the image before the transfer
+ * \param[in] imageAcquireSrcQueueFamilyIndex   Image ownership source before the transfer
+ * \param[in] imageAcquireDstQueueFamilyIndex   Image ownership destination before the transfer
+ * \param[in] image                             Source image
+ * \param[in] imageFormat                       Format of the image
+ * \param[in] transferImageLayout               Layout of the image during the copy
+ * \param[in] imageOffset                       Texel offset in the image
+ * \param[in] imageExtent                       Texel extent in the image
+ * \param[in] imageSubresource                  Mip level and array layers
+ * \param[in] pBufferAcquireBarrierNext         Optional extension chain of the acquiring buffer barrier, or NULL
+ * \param[in] bufferSrcStageMask                Stage that last used the buffer
+ * \param[in] bufferSrcAccessMask               Access that last used the buffer
+ * \param[in] bufferAcquireSrcQueueFamilyIndex  Buffer ownership source before the transfer
+ * \param[in] bufferAcquireDstQueueFamilyIndex  Buffer ownership destination before the transfer
+ * \param[in] buffer                            Destination buffer
+ * \param[in] bufferOffset                      Byte offset of the first plane in the buffer
+ * \param[in] bufferRowAlignment                Row alignment of the buffer layout in bytes
+ * \param[in] pImageBarrierNext                 Optional extension chain of the releasing image barrier, or NULL
+ * \param[in] imageDstStageMask                 Stage that next uses the image
+ * \param[in] imageDstAccessMask                Access that next uses the image
+ * \param[in] finalImageLayout                  Layout of the image after the transfer
+ * \param[in] imageSrcQueueFamilyIndex          Image ownership source after the transfer
+ * \param[in] imageDstQueueFamilyIndex          Image ownership destination after the transfer
+ * \param[in] pBufferBarrierNext                Optional extension chain of the releasing buffer barrier, or NULL
+ * \param[in] bufferDstStageMask                Stage that next uses the buffer
+ * \param[in] bufferDstAccessMask               Access that next uses the buffer
+ * \param[in] bufferSrcQueueFamilyIndex         Buffer ownership source after the transfer
+ * \param[in] bufferDstQueueFamilyIndex         Buffer ownership destination after the transfer
+ *
+ * \retval None
+ */
+void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandBuffer,
+                                               VkDependencyFlags        dependencyFlags,
+                                               const void*              pImageAcquireBarrierNext,
+                                               VkPipelineStageFlags     imageSrcStageMask,
+                                               VkAccessFlags            imageSrcAccessMask,
+                                               VkImageLayout            initialImageLayout,
+                                               uint32_t                 imageAcquireSrcQueueFamilyIndex,
+                                               uint32_t                 imageAcquireDstQueueFamilyIndex,
+                                               VkImage                  image,
+                                               VkFormat                 imageFormat,
+                                               VkImageLayout            transferImageLayout,
+                                               VkOffset3D               imageOffset,
+                                               VkExtent3D               imageExtent,
+                                               VkImageSubresourceLayers imageSubresource,
+                                               const void*              pBufferAcquireBarrierNext,
+                                               VkPipelineStageFlags     bufferSrcStageMask,
+                                               VkAccessFlags            bufferSrcAccessMask,
+                                               uint32_t                 bufferAcquireSrcQueueFamilyIndex,
+                                               uint32_t                 bufferAcquireDstQueueFamilyIndex,
+                                               VkBuffer                 buffer,
+                                               VkDeviceSize             bufferOffset,
+                                               VkDeviceSize             bufferRowAlignment,
+                                               const void*              pImageBarrierNext,
+                                               VkPipelineStageFlags     imageDstStageMask,
+                                               VkAccessFlags            imageDstAccessMask,
+                                               VkImageLayout            finalImageLayout,
+                                               uint32_t                 imageSrcQueueFamilyIndex,
+                                               uint32_t                 imageDstQueueFamilyIndex,
+                                               const void*              pBufferBarrierNext,
+                                               VkPipelineStageFlags     bufferDstStageMask,
+                                               VkAccessFlags            bufferDstAccessMask,
+                                               uint32_t                 bufferSrcQueueFamilyIndex,
+                                               uint32_t                 bufferDstQueueFamilyIndex);
+/**
+ * \brief Copies one region between two images, with barriers and optional ownership transfers.
+ *
+ * \par Details:
+ *  Records: both images into their transfer layouts (acquire), one copy of the region, then
+ *  both images into their final layouts (release). Queue family pairs are
+ *  VK_QUEUE_FAMILY_IGNORED for no ownership transfer.
+ *
+ * \param[in] commandBuffer                Command buffer recording the transfer
+ * \param[in] dependencyFlags              Dependency flags of every barrier
+ * \param[in] pSrcAcquireBarrierNext       Optional extension chain of the source acquire barrier, or NULL
+ * \param[in] srcStageMask                 Stage that last used the source
+ * \param[in] srcAccessMask                Access that last used the source
+ * \param[in] srcInitialLayout             Layout of the source before the transfer
+ * \param[in] srcTransferLayout            Layout of the source during the copy
+ * \param[in] srcAcquireQueueFamilyIndex   Source ownership before the transfer
+ * \param[in] srcTransferQueueFamilyIndex  Source ownership during the transfer
+ * \param[in] srcImage                     Source image
+ * \param[in] srcSubresource               Source subresource layers
+ * \param[in] srcOffset                    Source texel offset
+ * \param[in] pDstAcquireBarrierNext       Optional extension chain of the destination acquire barrier, or NULL
+ * \param[in] dstStageMask                 Stage that last used the destination
+ * \param[in] dstAccessMask                Access that last used the destination
+ * \param[in] dstInitialLayout             Layout of the destination before the transfer
+ * \param[in] dstTransferLayout            Layout of the destination during the copy
+ * \param[in] dstAcquireQueueFamilyIndex   Destination ownership before the transfer
+ * \param[in] dstTransferQueueFamilyIndex  Destination ownership during the transfer
+ * \param[in] dstImage                     Destination image
+ * \param[in] dstSubresource               Destination subresource layers
+ * \param[in] dstOffset                    Destination texel offset
+ * \param[in] extent                       Texel extent copied
+ * \param[in] pSrcBarrierNext              Optional extension chain of the source release barrier, or NULL
+ * \param[in] srcDstStageMask              Stage that next uses the source
+ * \param[in] srcDstAccessMask             Access that next uses the source
+ * \param[in] srcFinalLayout               Layout of the source after the transfer
+ * \param[in] srcReleaseQueueFamilyIndex   Source ownership during the release
+ * \param[in] srcDstQueueFamilyIndex       Source ownership after the transfer
+ * \param[in] pDstBarrierNext              Optional extension chain of the destination release barrier, or NULL
+ * \param[in] dstDstStageMask              Stage that next uses the destination
+ * \param[in] dstDstAccessMask             Access that next uses the destination
+ * \param[in] dstFinalLayout               Layout of the destination after the transfer
+ * \param[in] dstReleaseQueueFamilyIndex   Destination ownership during the release
+ * \param[in] dstDstQueueFamilyIndex       Destination ownership after the transfer
+ *
+ * \retval None
+ */
+void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBuffer,
+                                              VkDependencyFlags        dependencyFlags,
+                                              const void*              pSrcAcquireBarrierNext,
+                                              VkPipelineStageFlags     srcStageMask,
+                                              VkAccessFlags            srcAccessMask,
+                                              VkImageLayout            srcInitialLayout,
+                                              VkImageLayout            srcTransferLayout,
+                                              uint32_t                 srcAcquireQueueFamilyIndex,
+                                              uint32_t                 srcTransferQueueFamilyIndex,
+                                              VkImage                  srcImage,
+                                              VkImageSubresourceLayers srcSubresource,
+                                              VkOffset3D               srcOffset,
+                                              const void*              pDstAcquireBarrierNext,
+                                              VkPipelineStageFlags     dstStageMask,
+                                              VkAccessFlags            dstAccessMask,
+                                              VkImageLayout            dstInitialLayout,
+                                              VkImageLayout            dstTransferLayout,
+                                              uint32_t                 dstAcquireQueueFamilyIndex,
+                                              uint32_t                 dstTransferQueueFamilyIndex,
+                                              VkImage                  dstImage,
+                                              VkImageSubresourceLayers dstSubresource,
+                                              VkOffset3D               dstOffset,
+                                              VkExtent3D               extent,
+                                              const void*              pSrcBarrierNext,
+                                              VkPipelineStageFlags     srcDstStageMask,
+                                              VkAccessFlags            srcDstAccessMask,
+                                              VkImageLayout            srcFinalLayout,
+                                              uint32_t                 srcReleaseQueueFamilyIndex,
+                                              uint32_t                 srcDstQueueFamilyIndex,
+                                              const void*              pDstBarrierNext,
+                                              VkPipelineStageFlags     dstDstStageMask,
+                                              VkAccessFlags            dstDstAccessMask,
+                                              VkImageLayout            dstFinalLayout,
+                                              uint32_t                 dstReleaseQueueFamilyIndex,
+                                              uint32_t                 dstDstQueueFamilyIndex);
+/**
+ * \brief Blits one region between two images with a filter, with barriers (no ownership transfer).
+ *
+ * \par Details:
+ *  Records: both images into their transfer layouts, one blit whose destination corner is the
+ *  offset plus the extent, then both images into their final layouts.
+ *
+ * \param[in] commandBuffer           Command buffer recording the transfer
+ * \param[in] dependencyFlags         Dependency flags of every barrier
+ * \param[in] pSrcAcquireBarrierNext  Optional extension chain of the source acquire barrier, or NULL
+ * \param[in] srcStageMask            Stage that last used the source
+ * \param[in] srcAccessMask           Access that last used the source
+ * \param[in] srcInitialLayout        Layout of the source before the transfer
+ * \param[in] srcTransferLayout       Layout of the source during the blit
+ * \param[in] srcImage                Source image
+ * \param[in] srcSubresource          Source subresource layers
+ * \param[in] srcOffset               Source texel offset
+ * \param[in] srcExtent               Source texel extent
+ * \param[in] pDstAcquireBarrierNext  Optional extension chain of the destination acquire barrier, or NULL
+ * \param[in] dstStageMask            Stage that last used the destination
+ * \param[in] dstAccessMask           Access that last used the destination
+ * \param[in] dstInitialLayout        Layout of the destination before the transfer
+ * \param[in] dstTransferLayout       Layout of the destination during the blit
+ * \param[in] dstImage                Destination image
+ * \param[in] dstSubresource          Destination subresource layers
+ * \param[in] dstOffset               Destination texel offset
+ * \param[in] dstExtent               Destination texel extent
+ * \param[in] filter                  Filter applied by the blit
+ * \param[in] pSrcBarrierNext         Optional extension chain of the source release barrier, or NULL
+ * \param[in] srcDstStageMask         Stage that next uses the source
+ * \param[in] srcDstAccessMask        Access that next uses the source
+ * \param[in] srcFinalLayout          Layout of the source after the transfer
+ * \param[in] pDstBarrierNext         Optional extension chain of the destination release barrier, or NULL
+ * \param[in] dstDstStageMask         Stage that next uses the destination
+ * \param[in] dstDstAccessMask        Access that next uses the destination
+ * \param[in] dstFinalLayout          Layout of the destination after the transfer
+ *
+ * \retval None
+ */
+void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
+                             VkDependencyFlags        dependencyFlags,
+                             const void*              pSrcAcquireBarrierNext,
+                             VkPipelineStageFlags     srcStageMask,
+                             VkAccessFlags            srcAccessMask,
+                             VkImageLayout            srcInitialLayout,
+                             VkImageLayout            srcTransferLayout,
+                             VkImage                  srcImage,
+                             VkImageSubresourceLayers srcSubresource,
+                             VkOffset3D               srcOffset,
+                             VkExtent3D               srcExtent,
+                             const void*              pDstAcquireBarrierNext,
+                             VkPipelineStageFlags     dstStageMask,
+                             VkAccessFlags            dstAccessMask,
+                             VkImageLayout            dstInitialLayout,
+                             VkImageLayout            dstTransferLayout,
+                             VkImage                  dstImage,
+                             VkImageSubresourceLayers dstSubresource,
+                             VkOffset3D               dstOffset,
+                             VkExtent3D               dstExtent,
+                             VkFilter                 filter,
+                             const void*              pSrcBarrierNext,
+                             VkPipelineStageFlags     srcDstStageMask,
+                             VkAccessFlags            srcDstAccessMask,
+                             VkImageLayout            srcFinalLayout,
+                             const void*              pDstBarrierNext,
+                             VkPipelineStageFlags     dstDstStageMask,
+                             VkAccessFlags            dstDstAccessMask,
+                             VkImageLayout            dstFinalLayout);
+/**
+ * \brief Copies every plane of a subresource from a linear buffer into an image, with barriers and no ownership transfer.
+ *
+ * \param[in] commandBuffer             See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] dependencyFlags           See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] pBufferBarrierNext        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferSrcStageMask        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferSrcAccessMask       See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] buffer                    See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferOffset              See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferRowAlignment        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] image                     See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageFormat               See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] transferImageLayout       See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageOffset               See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageExtent               See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageSubresource          See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] pImageAcquireBarrierNext  See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageSrcStageMask         See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageSrcAccessMask        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] initialImageLayout        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] pImageBarrierNext         See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageDstStageMask         See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageDstAccessMask        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] finalImageLayout          See cvkCmdTransferBufferToImageQueueOwnership
+ *
+ * \retval None
+ */
+void cvkCmdTransferBufferToImage(VkCommandBuffer          commandBuffer,
+                                 VkDependencyFlags        dependencyFlags,
+                                 const void*              pBufferBarrierNext,
+                                 VkPipelineStageFlags     bufferSrcStageMask,
+                                 VkAccessFlags            bufferSrcAccessMask,
+                                 VkBuffer                 buffer,
+                                 VkDeviceSize             bufferOffset,
+                                 VkDeviceSize             bufferRowAlignment,
+                                 VkImage                  image,
+                                 VkFormat                 imageFormat,
+                                 VkImageLayout            transferImageLayout,
+                                 VkOffset3D               imageOffset,
+                                 VkExtent3D               imageExtent,
+                                 VkImageSubresourceLayers imageSubresource,
+                                 const void*              pImageAcquireBarrierNext,
+                                 VkPipelineStageFlags     imageSrcStageMask,
+                                 VkAccessFlags            imageSrcAccessMask,
+                                 VkImageLayout            initialImageLayout,
+                                 const void*              pImageBarrierNext,
+                                 VkPipelineStageFlags     imageDstStageMask,
+                                 VkAccessFlags            imageDstAccessMask,
+                                 VkImageLayout            finalImageLayout);
+/**
+ * \brief Copies every plane of a subresource from a linear buffer into an externally owned image: acquires it from the external owner, copies, and releases it back.
+ *
+ * \param[in] commandBuffer             See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] dependencyFlags           See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] pBufferBarrierNext        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferSrcStageMask        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferSrcAccessMask       See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] buffer                    See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferOffset              See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] bufferRowAlignment        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] image                     See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageFormat               See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] transferImageLayout       See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageOffset               See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageExtent               See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] imageSubresource          See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] pImageAcquireBarrierNext  See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] initialImageLayout        See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] pImageBarrierNext         See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] finalImageLayout          See cvkCmdTransferBufferToImageQueueOwnership
+ * \param[in] queueFamilyIndex          Queue family owning the image between acquire and release
+ *
+ * \retval None
+ */
+void cvkCmdTransferBufferToExternalImage(VkCommandBuffer          commandBuffer,
+                                         VkDependencyFlags        dependencyFlags,
+                                         const void*              pBufferBarrierNext,
+                                         VkPipelineStageFlags     bufferSrcStageMask,
+                                         VkAccessFlags            bufferSrcAccessMask,
+                                         VkBuffer                 buffer,
+                                         VkDeviceSize             bufferOffset,
+                                         VkDeviceSize             bufferRowAlignment,
+                                         VkImage                  image,
+                                         VkFormat                 imageFormat,
+                                         VkImageLayout            transferImageLayout,
+                                         VkOffset3D               imageOffset,
+                                         VkExtent3D               imageExtent,
+                                         VkImageSubresourceLayers imageSubresource,
+                                         const void*              pImageAcquireBarrierNext,
+                                         VkImageLayout            initialImageLayout,
+                                         const void*              pImageBarrierNext,
+                                         VkImageLayout            finalImageLayout,
+                                         uint32_t                 queueFamilyIndex);
+/**
+ * \brief Copies a buffer written by compute shaders into an externally owned image.
+ *
+ * \param[in] commandBuffer             See cvkCmdTransferBufferToExternalImage
+ * \param[in] dependencyFlags           See cvkCmdTransferBufferToExternalImage
+ * \param[in] pBufferBarrierNext        See cvkCmdTransferBufferToExternalImage
+ * \param[in] buffer                    See cvkCmdTransferBufferToExternalImage
+ * \param[in] bufferOffset              See cvkCmdTransferBufferToExternalImage
+ * \param[in] bufferRowAlignment        See cvkCmdTransferBufferToExternalImage
+ * \param[in] image                     See cvkCmdTransferBufferToExternalImage
+ * \param[in] imageFormat               See cvkCmdTransferBufferToExternalImage
+ * \param[in] transferImageLayout       See cvkCmdTransferBufferToExternalImage
+ * \param[in] imageOffset               See cvkCmdTransferBufferToExternalImage
+ * \param[in] imageExtent               See cvkCmdTransferBufferToExternalImage
+ * \param[in] imageSubresource          See cvkCmdTransferBufferToExternalImage
+ * \param[in] pImageAcquireBarrierNext  See cvkCmdTransferBufferToExternalImage
+ * \param[in] initialImageLayout        See cvkCmdTransferBufferToExternalImage
+ * \param[in] pImageBarrierNext         See cvkCmdTransferBufferToExternalImage
+ * \param[in] finalImageLayout          See cvkCmdTransferBufferToExternalImage
+ * \param[in] queueFamilyIndex          See cvkCmdTransferBufferToExternalImage
+ *
+ * \retval None
+ */
+void cvkCmdTransferComputeBufferToExternalImage(VkCommandBuffer          commandBuffer,
+                                                VkDependencyFlags        dependencyFlags,
+                                                const void*              pBufferBarrierNext,
+                                                VkBuffer                 buffer,
+                                                VkDeviceSize             bufferOffset,
+                                                VkDeviceSize             bufferRowAlignment,
+                                                VkImage                  image,
+                                                VkFormat                 imageFormat,
+                                                VkImageLayout            transferImageLayout,
+                                                VkOffset3D               imageOffset,
+                                                VkExtent3D               imageExtent,
+                                                VkImageSubresourceLayers imageSubresource,
+                                                const void*              pImageAcquireBarrierNext,
+                                                VkImageLayout            initialImageLayout,
+                                                const void*              pImageBarrierNext,
+                                                VkImageLayout            finalImageLayout,
+                                                uint32_t                 queueFamilyIndex);
+/**
+ * \brief Copies every plane of a subresource from an image into a linear buffer, with barriers and no ownership transfer.
+ *
+ * \param[in] commandBuffer              See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] dependencyFlags            See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] pImageAcquireBarrierNext   See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageSrcStageMask          See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageSrcAccessMask         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] initialImageLayout         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] image                      See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageFormat                See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] transferImageLayout        See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageOffset                See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageExtent                See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageSubresource           See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] pBufferAcquireBarrierNext  See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] bufferSrcStageMask         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] bufferSrcAccessMask        See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] buffer                     See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] bufferOffset               See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] bufferRowAlignment         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] pImageBarrierNext          See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageDstStageMask          See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] imageDstAccessMask         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] finalImageLayout           See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] pBufferBarrierNext         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] bufferDstStageMask         See cvkCmdTransferImageToBufferQueueOwnership
+ * \param[in] bufferDstAccessMask        See cvkCmdTransferImageToBufferQueueOwnership
+ *
+ * \retval None
+ */
+void cvkCmdTransferImageToBuffer(VkCommandBuffer          commandBuffer,
+                                 VkDependencyFlags        dependencyFlags,
+                                 const void*              pImageAcquireBarrierNext,
+                                 VkPipelineStageFlags     imageSrcStageMask,
+                                 VkAccessFlags            imageSrcAccessMask,
+                                 VkImageLayout            initialImageLayout,
+                                 VkImage                  image,
+                                 VkFormat                 imageFormat,
+                                 VkImageLayout            transferImageLayout,
+                                 VkOffset3D               imageOffset,
+                                 VkExtent3D               imageExtent,
+                                 VkImageSubresourceLayers imageSubresource,
+                                 const void*              pBufferAcquireBarrierNext,
+                                 VkPipelineStageFlags     bufferSrcStageMask,
+                                 VkAccessFlags            bufferSrcAccessMask,
+                                 VkBuffer                 buffer,
+                                 VkDeviceSize             bufferOffset,
+                                 VkDeviceSize             bufferRowAlignment,
+                                 const void*              pImageBarrierNext,
+                                 VkPipelineStageFlags     imageDstStageMask,
+                                 VkAccessFlags            imageDstAccessMask,
+                                 VkImageLayout            finalImageLayout,
+                                 const void*              pBufferBarrierNext,
+                                 VkPipelineStageFlags     bufferDstStageMask,
+                                 VkAccessFlags            bufferDstAccessMask);
+/**
+ * \brief Copies one region between two images, with barriers and no ownership transfer.
+ *
+ * \param[in] commandBuffer           See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dependencyFlags         See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] pSrcAcquireBarrierNext  See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcStageMask            See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcAccessMask           See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcInitialLayout        See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcTransferLayout       See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcImage                See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcSubresource          See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcOffset               See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] pDstAcquireBarrierNext  See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstStageMask            See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstAccessMask           See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstInitialLayout        See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstTransferLayout       See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstImage                See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstSubresource          See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstOffset               See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] extent                  See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] pSrcBarrierNext         See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcDstStageMask         See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcDstAccessMask        See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] srcFinalLayout          See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] pDstBarrierNext         See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstDstStageMask         See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstDstAccessMask        See cvkCmdTransferImageToImageQueueOwnership
+ * \param[in] dstFinalLayout          See cvkCmdTransferImageToImageQueueOwnership
+ *
+ * \retval None
+ */
+void cvkCmdTransferImageToImage(VkCommandBuffer          commandBuffer,
+                                VkDependencyFlags        dependencyFlags,
+                                const void*              pSrcAcquireBarrierNext,
+                                VkPipelineStageFlags     srcStageMask,
+                                VkAccessFlags            srcAccessMask,
+                                VkImageLayout            srcInitialLayout,
+                                VkImageLayout            srcTransferLayout,
+                                VkImage                  srcImage,
+                                VkImageSubresourceLayers srcSubresource,
+                                VkOffset3D               srcOffset,
+                                const void*              pDstAcquireBarrierNext,
+                                VkPipelineStageFlags     dstStageMask,
+                                VkAccessFlags            dstAccessMask,
+                                VkImageLayout            dstInitialLayout,
+                                VkImageLayout            dstTransferLayout,
+                                VkImage                  dstImage,
+                                VkImageSubresourceLayers dstSubresource,
+                                VkOffset3D               dstOffset,
+                                VkExtent3D               extent,
+                                const void*              pSrcBarrierNext,
+                                VkPipelineStageFlags     srcDstStageMask,
+                                VkAccessFlags            srcDstAccessMask,
+                                VkImageLayout            srcFinalLayout,
+                                const void*              pDstBarrierNext,
+                                VkPipelineStageFlags     dstDstStageMask,
+                                VkAccessFlags            dstDstAccessMask,
+                                VkImageLayout            dstFinalLayout);
+/**
+ * \brief 2D form of cvkCmdTransferBufferToImage.
+ *
+ * \param[in] commandBuffer             See cvkCmdTransferBufferToImage
+ * \param[in] dependencyFlags           See cvkCmdTransferBufferToImage
+ * \param[in] pBufferBarrierNext        See cvkCmdTransferBufferToImage
+ * \param[in] bufferSrcStageMask        See cvkCmdTransferBufferToImage
+ * \param[in] bufferSrcAccessMask       See cvkCmdTransferBufferToImage
+ * \param[in] buffer                    See cvkCmdTransferBufferToImage
+ * \param[in] bufferOffset              See cvkCmdTransferBufferToImage
+ * \param[in] bufferRowAlignment        See cvkCmdTransferBufferToImage
+ * \param[in] image                     See cvkCmdTransferBufferToImage
+ * \param[in] imageFormat               See cvkCmdTransferBufferToImage
+ * \param[in] transferImageLayout       See cvkCmdTransferBufferToImage
+ * \param[in] imageSubresource          See cvkCmdTransferBufferToImage
+ * \param[in] pImageAcquireBarrierNext  See cvkCmdTransferBufferToImage
+ * \param[in] imageSrcStageMask         See cvkCmdTransferBufferToImage
+ * \param[in] imageSrcAccessMask        See cvkCmdTransferBufferToImage
+ * \param[in] initialImageLayout        See cvkCmdTransferBufferToImage
+ * \param[in] pImageBarrierNext         See cvkCmdTransferBufferToImage
+ * \param[in] imageDstStageMask         See cvkCmdTransferBufferToImage
+ * \param[in] imageDstAccessMask        See cvkCmdTransferBufferToImage
+ * \param[in] finalImageLayout          See cvkCmdTransferBufferToImage
+ * \param[in] imageOffset2D             imageOffset without depth
+ * \param[in] imageExtent2D             imageExtent without depth
+ *
+ * \retval None
+ */
+void cvkCmdTransferBufferToImage2D(VkCommandBuffer          commandBuffer,
+                                   VkDependencyFlags        dependencyFlags,
+                                   const void*              pBufferBarrierNext,
+                                   VkPipelineStageFlags     bufferSrcStageMask,
+                                   VkAccessFlags            bufferSrcAccessMask,
+                                   VkBuffer                 buffer,
+                                   VkDeviceSize             bufferOffset,
+                                   VkDeviceSize             bufferRowAlignment,
+                                   VkImage                  image,
+                                   VkFormat                 imageFormat,
+                                   VkImageLayout            transferImageLayout,
+                                   VkImageSubresourceLayers imageSubresource,
+                                   const void*              pImageAcquireBarrierNext,
+                                   VkPipelineStageFlags     imageSrcStageMask,
+                                   VkAccessFlags            imageSrcAccessMask,
+                                   VkImageLayout            initialImageLayout,
+                                   const void*              pImageBarrierNext,
+                                   VkPipelineStageFlags     imageDstStageMask,
+                                   VkAccessFlags            imageDstAccessMask,
+                                   VkImageLayout            finalImageLayout,
+                                   VkOffset2D               imageOffset2D,
+                                   VkExtent2D               imageExtent2D);
+/**
+ * \brief 2D form of cvkCmdTransferComputeBufferToExternalImage.
+ *
+ * \param[in] commandBuffer             See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] dependencyFlags           See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] pBufferBarrierNext        See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] buffer                    See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] bufferOffset              See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] bufferRowAlignment        See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] image                     See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] imageFormat               See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] transferImageLayout       See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] imageSubresource          See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] pImageAcquireBarrierNext  See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] initialImageLayout        See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] pImageBarrierNext         See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] finalImageLayout          See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] queueFamilyIndex          See cvkCmdTransferComputeBufferToExternalImage
+ * \param[in] imageOffset2D             imageOffset without depth
+ * \param[in] imageExtent2D             imageExtent without depth
+ *
+ * \retval None
+ */
+void cvkCmdTransferComputeBufferToExternalImage2D(VkCommandBuffer          commandBuffer,
+                                                  VkDependencyFlags        dependencyFlags,
+                                                  const void*              pBufferBarrierNext,
+                                                  VkBuffer                 buffer,
+                                                  VkDeviceSize             bufferOffset,
+                                                  VkDeviceSize             bufferRowAlignment,
+                                                  VkImage                  image,
+                                                  VkFormat                 imageFormat,
+                                                  VkImageLayout            transferImageLayout,
+                                                  VkImageSubresourceLayers imageSubresource,
+                                                  const void*              pImageAcquireBarrierNext,
+                                                  VkImageLayout            initialImageLayout,
+                                                  const void*              pImageBarrierNext,
+                                                  VkImageLayout            finalImageLayout,
+                                                  uint32_t                 queueFamilyIndex,
+                                                  VkOffset2D               imageOffset2D,
+                                                  VkExtent2D               imageExtent2D);
+/**
+ * \brief 2D form of cvkCmdTransferImageToBuffer.
+ *
+ * \param[in] commandBuffer              See cvkCmdTransferImageToBuffer
+ * \param[in] dependencyFlags            See cvkCmdTransferImageToBuffer
+ * \param[in] pImageAcquireBarrierNext   See cvkCmdTransferImageToBuffer
+ * \param[in] imageSrcStageMask          See cvkCmdTransferImageToBuffer
+ * \param[in] imageSrcAccessMask         See cvkCmdTransferImageToBuffer
+ * \param[in] initialImageLayout         See cvkCmdTransferImageToBuffer
+ * \param[in] image                      See cvkCmdTransferImageToBuffer
+ * \param[in] imageFormat                See cvkCmdTransferImageToBuffer
+ * \param[in] transferImageLayout        See cvkCmdTransferImageToBuffer
+ * \param[in] imageSubresource           See cvkCmdTransferImageToBuffer
+ * \param[in] pBufferAcquireBarrierNext  See cvkCmdTransferImageToBuffer
+ * \param[in] bufferSrcStageMask         See cvkCmdTransferImageToBuffer
+ * \param[in] bufferSrcAccessMask        See cvkCmdTransferImageToBuffer
+ * \param[in] buffer                     See cvkCmdTransferImageToBuffer
+ * \param[in] bufferOffset               See cvkCmdTransferImageToBuffer
+ * \param[in] bufferRowAlignment         See cvkCmdTransferImageToBuffer
+ * \param[in] pImageBarrierNext          See cvkCmdTransferImageToBuffer
+ * \param[in] imageDstStageMask          See cvkCmdTransferImageToBuffer
+ * \param[in] imageDstAccessMask         See cvkCmdTransferImageToBuffer
+ * \param[in] finalImageLayout           See cvkCmdTransferImageToBuffer
+ * \param[in] pBufferBarrierNext         See cvkCmdTransferImageToBuffer
+ * \param[in] bufferDstStageMask         See cvkCmdTransferImageToBuffer
+ * \param[in] bufferDstAccessMask        See cvkCmdTransferImageToBuffer
+ * \param[in] imageOffset2D              imageOffset without depth
+ * \param[in] imageExtent2D              imageExtent without depth
+ *
+ * \retval None
+ */
+void cvkCmdTransferImageToBuffer2D(VkCommandBuffer          commandBuffer,
+                                   VkDependencyFlags        dependencyFlags,
+                                   const void*              pImageAcquireBarrierNext,
+                                   VkPipelineStageFlags     imageSrcStageMask,
+                                   VkAccessFlags            imageSrcAccessMask,
+                                   VkImageLayout            initialImageLayout,
+                                   VkImage                  image,
+                                   VkFormat                 imageFormat,
+                                   VkImageLayout            transferImageLayout,
+                                   VkImageSubresourceLayers imageSubresource,
+                                   const void*              pBufferAcquireBarrierNext,
+                                   VkPipelineStageFlags     bufferSrcStageMask,
+                                   VkAccessFlags            bufferSrcAccessMask,
+                                   VkBuffer                 buffer,
+                                   VkDeviceSize             bufferOffset,
+                                   VkDeviceSize             bufferRowAlignment,
+                                   const void*              pImageBarrierNext,
+                                   VkPipelineStageFlags     imageDstStageMask,
+                                   VkAccessFlags            imageDstAccessMask,
+                                   VkImageLayout            finalImageLayout,
+                                   const void*              pBufferBarrierNext,
+                                   VkPipelineStageFlags     bufferDstStageMask,
+                                   VkAccessFlags            bufferDstAccessMask,
+                                   VkOffset2D               imageOffset2D,
+                                   VkExtent2D               imageExtent2D);
+/**
+ * \brief 2D form of cvkCmdTransferImageToImage.
+ *
+ * \param[in] commandBuffer           See cvkCmdTransferImageToImage
+ * \param[in] dependencyFlags         See cvkCmdTransferImageToImage
+ * \param[in] pSrcAcquireBarrierNext  See cvkCmdTransferImageToImage
+ * \param[in] srcStageMask            See cvkCmdTransferImageToImage
+ * \param[in] srcAccessMask           See cvkCmdTransferImageToImage
+ * \param[in] srcInitialLayout        See cvkCmdTransferImageToImage
+ * \param[in] srcTransferLayout       See cvkCmdTransferImageToImage
+ * \param[in] srcImage                See cvkCmdTransferImageToImage
+ * \param[in] srcSubresource          See cvkCmdTransferImageToImage
+ * \param[in] pDstAcquireBarrierNext  See cvkCmdTransferImageToImage
+ * \param[in] dstStageMask            See cvkCmdTransferImageToImage
+ * \param[in] dstAccessMask           See cvkCmdTransferImageToImage
+ * \param[in] dstInitialLayout        See cvkCmdTransferImageToImage
+ * \param[in] dstTransferLayout       See cvkCmdTransferImageToImage
+ * \param[in] dstImage                See cvkCmdTransferImageToImage
+ * \param[in] dstSubresource          See cvkCmdTransferImageToImage
+ * \param[in] pSrcBarrierNext         See cvkCmdTransferImageToImage
+ * \param[in] srcDstStageMask         See cvkCmdTransferImageToImage
+ * \param[in] srcDstAccessMask        See cvkCmdTransferImageToImage
+ * \param[in] srcFinalLayout          See cvkCmdTransferImageToImage
+ * \param[in] pDstBarrierNext         See cvkCmdTransferImageToImage
+ * \param[in] dstDstStageMask         See cvkCmdTransferImageToImage
+ * \param[in] dstDstAccessMask        See cvkCmdTransferImageToImage
+ * \param[in] dstFinalLayout          See cvkCmdTransferImageToImage
+ * \param[in] srcOffset2D             srcOffset without depth
+ * \param[in] dstOffset2D             dstOffset without depth
+ * \param[in] extent2D                extent without depth
+ *
+ * \retval None
+ */
+void cvkCmdTransferImageToImage2D(VkCommandBuffer          commandBuffer,
+                                  VkDependencyFlags        dependencyFlags,
+                                  const void*              pSrcAcquireBarrierNext,
+                                  VkPipelineStageFlags     srcStageMask,
+                                  VkAccessFlags            srcAccessMask,
+                                  VkImageLayout            srcInitialLayout,
+                                  VkImageLayout            srcTransferLayout,
+                                  VkImage                  srcImage,
+                                  VkImageSubresourceLayers srcSubresource,
+                                  const void*              pDstAcquireBarrierNext,
+                                  VkPipelineStageFlags     dstStageMask,
+                                  VkAccessFlags            dstAccessMask,
+                                  VkImageLayout            dstInitialLayout,
+                                  VkImageLayout            dstTransferLayout,
+                                  VkImage                  dstImage,
+                                  VkImageSubresourceLayers dstSubresource,
+                                  const void*              pSrcBarrierNext,
+                                  VkPipelineStageFlags     srcDstStageMask,
+                                  VkAccessFlags            srcDstAccessMask,
+                                  VkImageLayout            srcFinalLayout,
+                                  const void*              pDstBarrierNext,
+                                  VkPipelineStageFlags     dstDstStageMask,
+                                  VkAccessFlags            dstDstAccessMask,
+                                  VkImageLayout            dstFinalLayout,
+                                  VkOffset2D               srcOffset2D,
+                                  VkOffset2D               dstOffset2D,
+                                  VkExtent2D               extent2D);
+/**
+ * \brief 2D form of cvkCmdTransferBlitImage.
+ *
+ * \param[in] commandBuffer           See cvkCmdTransferBlitImage
+ * \param[in] dependencyFlags         See cvkCmdTransferBlitImage
+ * \param[in] pSrcAcquireBarrierNext  See cvkCmdTransferBlitImage
+ * \param[in] srcStageMask            See cvkCmdTransferBlitImage
+ * \param[in] srcAccessMask           See cvkCmdTransferBlitImage
+ * \param[in] srcInitialLayout        See cvkCmdTransferBlitImage
+ * \param[in] srcTransferLayout       See cvkCmdTransferBlitImage
+ * \param[in] srcImage                See cvkCmdTransferBlitImage
+ * \param[in] srcSubresource          See cvkCmdTransferBlitImage
+ * \param[in] pDstAcquireBarrierNext  See cvkCmdTransferBlitImage
+ * \param[in] dstStageMask            See cvkCmdTransferBlitImage
+ * \param[in] dstAccessMask           See cvkCmdTransferBlitImage
+ * \param[in] dstInitialLayout        See cvkCmdTransferBlitImage
+ * \param[in] dstTransferLayout       See cvkCmdTransferBlitImage
+ * \param[in] dstImage                See cvkCmdTransferBlitImage
+ * \param[in] dstSubresource          See cvkCmdTransferBlitImage
+ * \param[in] filter                  See cvkCmdTransferBlitImage
+ * \param[in] pSrcBarrierNext         See cvkCmdTransferBlitImage
+ * \param[in] srcDstStageMask         See cvkCmdTransferBlitImage
+ * \param[in] srcDstAccessMask        See cvkCmdTransferBlitImage
+ * \param[in] srcFinalLayout          See cvkCmdTransferBlitImage
+ * \param[in] pDstBarrierNext         See cvkCmdTransferBlitImage
+ * \param[in] dstDstStageMask         See cvkCmdTransferBlitImage
+ * \param[in] dstDstAccessMask        See cvkCmdTransferBlitImage
+ * \param[in] dstFinalLayout          See cvkCmdTransferBlitImage
+ * \param[in] srcOffset2D             srcOffset without depth
+ * \param[in] srcExtent2D             srcExtent without depth
+ * \param[in] dstOffset2D             dstOffset without depth
+ * \param[in] dstExtent2D             dstExtent without depth
+ *
+ * \retval None
+ */
+void cvkCmdTransferBlitImage2D(VkCommandBuffer          commandBuffer,
+                               VkDependencyFlags        dependencyFlags,
+                               const void*              pSrcAcquireBarrierNext,
+                               VkPipelineStageFlags     srcStageMask,
+                               VkAccessFlags            srcAccessMask,
+                               VkImageLayout            srcInitialLayout,
+                               VkImageLayout            srcTransferLayout,
+                               VkImage                  srcImage,
+                               VkImageSubresourceLayers srcSubresource,
+                               const void*              pDstAcquireBarrierNext,
+                               VkPipelineStageFlags     dstStageMask,
+                               VkAccessFlags            dstAccessMask,
+                               VkImageLayout            dstInitialLayout,
+                               VkImageLayout            dstTransferLayout,
+                               VkImage                  dstImage,
+                               VkImageSubresourceLayers dstSubresource,
+                               VkFilter                 filter,
+                               const void*              pSrcBarrierNext,
+                               VkPipelineStageFlags     srcDstStageMask,
+                               VkAccessFlags            srcDstAccessMask,
+                               VkImageLayout            srcFinalLayout,
+                               const void*              pDstBarrierNext,
+                               VkPipelineStageFlags     dstDstStageMask,
+                               VkAccessFlags            dstDstAccessMask,
+                               VkImageLayout            dstFinalLayout,
+                               VkOffset2D               srcOffset2D,
+                               VkExtent2D               srcExtent2D,
+                               VkOffset2D               dstOffset2D,
+                               VkExtent2D               dstExtent2D);
 
 #ifdef __cplusplus
 }

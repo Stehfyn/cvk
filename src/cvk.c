@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vulkan/utility/vk_format_utils.h>
 
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {
@@ -7232,6 +7233,54 @@ void cvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
     cvkCmdPushComputeConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
     cvkCmdDispatchItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
 }
+void cvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDispatchItems(commandBuffer, item_count, items_per_invocation, local_size);
+}
+void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
+                                  VkPipeline             pipeline,
+                                  VkPipelineLayout       layout,
+                                  uint32_t               firstSet,
+                                  uint32_t               descriptorSetCount,
+                                  const VkDescriptorSet* pDescriptorSets,
+                                  uint32_t               dynamicOffsetCount,
+                                  const uint32_t*        pDynamicOffsets,
+                                  uint32_t               pushConstantOffset,
+                                  uint32_t               pushConstantSize,
+                                  const void*            pPushConstants,
+                                  VkExtent2D             itemCount2D,
+                                  VkExtent2D             itemsPerInvocation2D,
+                                  VkExtent2D             localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDispatchComputeItems(commandBuffer,
+                               pipeline,
+                               layout,
+                               firstSet,
+                               descriptorSetCount,
+                               pDescriptorSets,
+                               dynamicOffsetCount,
+                               pDynamicOffsets,
+                               item_count,
+                               items_per_invocation,
+                               local_size,
+                               pushConstantOffset,
+                               pushConstantSize,
+                               pPushConstants);
+}
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                          VkDebugUtilsMessageTypeFlagsEXT             messageTypes,
                                                          const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -7339,4 +7388,1103 @@ VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t 
         }
     }
     return VK_NULL_HANDLE;
+}
+uint32_t cvkGetFormatPlaneCount(VkFormat format)
+{
+    return vkuFormatPlaneCount(format);
+}
+VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex)
+{
+    if (1u == vkuFormatPlaneCount(format))
+    {
+        return VK_IMAGE_ASPECT_COLOR_BIT;
+    }
+    /* format plane aspects are consecutive bits from VK_IMAGE_ASPECT_PLANE_0_BIT */
+    return (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_PLANE_0_BIT << planeIndex);
+}
+VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex)
+{
+    /* memory plane aspects are consecutive bits from VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT */
+    return (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT << planeIndex);
+}
+VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
+{
+    VkImageAspectFlags aspect_mask;
+    uint32_t           plane_count;
+    uint32_t           plane_index;
+
+    aspect_mask = 0;
+    if (vkuFormatHasDepth(format))
+    {
+        aspect_mask |= VK_IMAGE_ASPECT_DEPTH_BIT;
+    }
+    if (vkuFormatHasStencil(format))
+    {
+        aspect_mask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+    }
+    if (0 != aspect_mask)
+    {
+        return aspect_mask;
+    }
+    plane_count = vkuFormatPlaneCount(format);
+    for (plane_index = 0; plane_index < plane_count; ++plane_index)
+    {
+        aspect_mask |= cvkGetFormatPlaneAspect(format, plane_index);
+    }
+    return aspect_mask;
+}
+VkImageSubresourceLayers cvkGetFormatSubresourceLayers(VkFormat format, uint32_t mipLevel, uint32_t baseArrayLayer, uint32_t layerCount)
+{
+    VkImageSubresourceLayers image_subresource_layers;
+
+    cvkInitImageSubresourceLayers(&image_subresource_layers, cvkGetFormatAspectMask(format), mipLevel, baseArrayLayer, layerCount);
+    return image_subresource_layers;
+}
+VkImageSubresourceLayers cvkGetFormatBaseSubresourceLayers(VkFormat format)
+{
+    return cvkGetFormatSubresourceLayers(format, 0, 0, 1);
+}
+VkImageSubresourceRange cvkGetFormatSubresourceRange(VkFormat format, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
+{
+    VkImageSubresourceRange image_subresource_range;
+
+    cvkInitImageSubresourceRange(&image_subresource_range, cvkGetFormatAspectMask(format), baseMipLevel, levelCount, baseArrayLayer, layerCount);
+    return image_subresource_range;
+}
+VkImageSubresourceRange cvkGetFormatBaseSubresourceRange(VkFormat format)
+{
+    return cvkGetFormatSubresourceRange(format, 0, 1, 0, 1);
+}
+uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
+                                        uint32_t      width,
+                                        uint32_t      height,
+                                        uint32_t      depth,
+                                        uint32_t      layerCount,
+                                        VkDeviceSize  rowAlignment,
+                                        VkDeviceSize* pPlaneOffsets,
+                                        uint32_t*     pPlaneStrides,
+                                        VkExtent3D*   pPlaneExtents,
+                                        VkDeviceSize* pSize)
+{
+    VkDeviceSize plane_offset;
+    VkDeviceSize row_byte_count;
+    VkDeviceSize aligned_row_byte_count;
+    VkDeviceSize plane_byte_count;
+    VkExtent3D   block_extent;
+    VkExtent2D   divisors;
+    VkFormat     plane_format;
+    uint32_t     block_columns;
+    uint32_t     block_rows;
+    uint32_t     block_slices;
+    uint32_t     plane_count;
+    uint32_t     plane_index;
+
+    plane_count  = vkuFormatPlaneCount(format);
+    plane_offset = 0;
+    (void)memset(pPlaneOffsets, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
+    (void)memset(pPlaneStrides, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
+    (void)memset(pPlaneExtents, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
+    for (plane_index = 0; plane_index < plane_count; ++plane_index)
+    {
+        if (1u == plane_count)
+        {
+            plane_format                      = format;
+            pPlaneExtents[plane_index].width  = width;
+            pPlaneExtents[plane_index].height = height;
+        }
+        else
+        {
+            plane_format                      = vkuFindMultiplaneCompatibleFormat(format, cvkGetFormatPlaneAspect(format, plane_index));
+            divisors                          = vkuFindMultiplaneExtentDivisors(format, cvkGetFormatPlaneAspect(format, plane_index));
+            pPlaneExtents[plane_index].width  = (width + divisors.width - 1u) / divisors.width;
+            pPlaneExtents[plane_index].height = (height + divisors.height - 1u) / divisors.height;
+        }
+        pPlaneExtents[plane_index].depth = depth;
+        block_extent                     = vkuFormatTexelBlockExtent(plane_format);
+        block_columns                    = (pPlaneExtents[plane_index].width + block_extent.width - 1u) / block_extent.width;
+        block_rows                       = (pPlaneExtents[plane_index].height + block_extent.height - 1u) / block_extent.height;
+        block_slices                     = (pPlaneExtents[plane_index].depth + block_extent.depth - 1u) / block_extent.depth;
+        row_byte_count                   = (VkDeviceSize)block_columns * vkuFormatTexelBlockSize(plane_format);
+        aligned_row_byte_count           = ((row_byte_count + rowAlignment - 1u) / rowAlignment) * rowAlignment;
+        plane_byte_count                 = aligned_row_byte_count * block_rows * block_slices * layerCount;
+        pPlaneOffsets[plane_index]       = plane_offset;
+        pPlaneStrides[plane_index]       = (uint32_t)aligned_row_byte_count;
+        plane_offset += plane_byte_count;
+    }
+    (*pSize) = plane_offset;
+    return plane_count;
+}
+VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height)
+{
+    VkDeviceSize plane_offsets[VKU_FORMAT_MAX_PLANES];
+    uint32_t     plane_strides[VKU_FORMAT_MAX_PLANES];
+    VkExtent3D   plane_extents[VKU_FORMAT_MAX_PLANES];
+    VkDeviceSize size;
+
+    (void)cvkCalculateFormatPlaneLayouts(format, width, height, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
+    return size;
+}
+uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
+                                      VkDeviceSize             bufferRowAlignment,
+                                      VkFormat                 imageFormat,
+                                      VkOffset3D               imageOffset,
+                                      VkExtent3D               imageExtent,
+                                      VkImageSubresourceLayers imageSubresource,
+                                      VkBufferImageCopy*       pRegions,
+                                      VkDeviceSize*            pTransferByteCount,
+                                      VkImageAspectFlags*      pAspectMask)
+{
+    VkDeviceSize             plane_offsets[VKU_FORMAT_MAX_PLANES];
+    uint32_t                 plane_strides[VKU_FORMAT_MAX_PLANES];
+    VkExtent3D               plane_extents[VKU_FORMAT_MAX_PLANES];
+    VkImageSubresourceLayers plane_subresource;
+    VkOffset3D               plane_offset;
+    VkExtent2D               divisors;
+    VkExtent3D               block_extent;
+    VkDeviceSize             tight_row_byte_count;
+    VkFormat                 plane_format;
+    uint32_t                 plane_texel_size;
+    uint32_t                 buffer_row_length;
+    uint32_t                 plane_count;
+    uint32_t                 plane_index;
+
+    plane_count    = cvkCalculateFormatPlaneLayouts(imageFormat,
+                                                    imageExtent.width,
+                                                    imageExtent.height,
+                                                    imageExtent.depth,
+                                                    imageSubresource.layerCount,
+                                                    bufferRowAlignment,
+                                                    plane_offsets,
+                                                    plane_strides,
+                                                    plane_extents,
+                                                    pTransferByteCount);
+    (*pAspectMask) = 0;
+    for (plane_index = 0; plane_index < plane_count; ++plane_index)
+    {
+        plane_offset = imageOffset;
+        if (1u == plane_count)
+        {
+            plane_format = imageFormat;
+        }
+        else
+        {
+            plane_format   = vkuFindMultiplaneCompatibleFormat(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index));
+            divisors       = vkuFindMultiplaneExtentDivisors(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index));
+            plane_offset.x = imageOffset.x / (int32_t)divisors.width;
+            plane_offset.y = imageOffset.y / (int32_t)divisors.height;
+        }
+        plane_texel_size     = vkuFormatTexelBlockSize(plane_format);
+        block_extent         = vkuFormatTexelBlockExtent(plane_format);
+        tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1u) / block_extent.width) * plane_texel_size;
+        buffer_row_length    = (tight_row_byte_count == plane_strides[plane_index]) ? 0 : (plane_strides[plane_index] / plane_texel_size) * block_extent.width;
+        cvkInitImageSubresourceLayers(&plane_subresource, cvkGetFormatPlaneAspect(imageFormat, plane_index), imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
+        cvkInitBufferImageCopy(&pRegions[plane_index], bufferOffset + plane_offsets[plane_index], buffer_row_length, 0, plane_subresource, plane_offset, plane_extents[plane_index]);
+        (*pAspectMask) |= plane_subresource.aspectMask;
+    }
+    return plane_count;
+}
+void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandBuffer,
+                                               VkDependencyFlags        dependencyFlags,
+                                               const void*              pBufferBarrierNext,
+                                               VkPipelineStageFlags     bufferSrcStageMask,
+                                               VkAccessFlags            bufferSrcAccessMask,
+                                               uint32_t                 bufferSrcQueueFamilyIndex,
+                                               uint32_t                 bufferDstQueueFamilyIndex,
+                                               VkBuffer                 buffer,
+                                               VkDeviceSize             bufferOffset,
+                                               VkDeviceSize             bufferRowAlignment,
+                                               VkImage                  image,
+                                               VkFormat                 imageFormat,
+                                               VkImageLayout            transferImageLayout,
+                                               VkOffset3D               imageOffset,
+                                               VkExtent3D               imageExtent,
+                                               VkImageSubresourceLayers imageSubresource,
+                                               const void*              pImageAcquireBarrierNext,
+                                               VkPipelineStageFlags     imageSrcStageMask,
+                                               VkAccessFlags            imageSrcAccessMask,
+                                               VkImageLayout            initialImageLayout,
+                                               uint32_t                 imageAcquireSrcQueueFamilyIndex,
+                                               uint32_t                 imageAcquireDstQueueFamilyIndex,
+                                               const void*              pImageBarrierNext,
+                                               VkPipelineStageFlags     imageDstStageMask,
+                                               VkAccessFlags            imageDstAccessMask,
+                                               VkImageLayout            finalImageLayout,
+                                               uint32_t                 imageSrcQueueFamilyIndex,
+                                               uint32_t                 imageDstQueueFamilyIndex)
+{
+    VkBufferImageCopy       regions[VKU_FORMAT_MAX_PLANES];
+    VkImageSubresourceRange subresource_range;
+    VkDeviceSize            transfer_byte_count;
+    VkImageAspectFlags      aspect_mask;
+    uint32_t                region_count;
+
+    region_count = cvkGetBufferImageCopyRegions(bufferOffset, bufferRowAlignment, imageFormat, imageOffset, imageExtent, imageSubresource, regions, &transfer_byte_count, &aspect_mask);
+    cvkInitImageSubresourceRange(&subresource_range, aspect_mask, imageSubresource.mipLevel, 1, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
+
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pImageAcquireBarrierNext,
+                                     imageSrcAccessMask,
+                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     initialImageLayout,
+                                     transferImageLayout,
+                                     imageAcquireSrcQueueFamilyIndex,
+                                     imageAcquireDstQueueFamilyIndex,
+                                     image,
+                                     subresource_range,
+                                     imageSrcStageMask,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     dependencyFlags);
+    cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
+                                      pBufferBarrierNext,
+                                      bufferSrcAccessMask,
+                                      VK_ACCESS_TRANSFER_READ_BIT,
+                                      bufferSrcQueueFamilyIndex,
+                                      bufferDstQueueFamilyIndex,
+                                      buffer,
+                                      bufferOffset,
+                                      transfer_byte_count,
+                                      bufferSrcStageMask,
+                                      VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                      dependencyFlags);
+    cvkCmdCopyBufferToImage(commandBuffer, buffer, image, transferImageLayout, region_count, regions);
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pImageBarrierNext,
+                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     imageDstAccessMask,
+                                     transferImageLayout,
+                                     finalImageLayout,
+                                     imageSrcQueueFamilyIndex,
+                                     imageDstQueueFamilyIndex,
+                                     image,
+                                     subresource_range,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     imageDstStageMask,
+                                     dependencyFlags);
+}
+void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandBuffer,
+                                               VkDependencyFlags        dependencyFlags,
+                                               const void*              pImageAcquireBarrierNext,
+                                               VkPipelineStageFlags     imageSrcStageMask,
+                                               VkAccessFlags            imageSrcAccessMask,
+                                               VkImageLayout            initialImageLayout,
+                                               uint32_t                 imageAcquireSrcQueueFamilyIndex,
+                                               uint32_t                 imageAcquireDstQueueFamilyIndex,
+                                               VkImage                  image,
+                                               VkFormat                 imageFormat,
+                                               VkImageLayout            transferImageLayout,
+                                               VkOffset3D               imageOffset,
+                                               VkExtent3D               imageExtent,
+                                               VkImageSubresourceLayers imageSubresource,
+                                               const void*              pBufferAcquireBarrierNext,
+                                               VkPipelineStageFlags     bufferSrcStageMask,
+                                               VkAccessFlags            bufferSrcAccessMask,
+                                               uint32_t                 bufferAcquireSrcQueueFamilyIndex,
+                                               uint32_t                 bufferAcquireDstQueueFamilyIndex,
+                                               VkBuffer                 buffer,
+                                               VkDeviceSize             bufferOffset,
+                                               VkDeviceSize             bufferRowAlignment,
+                                               const void*              pImageBarrierNext,
+                                               VkPipelineStageFlags     imageDstStageMask,
+                                               VkAccessFlags            imageDstAccessMask,
+                                               VkImageLayout            finalImageLayout,
+                                               uint32_t                 imageSrcQueueFamilyIndex,
+                                               uint32_t                 imageDstQueueFamilyIndex,
+                                               const void*              pBufferBarrierNext,
+                                               VkPipelineStageFlags     bufferDstStageMask,
+                                               VkAccessFlags            bufferDstAccessMask,
+                                               uint32_t                 bufferSrcQueueFamilyIndex,
+                                               uint32_t                 bufferDstQueueFamilyIndex)
+{
+    VkBufferImageCopy       regions[VKU_FORMAT_MAX_PLANES];
+    VkImageSubresourceRange subresource_range;
+    VkDeviceSize            transfer_byte_count;
+    VkImageAspectFlags      aspect_mask;
+    uint32_t                region_count;
+
+    region_count = cvkGetBufferImageCopyRegions(bufferOffset, bufferRowAlignment, imageFormat, imageOffset, imageExtent, imageSubresource, regions, &transfer_byte_count, &aspect_mask);
+    cvkInitImageSubresourceRange(&subresource_range, aspect_mask, imageSubresource.mipLevel, 1, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
+
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pImageAcquireBarrierNext,
+                                     imageSrcAccessMask,
+                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     initialImageLayout,
+                                     transferImageLayout,
+                                     imageAcquireSrcQueueFamilyIndex,
+                                     imageAcquireDstQueueFamilyIndex,
+                                     image,
+                                     subresource_range,
+                                     imageSrcStageMask,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     dependencyFlags);
+    cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
+                                      pBufferAcquireBarrierNext,
+                                      bufferSrcAccessMask,
+                                      VK_ACCESS_TRANSFER_WRITE_BIT,
+                                      bufferAcquireSrcQueueFamilyIndex,
+                                      bufferAcquireDstQueueFamilyIndex,
+                                      buffer,
+                                      bufferOffset,
+                                      transfer_byte_count,
+                                      bufferSrcStageMask,
+                                      VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                      dependencyFlags);
+    cvkCmdCopyImageToBuffer(commandBuffer, image, transferImageLayout, buffer, region_count, regions);
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pImageBarrierNext,
+                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     imageDstAccessMask,
+                                     transferImageLayout,
+                                     finalImageLayout,
+                                     imageSrcQueueFamilyIndex,
+                                     imageDstQueueFamilyIndex,
+                                     image,
+                                     subresource_range,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     imageDstStageMask,
+                                     dependencyFlags);
+    cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
+                                      pBufferBarrierNext,
+                                      VK_ACCESS_TRANSFER_WRITE_BIT,
+                                      bufferDstAccessMask,
+                                      bufferSrcQueueFamilyIndex,
+                                      bufferDstQueueFamilyIndex,
+                                      buffer,
+                                      bufferOffset,
+                                      transfer_byte_count,
+                                      VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                      bufferDstStageMask,
+                                      dependencyFlags);
+}
+void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBuffer,
+                                              VkDependencyFlags        dependencyFlags,
+                                              const void*              pSrcAcquireBarrierNext,
+                                              VkPipelineStageFlags     srcStageMask,
+                                              VkAccessFlags            srcAccessMask,
+                                              VkImageLayout            srcInitialLayout,
+                                              VkImageLayout            srcTransferLayout,
+                                              uint32_t                 srcAcquireQueueFamilyIndex,
+                                              uint32_t                 srcTransferQueueFamilyIndex,
+                                              VkImage                  srcImage,
+                                              VkImageSubresourceLayers srcSubresource,
+                                              VkOffset3D               srcOffset,
+                                              const void*              pDstAcquireBarrierNext,
+                                              VkPipelineStageFlags     dstStageMask,
+                                              VkAccessFlags            dstAccessMask,
+                                              VkImageLayout            dstInitialLayout,
+                                              VkImageLayout            dstTransferLayout,
+                                              uint32_t                 dstAcquireQueueFamilyIndex,
+                                              uint32_t                 dstTransferQueueFamilyIndex,
+                                              VkImage                  dstImage,
+                                              VkImageSubresourceLayers dstSubresource,
+                                              VkOffset3D               dstOffset,
+                                              VkExtent3D               extent,
+                                              const void*              pSrcBarrierNext,
+                                              VkPipelineStageFlags     srcDstStageMask,
+                                              VkAccessFlags            srcDstAccessMask,
+                                              VkImageLayout            srcFinalLayout,
+                                              uint32_t                 srcReleaseQueueFamilyIndex,
+                                              uint32_t                 srcDstQueueFamilyIndex,
+                                              const void*              pDstBarrierNext,
+                                              VkPipelineStageFlags     dstDstStageMask,
+                                              VkAccessFlags            dstDstAccessMask,
+                                              VkImageLayout            dstFinalLayout,
+                                              uint32_t                 dstReleaseQueueFamilyIndex,
+                                              uint32_t                 dstDstQueueFamilyIndex)
+{
+    VkImageSubresourceRange src_range;
+    VkImageSubresourceRange dst_range;
+    VkImageCopy             region;
+
+    cvkInitImageSubresourceRange(&src_range, srcSubresource.aspectMask, srcSubresource.mipLevel, 1, srcSubresource.baseArrayLayer, srcSubresource.layerCount);
+    cvkInitImageSubresourceRange(&dst_range, dstSubresource.aspectMask, dstSubresource.mipLevel, 1, dstSubresource.baseArrayLayer, dstSubresource.layerCount);
+    cvkInitImageCopy(&region, srcSubresource, srcOffset, dstSubresource, dstOffset, extent);
+
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pSrcAcquireBarrierNext,
+                                     srcAccessMask,
+                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     srcInitialLayout,
+                                     srcTransferLayout,
+                                     srcAcquireQueueFamilyIndex,
+                                     srcTransferQueueFamilyIndex,
+                                     srcImage,
+                                     src_range,
+                                     srcStageMask,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     dependencyFlags);
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pDstAcquireBarrierNext,
+                                     dstAccessMask,
+                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     dstInitialLayout,
+                                     dstTransferLayout,
+                                     dstAcquireQueueFamilyIndex,
+                                     dstTransferQueueFamilyIndex,
+                                     dstImage,
+                                     dst_range,
+                                     dstStageMask,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     dependencyFlags);
+    cvkCmdCopyImage(commandBuffer, srcImage, srcTransferLayout, dstImage, dstTransferLayout, 1, &region);
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pSrcBarrierNext,
+                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     srcDstAccessMask,
+                                     srcTransferLayout,
+                                     srcFinalLayout,
+                                     srcReleaseQueueFamilyIndex,
+                                     srcDstQueueFamilyIndex,
+                                     srcImage,
+                                     src_range,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     srcDstStageMask,
+                                     dependencyFlags);
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pDstBarrierNext,
+                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     dstDstAccessMask,
+                                     dstTransferLayout,
+                                     dstFinalLayout,
+                                     dstReleaseQueueFamilyIndex,
+                                     dstDstQueueFamilyIndex,
+                                     dstImage,
+                                     dst_range,
+                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     dstDstStageMask,
+                                     dependencyFlags);
+}
+void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
+                             VkDependencyFlags        dependencyFlags,
+                             const void*              pSrcAcquireBarrierNext,
+                             VkPipelineStageFlags     srcStageMask,
+                             VkAccessFlags            srcAccessMask,
+                             VkImageLayout            srcInitialLayout,
+                             VkImageLayout            srcTransferLayout,
+                             VkImage                  srcImage,
+                             VkImageSubresourceLayers srcSubresource,
+                             VkOffset3D               srcOffset,
+                             VkExtent3D               srcExtent,
+                             const void*              pDstAcquireBarrierNext,
+                             VkPipelineStageFlags     dstStageMask,
+                             VkAccessFlags            dstAccessMask,
+                             VkImageLayout            dstInitialLayout,
+                             VkImageLayout            dstTransferLayout,
+                             VkImage                  dstImage,
+                             VkImageSubresourceLayers dstSubresource,
+                             VkOffset3D               dstOffset,
+                             VkExtent3D               dstExtent,
+                             VkFilter                 filter,
+                             const void*              pSrcBarrierNext,
+                             VkPipelineStageFlags     srcDstStageMask,
+                             VkAccessFlags            srcDstAccessMask,
+                             VkImageLayout            srcFinalLayout,
+                             const void*              pDstBarrierNext,
+                             VkPipelineStageFlags     dstDstStageMask,
+                             VkAccessFlags            dstDstAccessMask,
+                             VkImageLayout            dstFinalLayout)
+{
+    VkImageSubresourceRange src_range;
+    VkImageSubresourceRange dst_range;
+    VkOffset3D              src_offsets[2];
+    VkOffset3D              dst_offsets[2];
+    VkImageBlit             region;
+
+    cvkInitImageSubresourceRange(&src_range, srcSubresource.aspectMask, srcSubresource.mipLevel, 1, srcSubresource.baseArrayLayer, srcSubresource.layerCount);
+    cvkInitImageSubresourceRange(&dst_range, dstSubresource.aspectMask, dstSubresource.mipLevel, 1, dstSubresource.baseArrayLayer, dstSubresource.layerCount);
+    src_offsets[0] = srcOffset;
+    cvkInitOffset3D(&src_offsets[1], srcOffset.x + (int32_t)srcExtent.width, srcOffset.y + (int32_t)srcExtent.height, srcOffset.z + (int32_t)srcExtent.depth);
+    dst_offsets[0] = dstOffset;
+    cvkInitOffset3D(&dst_offsets[1], dstOffset.x + (int32_t)dstExtent.width, dstOffset.y + (int32_t)dstExtent.height, dstOffset.z + (int32_t)dstExtent.depth);
+    cvkInitImageBlit(&region, srcSubresource, src_offsets, dstSubresource, dst_offsets);
+
+    cvkCmdImageBarrier(commandBuffer,
+                       pSrcAcquireBarrierNext,
+                       srcAccessMask,
+                       VK_ACCESS_TRANSFER_READ_BIT,
+                       srcInitialLayout,
+                       srcTransferLayout,
+                       srcImage,
+                       src_range,
+                       srcStageMask,
+                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       dependencyFlags);
+    cvkCmdImageBarrier(commandBuffer,
+                       pDstAcquireBarrierNext,
+                       dstAccessMask,
+                       VK_ACCESS_TRANSFER_WRITE_BIT,
+                       dstInitialLayout,
+                       dstTransferLayout,
+                       dstImage,
+                       dst_range,
+                       dstStageMask,
+                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       dependencyFlags);
+    cvkCmdBlitImage(commandBuffer, srcImage, srcTransferLayout, dstImage, dstTransferLayout, 1, &region, filter);
+    cvkCmdImageBarrier(commandBuffer,
+                       pSrcBarrierNext,
+                       VK_ACCESS_TRANSFER_READ_BIT,
+                       srcDstAccessMask,
+                       srcTransferLayout,
+                       srcFinalLayout,
+                       srcImage,
+                       src_range,
+                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       srcDstStageMask,
+                       dependencyFlags);
+    cvkCmdImageBarrier(commandBuffer,
+                       pDstBarrierNext,
+                       VK_ACCESS_TRANSFER_WRITE_BIT,
+                       dstDstAccessMask,
+                       dstTransferLayout,
+                       dstFinalLayout,
+                       dstImage,
+                       dst_range,
+                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       dstDstStageMask,
+                       dependencyFlags);
+}
+void cvkCmdTransferBufferToImage(VkCommandBuffer          commandBuffer,
+                                 VkDependencyFlags        dependencyFlags,
+                                 const void*              pBufferBarrierNext,
+                                 VkPipelineStageFlags     bufferSrcStageMask,
+                                 VkAccessFlags            bufferSrcAccessMask,
+                                 VkBuffer                 buffer,
+                                 VkDeviceSize             bufferOffset,
+                                 VkDeviceSize             bufferRowAlignment,
+                                 VkImage                  image,
+                                 VkFormat                 imageFormat,
+                                 VkImageLayout            transferImageLayout,
+                                 VkOffset3D               imageOffset,
+                                 VkExtent3D               imageExtent,
+                                 VkImageSubresourceLayers imageSubresource,
+                                 const void*              pImageAcquireBarrierNext,
+                                 VkPipelineStageFlags     imageSrcStageMask,
+                                 VkAccessFlags            imageSrcAccessMask,
+                                 VkImageLayout            initialImageLayout,
+                                 const void*              pImageBarrierNext,
+                                 VkPipelineStageFlags     imageDstStageMask,
+                                 VkAccessFlags            imageDstAccessMask,
+                                 VkImageLayout            finalImageLayout)
+{
+    cvkCmdTransferBufferToImageQueueOwnership(commandBuffer,
+                                              dependencyFlags,
+                                              pBufferBarrierNext,
+                                              bufferSrcStageMask,
+                                              bufferSrcAccessMask,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              buffer,
+                                              bufferOffset,
+                                              bufferRowAlignment,
+                                              image,
+                                              imageFormat,
+                                              transferImageLayout,
+                                              imageOffset,
+                                              imageExtent,
+                                              imageSubresource,
+                                              pImageAcquireBarrierNext,
+                                              imageSrcStageMask,
+                                              imageSrcAccessMask,
+                                              initialImageLayout,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              pImageBarrierNext,
+                                              imageDstStageMask,
+                                              imageDstAccessMask,
+                                              finalImageLayout,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED);
+}
+void cvkCmdTransferBufferToExternalImage(VkCommandBuffer          commandBuffer,
+                                         VkDependencyFlags        dependencyFlags,
+                                         const void*              pBufferBarrierNext,
+                                         VkPipelineStageFlags     bufferSrcStageMask,
+                                         VkAccessFlags            bufferSrcAccessMask,
+                                         VkBuffer                 buffer,
+                                         VkDeviceSize             bufferOffset,
+                                         VkDeviceSize             bufferRowAlignment,
+                                         VkImage                  image,
+                                         VkFormat                 imageFormat,
+                                         VkImageLayout            transferImageLayout,
+                                         VkOffset3D               imageOffset,
+                                         VkExtent3D               imageExtent,
+                                         VkImageSubresourceLayers imageSubresource,
+                                         const void*              pImageAcquireBarrierNext,
+                                         VkImageLayout            initialImageLayout,
+                                         const void*              pImageBarrierNext,
+                                         VkImageLayout            finalImageLayout,
+                                         uint32_t                 queueFamilyIndex)
+{
+    cvkCmdTransferBufferToImageQueueOwnership(commandBuffer,
+                                              dependencyFlags,
+                                              pBufferBarrierNext,
+                                              bufferSrcStageMask,
+                                              bufferSrcAccessMask,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              buffer,
+                                              bufferOffset,
+                                              bufferRowAlignment,
+                                              image,
+                                              imageFormat,
+                                              transferImageLayout,
+                                              imageOffset,
+                                              imageExtent,
+                                              imageSubresource,
+                                              pImageAcquireBarrierNext,
+                                              VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                              0,
+                                              initialImageLayout,
+                                              VK_QUEUE_FAMILY_EXTERNAL,
+                                              queueFamilyIndex,
+                                              pImageBarrierNext,
+                                              VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                              0,
+                                              finalImageLayout,
+                                              queueFamilyIndex,
+                                              VK_QUEUE_FAMILY_EXTERNAL);
+}
+void cvkCmdTransferComputeBufferToExternalImage(VkCommandBuffer          commandBuffer,
+                                                VkDependencyFlags        dependencyFlags,
+                                                const void*              pBufferBarrierNext,
+                                                VkBuffer                 buffer,
+                                                VkDeviceSize             bufferOffset,
+                                                VkDeviceSize             bufferRowAlignment,
+                                                VkImage                  image,
+                                                VkFormat                 imageFormat,
+                                                VkImageLayout            transferImageLayout,
+                                                VkOffset3D               imageOffset,
+                                                VkExtent3D               imageExtent,
+                                                VkImageSubresourceLayers imageSubresource,
+                                                const void*              pImageAcquireBarrierNext,
+                                                VkImageLayout            initialImageLayout,
+                                                const void*              pImageBarrierNext,
+                                                VkImageLayout            finalImageLayout,
+                                                uint32_t                 queueFamilyIndex)
+{
+    cvkCmdTransferBufferToExternalImage(commandBuffer,
+                                        dependencyFlags,
+                                        pBufferBarrierNext,
+                                        VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                        VK_ACCESS_SHADER_WRITE_BIT,
+                                        buffer,
+                                        bufferOffset,
+                                        bufferRowAlignment,
+                                        image,
+                                        imageFormat,
+                                        transferImageLayout,
+                                        imageOffset,
+                                        imageExtent,
+                                        imageSubresource,
+                                        pImageAcquireBarrierNext,
+                                        initialImageLayout,
+                                        pImageBarrierNext,
+                                        finalImageLayout,
+                                        queueFamilyIndex);
+}
+void cvkCmdTransferImageToBuffer(VkCommandBuffer          commandBuffer,
+                                 VkDependencyFlags        dependencyFlags,
+                                 const void*              pImageAcquireBarrierNext,
+                                 VkPipelineStageFlags     imageSrcStageMask,
+                                 VkAccessFlags            imageSrcAccessMask,
+                                 VkImageLayout            initialImageLayout,
+                                 VkImage                  image,
+                                 VkFormat                 imageFormat,
+                                 VkImageLayout            transferImageLayout,
+                                 VkOffset3D               imageOffset,
+                                 VkExtent3D               imageExtent,
+                                 VkImageSubresourceLayers imageSubresource,
+                                 const void*              pBufferAcquireBarrierNext,
+                                 VkPipelineStageFlags     bufferSrcStageMask,
+                                 VkAccessFlags            bufferSrcAccessMask,
+                                 VkBuffer                 buffer,
+                                 VkDeviceSize             bufferOffset,
+                                 VkDeviceSize             bufferRowAlignment,
+                                 const void*              pImageBarrierNext,
+                                 VkPipelineStageFlags     imageDstStageMask,
+                                 VkAccessFlags            imageDstAccessMask,
+                                 VkImageLayout            finalImageLayout,
+                                 const void*              pBufferBarrierNext,
+                                 VkPipelineStageFlags     bufferDstStageMask,
+                                 VkAccessFlags            bufferDstAccessMask)
+{
+    cvkCmdTransferImageToBufferQueueOwnership(commandBuffer,
+                                              dependencyFlags,
+                                              pImageAcquireBarrierNext,
+                                              imageSrcStageMask,
+                                              imageSrcAccessMask,
+                                              initialImageLayout,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              image,
+                                              imageFormat,
+                                              transferImageLayout,
+                                              imageOffset,
+                                              imageExtent,
+                                              imageSubresource,
+                                              pBufferAcquireBarrierNext,
+                                              bufferSrcStageMask,
+                                              bufferSrcAccessMask,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              buffer,
+                                              bufferOffset,
+                                              bufferRowAlignment,
+                                              pImageBarrierNext,
+                                              imageDstStageMask,
+                                              imageDstAccessMask,
+                                              finalImageLayout,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              pBufferBarrierNext,
+                                              bufferDstStageMask,
+                                              bufferDstAccessMask,
+                                              VK_QUEUE_FAMILY_IGNORED,
+                                              VK_QUEUE_FAMILY_IGNORED);
+}
+void cvkCmdTransferImageToImage(VkCommandBuffer          commandBuffer,
+                                VkDependencyFlags        dependencyFlags,
+                                const void*              pSrcAcquireBarrierNext,
+                                VkPipelineStageFlags     srcStageMask,
+                                VkAccessFlags            srcAccessMask,
+                                VkImageLayout            srcInitialLayout,
+                                VkImageLayout            srcTransferLayout,
+                                VkImage                  srcImage,
+                                VkImageSubresourceLayers srcSubresource,
+                                VkOffset3D               srcOffset,
+                                const void*              pDstAcquireBarrierNext,
+                                VkPipelineStageFlags     dstStageMask,
+                                VkAccessFlags            dstAccessMask,
+                                VkImageLayout            dstInitialLayout,
+                                VkImageLayout            dstTransferLayout,
+                                VkImage                  dstImage,
+                                VkImageSubresourceLayers dstSubresource,
+                                VkOffset3D               dstOffset,
+                                VkExtent3D               extent,
+                                const void*              pSrcBarrierNext,
+                                VkPipelineStageFlags     srcDstStageMask,
+                                VkAccessFlags            srcDstAccessMask,
+                                VkImageLayout            srcFinalLayout,
+                                const void*              pDstBarrierNext,
+                                VkPipelineStageFlags     dstDstStageMask,
+                                VkAccessFlags            dstDstAccessMask,
+                                VkImageLayout            dstFinalLayout)
+{
+    cvkCmdTransferImageToImageQueueOwnership(commandBuffer,
+                                             dependencyFlags,
+                                             pSrcAcquireBarrierNext,
+                                             srcStageMask,
+                                             srcAccessMask,
+                                             srcInitialLayout,
+                                             srcTransferLayout,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             srcImage,
+                                             srcSubresource,
+                                             srcOffset,
+                                             pDstAcquireBarrierNext,
+                                             dstStageMask,
+                                             dstAccessMask,
+                                             dstInitialLayout,
+                                             dstTransferLayout,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             dstImage,
+                                             dstSubresource,
+                                             dstOffset,
+                                             extent,
+                                             pSrcBarrierNext,
+                                             srcDstStageMask,
+                                             srcDstAccessMask,
+                                             srcFinalLayout,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             pDstBarrierNext,
+                                             dstDstStageMask,
+                                             dstDstAccessMask,
+                                             dstFinalLayout,
+                                             VK_QUEUE_FAMILY_IGNORED,
+                                             VK_QUEUE_FAMILY_IGNORED);
+}
+void cvkCmdTransferBufferToImage2D(VkCommandBuffer          commandBuffer,
+                                   VkDependencyFlags        dependencyFlags,
+                                   const void*              pBufferBarrierNext,
+                                   VkPipelineStageFlags     bufferSrcStageMask,
+                                   VkAccessFlags            bufferSrcAccessMask,
+                                   VkBuffer                 buffer,
+                                   VkDeviceSize             bufferOffset,
+                                   VkDeviceSize             bufferRowAlignment,
+                                   VkImage                  image,
+                                   VkFormat                 imageFormat,
+                                   VkImageLayout            transferImageLayout,
+                                   VkImageSubresourceLayers imageSubresource,
+                                   const void*              pImageAcquireBarrierNext,
+                                   VkPipelineStageFlags     imageSrcStageMask,
+                                   VkAccessFlags            imageSrcAccessMask,
+                                   VkImageLayout            initialImageLayout,
+                                   const void*              pImageBarrierNext,
+                                   VkPipelineStageFlags     imageDstStageMask,
+                                   VkAccessFlags            imageDstAccessMask,
+                                   VkImageLayout            finalImageLayout,
+                                   VkOffset2D               imageOffset2D,
+                                   VkExtent2D               imageExtent2D)
+{
+    VkOffset3D image_offset;
+    VkExtent3D image_extent;
+
+    cvkInitOffset3D(&image_offset, imageOffset2D.x, imageOffset2D.y, 0);
+    cvkInitExtent3D(&image_extent, imageExtent2D.width, imageExtent2D.height, 1);
+    cvkCmdTransferBufferToImage(commandBuffer,
+                                dependencyFlags,
+                                pBufferBarrierNext,
+                                bufferSrcStageMask,
+                                bufferSrcAccessMask,
+                                buffer,
+                                bufferOffset,
+                                bufferRowAlignment,
+                                image,
+                                imageFormat,
+                                transferImageLayout,
+                                image_offset,
+                                image_extent,
+                                imageSubresource,
+                                pImageAcquireBarrierNext,
+                                imageSrcStageMask,
+                                imageSrcAccessMask,
+                                initialImageLayout,
+                                pImageBarrierNext,
+                                imageDstStageMask,
+                                imageDstAccessMask,
+                                finalImageLayout);
+}
+void cvkCmdTransferComputeBufferToExternalImage2D(VkCommandBuffer          commandBuffer,
+                                                  VkDependencyFlags        dependencyFlags,
+                                                  const void*              pBufferBarrierNext,
+                                                  VkBuffer                 buffer,
+                                                  VkDeviceSize             bufferOffset,
+                                                  VkDeviceSize             bufferRowAlignment,
+                                                  VkImage                  image,
+                                                  VkFormat                 imageFormat,
+                                                  VkImageLayout            transferImageLayout,
+                                                  VkImageSubresourceLayers imageSubresource,
+                                                  const void*              pImageAcquireBarrierNext,
+                                                  VkImageLayout            initialImageLayout,
+                                                  const void*              pImageBarrierNext,
+                                                  VkImageLayout            finalImageLayout,
+                                                  uint32_t                 queueFamilyIndex,
+                                                  VkOffset2D               imageOffset2D,
+                                                  VkExtent2D               imageExtent2D)
+{
+    VkOffset3D image_offset;
+    VkExtent3D image_extent;
+
+    cvkInitOffset3D(&image_offset, imageOffset2D.x, imageOffset2D.y, 0);
+    cvkInitExtent3D(&image_extent, imageExtent2D.width, imageExtent2D.height, 1);
+    cvkCmdTransferComputeBufferToExternalImage(commandBuffer,
+                                               dependencyFlags,
+                                               pBufferBarrierNext,
+                                               buffer,
+                                               bufferOffset,
+                                               bufferRowAlignment,
+                                               image,
+                                               imageFormat,
+                                               transferImageLayout,
+                                               image_offset,
+                                               image_extent,
+                                               imageSubresource,
+                                               pImageAcquireBarrierNext,
+                                               initialImageLayout,
+                                               pImageBarrierNext,
+                                               finalImageLayout,
+                                               queueFamilyIndex);
+}
+void cvkCmdTransferImageToBuffer2D(VkCommandBuffer          commandBuffer,
+                                   VkDependencyFlags        dependencyFlags,
+                                   const void*              pImageAcquireBarrierNext,
+                                   VkPipelineStageFlags     imageSrcStageMask,
+                                   VkAccessFlags            imageSrcAccessMask,
+                                   VkImageLayout            initialImageLayout,
+                                   VkImage                  image,
+                                   VkFormat                 imageFormat,
+                                   VkImageLayout            transferImageLayout,
+                                   VkImageSubresourceLayers imageSubresource,
+                                   const void*              pBufferAcquireBarrierNext,
+                                   VkPipelineStageFlags     bufferSrcStageMask,
+                                   VkAccessFlags            bufferSrcAccessMask,
+                                   VkBuffer                 buffer,
+                                   VkDeviceSize             bufferOffset,
+                                   VkDeviceSize             bufferRowAlignment,
+                                   const void*              pImageBarrierNext,
+                                   VkPipelineStageFlags     imageDstStageMask,
+                                   VkAccessFlags            imageDstAccessMask,
+                                   VkImageLayout            finalImageLayout,
+                                   const void*              pBufferBarrierNext,
+                                   VkPipelineStageFlags     bufferDstStageMask,
+                                   VkAccessFlags            bufferDstAccessMask,
+                                   VkOffset2D               imageOffset2D,
+                                   VkExtent2D               imageExtent2D)
+{
+    VkOffset3D image_offset;
+    VkExtent3D image_extent;
+
+    cvkInitOffset3D(&image_offset, imageOffset2D.x, imageOffset2D.y, 0);
+    cvkInitExtent3D(&image_extent, imageExtent2D.width, imageExtent2D.height, 1);
+    cvkCmdTransferImageToBuffer(commandBuffer,
+                                dependencyFlags,
+                                pImageAcquireBarrierNext,
+                                imageSrcStageMask,
+                                imageSrcAccessMask,
+                                initialImageLayout,
+                                image,
+                                imageFormat,
+                                transferImageLayout,
+                                image_offset,
+                                image_extent,
+                                imageSubresource,
+                                pBufferAcquireBarrierNext,
+                                bufferSrcStageMask,
+                                bufferSrcAccessMask,
+                                buffer,
+                                bufferOffset,
+                                bufferRowAlignment,
+                                pImageBarrierNext,
+                                imageDstStageMask,
+                                imageDstAccessMask,
+                                finalImageLayout,
+                                pBufferBarrierNext,
+                                bufferDstStageMask,
+                                bufferDstAccessMask);
+}
+void cvkCmdTransferImageToImage2D(VkCommandBuffer          commandBuffer,
+                                  VkDependencyFlags        dependencyFlags,
+                                  const void*              pSrcAcquireBarrierNext,
+                                  VkPipelineStageFlags     srcStageMask,
+                                  VkAccessFlags            srcAccessMask,
+                                  VkImageLayout            srcInitialLayout,
+                                  VkImageLayout            srcTransferLayout,
+                                  VkImage                  srcImage,
+                                  VkImageSubresourceLayers srcSubresource,
+                                  const void*              pDstAcquireBarrierNext,
+                                  VkPipelineStageFlags     dstStageMask,
+                                  VkAccessFlags            dstAccessMask,
+                                  VkImageLayout            dstInitialLayout,
+                                  VkImageLayout            dstTransferLayout,
+                                  VkImage                  dstImage,
+                                  VkImageSubresourceLayers dstSubresource,
+                                  const void*              pSrcBarrierNext,
+                                  VkPipelineStageFlags     srcDstStageMask,
+                                  VkAccessFlags            srcDstAccessMask,
+                                  VkImageLayout            srcFinalLayout,
+                                  const void*              pDstBarrierNext,
+                                  VkPipelineStageFlags     dstDstStageMask,
+                                  VkAccessFlags            dstDstAccessMask,
+                                  VkImageLayout            dstFinalLayout,
+                                  VkOffset2D               srcOffset2D,
+                                  VkOffset2D               dstOffset2D,
+                                  VkExtent2D               extent2D)
+{
+    VkOffset3D src_offset;
+    VkOffset3D dst_offset;
+    VkExtent3D extent;
+
+    cvkInitOffset3D(&src_offset, srcOffset2D.x, srcOffset2D.y, 0);
+    cvkInitOffset3D(&dst_offset, dstOffset2D.x, dstOffset2D.y, 0);
+    cvkInitExtent3D(&extent, extent2D.width, extent2D.height, 1);
+    cvkCmdTransferImageToImage(commandBuffer,
+                               dependencyFlags,
+                               pSrcAcquireBarrierNext,
+                               srcStageMask,
+                               srcAccessMask,
+                               srcInitialLayout,
+                               srcTransferLayout,
+                               srcImage,
+                               srcSubresource,
+                               src_offset,
+                               pDstAcquireBarrierNext,
+                               dstStageMask,
+                               dstAccessMask,
+                               dstInitialLayout,
+                               dstTransferLayout,
+                               dstImage,
+                               dstSubresource,
+                               dst_offset,
+                               extent,
+                               pSrcBarrierNext,
+                               srcDstStageMask,
+                               srcDstAccessMask,
+                               srcFinalLayout,
+                               pDstBarrierNext,
+                               dstDstStageMask,
+                               dstDstAccessMask,
+                               dstFinalLayout);
+}
+void cvkCmdTransferBlitImage2D(VkCommandBuffer          commandBuffer,
+                               VkDependencyFlags        dependencyFlags,
+                               const void*              pSrcAcquireBarrierNext,
+                               VkPipelineStageFlags     srcStageMask,
+                               VkAccessFlags            srcAccessMask,
+                               VkImageLayout            srcInitialLayout,
+                               VkImageLayout            srcTransferLayout,
+                               VkImage                  srcImage,
+                               VkImageSubresourceLayers srcSubresource,
+                               const void*              pDstAcquireBarrierNext,
+                               VkPipelineStageFlags     dstStageMask,
+                               VkAccessFlags            dstAccessMask,
+                               VkImageLayout            dstInitialLayout,
+                               VkImageLayout            dstTransferLayout,
+                               VkImage                  dstImage,
+                               VkImageSubresourceLayers dstSubresource,
+                               VkFilter                 filter,
+                               const void*              pSrcBarrierNext,
+                               VkPipelineStageFlags     srcDstStageMask,
+                               VkAccessFlags            srcDstAccessMask,
+                               VkImageLayout            srcFinalLayout,
+                               const void*              pDstBarrierNext,
+                               VkPipelineStageFlags     dstDstStageMask,
+                               VkAccessFlags            dstDstAccessMask,
+                               VkImageLayout            dstFinalLayout,
+                               VkOffset2D               srcOffset2D,
+                               VkExtent2D               srcExtent2D,
+                               VkOffset2D               dstOffset2D,
+                               VkExtent2D               dstExtent2D)
+{
+    VkOffset3D src_offset;
+    VkExtent3D src_extent;
+    VkOffset3D dst_offset;
+    VkExtent3D dst_extent;
+
+    cvkInitOffset3D(&src_offset, srcOffset2D.x, srcOffset2D.y, 0);
+    cvkInitExtent3D(&src_extent, srcExtent2D.width, srcExtent2D.height, 1);
+    cvkInitOffset3D(&dst_offset, dstOffset2D.x, dstOffset2D.y, 0);
+    cvkInitExtent3D(&dst_extent, dstExtent2D.width, dstExtent2D.height, 1);
+    cvkCmdTransferBlitImage(commandBuffer,
+                            dependencyFlags,
+                            pSrcAcquireBarrierNext,
+                            srcStageMask,
+                            srcAccessMask,
+                            srcInitialLayout,
+                            srcTransferLayout,
+                            srcImage,
+                            srcSubresource,
+                            src_offset,
+                            src_extent,
+                            pDstAcquireBarrierNext,
+                            dstStageMask,
+                            dstAccessMask,
+                            dstInitialLayout,
+                            dstTransferLayout,
+                            dstImage,
+                            dstSubresource,
+                            dst_offset,
+                            dst_extent,
+                            filter,
+                            pSrcBarrierNext,
+                            srcDstStageMask,
+                            srcDstAccessMask,
+                            srcFinalLayout,
+                            pDstBarrierNext,
+                            dstDstStageMask,
+                            dstDstAccessMask,
+                            dstFinalLayout);
 }
