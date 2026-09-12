@@ -20,11 +20,19 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
     }
 }
 
-VkResult cvkAcquireNextImage2(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex)
+VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex)
 {
-    VkResult result;
+    VkResult                  result;
+    VkAcquireNextImageInfoKHR acquire_info;
 
-    result = vkAcquireNextImage2KHR(device, pAcquireInfo, pImageIndex);
+    acquire_info.sType      = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
+    acquire_info.pNext      = pNext;
+    acquire_info.swapchain  = swapchain;
+    acquire_info.timeout    = timeout;
+    acquire_info.semaphore  = semaphore;
+    acquire_info.fence      = fence;
+    acquire_info.deviceMask = deviceMask;
+    result                  = vkAcquireNextImage2KHR(device, &acquire_info, pImageIndex);
     CVK_ASSERT(0 <= result);
     return result;
 }
@@ -1284,9 +1292,14 @@ void cvkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCal
 {
     vkFreeMemory(device, memory, pAllocator);
 }
-VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo)
+VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const void* pNext, VkBuffer buffer)
 {
-    return vkGetBufferDeviceAddress(device, pInfo);
+    VkBufferDeviceAddressInfo info;
+
+    info.sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+    info.pNext  = pNext;
+    info.buffer = buffer;
+    return vkGetBufferDeviceAddress(device, &info);
 }
 void cvkGetBufferMemoryRequirements(VkDevice device, VkBuffer buffer, VkMemoryRequirements* pMemoryRequirements)
 {
@@ -1301,9 +1314,14 @@ void cvkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequir
     vkGetBufferMemoryRequirements2(device, pInfo, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
-uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo)
+uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const void* pNext, VkBuffer buffer)
 {
-    return vkGetBufferOpaqueCaptureAddress(device, pInfo);
+    VkBufferDeviceAddressInfo info;
+
+    info.sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+    info.pNext  = pNext;
+    info.buffer = buffer;
+    return vkGetBufferOpaqueCaptureAddress(device, &info);
 }
 void cvkGetDescriptorSetLayoutSupport(VkDevice                            device,
                                       const void*                         pCreateInfoNext,
@@ -1348,9 +1366,14 @@ void cvkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDevi
 {
     vkGetDeviceMemoryCommitment(device, memory, pCommittedMemoryInBytes);
 }
-uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo)
+uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const void* pNext, VkDeviceMemory memory)
 {
-    return vkGetDeviceMemoryOpaqueCaptureAddress(device, pInfo);
+    VkDeviceMemoryOpaqueCaptureAddressInfo info;
+
+    info.sType  = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
+    info.pNext  = pNext;
+    info.memory = memory;
+    return vkGetDeviceMemoryOpaqueCaptureAddress(device, &info);
 }
 PFN_vkVoidFunction cvkGetDeviceProcAddr(VkDevice device, const char* pName)
 {
@@ -1365,9 +1388,16 @@ void cvkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queu
     vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
     CVK_ASSERT(VK_NULL_HANDLE != (*pQueue));
 }
-void cvkGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue)
+void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)
 {
-    vkGetDeviceQueue2(device, pQueueInfo, pQueue);
+    VkDeviceQueueInfo2 queue_info;
+
+    queue_info.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
+    queue_info.pNext            = pNext;
+    queue_info.flags            = flags;
+    queue_info.queueFamilyIndex = queueFamilyIndex;
+    queue_info.queueIndex       = queueIndex;
+    vkGetDeviceQueue2(device, &queue_info, pQueue);
     CVK_ASSERT(VK_NULL_HANDLE != (*pQueue));
 }
 uint32_t cvkGetDisplayModeProperties(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
@@ -1472,10 +1502,17 @@ PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName
     CVK_ASSERT(NULL != function);
     return function;
 }
-void cvkGetMemoryFd(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd)
+void cvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd)
 {
+    VkMemoryGetFdInfoKHR get_fd_info;
+
     PFN_vkGetMemoryFdKHR function = (PFN_vkGetMemoryFdKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryFdKHR");
-    CVK_CHECK(function(device, pGetFdInfo, pFd));
+
+    get_fd_info.sType      = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+    get_fd_info.pNext      = pNext;
+    get_fd_info.memory     = memory;
+    get_fd_info.handleType = handleType;
+    CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 void cvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties)
 {
@@ -1735,10 +1772,17 @@ void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_
 {
     CVK_CHECK(vkGetSemaphoreCounterValue(device, semaphore, pValue));
 }
-void cvkGetSemaphoreFd(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd)
+void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd)
 {
+    VkSemaphoreGetFdInfoKHR get_fd_info;
+
     PFN_vkGetSemaphoreFdKHR function = (PFN_vkGetSemaphoreFdKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreFdKHR");
-    CVK_CHECK(function(device, pGetFdInfo, pFd));
+
+    get_fd_info.sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
+    get_fd_info.pNext      = pNext;
+    get_fd_info.semaphore  = semaphore;
+    get_fd_info.handleType = handleType;
+    CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImage pSwapchainImages[CVK_MAX_SWAPCHAIN_IMAGES])
 {
@@ -1749,10 +1793,19 @@ uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImag
     CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, pSwapchainImages));
     return swapchain_image_count;
 }
-void cvkImportSemaphoreFd(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo)
+void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
 {
+    VkImportSemaphoreFdInfoKHR import_semaphore_fd_info;
+
     PFN_vkImportSemaphoreFdKHR function = (PFN_vkImportSemaphoreFdKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreFdKHR");
-    CVK_CHECK(function(device, pImportSemaphoreFdInfo));
+
+    import_semaphore_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+    import_semaphore_fd_info.pNext      = pNext;
+    import_semaphore_fd_info.semaphore  = semaphore;
+    import_semaphore_fd_info.flags      = flags;
+    import_semaphore_fd_info.handleType = handleType;
+    import_semaphore_fd_info.fd         = fd;
+    CVK_CHECK(function(device, &import_semaphore_fd_info));
 }
 void cvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
@@ -1794,11 +1847,27 @@ void cvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char*
     memcpy(label_info.color, color, sizeof(label_info.color));
     vkQueueInsertDebugUtilsLabelEXT(queue, &label_info);
 }
-VkResult cvkQueuePresent(VkQueue queue, const VkPresentInfoKHR* pPresentInfo)
+VkResult cvkQueuePresent(VkQueue               queue,
+                         const void*           pNext,
+                         uint32_t              waitSemaphoreCount,
+                         const VkSemaphore*    pWaitSemaphores,
+                         uint32_t              swapchainCount,
+                         const VkSwapchainKHR* pSwapchains,
+                         const uint32_t*       pImageIndices,
+                         VkResult*             pResults)
 {
-    VkResult result;
+    VkResult         result;
+    VkPresentInfoKHR present_info;
 
-    result = vkQueuePresentKHR(queue, pPresentInfo);
+    present_info.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    present_info.pNext              = pNext;
+    present_info.waitSemaphoreCount = waitSemaphoreCount;
+    present_info.pWaitSemaphores    = pWaitSemaphores;
+    present_info.swapchainCount     = swapchainCount;
+    present_info.pSwapchains        = pSwapchains;
+    present_info.pImageIndices      = pImageIndices;
+    present_info.pResults           = pResults;
+    result                          = vkQueuePresentKHR(queue, &present_info);
     CVK_ASSERT(0 <= result);
     return result;
 }
@@ -1834,21 +1903,43 @@ void cvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQue
 {
     vkResetQueryPool(device, queryPool, firstQuery, queryCount);
 }
-void cvkSetDebugUtilsObjectName(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo)
+void cvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
 {
-    CVK_CHECK(vkSetDebugUtilsObjectNameEXT(device, pNameInfo));
+    VkDebugUtilsObjectNameInfoEXT name_info;
+
+    name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+    name_info.pNext        = pNext;
+    name_info.objectType   = objectType;
+    name_info.objectHandle = objectHandle;
+    name_info.pObjectName  = pObjectName;
+    CVK_CHECK(vkSetDebugUtilsObjectNameEXT(device, &name_info));
 }
-void cvkSetDebugUtilsObjectTag(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo)
+void cvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag)
 {
-    CVK_CHECK(vkSetDebugUtilsObjectTagEXT(device, pTagInfo));
+    VkDebugUtilsObjectTagInfoEXT tag_info;
+
+    tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
+    tag_info.pNext        = pNext;
+    tag_info.objectType   = objectType;
+    tag_info.objectHandle = objectHandle;
+    tag_info.tagName      = tagName;
+    tag_info.tagSize      = tagSize;
+    tag_info.pTag         = pTag;
+    CVK_CHECK(vkSetDebugUtilsObjectTagEXT(device, &tag_info));
 }
 void cvkSetEvent(VkDevice device, VkEvent event)
 {
     CVK_CHECK(vkSetEvent(device, event));
 }
-void cvkSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo)
+void cvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value)
 {
-    CVK_CHECK(vkSignalSemaphore(device, pSignalInfo));
+    VkSemaphoreSignalInfo signal_info;
+
+    signal_info.sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
+    signal_info.pNext     = pNext;
+    signal_info.semaphore = semaphore;
+    signal_info.value     = value;
+    CVK_CHECK(vkSignalSemaphore(device, &signal_info));
 }
 void cvkSubmitDebugUtilsMessage(VkInstance                                instance,
                                 VkDebugUtilsMessageSeverityFlagBitsEXT    messageSeverity,
@@ -1905,35 +1996,20 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
     CVK_ASSERT(0 <= result);
     return result;
 }
-VkResult cvkWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout)
+VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout)
 {
-    VkResult result;
+    VkResult            result;
+    VkSemaphoreWaitInfo wait_info;
 
-    result = vkWaitSemaphores(device, pWaitInfo, timeout);
+    wait_info.sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
+    wait_info.pNext          = pNext;
+    wait_info.flags          = flags;
+    wait_info.semaphoreCount = semaphoreCount;
+    wait_info.pSemaphores    = pSemaphores;
+    wait_info.pValues        = pValues;
+    result                   = vkWaitSemaphores(device, &wait_info, timeout);
     CVK_ASSERT(0 <= result);
     return result;
-}
-VkResult cvkAcquireNextImageInfo(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex)
-{
-    VkAcquireNextImageInfoKHR acquire_info;
-
-    acquire_info.sType      = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
-    acquire_info.pNext      = pNext;
-    acquire_info.swapchain  = swapchain;
-    acquire_info.timeout    = timeout;
-    acquire_info.semaphore  = semaphore;
-    acquire_info.fence      = fence;
-    acquire_info.deviceMask = deviceMask;
-    return cvkAcquireNextImage2(device, &acquire_info, pImageIndex);
-}
-VkDeviceAddress cvkGetBufferDeviceAddressInfo(VkDevice device, const void* pNext, VkBuffer buffer)
-{
-    VkBufferDeviceAddressInfo info;
-
-    info.sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-    info.pNext  = pNext;
-    info.buffer = buffer;
-    return cvkGetBufferDeviceAddress(device, &info);
 }
 void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
 {
@@ -1943,35 +2019,6 @@ void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext,
     info.pNext  = pInfoNext;
     info.buffer = buffer;
     cvkGetBufferMemoryRequirements2(device, &info, pMemoryRequirementsNext, pMemoryRequirements);
-}
-uint64_t cvkGetBufferOpaqueCaptureAddressInfo(VkDevice device, const void* pNext, VkBuffer buffer)
-{
-    VkBufferDeviceAddressInfo info;
-
-    info.sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-    info.pNext  = pNext;
-    info.buffer = buffer;
-    return cvkGetBufferOpaqueCaptureAddress(device, &info);
-}
-uint64_t cvkGetDeviceMemoryOpaqueCaptureAddressInfo(VkDevice device, const void* pNext, VkDeviceMemory memory)
-{
-    VkDeviceMemoryOpaqueCaptureAddressInfo info;
-
-    info.sType  = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
-    info.pNext  = pNext;
-    info.memory = memory;
-    return cvkGetDeviceMemoryOpaqueCaptureAddress(device, &info);
-}
-void cvkGetDeviceQueueInfo2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue)
-{
-    VkDeviceQueueInfo2 queue_info;
-
-    queue_info.sType            = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
-    queue_info.pNext            = pNext;
-    queue_info.flags            = flags;
-    queue_info.queueFamilyIndex = queueFamilyIndex;
-    queue_info.queueIndex       = queueIndex;
-    cvkGetDeviceQueue2(device, &queue_info, pQueue);
 }
 void cvkGetImageMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkImage image, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
 {
@@ -1990,16 +2037,6 @@ uint32_t cvkGetImageSparseMemoryRequirementsInfo2(VkDevice device, const void* p
     info.pNext = pNext;
     info.image = image;
     return cvkGetImageSparseMemoryRequirements2(device, &info, pSparseMemoryRequirements);
-}
-void cvkGetMemoryFdInfo(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd)
-{
-    VkMemoryGetFdInfoKHR get_fd_info;
-
-    get_fd_info.sType      = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
-    get_fd_info.pNext      = pNext;
-    get_fd_info.memory     = memory;
-    get_fd_info.handleType = handleType;
-    cvkGetMemoryFd(device, &get_fd_info, pFd);
 }
 void cvkGetPhysicalDeviceExternalBufferInfo(VkPhysicalDevice                   physicalDevice,
                                             const void*                        pExternalBufferInfoNext,
@@ -2084,95 +2121,6 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
     format_info.usage   = usage;
     format_info.tiling  = tiling;
     return cvkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, pProperties);
-}
-void cvkGetSemaphoreFdInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd)
-{
-    VkSemaphoreGetFdInfoKHR get_fd_info;
-
-    get_fd_info.sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
-    get_fd_info.pNext      = pNext;
-    get_fd_info.semaphore  = semaphore;
-    get_fd_info.handleType = handleType;
-    cvkGetSemaphoreFd(device, &get_fd_info, pFd);
-}
-void cvkImportSemaphoreFdInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
-{
-    VkImportSemaphoreFdInfoKHR import_semaphore_fd_info;
-
-    import_semaphore_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
-    import_semaphore_fd_info.pNext      = pNext;
-    import_semaphore_fd_info.semaphore  = semaphore;
-    import_semaphore_fd_info.flags      = flags;
-    import_semaphore_fd_info.handleType = handleType;
-    import_semaphore_fd_info.fd         = fd;
-    cvkImportSemaphoreFd(device, &import_semaphore_fd_info);
-}
-VkResult cvkQueuePresentInfo(VkQueue               queue,
-                             const void*           pNext,
-                             uint32_t              waitSemaphoreCount,
-                             const VkSemaphore*    pWaitSemaphores,
-                             uint32_t              swapchainCount,
-                             const VkSwapchainKHR* pSwapchains,
-                             const uint32_t*       pImageIndices,
-                             VkResult*             pResults)
-{
-    VkPresentInfoKHR present_info;
-
-    present_info.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    present_info.pNext              = pNext;
-    present_info.waitSemaphoreCount = waitSemaphoreCount;
-    present_info.pWaitSemaphores    = pWaitSemaphores;
-    present_info.swapchainCount     = swapchainCount;
-    present_info.pSwapchains        = pSwapchains;
-    present_info.pImageIndices      = pImageIndices;
-    present_info.pResults           = pResults;
-    return cvkQueuePresent(queue, &present_info);
-}
-void cvkSetDebugUtilsObjectNameInfo(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
-{
-    VkDebugUtilsObjectNameInfoEXT name_info;
-
-    name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-    name_info.pNext        = pNext;
-    name_info.objectType   = objectType;
-    name_info.objectHandle = objectHandle;
-    name_info.pObjectName  = pObjectName;
-    cvkSetDebugUtilsObjectName(device, &name_info);
-}
-void cvkSetDebugUtilsObjectTagInfo(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag)
-{
-    VkDebugUtilsObjectTagInfoEXT tag_info;
-
-    tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
-    tag_info.pNext        = pNext;
-    tag_info.objectType   = objectType;
-    tag_info.objectHandle = objectHandle;
-    tag_info.tagName      = tagName;
-    tag_info.tagSize      = tagSize;
-    tag_info.pTag         = pTag;
-    cvkSetDebugUtilsObjectTag(device, &tag_info);
-}
-void cvkSignalSemaphoreInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value)
-{
-    VkSemaphoreSignalInfo signal_info;
-
-    signal_info.sType     = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
-    signal_info.pNext     = pNext;
-    signal_info.semaphore = semaphore;
-    signal_info.value     = value;
-    cvkSignalSemaphore(device, &signal_info);
-}
-VkResult cvkWaitSemaphoreInfo(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout)
-{
-    VkSemaphoreWaitInfo wait_info;
-
-    wait_info.sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
-    wait_info.pNext          = pNext;
-    wait_info.flags          = flags;
-    wait_info.semaphoreCount = semaphoreCount;
-    wait_info.pSemaphores    = pSemaphores;
-    wait_info.pValues        = pValues;
-    return cvkWaitSemaphores(device, &wait_info, timeout);
 }
 void cvkInitAcquireNextImageInfo(VkAcquireNextImageInfoKHR* pInfo, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask)
 {
@@ -5372,7 +5320,7 @@ VkResult cvkQueuePresentWithDeviceGroupInfo(VkQueue                             
     device_group_present_info.swapchainCount = deviceGroupSwapchainCount;
     device_group_present_info.pDeviceMasks   = pDeviceMasks;
     device_group_present_info.mode           = mode;
-    return cvkQueuePresentInfo(queue, &device_group_present_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
+    return cvkQueuePresent(queue, &device_group_present_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
 uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {

@@ -62,13 +62,18 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
  * \par Details:
  *  Wraps vkAcquireNextImage2KHR. Aborts on any error result.
  *
- * \param[in] device        VkDevice value
- * \param[in] pAcquireInfo  VkAcquireNextImageInfoKHR value
- * \param[out] pImageIndex   Receives the uint32_t
+ * \param[in] device       VkDevice value
+ * \param[in] pNext        Optional extension chain attached to VkAcquireNextImageInfoKHR, or NULL
+ * \param[in] swapchain    VkAcquireNextImageInfoKHR::swapchain
+ * \param[in] timeout      VkAcquireNextImageInfoKHR::timeout
+ * \param[in] semaphore    VkAcquireNextImageInfoKHR::semaphore
+ * \param[in] fence        VkAcquireNextImageInfoKHR::fence
+ * \param[in] deviceMask   VkAcquireNextImageInfoKHR::deviceMask
+ * \param[out] pImageIndex  Receives the uint32_t
  *
  * \return VK_SUCCESS or one of: VK_TIMEOUT, VK_NOT_READY, VK_SUBOPTIMAL_KHR. Error results abort.
  */
-VkResult cvkAcquireNextImage2(VkDevice device, const VkAcquireNextImageInfoKHR* pAcquireInfo, uint32_t* pImageIndex);
+VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex);
 /**
  * \brief Acquires next image.
  *
@@ -2356,11 +2361,12 @@ void cvkFreeMemory(VkDevice device, VkDeviceMemory memory, const VkAllocationCal
  *  Wraps vkGetBufferDeviceAddress.
  *
  * \param[in] device  VkDevice value
- * \param[in] pInfo   VkBufferDeviceAddressInfo value
+ * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
+ * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
  *
  * \return The VkDeviceAddress returned by the command.
  */
-VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo);
+VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const void* pNext, VkBuffer buffer);
 /**
  * \brief Retrieves buffer memory requirements.
  *
@@ -2395,11 +2401,12 @@ void cvkGetBufferMemoryRequirements2(VkDevice device, const VkBufferMemoryRequir
  *  Wraps vkGetBufferOpaqueCaptureAddress.
  *
  * \param[in] device  VkDevice value
- * \param[in] pInfo   VkBufferDeviceAddressInfo value
+ * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
+ * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
  *
  * \return The uint64_t returned by the command.
  */
-uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const VkBufferDeviceAddressInfo* pInfo);
+uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const void* pNext, VkBuffer buffer);
 /**
  * \brief Retrieves descriptor set layout support.
  *
@@ -2484,11 +2491,12 @@ void cvkGetDeviceMemoryCommitment(VkDevice device, VkDeviceMemory memory, VkDevi
  *  Wraps vkGetDeviceMemoryOpaqueCaptureAddress.
  *
  * \param[in] device  VkDevice value
- * \param[in] pInfo   VkDeviceMemoryOpaqueCaptureAddressInfo value
+ * \param[in] pNext   Optional extension chain attached to VkDeviceMemoryOpaqueCaptureAddressInfo, or NULL
+ * \param[in] memory  VkDeviceMemoryOpaqueCaptureAddressInfo::memory
  *
  * \return The uint64_t returned by the command.
  */
-uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const VkDeviceMemoryOpaqueCaptureAddressInfo* pInfo);
+uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const void* pNext, VkDeviceMemory memory);
 /**
  * \brief Retrieves device proc addr.
  *
@@ -2521,13 +2529,16 @@ void cvkGetDeviceQueue(VkDevice device, uint32_t queueFamilyIndex, uint32_t queu
  * \par Details:
  *  Wraps vkGetDeviceQueue2.
  *
- * \param[in] device      VkDevice value
- * \param[in] pQueueInfo  VkDeviceQueueInfo2 value
- * \param[out] pQueue      Receives the created VkQueue
+ * \param[in] device            VkDevice value
+ * \param[in] pNext             Optional extension chain attached to VkDeviceQueueInfo2, or NULL
+ * \param[in] flags             VkDeviceQueueInfo2::flags
+ * \param[in] queueFamilyIndex  VkDeviceQueueInfo2::queueFamilyIndex
+ * \param[in] queueIndex        VkDeviceQueueInfo2::queueIndex
+ * \param[out] pQueue            Receives the created VkQueue
  *
  * \retval None
  */
-void cvkGetDeviceQueue2(VkDevice device, const VkDeviceQueueInfo2* pQueueInfo, VkQueue* pQueue);
+void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
 /**
  * \brief Retrieves display mode properties.
  *
@@ -2694,12 +2705,14 @@ PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName
  *  Wraps vkGetMemoryFdKHR. Aborts on any error result.
  *
  * \param[in] device      VkDevice value
- * \param[in] pGetFdInfo  VkMemoryGetFdInfoKHR value
+ * \param[in] pNext       Optional extension chain attached to VkMemoryGetFdInfoKHR, or NULL
+ * \param[in] memory      VkMemoryGetFdInfoKHR::memory
+ * \param[in] handleType  VkMemoryGetFdInfoKHR::handleType
  * \param[out] pFd         Receives the int
  *
  * \retval None
  */
-void cvkGetMemoryFd(VkDevice device, const VkMemoryGetFdInfoKHR* pGetFdInfo, int* pFd);
+void cvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd);
 /**
  * \brief Retrieves memory fd properties.
  *
@@ -3125,12 +3138,14 @@ void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_
  *  Wraps vkGetSemaphoreFdKHR. Aborts on any error result.
  *
  * \param[in] device      VkDevice value
- * \param[in] pGetFdInfo  VkSemaphoreGetFdInfoKHR value
+ * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetFdInfoKHR, or NULL
+ * \param[in] semaphore   VkSemaphoreGetFdInfoKHR::semaphore
+ * \param[in] handleType  VkSemaphoreGetFdInfoKHR::handleType
  * \param[out] pFd         Receives the int
  *
  * \retval None
  */
-void cvkGetSemaphoreFd(VkDevice device, const VkSemaphoreGetFdInfoKHR* pGetFdInfo, int* pFd);
+void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd);
 /**
  * \brief Retrieves swapchain images.
  *
@@ -3150,12 +3165,16 @@ uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImag
  * \par Details:
  *  Wraps vkImportSemaphoreFdKHR. Aborts on any error result.
  *
- * \param[in] device                  VkDevice value
- * \param[in] pImportSemaphoreFdInfo  VkImportSemaphoreFdInfoKHR value
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreFdInfoKHR, or NULL
+ * \param[in] semaphore   VkImportSemaphoreFdInfoKHR::semaphore
+ * \param[in] flags       VkImportSemaphoreFdInfoKHR::flags
+ * \param[in] handleType  VkImportSemaphoreFdInfoKHR::handleType
+ * \param[in] fd          VkImportSemaphoreFdInfoKHR::fd
  *
  * \retval None
  */
-void cvkImportSemaphoreFd(VkDevice device, const VkImportSemaphoreFdInfoKHR* pImportSemaphoreFdInfo);
+void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
 /**
  * \brief Calls vkInvalidateMappedMemoryRanges.
  *
@@ -3258,12 +3277,25 @@ void cvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char*
  * \par Details:
  *  Wraps vkQueuePresentKHR. Aborts on any error result.
  *
- * \param[in] queue         VkQueue value
- * \param[in] pPresentInfo  VkPresentInfoKHR value
+ * \param[in] queue               VkQueue value
+ * \param[in] pNext               Optional extension chain attached to VkPresentInfoKHR, or NULL
+ * \param[in] waitSemaphoreCount  VkPresentInfoKHR::waitSemaphoreCount
+ * \param[in] pWaitSemaphores     VkPresentInfoKHR::pWaitSemaphores
+ * \param[in] swapchainCount      VkPresentInfoKHR::swapchainCount
+ * \param[in] pSwapchains         VkPresentInfoKHR::pSwapchains
+ * \param[in] pImageIndices       VkPresentInfoKHR::pImageIndices
+ * \param[in] pResults            VkPresentInfoKHR::pResults
  *
  * \return VK_SUCCESS or one of: VK_SUBOPTIMAL_KHR. Error results abort.
  */
-VkResult cvkQueuePresent(VkQueue queue, const VkPresentInfoKHR* pPresentInfo);
+VkResult cvkQueuePresent(VkQueue               queue,
+                         const void*           pNext,
+                         uint32_t              waitSemaphoreCount,
+                         const VkSemaphore*    pWaitSemaphores,
+                         uint32_t              swapchainCount,
+                         const VkSwapchainKHR* pSwapchains,
+                         const uint32_t*       pImageIndices,
+                         VkResult*             pResults);
 /**
  * \brief Queues submit.
  *
@@ -3372,24 +3404,32 @@ void cvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQue
  * \par Details:
  *  Wraps vkSetDebugUtilsObjectNameEXT. Aborts on any error result.
  *
- * \param[in] device     VkDevice value
- * \param[in] pNameInfo  VkDebugUtilsObjectNameInfoEXT value
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectNameInfoEXT, or NULL
+ * \param[in] objectType    VkDebugUtilsObjectNameInfoEXT::objectType
+ * \param[in] objectHandle  VkDebugUtilsObjectNameInfoEXT::objectHandle
+ * \param[in] pObjectName   VkDebugUtilsObjectNameInfoEXT::pObjectName
  *
  * \retval None
  */
-void cvkSetDebugUtilsObjectName(VkDevice device, const VkDebugUtilsObjectNameInfoEXT* pNameInfo);
+void cvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName);
 /**
  * \brief Sets debug utils object tag.
  *
  * \par Details:
  *  Wraps vkSetDebugUtilsObjectTagEXT. Aborts on any error result.
  *
- * \param[in] device    VkDevice value
- * \param[in] pTagInfo  VkDebugUtilsObjectTagInfoEXT value
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectTagInfoEXT, or NULL
+ * \param[in] objectType    VkDebugUtilsObjectTagInfoEXT::objectType
+ * \param[in] objectHandle  VkDebugUtilsObjectTagInfoEXT::objectHandle
+ * \param[in] tagName       VkDebugUtilsObjectTagInfoEXT::tagName
+ * \param[in] tagSize       VkDebugUtilsObjectTagInfoEXT::tagSize
+ * \param[in] pTag          VkDebugUtilsObjectTagInfoEXT::pTag
  *
  * \retval None
  */
-void cvkSetDebugUtilsObjectTag(VkDevice device, const VkDebugUtilsObjectTagInfoEXT* pTagInfo);
+void cvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag);
 /**
  * \brief Sets event.
  *
@@ -3408,12 +3448,14 @@ void cvkSetEvent(VkDevice device, VkEvent event);
  * \par Details:
  *  Wraps vkSignalSemaphore. Aborts on any error result.
  *
- * \param[in] device       VkDevice value
- * \param[in] pSignalInfo  VkSemaphoreSignalInfo value
+ * \param[in] device     VkDevice value
+ * \param[in] pNext      Optional extension chain attached to VkSemaphoreSignalInfo, or NULL
+ * \param[in] semaphore  VkSemaphoreSignalInfo::semaphore
+ * \param[in] value      VkSemaphoreSignalInfo::value
  *
  * \retval None
  */
-void cvkSignalSemaphore(VkDevice device, const VkSemaphoreSignalInfo* pSignalInfo);
+void cvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value);
 /**
  * \brief Calls vkSubmitDebugUtilsMessageEXT.
  *
@@ -3526,38 +3568,17 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
  * \par Details:
  *  Wraps vkWaitSemaphores. Aborts on any error result.
  *
- * \param[in] device     VkDevice value
- * \param[in] pWaitInfo  VkSemaphoreWaitInfo value
- * \param[in] timeout    uint64_t value
+ * \param[in] device          VkDevice value
+ * \param[in] pNext           Optional extension chain attached to VkSemaphoreWaitInfo, or NULL
+ * \param[in] flags           VkSemaphoreWaitInfo::flags
+ * \param[in] semaphoreCount  VkSemaphoreWaitInfo::semaphoreCount
+ * \param[in] pSemaphores     VkSemaphoreWaitInfo::pSemaphores
+ * \param[in] pValues         VkSemaphoreWaitInfo::pValues
+ * \param[in] timeout         uint64_t value
  *
  * \return VK_SUCCESS or one of: VK_TIMEOUT. Error results abort.
  */
-VkResult cvkWaitSemaphores(VkDevice device, const VkSemaphoreWaitInfo* pWaitInfo, uint64_t timeout);
-/**
- * \brief Acquires next image 2 from the fields of VkAcquireNextImageInfoKHR.
- *
- * \param[in] device       VkDevice value
- * \param[in] pNext        Optional extension chain attached to VkAcquireNextImageInfoKHR, or NULL
- * \param[in] swapchain    VkAcquireNextImageInfoKHR::swapchain
- * \param[in] timeout      VkAcquireNextImageInfoKHR::timeout
- * \param[in] semaphore    VkAcquireNextImageInfoKHR::semaphore
- * \param[in] fence        VkAcquireNextImageInfoKHR::fence
- * \param[in] deviceMask   VkAcquireNextImageInfoKHR::deviceMask
- * \param[out] pImageIndex  Receives the uint32_t
- *
- * \return VK_SUCCESS or one of: . Error results abort.
- */
-VkResult cvkAcquireNextImageInfo(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex);
-/**
- * \brief Retrieves buffer device address from the fields of VkBufferDeviceAddressInfo.
- *
- * \param[in] device  VkDevice value
- * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
- * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
- *
- * \return The VkDeviceAddress returned by the command.
- */
-VkDeviceAddress cvkGetBufferDeviceAddressInfo(VkDevice device, const void* pNext, VkBuffer buffer);
+VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout);
 /**
  * \brief Retrieves buffer memory requirements 2 from the fields of VkBufferMemoryRequirementsInfo2.
  *
@@ -3570,39 +3591,6 @@ VkDeviceAddress cvkGetBufferDeviceAddressInfo(VkDevice device, const void* pNext
  * \retval None
  */
 void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
-/**
- * \brief Retrieves buffer opaque capture address from the fields of VkBufferDeviceAddressInfo.
- *
- * \param[in] device  VkDevice value
- * \param[in] pNext   Optional extension chain attached to VkBufferDeviceAddressInfo, or NULL
- * \param[in] buffer  VkBufferDeviceAddressInfo::buffer
- *
- * \return The uint64_t returned by the command.
- */
-uint64_t cvkGetBufferOpaqueCaptureAddressInfo(VkDevice device, const void* pNext, VkBuffer buffer);
-/**
- * \brief Retrieves device memory opaque capture address from the fields of VkDeviceMemoryOpaqueCaptureAddressInfo.
- *
- * \param[in] device  VkDevice value
- * \param[in] pNext   Optional extension chain attached to VkDeviceMemoryOpaqueCaptureAddressInfo, or NULL
- * \param[in] memory  VkDeviceMemoryOpaqueCaptureAddressInfo::memory
- *
- * \return The uint64_t returned by the command.
- */
-uint64_t cvkGetDeviceMemoryOpaqueCaptureAddressInfo(VkDevice device, const void* pNext, VkDeviceMemory memory);
-/**
- * \brief Retrieves device queue 2 from the fields of VkDeviceQueueInfo2.
- *
- * \param[in] device            VkDevice value
- * \param[in] pNext             Optional extension chain attached to VkDeviceQueueInfo2, or NULL
- * \param[in] flags             VkDeviceQueueInfo2::flags
- * \param[in] queueFamilyIndex  VkDeviceQueueInfo2::queueFamilyIndex
- * \param[in] queueIndex        VkDeviceQueueInfo2::queueIndex
- * \param[out] pQueue            Receives the created VkQueue
- *
- * \retval None
- */
-void cvkGetDeviceQueueInfo2(VkDevice device, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex, VkQueue* pQueue);
 /**
  * \brief Retrieves image memory requirements 2 from the fields of VkImageMemoryRequirementsInfo2.
  *
@@ -3626,18 +3614,6 @@ void cvkGetImageMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, 
  * \return The uint32_t returned by the command.
  */
 uint32_t cvkGetImageSparseMemoryRequirementsInfo2(VkDevice device, const void* pNext, VkImage image, VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS]);
-/**
- * \brief Retrieves memory fd from the fields of VkMemoryGetFdInfoKHR.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetFdInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetFdInfoKHR::memory
- * \param[in] handleType  VkMemoryGetFdInfoKHR::handleType
- * \param[out] pFd         Receives the int
- *
- * \retval None
- */
-void cvkGetMemoryFdInfo(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd);
 /**
  * \brief Retrieves physical device external buffer properties from the fields of VkPhysicalDeviceExternalBufferInfo.
  *
@@ -3736,104 +3712,6 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
                                                     VkImageUsageFlags              usage,
                                                     VkImageTiling                  tiling,
                                                     VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES]);
-/**
- * \brief Retrieves semaphore fd from the fields of VkSemaphoreGetFdInfoKHR.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetFdInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetFdInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetFdInfoKHR::handleType
- * \param[out] pFd         Receives the int
- *
- * \retval None
- */
-void cvkGetSemaphoreFdInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd);
-/**
- * \brief Imports semaphore fd from the fields of VkImportSemaphoreFdInfoKHR.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreFdInfoKHR, or NULL
- * \param[in] semaphore   VkImportSemaphoreFdInfoKHR::semaphore
- * \param[in] flags       VkImportSemaphoreFdInfoKHR::flags
- * \param[in] handleType  VkImportSemaphoreFdInfoKHR::handleType
- * \param[in] fd          VkImportSemaphoreFdInfoKHR::fd
- *
- * \retval None
- */
-void cvkImportSemaphoreFdInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
-/**
- * \brief Queues present from the fields of VkPresentInfoKHR.
- *
- * \param[in] queue               VkQueue value
- * \param[in] pNext               Optional extension chain attached to VkPresentInfoKHR, or NULL
- * \param[in] waitSemaphoreCount  VkPresentInfoKHR::waitSemaphoreCount
- * \param[in] pWaitSemaphores     VkPresentInfoKHR::pWaitSemaphores
- * \param[in] swapchainCount      VkPresentInfoKHR::swapchainCount
- * \param[in] pSwapchains         VkPresentInfoKHR::pSwapchains
- * \param[in] pImageIndices       VkPresentInfoKHR::pImageIndices
- * \param[in] pResults            VkPresentInfoKHR::pResults
- *
- * \return VK_SUCCESS or one of: . Error results abort.
- */
-VkResult cvkQueuePresentInfo(VkQueue               queue,
-                             const void*           pNext,
-                             uint32_t              waitSemaphoreCount,
-                             const VkSemaphore*    pWaitSemaphores,
-                             uint32_t              swapchainCount,
-                             const VkSwapchainKHR* pSwapchains,
-                             const uint32_t*       pImageIndices,
-                             VkResult*             pResults);
-/**
- * \brief Sets debug utils object name from the fields of VkDebugUtilsObjectNameInfoEXT.
- *
- * \param[in] device        VkDevice value
- * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectNameInfoEXT, or NULL
- * \param[in] objectType    VkDebugUtilsObjectNameInfoEXT::objectType
- * \param[in] objectHandle  VkDebugUtilsObjectNameInfoEXT::objectHandle
- * \param[in] pObjectName   VkDebugUtilsObjectNameInfoEXT::pObjectName
- *
- * \retval None
- */
-void cvkSetDebugUtilsObjectNameInfo(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName);
-/**
- * \brief Sets debug utils object tag from the fields of VkDebugUtilsObjectTagInfoEXT.
- *
- * \param[in] device        VkDevice value
- * \param[in] pNext         Optional extension chain attached to VkDebugUtilsObjectTagInfoEXT, or NULL
- * \param[in] objectType    VkDebugUtilsObjectTagInfoEXT::objectType
- * \param[in] objectHandle  VkDebugUtilsObjectTagInfoEXT::objectHandle
- * \param[in] tagName       VkDebugUtilsObjectTagInfoEXT::tagName
- * \param[in] tagSize       VkDebugUtilsObjectTagInfoEXT::tagSize
- * \param[in] pTag          VkDebugUtilsObjectTagInfoEXT::pTag
- *
- * \retval None
- */
-void cvkSetDebugUtilsObjectTagInfo(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag);
-/**
- * \brief Signals semaphore from the fields of VkSemaphoreSignalInfo.
- *
- * \param[in] device     VkDevice value
- * \param[in] pNext      Optional extension chain attached to VkSemaphoreSignalInfo, or NULL
- * \param[in] semaphore  VkSemaphoreSignalInfo::semaphore
- * \param[in] value      VkSemaphoreSignalInfo::value
- *
- * \retval None
- */
-void cvkSignalSemaphoreInfo(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value);
-/**
- * \brief Waits for semaphores from the fields of VkSemaphoreWaitInfo.
- *
- * \param[in] device          VkDevice value
- * \param[in] pNext           Optional extension chain attached to VkSemaphoreWaitInfo, or NULL
- * \param[in] flags           VkSemaphoreWaitInfo::flags
- * \param[in] semaphoreCount  VkSemaphoreWaitInfo::semaphoreCount
- * \param[in] pSemaphores     VkSemaphoreWaitInfo::pSemaphores
- * \param[in] pValues         VkSemaphoreWaitInfo::pValues
- * \param[in] timeout         uint64_t value
- *
- * \return VK_SUCCESS or one of: . Error results abort.
- */
-VkResult cvkWaitSemaphoreInfo(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint32_t semaphoreCount, const VkSemaphore* pSemaphores, const uint64_t* pValues, uint64_t timeout);
 /**
  * \brief Initializes a VkAcquireNextImageInfoKHR.
  *
@@ -7951,17 +7829,17 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
 /**
  * \brief Queues present with VkDeviceGroupPresentInfoKHR chained.
  *
- * \param[in] queue                      See cvkQueuePresentInfo
- * \param[in] pNext                      See cvkQueuePresentInfo
+ * \param[in] queue                      See cvkQueuePresent
+ * \param[in] pNext                      See cvkQueuePresent
  * \param[in] deviceGroupSwapchainCount  VkDeviceGroupPresentInfoKHR::deviceGroupSwapchainCount
  * \param[in] pDeviceMasks               VkDeviceGroupPresentInfoKHR::pDeviceMasks
  * \param[in] mode                       VkDeviceGroupPresentInfoKHR::mode
- * \param[in] waitSemaphoreCount         See cvkQueuePresentInfo
- * \param[in] pWaitSemaphores            See cvkQueuePresentInfo
- * \param[in] swapchainCount             See cvkQueuePresentInfo
- * \param[in] pSwapchains                See cvkQueuePresentInfo
- * \param[in] pImageIndices              See cvkQueuePresentInfo
- * \param[out] pResults                   See cvkQueuePresentInfo
+ * \param[in] waitSemaphoreCount         See cvkQueuePresent
+ * \param[in] pWaitSemaphores            See cvkQueuePresent
+ * \param[in] swapchainCount             See cvkQueuePresent
+ * \param[in] pSwapchains                See cvkQueuePresent
+ * \param[in] pImageIndices              See cvkQueuePresent
+ * \param[out] pResults                   See cvkQueuePresent
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */

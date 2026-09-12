@@ -277,10 +277,14 @@ class Generator:
         return len(t) >= 2 and t[-1] == "Info" and t[-2] not in self.KIND
 
     def flip_param(self, cmd: Command) -> Optional[Param]:
-        """The single plain-Info input whose tier 0 keeps the pointer (SPEC.md section 4)."""
+        """The single plain-Info input whose tier 0 keeps the pointer (SPEC.md section 4):
+        only when the command also fills an output sType struct, so that tier 0 does the
+        output and the flattened sibling does the input. A command with a plain-Info input and
+        no output struct flattens at tier 0 like everything else."""
         roles = self.roles(cmd)
         iparams = [p for p, r in zip(cmd.params, roles) if r == "I"]
-        if len(iparams) == 1 and self.is_plain_info(self.reg.struct_of(iparams[0].type)):
+        fills_output = any(r in ("P", "P[]") for r in roles)
+        if len(iparams) == 1 and fills_output and self.is_plain_info(self.reg.struct_of(iparams[0].type)):
             return iparams[0]
         return None
 
