@@ -35962,6 +35962,924 @@ void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
                                pushConstantSize,
                                pPushConstants);
 }
+void cvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
+{
+    cvkCreateFence(device, pFenceNext, VK_FENCE_CREATE_SIGNALED_BIT, pAllocator, pFence);
+}
+VkResult cvkWaitForFenceIndefinitely(VkDevice device, VkFence fence)
+{
+    return cvkWaitForFence(device, fence, VK_TRUE, UINT64_MAX);
+}
+VkResult cvkWaitForAllFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
+{
+    return cvkWaitForFences(device, fenceCount, pFences, VK_TRUE, UINT64_MAX);
+}
+VkResult cvkWaitForAnyFence(VkDevice device, uint32_t fenceCount, const VkFence* pFences)
+{
+    return cvkWaitForFences(device, fenceCount, pFences, VK_FALSE, UINT64_MAX);
+}
+void cvkCreateTimelineSemaphore(VkDevice device, const void* pSemaphoreNext, uint64_t initialValue, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore)
+{
+    cvkCreateSemaphoreWithTypeInfo(device, pSemaphoreNext, VK_SEMAPHORE_TYPE_TIMELINE, initialValue, flags, pAllocator, pSemaphore);
+}
+VkResult cvkWaitSemaphore(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint64_t timeout, VkSemaphore semaphore, uint64_t value)
+{
+    return cvkWaitSemaphores(device, pNext, flags, 1, &semaphore, &value, timeout);
+}
+VkResult cvkWaitSemaphoreIndefinitely(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, VkSemaphore semaphore, uint64_t value)
+{
+    return cvkWaitSemaphore(device, pNext, flags, UINT64_MAX, semaphore, value);
+}
+void cvkBeginOneTimeCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext)
+{
+    cvkBeginCommandBuffer(commandBuffer, pNext, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+}
+void cvkAllocatePrimaryCommandBuffers(VkDevice device, const void* pCommandBuffersNext, VkCommandPool commandPool, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers)
+{
+    cvkAllocateCommandBuffers(device, pCommandBuffersNext, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, commandBufferCount, pCommandBuffers);
+}
+void cvkAllocateSecondaryCommandBuffers(VkDevice device, const void* pCommandBuffersNext, VkCommandPool commandPool, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers)
+{
+    cvkAllocateCommandBuffers(device, pCommandBuffersNext, commandPool, VK_COMMAND_BUFFER_LEVEL_SECONDARY, commandBufferCount, pCommandBuffers);
+}
+void cvkAllocateCommandBuffer(VkDevice device, const void* pCommandBufferNext, VkCommandPool commandPool, VkCommandBufferLevel level, VkCommandBuffer* pCommandBuffer)
+{
+    cvkAllocateCommandBuffers(device, pCommandBufferNext, commandPool, level, 1, pCommandBuffer);
+}
+void cvkAllocatePrimaryCommandBuffer(VkDevice device, const void* pCommandBufferNext, VkCommandPool commandPool, VkCommandBuffer* pCommandBuffer)
+{
+    cvkAllocateCommandBuffer(device, pCommandBufferNext, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, pCommandBuffer);
+}
+void cvkAllocateSecondaryCommandBuffer(VkDevice device, const void* pCommandBufferNext, VkCommandPool commandPool, VkCommandBuffer* pCommandBuffer)
+{
+    cvkAllocateCommandBuffer(device, pCommandBufferNext, commandPool, VK_COMMAND_BUFFER_LEVEL_SECONDARY, pCommandBuffer);
+}
+void cvkCreateResettableCommandPool(VkDevice device, const void* pCommandPoolNext, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
+{
+    cvkCreateCommandPool(device, pCommandPoolNext, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, queueFamilyIndex, pAllocator, pCommandPool);
+}
+void cvkCreateTransientCommandPool(VkDevice device, const void* pCommandPoolNext, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
+{
+    cvkCreateCommandPool(device, pCommandPoolNext, VK_COMMAND_POOL_CREATE_TRANSIENT_BIT, queueFamilyIndex, pAllocator, pCommandPool);
+}
+void cvkSetupPrimaryCommandPool(VkDevice                     device,
+                                const void*                  pCommandPoolNext,
+                                VkCommandPoolCreateFlags     flags,
+                                uint32_t                     queueFamilyIndex,
+                                const void*                  pCommandBuffersNext,
+                                uint32_t                     commandBufferCount,
+                                const VkAllocationCallbacks* pAllocator,
+                                VkCommandPool*               pCommandPool,
+                                VkCommandBuffer*             pCommandBuffers)
+{
+    cvkSetupCommandPool(device, pCommandPoolNext, flags, queueFamilyIndex, pCommandBuffersNext, VK_COMMAND_BUFFER_LEVEL_PRIMARY, commandBufferCount, pAllocator, pCommandPool, pCommandBuffers);
+}
+void cvkQueueSubmitCommandBufferAndWaitIdle(VkQueue                     queue,
+                                            VkCommandBuffer             commandBuffer,
+                                            const void*                 pNext,
+                                            uint32_t                    waitSemaphoreCount,
+                                            const VkSemaphore*          pWaitSemaphores,
+                                            const VkPipelineStageFlags* pWaitDstStageMask,
+                                            uint32_t                    signalSemaphoreCount,
+                                            const VkSemaphore*          pSignalSemaphores,
+                                            VkFence                     fence)
+{
+    cvkQueueSubmitCommandBuffer(queue, pNext, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, signalSemaphoreCount, pSignalSemaphores, fence, commandBuffer);
+    cvkQueueWaitIdle(queue);
+}
+void cvkMapWholeMemory(VkDevice device, VkDeviceMemory memory, void** ppData)
+{
+    cvkMapMemory(device, memory, 0, VK_WHOLE_SIZE, 0, ppData);
+}
+void cvkFlushWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory)
+{
+    cvkFlushMappedMemoryRange(device, pNext, memory, 0, VK_WHOLE_SIZE);
+}
+void cvkInvalidateWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory)
+{
+    cvkInvalidateMappedMemoryRange(device, pNext, memory, 0, VK_WHOLE_SIZE);
+}
+void cvkAllocateDeviceLocalImageMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkImage image, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
+{
+    cvkAllocateImageMemory(physicalDevice, device, image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, pMemoryNext, pAllocator, pMemory);
+}
+void cvkAllocateDeviceLocalBufferMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkBuffer buffer, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
+{
+    cvkAllocateBufferMemory(physicalDevice, device, buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, pMemoryNext, pAllocator, pMemory);
+}
+void cvkAllocateHostVisibleBufferMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkBuffer buffer, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
+{
+    cvkAllocateBufferMemory(physicalDevice, device, buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, pMemoryNext, pAllocator, pMemory);
+}
+void cvkSetupDeviceLocalImage(VkPhysicalDevice             physicalDevice,
+                              VkDevice                     device,
+                              const void*                  pImageNext,
+                              VkImageCreateFlags           flags,
+                              VkImageType                  imageType,
+                              VkFormat                     format,
+                              VkExtent3D                   extent,
+                              uint32_t                     mipLevels,
+                              uint32_t                     arrayLayers,
+                              VkSampleCountFlagBits        samples,
+                              VkImageTiling                tiling,
+                              VkImageUsageFlags            usage,
+                              VkSharingMode                sharingMode,
+                              uint32_t                     queueFamilyIndexCount,
+                              const uint32_t*              pQueueFamilyIndices,
+                              VkImageLayout                initialLayout,
+                              const void*                  pMemoryNext,
+                              const VkAllocationCallbacks* pAllocator,
+                              VkImage*                     pImage,
+                              VkDeviceMemory*              pMemory)
+{
+    cvkSetupImage(physicalDevice,
+                  device,
+                  pImageNext,
+                  flags,
+                  imageType,
+                  format,
+                  extent,
+                  mipLevels,
+                  arrayLayers,
+                  samples,
+                  tiling,
+                  usage,
+                  sharingMode,
+                  queueFamilyIndexCount,
+                  pQueueFamilyIndices,
+                  initialLayout,
+                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                  pMemoryNext,
+                  pAllocator,
+                  pImage,
+                  pMemory);
+}
+void cvkSetupDeviceLocalBuffer(VkPhysicalDevice             physicalDevice,
+                               VkDevice                     device,
+                               const void*                  pBufferNext,
+                               VkBufferCreateFlags          flags,
+                               VkDeviceSize                 size,
+                               VkBufferUsageFlags           usage,
+                               VkSharingMode                sharingMode,
+                               uint32_t                     queueFamilyIndexCount,
+                               const uint32_t*              pQueueFamilyIndices,
+                               const void*                  pMemoryNext,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkBuffer*                    pBuffer,
+                               VkDeviceMemory*              pMemory)
+{
+    cvkSetupBuffer(physicalDevice,
+                   device,
+                   pBufferNext,
+                   flags,
+                   size,
+                   usage,
+                   sharingMode,
+                   queueFamilyIndexCount,
+                   pQueueFamilyIndices,
+                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                   pMemoryNext,
+                   pAllocator,
+                   pBuffer,
+                   pMemory);
+}
+void cvkSetupHostVisibleBuffer(VkPhysicalDevice             physicalDevice,
+                               VkDevice                     device,
+                               const void*                  pBufferNext,
+                               VkBufferCreateFlags          flags,
+                               VkDeviceSize                 size,
+                               VkBufferUsageFlags           usage,
+                               VkSharingMode                sharingMode,
+                               uint32_t                     queueFamilyIndexCount,
+                               const uint32_t*              pQueueFamilyIndices,
+                               const void*                  pMemoryNext,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkBuffer*                    pBuffer,
+                               VkDeviceMemory*              pMemory)
+{
+    cvkSetupBuffer(physicalDevice,
+                   device,
+                   pBufferNext,
+                   flags,
+                   size,
+                   usage,
+                   sharingMode,
+                   queueFamilyIndexCount,
+                   pQueueFamilyIndices,
+                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                   pMemoryNext,
+                   pAllocator,
+                   pBuffer,
+                   pMemory);
+}
+void cvkCreateImage2D(VkDevice                     device,
+                      const void*                  pImageNext,
+                      VkImageCreateFlags           flags,
+                      VkFormat                     format,
+                      uint32_t                     mipLevels,
+                      uint32_t                     arrayLayers,
+                      VkSampleCountFlagBits        samples,
+                      VkImageTiling                tiling,
+                      VkImageUsageFlags            usage,
+                      VkSharingMode                sharingMode,
+                      uint32_t                     queueFamilyIndexCount,
+                      const uint32_t*              pQueueFamilyIndices,
+                      VkImageLayout                initialLayout,
+                      VkExtent2D                   extent2D,
+                      const VkAllocationCallbacks* pAllocator,
+                      VkImage*                     pImage)
+{
+    VkExtent3D extent;
+
+    cvkInitExtent3D(&extent, extent2D.width, extent2D.height, 1);
+    cvkCreateImage(device,
+                   pImageNext,
+                   flags,
+                   VK_IMAGE_TYPE_2D,
+                   format,
+                   extent,
+                   mipLevels,
+                   arrayLayers,
+                   samples,
+                   tiling,
+                   usage,
+                   sharingMode,
+                   queueFamilyIndexCount,
+                   pQueueFamilyIndices,
+                   initialLayout,
+                   pAllocator,
+                   pImage);
+}
+void cvkSetupImage2D(VkPhysicalDevice             physicalDevice,
+                     VkDevice                     device,
+                     const void*                  pImageNext,
+                     VkImageCreateFlags           flags,
+                     VkFormat                     format,
+                     uint32_t                     mipLevels,
+                     uint32_t                     arrayLayers,
+                     VkSampleCountFlagBits        samples,
+                     VkImageTiling                tiling,
+                     VkImageUsageFlags            usage,
+                     VkSharingMode                sharingMode,
+                     uint32_t                     queueFamilyIndexCount,
+                     const uint32_t*              pQueueFamilyIndices,
+                     VkImageLayout                initialLayout,
+                     VkMemoryPropertyFlags        requiredProperties,
+                     VkExtent2D                   extent2D,
+                     const void*                  pMemoryNext,
+                     const VkAllocationCallbacks* pAllocator,
+                     VkImage*                     pImage,
+                     VkDeviceMemory*              pMemory)
+{
+    VkExtent3D extent;
+
+    cvkInitExtent3D(&extent, extent2D.width, extent2D.height, 1);
+    cvkSetupImage(physicalDevice,
+                  device,
+                  pImageNext,
+                  flags,
+                  VK_IMAGE_TYPE_2D,
+                  format,
+                  extent,
+                  mipLevels,
+                  arrayLayers,
+                  samples,
+                  tiling,
+                  usage,
+                  sharingMode,
+                  queueFamilyIndexCount,
+                  pQueueFamilyIndices,
+                  initialLayout,
+                  requiredProperties,
+                  pMemoryNext,
+                  pAllocator,
+                  pImage,
+                  pMemory);
+}
+void cvkSetupDeviceLocalImage2D(VkPhysicalDevice             physicalDevice,
+                                VkDevice                     device,
+                                const void*                  pImageNext,
+                                VkImageCreateFlags           flags,
+                                VkFormat                     format,
+                                uint32_t                     mipLevels,
+                                uint32_t                     arrayLayers,
+                                VkSampleCountFlagBits        samples,
+                                VkImageTiling                tiling,
+                                VkImageUsageFlags            usage,
+                                VkSharingMode                sharingMode,
+                                uint32_t                     queueFamilyIndexCount,
+                                const uint32_t*              pQueueFamilyIndices,
+                                VkImageLayout                initialLayout,
+                                VkExtent2D                   extent2D,
+                                const void*                  pMemoryNext,
+                                const VkAllocationCallbacks* pAllocator,
+                                VkImage*                     pImage,
+                                VkDeviceMemory*              pMemory)
+{
+    cvkSetupImage2D(physicalDevice,
+                    device,
+                    pImageNext,
+                    flags,
+                    format,
+                    mipLevels,
+                    arrayLayers,
+                    samples,
+                    tiling,
+                    usage,
+                    sharingMode,
+                    queueFamilyIndexCount,
+                    pQueueFamilyIndices,
+                    initialLayout,
+                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    extent2D,
+                    pMemoryNext,
+                    pAllocator,
+                    pImage,
+                    pMemory);
+}
+void cvkCreateImageView2D(VkDevice                     device,
+                          const void*                  pViewNext,
+                          VkImageViewCreateFlags       flags,
+                          VkImage                      image,
+                          VkFormat                     format,
+                          VkImageSubresourceRange      subresourceRange,
+                          const VkAllocationCallbacks* pAllocator,
+                          VkImageView*                 pView)
+{
+    VkComponentMapping components;
+
+    cvkInitComponentMapping(&components, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY);
+    cvkCreateImageView(device, pViewNext, flags, image, VK_IMAGE_VIEW_TYPE_2D, format, components, subresourceRange, pAllocator, pView);
+}
+void cvkCreateWholeImageView2D(VkDevice                     device,
+                               VkImageAspectFlags           aspectMask,
+                               const void*                  pViewNext,
+                               VkImageViewCreateFlags       flags,
+                               VkImage                      image,
+                               VkFormat                     format,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkImageView*                 pView)
+{
+    VkImageSubresourceRange subresource_range;
+
+    cvkInitImageSubresourceRange(&subresource_range, aspectMask, 0, VK_REMAINING_MIP_LEVELS, 0, VK_REMAINING_ARRAY_LAYERS);
+    cvkCreateImageView2D(device, pViewNext, flags, image, format, subresource_range, pAllocator, pView);
+}
+void cvkGetPhysicalDeviceLimits(VkPhysicalDevice physicalDevice, VkPhysicalDeviceLimits* pLimits)
+{
+    VkPhysicalDeviceProperties physical_device_properties;
+
+    cvkGetPhysicalDeviceProperties(physicalDevice, &physical_device_properties);
+    (*pLimits) = physical_device_properties.limits;
+}
+float cvkGetPhysicalDeviceTimestampPeriod(VkPhysicalDevice physicalDevice)
+{
+    VkPhysicalDeviceProperties physical_device_properties;
+
+    cvkGetPhysicalDeviceProperties(physicalDevice, &physical_device_properties);
+    return physical_device_properties.limits.timestampPeriod;
+}
+uint32_t cvkGetPhysicalDeviceApiVersion(VkPhysicalDevice physicalDevice)
+{
+    VkPhysicalDeviceProperties physical_device_properties;
+
+    cvkGetPhysicalDeviceProperties(physicalDevice, &physical_device_properties);
+    return physical_device_properties.apiVersion;
+}
+VkPhysicalDevice cvkGetPhysicalDeviceByIndex(VkInstance instance, uint32_t physicalDeviceIndex)
+{
+    VkPhysicalDevice physical_devices[CVK_MAX_PHYSICAL_DEVICES];
+    uint32_t         physical_device_count;
+
+    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    CVK_ASSERT(physical_device_count > physicalDeviceIndex);
+    return physical_devices[physicalDeviceIndex];
+}
+uint32_t cvkGetPhysicalDeviceComputeQueueFamilyIndex(VkPhysicalDevice physicalDevice)
+{
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_COMPUTE_BIT);
+}
+void cvkSetupComputeDeviceQueue(VkPhysicalDevice                physicalDevice,
+                                const void*                     pDeviceNext,
+                                VkDeviceCreateFlags             flags,
+                                uint32_t                        enabledLayerCount,
+                                const char* const*              ppEnabledLayerNames,
+                                uint32_t                        enabledExtensionCount,
+                                const char* const*              ppEnabledExtensionNames,
+                                const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                const void*                     pQueueNext,
+                                VkDeviceQueueCreateFlags        queueFlags,
+                                float                           queuePriority,
+                                const VkAllocationCallbacks*    pAllocator,
+                                VkDevice*                       pDevice,
+                                VkQueue*                        pQueue)
+{
+    uint32_t queue_family_index;
+
+    queue_family_index = cvkGetPhysicalDeviceComputeQueueFamilyIndex(physicalDevice);
+    CVK_ASSERT(VK_INVALID != queue_family_index);
+    cvkSetupDeviceQueue(physicalDevice,
+                        queue_family_index,
+                        pDeviceNext,
+                        flags,
+                        enabledLayerCount,
+                        ppEnabledLayerNames,
+                        enabledExtensionCount,
+                        ppEnabledExtensionNames,
+                        pEnabledFeatures,
+                        pQueueNext,
+                        queueFlags,
+                        queuePriority,
+                        pAllocator,
+                        pDevice,
+                        pQueue);
+}
+uint32_t cvkGetPhysicalDeviceGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice)
+{
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_GRAPHICS_BIT);
+}
+void cvkSetupGraphicsDeviceQueue(VkPhysicalDevice                physicalDevice,
+                                 const void*                     pDeviceNext,
+                                 VkDeviceCreateFlags             flags,
+                                 uint32_t                        enabledLayerCount,
+                                 const char* const*              ppEnabledLayerNames,
+                                 uint32_t                        enabledExtensionCount,
+                                 const char* const*              ppEnabledExtensionNames,
+                                 const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                 const void*                     pQueueNext,
+                                 VkDeviceQueueCreateFlags        queueFlags,
+                                 float                           queuePriority,
+                                 const VkAllocationCallbacks*    pAllocator,
+                                 VkDevice*                       pDevice,
+                                 VkQueue*                        pQueue)
+{
+    uint32_t queue_family_index;
+
+    queue_family_index = cvkGetPhysicalDeviceGraphicsQueueFamilyIndex(physicalDevice);
+    CVK_ASSERT(VK_INVALID != queue_family_index);
+    cvkSetupDeviceQueue(physicalDevice,
+                        queue_family_index,
+                        pDeviceNext,
+                        flags,
+                        enabledLayerCount,
+                        ppEnabledLayerNames,
+                        enabledExtensionCount,
+                        ppEnabledExtensionNames,
+                        pEnabledFeatures,
+                        pQueueNext,
+                        queueFlags,
+                        queuePriority,
+                        pAllocator,
+                        pDevice,
+                        pQueue);
+}
+uint32_t cvkGetPhysicalDeviceTransferQueueFamilyIndex(VkPhysicalDevice physicalDevice)
+{
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_TRANSFER_BIT);
+}
+void cvkSetupTransferDeviceQueue(VkPhysicalDevice                physicalDevice,
+                                 const void*                     pDeviceNext,
+                                 VkDeviceCreateFlags             flags,
+                                 uint32_t                        enabledLayerCount,
+                                 const char* const*              ppEnabledLayerNames,
+                                 uint32_t                        enabledExtensionCount,
+                                 const char* const*              ppEnabledExtensionNames,
+                                 const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                 const void*                     pQueueNext,
+                                 VkDeviceQueueCreateFlags        queueFlags,
+                                 float                           queuePriority,
+                                 const VkAllocationCallbacks*    pAllocator,
+                                 VkDevice*                       pDevice,
+                                 VkQueue*                        pQueue)
+{
+    uint32_t queue_family_index;
+
+    queue_family_index = cvkGetPhysicalDeviceTransferQueueFamilyIndex(physicalDevice);
+    CVK_ASSERT(VK_INVALID != queue_family_index);
+    cvkSetupDeviceQueue(physicalDevice,
+                        queue_family_index,
+                        pDeviceNext,
+                        flags,
+                        enabledLayerCount,
+                        ppEnabledLayerNames,
+                        enabledExtensionCount,
+                        ppEnabledExtensionNames,
+                        pEnabledFeatures,
+                        pQueueNext,
+                        queueFlags,
+                        queuePriority,
+                        pAllocator,
+                        pDevice,
+                        pQueue);
+}
+void cvkCreateSingleBindingDescriptorSetLayout(VkDevice                         device,
+                                               uint32_t                         binding,
+                                               VkDescriptorType                 descriptorType,
+                                               uint32_t                         descriptorCount,
+                                               VkShaderStageFlags               stageFlags,
+                                               const VkSampler*                 pImmutableSamplers,
+                                               const void*                      pSetLayoutNext,
+                                               VkDescriptorSetLayoutCreateFlags flags,
+                                               const VkAllocationCallbacks*     pAllocator,
+                                               VkDescriptorSetLayout*           pSetLayout)
+{
+    VkDescriptorSetLayoutBinding descriptor_set_layout_binding;
+
+    cvkInitDescriptorSetLayoutBinding(&descriptor_set_layout_binding, binding, descriptorType, descriptorCount, stageFlags, pImmutableSamplers);
+    cvkCreateDescriptorSetLayout(device, pSetLayoutNext, flags, 1, &descriptor_set_layout_binding, pAllocator, pSetLayout);
+}
+void cvkCreateSingleTypeDescriptorPool(VkDevice                     device,
+                                       VkDescriptorType             type,
+                                       uint32_t                     descriptorCount,
+                                       const void*                  pDescriptorPoolNext,
+                                       VkDescriptorPoolCreateFlags  flags,
+                                       uint32_t                     maxSets,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       VkDescriptorPool*            pDescriptorPool)
+{
+    VkDescriptorPoolSize descriptor_pool_size;
+
+    cvkInitDescriptorPoolSize(&descriptor_pool_size, type, descriptorCount);
+    cvkCreateDescriptorPool(device, pDescriptorPoolNext, flags, maxSets, 1, &descriptor_pool_size, pAllocator, pDescriptorPool);
+}
+void cvkAllocateDescriptorSet(VkDevice device, const void* pDescriptorSetNext, VkDescriptorPool descriptorPool, VkDescriptorSetLayout setLayout, VkDescriptorSet* pDescriptorSet)
+{
+    cvkAllocateDescriptorSets(device, pDescriptorSetNext, descriptorPool, 1, &setLayout, pDescriptorSet);
+}
+void cvkUpdateStorageImageDescriptorSet(VkDevice device, VkImageView imageView, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
+{
+    cvkUpdateImageDescriptorSet(device, VK_NULL_HANDLE, imageView, VK_IMAGE_LAYOUT_GENERAL, pNext, dstSet, dstBinding, dstArrayElement, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+}
+void cvkUpdateSampledImageDescriptorSet(VkDevice device, VkImageView imageView, VkImageLayout imageLayout, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
+{
+    cvkUpdateImageDescriptorSet(device, VK_NULL_HANDLE, imageView, imageLayout, pNext, dstSet, dstBinding, dstArrayElement, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+}
+void cvkUpdateCombinedImageSamplerDescriptorSet(VkDevice        device,
+                                                VkSampler       sampler,
+                                                VkImageView     imageView,
+                                                VkImageLayout   imageLayout,
+                                                const void*     pNext,
+                                                VkDescriptorSet dstSet,
+                                                uint32_t        dstBinding,
+                                                uint32_t        dstArrayElement)
+{
+    cvkUpdateImageDescriptorSet(device, sampler, imageView, imageLayout, pNext, dstSet, dstBinding, dstArrayElement, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+}
+void cvkUpdateStorageBufferDescriptorSet(VkDevice        device,
+                                         VkBuffer        buffer,
+                                         VkDeviceSize    offset,
+                                         VkDeviceSize    range,
+                                         const void*     pNext,
+                                         VkDescriptorSet dstSet,
+                                         uint32_t        dstBinding,
+                                         uint32_t        dstArrayElement)
+{
+    cvkUpdateBufferDescriptorSet(device, buffer, offset, range, pNext, dstSet, dstBinding, dstArrayElement, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+}
+void cvkUpdateUniformBufferDescriptorSet(VkDevice        device,
+                                         VkBuffer        buffer,
+                                         VkDeviceSize    offset,
+                                         VkDeviceSize    range,
+                                         const void*     pNext,
+                                         VkDescriptorSet dstSet,
+                                         uint32_t        dstBinding,
+                                         uint32_t        dstArrayElement)
+{
+    cvkUpdateBufferDescriptorSet(device, buffer, offset, range, pNext, dstSet, dstBinding, dstArrayElement, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+}
+void cvkUpdateWholeStorageBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
+{
+    cvkUpdateStorageBufferDescriptorSet(device, buffer, 0, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
+}
+void cvkUpdateWholeUniformBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
+{
+    cvkUpdateUniformBufferDescriptorSet(device, buffer, 0, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
+}
+void cvkCmdWriteTopOfPipeTimestamp(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
+{
+    cvkCmdWriteTimestamp(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, queryPool, query);
+}
+void cvkCmdWriteBottomOfPipeTimestamp(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
+{
+    cvkCmdWriteTimestamp(commandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, queryPool, query);
+}
+void cvkCmdMemoryBarrier(VkCommandBuffer      commandBuffer,
+                         const void*          pNext,
+                         VkAccessFlags        srcAccessMask,
+                         VkAccessFlags        dstAccessMask,
+                         VkPipelineStageFlags srcStageMask,
+                         VkPipelineStageFlags dstStageMask,
+                         VkDependencyFlags    dependencyFlags)
+{
+    VkMemoryBarrier memory_barrier;
+
+    cvkInitMemoryBarrier(&memory_barrier, pNext, srcAccessMask, dstAccessMask);
+    cvkCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, 1, &memory_barrier, 0, NULL, 0, NULL);
+}
+void cvkCmdMemoryBarrier2(VkCommandBuffer       commandBuffer,
+                          const void*           pNext,
+                          VkPipelineStageFlags2 srcStageMask,
+                          VkAccessFlags2        srcAccessMask,
+                          VkPipelineStageFlags2 dstStageMask,
+                          VkAccessFlags2        dstAccessMask,
+                          VkDependencyFlags     dependencyFlags,
+                          const void*           pDependencyNext)
+{
+    VkMemoryBarrier2 memory_barrier;
+
+    cvkInitMemoryBarrier2(&memory_barrier, pNext, srcStageMask, srcAccessMask, dstStageMask, dstAccessMask);
+    cvkCmdPipelineBarrier2(commandBuffer, pDependencyNext, dependencyFlags, 1, &memory_barrier, 0, NULL, 0, NULL);
+}
+void cvkCmdImageQueueOwnershipBarrier2(VkCommandBuffer         commandBuffer,
+                                       const void*             pNext,
+                                       VkPipelineStageFlags2   srcStageMask,
+                                       VkAccessFlags2          srcAccessMask,
+                                       VkPipelineStageFlags2   dstStageMask,
+                                       VkAccessFlags2          dstAccessMask,
+                                       VkImageLayout           oldLayout,
+                                       VkImageLayout           newLayout,
+                                       uint32_t                srcQueueFamilyIndex,
+                                       uint32_t                dstQueueFamilyIndex,
+                                       VkImage                 image,
+                                       VkImageSubresourceRange subresourceRange,
+                                       VkDependencyFlags       dependencyFlags,
+                                       const void*             pDependencyNext)
+{
+    VkImageMemoryBarrier2 image_memory_barrier;
+
+    cvkInitImageMemoryBarrier2(&image_memory_barrier,
+                               pNext,
+                               srcStageMask,
+                               srcAccessMask,
+                               dstStageMask,
+                               dstAccessMask,
+                               oldLayout,
+                               newLayout,
+                               srcQueueFamilyIndex,
+                               dstQueueFamilyIndex,
+                               image,
+                               subresourceRange);
+    cvkCmdPipelineBarrier2(commandBuffer, pDependencyNext, dependencyFlags, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+}
+void cvkCmdBufferQueueOwnershipBarrier2(VkCommandBuffer       commandBuffer,
+                                        const void*           pNext,
+                                        VkPipelineStageFlags2 srcStageMask,
+                                        VkAccessFlags2        srcAccessMask,
+                                        VkPipelineStageFlags2 dstStageMask,
+                                        VkAccessFlags2        dstAccessMask,
+                                        uint32_t              srcQueueFamilyIndex,
+                                        uint32_t              dstQueueFamilyIndex,
+                                        VkBuffer              buffer,
+                                        VkDeviceSize          offset,
+                                        VkDeviceSize          size,
+                                        VkDependencyFlags     dependencyFlags,
+                                        const void*           pDependencyNext)
+{
+    VkBufferMemoryBarrier2 buffer_memory_barrier;
+
+    cvkInitBufferMemoryBarrier2(&buffer_memory_barrier, pNext, srcStageMask, srcAccessMask, dstStageMask, dstAccessMask, srcQueueFamilyIndex, dstQueueFamilyIndex, buffer, offset, size);
+    cvkCmdPipelineBarrier2(commandBuffer, pDependencyNext, dependencyFlags, 0, NULL, 1, &buffer_memory_barrier, 0, NULL);
+}
+void cvkCmdImageBarrier2(VkCommandBuffer         commandBuffer,
+                         const void*             pNext,
+                         VkPipelineStageFlags2   srcStageMask,
+                         VkAccessFlags2          srcAccessMask,
+                         VkPipelineStageFlags2   dstStageMask,
+                         VkAccessFlags2          dstAccessMask,
+                         VkImageLayout           oldLayout,
+                         VkImageLayout           newLayout,
+                         VkImage                 image,
+                         VkImageSubresourceRange subresourceRange,
+                         VkDependencyFlags       dependencyFlags,
+                         const void*             pDependencyNext)
+{
+    cvkCmdImageQueueOwnershipBarrier2(commandBuffer,
+                                      pNext,
+                                      srcStageMask,
+                                      srcAccessMask,
+                                      dstStageMask,
+                                      dstAccessMask,
+                                      oldLayout,
+                                      newLayout,
+                                      VK_QUEUE_FAMILY_IGNORED,
+                                      VK_QUEUE_FAMILY_IGNORED,
+                                      image,
+                                      subresourceRange,
+                                      dependencyFlags,
+                                      pDependencyNext);
+}
+void cvkCmdBufferBarrier2(VkCommandBuffer       commandBuffer,
+                          const void*           pNext,
+                          VkPipelineStageFlags2 srcStageMask,
+                          VkAccessFlags2        srcAccessMask,
+                          VkPipelineStageFlags2 dstStageMask,
+                          VkAccessFlags2        dstAccessMask,
+                          VkBuffer              buffer,
+                          VkDeviceSize          offset,
+                          VkDeviceSize          size,
+                          VkDependencyFlags     dependencyFlags,
+                          const void*           pDependencyNext)
+{
+    cvkCmdBufferQueueOwnershipBarrier2(commandBuffer,
+                                       pNext,
+                                       srcStageMask,
+                                       srcAccessMask,
+                                       dstStageMask,
+                                       dstAccessMask,
+                                       VK_QUEUE_FAMILY_IGNORED,
+                                       VK_QUEUE_FAMILY_IGNORED,
+                                       buffer,
+                                       offset,
+                                       size,
+                                       dependencyFlags,
+                                       pDependencyNext);
+}
+void cvkCmdAcquireImageFromExternal2(VkCommandBuffer         commandBuffer,
+                                     const void*             pNext,
+                                     VkPipelineStageFlags2   dstStageMask,
+                                     VkAccessFlags2          dstAccessMask,
+                                     VkImageLayout           oldLayout,
+                                     VkImageLayout           newLayout,
+                                     uint32_t                dstQueueFamilyIndex,
+                                     VkImage                 image,
+                                     VkImageSubresourceRange subresourceRange,
+                                     VkDependencyFlags       dependencyFlags,
+                                     const void*             pDependencyNext)
+{
+    cvkCmdImageQueueOwnershipBarrier2(commandBuffer,
+                                      pNext,
+                                      VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
+                                      VK_ACCESS_2_NONE,
+                                      dstStageMask,
+                                      dstAccessMask,
+                                      oldLayout,
+                                      newLayout,
+                                      VK_QUEUE_FAMILY_EXTERNAL,
+                                      dstQueueFamilyIndex,
+                                      image,
+                                      subresourceRange,
+                                      dependencyFlags,
+                                      pDependencyNext);
+}
+void cvkCmdReleaseImageToExternal2(VkCommandBuffer         commandBuffer,
+                                   const void*             pNext,
+                                   VkPipelineStageFlags2   srcStageMask,
+                                   VkAccessFlags2          srcAccessMask,
+                                   VkImageLayout           oldLayout,
+                                   VkImageLayout           newLayout,
+                                   uint32_t                srcQueueFamilyIndex,
+                                   VkImage                 image,
+                                   VkImageSubresourceRange subresourceRange,
+                                   VkDependencyFlags       dependencyFlags,
+                                   const void*             pDependencyNext)
+{
+    cvkCmdImageQueueOwnershipBarrier2(commandBuffer,
+                                      pNext,
+                                      srcStageMask,
+                                      srcAccessMask,
+                                      VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT,
+                                      VK_ACCESS_2_NONE,
+                                      oldLayout,
+                                      newLayout,
+                                      srcQueueFamilyIndex,
+                                      VK_QUEUE_FAMILY_EXTERNAL,
+                                      image,
+                                      subresourceRange,
+                                      dependencyFlags,
+                                      pDependencyNext);
+}
+void cvkCmdAcquireBufferFromExternal2(VkCommandBuffer       commandBuffer,
+                                      const void*           pNext,
+                                      VkPipelineStageFlags2 dstStageMask,
+                                      VkAccessFlags2        dstAccessMask,
+                                      uint32_t              dstQueueFamilyIndex,
+                                      VkBuffer              buffer,
+                                      VkDeviceSize          offset,
+                                      VkDeviceSize          size,
+                                      VkDependencyFlags     dependencyFlags,
+                                      const void*           pDependencyNext)
+{
+    cvkCmdBufferQueueOwnershipBarrier2(commandBuffer,
+                                       pNext,
+                                       VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
+                                       VK_ACCESS_2_NONE,
+                                       dstStageMask,
+                                       dstAccessMask,
+                                       VK_QUEUE_FAMILY_EXTERNAL,
+                                       dstQueueFamilyIndex,
+                                       buffer,
+                                       offset,
+                                       size,
+                                       dependencyFlags,
+                                       pDependencyNext);
+}
+void cvkCmdReleaseBufferToExternal2(VkCommandBuffer       commandBuffer,
+                                    const void*           pNext,
+                                    VkPipelineStageFlags2 srcStageMask,
+                                    VkAccessFlags2        srcAccessMask,
+                                    uint32_t              srcQueueFamilyIndex,
+                                    VkBuffer              buffer,
+                                    VkDeviceSize          offset,
+                                    VkDeviceSize          size,
+                                    VkDependencyFlags     dependencyFlags,
+                                    const void*           pDependencyNext)
+{
+    cvkCmdBufferQueueOwnershipBarrier2(commandBuffer,
+                                       pNext,
+                                       srcStageMask,
+                                       srcAccessMask,
+                                       VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT,
+                                       VK_ACCESS_2_NONE,
+                                       srcQueueFamilyIndex,
+                                       VK_QUEUE_FAMILY_EXTERNAL,
+                                       buffer,
+                                       offset,
+                                       size,
+                                       dependencyFlags,
+                                       pDependencyNext);
+}
+void cvkCmdBeginColorRendering(VkCommandBuffer     commandBuffer,
+                               VkImageView         imageView,
+                               VkImageLayout       imageLayout,
+                               VkAttachmentLoadOp  loadOp,
+                               VkAttachmentStoreOp storeOp,
+                               VkClearValue        clearValue,
+                               const void*         pNext,
+                               VkRenderingFlags    flags,
+                               VkRect2D            renderArea,
+                               uint32_t            layerCount,
+                               uint32_t            viewMask,
+                               const void*         pColorAttachmentNext)
+{
+    VkRenderingAttachmentInfo color_attachment;
+
+    cvkInitRenderingAttachmentInfo(&color_attachment, pColorAttachmentNext, imageView, imageLayout, VK_RESOLVE_MODE_NONE, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_UNDEFINED, loadOp, storeOp, clearValue);
+    cvkCmdBeginRendering(commandBuffer, pNext, flags, renderArea, layerCount, viewMask, 1, &color_attachment, NULL, NULL);
+}
+void cvkCreateSingleAttachmentFramebuffer(VkDevice                     device,
+                                          const void*                  pFramebufferNext,
+                                          VkFramebufferCreateFlags     flags,
+                                          VkRenderPass                 renderPass,
+                                          uint32_t                     width,
+                                          uint32_t                     height,
+                                          uint32_t                     layers,
+                                          VkImageView                  attachment,
+                                          const VkAllocationCallbacks* pAllocator,
+                                          VkFramebuffer*               pFramebuffer)
+{
+    cvkCreateFramebuffer(device, pFramebufferNext, flags, renderPass, 1, &attachment, width, height, layers, pAllocator, pFramebuffer);
+}
+void cvkCreateColorRenderPass(VkDevice                     device,
+                              VkFormat                     format,
+                              VkSampleCountFlagBits        samples,
+                              VkAttachmentLoadOp           loadOp,
+                              VkAttachmentStoreOp          storeOp,
+                              VkImageLayout                initialLayout,
+                              VkImageLayout                finalLayout,
+                              const void*                  pRenderPassNext,
+                              VkRenderPassCreateFlags      flags,
+                              const VkAllocationCallbacks* pAllocator,
+                              VkRenderPass*                pRenderPass)
+{
+    VkAttachmentDescription attachment_description;
+    VkAttachmentReference   attachment_reference;
+    VkSubpassDescription    subpass_description;
+
+    cvkInitAttachmentDescription(&attachment_description, 0, format, samples, loadOp, storeOp, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, initialLayout, finalLayout);
+    cvkInitAttachmentReference(&attachment_reference, 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    cvkInitSubpassDescription(&subpass_description, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, 1, &attachment_reference, NULL, NULL, 0, NULL);
+    cvkCreateRenderPass(device, pRenderPassNext, flags, 1, &attachment_description, 1, &subpass_description, 0, NULL, pAllocator, pRenderPass);
+}
+VkResult cvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapchain, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
+{
+    return cvkAcquireNextImage(device, swapchain, UINT64_MAX, semaphore, fence, pImageIndex);
+}
+VkBool32 cvkGetPhysicalDeviceExternalBufferImportSupport(VkPhysicalDevice                   physicalDevice,
+                                                         const void*                        pExternalBufferInfoNext,
+                                                         VkBufferCreateFlags                flags,
+                                                         VkBufferUsageFlags                 usage,
+                                                         VkExternalMemoryHandleTypeFlagBits handleType,
+                                                         VkBool32*                          pDedicatedOnly)
+{
+    VkExternalBufferProperties external_buffer_properties;
+
+    cvkGetPhysicalDeviceExternalBufferInfo(physicalDevice, pExternalBufferInfoNext, flags, usage, handleType, NULL, &external_buffer_properties);
+    (*pDedicatedOnly) = (external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
+    return (external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
+}
+VkBool32 cvkGetPhysicalDeviceExternalBufferExportSupport(VkPhysicalDevice                   physicalDevice,
+                                                         const void*                        pExternalBufferInfoNext,
+                                                         VkBufferCreateFlags                flags,
+                                                         VkBufferUsageFlags                 usage,
+                                                         VkExternalMemoryHandleTypeFlagBits handleType,
+                                                         VkBool32*                          pDedicatedOnly)
+{
+    VkExternalBufferProperties external_buffer_properties;
+
+    cvkGetPhysicalDeviceExternalBufferInfo(physicalDevice, pExternalBufferInfoNext, flags, usage, handleType, NULL, &external_buffer_properties);
+    (*pDedicatedOnly) = (external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
+    return (external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
+}
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                          VkDebugUtilsMessageTypeFlagsEXT             messageTypes,
                                                          const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,

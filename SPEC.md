@@ -212,7 +212,10 @@ policy file. **The chain's signature is computed from its steps' signatures**, n
 
 - an input of a step is satisfied by an earlier output whose stem matches (`image` from
   `pImage`, `allocationSize` from `pAllocationSize`, `memoryTypeIndex` from `pMemoryTypeIndex`);
-- a step's `pNext` is renamed after that step's product (`pImageNext`, `pMemoryNext`);
+- a step's plain `pNext` is renamed after that step's product (`pImageNext`, `pMemoryNext`),
+  under the chain's own name for it when the step's out-parameter is bound to a chain output
+  (`pCommandBuffers` bound to `pCommandBuffer` gives `pCommandBufferNext`); an already
+  qualified `p<X>Next` keeps its name, so `pDeviceNext` and `pQueueNext` never merge;
 - every unsatisfied input becomes a chain parameter; every produced handle becomes a chain
   out-parameter; a step output routed to a `local` stays internal;
 - `bind` fixes a step argument to an expression (`memoryOffset: 0`, a mask intersection);
@@ -241,7 +244,31 @@ barrier), `cvkQueueSubmitCommandBuffer`, `cvkSetupCommandPool`, `cvkCreateComput
 (requirements → type index → assert → allocate, all in one body; no import mask, that
 constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the
 extensible `2` form is used only where something is chained (dedicated requirements, plane),
-`cvkSetup{Image,Buffer}` (create → allocate → bind). Step forms: `bind`, `local`, `into`
+`cvkSetup{Image,Buffer}` (create → allocate → bind). The second sweep over the widened
+profile added, by family: synchronization (`cvkCreateSignaledFence`, `cvkWaitFor{Fence,AllFences,AnyFence}Indefinitely`
+forms, `cvkCreateTimelineSemaphore`, `cvkWaitSemaphore[Indefinitely]`); command buffers
+(`cvkBeginOneTimeCommandBuffer`, `cvkAllocate{,Primary,Secondary}CommandBuffer[s]`,
+`cvkCreate{Resettable,Transient}CommandPool`, `cvkSetupPrimaryCommandPool`,
+`cvkQueueSubmitCommandBufferAndWaitIdle`); memory (`cvkMapWholeMemory`,
+`cvk{Flush,Invalidate}WholeMappedMemory`, `cvkAllocate{DeviceLocal,HostVisible}{Image,Buffer}Memory`,
+`cvkSetup{DeviceLocal,HostVisible}{Image,Buffer}`); images (`cvkCreateImage2D`, `cvkSetupImage2D`,
+`cvkSetupDeviceLocalImage2D`, `cvkCreateImageView2D` with identity components,
+`cvkCreateWholeImageView2D` over the remaining levels and layers); physical device
+(`cvkGetPhysicalDeviceLimits`, `cvkGetPhysicalDeviceTimestampPeriod`, `cvkGetPhysicalDeviceApiVersion`,
+`cvkGetPhysicalDeviceByIndex`, `cvkGetPhysicalDevice{Compute,Graphics,Transfer}QueueFamilyIndex`,
+`cvkSetup{Compute,Graphics,Transfer}DeviceQueue`); descriptors (`cvkCreateSingleBindingDescriptorSetLayout`,
+`cvkCreateSingleTypeDescriptorPool`, `cvkAllocateDescriptorSet`, `cvkUpdate{StorageImage,SampledImage,CombinedImageSampler,StorageBuffer,UniformBuffer}DescriptorSet`
+and the `Whole` buffer forms); queries (`cvkCmdWrite{TopOfPipe,BottomOfPipe}Timestamp`); barriers
+(`cvkCmdMemoryBarrier`, and the synchronization2 mirror `cvkCmd{Memory,Image,Buffer}Barrier2`,
+`cvkCmd{Image,Buffer}QueueOwnershipBarrier2`, `cvkCmd{Acquire,Release}{Image,Buffer}{From,To}External2`,
+each taking `pDependencyNext` for the `VkDependencyInfo` chain beside the barrier's `pNext`);
+rendering (`cvkCmdBeginColorRendering`, `cvkCreateSingleAttachmentFramebuffer`,
+`cvkCreateColorRenderPass`: one attachment, one graphics subpass, no dependencies);
+swapchain (`cvkAcquireNextImageIndefinitely`); external buffers
+(`cvkGetPhysicalDeviceExternalBuffer{Import,Export}Support`, the buffer mirror of the image
+support chains). A `Whole` form binds offset 0 and `VK_WHOLE_SIZE` or the remaining levels
+and layers; an `Indefinitely` form binds `UINT64_MAX`; a `Single<Noun>` form binds a count of
+one over a local built by a builder step. Step forms: `bind`, `local`, `into`
 (return value to a local), `store` (return value to a chain output), `return` (on a call, or
 an expression with the chain's `ret` type), `set`, `assert`. An import constraint on memory types is a
 parameter of the import protocol, never a name and never part of a plain allocation.
@@ -294,7 +321,17 @@ acceptance test of the surface: anything they cannot express is a generator defe
   are chains binding constants or building 3D offsets and extents from 2D ones. Chains and
   protocols may compose each other: the generator emits in dependency order.
 
-Not yet written: buffer import and export.
+- Buffer import (`cvkImportFdBuffer`, `cvkImportWin32HandleBuffer`): the buffer form of the
+  image import protocols, on `cvkGetPhysicalDeviceExternalBufferImportSupport`,
+  `cvkCreateBufferWithExternalMemoryInfo`, `cvkGetBufferMemoryRequirementsInfo2` with
+  dedicated requirements, and `cvkBindBufferMemory`.
+- Export (`cvkExportFd{Image,Buffer}`, `cvkExportWin32Handle{Image,Buffer}`): capability
+  (exportable; DEDICATED_ONLY or requiresDedicatedAllocation forces dedicated), creation with
+  the handle type declared, requirements, selection, `cvkAllocateExportMemory` with the
+  dedicated info chained when required, binding, then `cvkGetMemoryFd` or
+  `cvkGetMemoryWin32Handle`. The Win32 forms take the export handle info's attributes, access
+  and name, chained only for the opaque Win32 and D3D handle types, the only ones the
+  specification permits it for. The exported descriptor or handle is owned by the caller.
 
 ## 9. Documentation phrasing (derived)
 

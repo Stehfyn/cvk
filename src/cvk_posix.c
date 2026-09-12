@@ -277,3 +277,236 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     }
     cvkBindPlaneImageMemories(device, planeCount, NULL, plane_aspects, plane_images, plane_memories, plane_offsets);
 }
+void cvkImportFdBuffer(VkPhysicalDevice                   physicalDevice,
+                       VkDevice                           device,
+                       const void*                        pBufferNext,
+                       VkBufferCreateFlags                flags,
+                       VkDeviceSize                       size,
+                       VkBufferUsageFlags                 usage,
+                       VkSharingMode                      sharingMode,
+                       uint32_t                           queueFamilyIndexCount,
+                       const uint32_t*                    pQueueFamilyIndices,
+                       VkExternalMemoryHandleTypeFlagBits handleType,
+                       int                                fd,
+                       VkDeviceSize                       allocationSize,
+                       VkMemoryPropertyFlags              requiredProperties,
+                       const void*                        pMemoryNext,
+                       const VkAllocationCallbacks*       pAllocator,
+                       VkBuffer*                          pBuffer,
+                       VkDeviceMemory*                    pMemory)
+{
+    VkMemoryFdPropertiesKHR       memory_fd_properties;
+    VkMemoryDedicatedRequirements memory_dedicated_requirements;
+    VkMemoryRequirements2         memory_requirements;
+    VkImportMemoryFdInfoKHR       import_memory_fd_info;
+    VkMemoryDedicatedAllocateInfo memory_dedicated_allocate_info;
+    const void*                   allocate_next;
+    VkBool32                      importable;
+    VkBool32                      dedicated;
+    uint32_t                      external_memory_type_bits;
+    uint32_t                      memory_type_index;
+    int                           imported_fd;
+
+    /* capability: the handle type must be importable for this buffer description */
+    importable = cvkGetPhysicalDeviceExternalBufferImportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
+    CVK_ASSERT(importable);
+
+    /* create, with the handle type declared */
+    cvkCreateBufferWithExternalMemoryInfo(device,
+                                          pBufferNext,
+                                          (VkExternalMemoryHandleTypeFlags)handleType,
+                                          flags,
+                                          size,
+                                          usage,
+                                          sharingMode,
+                                          queueFamilyIndexCount,
+                                          pQueueFamilyIndices,
+                                          pAllocator,
+                                          pBuffer);
+
+    /* constraint: the descriptor's memory types; the opaque descriptor type may not be queried and allows every type */
+    external_memory_type_bits = UINT32_MAX;
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT != handleType)
+    {
+        cvkGetMemoryFdProperties(device, handleType, fd, NULL, &memory_fd_properties);
+        external_memory_type_bits = memory_fd_properties.memoryTypeBits;
+    }
+
+    /* requirements, with dedicated requirements chained */
+    cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
+    cvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
+    CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    if (memory_dedicated_requirements.requiresDedicatedAllocation)
+    {
+        dedicated = VK_TRUE;
+    }
+
+    /* select within the external object's memory types */
+    memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits, requiredProperties);
+    CVK_ASSERT(VK_INVALID != memory_type_index);
+
+    /* ownership: a successful import consumes the descriptor, so import a duplicate */
+    imported_fd = dup(fd);
+    CVK_ASSERT(0 <= imported_fd);
+
+    /* allocate: import info heads the caller's chain, dedicated info in front when required */
+    cvkInitImportMemoryFdInfo(&import_memory_fd_info, pMemoryNext, handleType, imported_fd);
+    allocate_next = &import_memory_fd_info;
+    if (dedicated)
+    {
+        cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_fd_info, VK_NULL_HANDLE, (*pBuffer));
+        allocate_next = &memory_dedicated_allocate_info;
+    }
+    cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
+
+    /* bind */
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+}
+void cvkExportFdImage(VkPhysicalDevice                   physicalDevice,
+                      VkDevice                           device,
+                      const void*                        pImageNext,
+                      VkImageCreateFlags                 flags,
+                      VkImageType                        imageType,
+                      VkFormat                           format,
+                      VkExtent3D                         extent,
+                      uint32_t                           mipLevels,
+                      uint32_t                           arrayLayers,
+                      VkSampleCountFlagBits              samples,
+                      VkImageTiling                      tiling,
+                      VkImageUsageFlags                  usage,
+                      VkSharingMode                      sharingMode,
+                      uint32_t                           queueFamilyIndexCount,
+                      const uint32_t*                    pQueueFamilyIndices,
+                      VkImageLayout                      initialLayout,
+                      VkExternalMemoryHandleTypeFlagBits handleType,
+                      VkMemoryPropertyFlags              requiredProperties,
+                      const void*                        pMemoryNext,
+                      const VkAllocationCallbacks*       pAllocator,
+                      VkImage*                           pImage,
+                      VkDeviceMemory*                    pMemory,
+                      int*                               pFd)
+{
+    VkMemoryDedicatedRequirements memory_dedicated_requirements;
+    VkMemoryRequirements2         memory_requirements;
+    VkMemoryDedicatedAllocateInfo memory_dedicated_allocate_info;
+    const void*                   allocate_next;
+    VkBool32                      exportable;
+    VkBool32                      dedicated;
+    uint32_t                      memory_type_index;
+
+    /* capability: the handle type must be exportable for this image description */
+    exportable = cvkGetPhysicalDeviceExternalImageExportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
+    CVK_ASSERT(exportable);
+
+    /* create, with the handle type declared */
+    cvkCreateImageWithExternalMemoryInfo(device,
+                                         pImageNext,
+                                         (VkExternalMemoryHandleTypeFlags)handleType,
+                                         flags,
+                                         imageType,
+                                         format,
+                                         extent,
+                                         mipLevels,
+                                         arrayLayers,
+                                         samples,
+                                         tiling,
+                                         usage,
+                                         sharingMode,
+                                         queueFamilyIndexCount,
+                                         pQueueFamilyIndices,
+                                         initialLayout,
+                                         pAllocator,
+                                         pImage);
+
+    /* requirements, with dedicated requirements chained */
+    cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
+    cvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
+    if (memory_dedicated_requirements.requiresDedicatedAllocation)
+    {
+        dedicated = VK_TRUE;
+    }
+
+    /* select */
+    memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits, requiredProperties);
+    CVK_ASSERT(VK_INVALID != memory_type_index);
+
+    /* allocate: export info heads the chain, dedicated info behind it when required */
+    allocate_next = pMemoryNext;
+    if (dedicated)
+    {
+        cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, pMemoryNext, (*pImage), VK_NULL_HANDLE);
+        allocate_next = &memory_dedicated_allocate_info;
+    }
+    cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
+
+    /* bind, then export */
+    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkGetMemoryFd(device, NULL, (*pMemory), handleType, pFd);
+}
+void cvkExportFdBuffer(VkPhysicalDevice                   physicalDevice,
+                       VkDevice                           device,
+                       const void*                        pBufferNext,
+                       VkBufferCreateFlags                flags,
+                       VkDeviceSize                       size,
+                       VkBufferUsageFlags                 usage,
+                       VkSharingMode                      sharingMode,
+                       uint32_t                           queueFamilyIndexCount,
+                       const uint32_t*                    pQueueFamilyIndices,
+                       VkExternalMemoryHandleTypeFlagBits handleType,
+                       VkMemoryPropertyFlags              requiredProperties,
+                       const void*                        pMemoryNext,
+                       const VkAllocationCallbacks*       pAllocator,
+                       VkBuffer*                          pBuffer,
+                       VkDeviceMemory*                    pMemory,
+                       int*                               pFd)
+{
+    VkMemoryDedicatedRequirements memory_dedicated_requirements;
+    VkMemoryRequirements2         memory_requirements;
+    VkMemoryDedicatedAllocateInfo memory_dedicated_allocate_info;
+    const void*                   allocate_next;
+    VkBool32                      exportable;
+    VkBool32                      dedicated;
+    uint32_t                      memory_type_index;
+
+    /* capability: the handle type must be exportable for this buffer description */
+    exportable = cvkGetPhysicalDeviceExternalBufferExportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
+    CVK_ASSERT(exportable);
+
+    /* create, with the handle type declared */
+    cvkCreateBufferWithExternalMemoryInfo(device,
+                                          pBufferNext,
+                                          (VkExternalMemoryHandleTypeFlags)handleType,
+                                          flags,
+                                          size,
+                                          usage,
+                                          sharingMode,
+                                          queueFamilyIndexCount,
+                                          pQueueFamilyIndices,
+                                          pAllocator,
+                                          pBuffer);
+
+    /* requirements, with dedicated requirements chained */
+    cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
+    cvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
+    if (memory_dedicated_requirements.requiresDedicatedAllocation)
+    {
+        dedicated = VK_TRUE;
+    }
+
+    /* select */
+    memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits, requiredProperties);
+    CVK_ASSERT(VK_INVALID != memory_type_index);
+
+    /* allocate: export info heads the chain, dedicated info behind it when required */
+    allocate_next = pMemoryNext;
+    if (dedicated)
+    {
+        cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, pMemoryNext, VK_NULL_HANDLE, (*pBuffer));
+        allocate_next = &memory_dedicated_allocate_info;
+    }
+    cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
+
+    /* bind, then export */
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkGetMemoryFd(device, NULL, (*pMemory), handleType, pFd);
+}

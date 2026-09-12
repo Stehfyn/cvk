@@ -1323,6 +1323,1143 @@
           }
         }
       ]
+    },
+    "cvkCreateSignaledFence": {
+      "brief": "Creates a fence in the signaled state.",
+      "steps": [
+        {
+          "call": "cvkCreateFence",
+          "bind": {
+            "flags": "VK_FENCE_CREATE_SIGNALED_BIT"
+          }
+        }
+      ]
+    },
+    "cvkWaitForFenceIndefinitely": {
+      "brief": "Waits for one fence without a timeout.",
+      "steps": [
+        {
+          "call": "cvkWaitForFence",
+          "bind": {
+            "waitAll": "VK_TRUE",
+            "timeout": "UINT64_MAX"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkWaitForAllFences": {
+      "brief": "Waits until every fence is signaled, without a timeout.",
+      "steps": [
+        {
+          "call": "cvkWaitForFences",
+          "bind": {
+            "waitAll": "VK_TRUE",
+            "timeout": "UINT64_MAX"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkWaitForAnyFence": {
+      "brief": "Waits until at least one fence is signaled, without a timeout.",
+      "steps": [
+        {
+          "call": "cvkWaitForFences",
+          "bind": {
+            "waitAll": "VK_FALSE",
+            "timeout": "UINT64_MAX"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateTimelineSemaphore": {
+      "brief": "Creates a timeline semaphore with an initial value.",
+      "steps": [
+        {
+          "call": "cvkCreateSemaphoreWithTypeInfo",
+          "bind": {
+            "semaphoreType": "VK_SEMAPHORE_TYPE_TIMELINE"
+          }
+        }
+      ]
+    },
+    "cvkWaitSemaphore": {
+      "brief": "Waits for one timeline semaphore to reach a value.",
+      "inputs": [
+        {
+          "type": "VkSemaphore",
+          "name": "semaphore",
+          "doc": "Timeline semaphore to wait for"
+        },
+        {
+          "type": "uint64_t",
+          "name": "value",
+          "doc": "Value the semaphore must reach"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkWaitSemaphores",
+          "bind": {
+            "semaphoreCount": "1",
+            "pSemaphores": "&semaphore",
+            "pValues": "&value"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkWaitSemaphoreIndefinitely": {
+      "brief": "Waits for one timeline semaphore to reach a value, without a timeout.",
+      "steps": [
+        {
+          "call": "cvkWaitSemaphore",
+          "bind": {
+            "timeout": "UINT64_MAX"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkBeginOneTimeCommandBuffer": {
+      "brief": "Begins a primary command buffer for a single submission.",
+      "steps": [
+        {
+          "call": "cvkBeginCommandBuffer",
+          "bind": {
+            "flags": "VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT",
+            "pInheritanceInfo": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkAllocatePrimaryCommandBuffers": {
+      "brief": "Allocates primary command buffers.",
+      "steps": [
+        {
+          "call": "cvkAllocateCommandBuffers",
+          "bind": {
+            "level": "VK_COMMAND_BUFFER_LEVEL_PRIMARY"
+          }
+        }
+      ]
+    },
+    "cvkAllocateSecondaryCommandBuffers": {
+      "brief": "Allocates secondary command buffers.",
+      "steps": [
+        {
+          "call": "cvkAllocateCommandBuffers",
+          "bind": {
+            "level": "VK_COMMAND_BUFFER_LEVEL_SECONDARY"
+          }
+        }
+      ]
+    },
+    "cvkAllocateCommandBuffer": {
+      "brief": "Allocates one command buffer.",
+      "outputs": [
+        {
+          "type": "VkCommandBuffer",
+          "name": "pCommandBuffer"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkAllocateCommandBuffers",
+          "bind": {
+            "commandBufferCount": "1",
+            "pCommandBuffers": "pCommandBuffer"
+          }
+        }
+      ]
+    },
+    "cvkAllocatePrimaryCommandBuffer": {
+      "brief": "Allocates one primary command buffer.",
+      "steps": [
+        {
+          "call": "cvkAllocateCommandBuffer",
+          "bind": {
+            "level": "VK_COMMAND_BUFFER_LEVEL_PRIMARY"
+          }
+        }
+      ]
+    },
+    "cvkAllocateSecondaryCommandBuffer": {
+      "brief": "Allocates one secondary command buffer.",
+      "steps": [
+        {
+          "call": "cvkAllocateCommandBuffer",
+          "bind": {
+            "level": "VK_COMMAND_BUFFER_LEVEL_SECONDARY"
+          }
+        }
+      ]
+    },
+    "cvkCreateResettableCommandPool": {
+      "brief": "Creates a command pool whose command buffers can be reset individually.",
+      "steps": [
+        {
+          "call": "cvkCreateCommandPool",
+          "bind": {
+            "flags": "VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCreateTransientCommandPool": {
+      "brief": "Creates a command pool for short-lived command buffers.",
+      "steps": [
+        {
+          "call": "cvkCreateCommandPool",
+          "bind": {
+            "flags": "VK_COMMAND_POOL_CREATE_TRANSIENT_BIT"
+          }
+        }
+      ]
+    },
+    "cvkSetupPrimaryCommandPool": {
+      "brief": "Creates a command pool and allocates primary command buffers from it.",
+      "steps": [
+        {
+          "call": "cvkSetupCommandPool",
+          "bind": {
+            "level": "VK_COMMAND_BUFFER_LEVEL_PRIMARY"
+          }
+        }
+      ]
+    },
+    "cvkQueueSubmitCommandBufferAndWaitIdle": {
+      "brief": "Submits one command buffer and waits for the queue to become idle.",
+      "steps": [
+        {
+          "call": "cvkQueueSubmitCommandBuffer"
+        },
+        {
+          "call": "cvkQueueWaitIdle"
+        }
+      ]
+    },
+    "cvkMapWholeMemory": {
+      "brief": "Maps a whole memory object.",
+      "steps": [
+        {
+          "call": "cvkMapMemory",
+          "bind": {
+            "offset": "0",
+            "size": "VK_WHOLE_SIZE",
+            "flags": "0"
+          }
+        }
+      ]
+    },
+    "cvkFlushWholeMappedMemory": {
+      "brief": "Flushes a whole mapped memory object.",
+      "steps": [
+        {
+          "call": "cvkFlushMappedMemoryRange",
+          "bind": {
+            "offset": "0",
+            "size": "VK_WHOLE_SIZE"
+          }
+        }
+      ]
+    },
+    "cvkInvalidateWholeMappedMemory": {
+      "brief": "Invalidates a whole mapped memory object.",
+      "steps": [
+        {
+          "call": "cvkInvalidateMappedMemoryRange",
+          "bind": {
+            "offset": "0",
+            "size": "VK_WHOLE_SIZE"
+          }
+        }
+      ]
+    },
+    "cvkAllocateDeviceLocalImageMemory": {
+      "brief": "Allocates device-local memory for an image.",
+      "steps": [
+        {
+          "call": "cvkAllocateImageMemory",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT"
+          }
+        }
+      ]
+    },
+    "cvkAllocateDeviceLocalBufferMemory": {
+      "brief": "Allocates device-local memory for a buffer.",
+      "steps": [
+        {
+          "call": "cvkAllocateBufferMemory",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT"
+          }
+        }
+      ]
+    },
+    "cvkAllocateHostVisibleBufferMemory": {
+      "brief": "Allocates host-visible, host-coherent memory for a buffer.",
+      "steps": [
+        {
+          "call": "cvkAllocateBufferMemory",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT"
+          }
+        }
+      ]
+    },
+    "cvkSetupDeviceLocalImage": {
+      "brief": "Creates an image backed by device-local memory.",
+      "steps": [
+        {
+          "call": "cvkSetupImage",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT"
+          }
+        }
+      ]
+    },
+    "cvkSetupDeviceLocalBuffer": {
+      "brief": "Creates a buffer backed by device-local memory.",
+      "steps": [
+        {
+          "call": "cvkSetupBuffer",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT"
+          }
+        }
+      ]
+    },
+    "cvkSetupHostVisibleBuffer": {
+      "brief": "Creates a buffer backed by host-visible, host-coherent memory.",
+      "steps": [
+        {
+          "call": "cvkSetupBuffer",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCreateImage2D": {
+      "brief": "2D form of cvkCreateImage.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "extent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "extent"
+          },
+          "bind": {
+            "width": "extent2D.width",
+            "height": "extent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkCreateImage",
+          "bind": {
+            "imageType": "VK_IMAGE_TYPE_2D",
+            "extent": "extent"
+          }
+        }
+      ]
+    },
+    "cvkSetupImage2D": {
+      "brief": "2D form of cvkSetupImage.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "extent without depth"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "extent"
+          },
+          "bind": {
+            "width": "extent2D.width",
+            "height": "extent2D.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkSetupImage",
+          "bind": {
+            "imageType": "VK_IMAGE_TYPE_2D",
+            "extent": "extent"
+          }
+        }
+      ]
+    },
+    "cvkSetupDeviceLocalImage2D": {
+      "brief": "2D form of cvkSetupDeviceLocalImage.",
+      "steps": [
+        {
+          "call": "cvkSetupImage2D",
+          "bind": {
+            "requiredProperties": "VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCreateImageView2D": {
+      "brief": "Creates a 2D image view with identity component mapping.",
+      "steps": [
+        {
+          "call": "cvkInitComponentMapping",
+          "local": {
+            "pInfo": "components"
+          },
+          "bind": {
+            "r": "VK_COMPONENT_SWIZZLE_IDENTITY",
+            "g": "VK_COMPONENT_SWIZZLE_IDENTITY",
+            "b": "VK_COMPONENT_SWIZZLE_IDENTITY",
+            "a": "VK_COMPONENT_SWIZZLE_IDENTITY"
+          }
+        },
+        {
+          "call": "cvkCreateImageView",
+          "bind": {
+            "viewType": "VK_IMAGE_VIEW_TYPE_2D",
+            "components": "components"
+          }
+        }
+      ]
+    },
+    "cvkCreateWholeImageView2D": {
+      "brief": "Creates a 2D image view over every mip level and array layer of one aspect.",
+      "steps": [
+        {
+          "call": "cvkInitImageSubresourceRange",
+          "local": {
+            "pInfo": "subresource_range"
+          },
+          "bind": {
+            "baseMipLevel": "0",
+            "levelCount": "VK_REMAINING_MIP_LEVELS",
+            "baseArrayLayer": "0",
+            "layerCount": "VK_REMAINING_ARRAY_LAYERS"
+          }
+        },
+        {
+          "call": "cvkCreateImageView2D",
+          "bind": {
+            "subresourceRange": "subresource_range"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceLimits": {
+      "brief": "Retrieves physical device limits.",
+      "outputs": [
+        {
+          "type": "VkPhysicalDeviceLimits",
+          "name": "pLimits"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceProperties",
+          "local": {
+            "pProperties": "physical_device_properties"
+          }
+        },
+        {
+          "set": {
+            "pLimits": "physical_device_properties.limits"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceTimestampPeriod": {
+      "brief": "Returns the number of nanoseconds per timestamp tick.",
+      "ret": "float",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceProperties",
+          "local": {
+            "pProperties": "physical_device_properties"
+          }
+        },
+        {
+          "return": "physical_device_properties.limits.timestampPeriod"
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceApiVersion": {
+      "brief": "Returns the Vulkan version supported by the physical device.",
+      "ret": "uint32_t",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceProperties",
+          "local": {
+            "pProperties": "physical_device_properties"
+          }
+        },
+        {
+          "return": "physical_device_properties.apiVersion"
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceByIndex": {
+      "brief": "Returns the physical device at an index of the instance's enumeration.",
+      "ret": "VkPhysicalDevice",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "physicalDeviceIndex",
+          "doc": "Index into the enumeration"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkEnumeratePhysicalDevices",
+          "local": {
+            "pPhysicalDevices": "physical_devices"
+          },
+          "into": "physical_device_count"
+        },
+        {
+          "assert": "physical_device_count > physicalDeviceIndex"
+        },
+        {
+          "return": "physical_devices[physicalDeviceIndex]"
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceComputeQueueFamilyIndex": {
+      "brief": "Returns the first queue family supporting compute, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyIndex",
+          "bind": {
+            "requiredFlags": "VK_QUEUE_COMPUTE_BIT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupComputeDeviceQueue": {
+      "brief": "Creates a device with one queue of the first compute queue family.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceComputeQueueFamilyIndex",
+          "into": "queue_family_index"
+        },
+        {
+          "assert": "VK_INVALID != queue_family_index"
+        },
+        {
+          "call": "cvkSetupDeviceQueue",
+          "bind": {
+            "queueFamilyIndex": "queue_family_index"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceGraphicsQueueFamilyIndex": {
+      "brief": "Returns the first queue family supporting graphics, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyIndex",
+          "bind": {
+            "requiredFlags": "VK_QUEUE_GRAPHICS_BIT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupGraphicsDeviceQueue": {
+      "brief": "Creates a device with one queue of the first graphics queue family.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceGraphicsQueueFamilyIndex",
+          "into": "queue_family_index"
+        },
+        {
+          "assert": "VK_INVALID != queue_family_index"
+        },
+        {
+          "call": "cvkSetupDeviceQueue",
+          "bind": {
+            "queueFamilyIndex": "queue_family_index"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceTransferQueueFamilyIndex": {
+      "brief": "Returns the first queue family supporting transfer, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyIndex",
+          "bind": {
+            "requiredFlags": "VK_QUEUE_TRANSFER_BIT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupTransferDeviceQueue": {
+      "brief": "Creates a device with one queue of the first transfer queue family.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceTransferQueueFamilyIndex",
+          "into": "queue_family_index"
+        },
+        {
+          "assert": "VK_INVALID != queue_family_index"
+        },
+        {
+          "call": "cvkSetupDeviceQueue",
+          "bind": {
+            "queueFamilyIndex": "queue_family_index"
+          }
+        }
+      ]
+    },
+    "cvkCreateSingleBindingDescriptorSetLayout": {
+      "brief": "Creates a descriptor set layout with one binding.",
+      "steps": [
+        {
+          "call": "cvkInitDescriptorSetLayoutBinding",
+          "local": {
+            "pInfo": "descriptor_set_layout_binding"
+          }
+        },
+        {
+          "call": "cvkCreateDescriptorSetLayout",
+          "bind": {
+            "bindingCount": "1",
+            "pBindings": "&descriptor_set_layout_binding"
+          }
+        }
+      ]
+    },
+    "cvkCreateSingleTypeDescriptorPool": {
+      "brief": "Creates a descriptor pool holding one descriptor type.",
+      "steps": [
+        {
+          "call": "cvkInitDescriptorPoolSize",
+          "local": {
+            "pInfo": "descriptor_pool_size"
+          }
+        },
+        {
+          "call": "cvkCreateDescriptorPool",
+          "bind": {
+            "poolSizeCount": "1",
+            "pPoolSizes": "&descriptor_pool_size"
+          }
+        }
+      ]
+    },
+    "cvkAllocateDescriptorSet": {
+      "brief": "Allocates one descriptor set.",
+      "inputs": [
+        {
+          "type": "VkDescriptorSetLayout",
+          "name": "setLayout",
+          "doc": "Layout of the descriptor set"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkDescriptorSet",
+          "name": "pDescriptorSet"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkAllocateDescriptorSets",
+          "bind": {
+            "descriptorSetCount": "1",
+            "pSetLayouts": "&setLayout",
+            "pDescriptorSets": "pDescriptorSet"
+          }
+        }
+      ]
+    },
+    "cvkUpdateStorageImageDescriptorSet": {
+      "brief": "Writes one storage image descriptor in the general layout.",
+      "steps": [
+        {
+          "call": "cvkUpdateImageDescriptorSet",
+          "bind": {
+            "sampler": "VK_NULL_HANDLE",
+            "imageLayout": "VK_IMAGE_LAYOUT_GENERAL",
+            "descriptorType": "VK_DESCRIPTOR_TYPE_STORAGE_IMAGE"
+          }
+        }
+      ]
+    },
+    "cvkUpdateSampledImageDescriptorSet": {
+      "brief": "Writes one sampled image descriptor.",
+      "steps": [
+        {
+          "call": "cvkUpdateImageDescriptorSet",
+          "bind": {
+            "sampler": "VK_NULL_HANDLE",
+            "descriptorType": "VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE"
+          }
+        }
+      ]
+    },
+    "cvkUpdateCombinedImageSamplerDescriptorSet": {
+      "brief": "Writes one combined image sampler descriptor.",
+      "steps": [
+        {
+          "call": "cvkUpdateImageDescriptorSet",
+          "bind": {
+            "descriptorType": "VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER"
+          }
+        }
+      ]
+    },
+    "cvkUpdateStorageBufferDescriptorSet": {
+      "brief": "Writes one storage buffer descriptor.",
+      "steps": [
+        {
+          "call": "cvkUpdateBufferDescriptorSet",
+          "bind": {
+            "descriptorType": "VK_DESCRIPTOR_TYPE_STORAGE_BUFFER"
+          }
+        }
+      ]
+    },
+    "cvkUpdateUniformBufferDescriptorSet": {
+      "brief": "Writes one uniform buffer descriptor.",
+      "steps": [
+        {
+          "call": "cvkUpdateBufferDescriptorSet",
+          "bind": {
+            "descriptorType": "VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER"
+          }
+        }
+      ]
+    },
+    "cvkUpdateWholeStorageBufferDescriptorSet": {
+      "brief": "Writes one storage buffer descriptor covering the whole buffer.",
+      "steps": [
+        {
+          "call": "cvkUpdateStorageBufferDescriptorSet",
+          "bind": {
+            "offset": "0",
+            "range": "VK_WHOLE_SIZE"
+          }
+        }
+      ]
+    },
+    "cvkUpdateWholeUniformBufferDescriptorSet": {
+      "brief": "Writes one uniform buffer descriptor covering the whole buffer.",
+      "steps": [
+        {
+          "call": "cvkUpdateUniformBufferDescriptorSet",
+          "bind": {
+            "offset": "0",
+            "range": "VK_WHOLE_SIZE"
+          }
+        }
+      ]
+    },
+    "cvkCmdWriteTopOfPipeTimestamp": {
+      "brief": "Records a timestamp at the top of the pipe.",
+      "steps": [
+        {
+          "call": "cvkCmdWriteTimestamp",
+          "bind": {
+            "pipelineStage": "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCmdWriteBottomOfPipeTimestamp": {
+      "brief": "Records a timestamp at the bottom of the pipe.",
+      "steps": [
+        {
+          "call": "cvkCmdWriteTimestamp",
+          "bind": {
+            "pipelineStage": "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCmdMemoryBarrier": {
+      "brief": "Records one global memory barrier.",
+      "steps": [
+        {
+          "call": "cvkInitMemoryBarrier",
+          "local": {
+            "pInfo": "memory_barrier"
+          }
+        },
+        {
+          "call": "cvkCmdPipelineBarrier",
+          "bind": {
+            "memoryBarrierCount": "1",
+            "pMemoryBarriers": "&memory_barrier",
+            "bufferMemoryBarrierCount": "0",
+            "pBufferMemoryBarriers": "NULL",
+            "imageMemoryBarrierCount": "0",
+            "pImageMemoryBarriers": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkCmdMemoryBarrier2": {
+      "brief": "Records one global memory barrier with synchronization2.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pDependencyNext",
+          "doc": "Optional extension chain for VkDependencyInfo, or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitMemoryBarrier2",
+          "local": {
+            "pInfo": "memory_barrier"
+          }
+        },
+        {
+          "call": "cvkCmdPipelineBarrier2",
+          "bind": {
+            "memoryBarrierCount": "1",
+            "pMemoryBarriers": "&memory_barrier",
+            "bufferMemoryBarrierCount": "0",
+            "pBufferMemoryBarriers": "NULL",
+            "imageMemoryBarrierCount": "0",
+            "pImageMemoryBarriers": "NULL",
+            "pNext": "pDependencyNext"
+          }
+        }
+      ]
+    },
+    "cvkCmdImageQueueOwnershipBarrier2": {
+      "brief": "Records one image memory barrier with synchronization2, with queue family ownership transfer when the families differ.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pDependencyNext",
+          "doc": "Optional extension chain for VkDependencyInfo, or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitImageMemoryBarrier2",
+          "local": {
+            "pInfo": "image_memory_barrier"
+          }
+        },
+        {
+          "call": "cvkCmdPipelineBarrier2",
+          "bind": {
+            "memoryBarrierCount": "0",
+            "pMemoryBarriers": "NULL",
+            "bufferMemoryBarrierCount": "0",
+            "pBufferMemoryBarriers": "NULL",
+            "imageMemoryBarrierCount": "1",
+            "pImageMemoryBarriers": "&image_memory_barrier",
+            "pNext": "pDependencyNext"
+          }
+        }
+      ]
+    },
+    "cvkCmdBufferQueueOwnershipBarrier2": {
+      "brief": "Records one buffer memory barrier with synchronization2, with queue family ownership transfer when the families differ.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pDependencyNext",
+          "doc": "Optional extension chain for VkDependencyInfo, or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitBufferMemoryBarrier2",
+          "local": {
+            "pInfo": "buffer_memory_barrier"
+          }
+        },
+        {
+          "call": "cvkCmdPipelineBarrier2",
+          "bind": {
+            "memoryBarrierCount": "0",
+            "pMemoryBarriers": "NULL",
+            "bufferMemoryBarrierCount": "1",
+            "pBufferMemoryBarriers": "&buffer_memory_barrier",
+            "imageMemoryBarrierCount": "0",
+            "pImageMemoryBarriers": "NULL",
+            "pNext": "pDependencyNext"
+          }
+        }
+      ]
+    },
+    "cvkCmdImageBarrier2": {
+      "brief": "Records one image memory barrier with synchronization2, without ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdImageQueueOwnershipBarrier2",
+          "bind": {
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdBufferBarrier2": {
+      "brief": "Records one buffer memory barrier with synchronization2, without ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdBufferQueueOwnershipBarrier2",
+          "bind": {
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdAcquireImageFromExternal2": {
+      "brief": "Records the acquire half of an image ownership transfer from an external owner, with synchronization2.",
+      "steps": [
+        {
+          "call": "cvkCmdImageQueueOwnershipBarrier2",
+          "bind": {
+            "srcStageMask": "VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT",
+            "srcAccessMask": "VK_ACCESS_2_NONE",
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdReleaseImageToExternal2": {
+      "brief": "Records the release half of an image ownership transfer to an external owner, with synchronization2.",
+      "steps": [
+        {
+          "call": "cvkCmdImageQueueOwnershipBarrier2",
+          "bind": {
+            "dstStageMask": "VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT",
+            "dstAccessMask": "VK_ACCESS_2_NONE",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdAcquireBufferFromExternal2": {
+      "brief": "Records the acquire half of a buffer ownership transfer from an external owner, with synchronization2.",
+      "steps": [
+        {
+          "call": "cvkCmdBufferQueueOwnershipBarrier2",
+          "bind": {
+            "srcStageMask": "VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT",
+            "srcAccessMask": "VK_ACCESS_2_NONE",
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdReleaseBufferToExternal2": {
+      "brief": "Records the release half of a buffer ownership transfer to an external owner, with synchronization2.",
+      "steps": [
+        {
+          "call": "cvkCmdBufferQueueOwnershipBarrier2",
+          "bind": {
+            "dstStageMask": "VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT",
+            "dstAccessMask": "VK_ACCESS_2_NONE",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdBeginColorRendering": {
+      "brief": "Begins dynamic rendering into one color attachment without resolve, depth, or stencil.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pColorAttachmentNext",
+          "doc": "Optional extension chain for VkRenderingAttachmentInfo, or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitRenderingAttachmentInfo",
+          "local": {
+            "pInfo": "color_attachment"
+          },
+          "bind": {
+            "pNext": "pColorAttachmentNext",
+            "resolveMode": "VK_RESOLVE_MODE_NONE",
+            "resolveImageView": "VK_NULL_HANDLE",
+            "resolveImageLayout": "VK_IMAGE_LAYOUT_UNDEFINED"
+          }
+        },
+        {
+          "call": "cvkCmdBeginRendering",
+          "bind": {
+            "colorAttachmentCount": "1",
+            "pColorAttachments": "&color_attachment",
+            "pDepthAttachment": "NULL",
+            "pStencilAttachment": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkCreateSingleAttachmentFramebuffer": {
+      "brief": "Creates a framebuffer with one attachment.",
+      "inputs": [
+        {
+          "type": "VkImageView",
+          "name": "attachment",
+          "doc": "The framebuffer's only attachment"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateFramebuffer",
+          "bind": {
+            "attachmentCount": "1",
+            "pAttachments": "&attachment"
+          }
+        }
+      ]
+    },
+    "cvkCreateColorRenderPass": {
+      "brief": "Creates a render pass with one color attachment, one graphics subpass, and no dependencies.",
+      "steps": [
+        {
+          "call": "cvkInitAttachmentDescription",
+          "local": {
+            "pInfo": "attachment_description"
+          },
+          "bind": {
+            "flags": "0",
+            "stencilLoadOp": "VK_ATTACHMENT_LOAD_OP_DONT_CARE",
+            "stencilStoreOp": "VK_ATTACHMENT_STORE_OP_DONT_CARE"
+          }
+        },
+        {
+          "call": "cvkInitAttachmentReference",
+          "local": {
+            "pInfo": "attachment_reference"
+          },
+          "bind": {
+            "attachment": "0",
+            "layout": "VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL"
+          }
+        },
+        {
+          "call": "cvkInitSubpassDescription",
+          "local": {
+            "pInfo": "subpass_description"
+          },
+          "bind": {
+            "flags": "0",
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_GRAPHICS",
+            "inputAttachmentCount": "0",
+            "pInputAttachments": "NULL",
+            "colorAttachmentCount": "1",
+            "pColorAttachments": "&attachment_reference",
+            "pResolveAttachments": "NULL",
+            "pDepthStencilAttachment": "NULL",
+            "preserveAttachmentCount": "0",
+            "pPreserveAttachments": "NULL"
+          }
+        },
+        {
+          "call": "cvkCreateRenderPass",
+          "bind": {
+            "attachmentCount": "1",
+            "pAttachments": "&attachment_description",
+            "subpassCount": "1",
+            "pSubpasses": "&subpass_description",
+            "dependencyCount": "0",
+            "pDependencies": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkAcquireNextImageIndefinitely": {
+      "brief": "Acquires the next swapchain image without a timeout.",
+      "steps": [
+        {
+          "call": "cvkAcquireNextImage",
+          "bind": {
+            "timeout": "UINT64_MAX"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceExternalBufferImportSupport": {
+      "brief": "Reports whether a buffer description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.",
+      "ret": "VkBool32",
+      "outputs": [
+        {
+          "type": "VkBool32",
+          "name": "pDedicatedOnly"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceExternalBufferInfo",
+          "bind": {
+            "pExternalBufferPropertiesNext": "NULL"
+          },
+          "local": {
+            "pExternalBufferProperties": "external_buffer_properties"
+          }
+        },
+        {
+          "set": {
+            "pDedicatedOnly": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
+          }
+        },
+        {
+          "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceExternalBufferExportSupport": {
+      "brief": "Reports whether a buffer description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.",
+      "ret": "VkBool32",
+      "outputs": [
+        {
+          "type": "VkBool32",
+          "name": "pDedicatedOnly"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceExternalBufferInfo",
+          "bind": {
+            "pExternalBufferPropertiesNext": "NULL"
+          },
+          "local": {
+            "pExternalBufferProperties": "external_buffer_properties"
+          }
+        },
+        {
+          "set": {
+            "pDedicatedOnly": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
+          }
+        },
+        {
+          "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+        }
+      ]
     }
   }
 }

@@ -971,6 +971,175 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
                                const VkAllocationCallbacks*       pAllocator,
                                VkImage*                           pImage,
                                VkDeviceMemory*                    pMemory);
+/**
+ * \brief Imports a Win32 memory handle as a new buffer.
+ *
+ * \par Details:
+ *  Buffer form of cvkImportWin32HandleImage: capability (the handle type must be importable;
+ *  DEDICATED_ONLY forces a dedicated allocation), creation with the handle type declared,
+ *  the handle's memory types (not permitted for the opaque Win32 handle types, which
+ *  therefore allow every type), requirements with dedicated requirements chained, memory
+ *  type selection within the handle's memory types, allocation with the import info chained
+ *  (dedicated info in front when required), and binding. The handle stays owned by the
+ *  caller as Vulkan specifies for Win32 imports.
+ *
+ * \param[in]  physicalDevice          Physical device the buffer is created for
+ * \param[in]  device                  Logical device owning the buffer and memory
+ * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
+ * \param[in]  flags                   VkBufferCreateInfo::flags
+ * \param[in]  size                    VkBufferCreateInfo::size
+ * \param[in]  usage                   VkBufferCreateInfo::usage
+ * \param[in]  sharingMode             VkBufferCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount   VkBufferCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices     VkBufferCreateInfo::pQueueFamilyIndices
+ * \param[in]  handleType              Win32 external memory handle type being imported
+ * \param[in]  handle                  Handle to import, or NULL when name is used
+ * \param[in]  name                    Name of the object to import, or NULL when handle is used
+ * \param[in]  allocationSize          Size of the external memory object; must cover the buffer's requirements
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the created VkBuffer
+ * \param[out] pMemory                 Receives the imported VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
+                                VkDevice                           device,
+                                const void*                        pBufferNext,
+                                VkBufferCreateFlags                flags,
+                                VkDeviceSize                       size,
+                                VkBufferUsageFlags                 usage,
+                                VkSharingMode                      sharingMode,
+                                uint32_t                           queueFamilyIndexCount,
+                                const uint32_t*                    pQueueFamilyIndices,
+                                VkExternalMemoryHandleTypeFlagBits handleType,
+                                HANDLE                             handle,
+                                LPCWSTR                            name,
+                                VkDeviceSize                       allocationSize,
+                                VkMemoryPropertyFlags              requiredProperties,
+                                const void*                        pMemoryNext,
+                                const VkAllocationCallbacks*       pAllocator,
+                                VkBuffer*                          pBuffer,
+                                VkDeviceMemory*                    pMemory);
+/**
+ * \brief Creates an image whose memory is exportable and exports it as a Win32 handle.
+ *
+ * \par Details:
+ *  Runs the specification's export chain: capability (the handle type must be exportable;
+ *  DEDICATED_ONLY forces a dedicated allocation), creation with the handle type declared,
+ *  requirements with dedicated requirements chained (requiresDedicatedAllocation also forces
+ *  dedicated), memory type selection, allocation with the export info chained (the Win32
+ *  handle info behind it for the opaque and D3D handle types, which are the only ones that
+ *  permit it, then dedicated info when required), binding, and the handle export. The handle
+ *  is owned by the caller, who closes it; the memory stays valid while the image and memory live.
+ *
+ * \param[in]  physicalDevice          Physical device the image is created for
+ * \param[in]  device                  Logical device owning the image and memory
+ * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                   VkImageCreateInfo::flags
+ * \param[in]  imageType               VkImageCreateInfo::imageType
+ * \param[in]  format                  VkImageCreateInfo::format
+ * \param[in]  extent                  VkImageCreateInfo::extent
+ * \param[in]  mipLevels               VkImageCreateInfo::mipLevels
+ * \param[in]  arrayLayers             VkImageCreateInfo::arrayLayers
+ * \param[in]  samples                 VkImageCreateInfo::samples
+ * \param[in]  tiling                  VkImageCreateInfo::tiling
+ * \param[in]  usage                   VkImageCreateInfo::usage
+ * \param[in]  sharingMode             VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount   VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices     VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout           VkImageCreateInfo::initialLayout
+ * \param[in]  handleType              Win32 external memory handle type to export
+ * \param[in]  pAttributes             VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
+ * \param[in]  dwAccess                VkExportMemoryWin32HandleInfoKHR::dwAccess
+ * \param[in]  name                    VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the export infos, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pImage                  Receives the created VkImage
+ * \param[out] pMemory                 Receives the exportable VkDeviceMemory
+ * \param[out] pHandle                 Receives the exported handle, owned by the caller
+ *
+ * \retval None
+ */
+void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
+                               VkDevice                           device,
+                               const void*                        pImageNext,
+                               VkImageCreateFlags                 flags,
+                               VkImageType                        imageType,
+                               VkFormat                           format,
+                               VkExtent3D                         extent,
+                               uint32_t                           mipLevels,
+                               uint32_t                           arrayLayers,
+                               VkSampleCountFlagBits              samples,
+                               VkImageTiling                      tiling,
+                               VkImageUsageFlags                  usage,
+                               VkSharingMode                      sharingMode,
+                               uint32_t                           queueFamilyIndexCount,
+                               const uint32_t*                    pQueueFamilyIndices,
+                               VkImageLayout                      initialLayout,
+                               VkExternalMemoryHandleTypeFlagBits handleType,
+                               const SECURITY_ATTRIBUTES*         pAttributes,
+                               DWORD                              dwAccess,
+                               LPCWSTR                            name,
+                               VkMemoryPropertyFlags              requiredProperties,
+                               const void*                        pMemoryNext,
+                               const VkAllocationCallbacks*       pAllocator,
+                               VkImage*                           pImage,
+                               VkDeviceMemory*                    pMemory,
+                               HANDLE*                            pHandle);
+/**
+ * \brief Creates a buffer whose memory is exportable and exports it as a Win32 handle.
+ *
+ * \par Details:
+ *  Buffer form of cvkExportWin32HandleImage: capability, creation with the handle type
+ *  declared, requirements with dedicated requirements chained, memory type selection,
+ *  allocation with the export info chained (the Win32 handle info behind it for the opaque
+ *  and D3D handle types, then dedicated info when required), binding, and the handle export.
+ *  The handle is owned by the caller, who closes it.
+ *
+ * \param[in]  physicalDevice          Physical device the buffer is created for
+ * \param[in]  device                  Logical device owning the buffer and memory
+ * \param[in]  pBufferNext             Optional extension chain for VkBufferCreateInfo, or NULL
+ * \param[in]  flags                   VkBufferCreateInfo::flags
+ * \param[in]  size                    VkBufferCreateInfo::size
+ * \param[in]  usage                   VkBufferCreateInfo::usage
+ * \param[in]  sharingMode             VkBufferCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount   VkBufferCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices     VkBufferCreateInfo::pQueueFamilyIndices
+ * \param[in]  handleType              Win32 external memory handle type to export
+ * \param[in]  pAttributes             VkExportMemoryWin32HandleInfoKHR::pAttributes, or NULL for the defaults
+ * \param[in]  dwAccess                VkExportMemoryWin32HandleInfoKHR::dwAccess
+ * \param[in]  name                    VkExportMemoryWin32HandleInfoKHR::name, or NULL for an unnamed object
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the export infos, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pBuffer                 Receives the created VkBuffer
+ * \param[out] pMemory                 Receives the exportable VkDeviceMemory
+ * \param[out] pHandle                 Receives the exported handle, owned by the caller
+ *
+ * \retval None
+ */
+void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
+                                VkDevice                           device,
+                                const void*                        pBufferNext,
+                                VkBufferCreateFlags                flags,
+                                VkDeviceSize                       size,
+                                VkBufferUsageFlags                 usage,
+                                VkSharingMode                      sharingMode,
+                                uint32_t                           queueFamilyIndexCount,
+                                const uint32_t*                    pQueueFamilyIndices,
+                                VkExternalMemoryHandleTypeFlagBits handleType,
+                                const SECURITY_ATTRIBUTES*         pAttributes,
+                                DWORD                              dwAccess,
+                                LPCWSTR                            name,
+                                VkMemoryPropertyFlags              requiredProperties,
+                                const void*                        pMemoryNext,
+                                const VkAllocationCallbacks*       pAllocator,
+                                VkBuffer*                          pBuffer,
+                                VkDeviceMemory*                    pMemory,
+                                HANDLE*                            pHandle);
 
 #ifdef __cplusplus
 }

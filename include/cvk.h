@@ -46745,6 +46745,1339 @@ void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
                                   VkExtent2D             itemsPerInvocation2D,
                                   VkExtent2D             localSize2D);
 /**
+ * \brief Creates a fence in the signaled state.
+ *
+ * \param[in] device      See cvkCreateFence
+ * \param[in] pFenceNext  See cvkCreateFence
+ * \param[in] pAllocator  See cvkCreateFence
+ * \param[out] pFence      Receives the created VkFence
+ *
+ * \retval None
+ */
+void cvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
+/**
+ * \brief Waits for one fence without a timeout.
+ *
+ * \param[in] device  See cvkWaitForFence
+ * \param[in] fence   See cvkWaitForFence
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkWaitForFenceIndefinitely(VkDevice device, VkFence fence);
+/**
+ * \brief Waits until every fence is signaled, without a timeout.
+ *
+ * \param[in] device      See cvkWaitForFences
+ * \param[in] fenceCount  See cvkWaitForFences
+ * \param[in] pFences     See cvkWaitForFences
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkWaitForAllFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
+/**
+ * \brief Waits until at least one fence is signaled, without a timeout.
+ *
+ * \param[in] device      See cvkWaitForFences
+ * \param[in] fenceCount  See cvkWaitForFences
+ * \param[in] pFences     See cvkWaitForFences
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkWaitForAnyFence(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
+/**
+ * \brief Creates a timeline semaphore with an initial value.
+ *
+ * \param[in] device          See cvkCreateSemaphoreWithTypeInfo
+ * \param[in] pSemaphoreNext  See cvkCreateSemaphoreWithTypeInfo
+ * \param[in] initialValue    See cvkCreateSemaphoreWithTypeInfo
+ * \param[in] flags           See cvkCreateSemaphoreWithTypeInfo
+ * \param[in] pAllocator      See cvkCreateSemaphoreWithTypeInfo
+ * \param[out] pSemaphore      See cvkCreateSemaphore
+ *
+ * \retval None
+ */
+void cvkCreateTimelineSemaphore(VkDevice device, const void* pSemaphoreNext, uint64_t initialValue, VkSemaphoreCreateFlags flags, const VkAllocationCallbacks* pAllocator, VkSemaphore* pSemaphore);
+/**
+ * \brief Waits for one timeline semaphore to reach a value.
+ *
+ * \param[in] device     See cvkWaitSemaphores
+ * \param[in] pNext      See cvkWaitSemaphores
+ * \param[in] flags      See cvkWaitSemaphores
+ * \param[in] timeout    See cvkWaitSemaphores
+ * \param[in] semaphore  Timeline semaphore to wait for
+ * \param[in] value      Value the semaphore must reach
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkWaitSemaphore(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, uint64_t timeout, VkSemaphore semaphore, uint64_t value);
+/**
+ * \brief Waits for one timeline semaphore to reach a value, without a timeout.
+ *
+ * \param[in] device     See cvkWaitSemaphore
+ * \param[in] pNext      See cvkWaitSemaphore
+ * \param[in] flags      See cvkWaitSemaphore
+ * \param[in] semaphore  See cvkWaitSemaphore
+ * \param[in] value      See cvkWaitSemaphore
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkWaitSemaphoreIndefinitely(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flags, VkSemaphore semaphore, uint64_t value);
+/**
+ * \brief Begins a primary command buffer for a single submission.
+ *
+ * \param[in] commandBuffer  See cvkBeginCommandBuffer
+ * \param[in] pNext          See cvkBeginCommandBuffer
+ *
+ * \retval None
+ */
+void cvkBeginOneTimeCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext);
+/**
+ * \brief Allocates primary command buffers.
+ *
+ * \param[in] device               See cvkAllocateCommandBuffers
+ * \param[in] pCommandBuffersNext  See cvkAllocateCommandBuffers
+ * \param[in] commandPool          See cvkAllocateCommandBuffers
+ * \param[in] commandBufferCount   See cvkAllocateCommandBuffers
+ * \param[out] pCommandBuffers      Receives the VkCommandBuffer
+ *
+ * \retval None
+ */
+void cvkAllocatePrimaryCommandBuffers(VkDevice device, const void* pCommandBuffersNext, VkCommandPool commandPool, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers);
+/**
+ * \brief Allocates secondary command buffers.
+ *
+ * \param[in] device               See cvkAllocateCommandBuffers
+ * \param[in] pCommandBuffersNext  See cvkAllocateCommandBuffers
+ * \param[in] commandPool          See cvkAllocateCommandBuffers
+ * \param[in] commandBufferCount   See cvkAllocateCommandBuffers
+ * \param[out] pCommandBuffers      Receives the VkCommandBuffer
+ *
+ * \retval None
+ */
+void cvkAllocateSecondaryCommandBuffers(VkDevice device, const void* pCommandBuffersNext, VkCommandPool commandPool, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers);
+/**
+ * \brief Allocates one command buffer.
+ *
+ * \param[in] device              See cvkAllocateCommandBuffers
+ * \param[in] pCommandBufferNext  See cvkAllocateCommandBuffers
+ * \param[in] commandPool         See cvkAllocateCommandBuffers
+ * \param[in] level               See cvkAllocateCommandBuffers
+ * \param[out] pCommandBuffer      Receives the commandBuffer
+ *
+ * \retval None
+ */
+void cvkAllocateCommandBuffer(VkDevice device, const void* pCommandBufferNext, VkCommandPool commandPool, VkCommandBufferLevel level, VkCommandBuffer* pCommandBuffer);
+/**
+ * \brief Allocates one primary command buffer.
+ *
+ * \param[in] device              See cvkAllocateCommandBuffer
+ * \param[in] pCommandBufferNext  See cvkAllocateCommandBuffer
+ * \param[in] commandPool         See cvkAllocateCommandBuffer
+ * \param[out] pCommandBuffer      Receives the commandBuffer
+ *
+ * \retval None
+ */
+void cvkAllocatePrimaryCommandBuffer(VkDevice device, const void* pCommandBufferNext, VkCommandPool commandPool, VkCommandBuffer* pCommandBuffer);
+/**
+ * \brief Allocates one secondary command buffer.
+ *
+ * \param[in] device              See cvkAllocateCommandBuffer
+ * \param[in] pCommandBufferNext  See cvkAllocateCommandBuffer
+ * \param[in] commandPool         See cvkAllocateCommandBuffer
+ * \param[out] pCommandBuffer      Receives the commandBuffer
+ *
+ * \retval None
+ */
+void cvkAllocateSecondaryCommandBuffer(VkDevice device, const void* pCommandBufferNext, VkCommandPool commandPool, VkCommandBuffer* pCommandBuffer);
+/**
+ * \brief Creates a command pool whose command buffers can be reset individually.
+ *
+ * \param[in] device            See cvkCreateCommandPool
+ * \param[in] pCommandPoolNext  See cvkCreateCommandPool
+ * \param[in] queueFamilyIndex  See cvkCreateCommandPool
+ * \param[in] pAllocator        See cvkCreateCommandPool
+ * \param[out] pCommandPool      Receives the created VkCommandPool
+ *
+ * \retval None
+ */
+void cvkCreateResettableCommandPool(VkDevice device, const void* pCommandPoolNext, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
+/**
+ * \brief Creates a command pool for short-lived command buffers.
+ *
+ * \param[in] device            See cvkCreateCommandPool
+ * \param[in] pCommandPoolNext  See cvkCreateCommandPool
+ * \param[in] queueFamilyIndex  See cvkCreateCommandPool
+ * \param[in] pAllocator        See cvkCreateCommandPool
+ * \param[out] pCommandPool      Receives the created VkCommandPool
+ *
+ * \retval None
+ */
+void cvkCreateTransientCommandPool(VkDevice device, const void* pCommandPoolNext, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool);
+/**
+ * \brief Creates a command pool and allocates primary command buffers from it.
+ *
+ * \param[in] device               See cvkSetupCommandPool
+ * \param[in] pCommandPoolNext     See cvkSetupCommandPool
+ * \param[in] flags                See cvkSetupCommandPool
+ * \param[in] queueFamilyIndex     See cvkSetupCommandPool
+ * \param[in] pCommandBuffersNext  See cvkSetupCommandPool
+ * \param[in] commandBufferCount   See cvkSetupCommandPool
+ * \param[in] pAllocator           See cvkSetupCommandPool
+ * \param[out] pCommandPool         Receives the created VkCommandPool
+ * \param[out] pCommandBuffers      Receives the VkCommandBuffer
+ *
+ * \retval None
+ */
+void cvkSetupPrimaryCommandPool(VkDevice                     device,
+                                const void*                  pCommandPoolNext,
+                                VkCommandPoolCreateFlags     flags,
+                                uint32_t                     queueFamilyIndex,
+                                const void*                  pCommandBuffersNext,
+                                uint32_t                     commandBufferCount,
+                                const VkAllocationCallbacks* pAllocator,
+                                VkCommandPool*               pCommandPool,
+                                VkCommandBuffer*             pCommandBuffers);
+/**
+ * \brief Submits one command buffer and waits for the queue to become idle.
+ *
+ * \param[in] queue                 See cvkQueueSubmitCommandBuffer
+ * \param[in] commandBuffer         See cvkQueueSubmitCommandBuffer
+ * \param[in] pNext                 See cvkQueueSubmitCommandBuffer
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitCommandBuffer
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitCommandBuffer
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitCommandBuffer
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitCommandBuffer
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitCommandBuffer
+ * \param[in] fence                 See cvkQueueSubmitCommandBuffer
+ *
+ * \retval None
+ */
+void cvkQueueSubmitCommandBufferAndWaitIdle(VkQueue                     queue,
+                                            VkCommandBuffer             commandBuffer,
+                                            const void*                 pNext,
+                                            uint32_t                    waitSemaphoreCount,
+                                            const VkSemaphore*          pWaitSemaphores,
+                                            const VkPipelineStageFlags* pWaitDstStageMask,
+                                            uint32_t                    signalSemaphoreCount,
+                                            const VkSemaphore*          pSignalSemaphores,
+                                            VkFence                     fence);
+/**
+ * \brief Maps a whole memory object.
+ *
+ * \param[in] device  See cvkMapMemory
+ * \param[in] memory  See cvkMapMemory
+ * \param[out] ppData  Receives the void
+ *
+ * \retval None
+ */
+void cvkMapWholeMemory(VkDevice device, VkDeviceMemory memory, void** ppData);
+/**
+ * \brief Flushes a whole mapped memory object.
+ *
+ * \param[in] device  See cvkFlushMappedMemoryRange
+ * \param[in] pNext   See cvkFlushMappedMemoryRange
+ * \param[in] memory  See cvkFlushMappedMemoryRange
+ *
+ * \retval None
+ */
+void cvkFlushWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory);
+/**
+ * \brief Invalidates a whole mapped memory object.
+ *
+ * \param[in] device  See cvkInvalidateMappedMemoryRange
+ * \param[in] pNext   See cvkInvalidateMappedMemoryRange
+ * \param[in] memory  See cvkInvalidateMappedMemoryRange
+ *
+ * \retval None
+ */
+void cvkInvalidateWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory);
+/**
+ * \brief Allocates device-local memory for an image.
+ *
+ * \param[in] physicalDevice  See cvkAllocateImageMemory
+ * \param[in] device          See cvkAllocateImageMemory
+ * \param[in] image           See cvkAllocateImageMemory
+ * \param[in] pMemoryNext     See cvkAllocateImageMemory
+ * \param[in] pAllocator      See cvkAllocateImageMemory
+ * \param[out] pMemory         Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkAllocateDeviceLocalImageMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkImage image, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+/**
+ * \brief Allocates device-local memory for a buffer.
+ *
+ * \param[in] physicalDevice  See cvkAllocateBufferMemory
+ * \param[in] device          See cvkAllocateBufferMemory
+ * \param[in] buffer          See cvkAllocateBufferMemory
+ * \param[in] pMemoryNext     See cvkAllocateBufferMemory
+ * \param[in] pAllocator      See cvkAllocateBufferMemory
+ * \param[out] pMemory         Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkAllocateDeviceLocalBufferMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkBuffer buffer, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+/**
+ * \brief Allocates host-visible, host-coherent memory for a buffer.
+ *
+ * \param[in] physicalDevice  See cvkAllocateBufferMemory
+ * \param[in] device          See cvkAllocateBufferMemory
+ * \param[in] buffer          See cvkAllocateBufferMemory
+ * \param[in] pMemoryNext     See cvkAllocateBufferMemory
+ * \param[in] pAllocator      See cvkAllocateBufferMemory
+ * \param[out] pMemory         Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkAllocateHostVisibleBufferMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkBuffer buffer, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory);
+/**
+ * \brief Creates an image backed by device-local memory.
+ *
+ * \param[in] physicalDevice         See cvkSetupImage
+ * \param[in] device                 See cvkSetupImage
+ * \param[in] pImageNext             See cvkSetupImage
+ * \param[in] flags                  See cvkSetupImage
+ * \param[in] imageType              See cvkSetupImage
+ * \param[in] format                 See cvkSetupImage
+ * \param[in] extent                 See cvkSetupImage
+ * \param[in] mipLevels              See cvkSetupImage
+ * \param[in] arrayLayers            See cvkSetupImage
+ * \param[in] samples                See cvkSetupImage
+ * \param[in] tiling                 See cvkSetupImage
+ * \param[in] usage                  See cvkSetupImage
+ * \param[in] sharingMode            See cvkSetupImage
+ * \param[in] queueFamilyIndexCount  See cvkSetupImage
+ * \param[in] pQueueFamilyIndices    See cvkSetupImage
+ * \param[in] initialLayout          See cvkSetupImage
+ * \param[in] pMemoryNext            See cvkSetupImage
+ * \param[in] pAllocator             See cvkSetupImage
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupDeviceLocalImage(VkPhysicalDevice             physicalDevice,
+                              VkDevice                     device,
+                              const void*                  pImageNext,
+                              VkImageCreateFlags           flags,
+                              VkImageType                  imageType,
+                              VkFormat                     format,
+                              VkExtent3D                   extent,
+                              uint32_t                     mipLevels,
+                              uint32_t                     arrayLayers,
+                              VkSampleCountFlagBits        samples,
+                              VkImageTiling                tiling,
+                              VkImageUsageFlags            usage,
+                              VkSharingMode                sharingMode,
+                              uint32_t                     queueFamilyIndexCount,
+                              const uint32_t*              pQueueFamilyIndices,
+                              VkImageLayout                initialLayout,
+                              const void*                  pMemoryNext,
+                              const VkAllocationCallbacks* pAllocator,
+                              VkImage*                     pImage,
+                              VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a buffer backed by device-local memory.
+ *
+ * \param[in] physicalDevice         See cvkSetupBuffer
+ * \param[in] device                 See cvkSetupBuffer
+ * \param[in] pBufferNext            See cvkSetupBuffer
+ * \param[in] flags                  See cvkSetupBuffer
+ * \param[in] size                   See cvkSetupBuffer
+ * \param[in] usage                  See cvkSetupBuffer
+ * \param[in] sharingMode            See cvkSetupBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupBuffer
+ * \param[in] pMemoryNext            See cvkSetupBuffer
+ * \param[in] pAllocator             See cvkSetupBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupDeviceLocalBuffer(VkPhysicalDevice             physicalDevice,
+                               VkDevice                     device,
+                               const void*                  pBufferNext,
+                               VkBufferCreateFlags          flags,
+                               VkDeviceSize                 size,
+                               VkBufferUsageFlags           usage,
+                               VkSharingMode                sharingMode,
+                               uint32_t                     queueFamilyIndexCount,
+                               const uint32_t*              pQueueFamilyIndices,
+                               const void*                  pMemoryNext,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkBuffer*                    pBuffer,
+                               VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a buffer backed by host-visible, host-coherent memory.
+ *
+ * \param[in] physicalDevice         See cvkSetupBuffer
+ * \param[in] device                 See cvkSetupBuffer
+ * \param[in] pBufferNext            See cvkSetupBuffer
+ * \param[in] flags                  See cvkSetupBuffer
+ * \param[in] size                   See cvkSetupBuffer
+ * \param[in] usage                  See cvkSetupBuffer
+ * \param[in] sharingMode            See cvkSetupBuffer
+ * \param[in] queueFamilyIndexCount  See cvkSetupBuffer
+ * \param[in] pQueueFamilyIndices    See cvkSetupBuffer
+ * \param[in] pMemoryNext            See cvkSetupBuffer
+ * \param[in] pAllocator             See cvkSetupBuffer
+ * \param[out] pBuffer                Receives the created VkBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupHostVisibleBuffer(VkPhysicalDevice             physicalDevice,
+                               VkDevice                     device,
+                               const void*                  pBufferNext,
+                               VkBufferCreateFlags          flags,
+                               VkDeviceSize                 size,
+                               VkBufferUsageFlags           usage,
+                               VkSharingMode                sharingMode,
+                               uint32_t                     queueFamilyIndexCount,
+                               const uint32_t*              pQueueFamilyIndices,
+                               const void*                  pMemoryNext,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkBuffer*                    pBuffer,
+                               VkDeviceMemory*              pMemory);
+/**
+ * \brief 2D form of cvkCreateImage.
+ *
+ * \param[in] device                 See cvkCreateImage
+ * \param[in] pImageNext             See cvkCreateImage
+ * \param[in] flags                  See cvkCreateImage
+ * \param[in] format                 See cvkCreateImage
+ * \param[in] mipLevels              See cvkCreateImage
+ * \param[in] arrayLayers            See cvkCreateImage
+ * \param[in] samples                See cvkCreateImage
+ * \param[in] tiling                 See cvkCreateImage
+ * \param[in] usage                  See cvkCreateImage
+ * \param[in] sharingMode            See cvkCreateImage
+ * \param[in] queueFamilyIndexCount  See cvkCreateImage
+ * \param[in] pQueueFamilyIndices    See cvkCreateImage
+ * \param[in] initialLayout          See cvkCreateImage
+ * \param[in] extent2D               extent without depth
+ * \param[in] pAllocator             See cvkCreateImage
+ * \param[out] pImage                 Receives the created VkImage
+ *
+ * \retval None
+ */
+void cvkCreateImage2D(VkDevice                     device,
+                      const void*                  pImageNext,
+                      VkImageCreateFlags           flags,
+                      VkFormat                     format,
+                      uint32_t                     mipLevels,
+                      uint32_t                     arrayLayers,
+                      VkSampleCountFlagBits        samples,
+                      VkImageTiling                tiling,
+                      VkImageUsageFlags            usage,
+                      VkSharingMode                sharingMode,
+                      uint32_t                     queueFamilyIndexCount,
+                      const uint32_t*              pQueueFamilyIndices,
+                      VkImageLayout                initialLayout,
+                      VkExtent2D                   extent2D,
+                      const VkAllocationCallbacks* pAllocator,
+                      VkImage*                     pImage);
+/**
+ * \brief 2D form of cvkSetupImage.
+ *
+ * \param[in] physicalDevice         See cvkSetupImage
+ * \param[in] device                 See cvkSetupImage
+ * \param[in] pImageNext             See cvkSetupImage
+ * \param[in] flags                  See cvkSetupImage
+ * \param[in] format                 See cvkSetupImage
+ * \param[in] mipLevels              See cvkSetupImage
+ * \param[in] arrayLayers            See cvkSetupImage
+ * \param[in] samples                See cvkSetupImage
+ * \param[in] tiling                 See cvkSetupImage
+ * \param[in] usage                  See cvkSetupImage
+ * \param[in] sharingMode            See cvkSetupImage
+ * \param[in] queueFamilyIndexCount  See cvkSetupImage
+ * \param[in] pQueueFamilyIndices    See cvkSetupImage
+ * \param[in] initialLayout          See cvkSetupImage
+ * \param[in] requiredProperties     See cvkSetupImage
+ * \param[in] extent2D               extent without depth
+ * \param[in] pMemoryNext            See cvkSetupImage
+ * \param[in] pAllocator             See cvkSetupImage
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupImage2D(VkPhysicalDevice             physicalDevice,
+                     VkDevice                     device,
+                     const void*                  pImageNext,
+                     VkImageCreateFlags           flags,
+                     VkFormat                     format,
+                     uint32_t                     mipLevels,
+                     uint32_t                     arrayLayers,
+                     VkSampleCountFlagBits        samples,
+                     VkImageTiling                tiling,
+                     VkImageUsageFlags            usage,
+                     VkSharingMode                sharingMode,
+                     uint32_t                     queueFamilyIndexCount,
+                     const uint32_t*              pQueueFamilyIndices,
+                     VkImageLayout                initialLayout,
+                     VkMemoryPropertyFlags        requiredProperties,
+                     VkExtent2D                   extent2D,
+                     const void*                  pMemoryNext,
+                     const VkAllocationCallbacks* pAllocator,
+                     VkImage*                     pImage,
+                     VkDeviceMemory*              pMemory);
+/**
+ * \brief 2D form of cvkSetupDeviceLocalImage.
+ *
+ * \param[in] physicalDevice         See cvkSetupImage2D
+ * \param[in] device                 See cvkSetupImage2D
+ * \param[in] pImageNext             See cvkSetupImage2D
+ * \param[in] flags                  See cvkSetupImage2D
+ * \param[in] format                 See cvkSetupImage2D
+ * \param[in] mipLevels              See cvkSetupImage2D
+ * \param[in] arrayLayers            See cvkSetupImage2D
+ * \param[in] samples                See cvkSetupImage2D
+ * \param[in] tiling                 See cvkSetupImage2D
+ * \param[in] usage                  See cvkSetupImage2D
+ * \param[in] sharingMode            See cvkSetupImage2D
+ * \param[in] queueFamilyIndexCount  See cvkSetupImage2D
+ * \param[in] pQueueFamilyIndices    See cvkSetupImage2D
+ * \param[in] initialLayout          See cvkSetupImage2D
+ * \param[in] extent2D               See cvkSetupImage2D
+ * \param[in] pMemoryNext            See cvkSetupImage2D
+ * \param[in] pAllocator             See cvkSetupImage2D
+ * \param[out] pImage                 Receives the created VkImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupDeviceLocalImage2D(VkPhysicalDevice             physicalDevice,
+                                VkDevice                     device,
+                                const void*                  pImageNext,
+                                VkImageCreateFlags           flags,
+                                VkFormat                     format,
+                                uint32_t                     mipLevels,
+                                uint32_t                     arrayLayers,
+                                VkSampleCountFlagBits        samples,
+                                VkImageTiling                tiling,
+                                VkImageUsageFlags            usage,
+                                VkSharingMode                sharingMode,
+                                uint32_t                     queueFamilyIndexCount,
+                                const uint32_t*              pQueueFamilyIndices,
+                                VkImageLayout                initialLayout,
+                                VkExtent2D                   extent2D,
+                                const void*                  pMemoryNext,
+                                const VkAllocationCallbacks* pAllocator,
+                                VkImage*                     pImage,
+                                VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a 2D image view with identity component mapping.
+ *
+ * \param[in] device            See cvkCreateImageView
+ * \param[in] pViewNext         See cvkCreateImageView
+ * \param[in] flags             See cvkCreateImageView
+ * \param[in] image             See cvkCreateImageView
+ * \param[in] format            See cvkCreateImageView
+ * \param[in] subresourceRange  See cvkCreateImageView
+ * \param[in] pAllocator        See cvkCreateImageView
+ * \param[out] pView             Receives the created VkImageView
+ *
+ * \retval None
+ */
+void cvkCreateImageView2D(VkDevice                     device,
+                          const void*                  pViewNext,
+                          VkImageViewCreateFlags       flags,
+                          VkImage                      image,
+                          VkFormat                     format,
+                          VkImageSubresourceRange      subresourceRange,
+                          const VkAllocationCallbacks* pAllocator,
+                          VkImageView*                 pView);
+/**
+ * \brief Creates a 2D image view over every mip level and array layer of one aspect.
+ *
+ * \param[in] device      See cvkCreateImageView2D
+ * \param[in] aspectMask  See cvkInitImageSubresourceRange
+ * \param[in] pViewNext   See cvkCreateImageView2D
+ * \param[in] flags       See cvkCreateImageView2D
+ * \param[in] image       See cvkCreateImageView2D
+ * \param[in] format      See cvkCreateImageView2D
+ * \param[in] pAllocator  See cvkCreateImageView2D
+ * \param[out] pView       Receives the created VkImageView
+ *
+ * \retval None
+ */
+void cvkCreateWholeImageView2D(VkDevice                     device,
+                               VkImageAspectFlags           aspectMask,
+                               const void*                  pViewNext,
+                               VkImageViewCreateFlags       flags,
+                               VkImage                      image,
+                               VkFormat                     format,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkImageView*                 pView);
+/**
+ * \brief Retrieves physical device limits.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceProperties
+ * \param[out] pLimits         Receives the limits
+ *
+ * \retval None
+ */
+void cvkGetPhysicalDeviceLimits(VkPhysicalDevice physicalDevice, VkPhysicalDeviceLimits* pLimits);
+/**
+ * \brief Returns the number of nanoseconds per timestamp tick.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceProperties
+ *
+ * \return The float returned by the command.
+ */
+float cvkGetPhysicalDeviceTimestampPeriod(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Returns the Vulkan version supported by the physical device.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceProperties
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceApiVersion(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Returns the physical device at an index of the instance's enumeration.
+ *
+ * \param[in] instance             See cvkEnumeratePhysicalDevices
+ * \param[in] physicalDeviceIndex  Index into the enumeration
+ *
+ * \return The VkPhysicalDevice returned by the command.
+ */
+VkPhysicalDevice cvkGetPhysicalDeviceByIndex(VkInstance instance, uint32_t physicalDeviceIndex);
+/**
+ * \brief Returns the first queue family supporting compute, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceComputeQueueFamilyIndex(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Creates a device with one queue of the first compute queue family.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceComputeQueueFamilyIndex
+ * \param[in] pDeviceNext              See cvkSetupDeviceQueue
+ * \param[in] flags                    See cvkSetupDeviceQueue
+ * \param[in] enabledLayerCount        See cvkSetupDeviceQueue
+ * \param[in] ppEnabledLayerNames      See cvkSetupDeviceQueue
+ * \param[in] enabledExtensionCount    See cvkSetupDeviceQueue
+ * \param[in] ppEnabledExtensionNames  See cvkSetupDeviceQueue
+ * \param[in] pEnabledFeatures         See cvkSetupDeviceQueue
+ * \param[in] pQueueNext               See cvkSetupDeviceQueue
+ * \param[in] queueFlags               See cvkSetupDeviceQueue
+ * \param[in] queuePriority            See cvkSetupDeviceQueue
+ * \param[in] pAllocator               See cvkSetupDeviceQueue
+ * \param[out] pDevice                  Receives the created VkDevice
+ * \param[out] pQueue                   Receives the created VkQueue
+ *
+ * \retval None
+ */
+void cvkSetupComputeDeviceQueue(VkPhysicalDevice                physicalDevice,
+                                const void*                     pDeviceNext,
+                                VkDeviceCreateFlags             flags,
+                                uint32_t                        enabledLayerCount,
+                                const char* const*              ppEnabledLayerNames,
+                                uint32_t                        enabledExtensionCount,
+                                const char* const*              ppEnabledExtensionNames,
+                                const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                const void*                     pQueueNext,
+                                VkDeviceQueueCreateFlags        queueFlags,
+                                float                           queuePriority,
+                                const VkAllocationCallbacks*    pAllocator,
+                                VkDevice*                       pDevice,
+                                VkQueue*                        pQueue);
+/**
+ * \brief Returns the first queue family supporting graphics, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Creates a device with one queue of the first graphics queue family.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceGraphicsQueueFamilyIndex
+ * \param[in] pDeviceNext              See cvkSetupDeviceQueue
+ * \param[in] flags                    See cvkSetupDeviceQueue
+ * \param[in] enabledLayerCount        See cvkSetupDeviceQueue
+ * \param[in] ppEnabledLayerNames      See cvkSetupDeviceQueue
+ * \param[in] enabledExtensionCount    See cvkSetupDeviceQueue
+ * \param[in] ppEnabledExtensionNames  See cvkSetupDeviceQueue
+ * \param[in] pEnabledFeatures         See cvkSetupDeviceQueue
+ * \param[in] pQueueNext               See cvkSetupDeviceQueue
+ * \param[in] queueFlags               See cvkSetupDeviceQueue
+ * \param[in] queuePriority            See cvkSetupDeviceQueue
+ * \param[in] pAllocator               See cvkSetupDeviceQueue
+ * \param[out] pDevice                  Receives the created VkDevice
+ * \param[out] pQueue                   Receives the created VkQueue
+ *
+ * \retval None
+ */
+void cvkSetupGraphicsDeviceQueue(VkPhysicalDevice                physicalDevice,
+                                 const void*                     pDeviceNext,
+                                 VkDeviceCreateFlags             flags,
+                                 uint32_t                        enabledLayerCount,
+                                 const char* const*              ppEnabledLayerNames,
+                                 uint32_t                        enabledExtensionCount,
+                                 const char* const*              ppEnabledExtensionNames,
+                                 const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                 const void*                     pQueueNext,
+                                 VkDeviceQueueCreateFlags        queueFlags,
+                                 float                           queuePriority,
+                                 const VkAllocationCallbacks*    pAllocator,
+                                 VkDevice*                       pDevice,
+                                 VkQueue*                        pQueue);
+/**
+ * \brief Returns the first queue family supporting transfer, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceTransferQueueFamilyIndex(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Creates a device with one queue of the first transfer queue family.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceTransferQueueFamilyIndex
+ * \param[in] pDeviceNext              See cvkSetupDeviceQueue
+ * \param[in] flags                    See cvkSetupDeviceQueue
+ * \param[in] enabledLayerCount        See cvkSetupDeviceQueue
+ * \param[in] ppEnabledLayerNames      See cvkSetupDeviceQueue
+ * \param[in] enabledExtensionCount    See cvkSetupDeviceQueue
+ * \param[in] ppEnabledExtensionNames  See cvkSetupDeviceQueue
+ * \param[in] pEnabledFeatures         See cvkSetupDeviceQueue
+ * \param[in] pQueueNext               See cvkSetupDeviceQueue
+ * \param[in] queueFlags               See cvkSetupDeviceQueue
+ * \param[in] queuePriority            See cvkSetupDeviceQueue
+ * \param[in] pAllocator               See cvkSetupDeviceQueue
+ * \param[out] pDevice                  Receives the created VkDevice
+ * \param[out] pQueue                   Receives the created VkQueue
+ *
+ * \retval None
+ */
+void cvkSetupTransferDeviceQueue(VkPhysicalDevice                physicalDevice,
+                                 const void*                     pDeviceNext,
+                                 VkDeviceCreateFlags             flags,
+                                 uint32_t                        enabledLayerCount,
+                                 const char* const*              ppEnabledLayerNames,
+                                 uint32_t                        enabledExtensionCount,
+                                 const char* const*              ppEnabledExtensionNames,
+                                 const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                                 const void*                     pQueueNext,
+                                 VkDeviceQueueCreateFlags        queueFlags,
+                                 float                           queuePriority,
+                                 const VkAllocationCallbacks*    pAllocator,
+                                 VkDevice*                       pDevice,
+                                 VkQueue*                        pQueue);
+/**
+ * \brief Creates a descriptor set layout with one binding.
+ *
+ * \param[in] device              See cvkCreateDescriptorSetLayout
+ * \param[in] binding             See cvkInitDescriptorSetLayoutBinding
+ * \param[in] descriptorType      See cvkInitDescriptorSetLayoutBinding
+ * \param[in] descriptorCount     See cvkInitDescriptorSetLayoutBinding
+ * \param[in] stageFlags          See cvkInitDescriptorSetLayoutBinding
+ * \param[in] pImmutableSamplers  See cvkInitDescriptorSetLayoutBinding
+ * \param[in] pSetLayoutNext      See cvkCreateDescriptorSetLayout
+ * \param[in] flags               See cvkCreateDescriptorSetLayout
+ * \param[in] pAllocator          See cvkCreateDescriptorSetLayout
+ * \param[out] pSetLayout          Receives the created VkDescriptorSetLayout
+ *
+ * \retval None
+ */
+void cvkCreateSingleBindingDescriptorSetLayout(VkDevice                         device,
+                                               uint32_t                         binding,
+                                               VkDescriptorType                 descriptorType,
+                                               uint32_t                         descriptorCount,
+                                               VkShaderStageFlags               stageFlags,
+                                               const VkSampler*                 pImmutableSamplers,
+                                               const void*                      pSetLayoutNext,
+                                               VkDescriptorSetLayoutCreateFlags flags,
+                                               const VkAllocationCallbacks*     pAllocator,
+                                               VkDescriptorSetLayout*           pSetLayout);
+/**
+ * \brief Creates a descriptor pool holding one descriptor type.
+ *
+ * \param[in] device               See cvkCreateDescriptorPool
+ * \param[in] type                 See cvkInitDescriptorPoolSize
+ * \param[in] descriptorCount      See cvkInitDescriptorPoolSize
+ * \param[in] pDescriptorPoolNext  See cvkCreateDescriptorPool
+ * \param[in] flags                See cvkCreateDescriptorPool
+ * \param[in] maxSets              See cvkCreateDescriptorPool
+ * \param[in] pAllocator           See cvkCreateDescriptorPool
+ * \param[out] pDescriptorPool      Receives the created VkDescriptorPool
+ *
+ * \retval None
+ */
+void cvkCreateSingleTypeDescriptorPool(VkDevice                     device,
+                                       VkDescriptorType             type,
+                                       uint32_t                     descriptorCount,
+                                       const void*                  pDescriptorPoolNext,
+                                       VkDescriptorPoolCreateFlags  flags,
+                                       uint32_t                     maxSets,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       VkDescriptorPool*            pDescriptorPool);
+/**
+ * \brief Allocates one descriptor set.
+ *
+ * \param[in] device              See cvkAllocateDescriptorSets
+ * \param[in] pDescriptorSetNext  See cvkAllocateDescriptorSets
+ * \param[in] descriptorPool      See cvkAllocateDescriptorSets
+ * \param[in] setLayout           Layout of the descriptor set
+ * \param[out] pDescriptorSet      Receives the descriptorSet
+ *
+ * \retval None
+ */
+void cvkAllocateDescriptorSet(VkDevice device, const void* pDescriptorSetNext, VkDescriptorPool descriptorPool, VkDescriptorSetLayout setLayout, VkDescriptorSet* pDescriptorSet);
+/**
+ * \brief Writes one storage image descriptor in the general layout.
+ *
+ * \param[in] device           See cvkUpdateImageDescriptorSet
+ * \param[in] imageView        See cvkUpdateImageDescriptorSet
+ * \param[in] pNext            See cvkUpdateImageDescriptorSet
+ * \param[in] dstSet           See cvkUpdateImageDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateImageDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateImageDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateStorageImageDescriptorSet(VkDevice device, VkImageView imageView, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement);
+/**
+ * \brief Writes one sampled image descriptor.
+ *
+ * \param[in] device           See cvkUpdateImageDescriptorSet
+ * \param[in] imageView        See cvkUpdateImageDescriptorSet
+ * \param[in] imageLayout      See cvkUpdateImageDescriptorSet
+ * \param[in] pNext            See cvkUpdateImageDescriptorSet
+ * \param[in] dstSet           See cvkUpdateImageDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateImageDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateImageDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateSampledImageDescriptorSet(VkDevice device, VkImageView imageView, VkImageLayout imageLayout, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement);
+/**
+ * \brief Writes one combined image sampler descriptor.
+ *
+ * \param[in] device           See cvkUpdateImageDescriptorSet
+ * \param[in] sampler          See cvkUpdateImageDescriptorSet
+ * \param[in] imageView        See cvkUpdateImageDescriptorSet
+ * \param[in] imageLayout      See cvkUpdateImageDescriptorSet
+ * \param[in] pNext            See cvkUpdateImageDescriptorSet
+ * \param[in] dstSet           See cvkUpdateImageDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateImageDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateImageDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateCombinedImageSamplerDescriptorSet(VkDevice        device,
+                                                VkSampler       sampler,
+                                                VkImageView     imageView,
+                                                VkImageLayout   imageLayout,
+                                                const void*     pNext,
+                                                VkDescriptorSet dstSet,
+                                                uint32_t        dstBinding,
+                                                uint32_t        dstArrayElement);
+/**
+ * \brief Writes one storage buffer descriptor.
+ *
+ * \param[in] device           See cvkUpdateBufferDescriptorSet
+ * \param[in] buffer           See cvkUpdateBufferDescriptorSet
+ * \param[in] offset           See cvkUpdateBufferDescriptorSet
+ * \param[in] range            See cvkUpdateBufferDescriptorSet
+ * \param[in] pNext            See cvkUpdateBufferDescriptorSet
+ * \param[in] dstSet           See cvkUpdateBufferDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateBufferDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateBufferDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateStorageBufferDescriptorSet(VkDevice        device,
+                                         VkBuffer        buffer,
+                                         VkDeviceSize    offset,
+                                         VkDeviceSize    range,
+                                         const void*     pNext,
+                                         VkDescriptorSet dstSet,
+                                         uint32_t        dstBinding,
+                                         uint32_t        dstArrayElement);
+/**
+ * \brief Writes one uniform buffer descriptor.
+ *
+ * \param[in] device           See cvkUpdateBufferDescriptorSet
+ * \param[in] buffer           See cvkUpdateBufferDescriptorSet
+ * \param[in] offset           See cvkUpdateBufferDescriptorSet
+ * \param[in] range            See cvkUpdateBufferDescriptorSet
+ * \param[in] pNext            See cvkUpdateBufferDescriptorSet
+ * \param[in] dstSet           See cvkUpdateBufferDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateBufferDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateBufferDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateUniformBufferDescriptorSet(VkDevice        device,
+                                         VkBuffer        buffer,
+                                         VkDeviceSize    offset,
+                                         VkDeviceSize    range,
+                                         const void*     pNext,
+                                         VkDescriptorSet dstSet,
+                                         uint32_t        dstBinding,
+                                         uint32_t        dstArrayElement);
+/**
+ * \brief Writes one storage buffer descriptor covering the whole buffer.
+ *
+ * \param[in] device           See cvkUpdateStorageBufferDescriptorSet
+ * \param[in] buffer           See cvkUpdateStorageBufferDescriptorSet
+ * \param[in] pNext            See cvkUpdateStorageBufferDescriptorSet
+ * \param[in] dstSet           See cvkUpdateStorageBufferDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateStorageBufferDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateStorageBufferDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateWholeStorageBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement);
+/**
+ * \brief Writes one uniform buffer descriptor covering the whole buffer.
+ *
+ * \param[in] device           See cvkUpdateUniformBufferDescriptorSet
+ * \param[in] buffer           See cvkUpdateUniformBufferDescriptorSet
+ * \param[in] pNext            See cvkUpdateUniformBufferDescriptorSet
+ * \param[in] dstSet           See cvkUpdateUniformBufferDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateUniformBufferDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateUniformBufferDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateWholeUniformBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement);
+/**
+ * \brief Records a timestamp at the top of the pipe.
+ *
+ * \param[in] commandBuffer  See cvkCmdWriteTimestamp
+ * \param[in] queryPool      See cvkCmdWriteTimestamp
+ * \param[in] query          See cvkCmdWriteTimestamp
+ *
+ * \retval None
+ */
+void cvkCmdWriteTopOfPipeTimestamp(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
+/**
+ * \brief Records a timestamp at the bottom of the pipe.
+ *
+ * \param[in] commandBuffer  See cvkCmdWriteTimestamp
+ * \param[in] queryPool      See cvkCmdWriteTimestamp
+ * \param[in] query          See cvkCmdWriteTimestamp
+ *
+ * \retval None
+ */
+void cvkCmdWriteBottomOfPipeTimestamp(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query);
+/**
+ * \brief Records one global memory barrier.
+ *
+ * \param[in] commandBuffer    See cvkCmdPipelineBarrier
+ * \param[in] pNext            See cvkInitMemoryBarrier
+ * \param[in] srcAccessMask    See cvkInitMemoryBarrier
+ * \param[in] dstAccessMask    See cvkInitMemoryBarrier
+ * \param[in] srcStageMask     See cvkCmdPipelineBarrier
+ * \param[in] dstStageMask     See cvkCmdPipelineBarrier
+ * \param[in] dependencyFlags  See cvkCmdPipelineBarrier
+ *
+ * \retval None
+ */
+void cvkCmdMemoryBarrier(VkCommandBuffer      commandBuffer,
+                         const void*          pNext,
+                         VkAccessFlags        srcAccessMask,
+                         VkAccessFlags        dstAccessMask,
+                         VkPipelineStageFlags srcStageMask,
+                         VkPipelineStageFlags dstStageMask,
+                         VkDependencyFlags    dependencyFlags);
+/**
+ * \brief Records one global memory barrier with synchronization2.
+ *
+ * \param[in] commandBuffer    See cvkCmdPipelineBarrier2
+ * \param[in] pNext            See cvkInitMemoryBarrier2
+ * \param[in] srcStageMask     See cvkInitMemoryBarrier2
+ * \param[in] srcAccessMask    See cvkInitMemoryBarrier2
+ * \param[in] dstStageMask     See cvkInitMemoryBarrier2
+ * \param[in] dstAccessMask    See cvkInitMemoryBarrier2
+ * \param[in] dependencyFlags  See cvkCmdPipelineBarrier2
+ * \param[in] pDependencyNext  Optional extension chain for VkDependencyInfo, or NULL
+ *
+ * \retval None
+ */
+void cvkCmdMemoryBarrier2(VkCommandBuffer       commandBuffer,
+                          const void*           pNext,
+                          VkPipelineStageFlags2 srcStageMask,
+                          VkAccessFlags2        srcAccessMask,
+                          VkPipelineStageFlags2 dstStageMask,
+                          VkAccessFlags2        dstAccessMask,
+                          VkDependencyFlags     dependencyFlags,
+                          const void*           pDependencyNext);
+/**
+ * \brief Records one image memory barrier with synchronization2, with queue family ownership transfer when the families differ.
+ *
+ * \param[in] commandBuffer        See cvkCmdPipelineBarrier2
+ * \param[in] pNext                See cvkInitImageMemoryBarrier2
+ * \param[in] srcStageMask         See cvkInitImageMemoryBarrier2
+ * \param[in] srcAccessMask        See cvkInitImageMemoryBarrier2
+ * \param[in] dstStageMask         See cvkInitImageMemoryBarrier2
+ * \param[in] dstAccessMask        See cvkInitImageMemoryBarrier2
+ * \param[in] oldLayout            See cvkInitImageMemoryBarrier2
+ * \param[in] newLayout            See cvkInitImageMemoryBarrier2
+ * \param[in] srcQueueFamilyIndex  See cvkInitImageMemoryBarrier2
+ * \param[in] dstQueueFamilyIndex  See cvkInitImageMemoryBarrier2
+ * \param[in] image                See cvkInitImageMemoryBarrier2
+ * \param[in] subresourceRange     See cvkInitImageMemoryBarrier2
+ * \param[in] dependencyFlags      See cvkCmdPipelineBarrier2
+ * \param[in] pDependencyNext      Optional extension chain for VkDependencyInfo, or NULL
+ *
+ * \retval None
+ */
+void cvkCmdImageQueueOwnershipBarrier2(VkCommandBuffer         commandBuffer,
+                                       const void*             pNext,
+                                       VkPipelineStageFlags2   srcStageMask,
+                                       VkAccessFlags2          srcAccessMask,
+                                       VkPipelineStageFlags2   dstStageMask,
+                                       VkAccessFlags2          dstAccessMask,
+                                       VkImageLayout           oldLayout,
+                                       VkImageLayout           newLayout,
+                                       uint32_t                srcQueueFamilyIndex,
+                                       uint32_t                dstQueueFamilyIndex,
+                                       VkImage                 image,
+                                       VkImageSubresourceRange subresourceRange,
+                                       VkDependencyFlags       dependencyFlags,
+                                       const void*             pDependencyNext);
+/**
+ * \brief Records one buffer memory barrier with synchronization2, with queue family ownership transfer when the families differ.
+ *
+ * \param[in] commandBuffer        See cvkCmdPipelineBarrier2
+ * \param[in] pNext                See cvkInitBufferMemoryBarrier2
+ * \param[in] srcStageMask         See cvkInitBufferMemoryBarrier2
+ * \param[in] srcAccessMask        See cvkInitBufferMemoryBarrier2
+ * \param[in] dstStageMask         See cvkInitBufferMemoryBarrier2
+ * \param[in] dstAccessMask        See cvkInitBufferMemoryBarrier2
+ * \param[in] srcQueueFamilyIndex  See cvkInitBufferMemoryBarrier2
+ * \param[in] dstQueueFamilyIndex  See cvkInitBufferMemoryBarrier2
+ * \param[in] buffer               See cvkInitBufferMemoryBarrier2
+ * \param[in] offset               See cvkInitBufferMemoryBarrier2
+ * \param[in] size                 See cvkInitBufferMemoryBarrier2
+ * \param[in] dependencyFlags      See cvkCmdPipelineBarrier2
+ * \param[in] pDependencyNext      Optional extension chain for VkDependencyInfo, or NULL
+ *
+ * \retval None
+ */
+void cvkCmdBufferQueueOwnershipBarrier2(VkCommandBuffer       commandBuffer,
+                                        const void*           pNext,
+                                        VkPipelineStageFlags2 srcStageMask,
+                                        VkAccessFlags2        srcAccessMask,
+                                        VkPipelineStageFlags2 dstStageMask,
+                                        VkAccessFlags2        dstAccessMask,
+                                        uint32_t              srcQueueFamilyIndex,
+                                        uint32_t              dstQueueFamilyIndex,
+                                        VkBuffer              buffer,
+                                        VkDeviceSize          offset,
+                                        VkDeviceSize          size,
+                                        VkDependencyFlags     dependencyFlags,
+                                        const void*           pDependencyNext);
+/**
+ * \brief Records one image memory barrier with synchronization2, without ownership transfer.
+ *
+ * \param[in] commandBuffer     See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] pNext             See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] srcStageMask      See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] srcAccessMask     See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dstStageMask      See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dstAccessMask     See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] oldLayout         See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] newLayout         See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] image             See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] subresourceRange  See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dependencyFlags   See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] pDependencyNext   See cvkCmdImageQueueOwnershipBarrier2
+ *
+ * \retval None
+ */
+void cvkCmdImageBarrier2(VkCommandBuffer         commandBuffer,
+                         const void*             pNext,
+                         VkPipelineStageFlags2   srcStageMask,
+                         VkAccessFlags2          srcAccessMask,
+                         VkPipelineStageFlags2   dstStageMask,
+                         VkAccessFlags2          dstAccessMask,
+                         VkImageLayout           oldLayout,
+                         VkImageLayout           newLayout,
+                         VkImage                 image,
+                         VkImageSubresourceRange subresourceRange,
+                         VkDependencyFlags       dependencyFlags,
+                         const void*             pDependencyNext);
+/**
+ * \brief Records one buffer memory barrier with synchronization2, without ownership transfer.
+ *
+ * \param[in] commandBuffer    See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] pNext            See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] srcStageMask     See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] srcAccessMask    See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dstStageMask     See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dstAccessMask    See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] buffer           See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] offset           See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] size             See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dependencyFlags  See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] pDependencyNext  See cvkCmdBufferQueueOwnershipBarrier2
+ *
+ * \retval None
+ */
+void cvkCmdBufferBarrier2(VkCommandBuffer       commandBuffer,
+                          const void*           pNext,
+                          VkPipelineStageFlags2 srcStageMask,
+                          VkAccessFlags2        srcAccessMask,
+                          VkPipelineStageFlags2 dstStageMask,
+                          VkAccessFlags2        dstAccessMask,
+                          VkBuffer              buffer,
+                          VkDeviceSize          offset,
+                          VkDeviceSize          size,
+                          VkDependencyFlags     dependencyFlags,
+                          const void*           pDependencyNext);
+/**
+ * \brief Records the acquire half of an image ownership transfer from an external owner, with synchronization2.
+ *
+ * \param[in] commandBuffer        See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] pNext                See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dstStageMask         See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dstAccessMask        See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] oldLayout            See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] newLayout            See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dstQueueFamilyIndex  See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] image                See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] subresourceRange     See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dependencyFlags      See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] pDependencyNext      See cvkCmdImageQueueOwnershipBarrier2
+ *
+ * \retval None
+ */
+void cvkCmdAcquireImageFromExternal2(VkCommandBuffer         commandBuffer,
+                                     const void*             pNext,
+                                     VkPipelineStageFlags2   dstStageMask,
+                                     VkAccessFlags2          dstAccessMask,
+                                     VkImageLayout           oldLayout,
+                                     VkImageLayout           newLayout,
+                                     uint32_t                dstQueueFamilyIndex,
+                                     VkImage                 image,
+                                     VkImageSubresourceRange subresourceRange,
+                                     VkDependencyFlags       dependencyFlags,
+                                     const void*             pDependencyNext);
+/**
+ * \brief Records the release half of an image ownership transfer to an external owner, with synchronization2.
+ *
+ * \param[in] commandBuffer        See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] pNext                See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] srcStageMask         See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] srcAccessMask        See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] oldLayout            See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] newLayout            See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] srcQueueFamilyIndex  See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] image                See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] subresourceRange     See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] dependencyFlags      See cvkCmdImageQueueOwnershipBarrier2
+ * \param[in] pDependencyNext      See cvkCmdImageQueueOwnershipBarrier2
+ *
+ * \retval None
+ */
+void cvkCmdReleaseImageToExternal2(VkCommandBuffer         commandBuffer,
+                                   const void*             pNext,
+                                   VkPipelineStageFlags2   srcStageMask,
+                                   VkAccessFlags2          srcAccessMask,
+                                   VkImageLayout           oldLayout,
+                                   VkImageLayout           newLayout,
+                                   uint32_t                srcQueueFamilyIndex,
+                                   VkImage                 image,
+                                   VkImageSubresourceRange subresourceRange,
+                                   VkDependencyFlags       dependencyFlags,
+                                   const void*             pDependencyNext);
+/**
+ * \brief Records the acquire half of a buffer ownership transfer from an external owner, with synchronization2.
+ *
+ * \param[in] commandBuffer        See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] pNext                See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dstStageMask         See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dstAccessMask        See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dstQueueFamilyIndex  See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] buffer               See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] offset               See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] size                 See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dependencyFlags      See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] pDependencyNext      See cvkCmdBufferQueueOwnershipBarrier2
+ *
+ * \retval None
+ */
+void cvkCmdAcquireBufferFromExternal2(VkCommandBuffer       commandBuffer,
+                                      const void*           pNext,
+                                      VkPipelineStageFlags2 dstStageMask,
+                                      VkAccessFlags2        dstAccessMask,
+                                      uint32_t              dstQueueFamilyIndex,
+                                      VkBuffer              buffer,
+                                      VkDeviceSize          offset,
+                                      VkDeviceSize          size,
+                                      VkDependencyFlags     dependencyFlags,
+                                      const void*           pDependencyNext);
+/**
+ * \brief Records the release half of a buffer ownership transfer to an external owner, with synchronization2.
+ *
+ * \param[in] commandBuffer        See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] pNext                See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] srcStageMask         See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] srcAccessMask        See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] srcQueueFamilyIndex  See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] buffer               See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] offset               See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] size                 See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] dependencyFlags      See cvkCmdBufferQueueOwnershipBarrier2
+ * \param[in] pDependencyNext      See cvkCmdBufferQueueOwnershipBarrier2
+ *
+ * \retval None
+ */
+void cvkCmdReleaseBufferToExternal2(VkCommandBuffer       commandBuffer,
+                                    const void*           pNext,
+                                    VkPipelineStageFlags2 srcStageMask,
+                                    VkAccessFlags2        srcAccessMask,
+                                    uint32_t              srcQueueFamilyIndex,
+                                    VkBuffer              buffer,
+                                    VkDeviceSize          offset,
+                                    VkDeviceSize          size,
+                                    VkDependencyFlags     dependencyFlags,
+                                    const void*           pDependencyNext);
+/**
+ * \brief Begins dynamic rendering into one color attachment without resolve, depth, or stencil.
+ *
+ * \param[in] commandBuffer         See cvkCmdBeginRendering
+ * \param[in] imageView             See cvkInitRenderingAttachmentInfo
+ * \param[in] imageLayout           See cvkInitRenderingAttachmentInfo
+ * \param[in] loadOp                See cvkInitRenderingAttachmentInfo
+ * \param[in] storeOp               See cvkInitRenderingAttachmentInfo
+ * \param[in] clearValue            See cvkInitRenderingAttachmentInfo
+ * \param[in] pNext                 See cvkCmdBeginRendering
+ * \param[in] flags                 See cvkCmdBeginRendering
+ * \param[in] renderArea            See cvkCmdBeginRendering
+ * \param[in] layerCount            See cvkCmdBeginRendering
+ * \param[in] viewMask              See cvkCmdBeginRendering
+ * \param[in] pColorAttachmentNext  Optional extension chain for VkRenderingAttachmentInfo, or NULL
+ *
+ * \retval None
+ */
+void cvkCmdBeginColorRendering(VkCommandBuffer     commandBuffer,
+                               VkImageView         imageView,
+                               VkImageLayout       imageLayout,
+                               VkAttachmentLoadOp  loadOp,
+                               VkAttachmentStoreOp storeOp,
+                               VkClearValue        clearValue,
+                               const void*         pNext,
+                               VkRenderingFlags    flags,
+                               VkRect2D            renderArea,
+                               uint32_t            layerCount,
+                               uint32_t            viewMask,
+                               const void*         pColorAttachmentNext);
+/**
+ * \brief Creates a framebuffer with one attachment.
+ *
+ * \param[in] device            See cvkCreateFramebuffer
+ * \param[in] pFramebufferNext  See cvkCreateFramebuffer
+ * \param[in] flags             See cvkCreateFramebuffer
+ * \param[in] renderPass        See cvkCreateFramebuffer
+ * \param[in] width             See cvkCreateFramebuffer
+ * \param[in] height            See cvkCreateFramebuffer
+ * \param[in] layers            See cvkCreateFramebuffer
+ * \param[in] attachment        The framebuffer's only attachment
+ * \param[in] pAllocator        See cvkCreateFramebuffer
+ * \param[out] pFramebuffer      Receives the created VkFramebuffer
+ *
+ * \retval None
+ */
+void cvkCreateSingleAttachmentFramebuffer(VkDevice                     device,
+                                          const void*                  pFramebufferNext,
+                                          VkFramebufferCreateFlags     flags,
+                                          VkRenderPass                 renderPass,
+                                          uint32_t                     width,
+                                          uint32_t                     height,
+                                          uint32_t                     layers,
+                                          VkImageView                  attachment,
+                                          const VkAllocationCallbacks* pAllocator,
+                                          VkFramebuffer*               pFramebuffer);
+/**
+ * \brief Creates a render pass with one color attachment, one graphics subpass, and no dependencies.
+ *
+ * \param[in] device           See cvkCreateRenderPass
+ * \param[in] format           See cvkInitAttachmentDescription
+ * \param[in] samples          See cvkInitAttachmentDescription
+ * \param[in] loadOp           See cvkInitAttachmentDescription
+ * \param[in] storeOp          See cvkInitAttachmentDescription
+ * \param[in] initialLayout    See cvkInitAttachmentDescription
+ * \param[in] finalLayout      See cvkInitAttachmentDescription
+ * \param[in] pRenderPassNext  See cvkCreateRenderPass
+ * \param[in] flags            See cvkCreateRenderPass
+ * \param[in] pAllocator       See cvkCreateRenderPass
+ * \param[out] pRenderPass      Receives the created VkRenderPass
+ *
+ * \retval None
+ */
+void cvkCreateColorRenderPass(VkDevice                     device,
+                              VkFormat                     format,
+                              VkSampleCountFlagBits        samples,
+                              VkAttachmentLoadOp           loadOp,
+                              VkAttachmentStoreOp          storeOp,
+                              VkImageLayout                initialLayout,
+                              VkImageLayout                finalLayout,
+                              const void*                  pRenderPassNext,
+                              VkRenderPassCreateFlags      flags,
+                              const VkAllocationCallbacks* pAllocator,
+                              VkRenderPass*                pRenderPass);
+/**
+ * \brief Acquires the next swapchain image without a timeout.
+ *
+ * \param[in] device       See cvkAcquireNextImage
+ * \param[in] swapchain    See cvkAcquireNextImage
+ * \param[in] semaphore    See cvkAcquireNextImage
+ * \param[in] fence        See cvkAcquireNextImage
+ * \param[out] pImageIndex  Receives the uint32_t
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapchain, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex);
+/**
+ * \brief Reports whether a buffer description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] pExternalBufferInfoNext  See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] flags                    See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] usage                    See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] handleType               See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[out] pDedicatedOnly           Receives the dedicatedOnly
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceExternalBufferImportSupport(VkPhysicalDevice                   physicalDevice,
+                                                         const void*                        pExternalBufferInfoNext,
+                                                         VkBufferCreateFlags                flags,
+                                                         VkBufferUsageFlags                 usage,
+                                                         VkExternalMemoryHandleTypeFlagBits handleType,
+                                                         VkBool32*                          pDedicatedOnly);
+/**
+ * \brief Reports whether a buffer description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] pExternalBufferInfoNext  See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] flags                    See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] usage                    See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[in] handleType               See cvkGetPhysicalDeviceExternalBufferInfo
+ * \param[out] pDedicatedOnly           Receives the dedicatedOnly
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceExternalBufferExportSupport(VkPhysicalDevice                   physicalDevice,
+                                                         const void*                        pExternalBufferInfoNext,
+                                                         VkBufferCreateFlags                flags,
+                                                         VkBufferUsageFlags                 usage,
+                                                         VkExternalMemoryHandleTypeFlagBits handleType,
+                                                         VkBool32*                          pDedicatedOnly);
+/**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
  *
  * \par Details:

@@ -1330,7 +1330,10 @@ class Generator:
                 return
             sret, sparams = self.sigs[fn]
             bind, local = step.get("bind", {}), step.get("local", {})
-            product = next((stem(p.name) for p in sparams if p.is_out and p.text.split()[0].rstrip("*") in self.reg.handles), None)
+            # The step's product names its pNext (pImageNext): the first handle it produces, under
+            # the chain's own name for it when the step's out-parameter is bound to a chain output
+            # (pCommandBuffers bound to pCommandBuffer -> pCommandBufferNext).
+            product = next((stem(bind.get(p.name, p.name)) for p in sparams if p.is_out and p.text.split()[0].rstrip("*") in self.reg.handles), None)
             args = []
             for p in sparams:
                 ptype = p.text.rsplit(" ", 1)[0]
@@ -1356,7 +1359,7 @@ class Generator:
                     args.append(available[p.name])
                 else:
                     pname = p.name
-                    if re.fullmatch(r"p(\w+)?Next", p.name) and product:
+                    if p.name == "pNext" and product:          # an already qualified p<X>Next keeps its name
                         pname = "p" + product[0].upper() + product[1:] + "Next"
                     if pname not in inputs:
                         inputs[pname] = EmittedParam(f"{ptype} {pname}", pname, f"See {fn}", False)
