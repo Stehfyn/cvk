@@ -5387,289 +5387,298 @@ void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFl
 void cvkGetBufferMemoryDedicatedRequirements(VkDevice                       device,
                                              const void*                    pInfoNext,
                                              VkBuffer                       buffer,
-                                             void*                          pDedicatedRequirementsNext,
+                                             void*                          pMemoryDedicatedRequirementsNext,
                                              VkMemoryRequirements2*         pMemoryRequirements,
-                                             VkMemoryDedicatedRequirements* pDedicatedRequirements)
+                                             VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements)
 {
-    VkMemoryDedicatedRequirements dedicated_requirements;
+    VkMemoryDedicatedRequirements memory_dedicated_requirements;
 
-    dedicated_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
-    dedicated_requirements.pNext = pDedicatedRequirementsNext;
-    cvkGetBufferMemoryRequirementsInfo2(device, pInfoNext, buffer, &dedicated_requirements, pMemoryRequirements);
-    (*pDedicatedRequirements) = dedicated_requirements;
+    memory_dedicated_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+    memory_dedicated_requirements.pNext = pMemoryDedicatedRequirementsNext;
+    cvkGetBufferMemoryRequirementsInfo2(device, pInfoNext, buffer, &memory_dedicated_requirements, pMemoryRequirements);
+    (*pMemoryDedicatedRequirements) = memory_dedicated_requirements;
 }
 void cvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice                                             device,
                                                              const void*                                          pCreateInfoNext,
                                                              VkDescriptorSetLayoutCreateFlags                     flags,
                                                              uint32_t                                             bindingCount,
                                                              const VkDescriptorSetLayoutBinding*                  pBindings,
-                                                             void*                                                pVariableDescriptorCountSupportNext,
+                                                             void*                                                pDescriptorSetVariableDescriptorCountLayoutSupportNext,
                                                              VkDescriptorSetLayoutSupport*                        pSupport,
-                                                             VkDescriptorSetVariableDescriptorCountLayoutSupport* pVariableDescriptorCountSupport)
+                                                             VkDescriptorSetVariableDescriptorCountLayoutSupport* pDescriptorSetVariableDescriptorCountLayoutSupport)
 {
-    VkDescriptorSetVariableDescriptorCountLayoutSupport variable_descriptor_count_support;
+    VkDescriptorSetVariableDescriptorCountLayoutSupport descriptor_set_variable_descriptor_count_layout_support;
 
-    variable_descriptor_count_support.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
-    variable_descriptor_count_support.pNext = pVariableDescriptorCountSupportNext;
-    cvkGetDescriptorSetLayoutSupport(device, pCreateInfoNext, flags, bindingCount, pBindings, &variable_descriptor_count_support, pSupport);
-    (*pVariableDescriptorCountSupport) = variable_descriptor_count_support;
+    descriptor_set_variable_descriptor_count_layout_support.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
+    descriptor_set_variable_descriptor_count_layout_support.pNext = pDescriptorSetVariableDescriptorCountLayoutSupportNext;
+    cvkGetDescriptorSetLayoutSupport(device, pCreateInfoNext, flags, bindingCount, pBindings, &descriptor_set_variable_descriptor_count_layout_support, pSupport);
+    (*pDescriptorSetVariableDescriptorCountLayoutSupport) = descriptor_set_variable_descriptor_count_layout_support;
 }
 void cvkGetImageMemoryDedicatedRequirements(VkDevice                       device,
                                             const void*                    pInfoNext,
                                             VkImage                        image,
-                                            void*                          pDedicatedRequirementsNext,
+                                            void*                          pMemoryDedicatedRequirementsNext,
                                             VkMemoryRequirements2*         pMemoryRequirements,
-                                            VkMemoryDedicatedRequirements* pDedicatedRequirements)
+                                            VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements)
 {
-    VkMemoryDedicatedRequirements dedicated_requirements;
+    VkMemoryDedicatedRequirements memory_dedicated_requirements;
 
-    dedicated_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
-    dedicated_requirements.pNext = pDedicatedRequirementsNext;
-    cvkGetImageMemoryRequirementsInfo2(device, pInfoNext, image, &dedicated_requirements, pMemoryRequirements);
-    (*pDedicatedRequirements) = dedicated_requirements;
+    memory_dedicated_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+    memory_dedicated_requirements.pNext = pMemoryDedicatedRequirementsNext;
+    cvkGetImageMemoryRequirementsInfo2(device, pInfoNext, image, &memory_dedicated_requirements, pMemoryRequirements);
+    (*pMemoryDedicatedRequirements) = memory_dedicated_requirements;
 }
 void cvkGetPhysicalDevice16BitStorageFeatures(VkPhysicalDevice                      physicalDevice,
-                                              void*                                 p16BitStorageFeaturesNext,
+                                              void*                                 pPhysicalDevice16BitStorageFeaturesNext,
                                               VkPhysicalDeviceFeatures2*            pFeatures,
-                                              VkPhysicalDevice16BitStorageFeatures* p16BitStorageFeatures)
+                                              VkPhysicalDevice16BitStorageFeatures* pPhysicalDevice16BitStorageFeatures)
 {
-    VkPhysicalDevice16BitStorageFeatures p16_bit_storage_features;
+    VkPhysicalDevice16BitStorageFeatures physical_device16_bit_storage_features;
 
-    p16_bit_storage_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
-    p16_bit_storage_features.pNext = p16BitStorageFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &p16_bit_storage_features, pFeatures);
-    (*p16BitStorageFeatures) = p16_bit_storage_features;
+    physical_device16_bit_storage_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
+    physical_device16_bit_storage_features.pNext = pPhysicalDevice16BitStorageFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device16_bit_storage_features, pFeatures);
+    (*pPhysicalDevice16BitStorageFeatures) = physical_device16_bit_storage_features;
 }
 void cvkGetPhysicalDevice8BitStorageFeatures(VkPhysicalDevice                     physicalDevice,
-                                             void*                                p8BitStorageFeaturesNext,
+                                             void*                                pPhysicalDevice8BitStorageFeaturesNext,
                                              VkPhysicalDeviceFeatures2*           pFeatures,
-                                             VkPhysicalDevice8BitStorageFeatures* p8BitStorageFeatures)
+                                             VkPhysicalDevice8BitStorageFeatures* pPhysicalDevice8BitStorageFeatures)
 {
-    VkPhysicalDevice8BitStorageFeatures p8_bit_storage_features;
+    VkPhysicalDevice8BitStorageFeatures physical_device8_bit_storage_features;
 
-    p8_bit_storage_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
-    p8_bit_storage_features.pNext = p8BitStorageFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &p8_bit_storage_features, pFeatures);
-    (*p8BitStorageFeatures) = p8_bit_storage_features;
+    physical_device8_bit_storage_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
+    physical_device8_bit_storage_features.pNext = pPhysicalDevice8BitStorageFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device8_bit_storage_features, pFeatures);
+    (*pPhysicalDevice8BitStorageFeatures) = physical_device8_bit_storage_features;
 }
 void cvkGetPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDevice                             physicalDevice,
-                                                     void*                                        pBufferDeviceAddressFeaturesNext,
+                                                     void*                                        pPhysicalDeviceBufferDeviceAddressFeaturesNext,
                                                      VkPhysicalDeviceFeatures2*                   pFeatures,
-                                                     VkPhysicalDeviceBufferDeviceAddressFeatures* pBufferDeviceAddressFeatures)
+                                                     VkPhysicalDeviceBufferDeviceAddressFeatures* pPhysicalDeviceBufferDeviceAddressFeatures)
 {
-    VkPhysicalDeviceBufferDeviceAddressFeatures buffer_device_address_features;
+    VkPhysicalDeviceBufferDeviceAddressFeatures physical_device_buffer_device_address_features;
 
-    buffer_device_address_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
-    buffer_device_address_features.pNext = pBufferDeviceAddressFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &buffer_device_address_features, pFeatures);
-    (*pBufferDeviceAddressFeatures) = buffer_device_address_features;
+    physical_device_buffer_device_address_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+    physical_device_buffer_device_address_features.pNext = pPhysicalDeviceBufferDeviceAddressFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_buffer_device_address_features, pFeatures);
+    (*pPhysicalDeviceBufferDeviceAddressFeatures) = physical_device_buffer_device_address_features;
 }
 void cvkGetPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDevice                            physicalDevice,
-                                                    void*                                       pDescriptorIndexingFeaturesNext,
+                                                    void*                                       pPhysicalDeviceDescriptorIndexingFeaturesNext,
                                                     VkPhysicalDeviceFeatures2*                  pFeatures,
-                                                    VkPhysicalDeviceDescriptorIndexingFeatures* pDescriptorIndexingFeatures)
+                                                    VkPhysicalDeviceDescriptorIndexingFeatures* pPhysicalDeviceDescriptorIndexingFeatures)
 {
-    VkPhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features;
+    VkPhysicalDeviceDescriptorIndexingFeatures physical_device_descriptor_indexing_features;
 
-    descriptor_indexing_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-    descriptor_indexing_features.pNext = pDescriptorIndexingFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &descriptor_indexing_features, pFeatures);
-    (*pDescriptorIndexingFeatures) = descriptor_indexing_features;
+    physical_device_descriptor_indexing_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+    physical_device_descriptor_indexing_features.pNext = pPhysicalDeviceDescriptorIndexingFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_descriptor_indexing_features, pFeatures);
+    (*pPhysicalDeviceDescriptorIndexingFeatures) = physical_device_descriptor_indexing_features;
 }
 void cvkGetPhysicalDeviceHostQueryResetFeatures(VkPhysicalDevice                        physicalDevice,
-                                                void*                                   pHostQueryResetFeaturesNext,
+                                                void*                                   pPhysicalDeviceHostQueryResetFeaturesNext,
                                                 VkPhysicalDeviceFeatures2*              pFeatures,
-                                                VkPhysicalDeviceHostQueryResetFeatures* pHostQueryResetFeatures)
+                                                VkPhysicalDeviceHostQueryResetFeatures* pPhysicalDeviceHostQueryResetFeatures)
 {
-    VkPhysicalDeviceHostQueryResetFeatures host_query_reset_features;
+    VkPhysicalDeviceHostQueryResetFeatures physical_device_host_query_reset_features;
 
-    host_query_reset_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
-    host_query_reset_features.pNext = pHostQueryResetFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &host_query_reset_features, pFeatures);
-    (*pHostQueryResetFeatures) = host_query_reset_features;
+    physical_device_host_query_reset_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
+    physical_device_host_query_reset_features.pNext = pPhysicalDeviceHostQueryResetFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_host_query_reset_features, pFeatures);
+    (*pPhysicalDeviceHostQueryResetFeatures) = physical_device_host_query_reset_features;
 }
 void cvkGetPhysicalDeviceImagelessFramebufferFeatures(VkPhysicalDevice                              physicalDevice,
-                                                      void*                                         pImagelessFramebufferFeaturesNext,
+                                                      void*                                         pPhysicalDeviceImagelessFramebufferFeaturesNext,
                                                       VkPhysicalDeviceFeatures2*                    pFeatures,
-                                                      VkPhysicalDeviceImagelessFramebufferFeatures* pImagelessFramebufferFeatures)
+                                                      VkPhysicalDeviceImagelessFramebufferFeatures* pPhysicalDeviceImagelessFramebufferFeatures)
 {
-    VkPhysicalDeviceImagelessFramebufferFeatures imageless_framebuffer_features;
+    VkPhysicalDeviceImagelessFramebufferFeatures physical_device_imageless_framebuffer_features;
 
-    imageless_framebuffer_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
-    imageless_framebuffer_features.pNext = pImagelessFramebufferFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &imageless_framebuffer_features, pFeatures);
-    (*pImagelessFramebufferFeatures) = imageless_framebuffer_features;
+    physical_device_imageless_framebuffer_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
+    physical_device_imageless_framebuffer_features.pNext = pPhysicalDeviceImagelessFramebufferFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_imageless_framebuffer_features, pFeatures);
+    (*pPhysicalDeviceImagelessFramebufferFeatures) = physical_device_imageless_framebuffer_features;
 }
-void cvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice physicalDevice, void* pMultiviewFeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceMultiviewFeatures* pMultiviewFeatures)
+void cvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice                   physicalDevice,
+                                           void*                              pPhysicalDeviceMultiviewFeaturesNext,
+                                           VkPhysicalDeviceFeatures2*         pFeatures,
+                                           VkPhysicalDeviceMultiviewFeatures* pPhysicalDeviceMultiviewFeatures)
 {
-    VkPhysicalDeviceMultiviewFeatures multiview_features;
+    VkPhysicalDeviceMultiviewFeatures physical_device_multiview_features;
 
-    multiview_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
-    multiview_features.pNext = pMultiviewFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &multiview_features, pFeatures);
-    (*pMultiviewFeatures) = multiview_features;
+    physical_device_multiview_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
+    physical_device_multiview_features.pNext = pPhysicalDeviceMultiviewFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_multiview_features, pFeatures);
+    (*pPhysicalDeviceMultiviewFeatures) = physical_device_multiview_features;
 }
 void cvkGetPhysicalDeviceProtectedMemoryFeatures(VkPhysicalDevice                         physicalDevice,
-                                                 void*                                    pProtectedMemoryFeaturesNext,
+                                                 void*                                    pPhysicalDeviceProtectedMemoryFeaturesNext,
                                                  VkPhysicalDeviceFeatures2*               pFeatures,
-                                                 VkPhysicalDeviceProtectedMemoryFeatures* pProtectedMemoryFeatures)
+                                                 VkPhysicalDeviceProtectedMemoryFeatures* pPhysicalDeviceProtectedMemoryFeatures)
 {
-    VkPhysicalDeviceProtectedMemoryFeatures protected_memory_features;
+    VkPhysicalDeviceProtectedMemoryFeatures physical_device_protected_memory_features;
 
-    protected_memory_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
-    protected_memory_features.pNext = pProtectedMemoryFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &protected_memory_features, pFeatures);
-    (*pProtectedMemoryFeatures) = protected_memory_features;
+    physical_device_protected_memory_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
+    physical_device_protected_memory_features.pNext = pPhysicalDeviceProtectedMemoryFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_protected_memory_features, pFeatures);
+    (*pPhysicalDeviceProtectedMemoryFeatures) = physical_device_protected_memory_features;
 }
 void cvkGetPhysicalDeviceSamplerYcbcrConversionFeatures(VkPhysicalDevice                                physicalDevice,
-                                                        void*                                           pSamplerYcbcrConversionFeaturesNext,
+                                                        void*                                           pPhysicalDeviceSamplerYcbcrConversionFeaturesNext,
                                                         VkPhysicalDeviceFeatures2*                      pFeatures,
-                                                        VkPhysicalDeviceSamplerYcbcrConversionFeatures* pSamplerYcbcrConversionFeatures)
+                                                        VkPhysicalDeviceSamplerYcbcrConversionFeatures* pPhysicalDeviceSamplerYcbcrConversionFeatures)
 {
-    VkPhysicalDeviceSamplerYcbcrConversionFeatures sampler_ycbcr_conversion_features;
+    VkPhysicalDeviceSamplerYcbcrConversionFeatures physical_device_sampler_ycbcr_conversion_features;
 
-    sampler_ycbcr_conversion_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
-    sampler_ycbcr_conversion_features.pNext = pSamplerYcbcrConversionFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &sampler_ycbcr_conversion_features, pFeatures);
-    (*pSamplerYcbcrConversionFeatures) = sampler_ycbcr_conversion_features;
+    physical_device_sampler_ycbcr_conversion_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
+    physical_device_sampler_ycbcr_conversion_features.pNext = pPhysicalDeviceSamplerYcbcrConversionFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_sampler_ycbcr_conversion_features, pFeatures);
+    (*pPhysicalDeviceSamplerYcbcrConversionFeatures) = physical_device_sampler_ycbcr_conversion_features;
 }
 void cvkGetPhysicalDeviceScalarBlockLayoutFeatures(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pScalarBlockLayoutFeaturesNext,
+                                                   void*                                      pPhysicalDeviceScalarBlockLayoutFeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceScalarBlockLayoutFeatures* pScalarBlockLayoutFeatures)
+                                                   VkPhysicalDeviceScalarBlockLayoutFeatures* pPhysicalDeviceScalarBlockLayoutFeatures)
 {
-    VkPhysicalDeviceScalarBlockLayoutFeatures scalar_block_layout_features;
+    VkPhysicalDeviceScalarBlockLayoutFeatures physical_device_scalar_block_layout_features;
 
-    scalar_block_layout_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
-    scalar_block_layout_features.pNext = pScalarBlockLayoutFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &scalar_block_layout_features, pFeatures);
-    (*pScalarBlockLayoutFeatures) = scalar_block_layout_features;
+    physical_device_scalar_block_layout_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
+    physical_device_scalar_block_layout_features.pNext = pPhysicalDeviceScalarBlockLayoutFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_scalar_block_layout_features, pFeatures);
+    (*pPhysicalDeviceScalarBlockLayoutFeatures) = physical_device_scalar_block_layout_features;
 }
 void cvkGetPhysicalDeviceSeparateDepthStencilLayoutsFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                             void*                                                pSeparateDepthStencilLayoutsFeaturesNext,
+                                                             void*                                                pPhysicalDeviceSeparateDepthStencilLayoutsFeaturesNext,
                                                              VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                             VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pSeparateDepthStencilLayoutsFeatures)
+                                                             VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pPhysicalDeviceSeparateDepthStencilLayoutsFeatures)
 {
-    VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures separate_depth_stencil_layouts_features;
+    VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures physical_device_separate_depth_stencil_layouts_features;
 
-    separate_depth_stencil_layouts_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
-    separate_depth_stencil_layouts_features.pNext = pSeparateDepthStencilLayoutsFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &separate_depth_stencil_layouts_features, pFeatures);
-    (*pSeparateDepthStencilLayoutsFeatures) = separate_depth_stencil_layouts_features;
+    physical_device_separate_depth_stencil_layouts_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
+    physical_device_separate_depth_stencil_layouts_features.pNext = pPhysicalDeviceSeparateDepthStencilLayoutsFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_separate_depth_stencil_layouts_features, pFeatures);
+    (*pPhysicalDeviceSeparateDepthStencilLayoutsFeatures) = physical_device_separate_depth_stencil_layouts_features;
 }
 void cvkGetPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pShaderAtomicInt64FeaturesNext,
+                                                   void*                                      pPhysicalDeviceShaderAtomicInt64FeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceShaderAtomicInt64Features* pShaderAtomicInt64Features)
+                                                   VkPhysicalDeviceShaderAtomicInt64Features* pPhysicalDeviceShaderAtomicInt64Features)
 {
-    VkPhysicalDeviceShaderAtomicInt64Features shader_atomic_int64_features;
+    VkPhysicalDeviceShaderAtomicInt64Features physical_device_shader_atomic_int64_features;
 
-    shader_atomic_int64_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
-    shader_atomic_int64_features.pNext = pShaderAtomicInt64FeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &shader_atomic_int64_features, pFeatures);
-    (*pShaderAtomicInt64Features) = shader_atomic_int64_features;
+    physical_device_shader_atomic_int64_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
+    physical_device_shader_atomic_int64_features.pNext = pPhysicalDeviceShaderAtomicInt64FeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_shader_atomic_int64_features, pFeatures);
+    (*pPhysicalDeviceShaderAtomicInt64Features) = physical_device_shader_atomic_int64_features;
 }
 void cvkGetPhysicalDeviceShaderDrawParametersFeatures(VkPhysicalDevice                              physicalDevice,
-                                                      void*                                         pShaderDrawParametersFeaturesNext,
+                                                      void*                                         pPhysicalDeviceShaderDrawParametersFeaturesNext,
                                                       VkPhysicalDeviceFeatures2*                    pFeatures,
-                                                      VkPhysicalDeviceShaderDrawParametersFeatures* pShaderDrawParametersFeatures)
+                                                      VkPhysicalDeviceShaderDrawParametersFeatures* pPhysicalDeviceShaderDrawParametersFeatures)
 {
-    VkPhysicalDeviceShaderDrawParametersFeatures shader_draw_parameters_features;
+    VkPhysicalDeviceShaderDrawParametersFeatures physical_device_shader_draw_parameters_features;
 
-    shader_draw_parameters_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
-    shader_draw_parameters_features.pNext = pShaderDrawParametersFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &shader_draw_parameters_features, pFeatures);
-    (*pShaderDrawParametersFeatures) = shader_draw_parameters_features;
+    physical_device_shader_draw_parameters_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+    physical_device_shader_draw_parameters_features.pNext = pPhysicalDeviceShaderDrawParametersFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_shader_draw_parameters_features, pFeatures);
+    (*pPhysicalDeviceShaderDrawParametersFeatures) = physical_device_shader_draw_parameters_features;
 }
 void cvkGetPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pShaderFloat16Int8FeaturesNext,
+                                                   void*                                      pPhysicalDeviceShaderFloat16Int8FeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceShaderFloat16Int8Features* pShaderFloat16Int8Features)
+                                                   VkPhysicalDeviceShaderFloat16Int8Features* pPhysicalDeviceShaderFloat16Int8Features)
 {
-    VkPhysicalDeviceShaderFloat16Int8Features shader_float16_int8_features;
+    VkPhysicalDeviceShaderFloat16Int8Features physical_device_shader_float16_int8_features;
 
-    shader_float16_int8_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
-    shader_float16_int8_features.pNext = pShaderFloat16Int8FeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &shader_float16_int8_features, pFeatures);
-    (*pShaderFloat16Int8Features) = shader_float16_int8_features;
+    physical_device_shader_float16_int8_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
+    physical_device_shader_float16_int8_features.pNext = pPhysicalDeviceShaderFloat16Int8FeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_shader_float16_int8_features, pFeatures);
+    (*pPhysicalDeviceShaderFloat16Int8Features) = physical_device_shader_float16_int8_features;
 }
 void cvkGetPhysicalDeviceShaderSubgroupExtendedTypesFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                             void*                                                pShaderSubgroupExtendedTypesFeaturesNext,
+                                                             void*                                                pPhysicalDeviceShaderSubgroupExtendedTypesFeaturesNext,
                                                              VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                             VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pShaderSubgroupExtendedTypesFeatures)
+                                                             VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pPhysicalDeviceShaderSubgroupExtendedTypesFeatures)
 {
-    VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures shader_subgroup_extended_types_features;
+    VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures physical_device_shader_subgroup_extended_types_features;
 
-    shader_subgroup_extended_types_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
-    shader_subgroup_extended_types_features.pNext = pShaderSubgroupExtendedTypesFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &shader_subgroup_extended_types_features, pFeatures);
-    (*pShaderSubgroupExtendedTypesFeatures) = shader_subgroup_extended_types_features;
+    physical_device_shader_subgroup_extended_types_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
+    physical_device_shader_subgroup_extended_types_features.pNext = pPhysicalDeviceShaderSubgroupExtendedTypesFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_shader_subgroup_extended_types_features, pFeatures);
+    (*pPhysicalDeviceShaderSubgroupExtendedTypesFeatures) = physical_device_shader_subgroup_extended_types_features;
 }
 void cvkGetPhysicalDeviceTimelineSemaphoreFeatures(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pTimelineSemaphoreFeaturesNext,
+                                                   void*                                      pPhysicalDeviceTimelineSemaphoreFeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceTimelineSemaphoreFeatures* pTimelineSemaphoreFeatures)
+                                                   VkPhysicalDeviceTimelineSemaphoreFeatures* pPhysicalDeviceTimelineSemaphoreFeatures)
 {
-    VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features;
+    VkPhysicalDeviceTimelineSemaphoreFeatures physical_device_timeline_semaphore_features;
 
-    timeline_semaphore_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
-    timeline_semaphore_features.pNext = pTimelineSemaphoreFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &timeline_semaphore_features, pFeatures);
-    (*pTimelineSemaphoreFeatures) = timeline_semaphore_features;
+    physical_device_timeline_semaphore_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
+    physical_device_timeline_semaphore_features.pNext = pPhysicalDeviceTimelineSemaphoreFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_timeline_semaphore_features, pFeatures);
+    (*pPhysicalDeviceTimelineSemaphoreFeatures) = physical_device_timeline_semaphore_features;
 }
 void cvkGetPhysicalDeviceUniformBufferStandardLayoutFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                             void*                                                pUniformBufferStandardLayoutFeaturesNext,
+                                                             void*                                                pPhysicalDeviceUniformBufferStandardLayoutFeaturesNext,
                                                              VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                             VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pUniformBufferStandardLayoutFeatures)
+                                                             VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pPhysicalDeviceUniformBufferStandardLayoutFeatures)
 {
-    VkPhysicalDeviceUniformBufferStandardLayoutFeatures uniform_buffer_standard_layout_features;
+    VkPhysicalDeviceUniformBufferStandardLayoutFeatures physical_device_uniform_buffer_standard_layout_features;
 
-    uniform_buffer_standard_layout_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
-    uniform_buffer_standard_layout_features.pNext = pUniformBufferStandardLayoutFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &uniform_buffer_standard_layout_features, pFeatures);
-    (*pUniformBufferStandardLayoutFeatures) = uniform_buffer_standard_layout_features;
+    physical_device_uniform_buffer_standard_layout_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
+    physical_device_uniform_buffer_standard_layout_features.pNext = pPhysicalDeviceUniformBufferStandardLayoutFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_uniform_buffer_standard_layout_features, pFeatures);
+    (*pPhysicalDeviceUniformBufferStandardLayoutFeatures) = physical_device_uniform_buffer_standard_layout_features;
 }
 void cvkGetPhysicalDeviceVariablePointersFeatures(VkPhysicalDevice                          physicalDevice,
-                                                  void*                                     pVariablePointersFeaturesNext,
+                                                  void*                                     pPhysicalDeviceVariablePointersFeaturesNext,
                                                   VkPhysicalDeviceFeatures2*                pFeatures,
-                                                  VkPhysicalDeviceVariablePointersFeatures* pVariablePointersFeatures)
+                                                  VkPhysicalDeviceVariablePointersFeatures* pPhysicalDeviceVariablePointersFeatures)
 {
-    VkPhysicalDeviceVariablePointersFeatures variable_pointers_features;
+    VkPhysicalDeviceVariablePointersFeatures physical_device_variable_pointers_features;
 
-    variable_pointers_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
-    variable_pointers_features.pNext = pVariablePointersFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &variable_pointers_features, pFeatures);
-    (*pVariablePointersFeatures) = variable_pointers_features;
+    physical_device_variable_pointers_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
+    physical_device_variable_pointers_features.pNext = pPhysicalDeviceVariablePointersFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_variable_pointers_features, pFeatures);
+    (*pPhysicalDeviceVariablePointersFeatures) = physical_device_variable_pointers_features;
 }
-void cvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice physicalDevice, void* pVulkan11FeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceVulkan11Features* pVulkan11Features)
+void cvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice                  physicalDevice,
+                                          void*                             pPhysicalDeviceVulkan11FeaturesNext,
+                                          VkPhysicalDeviceFeatures2*        pFeatures,
+                                          VkPhysicalDeviceVulkan11Features* pPhysicalDeviceVulkan11Features)
 {
-    VkPhysicalDeviceVulkan11Features vulkan11_features;
+    VkPhysicalDeviceVulkan11Features physical_device_vulkan11_features;
 
-    vulkan11_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-    vulkan11_features.pNext = pVulkan11FeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &vulkan11_features, pFeatures);
-    (*pVulkan11Features) = vulkan11_features;
+    physical_device_vulkan11_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+    physical_device_vulkan11_features.pNext = pPhysicalDeviceVulkan11FeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_vulkan11_features, pFeatures);
+    (*pPhysicalDeviceVulkan11Features) = physical_device_vulkan11_features;
 }
-void cvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice physicalDevice, void* pVulkan12FeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceVulkan12Features* pVulkan12Features)
+void cvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice                  physicalDevice,
+                                          void*                             pPhysicalDeviceVulkan12FeaturesNext,
+                                          VkPhysicalDeviceFeatures2*        pFeatures,
+                                          VkPhysicalDeviceVulkan12Features* pPhysicalDeviceVulkan12Features)
 {
-    VkPhysicalDeviceVulkan12Features vulkan12_features;
+    VkPhysicalDeviceVulkan12Features physical_device_vulkan12_features;
 
-    vulkan12_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-    vulkan12_features.pNext = pVulkan12FeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &vulkan12_features, pFeatures);
-    (*pVulkan12Features) = vulkan12_features;
+    physical_device_vulkan12_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    physical_device_vulkan12_features.pNext = pPhysicalDeviceVulkan12FeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_vulkan12_features, pFeatures);
+    (*pPhysicalDeviceVulkan12Features) = physical_device_vulkan12_features;
 }
 void cvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pVulkanMemoryModelFeaturesNext,
+                                                   void*                                      pPhysicalDeviceVulkanMemoryModelFeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceVulkanMemoryModelFeatures* pVulkanMemoryModelFeatures)
+                                                   VkPhysicalDeviceVulkanMemoryModelFeatures* pPhysicalDeviceVulkanMemoryModelFeatures)
 {
-    VkPhysicalDeviceVulkanMemoryModelFeatures vulkan_memory_model_features;
+    VkPhysicalDeviceVulkanMemoryModelFeatures physical_device_vulkan_memory_model_features;
 
-    vulkan_memory_model_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
-    vulkan_memory_model_features.pNext = pVulkanMemoryModelFeaturesNext;
-    cvkGetPhysicalDeviceFeatures2(physicalDevice, &vulkan_memory_model_features, pFeatures);
-    (*pVulkanMemoryModelFeatures) = vulkan_memory_model_features;
+    physical_device_vulkan_memory_model_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
+    physical_device_vulkan_memory_model_features.pNext = pPhysicalDeviceVulkanMemoryModelFeaturesNext;
+    cvkGetPhysicalDeviceFeatures2(physicalDevice, &physical_device_vulkan_memory_model_features, pFeatures);
+    (*pPhysicalDeviceVulkanMemoryModelFeatures) = physical_device_vulkan_memory_model_features;
 }
 void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2(VkPhysicalDevice                       physicalDevice,
                                                           VkFormat                               format,
@@ -5704,16 +5713,16 @@ void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice         
                                                        VkImageTiling                    tiling,
                                                        VkImageUsageFlags                usage,
                                                        VkImageCreateFlags               flags,
-                                                       void*                            pExternalPropertiesNext,
+                                                       void*                            pExternalImageFormatPropertiesNext,
                                                        VkImageFormatProperties2*        pImageFormatProperties,
-                                                       VkExternalImageFormatProperties* pExternalProperties)
+                                                       VkExternalImageFormatProperties* pExternalImageFormatProperties)
 {
-    VkExternalImageFormatProperties external_properties;
+    VkExternalImageFormatProperties external_image_format_properties;
 
-    external_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
-    external_properties.pNext = pExternalPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &external_properties, pImageFormatProperties);
-    (*pExternalProperties) = external_properties;
+    external_image_format_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
+    external_image_format_properties.pNext = pExternalImageFormatPropertiesNext;
+    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &external_image_format_properties, pImageFormatProperties);
+    (*pExternalImageFormatProperties) = external_image_format_properties;
 }
 void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalDevice                               physicalDevice,
                                                                      const void*                                    pImageFormatInfoNext,
@@ -5722,190 +5731,196 @@ void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalD
                                                                      VkImageTiling                                  tiling,
                                                                      VkImageUsageFlags                              usage,
                                                                      VkImageCreateFlags                             flags,
-                                                                     void*                                          pSamplerYcbcrConversionPropertiesNext,
+                                                                     void*                                          pSamplerYcbcrConversionImageFormatPropertiesNext,
                                                                      VkImageFormatProperties2*                      pImageFormatProperties,
-                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionProperties)
+                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties)
 {
-    VkSamplerYcbcrConversionImageFormatProperties sampler_ycbcr_conversion_properties;
+    VkSamplerYcbcrConversionImageFormatProperties sampler_ycbcr_conversion_image_format_properties;
 
-    sampler_ycbcr_conversion_properties.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
-    sampler_ycbcr_conversion_properties.pNext = pSamplerYcbcrConversionPropertiesNext;
-    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &sampler_ycbcr_conversion_properties, pImageFormatProperties);
-    (*pSamplerYcbcrConversionProperties) = sampler_ycbcr_conversion_properties;
+    sampler_ycbcr_conversion_image_format_properties.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
+    sampler_ycbcr_conversion_image_format_properties.pNext = pSamplerYcbcrConversionImageFormatPropertiesNext;
+    cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &sampler_ycbcr_conversion_image_format_properties, pImageFormatProperties);
+    (*pSamplerYcbcrConversionImageFormatProperties) = sampler_ycbcr_conversion_image_format_properties;
 }
 void cvkGetPhysicalDeviceDepthStencilResolveProperties(VkPhysicalDevice                               physicalDevice,
-                                                       void*                                          pDepthStencilResolvePropertiesNext,
+                                                       void*                                          pPhysicalDeviceDepthStencilResolvePropertiesNext,
                                                        VkPhysicalDeviceProperties2*                   pProperties,
-                                                       VkPhysicalDeviceDepthStencilResolveProperties* pDepthStencilResolveProperties)
+                                                       VkPhysicalDeviceDepthStencilResolveProperties* pPhysicalDeviceDepthStencilResolveProperties)
 {
-    VkPhysicalDeviceDepthStencilResolveProperties depth_stencil_resolve_properties;
+    VkPhysicalDeviceDepthStencilResolveProperties physical_device_depth_stencil_resolve_properties;
 
-    depth_stencil_resolve_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
-    depth_stencil_resolve_properties.pNext = pDepthStencilResolvePropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &depth_stencil_resolve_properties, pProperties);
-    (*pDepthStencilResolveProperties) = depth_stencil_resolve_properties;
+    physical_device_depth_stencil_resolve_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
+    physical_device_depth_stencil_resolve_properties.pNext = pPhysicalDeviceDepthStencilResolvePropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_depth_stencil_resolve_properties, pProperties);
+    (*pPhysicalDeviceDepthStencilResolveProperties) = physical_device_depth_stencil_resolve_properties;
 }
 void cvkGetPhysicalDeviceDescriptorIndexingProperties(VkPhysicalDevice                              physicalDevice,
-                                                      void*                                         pDescriptorIndexingPropertiesNext,
+                                                      void*                                         pPhysicalDeviceDescriptorIndexingPropertiesNext,
                                                       VkPhysicalDeviceProperties2*                  pProperties,
-                                                      VkPhysicalDeviceDescriptorIndexingProperties* pDescriptorIndexingProperties)
+                                                      VkPhysicalDeviceDescriptorIndexingProperties* pPhysicalDeviceDescriptorIndexingProperties)
 {
-    VkPhysicalDeviceDescriptorIndexingProperties descriptor_indexing_properties;
+    VkPhysicalDeviceDescriptorIndexingProperties physical_device_descriptor_indexing_properties;
 
-    descriptor_indexing_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
-    descriptor_indexing_properties.pNext = pDescriptorIndexingPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &descriptor_indexing_properties, pProperties);
-    (*pDescriptorIndexingProperties) = descriptor_indexing_properties;
+    physical_device_descriptor_indexing_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
+    physical_device_descriptor_indexing_properties.pNext = pPhysicalDeviceDescriptorIndexingPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_descriptor_indexing_properties, pProperties);
+    (*pPhysicalDeviceDescriptorIndexingProperties) = physical_device_descriptor_indexing_properties;
 }
-void cvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice physicalDevice, void* pDriverPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceDriverProperties* pDriverProperties)
+void cvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice                  physicalDevice,
+                                          void*                             pPhysicalDeviceDriverPropertiesNext,
+                                          VkPhysicalDeviceProperties2*      pProperties,
+                                          VkPhysicalDeviceDriverProperties* pPhysicalDeviceDriverProperties)
 {
-    VkPhysicalDeviceDriverProperties driver_properties;
+    VkPhysicalDeviceDriverProperties physical_device_driver_properties;
 
-    driver_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
-    driver_properties.pNext = pDriverPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &driver_properties, pProperties);
-    (*pDriverProperties) = driver_properties;
+    physical_device_driver_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
+    physical_device_driver_properties.pNext = pPhysicalDeviceDriverPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_driver_properties, pProperties);
+    (*pPhysicalDeviceDriverProperties) = physical_device_driver_properties;
 }
 void cvkGetPhysicalDeviceFloatControlsProperties(VkPhysicalDevice                         physicalDevice,
-                                                 void*                                    pFloatControlsPropertiesNext,
+                                                 void*                                    pPhysicalDeviceFloatControlsPropertiesNext,
                                                  VkPhysicalDeviceProperties2*             pProperties,
-                                                 VkPhysicalDeviceFloatControlsProperties* pFloatControlsProperties)
+                                                 VkPhysicalDeviceFloatControlsProperties* pPhysicalDeviceFloatControlsProperties)
 {
-    VkPhysicalDeviceFloatControlsProperties float_controls_properties;
+    VkPhysicalDeviceFloatControlsProperties physical_device_float_controls_properties;
 
-    float_controls_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
-    float_controls_properties.pNext = pFloatControlsPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &float_controls_properties, pProperties);
-    (*pFloatControlsProperties) = float_controls_properties;
+    physical_device_float_controls_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
+    physical_device_float_controls_properties.pNext = pPhysicalDeviceFloatControlsPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_float_controls_properties, pProperties);
+    (*pPhysicalDeviceFloatControlsProperties) = physical_device_float_controls_properties;
 }
-void cvkGetPhysicalDeviceIDProperties(VkPhysicalDevice physicalDevice, void* pIDPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceIDProperties* pIDProperties)
+void cvkGetPhysicalDeviceIDProperties(VkPhysicalDevice              physicalDevice,
+                                      void*                         pPhysicalDeviceIDPropertiesNext,
+                                      VkPhysicalDeviceProperties2*  pProperties,
+                                      VkPhysicalDeviceIDProperties* pPhysicalDeviceIDProperties)
 {
-    VkPhysicalDeviceIDProperties id_properties;
+    VkPhysicalDeviceIDProperties physical_device_id_properties;
 
-    id_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
-    id_properties.pNext = pIDPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &id_properties, pProperties);
-    (*pIDProperties) = id_properties;
+    physical_device_id_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
+    physical_device_id_properties.pNext = pPhysicalDeviceIDPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_id_properties, pProperties);
+    (*pPhysicalDeviceIDProperties) = physical_device_id_properties;
 }
 void cvkGetPhysicalDeviceMaintenance3Properties(VkPhysicalDevice                        physicalDevice,
-                                                void*                                   pMaintenance3PropertiesNext,
+                                                void*                                   pPhysicalDeviceMaintenance3PropertiesNext,
                                                 VkPhysicalDeviceProperties2*            pProperties,
-                                                VkPhysicalDeviceMaintenance3Properties* pMaintenance3Properties)
+                                                VkPhysicalDeviceMaintenance3Properties* pPhysicalDeviceMaintenance3Properties)
 {
-    VkPhysicalDeviceMaintenance3Properties maintenance3_properties;
+    VkPhysicalDeviceMaintenance3Properties physical_device_maintenance3_properties;
 
-    maintenance3_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
-    maintenance3_properties.pNext = pMaintenance3PropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &maintenance3_properties, pProperties);
-    (*pMaintenance3Properties) = maintenance3_properties;
+    physical_device_maintenance3_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
+    physical_device_maintenance3_properties.pNext = pPhysicalDeviceMaintenance3PropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_maintenance3_properties, pProperties);
+    (*pPhysicalDeviceMaintenance3Properties) = physical_device_maintenance3_properties;
 }
 void cvkGetPhysicalDeviceMultiviewProperties(VkPhysicalDevice                     physicalDevice,
-                                             void*                                pMultiviewPropertiesNext,
+                                             void*                                pPhysicalDeviceMultiviewPropertiesNext,
                                              VkPhysicalDeviceProperties2*         pProperties,
-                                             VkPhysicalDeviceMultiviewProperties* pMultiviewProperties)
+                                             VkPhysicalDeviceMultiviewProperties* pPhysicalDeviceMultiviewProperties)
 {
-    VkPhysicalDeviceMultiviewProperties multiview_properties;
+    VkPhysicalDeviceMultiviewProperties physical_device_multiview_properties;
 
-    multiview_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
-    multiview_properties.pNext = pMultiviewPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &multiview_properties, pProperties);
-    (*pMultiviewProperties) = multiview_properties;
+    physical_device_multiview_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
+    physical_device_multiview_properties.pNext = pPhysicalDeviceMultiviewPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_multiview_properties, pProperties);
+    (*pPhysicalDeviceMultiviewProperties) = physical_device_multiview_properties;
 }
 void cvkGetPhysicalDevicePCIBusInfoProperties(VkPhysicalDevice                         physicalDevice,
-                                              void*                                    pPCIBusInfoPropertiesNext,
+                                              void*                                    pPhysicalDevicePCIBusInfoPropertiesNext,
                                               VkPhysicalDeviceProperties2*             pProperties,
-                                              VkPhysicalDevicePCIBusInfoPropertiesEXT* pPCIBusInfoProperties)
+                                              VkPhysicalDevicePCIBusInfoPropertiesEXT* pPhysicalDevicePCIBusInfoProperties)
 {
-    VkPhysicalDevicePCIBusInfoPropertiesEXT pci_bus_info_properties;
+    VkPhysicalDevicePCIBusInfoPropertiesEXT physical_device_pci_bus_info_properties;
 
-    pci_bus_info_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
-    pci_bus_info_properties.pNext = pPCIBusInfoPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &pci_bus_info_properties, pProperties);
-    (*pPCIBusInfoProperties) = pci_bus_info_properties;
+    physical_device_pci_bus_info_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
+    physical_device_pci_bus_info_properties.pNext = pPhysicalDevicePCIBusInfoPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_pci_bus_info_properties, pProperties);
+    (*pPhysicalDevicePCIBusInfoProperties) = physical_device_pci_bus_info_properties;
 }
 void cvkGetPhysicalDevicePointClippingProperties(VkPhysicalDevice                         physicalDevice,
-                                                 void*                                    pPointClippingPropertiesNext,
+                                                 void*                                    pPhysicalDevicePointClippingPropertiesNext,
                                                  VkPhysicalDeviceProperties2*             pProperties,
-                                                 VkPhysicalDevicePointClippingProperties* pPointClippingProperties)
+                                                 VkPhysicalDevicePointClippingProperties* pPhysicalDevicePointClippingProperties)
 {
-    VkPhysicalDevicePointClippingProperties point_clipping_properties;
+    VkPhysicalDevicePointClippingProperties physical_device_point_clipping_properties;
 
-    point_clipping_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
-    point_clipping_properties.pNext = pPointClippingPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &point_clipping_properties, pProperties);
-    (*pPointClippingProperties) = point_clipping_properties;
+    physical_device_point_clipping_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
+    physical_device_point_clipping_properties.pNext = pPhysicalDevicePointClippingPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_point_clipping_properties, pProperties);
+    (*pPhysicalDevicePointClippingProperties) = physical_device_point_clipping_properties;
 }
 void cvkGetPhysicalDeviceProtectedMemoryProperties(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pProtectedMemoryPropertiesNext,
+                                                   void*                                      pPhysicalDeviceProtectedMemoryPropertiesNext,
                                                    VkPhysicalDeviceProperties2*               pProperties,
-                                                   VkPhysicalDeviceProtectedMemoryProperties* pProtectedMemoryProperties)
+                                                   VkPhysicalDeviceProtectedMemoryProperties* pPhysicalDeviceProtectedMemoryProperties)
 {
-    VkPhysicalDeviceProtectedMemoryProperties protected_memory_properties;
+    VkPhysicalDeviceProtectedMemoryProperties physical_device_protected_memory_properties;
 
-    protected_memory_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
-    protected_memory_properties.pNext = pProtectedMemoryPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &protected_memory_properties, pProperties);
-    (*pProtectedMemoryProperties) = protected_memory_properties;
+    physical_device_protected_memory_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
+    physical_device_protected_memory_properties.pNext = pPhysicalDeviceProtectedMemoryPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_protected_memory_properties, pProperties);
+    (*pPhysicalDeviceProtectedMemoryProperties) = physical_device_protected_memory_properties;
 }
 void cvkGetPhysicalDeviceSamplerFilterMinmaxProperties(VkPhysicalDevice                               physicalDevice,
-                                                       void*                                          pSamplerFilterMinmaxPropertiesNext,
+                                                       void*                                          pPhysicalDeviceSamplerFilterMinmaxPropertiesNext,
                                                        VkPhysicalDeviceProperties2*                   pProperties,
-                                                       VkPhysicalDeviceSamplerFilterMinmaxProperties* pSamplerFilterMinmaxProperties)
+                                                       VkPhysicalDeviceSamplerFilterMinmaxProperties* pPhysicalDeviceSamplerFilterMinmaxProperties)
 {
-    VkPhysicalDeviceSamplerFilterMinmaxProperties sampler_filter_minmax_properties;
+    VkPhysicalDeviceSamplerFilterMinmaxProperties physical_device_sampler_filter_minmax_properties;
 
-    sampler_filter_minmax_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
-    sampler_filter_minmax_properties.pNext = pSamplerFilterMinmaxPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &sampler_filter_minmax_properties, pProperties);
-    (*pSamplerFilterMinmaxProperties) = sampler_filter_minmax_properties;
+    physical_device_sampler_filter_minmax_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
+    physical_device_sampler_filter_minmax_properties.pNext = pPhysicalDeviceSamplerFilterMinmaxPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_sampler_filter_minmax_properties, pProperties);
+    (*pPhysicalDeviceSamplerFilterMinmaxProperties) = physical_device_sampler_filter_minmax_properties;
 }
 void cvkGetPhysicalDeviceSubgroupProperties(VkPhysicalDevice                    physicalDevice,
-                                            void*                               pSubgroupPropertiesNext,
+                                            void*                               pPhysicalDeviceSubgroupPropertiesNext,
                                             VkPhysicalDeviceProperties2*        pProperties,
-                                            VkPhysicalDeviceSubgroupProperties* pSubgroupProperties)
+                                            VkPhysicalDeviceSubgroupProperties* pPhysicalDeviceSubgroupProperties)
 {
-    VkPhysicalDeviceSubgroupProperties subgroup_properties;
+    VkPhysicalDeviceSubgroupProperties physical_device_subgroup_properties;
 
-    subgroup_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
-    subgroup_properties.pNext = pSubgroupPropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &subgroup_properties, pProperties);
-    (*pSubgroupProperties) = subgroup_properties;
+    physical_device_subgroup_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
+    physical_device_subgroup_properties.pNext = pPhysicalDeviceSubgroupPropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_subgroup_properties, pProperties);
+    (*pPhysicalDeviceSubgroupProperties) = physical_device_subgroup_properties;
 }
 void cvkGetPhysicalDeviceTimelineSemaphoreProperties(VkPhysicalDevice                             physicalDevice,
-                                                     void*                                        pTimelineSemaphorePropertiesNext,
+                                                     void*                                        pPhysicalDeviceTimelineSemaphorePropertiesNext,
                                                      VkPhysicalDeviceProperties2*                 pProperties,
-                                                     VkPhysicalDeviceTimelineSemaphoreProperties* pTimelineSemaphoreProperties)
+                                                     VkPhysicalDeviceTimelineSemaphoreProperties* pPhysicalDeviceTimelineSemaphoreProperties)
 {
-    VkPhysicalDeviceTimelineSemaphoreProperties timeline_semaphore_properties;
+    VkPhysicalDeviceTimelineSemaphoreProperties physical_device_timeline_semaphore_properties;
 
-    timeline_semaphore_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
-    timeline_semaphore_properties.pNext = pTimelineSemaphorePropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &timeline_semaphore_properties, pProperties);
-    (*pTimelineSemaphoreProperties) = timeline_semaphore_properties;
+    physical_device_timeline_semaphore_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
+    physical_device_timeline_semaphore_properties.pNext = pPhysicalDeviceTimelineSemaphorePropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_timeline_semaphore_properties, pProperties);
+    (*pPhysicalDeviceTimelineSemaphoreProperties) = physical_device_timeline_semaphore_properties;
 }
 void cvkGetPhysicalDeviceVulkan11Properties(VkPhysicalDevice                    physicalDevice,
-                                            void*                               pVulkan11PropertiesNext,
+                                            void*                               pPhysicalDeviceVulkan11PropertiesNext,
                                             VkPhysicalDeviceProperties2*        pProperties,
-                                            VkPhysicalDeviceVulkan11Properties* pVulkan11Properties)
+                                            VkPhysicalDeviceVulkan11Properties* pPhysicalDeviceVulkan11Properties)
 {
-    VkPhysicalDeviceVulkan11Properties vulkan11_properties;
+    VkPhysicalDeviceVulkan11Properties physical_device_vulkan11_properties;
 
-    vulkan11_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
-    vulkan11_properties.pNext = pVulkan11PropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &vulkan11_properties, pProperties);
-    (*pVulkan11Properties) = vulkan11_properties;
+    physical_device_vulkan11_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
+    physical_device_vulkan11_properties.pNext = pPhysicalDeviceVulkan11PropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_vulkan11_properties, pProperties);
+    (*pPhysicalDeviceVulkan11Properties) = physical_device_vulkan11_properties;
 }
 void cvkGetPhysicalDeviceVulkan12Properties(VkPhysicalDevice                    physicalDevice,
-                                            void*                               pVulkan12PropertiesNext,
+                                            void*                               pPhysicalDeviceVulkan12PropertiesNext,
                                             VkPhysicalDeviceProperties2*        pProperties,
-                                            VkPhysicalDeviceVulkan12Properties* pVulkan12Properties)
+                                            VkPhysicalDeviceVulkan12Properties* pPhysicalDeviceVulkan12Properties)
 {
-    VkPhysicalDeviceVulkan12Properties vulkan12_properties;
+    VkPhysicalDeviceVulkan12Properties physical_device_vulkan12_properties;
 
-    vulkan12_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
-    vulkan12_properties.pNext = pVulkan12PropertiesNext;
-    cvkGetPhysicalDeviceProperties2(physicalDevice, &vulkan12_properties, pProperties);
-    (*pVulkan12Properties) = vulkan12_properties;
+    physical_device_vulkan12_properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
+    physical_device_vulkan12_properties.pNext = pPhysicalDeviceVulkan12PropertiesNext;
+    cvkGetPhysicalDeviceProperties2(physicalDevice, &physical_device_vulkan12_properties, pProperties);
+    (*pPhysicalDeviceVulkan12Properties) = physical_device_vulkan12_properties;
 }
 uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {

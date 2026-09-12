@@ -812,8 +812,9 @@ class Generator:
         if chain_param is None:
             self.errors.append(f"output convenience {name}: no output chain parameter on {target}")
             return
-        ext_out = "p" + d + kind
-        ext_next = f"p{d}{kind}Next"
+        # The extender's out-parameter and its chain are named after the full struct, like the function.
+        ext_out = "p" + self.struct_short(ext)
+        ext_next = f"p{self.struct_short(ext)}Next"
         var = snake(ext_out)
         params: List[EmittedParam] = []
         args: List[str] = []

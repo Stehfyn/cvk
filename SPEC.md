@@ -147,8 +147,9 @@ struct names with `Get` in front: `cvkGetPhysicalDeviceHostQueryResetFeatures`,
 `cvkGetDescriptorSetVariableDescriptorCountLayoutSupport`. The call goes to the flattened
 sibling when one exists, so the input stays flattened. `<target>With<D><Kind>` is the fallback
 when the command's tail is not the run; no profile command needs it today.
-The function takes `p<D><Kind>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
-chains it into the output struct, and returns it through an added out-parameter `p<D><Kind>`.
+The function takes `p<ExtenderStruct>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
+chains it into the output struct, and returns it through an added out-parameter `p<ExtenderStruct>`
+(`pExternalImageFormatProperties`, `pMemoryDedicatedRequirements`).
 
 ## 7. Tier 1': specializations (policy table)
 

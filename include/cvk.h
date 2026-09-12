@@ -7929,32 +7929,32 @@ void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFl
 /**
  * \brief Retrieves buffer memory requirements 2 with VkMemoryDedicatedRequirements chained to the output.
  *
- * \param[in] device                      VkDevice value
- * \param[in] pInfoNext                   Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
- * \param[in] buffer                      VkBufferMemoryRequirementsInfo2::buffer
- * \param[in] pDedicatedRequirementsNext  Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
- * \param[out] pMemoryRequirements         Receives the VkMemoryRequirements2
- * \param[out] pDedicatedRequirements      Receives the VkMemoryDedicatedRequirements
+ * \param[in] device                            VkDevice value
+ * \param[in] pInfoNext                         Optional extension chain attached to VkBufferMemoryRequirementsInfo2, or NULL
+ * \param[in] buffer                            VkBufferMemoryRequirementsInfo2::buffer
+ * \param[in] pMemoryDedicatedRequirementsNext  Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
+ * \param[out] pMemoryRequirements               Receives the VkMemoryRequirements2
+ * \param[out] pMemoryDedicatedRequirements      Receives the VkMemoryDedicatedRequirements
  *
  * \retval None
  */
 void cvkGetBufferMemoryDedicatedRequirements(VkDevice                       device,
                                              const void*                    pInfoNext,
                                              VkBuffer                       buffer,
-                                             void*                          pDedicatedRequirementsNext,
+                                             void*                          pMemoryDedicatedRequirementsNext,
                                              VkMemoryRequirements2*         pMemoryRequirements,
-                                             VkMemoryDedicatedRequirements* pDedicatedRequirements);
+                                             VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements);
 /**
  * \brief Retrieves descriptor set layout support with VkDescriptorSetVariableDescriptorCountLayoutSupport chained to the output.
  *
- * \param[in] device                               VkDevice value
- * \param[in] pCreateInfoNext                      Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
- * \param[in] flags                                VkDescriptorSetLayoutCreateInfo::flags
- * \param[in] bindingCount                         VkDescriptorSetLayoutCreateInfo::bindingCount
- * \param[in] pBindings                            VkDescriptorSetLayoutCreateInfo::pBindings
- * \param[in] pVariableDescriptorCountSupportNext  Optional output extension chain attached to VkDescriptorSetVariableDescriptorCountLayoutSupport, or NULL
- * \param[out] pSupport                             Receives the VkDescriptorSetLayoutSupport
- * \param[out] pVariableDescriptorCountSupport      Receives the VkDescriptorSetVariableDescriptorCountLayoutSupport
+ * \param[in] device                                                  VkDevice value
+ * \param[in] pCreateInfoNext                                         Optional extension chain attached to VkDescriptorSetLayoutCreateInfo, or NULL
+ * \param[in] flags                                                   VkDescriptorSetLayoutCreateInfo::flags
+ * \param[in] bindingCount                                            VkDescriptorSetLayoutCreateInfo::bindingCount
+ * \param[in] pBindings                                               VkDescriptorSetLayoutCreateInfo::pBindings
+ * \param[in] pDescriptorSetVariableDescriptorCountLayoutSupportNext  Optional output extension chain attached to VkDescriptorSetVariableDescriptorCountLayoutSupport, or NULL
+ * \param[out] pSupport                                                Receives the VkDescriptorSetLayoutSupport
+ * \param[out] pDescriptorSetVariableDescriptorCountLayoutSupport      Receives the VkDescriptorSetVariableDescriptorCountLayoutSupport
  *
  * \retval None
  */
@@ -7963,312 +7963,321 @@ void cvkGetDescriptorSetVariableDescriptorCountLayoutSupport(VkDevice           
                                                              VkDescriptorSetLayoutCreateFlags                     flags,
                                                              uint32_t                                             bindingCount,
                                                              const VkDescriptorSetLayoutBinding*                  pBindings,
-                                                             void*                                                pVariableDescriptorCountSupportNext,
+                                                             void*                                                pDescriptorSetVariableDescriptorCountLayoutSupportNext,
                                                              VkDescriptorSetLayoutSupport*                        pSupport,
-                                                             VkDescriptorSetVariableDescriptorCountLayoutSupport* pVariableDescriptorCountSupport);
+                                                             VkDescriptorSetVariableDescriptorCountLayoutSupport* pDescriptorSetVariableDescriptorCountLayoutSupport);
 /**
  * \brief Retrieves image memory requirements 2 with VkMemoryDedicatedRequirements chained to the output.
  *
- * \param[in] device                      VkDevice value
- * \param[in] pInfoNext                   Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
- * \param[in] image                       VkImageMemoryRequirementsInfo2::image
- * \param[in] pDedicatedRequirementsNext  Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
- * \param[out] pMemoryRequirements         Receives the VkMemoryRequirements2
- * \param[out] pDedicatedRequirements      Receives the VkMemoryDedicatedRequirements
+ * \param[in] device                            VkDevice value
+ * \param[in] pInfoNext                         Optional extension chain attached to VkImageMemoryRequirementsInfo2, or NULL
+ * \param[in] image                             VkImageMemoryRequirementsInfo2::image
+ * \param[in] pMemoryDedicatedRequirementsNext  Optional output extension chain attached to VkMemoryDedicatedRequirements, or NULL
+ * \param[out] pMemoryRequirements               Receives the VkMemoryRequirements2
+ * \param[out] pMemoryDedicatedRequirements      Receives the VkMemoryDedicatedRequirements
  *
  * \retval None
  */
 void cvkGetImageMemoryDedicatedRequirements(VkDevice                       device,
                                             const void*                    pInfoNext,
                                             VkImage                        image,
-                                            void*                          pDedicatedRequirementsNext,
+                                            void*                          pMemoryDedicatedRequirementsNext,
                                             VkMemoryRequirements2*         pMemoryRequirements,
-                                            VkMemoryDedicatedRequirements* pDedicatedRequirements);
+                                            VkMemoryDedicatedRequirements* pMemoryDedicatedRequirements);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice16BitStorageFeatures chained to the output.
  *
- * \param[in] physicalDevice             VkPhysicalDevice value
- * \param[in] p16BitStorageFeaturesNext  Optional output extension chain attached to VkPhysicalDevice16BitStorageFeatures, or NULL
- * \param[out] pFeatures                  Receives the VkPhysicalDeviceFeatures2
- * \param[out] p16BitStorageFeatures      Receives the VkPhysicalDevice16BitStorageFeatures
+ * \param[in] physicalDevice                           VkPhysicalDevice value
+ * \param[in] pPhysicalDevice16BitStorageFeaturesNext  Optional output extension chain attached to VkPhysicalDevice16BitStorageFeatures, or NULL
+ * \param[out] pFeatures                                Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDevice16BitStorageFeatures      Receives the VkPhysicalDevice16BitStorageFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDevice16BitStorageFeatures(VkPhysicalDevice                      physicalDevice,
-                                              void*                                 p16BitStorageFeaturesNext,
+                                              void*                                 pPhysicalDevice16BitStorageFeaturesNext,
                                               VkPhysicalDeviceFeatures2*            pFeatures,
-                                              VkPhysicalDevice16BitStorageFeatures* p16BitStorageFeatures);
+                                              VkPhysicalDevice16BitStorageFeatures* pPhysicalDevice16BitStorageFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice8BitStorageFeatures chained to the output.
  *
- * \param[in] physicalDevice            VkPhysicalDevice value
- * \param[in] p8BitStorageFeaturesNext  Optional output extension chain attached to VkPhysicalDevice8BitStorageFeatures, or NULL
- * \param[out] pFeatures                 Receives the VkPhysicalDeviceFeatures2
- * \param[out] p8BitStorageFeatures      Receives the VkPhysicalDevice8BitStorageFeatures
+ * \param[in] physicalDevice                          VkPhysicalDevice value
+ * \param[in] pPhysicalDevice8BitStorageFeaturesNext  Optional output extension chain attached to VkPhysicalDevice8BitStorageFeatures, or NULL
+ * \param[out] pFeatures                               Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDevice8BitStorageFeatures      Receives the VkPhysicalDevice8BitStorageFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDevice8BitStorageFeatures(VkPhysicalDevice                     physicalDevice,
-                                             void*                                p8BitStorageFeaturesNext,
+                                             void*                                pPhysicalDevice8BitStorageFeaturesNext,
                                              VkPhysicalDeviceFeatures2*           pFeatures,
-                                             VkPhysicalDevice8BitStorageFeatures* p8BitStorageFeatures);
+                                             VkPhysicalDevice8BitStorageFeatures* pPhysicalDevice8BitStorageFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceBufferDeviceAddressFeatures chained to the output.
  *
- * \param[in] physicalDevice                    VkPhysicalDevice value
- * \param[in] pBufferDeviceAddressFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceBufferDeviceAddressFeatures, or NULL
- * \param[out] pFeatures                         Receives the VkPhysicalDeviceFeatures2
- * \param[out] pBufferDeviceAddressFeatures      Receives the VkPhysicalDeviceBufferDeviceAddressFeatures
+ * \param[in] physicalDevice                                  VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceBufferDeviceAddressFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceBufferDeviceAddressFeatures, or NULL
+ * \param[out] pFeatures                                       Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceBufferDeviceAddressFeatures      Receives the VkPhysicalDeviceBufferDeviceAddressFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceBufferDeviceAddressFeatures(VkPhysicalDevice                             physicalDevice,
-                                                     void*                                        pBufferDeviceAddressFeaturesNext,
+                                                     void*                                        pPhysicalDeviceBufferDeviceAddressFeaturesNext,
                                                      VkPhysicalDeviceFeatures2*                   pFeatures,
-                                                     VkPhysicalDeviceBufferDeviceAddressFeatures* pBufferDeviceAddressFeatures);
+                                                     VkPhysicalDeviceBufferDeviceAddressFeatures* pPhysicalDeviceBufferDeviceAddressFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceDescriptorIndexingFeatures chained to the output.
  *
- * \param[in] physicalDevice                   VkPhysicalDevice value
- * \param[in] pDescriptorIndexingFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingFeatures, or NULL
- * \param[out] pFeatures                        Receives the VkPhysicalDeviceFeatures2
- * \param[out] pDescriptorIndexingFeatures      Receives the VkPhysicalDeviceDescriptorIndexingFeatures
+ * \param[in] physicalDevice                                 VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceDescriptorIndexingFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingFeatures, or NULL
+ * \param[out] pFeatures                                      Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceDescriptorIndexingFeatures      Receives the VkPhysicalDeviceDescriptorIndexingFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceDescriptorIndexingFeatures(VkPhysicalDevice                            physicalDevice,
-                                                    void*                                       pDescriptorIndexingFeaturesNext,
+                                                    void*                                       pPhysicalDeviceDescriptorIndexingFeaturesNext,
                                                     VkPhysicalDeviceFeatures2*                  pFeatures,
-                                                    VkPhysicalDeviceDescriptorIndexingFeatures* pDescriptorIndexingFeatures);
+                                                    VkPhysicalDeviceDescriptorIndexingFeatures* pPhysicalDeviceDescriptorIndexingFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceHostQueryResetFeatures chained to the output.
  *
- * \param[in] physicalDevice               VkPhysicalDevice value
- * \param[in] pHostQueryResetFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceHostQueryResetFeatures, or NULL
- * \param[out] pFeatures                    Receives the VkPhysicalDeviceFeatures2
- * \param[out] pHostQueryResetFeatures      Receives the VkPhysicalDeviceHostQueryResetFeatures
+ * \param[in] physicalDevice                             VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceHostQueryResetFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceHostQueryResetFeatures, or NULL
+ * \param[out] pFeatures                                  Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceHostQueryResetFeatures      Receives the VkPhysicalDeviceHostQueryResetFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceHostQueryResetFeatures(VkPhysicalDevice                        physicalDevice,
-                                                void*                                   pHostQueryResetFeaturesNext,
+                                                void*                                   pPhysicalDeviceHostQueryResetFeaturesNext,
                                                 VkPhysicalDeviceFeatures2*              pFeatures,
-                                                VkPhysicalDeviceHostQueryResetFeatures* pHostQueryResetFeatures);
+                                                VkPhysicalDeviceHostQueryResetFeatures* pPhysicalDeviceHostQueryResetFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceImagelessFramebufferFeatures chained to the output.
  *
- * \param[in] physicalDevice                     VkPhysicalDevice value
- * \param[in] pImagelessFramebufferFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceImagelessFramebufferFeatures, or NULL
- * \param[out] pFeatures                          Receives the VkPhysicalDeviceFeatures2
- * \param[out] pImagelessFramebufferFeatures      Receives the VkPhysicalDeviceImagelessFramebufferFeatures
+ * \param[in] physicalDevice                                   VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceImagelessFramebufferFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceImagelessFramebufferFeatures, or NULL
+ * \param[out] pFeatures                                        Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceImagelessFramebufferFeatures      Receives the VkPhysicalDeviceImagelessFramebufferFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceImagelessFramebufferFeatures(VkPhysicalDevice                              physicalDevice,
-                                                      void*                                         pImagelessFramebufferFeaturesNext,
+                                                      void*                                         pPhysicalDeviceImagelessFramebufferFeaturesNext,
                                                       VkPhysicalDeviceFeatures2*                    pFeatures,
-                                                      VkPhysicalDeviceImagelessFramebufferFeatures* pImagelessFramebufferFeatures);
+                                                      VkPhysicalDeviceImagelessFramebufferFeatures* pPhysicalDeviceImagelessFramebufferFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceMultiviewFeatures chained to the output.
  *
- * \param[in] physicalDevice          VkPhysicalDevice value
- * \param[in] pMultiviewFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceMultiviewFeatures, or NULL
- * \param[out] pFeatures               Receives the VkPhysicalDeviceFeatures2
- * \param[out] pMultiviewFeatures      Receives the VkPhysicalDeviceMultiviewFeatures
+ * \param[in] physicalDevice                        VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceMultiviewFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceMultiviewFeatures, or NULL
+ * \param[out] pFeatures                             Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceMultiviewFeatures      Receives the VkPhysicalDeviceMultiviewFeatures
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice physicalDevice, void* pMultiviewFeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceMultiviewFeatures* pMultiviewFeatures);
+void cvkGetPhysicalDeviceMultiviewFeatures(VkPhysicalDevice                   physicalDevice,
+                                           void*                              pPhysicalDeviceMultiviewFeaturesNext,
+                                           VkPhysicalDeviceFeatures2*         pFeatures,
+                                           VkPhysicalDeviceMultiviewFeatures* pPhysicalDeviceMultiviewFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceProtectedMemoryFeatures chained to the output.
  *
- * \param[in] physicalDevice                VkPhysicalDevice value
- * \param[in] pProtectedMemoryFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryFeatures, or NULL
- * \param[out] pFeatures                     Receives the VkPhysicalDeviceFeatures2
- * \param[out] pProtectedMemoryFeatures      Receives the VkPhysicalDeviceProtectedMemoryFeatures
+ * \param[in] physicalDevice                              VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceProtectedMemoryFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryFeatures, or NULL
+ * \param[out] pFeatures                                   Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceProtectedMemoryFeatures      Receives the VkPhysicalDeviceProtectedMemoryFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceProtectedMemoryFeatures(VkPhysicalDevice                         physicalDevice,
-                                                 void*                                    pProtectedMemoryFeaturesNext,
+                                                 void*                                    pPhysicalDeviceProtectedMemoryFeaturesNext,
                                                  VkPhysicalDeviceFeatures2*               pFeatures,
-                                                 VkPhysicalDeviceProtectedMemoryFeatures* pProtectedMemoryFeatures);
+                                                 VkPhysicalDeviceProtectedMemoryFeatures* pPhysicalDeviceProtectedMemoryFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceSamplerYcbcrConversionFeatures chained to the output.
  *
- * \param[in] physicalDevice                       VkPhysicalDevice value
- * \param[in] pSamplerYcbcrConversionFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceSamplerYcbcrConversionFeatures, or NULL
- * \param[out] pFeatures                            Receives the VkPhysicalDeviceFeatures2
- * \param[out] pSamplerYcbcrConversionFeatures      Receives the VkPhysicalDeviceSamplerYcbcrConversionFeatures
+ * \param[in] physicalDevice                                     VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceSamplerYcbcrConversionFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceSamplerYcbcrConversionFeatures, or NULL
+ * \param[out] pFeatures                                          Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceSamplerYcbcrConversionFeatures      Receives the VkPhysicalDeviceSamplerYcbcrConversionFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceSamplerYcbcrConversionFeatures(VkPhysicalDevice                                physicalDevice,
-                                                        void*                                           pSamplerYcbcrConversionFeaturesNext,
+                                                        void*                                           pPhysicalDeviceSamplerYcbcrConversionFeaturesNext,
                                                         VkPhysicalDeviceFeatures2*                      pFeatures,
-                                                        VkPhysicalDeviceSamplerYcbcrConversionFeatures* pSamplerYcbcrConversionFeatures);
+                                                        VkPhysicalDeviceSamplerYcbcrConversionFeatures* pPhysicalDeviceSamplerYcbcrConversionFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceScalarBlockLayoutFeatures chained to the output.
  *
- * \param[in] physicalDevice                  VkPhysicalDevice value
- * \param[in] pScalarBlockLayoutFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceScalarBlockLayoutFeatures, or NULL
- * \param[out] pFeatures                       Receives the VkPhysicalDeviceFeatures2
- * \param[out] pScalarBlockLayoutFeatures      Receives the VkPhysicalDeviceScalarBlockLayoutFeatures
+ * \param[in] physicalDevice                                VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceScalarBlockLayoutFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceScalarBlockLayoutFeatures, or NULL
+ * \param[out] pFeatures                                     Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceScalarBlockLayoutFeatures      Receives the VkPhysicalDeviceScalarBlockLayoutFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceScalarBlockLayoutFeatures(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pScalarBlockLayoutFeaturesNext,
+                                                   void*                                      pPhysicalDeviceScalarBlockLayoutFeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceScalarBlockLayoutFeatures* pScalarBlockLayoutFeatures);
+                                                   VkPhysicalDeviceScalarBlockLayoutFeatures* pPhysicalDeviceScalarBlockLayoutFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures chained to the output.
  *
- * \param[in] physicalDevice                            VkPhysicalDevice value
- * \param[in] pSeparateDepthStencilLayoutsFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures, or NULL
- * \param[out] pFeatures                                 Receives the VkPhysicalDeviceFeatures2
- * \param[out] pSeparateDepthStencilLayoutsFeatures      Receives the VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures
+ * \param[in] physicalDevice                                          VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceSeparateDepthStencilLayoutsFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures, or NULL
+ * \param[out] pFeatures                                               Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceSeparateDepthStencilLayoutsFeatures      Receives the VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceSeparateDepthStencilLayoutsFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                             void*                                                pSeparateDepthStencilLayoutsFeaturesNext,
+                                                             void*                                                pPhysicalDeviceSeparateDepthStencilLayoutsFeaturesNext,
                                                              VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                             VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pSeparateDepthStencilLayoutsFeatures);
+                                                             VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures* pPhysicalDeviceSeparateDepthStencilLayoutsFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderAtomicInt64Features chained to the output.
  *
- * \param[in] physicalDevice                  VkPhysicalDevice value
- * \param[in] pShaderAtomicInt64FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderAtomicInt64Features, or NULL
- * \param[out] pFeatures                       Receives the VkPhysicalDeviceFeatures2
- * \param[out] pShaderAtomicInt64Features      Receives the VkPhysicalDeviceShaderAtomicInt64Features
+ * \param[in] physicalDevice                                VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceShaderAtomicInt64FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderAtomicInt64Features, or NULL
+ * \param[out] pFeatures                                     Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceShaderAtomicInt64Features      Receives the VkPhysicalDeviceShaderAtomicInt64Features
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceShaderAtomicInt64Features(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pShaderAtomicInt64FeaturesNext,
+                                                   void*                                      pPhysicalDeviceShaderAtomicInt64FeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceShaderAtomicInt64Features* pShaderAtomicInt64Features);
+                                                   VkPhysicalDeviceShaderAtomicInt64Features* pPhysicalDeviceShaderAtomicInt64Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderDrawParametersFeatures chained to the output.
  *
- * \param[in] physicalDevice                     VkPhysicalDevice value
- * \param[in] pShaderDrawParametersFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderDrawParametersFeatures, or NULL
- * \param[out] pFeatures                          Receives the VkPhysicalDeviceFeatures2
- * \param[out] pShaderDrawParametersFeatures      Receives the VkPhysicalDeviceShaderDrawParametersFeatures
+ * \param[in] physicalDevice                                   VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceShaderDrawParametersFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderDrawParametersFeatures, or NULL
+ * \param[out] pFeatures                                        Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceShaderDrawParametersFeatures      Receives the VkPhysicalDeviceShaderDrawParametersFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceShaderDrawParametersFeatures(VkPhysicalDevice                              physicalDevice,
-                                                      void*                                         pShaderDrawParametersFeaturesNext,
+                                                      void*                                         pPhysicalDeviceShaderDrawParametersFeaturesNext,
                                                       VkPhysicalDeviceFeatures2*                    pFeatures,
-                                                      VkPhysicalDeviceShaderDrawParametersFeatures* pShaderDrawParametersFeatures);
+                                                      VkPhysicalDeviceShaderDrawParametersFeatures* pPhysicalDeviceShaderDrawParametersFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderFloat16Int8Features chained to the output.
  *
- * \param[in] physicalDevice                  VkPhysicalDevice value
- * \param[in] pShaderFloat16Int8FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderFloat16Int8Features, or NULL
- * \param[out] pFeatures                       Receives the VkPhysicalDeviceFeatures2
- * \param[out] pShaderFloat16Int8Features      Receives the VkPhysicalDeviceShaderFloat16Int8Features
+ * \param[in] physicalDevice                                VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceShaderFloat16Int8FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderFloat16Int8Features, or NULL
+ * \param[out] pFeatures                                     Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceShaderFloat16Int8Features      Receives the VkPhysicalDeviceShaderFloat16Int8Features
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceShaderFloat16Int8Features(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pShaderFloat16Int8FeaturesNext,
+                                                   void*                                      pPhysicalDeviceShaderFloat16Int8FeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceShaderFloat16Int8Features* pShaderFloat16Int8Features);
+                                                   VkPhysicalDeviceShaderFloat16Int8Features* pPhysicalDeviceShaderFloat16Int8Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures chained to the output.
  *
- * \param[in] physicalDevice                            VkPhysicalDevice value
- * \param[in] pShaderSubgroupExtendedTypesFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures, or NULL
- * \param[out] pFeatures                                 Receives the VkPhysicalDeviceFeatures2
- * \param[out] pShaderSubgroupExtendedTypesFeatures      Receives the VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures
+ * \param[in] physicalDevice                                          VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceShaderSubgroupExtendedTypesFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures, or NULL
+ * \param[out] pFeatures                                               Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceShaderSubgroupExtendedTypesFeatures      Receives the VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceShaderSubgroupExtendedTypesFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                             void*                                                pShaderSubgroupExtendedTypesFeaturesNext,
+                                                             void*                                                pPhysicalDeviceShaderSubgroupExtendedTypesFeaturesNext,
                                                              VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                             VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pShaderSubgroupExtendedTypesFeatures);
+                                                             VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures* pPhysicalDeviceShaderSubgroupExtendedTypesFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceTimelineSemaphoreFeatures chained to the output.
  *
- * \param[in] physicalDevice                  VkPhysicalDevice value
- * \param[in] pTimelineSemaphoreFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreFeatures, or NULL
- * \param[out] pFeatures                       Receives the VkPhysicalDeviceFeatures2
- * \param[out] pTimelineSemaphoreFeatures      Receives the VkPhysicalDeviceTimelineSemaphoreFeatures
+ * \param[in] physicalDevice                                VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceTimelineSemaphoreFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreFeatures, or NULL
+ * \param[out] pFeatures                                     Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceTimelineSemaphoreFeatures      Receives the VkPhysicalDeviceTimelineSemaphoreFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceTimelineSemaphoreFeatures(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pTimelineSemaphoreFeaturesNext,
+                                                   void*                                      pPhysicalDeviceTimelineSemaphoreFeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceTimelineSemaphoreFeatures* pTimelineSemaphoreFeatures);
+                                                   VkPhysicalDeviceTimelineSemaphoreFeatures* pPhysicalDeviceTimelineSemaphoreFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceUniformBufferStandardLayoutFeatures chained to the output.
  *
- * \param[in] physicalDevice                            VkPhysicalDevice value
- * \param[in] pUniformBufferStandardLayoutFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceUniformBufferStandardLayoutFeatures, or NULL
- * \param[out] pFeatures                                 Receives the VkPhysicalDeviceFeatures2
- * \param[out] pUniformBufferStandardLayoutFeatures      Receives the VkPhysicalDeviceUniformBufferStandardLayoutFeatures
+ * \param[in] physicalDevice                                          VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceUniformBufferStandardLayoutFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceUniformBufferStandardLayoutFeatures, or NULL
+ * \param[out] pFeatures                                               Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceUniformBufferStandardLayoutFeatures      Receives the VkPhysicalDeviceUniformBufferStandardLayoutFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceUniformBufferStandardLayoutFeatures(VkPhysicalDevice                                     physicalDevice,
-                                                             void*                                                pUniformBufferStandardLayoutFeaturesNext,
+                                                             void*                                                pPhysicalDeviceUniformBufferStandardLayoutFeaturesNext,
                                                              VkPhysicalDeviceFeatures2*                           pFeatures,
-                                                             VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pUniformBufferStandardLayoutFeatures);
+                                                             VkPhysicalDeviceUniformBufferStandardLayoutFeatures* pPhysicalDeviceUniformBufferStandardLayoutFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVariablePointersFeatures chained to the output.
  *
- * \param[in] physicalDevice                 VkPhysicalDevice value
- * \param[in] pVariablePointersFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVariablePointersFeatures, or NULL
- * \param[out] pFeatures                      Receives the VkPhysicalDeviceFeatures2
- * \param[out] pVariablePointersFeatures      Receives the VkPhysicalDeviceVariablePointersFeatures
+ * \param[in] physicalDevice                               VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceVariablePointersFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVariablePointersFeatures, or NULL
+ * \param[out] pFeatures                                    Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceVariablePointersFeatures      Receives the VkPhysicalDeviceVariablePointersFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceVariablePointersFeatures(VkPhysicalDevice                          physicalDevice,
-                                                  void*                                     pVariablePointersFeaturesNext,
+                                                  void*                                     pPhysicalDeviceVariablePointersFeaturesNext,
                                                   VkPhysicalDeviceFeatures2*                pFeatures,
-                                                  VkPhysicalDeviceVariablePointersFeatures* pVariablePointersFeatures);
+                                                  VkPhysicalDeviceVariablePointersFeatures* pPhysicalDeviceVariablePointersFeatures);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkan11Features chained to the output.
  *
- * \param[in] physicalDevice         VkPhysicalDevice value
- * \param[in] pVulkan11FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan11Features, or NULL
- * \param[out] pFeatures              Receives the VkPhysicalDeviceFeatures2
- * \param[out] pVulkan11Features      Receives the VkPhysicalDeviceVulkan11Features
+ * \param[in] physicalDevice                       VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceVulkan11FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan11Features, or NULL
+ * \param[out] pFeatures                            Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceVulkan11Features      Receives the VkPhysicalDeviceVulkan11Features
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice physicalDevice, void* pVulkan11FeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceVulkan11Features* pVulkan11Features);
+void cvkGetPhysicalDeviceVulkan11Features(VkPhysicalDevice                  physicalDevice,
+                                          void*                             pPhysicalDeviceVulkan11FeaturesNext,
+                                          VkPhysicalDeviceFeatures2*        pFeatures,
+                                          VkPhysicalDeviceVulkan11Features* pPhysicalDeviceVulkan11Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkan12Features chained to the output.
  *
- * \param[in] physicalDevice         VkPhysicalDevice value
- * \param[in] pVulkan12FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan12Features, or NULL
- * \param[out] pFeatures              Receives the VkPhysicalDeviceFeatures2
- * \param[out] pVulkan12Features      Receives the VkPhysicalDeviceVulkan12Features
+ * \param[in] physicalDevice                       VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceVulkan12FeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan12Features, or NULL
+ * \param[out] pFeatures                            Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceVulkan12Features      Receives the VkPhysicalDeviceVulkan12Features
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice physicalDevice, void* pVulkan12FeaturesNext, VkPhysicalDeviceFeatures2* pFeatures, VkPhysicalDeviceVulkan12Features* pVulkan12Features);
+void cvkGetPhysicalDeviceVulkan12Features(VkPhysicalDevice                  physicalDevice,
+                                          void*                             pPhysicalDeviceVulkan12FeaturesNext,
+                                          VkPhysicalDeviceFeatures2*        pFeatures,
+                                          VkPhysicalDeviceVulkan12Features* pPhysicalDeviceVulkan12Features);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDeviceVulkanMemoryModelFeatures chained to the output.
  *
- * \param[in] physicalDevice                  VkPhysicalDevice value
- * \param[in] pVulkanMemoryModelFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVulkanMemoryModelFeatures, or NULL
- * \param[out] pFeatures                       Receives the VkPhysicalDeviceFeatures2
- * \param[out] pVulkanMemoryModelFeatures      Receives the VkPhysicalDeviceVulkanMemoryModelFeatures
+ * \param[in] physicalDevice                                VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceVulkanMemoryModelFeaturesNext  Optional output extension chain attached to VkPhysicalDeviceVulkanMemoryModelFeatures, or NULL
+ * \param[out] pFeatures                                     Receives the VkPhysicalDeviceFeatures2
+ * \param[out] pPhysicalDeviceVulkanMemoryModelFeatures      Receives the VkPhysicalDeviceVulkanMemoryModelFeatures
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pVulkanMemoryModelFeaturesNext,
+                                                   void*                                      pPhysicalDeviceVulkanMemoryModelFeaturesNext,
                                                    VkPhysicalDeviceFeatures2*                 pFeatures,
-                                                   VkPhysicalDeviceVulkanMemoryModelFeatures* pVulkanMemoryModelFeatures);
+                                                   VkPhysicalDeviceVulkanMemoryModelFeatures* pPhysicalDeviceVulkanMemoryModelFeatures);
 /**
  * \brief Retrieves physical device format properties 2 with VkDrmFormatModifierPropertiesList2EXT chained to the output.
  *
@@ -8304,16 +8313,16 @@ void cvkGetPhysicalDeviceDrmFormatModifierPropertiesList(VkPhysicalDevice       
 /**
  * \brief Retrieves physical device image format properties 2 with VkExternalImageFormatProperties chained to the output.
  *
- * \param[in] physicalDevice           VkPhysicalDevice value
- * \param[in] pImageFormatInfoNext     Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in] format                   VkPhysicalDeviceImageFormatInfo2::format
- * \param[in] type                     VkPhysicalDeviceImageFormatInfo2::type
- * \param[in] tiling                   VkPhysicalDeviceImageFormatInfo2::tiling
- * \param[in] usage                    VkPhysicalDeviceImageFormatInfo2::usage
- * \param[in] flags                    VkPhysicalDeviceImageFormatInfo2::flags
- * \param[in] pExternalPropertiesNext  Optional output extension chain attached to VkExternalImageFormatProperties, or NULL
- * \param[out] pImageFormatProperties   Receives the VkImageFormatProperties2
- * \param[out] pExternalProperties      Receives the VkExternalImageFormatProperties
+ * \param[in] physicalDevice                      VkPhysicalDevice value
+ * \param[in] pImageFormatInfoNext                Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in] format                              VkPhysicalDeviceImageFormatInfo2::format
+ * \param[in] type                                VkPhysicalDeviceImageFormatInfo2::type
+ * \param[in] tiling                              VkPhysicalDeviceImageFormatInfo2::tiling
+ * \param[in] usage                               VkPhysicalDeviceImageFormatInfo2::usage
+ * \param[in] flags                               VkPhysicalDeviceImageFormatInfo2::flags
+ * \param[in] pExternalImageFormatPropertiesNext  Optional output extension chain attached to VkExternalImageFormatProperties, or NULL
+ * \param[out] pImageFormatProperties              Receives the VkImageFormatProperties2
+ * \param[out] pExternalImageFormatProperties      Receives the VkExternalImageFormatProperties
  *
  * \retval None
  */
@@ -8324,22 +8333,22 @@ void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice         
                                                        VkImageTiling                    tiling,
                                                        VkImageUsageFlags                usage,
                                                        VkImageCreateFlags               flags,
-                                                       void*                            pExternalPropertiesNext,
+                                                       void*                            pExternalImageFormatPropertiesNext,
                                                        VkImageFormatProperties2*        pImageFormatProperties,
-                                                       VkExternalImageFormatProperties* pExternalProperties);
+                                                       VkExternalImageFormatProperties* pExternalImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkSamplerYcbcrConversionImageFormatProperties chained to the output.
  *
- * \param[in] physicalDevice                         VkPhysicalDevice value
- * \param[in] pImageFormatInfoNext                   Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
- * \param[in] format                                 VkPhysicalDeviceImageFormatInfo2::format
- * \param[in] type                                   VkPhysicalDeviceImageFormatInfo2::type
- * \param[in] tiling                                 VkPhysicalDeviceImageFormatInfo2::tiling
- * \param[in] usage                                  VkPhysicalDeviceImageFormatInfo2::usage
- * \param[in] flags                                  VkPhysicalDeviceImageFormatInfo2::flags
- * \param[in] pSamplerYcbcrConversionPropertiesNext  Optional output extension chain attached to VkSamplerYcbcrConversionImageFormatProperties, or NULL
- * \param[out] pImageFormatProperties                 Receives the VkImageFormatProperties2
- * \param[out] pSamplerYcbcrConversionProperties      Receives the VkSamplerYcbcrConversionImageFormatProperties
+ * \param[in] physicalDevice                                    VkPhysicalDevice value
+ * \param[in] pImageFormatInfoNext                              Optional extension chain attached to VkPhysicalDeviceImageFormatInfo2, or NULL
+ * \param[in] format                                            VkPhysicalDeviceImageFormatInfo2::format
+ * \param[in] type                                              VkPhysicalDeviceImageFormatInfo2::type
+ * \param[in] tiling                                            VkPhysicalDeviceImageFormatInfo2::tiling
+ * \param[in] usage                                             VkPhysicalDeviceImageFormatInfo2::usage
+ * \param[in] flags                                             VkPhysicalDeviceImageFormatInfo2::flags
+ * \param[in] pSamplerYcbcrConversionImageFormatPropertiesNext  Optional output extension chain attached to VkSamplerYcbcrConversionImageFormatProperties, or NULL
+ * \param[out] pImageFormatProperties                            Receives the VkImageFormatProperties2
+ * \param[out] pSamplerYcbcrConversionImageFormatProperties      Receives the VkSamplerYcbcrConversionImageFormatProperties
  *
  * \retval None
  */
@@ -8350,213 +8359,219 @@ void cvkGetPhysicalDeviceSamplerYcbcrConversionImageFormatProperties(VkPhysicalD
                                                                      VkImageTiling                                  tiling,
                                                                      VkImageUsageFlags                              usage,
                                                                      VkImageCreateFlags                             flags,
-                                                                     void*                                          pSamplerYcbcrConversionPropertiesNext,
+                                                                     void*                                          pSamplerYcbcrConversionImageFormatPropertiesNext,
                                                                      VkImageFormatProperties2*                      pImageFormatProperties,
-                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionProperties);
+                                                                     VkSamplerYcbcrConversionImageFormatProperties* pSamplerYcbcrConversionImageFormatProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDepthStencilResolveProperties chained to the output.
  *
- * \param[in] physicalDevice                      VkPhysicalDevice value
- * \param[in] pDepthStencilResolvePropertiesNext  Optional output extension chain attached to VkPhysicalDeviceDepthStencilResolveProperties, or NULL
- * \param[out] pProperties                         Receives the VkPhysicalDeviceProperties2
- * \param[out] pDepthStencilResolveProperties      Receives the VkPhysicalDeviceDepthStencilResolveProperties
+ * \param[in] physicalDevice                                    VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceDepthStencilResolvePropertiesNext  Optional output extension chain attached to VkPhysicalDeviceDepthStencilResolveProperties, or NULL
+ * \param[out] pProperties                                       Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceDepthStencilResolveProperties      Receives the VkPhysicalDeviceDepthStencilResolveProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceDepthStencilResolveProperties(VkPhysicalDevice                               physicalDevice,
-                                                       void*                                          pDepthStencilResolvePropertiesNext,
+                                                       void*                                          pPhysicalDeviceDepthStencilResolvePropertiesNext,
                                                        VkPhysicalDeviceProperties2*                   pProperties,
-                                                       VkPhysicalDeviceDepthStencilResolveProperties* pDepthStencilResolveProperties);
+                                                       VkPhysicalDeviceDepthStencilResolveProperties* pPhysicalDeviceDepthStencilResolveProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDescriptorIndexingProperties chained to the output.
  *
- * \param[in] physicalDevice                     VkPhysicalDevice value
- * \param[in] pDescriptorIndexingPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingProperties, or NULL
- * \param[out] pProperties                        Receives the VkPhysicalDeviceProperties2
- * \param[out] pDescriptorIndexingProperties      Receives the VkPhysicalDeviceDescriptorIndexingProperties
+ * \param[in] physicalDevice                                   VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceDescriptorIndexingPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceDescriptorIndexingProperties, or NULL
+ * \param[out] pProperties                                      Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceDescriptorIndexingProperties      Receives the VkPhysicalDeviceDescriptorIndexingProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceDescriptorIndexingProperties(VkPhysicalDevice                              physicalDevice,
-                                                      void*                                         pDescriptorIndexingPropertiesNext,
+                                                      void*                                         pPhysicalDeviceDescriptorIndexingPropertiesNext,
                                                       VkPhysicalDeviceProperties2*                  pProperties,
-                                                      VkPhysicalDeviceDescriptorIndexingProperties* pDescriptorIndexingProperties);
+                                                      VkPhysicalDeviceDescriptorIndexingProperties* pPhysicalDeviceDescriptorIndexingProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceDriverProperties chained to the output.
  *
- * \param[in] physicalDevice         VkPhysicalDevice value
- * \param[in] pDriverPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceDriverProperties, or NULL
- * \param[out] pProperties            Receives the VkPhysicalDeviceProperties2
- * \param[out] pDriverProperties      Receives the VkPhysicalDeviceDriverProperties
+ * \param[in] physicalDevice                       VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceDriverPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceDriverProperties, or NULL
+ * \param[out] pProperties                          Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceDriverProperties      Receives the VkPhysicalDeviceDriverProperties
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice physicalDevice, void* pDriverPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceDriverProperties* pDriverProperties);
+void cvkGetPhysicalDeviceDriverProperties(VkPhysicalDevice                  physicalDevice,
+                                          void*                             pPhysicalDeviceDriverPropertiesNext,
+                                          VkPhysicalDeviceProperties2*      pProperties,
+                                          VkPhysicalDeviceDriverProperties* pPhysicalDeviceDriverProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceFloatControlsProperties chained to the output.
  *
- * \param[in] physicalDevice                VkPhysicalDevice value
- * \param[in] pFloatControlsPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceFloatControlsProperties, or NULL
- * \param[out] pProperties                   Receives the VkPhysicalDeviceProperties2
- * \param[out] pFloatControlsProperties      Receives the VkPhysicalDeviceFloatControlsProperties
+ * \param[in] physicalDevice                              VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceFloatControlsPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceFloatControlsProperties, or NULL
+ * \param[out] pProperties                                 Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceFloatControlsProperties      Receives the VkPhysicalDeviceFloatControlsProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceFloatControlsProperties(VkPhysicalDevice                         physicalDevice,
-                                                 void*                                    pFloatControlsPropertiesNext,
+                                                 void*                                    pPhysicalDeviceFloatControlsPropertiesNext,
                                                  VkPhysicalDeviceProperties2*             pProperties,
-                                                 VkPhysicalDeviceFloatControlsProperties* pFloatControlsProperties);
+                                                 VkPhysicalDeviceFloatControlsProperties* pPhysicalDeviceFloatControlsProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceIDProperties chained to the output.
  *
- * \param[in] physicalDevice     VkPhysicalDevice value
- * \param[in] pIDPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceIDProperties, or NULL
- * \param[out] pProperties        Receives the VkPhysicalDeviceProperties2
- * \param[out] pIDProperties      Receives the VkPhysicalDeviceIDProperties
+ * \param[in] physicalDevice                   VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceIDPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceIDProperties, or NULL
+ * \param[out] pProperties                      Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceIDProperties      Receives the VkPhysicalDeviceIDProperties
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceIDProperties(VkPhysicalDevice physicalDevice, void* pIDPropertiesNext, VkPhysicalDeviceProperties2* pProperties, VkPhysicalDeviceIDProperties* pIDProperties);
+void cvkGetPhysicalDeviceIDProperties(VkPhysicalDevice              physicalDevice,
+                                      void*                         pPhysicalDeviceIDPropertiesNext,
+                                      VkPhysicalDeviceProperties2*  pProperties,
+                                      VkPhysicalDeviceIDProperties* pPhysicalDeviceIDProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceMaintenance3Properties chained to the output.
  *
- * \param[in] physicalDevice               VkPhysicalDevice value
- * \param[in] pMaintenance3PropertiesNext  Optional output extension chain attached to VkPhysicalDeviceMaintenance3Properties, or NULL
- * \param[out] pProperties                  Receives the VkPhysicalDeviceProperties2
- * \param[out] pMaintenance3Properties      Receives the VkPhysicalDeviceMaintenance3Properties
+ * \param[in] physicalDevice                             VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceMaintenance3PropertiesNext  Optional output extension chain attached to VkPhysicalDeviceMaintenance3Properties, or NULL
+ * \param[out] pProperties                                Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceMaintenance3Properties      Receives the VkPhysicalDeviceMaintenance3Properties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceMaintenance3Properties(VkPhysicalDevice                        physicalDevice,
-                                                void*                                   pMaintenance3PropertiesNext,
+                                                void*                                   pPhysicalDeviceMaintenance3PropertiesNext,
                                                 VkPhysicalDeviceProperties2*            pProperties,
-                                                VkPhysicalDeviceMaintenance3Properties* pMaintenance3Properties);
+                                                VkPhysicalDeviceMaintenance3Properties* pPhysicalDeviceMaintenance3Properties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceMultiviewProperties chained to the output.
  *
- * \param[in] physicalDevice            VkPhysicalDevice value
- * \param[in] pMultiviewPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceMultiviewProperties, or NULL
- * \param[out] pProperties               Receives the VkPhysicalDeviceProperties2
- * \param[out] pMultiviewProperties      Receives the VkPhysicalDeviceMultiviewProperties
+ * \param[in] physicalDevice                          VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceMultiviewPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceMultiviewProperties, or NULL
+ * \param[out] pProperties                             Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceMultiviewProperties      Receives the VkPhysicalDeviceMultiviewProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceMultiviewProperties(VkPhysicalDevice                     physicalDevice,
-                                             void*                                pMultiviewPropertiesNext,
+                                             void*                                pPhysicalDeviceMultiviewPropertiesNext,
                                              VkPhysicalDeviceProperties2*         pProperties,
-                                             VkPhysicalDeviceMultiviewProperties* pMultiviewProperties);
+                                             VkPhysicalDeviceMultiviewProperties* pPhysicalDeviceMultiviewProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePCIBusInfoPropertiesEXT chained to the output.
  *
- * \param[in] physicalDevice             VkPhysicalDevice value
- * \param[in] pPCIBusInfoPropertiesNext  Optional output extension chain attached to VkPhysicalDevicePCIBusInfoPropertiesEXT, or NULL
- * \param[out] pProperties                Receives the VkPhysicalDeviceProperties2
- * \param[out] pPCIBusInfoProperties      Receives the VkPhysicalDevicePCIBusInfoPropertiesEXT
+ * \param[in] physicalDevice                           VkPhysicalDevice value
+ * \param[in] pPhysicalDevicePCIBusInfoPropertiesNext  Optional output extension chain attached to VkPhysicalDevicePCIBusInfoPropertiesEXT, or NULL
+ * \param[out] pProperties                              Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDevicePCIBusInfoProperties      Receives the VkPhysicalDevicePCIBusInfoPropertiesEXT
  *
  * \retval None
  */
 void cvkGetPhysicalDevicePCIBusInfoProperties(VkPhysicalDevice                         physicalDevice,
-                                              void*                                    pPCIBusInfoPropertiesNext,
+                                              void*                                    pPhysicalDevicePCIBusInfoPropertiesNext,
                                               VkPhysicalDeviceProperties2*             pProperties,
-                                              VkPhysicalDevicePCIBusInfoPropertiesEXT* pPCIBusInfoProperties);
+                                              VkPhysicalDevicePCIBusInfoPropertiesEXT* pPhysicalDevicePCIBusInfoProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDevicePointClippingProperties chained to the output.
  *
- * \param[in] physicalDevice                VkPhysicalDevice value
- * \param[in] pPointClippingPropertiesNext  Optional output extension chain attached to VkPhysicalDevicePointClippingProperties, or NULL
- * \param[out] pProperties                   Receives the VkPhysicalDeviceProperties2
- * \param[out] pPointClippingProperties      Receives the VkPhysicalDevicePointClippingProperties
+ * \param[in] physicalDevice                              VkPhysicalDevice value
+ * \param[in] pPhysicalDevicePointClippingPropertiesNext  Optional output extension chain attached to VkPhysicalDevicePointClippingProperties, or NULL
+ * \param[out] pProperties                                 Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDevicePointClippingProperties      Receives the VkPhysicalDevicePointClippingProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDevicePointClippingProperties(VkPhysicalDevice                         physicalDevice,
-                                                 void*                                    pPointClippingPropertiesNext,
+                                                 void*                                    pPhysicalDevicePointClippingPropertiesNext,
                                                  VkPhysicalDeviceProperties2*             pProperties,
-                                                 VkPhysicalDevicePointClippingProperties* pPointClippingProperties);
+                                                 VkPhysicalDevicePointClippingProperties* pPhysicalDevicePointClippingProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceProtectedMemoryProperties chained to the output.
  *
- * \param[in] physicalDevice                  VkPhysicalDevice value
- * \param[in] pProtectedMemoryPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryProperties, or NULL
- * \param[out] pProperties                     Receives the VkPhysicalDeviceProperties2
- * \param[out] pProtectedMemoryProperties      Receives the VkPhysicalDeviceProtectedMemoryProperties
+ * \param[in] physicalDevice                                VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceProtectedMemoryPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceProtectedMemoryProperties, or NULL
+ * \param[out] pProperties                                   Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceProtectedMemoryProperties      Receives the VkPhysicalDeviceProtectedMemoryProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceProtectedMemoryProperties(VkPhysicalDevice                           physicalDevice,
-                                                   void*                                      pProtectedMemoryPropertiesNext,
+                                                   void*                                      pPhysicalDeviceProtectedMemoryPropertiesNext,
                                                    VkPhysicalDeviceProperties2*               pProperties,
-                                                   VkPhysicalDeviceProtectedMemoryProperties* pProtectedMemoryProperties);
+                                                   VkPhysicalDeviceProtectedMemoryProperties* pPhysicalDeviceProtectedMemoryProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSamplerFilterMinmaxProperties chained to the output.
  *
- * \param[in] physicalDevice                      VkPhysicalDevice value
- * \param[in] pSamplerFilterMinmaxPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceSamplerFilterMinmaxProperties, or NULL
- * \param[out] pProperties                         Receives the VkPhysicalDeviceProperties2
- * \param[out] pSamplerFilterMinmaxProperties      Receives the VkPhysicalDeviceSamplerFilterMinmaxProperties
+ * \param[in] physicalDevice                                    VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceSamplerFilterMinmaxPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceSamplerFilterMinmaxProperties, or NULL
+ * \param[out] pProperties                                       Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceSamplerFilterMinmaxProperties      Receives the VkPhysicalDeviceSamplerFilterMinmaxProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceSamplerFilterMinmaxProperties(VkPhysicalDevice                               physicalDevice,
-                                                       void*                                          pSamplerFilterMinmaxPropertiesNext,
+                                                       void*                                          pPhysicalDeviceSamplerFilterMinmaxPropertiesNext,
                                                        VkPhysicalDeviceProperties2*                   pProperties,
-                                                       VkPhysicalDeviceSamplerFilterMinmaxProperties* pSamplerFilterMinmaxProperties);
+                                                       VkPhysicalDeviceSamplerFilterMinmaxProperties* pPhysicalDeviceSamplerFilterMinmaxProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceSubgroupProperties chained to the output.
  *
- * \param[in] physicalDevice           VkPhysicalDevice value
- * \param[in] pSubgroupPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceSubgroupProperties, or NULL
- * \param[out] pProperties              Receives the VkPhysicalDeviceProperties2
- * \param[out] pSubgroupProperties      Receives the VkPhysicalDeviceSubgroupProperties
+ * \param[in] physicalDevice                         VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceSubgroupPropertiesNext  Optional output extension chain attached to VkPhysicalDeviceSubgroupProperties, or NULL
+ * \param[out] pProperties                            Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceSubgroupProperties      Receives the VkPhysicalDeviceSubgroupProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceSubgroupProperties(VkPhysicalDevice                    physicalDevice,
-                                            void*                               pSubgroupPropertiesNext,
+                                            void*                               pPhysicalDeviceSubgroupPropertiesNext,
                                             VkPhysicalDeviceProperties2*        pProperties,
-                                            VkPhysicalDeviceSubgroupProperties* pSubgroupProperties);
+                                            VkPhysicalDeviceSubgroupProperties* pPhysicalDeviceSubgroupProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceTimelineSemaphoreProperties chained to the output.
  *
- * \param[in] physicalDevice                    VkPhysicalDevice value
- * \param[in] pTimelineSemaphorePropertiesNext  Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreProperties, or NULL
- * \param[out] pProperties                       Receives the VkPhysicalDeviceProperties2
- * \param[out] pTimelineSemaphoreProperties      Receives the VkPhysicalDeviceTimelineSemaphoreProperties
+ * \param[in] physicalDevice                                  VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceTimelineSemaphorePropertiesNext  Optional output extension chain attached to VkPhysicalDeviceTimelineSemaphoreProperties, or NULL
+ * \param[out] pProperties                                     Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceTimelineSemaphoreProperties      Receives the VkPhysicalDeviceTimelineSemaphoreProperties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceTimelineSemaphoreProperties(VkPhysicalDevice                             physicalDevice,
-                                                     void*                                        pTimelineSemaphorePropertiesNext,
+                                                     void*                                        pPhysicalDeviceTimelineSemaphorePropertiesNext,
                                                      VkPhysicalDeviceProperties2*                 pProperties,
-                                                     VkPhysicalDeviceTimelineSemaphoreProperties* pTimelineSemaphoreProperties);
+                                                     VkPhysicalDeviceTimelineSemaphoreProperties* pPhysicalDeviceTimelineSemaphoreProperties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan11Properties chained to the output.
  *
- * \param[in] physicalDevice           VkPhysicalDevice value
- * \param[in] pVulkan11PropertiesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan11Properties, or NULL
- * \param[out] pProperties              Receives the VkPhysicalDeviceProperties2
- * \param[out] pVulkan11Properties      Receives the VkPhysicalDeviceVulkan11Properties
+ * \param[in] physicalDevice                         VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceVulkan11PropertiesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan11Properties, or NULL
+ * \param[out] pProperties                            Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceVulkan11Properties      Receives the VkPhysicalDeviceVulkan11Properties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceVulkan11Properties(VkPhysicalDevice                    physicalDevice,
-                                            void*                               pVulkan11PropertiesNext,
+                                            void*                               pPhysicalDeviceVulkan11PropertiesNext,
                                             VkPhysicalDeviceProperties2*        pProperties,
-                                            VkPhysicalDeviceVulkan11Properties* pVulkan11Properties);
+                                            VkPhysicalDeviceVulkan11Properties* pPhysicalDeviceVulkan11Properties);
 /**
  * \brief Retrieves physical device properties 2 with VkPhysicalDeviceVulkan12Properties chained to the output.
  *
- * \param[in] physicalDevice           VkPhysicalDevice value
- * \param[in] pVulkan12PropertiesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan12Properties, or NULL
- * \param[out] pProperties              Receives the VkPhysicalDeviceProperties2
- * \param[out] pVulkan12Properties      Receives the VkPhysicalDeviceVulkan12Properties
+ * \param[in] physicalDevice                         VkPhysicalDevice value
+ * \param[in] pPhysicalDeviceVulkan12PropertiesNext  Optional output extension chain attached to VkPhysicalDeviceVulkan12Properties, or NULL
+ * \param[out] pProperties                            Receives the VkPhysicalDeviceProperties2
+ * \param[out] pPhysicalDeviceVulkan12Properties      Receives the VkPhysicalDeviceVulkan12Properties
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceVulkan12Properties(VkPhysicalDevice                    physicalDevice,
-                                            void*                               pVulkan12PropertiesNext,
+                                            void*                               pPhysicalDeviceVulkan12PropertiesNext,
                                             VkPhysicalDeviceProperties2*        pProperties,
-                                            VkPhysicalDeviceVulkan12Properties* pVulkan12Properties);
+                                            VkPhysicalDeviceVulkan12Properties* pPhysicalDeviceVulkan12Properties);
 /**
  * \brief Returns the first memory type in the mask whose property flags equal the given flags exactly, or VK_INVALID.
  *
