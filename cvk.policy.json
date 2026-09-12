@@ -24,6 +24,11 @@
     "vkGetExternalComputeQueueDataNV::params": "I",
     "vkSetGpaDeviceClockModeAMD::pInfo": "I"
   },
+  "try_commands": [
+    "vkGetPhysicalDeviceVideoCapabilitiesKHR",
+    "vkGetPhysicalDeviceImageFormatProperties2",
+    "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR"
+  ],
   "chains": {
     "cvkGetPhysicalDeviceMemoryTypeIndex": {
       "brief": "Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.",
@@ -614,6 +619,16 @@
       "brief": "Creates a shader module, a compute pipeline layout, and a compute pipeline.",
       "inputs": [
         {
+          "type": "VkShaderModuleCreateFlags",
+          "name": "shaderModuleFlags",
+          "doc": "VkShaderModuleCreateInfo::flags"
+        },
+        {
+          "type": "VkPipelineLayoutCreateFlags",
+          "name": "pipelineLayoutFlags",
+          "doc": "VkPipelineLayoutCreateInfo::flags"
+        },
+        {
           "type": "const void*",
           "name": "pStageNext",
           "doc": "Optional extension chain for VkPipelineShaderStageCreateInfo, or NULL"
@@ -631,7 +646,10 @@
       ],
       "steps": [
         {
-          "call": "cvkCreateShaderModule"
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "flags": "shaderModuleFlags"
+          }
         },
         {
           "call": "cvkInitPipelineShaderStageCreateInfo",
@@ -647,7 +665,10 @@
           }
         },
         {
-          "call": "cvkCreateComputePipelineLayout"
+          "call": "cvkCreateComputePipelineLayout",
+          "bind": {
+            "flags": "pipelineLayoutFlags"
+          }
         },
         {
           "call": "cvkCreateComputePipeline",
@@ -2458,6 +2479,942 @@
         },
         {
           "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+        }
+      ]
+    },
+    "cvkCmdBindGraphicsPipeline": {
+      "brief": "Binds a graphics pipeline.",
+      "steps": [
+        {
+          "call": "cvkCmdBindPipeline",
+          "bind": {
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_GRAPHICS"
+          }
+        }
+      ]
+    },
+    "cvkCmdBindGraphicsDescriptorSets": {
+      "brief": "Binds descriptor sets to the graphics bind point.",
+      "steps": [
+        {
+          "call": "cvkCmdBindDescriptorSets",
+          "bind": {
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_GRAPHICS"
+          }
+        }
+      ]
+    },
+    "cvkCmdPushGraphicsConstants": {
+      "brief": "Pushes constants for every graphics stage.",
+      "steps": [
+        {
+          "call": "cvkCmdPushConstants",
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_ALL_GRAPHICS"
+          }
+        }
+      ]
+    },
+    "cvkCreateGraphicsPipelineLayout": {
+      "brief": "Creates a pipeline layout for every graphics stage with at most one push constant range.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constant range"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constant range, zero for none"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPushConstantRange",
+          "local": {
+            "pInfo": "push_constant_range"
+          },
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_ALL_GRAPHICS",
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize"
+          }
+        },
+        {
+          "call": "cvkCreatePipelineLayout",
+          "bind": {
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pPushConstantRanges": "&push_constant_range"
+          }
+        }
+      ]
+    },
+    "cvkInitEmptyPipelineVertexInputStateCreateInfo": {
+      "brief": "Initializes a vertex input state with no bindings and no attributes.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineVertexInputStateCreateInfo",
+          "bind": {
+            "vertexBindingDescriptionCount": "0",
+            "pVertexBindingDescriptions": "NULL",
+            "vertexAttributeDescriptionCount": "0",
+            "pVertexAttributeDescriptions": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkInitTriangleListPipelineInputAssemblyStateCreateInfo": {
+      "brief": "Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST without primitive restart.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineInputAssemblyStateCreateInfo",
+          "bind": {
+            "topology": "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST",
+            "primitiveRestartEnable": "VK_FALSE"
+          }
+        }
+      ]
+    },
+    "cvkInitTriangleStripPipelineInputAssemblyStateCreateInfo": {
+      "brief": "Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP without primitive restart.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineInputAssemblyStateCreateInfo",
+          "bind": {
+            "topology": "VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP",
+            "primitiveRestartEnable": "VK_FALSE"
+          }
+        }
+      ]
+    },
+    "cvkInitPointListPipelineInputAssemblyStateCreateInfo": {
+      "brief": "Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_POINT_LIST without primitive restart.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineInputAssemblyStateCreateInfo",
+          "bind": {
+            "topology": "VK_PRIMITIVE_TOPOLOGY_POINT_LIST",
+            "primitiveRestartEnable": "VK_FALSE"
+          }
+        }
+      ]
+    },
+    "cvkInitLineListPipelineInputAssemblyStateCreateInfo": {
+      "brief": "Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_LINE_LIST without primitive restart.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineInputAssemblyStateCreateInfo",
+          "bind": {
+            "topology": "VK_PRIMITIVE_TOPOLOGY_LINE_LIST",
+            "primitiveRestartEnable": "VK_FALSE"
+          }
+        }
+      ]
+    },
+    "cvkInitSinglePipelineViewportStateCreateInfo": {
+      "brief": "Initializes a viewport state with one viewport and one scissor; NULL pointers leave them dynamic.",
+      "inputs": [
+        {
+          "type": "const VkViewport*",
+          "name": "pViewport",
+          "doc": "The viewport, or NULL when VK_DYNAMIC_STATE_VIEWPORT is set"
+        },
+        {
+          "type": "const VkRect2D*",
+          "name": "pScissor",
+          "doc": "The scissor, or NULL when VK_DYNAMIC_STATE_SCISSOR is set"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPipelineViewportStateCreateInfo",
+          "bind": {
+            "viewportCount": "1",
+            "pViewports": "pViewport",
+            "scissorCount": "1",
+            "pScissors": "pScissor"
+          }
+        }
+      ]
+    },
+    "cvkInitFillPipelineRasterizationStateCreateInfo": {
+      "brief": "Initializes a rasterization state filling polygons with no depth clamp, discard, or depth bias, and unit line width.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineRasterizationStateCreateInfo",
+          "bind": {
+            "depthClampEnable": "VK_FALSE",
+            "rasterizerDiscardEnable": "VK_FALSE",
+            "polygonMode": "VK_POLYGON_MODE_FILL",
+            "depthBiasEnable": "VK_FALSE",
+            "depthBiasConstantFactor": "0.0f",
+            "depthBiasClamp": "0.0f",
+            "depthBiasSlopeFactor": "0.0f",
+            "lineWidth": "1.0f"
+          }
+        }
+      ]
+    },
+    "cvkInitSampleCountPipelineMultisampleStateCreateInfo": {
+      "brief": "Initializes a multisample state that is only a sample count: no sample shading, mask, or alpha operations.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineMultisampleStateCreateInfo",
+          "bind": {
+            "sampleShadingEnable": "VK_FALSE",
+            "minSampleShading": "0.0f",
+            "pSampleMask": "NULL",
+            "alphaToCoverageEnable": "VK_FALSE",
+            "alphaToOneEnable": "VK_FALSE"
+          }
+        }
+      ]
+    },
+    "cvkInitDisabledPipelineDepthStencilStateCreateInfo": {
+      "brief": "Initializes a depth stencil state with the depth, depth bounds, and stencil tests disabled.",
+      "steps": [
+        {
+          "call": "cvkInitStencilOpState",
+          "local": {
+            "pInfo": "stencil_op_state"
+          },
+          "bind": {
+            "failOp": "VK_STENCIL_OP_KEEP",
+            "passOp": "VK_STENCIL_OP_KEEP",
+            "depthFailOp": "VK_STENCIL_OP_KEEP",
+            "compareOp": "VK_COMPARE_OP_NEVER",
+            "compareMask": "0",
+            "writeMask": "0",
+            "reference": "0"
+          }
+        },
+        {
+          "call": "cvkInitPipelineDepthStencilStateCreateInfo",
+          "bind": {
+            "depthTestEnable": "VK_FALSE",
+            "depthWriteEnable": "VK_FALSE",
+            "depthCompareOp": "VK_COMPARE_OP_ALWAYS",
+            "depthBoundsTestEnable": "VK_FALSE",
+            "stencilTestEnable": "VK_FALSE",
+            "front": "stencil_op_state",
+            "back": "stencil_op_state",
+            "minDepthBounds": "0.0f",
+            "maxDepthBounds": "1.0f"
+          }
+        }
+      ]
+    },
+    "cvkInitDepthTestPipelineDepthStencilStateCreateInfo": {
+      "brief": "Initializes a depth stencil state with the depth test enabled and the depth bounds and stencil tests disabled.",
+      "steps": [
+        {
+          "call": "cvkInitStencilOpState",
+          "local": {
+            "pInfo": "stencil_op_state"
+          },
+          "bind": {
+            "failOp": "VK_STENCIL_OP_KEEP",
+            "passOp": "VK_STENCIL_OP_KEEP",
+            "depthFailOp": "VK_STENCIL_OP_KEEP",
+            "compareOp": "VK_COMPARE_OP_NEVER",
+            "compareMask": "0",
+            "writeMask": "0",
+            "reference": "0"
+          }
+        },
+        {
+          "call": "cvkInitPipelineDepthStencilStateCreateInfo",
+          "bind": {
+            "depthTestEnable": "VK_TRUE",
+            "depthBoundsTestEnable": "VK_FALSE",
+            "stencilTestEnable": "VK_FALSE",
+            "front": "stencil_op_state",
+            "back": "stencil_op_state",
+            "minDepthBounds": "0.0f",
+            "maxDepthBounds": "1.0f"
+          }
+        }
+      ]
+    },
+    "cvkInitOpaquePipelineColorBlendAttachmentState": {
+      "brief": "Initializes a color blend attachment state with blending disabled and every component written.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineColorBlendAttachmentState",
+          "bind": {
+            "blendEnable": "VK_FALSE",
+            "srcColorBlendFactor": "VK_BLEND_FACTOR_ONE",
+            "dstColorBlendFactor": "VK_BLEND_FACTOR_ZERO",
+            "colorBlendOp": "VK_BLEND_OP_ADD",
+            "srcAlphaBlendFactor": "VK_BLEND_FACTOR_ONE",
+            "dstAlphaBlendFactor": "VK_BLEND_FACTOR_ZERO",
+            "alphaBlendOp": "VK_BLEND_OP_ADD",
+            "colorWriteMask": "VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT"
+          }
+        }
+      ]
+    },
+    "cvkInitAlphaBlendPipelineColorBlendAttachmentState": {
+      "brief": "Initializes a color blend attachment state for source-alpha blending (color: SRC_ALPHA, ONE_MINUS_SRC_ALPHA; alpha: ONE, ONE_MINUS_SRC_ALPHA; both ADD) with every component written.",
+      "steps": [
+        {
+          "call": "cvkInitPipelineColorBlendAttachmentState",
+          "bind": {
+            "blendEnable": "VK_TRUE",
+            "srcColorBlendFactor": "VK_BLEND_FACTOR_SRC_ALPHA",
+            "dstColorBlendFactor": "VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA",
+            "colorBlendOp": "VK_BLEND_OP_ADD",
+            "srcAlphaBlendFactor": "VK_BLEND_FACTOR_ONE",
+            "dstAlphaBlendFactor": "VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA",
+            "alphaBlendOp": "VK_BLEND_OP_ADD",
+            "colorWriteMask": "VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT"
+          }
+        }
+      ]
+    },
+    "cvkInitSingleAttachmentPipelineColorBlendStateCreateInfo": {
+      "brief": "Initializes a color blend state with one attachment, no logic operation, and zero blend constants.",
+      "inputs": [
+        {
+          "type": "const VkPipelineColorBlendAttachmentState*",
+          "name": "pAttachment",
+          "doc": "The only attachment's blend state"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "float blend_constants[4] = { 0.0f, 0.0f, 0.0f, 0.0f }"
+        },
+        {
+          "call": "cvkInitPipelineColorBlendStateCreateInfo",
+          "bind": {
+            "logicOpEnable": "VK_FALSE",
+            "logicOp": "VK_LOGIC_OP_COPY",
+            "attachmentCount": "1",
+            "pAttachments": "pAttachment",
+            "blendConstants": "blend_constants"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetFirstViewport": {
+      "brief": "Sets viewport zero.",
+      "inputs": [
+        {
+          "type": "VkViewport",
+          "name": "viewport",
+          "doc": "The viewport"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdSetViewport",
+          "bind": {
+            "firstViewport": "0",
+            "viewportCount": "1",
+            "pViewports": "&viewport"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetFirstScissor": {
+      "brief": "Sets scissor zero.",
+      "inputs": [
+        {
+          "type": "VkRect2D",
+          "name": "scissor",
+          "doc": "The scissor rectangle"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdSetScissor",
+          "bind": {
+            "firstScissor": "0",
+            "scissorCount": "1",
+            "pScissors": "&scissor"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetFirstViewport2D": {
+      "brief": "Sets viewport zero to an extent at the origin with the full depth range.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "Viewport size"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitViewport",
+          "local": {
+            "pInfo": "viewport"
+          },
+          "bind": {
+            "x": "0.0f",
+            "y": "0.0f",
+            "width": "(float)extent2D.width",
+            "height": "(float)extent2D.height",
+            "minDepth": "0.0f",
+            "maxDepth": "1.0f"
+          }
+        },
+        {
+          "call": "cvkCmdSetFirstViewport",
+          "bind": {
+            "viewport": "viewport"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetFirstScissor2D": {
+      "brief": "Sets scissor zero to an extent at the origin.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "extent2D",
+          "doc": "Scissor size"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitOffset2D",
+          "local": {
+            "pInfo": "offset"
+          },
+          "bind": {
+            "x": "0",
+            "y": "0"
+          }
+        },
+        {
+          "call": "cvkInitRect2D",
+          "local": {
+            "pInfo": "scissor"
+          },
+          "bind": {
+            "offset": "offset",
+            "extent": "extent2D"
+          }
+        },
+        {
+          "call": "cvkCmdSetFirstScissor",
+          "bind": {
+            "scissor": "scissor"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetFirstViewportAndScissor2D": {
+      "brief": "Sets viewport zero and scissor zero to an extent at the origin.",
+      "steps": [
+        {
+          "call": "cvkCmdSetFirstViewport2D"
+        },
+        {
+          "call": "cvkCmdSetFirstScissor2D"
+        }
+      ]
+    },
+    "cvkSetupGraphicsPipeline": {
+      "brief": "Creates vertex and fragment shader modules, a graphics pipeline layout, and a graphics pipeline from caller-provided state.",
+      "inputs": [
+        {
+          "type": "VkShaderModuleCreateFlags",
+          "name": "shaderModuleFlags",
+          "doc": "VkShaderModuleCreateInfo::flags of both modules"
+        },
+        {
+          "type": "VkPipelineLayoutCreateFlags",
+          "name": "pipelineLayoutFlags",
+          "doc": "VkPipelineLayoutCreateInfo::flags"
+        },
+        {
+          "type": "const void*",
+          "name": "pVertexShaderModuleNext",
+          "doc": "Optional extension chain for the vertex VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "vertexCodeSize",
+          "doc": "Size in bytes of the vertex shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pVertexCode",
+          "doc": "Vertex shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentShaderModuleNext",
+          "doc": "Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "fragmentCodeSize",
+          "doc": "Size in bytes of the fragment shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pFragmentCode",
+          "doc": "Fragment shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pVertexStageNext",
+          "doc": "Optional extension chain for the vertex VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentStageNext",
+          "doc": "Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "VkPipelineShaderStageCreateFlags",
+          "name": "stageFlags",
+          "doc": "VkPipelineShaderStageCreateInfo::flags of both stages"
+        },
+        {
+          "type": "const char*",
+          "name": "pVertexEntryPoint",
+          "doc": "Entry point name of the vertex shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pVertexSpecializationInfo",
+          "doc": "Specialization of the vertex shader, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pFragmentEntryPoint",
+          "doc": "Entry point name of the fragment shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pFragmentSpecializationInfo",
+          "doc": "Specialization of the fragment shader, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkShaderModule",
+          "name": "pVertexShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pFragmentShaderModule"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pVertexShaderModuleNext",
+            "codeSize": "vertexCodeSize",
+            "pCode": "pVertexCode",
+            "pShaderModule": "pVertexShaderModule",
+            "flags": "shaderModuleFlags"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pFragmentShaderModuleNext",
+            "codeSize": "fragmentCodeSize",
+            "pCode": "pFragmentCode",
+            "pShaderModule": "pFragmentShaderModule",
+            "flags": "shaderModuleFlags"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[0]"
+          },
+          "bind": {
+            "pNext": "pVertexStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_VERTEX_BIT",
+            "module": "(*pVertexShaderModule)",
+            "pName": "pVertexEntryPoint",
+            "pSpecializationInfo": "pVertexSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[1]"
+          },
+          "bind": {
+            "pNext": "pFragmentStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "module": "(*pFragmentShaderModule)",
+            "pName": "pFragmentEntryPoint",
+            "pSpecializationInfo": "pFragmentSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateGraphicsPipelineLayout",
+          "bind": {
+            "flags": "pipelineLayoutFlags"
+          }
+        },
+        {
+          "call": "cvkCreateGraphicsPipeline",
+          "bind": {
+            "stageCount": "2",
+            "pStages": "shader_stages",
+            "layout": "(*pPipelineLayout)",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1"
+          }
+        }
+      ]
+    },
+    "cvkCmdDrawGraphicsVertices": {
+      "brief": "Binds a graphics pipeline, its descriptor sets, and push constants, then draws vertices.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constants"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constants"
+        },
+        {
+          "type": "const void*",
+          "name": "pPushConstants",
+          "doc": "Push constant bytes"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBindGraphicsPipeline"
+        },
+        {
+          "call": "cvkCmdBindGraphicsDescriptorSets"
+        },
+        {
+          "call": "cvkCmdPushGraphicsConstants",
+          "bind": {
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize",
+            "pValues": "pPushConstants"
+          }
+        },
+        {
+          "call": "cvkCmdDraw"
+        }
+      ]
+    },
+    "cvkCmdDrawGraphicsIndices": {
+      "brief": "Binds a graphics pipeline, its descriptor sets, and push constants, then draws indexed vertices.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constants"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constants"
+        },
+        {
+          "type": "const void*",
+          "name": "pPushConstants",
+          "doc": "Push constant bytes"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBindGraphicsPipeline"
+        },
+        {
+          "call": "cvkCmdBindGraphicsDescriptorSets"
+        },
+        {
+          "call": "cvkCmdPushGraphicsConstants",
+          "bind": {
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize",
+            "pValues": "pPushConstants"
+          }
+        },
+        {
+          "call": "cvkCmdDrawIndexed"
+        }
+      ]
+    },
+    "cvkCreateVertexShader": {
+      "brief": "Creates a vertex shader object from SPIR-V code.",
+      "steps": [
+        {
+          "call": "cvkCreateShader",
+          "bind": {
+            "stage": "VK_SHADER_STAGE_VERTEX_BIT",
+            "codeType": "VK_SHADER_CODE_TYPE_SPIRV_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateFragmentShader": {
+      "brief": "Creates a fragment shader object from SPIR-V code.",
+      "steps": [
+        {
+          "call": "cvkCreateShader",
+          "bind": {
+            "stage": "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "codeType": "VK_SHADER_CODE_TYPE_SPIRV_EXT",
+            "nextStage": "0"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateComputeShader": {
+      "brief": "Creates a compute shader object from SPIR-V code.",
+      "steps": [
+        {
+          "call": "cvkCreateShader",
+          "bind": {
+            "stage": "VK_SHADER_STAGE_COMPUTE_BIT",
+            "codeType": "VK_SHADER_CODE_TYPE_SPIRV_EXT",
+            "nextStage": "0"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCmdBindComputeShader": {
+      "brief": "Binds one shader object to the compute stage.",
+      "inputs": [
+        {
+          "type": "VkShaderEXT",
+          "name": "shader",
+          "doc": "The compute shader object"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "VkShaderStageFlagBits stage = VK_SHADER_STAGE_COMPUTE_BIT"
+        },
+        {
+          "call": "cvkCmdBindShaders",
+          "bind": {
+            "stageCount": "1",
+            "pStages": "&stage",
+            "pShaders": "&shader"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceVideoQueueFamilyIndex": {
+      "brief": "Returns the first queue family supporting the required video codec operations, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyVideoProperties",
+          "local": {
+            "pQueueFamilyVideoProperties": "queue_family_video_properties"
+          },
+          "into": "queue_family_property_count"
+        },
+        {
+          "call": "cvkGetVideoQueueFamilyIndex",
+          "bind": {
+            "propertyCount": "queue_family_property_count",
+            "pVideoProperties": "queue_family_video_properties"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupVideoDeviceQueue": {
+      "brief": "Creates a device with one queue of the first queue family supporting the required video codec operations.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceVideoQueueFamilyIndex",
+          "into": "queue_family_index"
+        },
+        {
+          "assert": "VK_INVALID != queue_family_index"
+        },
+        {
+          "call": "cvkSetupDeviceQueue",
+          "bind": {
+            "queueFamilyIndex": "queue_family_index"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceVideoDecodeQueueFamilyIndex": {
+      "brief": "Returns the first queue family supporting decode of any codec, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyIndex",
+          "bind": {
+            "requiredFlags": "VK_QUEUE_VIDEO_DECODE_BIT_KHR"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceVideoEncodeQueueFamilyIndex": {
+      "brief": "Returns the first queue family supporting encode of any codec, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyIndex",
+          "bind": {
+            "requiredFlags": "VK_QUEUE_VIDEO_ENCODE_BIT_KHR"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceVideoProfileSupport": {
+      "brief": "Reports whether a video profile is supported, without aborting when it is not.",
+      "ret": "VkBool32",
+      "steps": [
+        {
+          "call": "cvkTryGetPhysicalDeviceVideoCapabilities",
+          "bind": {
+            "pNext": "NULL"
+          },
+          "local": {
+            "pCapabilities": "capabilities"
+          },
+          "into": "result"
+        },
+        {
+          "return": "(VK_SUCCESS == result) ? VK_TRUE : VK_FALSE"
+        }
+      ]
+    },
+    "cvkSetupVideoSession": {
+      "brief": "Creates a video session and backs every one of its memory requirements with its own allocation.",
+      "outputs": [
+        {
+          "type": "uint32_t",
+          "name": "pMemoryCount"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateVideoSession"
+        },
+        {
+          "call": "cvkAllocateVideoSessionMemory",
+          "store": "pMemoryCount"
+        }
+      ]
+    },
+    "cvkCmdControlResetVideoCoding": {
+      "brief": "Resets the video coding state of the bound session.",
+      "steps": [
+        {
+          "call": "cvkCmdControlVideoCoding",
+          "bind": {
+            "flags": "VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCreateResultStatusQueryPool": {
+      "brief": "Creates a query pool of result status queries.",
+      "steps": [
+        {
+          "call": "cvkCreateQueryPool",
+          "bind": {
+            "queryType": "VK_QUERY_TYPE_RESULT_STATUS_ONLY_KHR",
+            "pipelineStatistics": "0"
+          }
+        }
+      ]
+    },
+    "cvkCreateVideoEncodeFeedbackQueryPool": {
+      "brief": "Creates a query pool of video encode feedback queries; the video profile is chained through pNext.",
+      "steps": [
+        {
+          "call": "cvkCreateQueryPoolWithVideoEncodeFeedbackInfo",
+          "bind": {
+            "queryType": "VK_QUERY_TYPE_VIDEO_ENCODE_FEEDBACK_KHR",
+            "pipelineStatistics": "0"
+          }
+        }
+      ]
+    },
+    "cvkSetupBufferWithVideoProfileListInfo": {
+      "brief": "Creates a buffer usable with the listed video profiles, allocates memory for it, and binds the memory.",
+      "steps": [
+        {
+          "call": "cvkCreateBufferWithVideoProfileListInfo"
+        },
+        {
+          "call": "cvkAllocateBufferMemory"
+        },
+        {
+          "call": "cvkBindBufferMemory",
+          "bind": {
+            "memoryOffset": "0"
+          }
+        }
+      ]
+    },
+    "cvkSetupImageWithVideoProfileListInfo": {
+      "brief": "Creates an image usable with the listed video profiles, allocates memory for it, and binds the memory.",
+      "steps": [
+        {
+          "call": "cvkCreateImageWithVideoProfileListInfo"
+        },
+        {
+          "call": "cvkAllocateImageMemory"
+        },
+        {
+          "call": "cvkBindImageMemory",
+          "bind": {
+            "memoryOffset": "0"
+          }
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceVideoFormatPropertiesByIndex": {
+      "brief": "Returns the video format properties at an index of the enumeration for an image usage; the profile list is chained through pNext.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "videoFormatPropertyIndex",
+          "doc": "Index into the enumeration"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkVideoFormatPropertiesKHR",
+          "name": "pVideoFormatProperties"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceVideoFormatInfo",
+          "local": {
+            "pVideoFormatProperties": "video_format_properties"
+          },
+          "into": "video_format_property_count"
+        },
+        {
+          "assert": "video_format_property_count > videoFormatPropertyIndex"
+        },
+        {
+          "set": {
+            "pVideoFormatProperties": "video_format_properties[videoFormatPropertyIndex]"
+          }
         }
       ]
     }

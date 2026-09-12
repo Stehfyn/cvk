@@ -5676,7 +5676,7 @@ void cvkInitImageToMemoryCopy(VkImageToMemoryCopy*     pInfo,
  *
  * \retval None
  */
-void cvkInitImageUsageFlags2CreateInfo(VkImageUsageFlags2CreateInfoKHR* pInfo, void* pNext, VkImageUsageFlags2KHR usage);
+void cvkInitImageUsageFlags2CreateInfoKHR(VkImageUsageFlags2CreateInfoKHR* pInfo, void* pNext, VkImageUsageFlags2KHR usage);
 /**
  * \brief Initializes a VkImageViewASTCDecodeModeEXT.
  *
@@ -33605,24 +33605,24 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
  *
  * \retval None
  */
-void cvkCreateImageWithUsageFlags2Info(VkDevice                     device,
-                                       void*                        pNext,
-                                       VkImageUsageFlags2KHR        usage2KHR,
-                                       VkImageCreateFlags           flags,
-                                       VkImageType                  imageType,
-                                       VkFormat                     format,
-                                       VkExtent3D                   extent,
-                                       uint32_t                     mipLevels,
-                                       uint32_t                     arrayLayers,
-                                       VkSampleCountFlagBits        samples,
-                                       VkImageTiling                tiling,
-                                       VkImageUsageFlags            usage,
-                                       VkSharingMode                sharingMode,
-                                       uint32_t                     queueFamilyIndexCount,
-                                       const uint32_t*              pQueueFamilyIndices,
-                                       VkImageLayout                initialLayout,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkImage*                     pImage);
+void cvkCreateImageWithUsageFlags2InfoKHR(VkDevice                     device,
+                                          void*                        pNext,
+                                          VkImageUsageFlags2KHR        usage2KHR,
+                                          VkImageCreateFlags           flags,
+                                          VkImageType                  imageType,
+                                          VkFormat                     format,
+                                          VkExtent3D                   extent,
+                                          uint32_t                     mipLevels,
+                                          uint32_t                     arrayLayers,
+                                          VkSampleCountFlagBits        samples,
+                                          VkImageTiling                tiling,
+                                          VkImageUsageFlags            usage,
+                                          VkSharingMode                sharingMode,
+                                          uint32_t                     queueFamilyIndexCount,
+                                          const uint32_t*              pQueueFamilyIndices,
+                                          VkImageLayout                initialLayout,
+                                          const VkAllocationCallbacks* pAllocator,
+                                          VkImage*                     pImage);
 /**
  * \brief Creates a image with VkOpaqueCaptureDataCreateInfoEXT chained.
  *
@@ -35730,27 +35730,27 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
  *
  * \retval None
  */
-void cvkCreateSwapchainWithImageUsageFlags2Info(VkDevice                      device,
-                                                void*                         pNext,
-                                                VkImageUsageFlags2KHR         usage,
-                                                VkSwapchainCreateFlagsKHR     flags,
-                                                VkSurfaceKHR                  surface,
-                                                uint32_t                      minImageCount,
-                                                VkFormat                      imageFormat,
-                                                VkColorSpaceKHR               imageColorSpace,
-                                                VkExtent2D                    imageExtent,
-                                                uint32_t                      imageArrayLayers,
-                                                VkImageUsageFlags             imageUsage,
-                                                VkSharingMode                 imageSharingMode,
-                                                uint32_t                      queueFamilyIndexCount,
-                                                const uint32_t*               pQueueFamilyIndices,
-                                                VkSurfaceTransformFlagBitsKHR preTransform,
-                                                VkCompositeAlphaFlagBitsKHR   compositeAlpha,
-                                                VkPresentModeKHR              presentMode,
-                                                VkBool32                      clipped,
-                                                VkSwapchainKHR                oldSwapchain,
-                                                const VkAllocationCallbacks*  pAllocator,
-                                                VkSwapchainKHR*               pSwapchain);
+void cvkCreateSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
+                                                   void*                         pNext,
+                                                   VkImageUsageFlags2KHR         usage,
+                                                   VkSwapchainCreateFlagsKHR     flags,
+                                                   VkSurfaceKHR                  surface,
+                                                   uint32_t                      minImageCount,
+                                                   VkFormat                      imageFormat,
+                                                   VkColorSpaceKHR               imageColorSpace,
+                                                   VkExtent2D                    imageExtent,
+                                                   uint32_t                      imageArrayLayers,
+                                                   VkImageUsageFlags             imageUsage,
+                                                   VkSharingMode                 imageSharingMode,
+                                                   uint32_t                      queueFamilyIndexCount,
+                                                   const uint32_t*               pQueueFamilyIndices,
+                                                   VkSurfaceTransformFlagBitsKHR preTransform,
+                                                   VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                   VkPresentModeKHR              presentMode,
+                                                   VkBool32                      clipped,
+                                                   VkSwapchainKHR                oldSwapchain,
+                                                   const VkAllocationCallbacks*  pAllocator,
+                                                   VkSwapchainKHR*               pSwapchain);
 /**
  * \brief Creates a swapchain with VkSwapchainCounterCreateInfoEXT chained.
  *
@@ -37339,16 +37339,16 @@ void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice     
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageUsageFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                          void*                     pImageFormatInfoNext,
-                                                          VkImageUsageFlags2KHR     usage2KHR,
-                                                          VkFormat                  format,
-                                                          VkImageType               type,
-                                                          VkImageTiling             tiling,
-                                                          VkImageUsageFlags         usage,
-                                                          VkImageCreateFlags        flags,
-                                                          void*                     pImageFormatPropertiesNext,
-                                                          VkImageFormatProperties2* pImageFormatProperties);
+void cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
+                                                                       void*                     pImageFormatInfoNext,
+                                                                       VkImageUsageFlags2KHR     usage2KHR,
+                                                                       VkFormat                  format,
+                                                                       VkImageType               type,
+                                                                       VkImageTiling             tiling,
+                                                                       VkImageUsageFlags         usage,
+                                                                       VkImageCreateFlags        flags,
+                                                                       void*                     pImageFormatPropertiesNext,
+                                                                       VkImageFormatProperties2* pImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkOpticalFlowImageFormatInfoNV chained.
  *
@@ -37502,15 +37502,15 @@ void cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice 
  *
  * \return The uint32_t returned by the command.
  */
-uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2Properties(VkPhysicalDevice               physicalDevice,
-                                                                    void*                          pNext,
-                                                                    VkImageUsageFlags2KHR          usage2KHR,
-                                                                    VkFormat                       format,
-                                                                    VkImageType                    type,
-                                                                    VkSampleCountFlagBits          samples,
-                                                                    VkImageUsageFlags              usage,
-                                                                    VkImageTiling                  tiling,
-                                                                    VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES]);
+uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice               physicalDevice,
+                                                                                 void*                          pNext,
+                                                                                 VkImageUsageFlags2KHR          usage2KHR,
+                                                                                 VkFormat                       format,
+                                                                                 VkImageType                    type,
+                                                                                 VkSampleCountFlagBits          samples,
+                                                                                 VkImageUsageFlags              usage,
+                                                                                 VkImageTiling                  tiling,
+                                                                                 VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES]);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfacePresentModeKHR chained.
  *
@@ -37825,12 +37825,12 @@ void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance        
  *
  * \return The uint32_t returned by the command.
  */
-uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2Properties(VkInstance                 instance,
-                                                                   VkPhysicalDevice           physicalDevice,
-                                                                   void*                      pNext,
-                                                                   VkImageUsageFlags2KHR      usage,
-                                                                   VkImageUsageFlags          imageUsage,
-                                                                   VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
+uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2CreateInfoPropertiesKHR(VkInstance                 instance,
+                                                                                VkPhysicalDevice           physicalDevice,
+                                                                                void*                      pNext,
+                                                                                VkImageUsageFlags2KHR      usage,
+                                                                                VkImageUsageFlags          imageUsage,
+                                                                                VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
 /**
  * \brief Retrieves physical device video format properties with VkVideoProfileListInfoKHR chained.
  *
@@ -45138,19 +45138,19 @@ void cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice   
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkImageUsageFlags2CreateInfoKHR chained to the output.
  *
- * \param[in] physicalDevice                   VkPhysicalDevice value
- * \param[in] pSurfaceInfoNext                 Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
- * \param[in] surface                          VkPhysicalDeviceSurfaceInfo2KHR::surface
- * \param[in] pImageUsageFlags2CreateInfoNext  Optional output extension chain attached to VkImageUsageFlags2CreateInfoKHR, or NULL
- * \param[out] pImageUsageFlags2CreateInfo      Receives the VkImageUsageFlags2CreateInfoKHR
+ * \param[in] physicalDevice                      VkPhysicalDevice value
+ * \param[in] pSurfaceInfoNext                    Optional extension chain attached to VkPhysicalDeviceSurfaceInfo2KHR, or NULL
+ * \param[in] surface                             VkPhysicalDeviceSurfaceInfo2KHR::surface
+ * \param[in] pImageUsageFlags2CreateInfoKHRNext  Optional output extension chain attached to VkImageUsageFlags2CreateInfoKHR, or NULL
+ * \param[out] pImageUsageFlags2CreateInfoKHR      Receives the VkImageUsageFlags2CreateInfoKHR
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2Info(VkPhysicalDevice                 physicalDevice,
-                                                                     const void*                      pSurfaceInfoNext,
-                                                                     VkSurfaceKHR                     surface,
-                                                                     void*                            pImageUsageFlags2CreateInfoNext,
-                                                                     VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfo);
+void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKHR(VkPhysicalDevice                 physicalDevice,
+                                                                                  const void*                      pSurfaceInfoNext,
+                                                                                  VkSurfaceKHR                     surface,
+                                                                                  void*                            pImageUsageFlags2CreateInfoKHRNext,
+                                                                                  VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkLatencySurfaceCapabilitiesNV chained to the output.
  *
@@ -45852,6 +45852,259 @@ void cvkGetTensorTileMemoryRequirementsQCOM(VkDevice                      device
                                             void*                         pTileMemoryRequirementsQCOMNext,
                                             VkTileMemoryRequirementsQCOM* pTileMemoryRequirementsQCOM);
 /**
+ * \brief Retrieves display mode properties 2 with VkDisplayModeStereoPropertiesNV chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetDisplayModeProperties2KHR. Aborts on any error result.
+ *
+ * \param[in] physicalDevice                VkPhysicalDevice value
+ * \param[in] display                       VkDisplayKHR value
+ * \param[out] pDisplayModeStereoProperties  Receives up to CVK_MAX_PROPERTIES entries of VkDisplayModeStereoPropertiesNV, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetDisplayModeStereoProperties(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModeStereoPropertiesNV pDisplayModeStereoProperties[CVK_MAX_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyCheckpointProperties2NV chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice                     VkPhysicalDevice value
+ * \param[out] pQueueFamilyCheckpointProperties2  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyCheckpointProperties2NV, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyCheckpointProperties2(VkPhysicalDevice physicalDevice, VkQueueFamilyCheckpointProperties2NV pQueueFamilyCheckpointProperties2[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyCheckpointPropertiesNV chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice                    VkPhysicalDevice value
+ * \param[out] pQueueFamilyCheckpointProperties  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyCheckpointPropertiesNV, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyCheckpointProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyCheckpointPropertiesNV pQueueFamilyCheckpointProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyGlobalPriorityProperties chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice                        VkPhysicalDevice value
+ * \param[out] pQueueFamilyGlobalPriorityProperties  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyGlobalPriorityProperties, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyGlobalPriorityProperties(VkPhysicalDevice                      physicalDevice,
+                                                                 VkQueueFamilyGlobalPriorityProperties pQueueFamilyGlobalPriorityProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice                                         VkPhysicalDevice value
+ * \param[out] pQueueFamilyOptimalImageTransferGranularityProperties  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyOptimalImageTransferGranularityProperties(
+    VkPhysicalDevice                                          physicalDevice,
+    VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR pQueueFamilyOptimalImageTransferGranularityProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyOwnershipTransferPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice                           VkPhysicalDevice value
+ * \param[out] pQueueFamilyOwnershipTransferProperties  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyOwnershipTransferPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyOwnershipTransferProperties(VkPhysicalDevice                            physicalDevice,
+                                                                    VkQueueFamilyOwnershipTransferPropertiesKHR pQueueFamilyOwnershipTransferProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyQueryResultStatusPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice                           VkPhysicalDevice value
+ * \param[out] pQueueFamilyQueryResultStatusProperties  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyQueryResultStatusPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyQueryResultStatusProperties(VkPhysicalDevice                            physicalDevice,
+                                                                    VkQueueFamilyQueryResultStatusPropertiesKHR pQueueFamilyQueryResultStatusProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device queue family properties 2 with VkQueueFamilyVideoPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceQueueFamilyProperties2.
+ *
+ * \param[in] physicalDevice               VkPhysicalDevice value
+ * \param[out] pQueueFamilyVideoProperties  Receives up to CVK_MAX_QUEUE_FAMILY_PROPERTIES entries of VkQueueFamilyVideoPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyVideoProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyVideoPropertiesKHR pQueueFamilyVideoProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES]);
+/**
+ * \brief Retrieves physical device surface formats 2 with VkImageCompressionPropertiesEXT chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceSurfaceFormats2KHR. Aborts on any error result.
+ *
+ * \param[in] physicalDevice               VkPhysicalDevice value
+ * \param[in] pSurfaceInfo                 VkPhysicalDeviceSurfaceInfo2KHR value
+ * \param[out] pImageCompressionProperties  Receives up to CVK_MAX_SURFACE_FORMATS entries of VkImageCompressionPropertiesEXT, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceSurfaceFormats2WithImageCompressionProperties(VkPhysicalDevice                       physicalDevice,
+                                                                           const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+                                                                           VkImageCompressionPropertiesEXT        pImageCompressionProperties[CVK_MAX_SURFACE_FORMATS]);
+/**
+ * \brief Retrieves physical device video format properties with VkImageCreateFlags2CreateInfoKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoFormatPropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance                      Parent handle used to resolve the extension command
+ * \param[in] physicalDevice                VkPhysicalDevice value
+ * \param[in] pVideoFormatInfo              VkPhysicalDeviceVideoFormatInfoKHR value
+ * \param[out] pImageCreateFlags2CreateInfo  Receives up to CVK_MAX_VIDEO_FORMAT_PROPERTIES entries of VkImageCreateFlags2CreateInfoKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceImageCreateFlags2CreateInfo(VkInstance                                instance,
+                                                         VkPhysicalDevice                          physicalDevice,
+                                                         const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                                         VkImageCreateFlags2CreateInfoKHR          pImageCreateFlags2CreateInfo[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
+/**
+ * \brief Retrieves physical device video format properties with VkImageUsageFlags2CreateInfoKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoFormatPropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance                        Parent handle used to resolve the extension command
+ * \param[in] physicalDevice                  VkPhysicalDevice value
+ * \param[in] pVideoFormatInfo                VkPhysicalDeviceVideoFormatInfoKHR value
+ * \param[out] pImageUsageFlags2CreateInfoKHR  Receives up to CVK_MAX_VIDEO_FORMAT_PROPERTIES entries of VkImageUsageFlags2CreateInfoKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceImageUsageFlags2CreateInfoKHR(VkInstance                                instance,
+                                                           VkPhysicalDevice                          physicalDevice,
+                                                           const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                                           VkImageUsageFlags2CreateInfoKHR           pImageUsageFlags2CreateInfoKHR[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
+/**
+ * \brief Retrieves physical device video format properties with VkVideoFormatAV1QuantizationMapPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoFormatPropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance                                  Parent handle used to resolve the extension command
+ * \param[in] physicalDevice                            VkPhysicalDevice value
+ * \param[in] pVideoFormatInfo                          VkPhysicalDeviceVideoFormatInfoKHR value
+ * \param[out] pVideoFormatAV1QuantizationMapProperties  Receives up to CVK_MAX_VIDEO_FORMAT_PROPERTIES entries of VkVideoFormatAV1QuantizationMapPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceVideoFormatAV1QuantizationMapProperties(VkInstance                                   instance,
+                                                                     VkPhysicalDevice                             physicalDevice,
+                                                                     const VkPhysicalDeviceVideoFormatInfoKHR*    pVideoFormatInfo,
+                                                                     VkVideoFormatAV1QuantizationMapPropertiesKHR pVideoFormatAV1QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
+/**
+ * \brief Retrieves physical device video format properties with VkVideoFormatH265QuantizationMapPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoFormatPropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance                                   Parent handle used to resolve the extension command
+ * \param[in] physicalDevice                             VkPhysicalDevice value
+ * \param[in] pVideoFormatInfo                           VkPhysicalDeviceVideoFormatInfoKHR value
+ * \param[out] pVideoFormatH265QuantizationMapProperties  Receives up to CVK_MAX_VIDEO_FORMAT_PROPERTIES entries of VkVideoFormatH265QuantizationMapPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceVideoFormatH265QuantizationMapProperties(VkInstance                                    instance,
+                                                                      VkPhysicalDevice                              physicalDevice,
+                                                                      const VkPhysicalDeviceVideoFormatInfoKHR*     pVideoFormatInfo,
+                                                                      VkVideoFormatH265QuantizationMapPropertiesKHR pVideoFormatH265QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
+/**
+ * \brief Retrieves physical device video format properties with VkVideoFormatQuantizationMapPropertiesKHR chained to every element.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoFormatPropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance                               Parent handle used to resolve the extension command
+ * \param[in] physicalDevice                         VkPhysicalDevice value
+ * \param[in] pVideoFormatInfo                       VkPhysicalDeviceVideoFormatInfoKHR value
+ * \param[out] pVideoFormatQuantizationMapProperties  Receives up to CVK_MAX_VIDEO_FORMAT_PROPERTIES entries of VkVideoFormatQuantizationMapPropertiesKHR, one per element
+ *
+ * \return Number of entries written.
+ */
+uint32_t cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkInstance                                instance,
+                                                                  VkPhysicalDevice                          physicalDevice,
+                                                                  const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                                                  VkVideoFormatQuantizationMapPropertiesKHR pVideoFormatQuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
+/**
+ * \brief Retrieves physical device video capabilities, returning the result instead of aborting on failure.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoCapabilitiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance        Parent handle used to resolve the extension command
+ * \param[in] physicalDevice  VkPhysicalDevice value
+ * \param[in] pVideoProfile   VkVideoProfileInfoKHR value
+ * \param[in] pNext           Optional output extension chain attached to VkVideoCapabilitiesKHR, or NULL
+ * \param[out] pCapabilities   Receives the VkVideoCapabilitiesKHR
+ *
+ * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR, VK_ERROR_UNKNOWN, VK_ERROR_VALIDATION_FAILED. Error results abort.
+ */
+VkResult cvkTryGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities);
+/**
+ * \brief Retrieves physical device image format properties 2, returning the result instead of aborting on failure.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceImageFormatProperties2. Aborts on any error result.
+ *
+ * \param[in] physicalDevice          VkPhysicalDevice value
+ * \param[in] pImageFormatInfo        VkPhysicalDeviceImageFormatInfo2 value
+ * \param[in] pNext                   Optional output extension chain attached to VkImageFormatProperties2, or NULL
+ * \param[out] pImageFormatProperties  Receives the VkImageFormatProperties2
+ *
+ * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_FORMAT_NOT_SUPPORTED, VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR, VK_ERROR_UNKNOWN, VK_ERROR_VALIDATION_FAILED. Error results abort.
+ */
+VkResult cvkTryGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice                        physicalDevice,
+                                                       const VkPhysicalDeviceImageFormatInfo2* pImageFormatInfo,
+                                                       void*                                   pNext,
+                                                       VkImageFormatProperties2*               pImageFormatProperties);
+/**
+ * \brief Retrieves physical device video encode quality level properties, returning the result instead of aborting on failure.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] instance                 Parent handle used to resolve the extension command
+ * \param[in] physicalDevice           VkPhysicalDevice value
+ * \param[in] pQualityLevelInfo        VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR value
+ * \param[in] pNext                    Optional output extension chain attached to VkVideoEncodeQualityLevelPropertiesKHR, or NULL
+ * \param[out] pQualityLevelProperties  Receives the VkVideoEncodeQualityLevelPropertiesKHR
+ *
+ * \return VK_SUCCESS or one of: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_OUT_OF_DEVICE_MEMORY, VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR, VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR, VK_ERROR_UNKNOWN, VK_ERROR_VALIDATION_FAILED. Error results abort.
+ */
+VkResult cvkTryGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance                                            instance,
+                                                                  VkPhysicalDevice                                      physicalDevice,
+                                                                  const VkPhysicalDeviceVideoEncodeQualityLevelInfoKHR* pQualityLevelInfo,
+                                                                  void*                                                 pNext,
+                                                                  VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties);
+/**
  * \brief Returns the first memory type in the mask whose property flags equal the given flags exactly, or VK_INVALID.
  *
  * \param[in] memoryTypeCount  memoryTypeCount value
@@ -45904,6 +46157,16 @@ VkBool32 cvkGetExtensionsSupport(uint32_t propertyCount, const VkExtensionProper
  * \return The uint32_t returned by the command.
  */
 uint32_t cvkGetQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamilyProperties* pProperties, VkQueueFlags requiredFlags);
+/**
+ * \brief Returns the first queue family whose video codec operations cover the required operations, or VK_INVALID.
+ *
+ * \param[in] propertyCount       propertyCount value
+ * \param[in] pVideoProperties    pVideoProperties value
+ * \param[in] requiredOperations  requiredOperations value
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetVideoQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamilyVideoPropertiesKHR* pVideoProperties, VkVideoCodecOperationFlagsKHR requiredOperations);
 /**
  * \brief Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.
  *
@@ -46509,7 +46772,6 @@ void cvkCreateComputePipelineLayout(VkDevice                     device,
  *
  * \param[in] device               See cvkCreateShaderModule
  * \param[in] pShaderModuleNext    See cvkCreateShaderModule
- * \param[in] flags                See cvkCreateShaderModule
  * \param[in] codeSize             See cvkCreateShaderModule
  * \param[in] pCode                See cvkCreateShaderModule
  * \param[in] pSpecializationInfo  See cvkInitPipelineShaderStageCreateInfo
@@ -46520,8 +46782,11 @@ void cvkCreateComputePipelineLayout(VkDevice                     device,
  * \param[in] pushConstantSize     See cvkCreateComputePipelineLayout
  * \param[in] pipelineCache        See cvkCreateComputePipeline
  * \param[in] pPipelineNext        See cvkCreateComputePipeline
+ * \param[in] flags                See cvkCreateComputePipeline
  * \param[in] basePipelineHandle   See cvkCreateComputePipeline
  * \param[in] basePipelineIndex    See cvkCreateComputePipeline
+ * \param[in] shaderModuleFlags    VkShaderModuleCreateInfo::flags
+ * \param[in] pipelineLayoutFlags  VkPipelineLayoutCreateInfo::flags
  * \param[in] pStageNext           Optional extension chain for VkPipelineShaderStageCreateInfo, or NULL
  * \param[in] stageFlags           VkPipelineShaderStageCreateInfo::flags
  * \param[in] pEntryPoint          Entry point name of the compute shader
@@ -46534,7 +46799,6 @@ void cvkCreateComputePipelineLayout(VkDevice                     device,
  */
 void cvkSetupComputePipeline(VkDevice                         device,
                              const void*                      pShaderModuleNext,
-                             VkShaderModuleCreateFlags        flags,
                              size_t                           codeSize,
                              const uint32_t*                  pCode,
                              const VkSpecializationInfo*      pSpecializationInfo,
@@ -46545,8 +46809,11 @@ void cvkSetupComputePipeline(VkDevice                         device,
                              uint32_t                         pushConstantSize,
                              VkPipelineCache                  pipelineCache,
                              const void*                      pPipelineNext,
+                             VkPipelineCreateFlags            flags,
                              VkPipeline                       basePipelineHandle,
                              int32_t                          basePipelineIndex,
+                             VkShaderModuleCreateFlags        shaderModuleFlags,
+                             VkPipelineLayoutCreateFlags      pipelineLayoutFlags,
                              const void*                      pStageNext,
                              VkPipelineShaderStageCreateFlags stageFlags,
                              const char*                      pEntryPoint,
@@ -48078,6 +48345,758 @@ VkBool32 cvkGetPhysicalDeviceExternalBufferExportSupport(VkPhysicalDevice       
                                                          VkExternalMemoryHandleTypeFlagBits handleType,
                                                          VkBool32*                          pDedicatedOnly);
 /**
+ * \brief Binds a graphics pipeline.
+ *
+ * \param[in] commandBuffer  See cvkCmdBindPipeline
+ * \param[in] pipeline       See cvkCmdBindPipeline
+ *
+ * \retval None
+ */
+void cvkCmdBindGraphicsPipeline(VkCommandBuffer commandBuffer, VkPipeline pipeline);
+/**
+ * \brief Binds descriptor sets to the graphics bind point.
+ *
+ * \param[in] commandBuffer       See cvkCmdBindDescriptorSets
+ * \param[in] layout              See cvkCmdBindDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindDescriptorSets
+ *
+ * \retval None
+ */
+void cvkCmdBindGraphicsDescriptorSets(VkCommandBuffer        commandBuffer,
+                                      VkPipelineLayout       layout,
+                                      uint32_t               firstSet,
+                                      uint32_t               descriptorSetCount,
+                                      const VkDescriptorSet* pDescriptorSets,
+                                      uint32_t               dynamicOffsetCount,
+                                      const uint32_t*        pDynamicOffsets);
+/**
+ * \brief Pushes constants for every graphics stage.
+ *
+ * \param[in] commandBuffer  See cvkCmdPushConstants
+ * \param[in] layout         See cvkCmdPushConstants
+ * \param[in] offset         See cvkCmdPushConstants
+ * \param[in] size           See cvkCmdPushConstants
+ * \param[in] pValues        See cvkCmdPushConstants
+ *
+ * \retval None
+ */
+void cvkCmdPushGraphicsConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues);
+/**
+ * \brief Creates a pipeline layout for every graphics stage with at most one push constant range.
+ *
+ * \param[in] device               See cvkCreatePipelineLayout
+ * \param[in] pPipelineLayoutNext  See cvkCreatePipelineLayout
+ * \param[in] flags                See cvkCreatePipelineLayout
+ * \param[in] setLayoutCount       See cvkCreatePipelineLayout
+ * \param[in] pSetLayouts          See cvkCreatePipelineLayout
+ * \param[in] pushConstantOffset   Offset of the push constant range
+ * \param[in] pushConstantSize     Size of the push constant range, zero for none
+ * \param[in] pAllocator           See cvkCreatePipelineLayout
+ * \param[out] pPipelineLayout      Receives the created VkPipelineLayout
+ *
+ * \retval None
+ */
+void cvkCreateGraphicsPipelineLayout(VkDevice                     device,
+                                     const void*                  pPipelineLayoutNext,
+                                     VkPipelineLayoutCreateFlags  flags,
+                                     uint32_t                     setLayoutCount,
+                                     const VkDescriptorSetLayout* pSetLayouts,
+                                     uint32_t                     pushConstantOffset,
+                                     uint32_t                     pushConstantSize,
+                                     const VkAllocationCallbacks* pAllocator,
+                                     VkPipelineLayout*            pPipelineLayout);
+/**
+ * \brief Initializes a vertex input state with no bindings and no attributes.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineVertexInputStateCreateInfo
+ * \param[in] pNext  See cvkInitPipelineVertexInputStateCreateInfo
+ * \param[in] flags  See cvkInitPipelineVertexInputStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitEmptyPipelineVertexInputStateCreateInfo(VkPipelineVertexInputStateCreateInfo* pInfo, const void* pNext, VkPipelineVertexInputStateCreateFlags flags);
+/**
+ * \brief Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST without primitive restart.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineInputAssemblyStateCreateInfo
+ * \param[in] pNext  See cvkInitPipelineInputAssemblyStateCreateInfo
+ * \param[in] flags  See cvkInitPipelineInputAssemblyStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitTriangleListPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCreateInfo* pInfo, const void* pNext, VkPipelineInputAssemblyStateCreateFlags flags);
+/**
+ * \brief Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP without primitive restart.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineInputAssemblyStateCreateInfo
+ * \param[in] pNext  See cvkInitPipelineInputAssemblyStateCreateInfo
+ * \param[in] flags  See cvkInitPipelineInputAssemblyStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitTriangleStripPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCreateInfo* pInfo, const void* pNext, VkPipelineInputAssemblyStateCreateFlags flags);
+/**
+ * \brief Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_POINT_LIST without primitive restart.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineInputAssemblyStateCreateInfo
+ * \param[in] pNext  See cvkInitPipelineInputAssemblyStateCreateInfo
+ * \param[in] flags  See cvkInitPipelineInputAssemblyStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitPointListPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCreateInfo* pInfo, const void* pNext, VkPipelineInputAssemblyStateCreateFlags flags);
+/**
+ * \brief Initializes an input assembly state for VK_PRIMITIVE_TOPOLOGY_LINE_LIST without primitive restart.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineInputAssemblyStateCreateInfo
+ * \param[in] pNext  See cvkInitPipelineInputAssemblyStateCreateInfo
+ * \param[in] flags  See cvkInitPipelineInputAssemblyStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitLineListPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCreateInfo* pInfo, const void* pNext, VkPipelineInputAssemblyStateCreateFlags flags);
+/**
+ * \brief Initializes a viewport state with one viewport and one scissor; NULL pointers leave them dynamic.
+ *
+ * \param[out] pInfo      Receives the initialized VkPipelineViewportStateCreateInfo
+ * \param[in] pNext      See cvkInitPipelineViewportStateCreateInfo
+ * \param[in] flags      See cvkInitPipelineViewportStateCreateInfo
+ * \param[in] pViewport  The viewport, or NULL when VK_DYNAMIC_STATE_VIEWPORT is set
+ * \param[in] pScissor   The scissor, or NULL when VK_DYNAMIC_STATE_SCISSOR is set
+ *
+ * \retval None
+ */
+void cvkInitSinglePipelineViewportStateCreateInfo(VkPipelineViewportStateCreateInfo* pInfo,
+                                                  const void*                        pNext,
+                                                  VkPipelineViewportStateCreateFlags flags,
+                                                  const VkViewport*                  pViewport,
+                                                  const VkRect2D*                    pScissor);
+/**
+ * \brief Initializes a rasterization state filling polygons with no depth clamp, discard, or depth bias, and unit line width.
+ *
+ * \param[out] pInfo      Receives the initialized VkPipelineRasterizationStateCreateInfo
+ * \param[in] pNext      See cvkInitPipelineRasterizationStateCreateInfo
+ * \param[in] flags      See cvkInitPipelineRasterizationStateCreateInfo
+ * \param[in] cullMode   See cvkInitPipelineRasterizationStateCreateInfo
+ * \param[in] frontFace  See cvkInitPipelineRasterizationStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitFillPipelineRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo* pInfo,
+                                                     const void*                             pNext,
+                                                     VkPipelineRasterizationStateCreateFlags flags,
+                                                     VkCullModeFlags                         cullMode,
+                                                     VkFrontFace                             frontFace);
+/**
+ * \brief Initializes a multisample state that is only a sample count: no sample shading, mask, or alpha operations.
+ *
+ * \param[out] pInfo                 Receives the initialized VkPipelineMultisampleStateCreateInfo
+ * \param[in] pNext                 See cvkInitPipelineMultisampleStateCreateInfo
+ * \param[in] flags                 See cvkInitPipelineMultisampleStateCreateInfo
+ * \param[in] rasterizationSamples  See cvkInitPipelineMultisampleStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitSampleCountPipelineMultisampleStateCreateInfo(VkPipelineMultisampleStateCreateInfo* pInfo,
+                                                          const void*                           pNext,
+                                                          VkPipelineMultisampleStateCreateFlags flags,
+                                                          VkSampleCountFlagBits                 rasterizationSamples);
+/**
+ * \brief Initializes a depth stencil state with the depth, depth bounds, and stencil tests disabled.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineDepthStencilStateCreateInfo
+ * \param[in] pNext  See cvkInitPipelineDepthStencilStateCreateInfo
+ * \param[in] flags  See cvkInitPipelineDepthStencilStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitDisabledPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo, const void* pNext, VkPipelineDepthStencilStateCreateFlags flags);
+/**
+ * \brief Initializes a depth stencil state with the depth test enabled and the depth bounds and stencil tests disabled.
+ *
+ * \param[out] pInfo             Receives the initialized VkPipelineDepthStencilStateCreateInfo
+ * \param[in] pNext             See cvkInitPipelineDepthStencilStateCreateInfo
+ * \param[in] flags             See cvkInitPipelineDepthStencilStateCreateInfo
+ * \param[in] depthWriteEnable  See cvkInitPipelineDepthStencilStateCreateInfo
+ * \param[in] depthCompareOp    See cvkInitPipelineDepthStencilStateCreateInfo
+ *
+ * \retval None
+ */
+void cvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo,
+                                                         const void*                            pNext,
+                                                         VkPipelineDepthStencilStateCreateFlags flags,
+                                                         VkBool32                               depthWriteEnable,
+                                                         VkCompareOp                            depthCompareOp);
+/**
+ * \brief Initializes a color blend attachment state with blending disabled and every component written.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineColorBlendAttachmentState
+ *
+ * \retval None
+ */
+void cvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo);
+/**
+ * \brief Initializes a color blend attachment state for source-alpha blending (color: SRC_ALPHA, ONE_MINUS_SRC_ALPHA; alpha: ONE, ONE_MINUS_SRC_ALPHA; both ADD) with every component written.
+ *
+ * \param[out] pInfo  Receives the initialized VkPipelineColorBlendAttachmentState
+ *
+ * \retval None
+ */
+void cvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo);
+/**
+ * \brief Initializes a color blend state with one attachment, no logic operation, and zero blend constants.
+ *
+ * \param[out] pInfo        Receives the initialized VkPipelineColorBlendStateCreateInfo
+ * \param[in] pNext        See cvkInitPipelineColorBlendStateCreateInfo
+ * \param[in] flags        See cvkInitPipelineColorBlendStateCreateInfo
+ * \param[in] pAttachment  The only attachment's blend state
+ *
+ * \retval None
+ */
+void cvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo*       pInfo,
+                                                              const void*                                pNext,
+                                                              VkPipelineColorBlendStateCreateFlags       flags,
+                                                              const VkPipelineColorBlendAttachmentState* pAttachment);
+/**
+ * \brief Sets viewport zero.
+ *
+ * \param[in] commandBuffer  See cvkCmdSetViewport
+ * \param[in] viewport       The viewport
+ *
+ * \retval None
+ */
+void cvkCmdSetFirstViewport(VkCommandBuffer commandBuffer, VkViewport viewport);
+/**
+ * \brief Sets scissor zero.
+ *
+ * \param[in] commandBuffer  See cvkCmdSetScissor
+ * \param[in] scissor        The scissor rectangle
+ *
+ * \retval None
+ */
+void cvkCmdSetFirstScissor(VkCommandBuffer commandBuffer, VkRect2D scissor);
+/**
+ * \brief Sets viewport zero to an extent at the origin with the full depth range.
+ *
+ * \param[in] commandBuffer  See cvkCmdSetFirstViewport
+ * \param[in] extent2D       Viewport size
+ *
+ * \retval None
+ */
+void cvkCmdSetFirstViewport2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
+/**
+ * \brief Sets scissor zero to an extent at the origin.
+ *
+ * \param[in] commandBuffer  See cvkCmdSetFirstScissor
+ * \param[in] extent2D       Scissor size
+ *
+ * \retval None
+ */
+void cvkCmdSetFirstScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
+/**
+ * \brief Sets viewport zero and scissor zero to an extent at the origin.
+ *
+ * \param[in] commandBuffer  See cvkCmdSetFirstViewport2D
+ * \param[in] extent2D       See cvkCmdSetFirstViewport2D
+ *
+ * \retval None
+ */
+void cvkCmdSetFirstViewportAndScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
+/**
+ * \brief Creates vertex and fragment shader modules, a graphics pipeline layout, and a graphics pipeline from caller-provided state.
+ *
+ * \param[in] device                       See cvkCreateShaderModule
+ * \param[in] pPipelineLayoutNext          See cvkCreateGraphicsPipelineLayout
+ * \param[in] setLayoutCount               See cvkCreateGraphicsPipelineLayout
+ * \param[in] pSetLayouts                  See cvkCreateGraphicsPipelineLayout
+ * \param[in] pushConstantOffset           See cvkCreateGraphicsPipelineLayout
+ * \param[in] pushConstantSize             See cvkCreateGraphicsPipelineLayout
+ * \param[in] pipelineCache                See cvkCreateGraphicsPipeline
+ * \param[in] pPipelineNext                See cvkCreateGraphicsPipeline
+ * \param[in] flags                        See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState            See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState          See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState           See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState               See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState          See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState            See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState           See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState             See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                   See cvkCreateGraphicsPipeline
+ * \param[in] subpass                      See cvkCreateGraphicsPipeline
+ * \param[in] shaderModuleFlags            VkShaderModuleCreateInfo::flags of both modules
+ * \param[in] pipelineLayoutFlags          VkPipelineLayoutCreateInfo::flags
+ * \param[in] pVertexShaderModuleNext      Optional extension chain for the vertex VkShaderModuleCreateInfo, or NULL
+ * \param[in] vertexCodeSize               Size in bytes of the vertex shader code
+ * \param[in] pVertexCode                  Vertex shader SPIR-V code
+ * \param[in] pFragmentShaderModuleNext    Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL
+ * \param[in] fragmentCodeSize             Size in bytes of the fragment shader code
+ * \param[in] pFragmentCode                Fragment shader SPIR-V code
+ * \param[in] pVertexStageNext             Optional extension chain for the vertex VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pFragmentStageNext           Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] stageFlags                   VkPipelineShaderStageCreateInfo::flags of both stages
+ * \param[in] pVertexEntryPoint            Entry point name of the vertex shader
+ * \param[in] pVertexSpecializationInfo    Specialization of the vertex shader, or NULL
+ * \param[in] pFragmentEntryPoint          Entry point name of the fragment shader
+ * \param[in] pFragmentSpecializationInfo  Specialization of the fragment shader, or NULL
+ * \param[in] pAllocator                   See cvkCreateShaderModule
+ * \param[out] pVertexShaderModule          Receives the vertexShaderModule
+ * \param[out] pFragmentShaderModule        Receives the fragmentShaderModule
+ * \param[out] pPipelineLayout              Receives the created VkPipelineLayout
+ * \param[out] pPipeline                    Receives the created VkPipeline
+ *
+ * \retval None
+ */
+void cvkSetupGraphicsPipeline(VkDevice                                      device,
+                              const void*                                   pPipelineLayoutNext,
+                              uint32_t                                      setLayoutCount,
+                              const VkDescriptorSetLayout*                  pSetLayouts,
+                              uint32_t                                      pushConstantOffset,
+                              uint32_t                                      pushConstantSize,
+                              VkPipelineCache                               pipelineCache,
+                              const void*                                   pPipelineNext,
+                              VkPipelineCreateFlags                         flags,
+                              const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                              const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                              const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                              const VkPipelineViewportStateCreateInfo*      pViewportState,
+                              const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                              const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                              const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                              const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                              const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                              VkRenderPass                                  renderPass,
+                              uint32_t                                      subpass,
+                              VkShaderModuleCreateFlags                     shaderModuleFlags,
+                              VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                              const void*                                   pVertexShaderModuleNext,
+                              size_t                                        vertexCodeSize,
+                              const uint32_t*                               pVertexCode,
+                              const void*                                   pFragmentShaderModuleNext,
+                              size_t                                        fragmentCodeSize,
+                              const uint32_t*                               pFragmentCode,
+                              const void*                                   pVertexStageNext,
+                              const void*                                   pFragmentStageNext,
+                              VkPipelineShaderStageCreateFlags              stageFlags,
+                              const char*                                   pVertexEntryPoint,
+                              const VkSpecializationInfo*                   pVertexSpecializationInfo,
+                              const char*                                   pFragmentEntryPoint,
+                              const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                              const VkAllocationCallbacks*                  pAllocator,
+                              VkShaderModule*                               pVertexShaderModule,
+                              VkShaderModule*                               pFragmentShaderModule,
+                              VkPipelineLayout*                             pPipelineLayout,
+                              VkPipeline*                                   pPipeline);
+/**
+ * \brief Binds a graphics pipeline, its descriptor sets, and push constants, then draws vertices.
+ *
+ * \param[in] commandBuffer       See cvkCmdBindGraphicsPipeline
+ * \param[in] pipeline            See cvkCmdBindGraphicsPipeline
+ * \param[in] layout              See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] vertexCount         See cvkCmdDraw
+ * \param[in] instanceCount       See cvkCmdDraw
+ * \param[in] firstVertex         See cvkCmdDraw
+ * \param[in] firstInstance       See cvkCmdDraw
+ * \param[in] pushConstantOffset  Offset of the push constants
+ * \param[in] pushConstantSize    Size of the push constants
+ * \param[in] pPushConstants      Push constant bytes
+ *
+ * \retval None
+ */
+void cvkCmdDrawGraphicsVertices(VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                uint32_t               vertexCount,
+                                uint32_t               instanceCount,
+                                uint32_t               firstVertex,
+                                uint32_t               firstInstance,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants);
+/**
+ * \brief Binds a graphics pipeline, its descriptor sets, and push constants, then draws indexed vertices.
+ *
+ * \param[in] commandBuffer       See cvkCmdBindGraphicsPipeline
+ * \param[in] pipeline            See cvkCmdBindGraphicsPipeline
+ * \param[in] layout              See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindGraphicsDescriptorSets
+ * \param[in] indexCount          See cvkCmdDrawIndexed
+ * \param[in] instanceCount       See cvkCmdDrawIndexed
+ * \param[in] firstIndex          See cvkCmdDrawIndexed
+ * \param[in] vertexOffset        See cvkCmdDrawIndexed
+ * \param[in] firstInstance       See cvkCmdDrawIndexed
+ * \param[in] pushConstantOffset  Offset of the push constants
+ * \param[in] pushConstantSize    Size of the push constants
+ * \param[in] pPushConstants      Push constant bytes
+ *
+ * \retval None
+ */
+void cvkCmdDrawGraphicsIndices(VkCommandBuffer        commandBuffer,
+                               VkPipeline             pipeline,
+                               VkPipelineLayout       layout,
+                               uint32_t               firstSet,
+                               uint32_t               descriptorSetCount,
+                               const VkDescriptorSet* pDescriptorSets,
+                               uint32_t               dynamicOffsetCount,
+                               const uint32_t*        pDynamicOffsets,
+                               uint32_t               indexCount,
+                               uint32_t               instanceCount,
+                               uint32_t               firstIndex,
+                               int32_t                vertexOffset,
+                               uint32_t               firstInstance,
+                               uint32_t               pushConstantOffset,
+                               uint32_t               pushConstantSize,
+                               const void*            pPushConstants);
+/**
+ * \brief Creates a vertex shader object from SPIR-V code.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pShaderNext             See cvkCreateShader
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] nextStage               See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 Receives the created VkShaderEXT
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateVertexShader(VkDevice                     device,
+                               const void*                  pShaderNext,
+                               VkShaderCreateFlagsEXT       flags,
+                               VkShaderStageFlags           nextStage,
+                               size_t                       codeSize,
+                               const void*                  pCode,
+                               const char*                  pName,
+                               uint32_t                     setLayoutCount,
+                               const VkDescriptorSetLayout* pSetLayouts,
+                               uint32_t                     pushConstantRangeCount,
+                               const VkPushConstantRange*   pPushConstantRanges,
+                               const VkSpecializationInfo*  pSpecializationInfo,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkShaderEXT*                 pShader);
+/**
+ * \brief Creates a fragment shader object from SPIR-V code.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pShaderNext             See cvkCreateShader
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 Receives the created VkShaderEXT
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateFragmentShader(VkDevice                     device,
+                                 const void*                  pShaderNext,
+                                 VkShaderCreateFlagsEXT       flags,
+                                 size_t                       codeSize,
+                                 const void*                  pCode,
+                                 const char*                  pName,
+                                 uint32_t                     setLayoutCount,
+                                 const VkDescriptorSetLayout* pSetLayouts,
+                                 uint32_t                     pushConstantRangeCount,
+                                 const VkPushConstantRange*   pPushConstantRanges,
+                                 const VkSpecializationInfo*  pSpecializationInfo,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkShaderEXT*                 pShader);
+/**
+ * \brief Creates a compute shader object from SPIR-V code.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pShaderNext             See cvkCreateShader
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 Receives the created VkShaderEXT
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputeShader(VkDevice                     device,
+                                const void*                  pShaderNext,
+                                VkShaderCreateFlagsEXT       flags,
+                                size_t                       codeSize,
+                                const void*                  pCode,
+                                const char*                  pName,
+                                uint32_t                     setLayoutCount,
+                                const VkDescriptorSetLayout* pSetLayouts,
+                                uint32_t                     pushConstantRangeCount,
+                                const VkPushConstantRange*   pPushConstantRanges,
+                                const VkSpecializationInfo*  pSpecializationInfo,
+                                const VkAllocationCallbacks* pAllocator,
+                                VkShaderEXT*                 pShader);
+/**
+ * \brief Binds one shader object to the compute stage.
+ *
+ * \param[in] device         See cvkCmdBindShaders
+ * \param[in] commandBuffer  See cvkCmdBindShaders
+ * \param[in] shader         The compute shader object
+ *
+ * \retval None
+ */
+void cvkCmdBindComputeShader(VkDevice device, VkCommandBuffer commandBuffer, VkShaderEXT shader);
+/**
+ * \brief Returns the first queue family supporting the required video codec operations, or VK_INVALID.
+ *
+ * \param[in] physicalDevice      See cvkGetPhysicalDeviceQueueFamilyVideoProperties
+ * \param[in] requiredOperations  See cvkGetVideoQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceVideoQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkVideoCodecOperationFlagsKHR requiredOperations);
+/**
+ * \brief Creates a device with one queue of the first queue family supporting the required video codec operations.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceVideoQueueFamilyIndex
+ * \param[in] requiredOperations       See cvkGetPhysicalDeviceVideoQueueFamilyIndex
+ * \param[in] pDeviceNext              See cvkSetupDeviceQueue
+ * \param[in] flags                    See cvkSetupDeviceQueue
+ * \param[in] enabledLayerCount        See cvkSetupDeviceQueue
+ * \param[in] ppEnabledLayerNames      See cvkSetupDeviceQueue
+ * \param[in] enabledExtensionCount    See cvkSetupDeviceQueue
+ * \param[in] ppEnabledExtensionNames  See cvkSetupDeviceQueue
+ * \param[in] pEnabledFeatures         See cvkSetupDeviceQueue
+ * \param[in] pQueueNext               See cvkSetupDeviceQueue
+ * \param[in] queueFlags               See cvkSetupDeviceQueue
+ * \param[in] queuePriority            See cvkSetupDeviceQueue
+ * \param[in] pAllocator               See cvkSetupDeviceQueue
+ * \param[out] pDevice                  Receives the created VkDevice
+ * \param[out] pQueue                   Receives the created VkQueue
+ *
+ * \retval None
+ */
+void cvkSetupVideoDeviceQueue(VkPhysicalDevice                physicalDevice,
+                              VkVideoCodecOperationFlagsKHR   requiredOperations,
+                              const void*                     pDeviceNext,
+                              VkDeviceCreateFlags             flags,
+                              uint32_t                        enabledLayerCount,
+                              const char* const*              ppEnabledLayerNames,
+                              uint32_t                        enabledExtensionCount,
+                              const char* const*              ppEnabledExtensionNames,
+                              const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                              const void*                     pQueueNext,
+                              VkDeviceQueueCreateFlags        queueFlags,
+                              float                           queuePriority,
+                              const VkAllocationCallbacks*    pAllocator,
+                              VkDevice*                       pDevice,
+                              VkQueue*                        pQueue);
+/**
+ * \brief Returns the first queue family supporting decode of any codec, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceVideoDecodeQueueFamilyIndex(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Returns the first queue family supporting encode of any codec, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceVideoEncodeQueueFamilyIndex(VkPhysicalDevice physicalDevice);
+/**
+ * \brief Reports whether a video profile is supported, without aborting when it is not.
+ *
+ * \param[in] instance        See cvkTryGetPhysicalDeviceVideoCapabilities
+ * \param[in] physicalDevice  See cvkTryGetPhysicalDeviceVideoCapabilities
+ * \param[in] pVideoProfile   See cvkTryGetPhysicalDeviceVideoCapabilities
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceVideoProfileSupport(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile);
+/**
+ * \brief Resets the video coding state of the bound session.
+ *
+ * \param[in] device         See cvkCmdControlVideoCoding
+ * \param[in] commandBuffer  See cvkCmdControlVideoCoding
+ * \param[in] pNext          See cvkCmdControlVideoCoding
+ *
+ * \retval None
+ */
+void cvkCmdControlResetVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext);
+/**
+ * \brief Creates a query pool of result status queries.
+ *
+ * \param[in] device          See cvkCreateQueryPool
+ * \param[in] pQueryPoolNext  See cvkCreateQueryPool
+ * \param[in] flags           See cvkCreateQueryPool
+ * \param[in] queryCount      See cvkCreateQueryPool
+ * \param[in] pAllocator      See cvkCreateQueryPool
+ * \param[out] pQueryPool      Receives the created VkQueryPool
+ *
+ * \retval None
+ */
+void cvkCreateResultStatusQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
+/**
+ * \brief Creates a query pool of video encode feedback queries; the video profile is chained through pNext.
+ *
+ * \param[in] device               See cvkCreateQueryPoolWithVideoEncodeFeedbackInfo
+ * \param[in] pQueryPoolNext       See cvkCreateQueryPoolWithVideoEncodeFeedbackInfo
+ * \param[in] encodeFeedbackFlags  See cvkCreateQueryPoolWithVideoEncodeFeedbackInfo
+ * \param[in] flags                See cvkCreateQueryPoolWithVideoEncodeFeedbackInfo
+ * \param[in] queryCount           See cvkCreateQueryPoolWithVideoEncodeFeedbackInfo
+ * \param[in] pAllocator           See cvkCreateQueryPoolWithVideoEncodeFeedbackInfo
+ * \param[out] pQueryPool           See cvkCreateQueryPool
+ *
+ * \retval None
+ */
+void cvkCreateVideoEncodeFeedbackQueryPool(VkDevice                      device,
+                                           const void*                   pQueryPoolNext,
+                                           VkVideoEncodeFeedbackFlagsKHR encodeFeedbackFlags,
+                                           VkQueryPoolCreateFlags        flags,
+                                           uint32_t                      queryCount,
+                                           const VkAllocationCallbacks*  pAllocator,
+                                           VkQueryPool*                  pQueryPool);
+/**
+ * \brief Creates a buffer usable with the listed video profiles, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkAllocateBufferMemory
+ * \param[in] device                 See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] pBufferNext            See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] profileCount           See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] pProfiles              See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] flags                  See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] size                   See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] usage                  See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] sharingMode            See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] queueFamilyIndexCount  See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] pQueueFamilyIndices    See cvkCreateBufferWithVideoProfileListInfo
+ * \param[in] requiredProperties     See cvkAllocateBufferMemory
+ * \param[in] pMemoryNext            See cvkAllocateBufferMemory
+ * \param[in] pAllocator             See cvkCreateBufferWithVideoProfileListInfo
+ * \param[out] pBuffer                See cvkCreateBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupBufferWithVideoProfileListInfo(VkPhysicalDevice             physicalDevice,
+                                            VkDevice                     device,
+                                            const void*                  pBufferNext,
+                                            uint32_t                     profileCount,
+                                            const VkVideoProfileInfoKHR* pProfiles,
+                                            VkBufferCreateFlags          flags,
+                                            VkDeviceSize                 size,
+                                            VkBufferUsageFlags           usage,
+                                            VkSharingMode                sharingMode,
+                                            uint32_t                     queueFamilyIndexCount,
+                                            const uint32_t*              pQueueFamilyIndices,
+                                            VkMemoryPropertyFlags        requiredProperties,
+                                            const void*                  pMemoryNext,
+                                            const VkAllocationCallbacks* pAllocator,
+                                            VkBuffer*                    pBuffer,
+                                            VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates an image usable with the listed video profiles, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkAllocateImageMemory
+ * \param[in] device                 See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] pImageNext             See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] profileCount           See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] pProfiles              See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] flags                  See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] imageType              See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] format                 See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] extent                 See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] mipLevels              See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] arrayLayers            See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] samples                See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] tiling                 See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] usage                  See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] sharingMode            See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] queueFamilyIndexCount  See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] pQueueFamilyIndices    See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] initialLayout          See cvkCreateImageWithVideoProfileListInfo
+ * \param[in] requiredProperties     See cvkAllocateImageMemory
+ * \param[in] pMemoryNext            See cvkAllocateImageMemory
+ * \param[in] pAllocator             See cvkCreateImageWithVideoProfileListInfo
+ * \param[out] pImage                 See cvkCreateImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupImageWithVideoProfileListInfo(VkPhysicalDevice             physicalDevice,
+                                           VkDevice                     device,
+                                           const void*                  pImageNext,
+                                           uint32_t                     profileCount,
+                                           const VkVideoProfileInfoKHR* pProfiles,
+                                           VkImageCreateFlags           flags,
+                                           VkImageType                  imageType,
+                                           VkFormat                     format,
+                                           VkExtent3D                   extent,
+                                           uint32_t                     mipLevels,
+                                           uint32_t                     arrayLayers,
+                                           VkSampleCountFlagBits        samples,
+                                           VkImageTiling                tiling,
+                                           VkImageUsageFlags            usage,
+                                           VkSharingMode                sharingMode,
+                                           uint32_t                     queueFamilyIndexCount,
+                                           const uint32_t*              pQueueFamilyIndices,
+                                           VkImageLayout                initialLayout,
+                                           VkMemoryPropertyFlags        requiredProperties,
+                                           const void*                  pMemoryNext,
+                                           const VkAllocationCallbacks* pAllocator,
+                                           VkImage*                     pImage,
+                                           VkDeviceMemory*              pMemory);
+/**
+ * \brief Returns the video format properties at an index of the enumeration for an image usage; the profile list is chained through pNext.
+ *
+ * \param[in] instance                  See cvkGetPhysicalDeviceVideoFormatInfo
+ * \param[in] physicalDevice            See cvkGetPhysicalDeviceVideoFormatInfo
+ * \param[in] pNext                     See cvkGetPhysicalDeviceVideoFormatInfo
+ * \param[in] imageUsage                See cvkGetPhysicalDeviceVideoFormatInfo
+ * \param[in] videoFormatPropertyIndex  Index into the enumeration
+ * \param[out] pVideoFormatProperties    Receives the videoFormatProperties
+ *
+ * \retval None
+ */
+void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkInstance                  instance,
+                                                      VkPhysicalDevice            physicalDevice,
+                                                      const void*                 pNext,
+                                                      VkImageUsageFlags           imageUsage,
+                                                      uint32_t                    videoFormatPropertyIndex,
+                                                      VkVideoFormatPropertiesKHR* pVideoFormatProperties);
+/**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
  *
  * \par Details:
@@ -48603,6 +49622,31 @@ void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
                              VkAccessFlags            dstDstAccessMask,
                              VkImageLayout            dstFinalLayout);
 /**
+ * \brief Allocates and binds one memory object per memory requirement of a video session.
+ *
+ * \par Details:
+ *  The session form of cvkAllocateImageMemory: the session reports one requirement per
+ *  memory bind index; each gets a compatible memory type, its own allocation covering the
+ *  whole requirement, and a bind at offset zero. All binds are submitted in one call.
+ *
+ * \param[in]  physicalDevice          Physical device the memory is selected on
+ * \param[in]  device                  Logical device owning the session and memory
+ * \param[in]  videoSession            Session to back
+ * \param[in]  requiredProperties      Memory property flags every selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain for every VkMemoryAllocateInfo, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pMemories               Receives one VkDeviceMemory per requirement; up to CVK_MAX_MEMORY_REQUIREMENTS entries
+ *
+ * \retval Number of memory objects allocated and bound
+ */
+uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevice,
+                                       VkDevice                     device,
+                                       VkVideoSessionKHR            videoSession,
+                                       VkMemoryPropertyFlags        requiredProperties,
+                                       const void*                  pMemoryNext,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       VkDeviceMemory*              pMemories);
+/**
  * \brief Copies every plane of a subresource from a linear buffer into an image, with barriers and no ownership transfer.
  *
  * \param[in] commandBuffer             See cvkCmdTransferBufferToImageQueueOwnership
@@ -49122,6 +50166,48 @@ void cvkCmdTransferBlitImage2D(VkCommandBuffer          commandBuffer,
                                VkExtent2D               srcExtent2D,
                                VkOffset2D               dstOffset2D,
                                VkExtent2D               dstExtent2D);
+/**
+ * \brief Creates a video session and backs every one of its memory requirements with its own allocation.
+ *
+ * \param[in] physicalDevice              See cvkAllocateVideoSessionMemory
+ * \param[in] device                      See cvkCreateVideoSession
+ * \param[in] pVideoSessionNext           See cvkCreateVideoSession
+ * \param[in] queueFamilyIndex            See cvkCreateVideoSession
+ * \param[in] flags                       See cvkCreateVideoSession
+ * \param[in] pVideoProfile               See cvkCreateVideoSession
+ * \param[in] pictureFormat               See cvkCreateVideoSession
+ * \param[in] maxCodedExtent              See cvkCreateVideoSession
+ * \param[in] referencePictureFormat      See cvkCreateVideoSession
+ * \param[in] maxDpbSlots                 See cvkCreateVideoSession
+ * \param[in] maxActiveReferencePictures  See cvkCreateVideoSession
+ * \param[in] pStdHeaderVersion           See cvkCreateVideoSession
+ * \param[in] requiredProperties          See cvkAllocateVideoSessionMemory
+ * \param[in] pMemoryNext                 See cvkAllocateVideoSessionMemory
+ * \param[in] pAllocator                  See cvkCreateVideoSession
+ * \param[out] pVideoSession               Receives the created VkVideoSessionKHR
+ * \param[out] pMemories                   
+ * \param[out] pMemoryCount                Receives the memoryCount
+ *
+ * \retval None
+ */
+void cvkSetupVideoSession(VkPhysicalDevice             physicalDevice,
+                          VkDevice                     device,
+                          const void*                  pVideoSessionNext,
+                          uint32_t                     queueFamilyIndex,
+                          VkVideoSessionCreateFlagsKHR flags,
+                          const VkVideoProfileInfoKHR* pVideoProfile,
+                          VkFormat                     pictureFormat,
+                          VkExtent2D                   maxCodedExtent,
+                          VkFormat                     referencePictureFormat,
+                          uint32_t                     maxDpbSlots,
+                          uint32_t                     maxActiveReferencePictures,
+                          const VkExtensionProperties* pStdHeaderVersion,
+                          VkMemoryPropertyFlags        requiredProperties,
+                          const void*                  pMemoryNext,
+                          const VkAllocationCallbacks* pAllocator,
+                          VkVideoSessionKHR*           pVideoSession,
+                          VkDeviceMemory*              pMemories,
+                          uint32_t*                    pMemoryCount);
 
 #ifdef __cplusplus
 }

@@ -95,6 +95,13 @@ flattened input struct is named after its parameter minus the `p` (`pCreateInfo`
 and results are `function` and `result`. Declarations are ordered by first access in the
 statements that follow.
 
+**Probe twins (policy).** Vulkan reports some unsupported cases as error codes
+(`VK_ERROR_FORMAT_NOT_SUPPORTED`, `VK_ERROR_VIDEO_PROFILE_*_NOT_SUPPORTED`), which the result
+policy turns into an abort. A command listed in the policy's `try_commands` gets a twin
+`cvkTry<tier-0 minus cvk>` with the tier-0 signature, returning `VkResult` and never
+asserting on it, so a chain can turn the result into a `VkBool32`
+(`cvkGetPhysicalDeviceVideoProfileSupport`). Enumerations are not probed.
+
 **Registry quirks (policy).** `role_overrides` in the policy file maps `vkCommand::param` to
 a role when the registry's declaration misleads the derivation: an input struct passed through
 a non-const pointer is declared `I` (`vkGetExternalComputeQueueDataNV::params`,
@@ -180,6 +187,17 @@ members carries caller-provided storage (`VkDrmFormatModifierPropertiesListEXT`:
 array), so that parameter is in/out and seeds the local before the call (`pExternalImageFormatProperties`,
 `pMemoryDedicatedRequirements`). A caller who also wants the base struct calls the base query.
 
+**Extenders on the element struct of an enumeration** (`VkQueueFamilyVideoPropertiesKHR` on
+`VkQueueFamilyProperties2`) follow the same replacement rule on the enumeration's name
+(`cvkGetPhysicalDeviceQueueFamilyVideoProperties`, `cvkGetPhysicalDeviceQueueFamilyGlobalPriorityProperties`)
+and the same signature shape as the enumeration: the base element array becomes a local, the
+extender array `p<ExtenderStruct>[CVK_MAX_<Base>]` is the out-parameter, every element is
+chained before the second call, and the count is returned. The run must match the enumeration's
+name exactly: an enumeration naming its subject in the plural (`SurfaceFormats2` for
+`VkSurfaceFormat2KHR`) takes the With form on the tier-0 name
+(`cvkGetPhysicalDeviceSurfaceFormats2WithImageCompressionProperties`), since replacing the run
+would drop the subject.
+
 ## 7. Tier 1': specializations
 
 Two derived forms and one policy form.
@@ -219,7 +237,15 @@ policy file. **The chain's signature is computed from its steps' signatures**, n
 - every unsatisfied input becomes a chain parameter; every produced handle becomes a chain
   out-parameter; a step output routed to a `local` stays internal;
 - `bind` fixes a step argument to an expression (`memoryOffset: 0`, a mask intersection);
-  `set` assigns a chain output; `store`/`return` route a step's return value;
+  `set` assigns a chain output; `store`/`return` route a step's return value; `declare` adds a
+  local with an initializer (`float blend_constants[4] = { 0.0f, ... }`); a `local` of the form
+  `name[i]` is an element of a chain-local array sized by its highest index (`shader_stages[1]`);
+- two steps wanting one name for different types (`VkShaderModuleCreateFlags flags` and
+  `VkPipelineCreateFlags flags`) is a generation error: the policy binds one of them to a
+  declared input (`shaderModuleFlags`, `pipelineLayoutFlags`), so the unqualified name stays
+  with the chain's product;
+- declared outputs join the parameter list where a step first binds, stores, or sets them;
+  a chain over a builder is a builder, so its `pInfo` leads;
 - parameter order: dispatch handles by level, then inputs in order of first appearance, then
   `pAllocator`, then outputs.
 
@@ -273,6 +299,32 @@ one over a local built by a builder step. Step forms: `bind`, `local`, `into`
 an expression with the chain's `ret` type), `set`, `assert`. An import constraint on memory types is a
 parameter of the import protocol, never a name and never part of a plain allocation.
 
+## 8a. Families: compute, graphics, video
+
+One vocabulary across the three families, so that each level of one family has its
+counterpart in the others. `<Kind>` is `Compute`, `Graphics`, or `Video`.
+
+| Level | Compute | Graphics | Video |
+|---|---|---|---|
+| queue family | `cvkGetPhysicalDeviceComputeQueueFamilyIndex` (flags) | `cvkGetPhysicalDeviceGraphicsQueueFamilyIndex` | `cvkGetPhysicalDeviceVideo{Decode,Encode}QueueFamilyIndex` (flags); `cvkGetPhysicalDeviceVideoQueueFamilyIndex(requiredOperations)` on the video properties of every family (output-array extender + `cvkGetVideoQueueFamilyIndex`, policy selector) |
+| device | `cvkSetupComputeDeviceQueue` | `cvkSetupGraphicsDeviceQueue` | `cvkSetupVideoDeviceQueue(requiredOperations)` |
+| capability | features/properties output extenders | same | `cvkGetPhysicalDeviceVideoCapabilities` (+ `cvkGetPhysicalDeviceVideo{Decode,Encode,DecodeH264,...}Capabilities` output extenders), `cvkGetPhysicalDeviceVideoProfileSupport` (probe twin → `VkBool32`), `cvkGetPhysicalDeviceVideoFormatPropertiesByIndex` |
+| program | `cvkCreateShaderModule`; shader object `cvkCreateComputeShader` | `cvkCreateShaderModule`; `cvkCreate{Vertex,Fragment}Shader` | session parameters: `cvkCreateVideoSessionParameters[With<Codec>Info]`, `cvkUpdateVideoSessionParameters[With<Codec>AddInfo]` |
+| layout | `cvkCreateComputePipelineLayout` (one range, `COMPUTE_BIT`) | `cvkCreateGraphicsPipelineLayout` (one range, `ALL_GRAPHICS`) | — |
+| fixed-function state | — | `cvkInit<Adjective>Pipeline<State>CreateInfo`: the builder with the canonical constants bound (`Empty` vertex input, `TriangleList`/`TriangleStrip`/`PointList`/`LineList` input assembly, `Single` viewport, `Fill` rasterization, `SampleCount` multisample, `Disabled`/`DepthTest` depth stencil, `Opaque`/`AlphaBlend` attachment, `SingleAttachment` color blend). Arrays stay caller-owned: a builder never points into chain storage | picture resources and reference slots: builders only, storage is the caller's |
+| object | `cvkSetupComputePipeline` (module, stage, layout, pipeline) | `cvkSetupGraphicsPipeline` (two modules, two stages, layout, pipeline over caller-provided state) | `cvkSetupVideoSession` (session, then `cvkAllocateVideoSessionMemory`: one allocation and bind per requirement, a protocol), `cvkSetup{Buffer,Image}WithVideoProfileListInfo` |
+| bind | `cvkCmdBindComputePipeline`, `cvkCmdBindComputeDescriptorSets`, `cvkCmdPushComputeConstants`, `cvkCmdBindComputeShader` | `cvkCmdBindGraphicsPipeline`, `cvkCmdBindGraphicsDescriptorSets`, `cvkCmdPushGraphicsConstants`, `cvkCmdSetFirst{Viewport,Scissor}[2D]`, `cvkCmdSetFirstViewportAndScissor2D` | `cvkCmdBeginVideoCoding[With<RateControl>Info]`, `cvkCmdControlVideoCoding`, `cvkCmdControlResetVideoCoding`, `cvkCmdEndVideoCoding` |
+| work | `cvkCmdDispatchItems`, `cvkCmdDispatchComputeItems` (bind, bind, push, dispatch) and 2D forms | `cvkCmdDrawGraphicsVertices`, `cvkCmdDrawGraphicsIndices` (bind, bind, push, draw) | `cvkCmdDecodeVideo[With<Codec>PictureInfo]`, `cvkCmdEncodeVideo[With<Codec>PictureInfo]` |
+| queries | `cvkCreateTimestampQueryPool` | same | `cvkCreateResultStatusQueryPool`, `cvkCreateVideoEncodeFeedbackQueryPool` |
+
+The `<Kind>` word binds the bind point (`VK_PIPELINE_BIND_POINT_<KIND>`), the stage set
+(`COMPUTE_BIT`, `ALL_GRAPHICS`), or the queue flag; a codec is never a `<Kind>`, it is the
+extender's distinct part (`H264`, `AV1`), which tier 1 already names. The video family has no
+layout or fixed-function level: its state lives in the session and its parameters objects,
+which the object level creates. Not designed here: a full decode or encode loop (DPB slot
+management is application policy), and pipeline libraries or shader-object graphics binding
+(the stage set bound per draw is application policy).
+
 ## 8b. Tier 3: protocols (authored C, folded in by the generator)
 
 Protocols branch on runtime facts the registry does not know (`DEDICATED_ONLY`,
@@ -321,6 +373,9 @@ acceptance test of the surface: anything they cannot express is a generator defe
   are chains binding constants or building 3D offsets and extents from 2D ones. Chains and
   protocols may compose each other: the generator emits in dependency order.
 
+- Video session memory (`cvkAllocateVideoSessionMemory`, core): the session form of
+  `cvkAllocateImageMemory`; one compatible type, allocation, and bind per reported
+  requirement, all binds in one call, count returned.
 - Buffer import (`cvkImportFdBuffer`, `cvkImportWin32HandleBuffer`): the buffer form of the
   image import protocols, on `cvkGetPhysicalDeviceExternalBufferImportSupport`,
   `cvkCreateBufferWithExternalMemoryInfo`, `cvkGetBufferMemoryRequirementsInfo2` with

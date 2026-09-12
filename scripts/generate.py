@@ -204,7 +204,7 @@ class Generator:
             groups["cmd:" + strip_vendor(c.name)].append(c.name)
         for st in structs:
             groups["struct:" + strip_vendor(st.name)].append(st.name)
-        for cmd, op, ext in self.output_pairs():
+        for cmd, op, ext in self.output_pairs() + self.output_array_pairs():
             spliced = self.splice_output_name(self.with_base(cmd), ext, self.reg.struct_of(op.type), [])
             if spliced:
                 groups["cmd:" + strip_vendor(spliced[1:])].append(ext.name)
@@ -440,10 +440,51 @@ class Generator:
             t.remove(cmd.verb)
         return "cvk" + cmd.verb + "".join(t)
 
-    def emit_tier0(self, cmd: Command) -> None:
+    def output_array_name(self, cmd: Command, ap: Param, ext: Struct) -> str:
+        """SPEC.md section 6, output-array extenders: the replacement rule of the output
+        extenders applied to an enumeration (cvkGetPhysicalDeviceQueueFamilyProperties2 +
+        VkQueueFamilyVideoPropertiesKHR -> cvkGetPhysicalDeviceQueueFamilyVideoProperties);
+        the With form when the tail is not the run or the name is a command's."""
+        base = self.reg.struct_of(ap.type)
+        spliced = self.splice_output_name(self.with_base(cmd), ext, base, [])
+        if spliced is None or spliced in self.tier0_names:
+            d_tokens = self.distinct_part(ext, base, strip_info=False)
+            base_tokens = [t for t in tokens(self.struct_short(base)) if not t.isdigit()]
+            kind = base_tokens[-1] if base_tokens and base_tokens[-1] in self.KINDS_OUT and base_tokens[-1] not in d_tokens else ""
+            spliced = self.cmd_name(cmd) + "With" + "".join(d_tokens) + kind
+        return spliced
+
+    def output_array_pairs(self) -> List[Tuple[Command, Param, Struct]]:
+        """(command, enumeration array, extender) for every in-profile extender of the element
+        struct of a command's single two-call enumeration array of sType structs."""
+        out = []
+        for cmd in self.cmds:
+            roles = self.roles(cmd)
+            arrays = [p for p, r in zip(cmd.params, roles) if r == "P[]"]
+            if len(arrays) != 1 or not any(r == "n*" for r in roles):
+                continue
+            base = self.reg.struct_of(arrays[0].type)
+            for ext in sorted(self.reg.extenders_of(base.name), key=lambda e: e.name):
+                if self.struct_in_profile(ext):
+                    out.append((cmd, arrays[0], ext))
+        return out
+
+    def emit_tier0(self, cmd: Command, out_ext: Optional[Struct] = None, probe: bool = False) -> None:
+        """Tier 0 (SPEC.md section 4). With `probe`, the cvkTry twin of a VkResult command from
+        the policy's `try_commands`: it returns the result instead of aborting, so a caller can
+        test support that Vulkan reports as an error code. With `out_ext`, the output-array
+        extender form (section 6): the enumeration's element array is a local with the
+        extender chained to every element, and the extender array is the out-parameter."""
         reg = self.reg
         roles = self.roles(cmd)
-        name = self.register(self.cmd_name(cmd), cmd.name)
+        if probe:
+            name = self.register("cvkTry" + self.cmd_name(cmd)[3:], cmd.name + ":try")
+        elif out_ext is not None:
+            ap = next(p for p, r in zip(cmd.params, roles) if r == "P[]")
+            name = self.register(self.output_array_name(cmd, ap, out_ext), f"{cmd.name}+{out_ext.name}:out[]")
+        else:
+            name = self.register(self.cmd_name(cmd), cmd.name)
+        ext_arrays: Dict[str, str] = {}                       # base array parameter -> extender array parameter
         keep = self.flip_param(cmd)
         roles = ["S*" if (keep is not None and p is keep) else r for p, r in zip(cmd.params, roles)]
         filled = sum(1 for r in roles if r in ("I", "P"))
@@ -516,9 +557,18 @@ class Generator:
             elif any(p is q for q, _ in enum_arrays):
                 cap = dict((id(q), c) for q, c in enum_arrays)[id(p)]
                 elem = p.full_type.rstrip("*").strip()
-                params.append(EmittedParam(f"{elem} {p.name}[{cap}]", p.name, f"Receives up to {cap} entries", True))
-                pre.append(f"CVK_ASSERT(NULL != {p.name});")
-                call_args.append(p.name)
+                if out_ext is not None and reg.struct_of(p.type) is not None and out_ext.name in [e.name for e in reg.extenders_of(p.type)]:
+                    # The base array stays a local; the extender array is the out-parameter.
+                    ext_param = "p" + self.struct_short(out_ext)
+                    params.append(EmittedParam(f"{out_ext.name} {ext_param}[{cap}]", ext_param, f"Receives up to {cap} entries of {out_ext.name}, one per element", True))
+                    pre.append(f"CVK_ASSERT(NULL != {ext_param});")
+                    locals_.append(f"{elem} {snake(p.name)}[{cap}];")
+                    ext_arrays[p.name] = ext_param
+                    call_args.append(snake(p.name))
+                else:
+                    params.append(EmittedParam(f"{elem} {p.name}[{cap}]", p.name, f"Receives up to {cap} entries", True))
+                    pre.append(f"CVK_ASSERT(NULL != {p.name});")
+                    call_args.append(p.name)
             else:
                 text = f"{p.full_type} {p.name}[{p.array_len}]" if p.array_len else f"{p.full_type} {p.name}"
                 params.append(EmittedParam(text, p.name, self.param_doc(p, r), p.is_output))
@@ -542,6 +592,7 @@ class Generator:
             locals_.insert(0, f"PFN_{cmd.name} {fn};")
             resolve = f"{fn} = (PFN_{cmd.name}){resolver}, \"{cmd.name}\");"
         call = f"{fn}({', '.join(call_args)})"
+        enum_args = {ext_arrays.get(q.name) and snake(q.name) or q.name for q, _ in enum_arrays}
 
         informational = [c for c in cmd.successcodes if c not in ("VK_SUCCESS",)]
         if enum_count:
@@ -551,7 +602,7 @@ class Generator:
         if enum_count:
             ret = "uint32_t"
             count_var = snake(enum_count.name)
-            first = call.replace(enum_arrays[0][0].name, "NULL")
+            first = f"{fn}({', '.join('NULL' if a in enum_args else a for a in call_args)})"
             body.insert(0, f"uint32_t {count_var} = 0;")
             if cmd.return_type == "VkResult":
                 body.append(f"CVK_CHECK({first});")
@@ -561,12 +612,19 @@ class Generator:
                 body.append(f"CVK_ASSERT({cap} >= {count_var});")
                 s = reg.struct_of(q.type)
                 if s and s.stype:
+                    arr = snake(q.name) if q.name in ext_arrays else q.name
                     body.append("{")
                     body.append("    uint32_t index;")
                     body.append(f"    for (index = 0; index < {count_var}; ++index)")
                     body.append("    {")
-                    body.append(f"        {q.name}[index].sType = {s.stype};")
-                    body.append(f"        {q.name}[index].pNext = NULL;")
+                    body.append(f"        {arr}[index].sType = {s.stype};")
+                    if q.name in ext_arrays:
+                        ext_param = ext_arrays[q.name]
+                        body.append(f"        {arr}[index].pNext = &{ext_param}[index];")
+                        body.append(f"        {ext_param}[index].sType = {out_ext.stype};")
+                        body.append(f"        {ext_param}[index].pNext = NULL;")
+                    else:
+                        body.append(f"        {arr}[index].pNext = NULL;")
                     body.append("    }")
                     body.append("}")
             if cmd.return_type == "VkResult":
@@ -575,6 +633,12 @@ class Generator:
                 body.append(f"{call};")
             body += post
             body.append(f"return {count_var};")
+        elif cmd.return_type == "VkResult" and probe:
+            ret = "VkResult"
+            body.insert(0, "VkResult result;")
+            body.append(f"result = {call};")
+            body += post
+            body.append("return result;")
         elif cmd.return_type == "VkResult" and informational:
             ret = "VkResult"
             body.insert(0, "VkResult result;")
@@ -603,7 +667,7 @@ class Generator:
         if resolve:
             first_call = next(i for i, l in enumerate(body) if f"{fn}(" in l)
             body[first_call:first_call] = ["", resolve]
-        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function(_pointer)?;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+;)", l)]
+        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function(_pointer)?;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+(\[\w+\])?;)", l)]
         other = [l for l in body if l not in decl_lines]
 
         # Declarations in order of first access in the statements that follow.
@@ -622,11 +686,18 @@ class Generator:
             pre = []
         body = decl_lines + ([""] if decl_lines else []) + pre + ([""] if pre else []) + other
 
-        doc = self.doc_block(self.brief(cmd), params, ret, cmd, informational if ret == "VkResult" else [])
+        brief = self.brief(cmd)
+        plats = self.platforms_for(cmd.extensions, cmd.core_version)
+        if probe:
+            brief = f"{brief[:-1]}, returning the result instead of aborting on failure."
+            informational = [c for c in cmd.errorcodes + cmd.successcodes if c != "VK_SUCCESS"]
+        elif out_ext is not None:
+            brief = f"{brief[:-1]} with {out_ext.name} chained to every element."
+            plats = plats | self.platforms_for(out_ext.extensions, out_ext.core_version)
+        doc = self.doc_block(brief, params, ret, cmd, informational if ret == "VkResult" else [])
         sig = self.signature(ret, name, params)
         self.sigs[name] = (ret, params)
-        self.place(self.platforms_for(cmd.extensions, cmd.core_version), doc + sig + ";",
-                   sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+        self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     def param_doc(self, p: Param, role: str) -> str:
         if p.name == "pAllocator":
@@ -1057,6 +1128,8 @@ class Generator:
         None when the target's tail is not the run (a flattened sibling ending in Info2)."""
         t = tokens(prefix[3:])
         run = [x for x in tokens(self.struct_short(base)) if not x.isdigit()]
+        # Exact match only: an enumeration naming its run in the plural (SurfaceFormats for
+        # VkSurfaceFormat2KHR) takes the With form, since replacing the run would drop the subject.
         if len(t) <= len(run) or t[-len(run):] != run:
             return None
         return "cvk" + "".join(t[: -len(run)] + tokens(self.struct_short(ext)))
@@ -1236,6 +1309,26 @@ class Generator:
         },
     ]
 
+    FIXED.append({
+        "name": "cvkGetVideoQueueFamilyIndex",
+        "ret": "uint32_t",
+        "brief": "Returns the first queue family whose video codec operations cover the required operations, or VK_INVALID.",
+        "params": [("uint32_t", "propertyCount"), ("const VkQueueFamilyVideoPropertiesKHR*", "pVideoProperties"),
+                   ("VkVideoCodecOperationFlagsKHR", "requiredOperations")],
+        "body": [
+            "uint32_t property_index;",
+            "",
+            "for (property_index = 0; property_index < propertyCount; ++property_index)",
+            "{",
+            "    if ((pVideoProperties[property_index].videoCodecOperations & requiredOperations) == requiredOperations)",
+            "    {",
+            "        return property_index;",
+            "    }",
+            "}",
+            "return VK_INVALID;",
+        ],
+    })
+
     def emit_fixed(self, f: dict) -> None:
         name = self.register(f["name"], "policy:" + f["name"])
         params = [EmittedParam(f"{t} {n}", n, f"{n} value", False) for t, n in f["params"]]
@@ -1309,12 +1402,21 @@ class Generator:
             return s[0].lower() + s[1:]
 
         declared = [EmittedParam(f"{x['type']} {x['name']}", x["name"], x.get("doc", f"{x['name']} value"), False) for x in spec.get("inputs", [])]
+        # Declared outputs join the parameter list where a step first binds, stores, or sets them.
+        declared_outputs: Dict[str, EmittedParam] = {}
         for out in spec.get("outputs", []):
-            outputs[out["name"]] = EmittedParam(f"{out['type']}* {out['name']}", out["name"], f"Receives the {stem(out['name'])}", True)
+            declared_outputs[out["name"]] = EmittedParam(f"{out['type']}* {out['name']}", out["name"], f"Receives the {stem(out['name'])}", True)
             available[stem(out["name"])] = f"(*{out['name']})"
+        raw_decls: List[str] = []
+        local_arrays: Dict[str, Tuple[str, int]] = {}
         for step in spec["steps"]:
+            if "declare" in step:
+                raw_decls.append(step["declare"] + ";")          # a local with an initializer
+                continue
             if "set" in step:
                 for k, v in step["set"].items():
+                    if k in declared_outputs:
+                        outputs.setdefault(k, declared_outputs[k])
                     body.append(f"(*{k}) = {v};")
                 continue
             if "assert" in step:
@@ -1338,10 +1440,18 @@ class Generator:
             for p in sparams:
                 ptype = p.text.rsplit(" ", 1)[0]
                 if p.name in bind:
+                    if bind[p.name] in declared_outputs:
+                        outputs.setdefault(bind[p.name], declared_outputs[bind[p.name]])
                     args.append(bind[p.name])
                 elif p.name in local:
                     var = local[p.name]
-                    if "[" in p.text:
+                    elem = re.fullmatch(r"(\w+)\[(\d+)\]", var)
+                    if elem:
+                        # An element of a chain-local array (shader_stages[1]): declared once, sized by the highest index.
+                        arr, idx = elem.group(1), int(elem.group(2))
+                        local_arrays[arr] = (ptype.rstrip("*").strip(), max(idx + 1, local_arrays.get(arr, ("", 0))[1]))
+                        args.append(f"&{var}")
+                    elif "[" in p.text:
                         # Fixed-capacity enumeration array: declared as an array, passed by name.
                         cap = p.text[p.text.index("[") + 1: p.text.index("]")]
                         locals_[f"{var}[{cap}]"] = p.text.split(" ", 1)[0]
@@ -1363,12 +1473,18 @@ class Generator:
                         pname = "p" + product[0].upper() + product[1:] + "Next"
                     if pname not in inputs:
                         inputs[pname] = EmittedParam(f"{ptype} {pname}", pname, f"See {fn}", False)
+                    elif inputs[pname].text != f"{ptype} {pname}":
+                        # Two steps want the same name for different things (a shader module's flags
+                        # and a pipeline's flags): the policy must bind one of them explicitly.
+                        self.errors.append(f"chain {name}: input {pname} is {inputs[pname].text} and {ptype} {pname} for {fn}; bind one of them")
                     args.append(pname)
             call = f"{fn}({', '.join(args)})"
             if step.get("return"):
                 ret = sret
                 body.append(f"return {call};")
             elif "store" in step:
+                if step["store"] in declared_outputs:
+                    outputs.setdefault(step["store"], declared_outputs[step["store"]])
                 body.append(f"(*{step['store']}) = {call};")
             elif "into" in step:
                 var = step["into"]
@@ -1395,8 +1511,12 @@ class Generator:
             cut -= 1
         rest = derived[:cut] + [p for p in inputs.values() if p.name in declared_names] + derived[cut:]
         alloc = [p for p in inputs.values() if p.name == "pAllocator"]
-        params = dispatch + rest + alloc + list(outputs.values())
-        decls = [f"{t} {v};" for v, t in locals_.items()]
+        for oname, oparam in declared_outputs.items():
+            outputs.setdefault(oname, oparam)
+        # A chain over a builder is a builder: its pInfo leads like every cvkInit.
+        info_out = [p for p in outputs.values() if p.name == "pInfo"]
+        params = info_out + dispatch + rest + alloc + [p for p in outputs.values() if p.name != "pInfo"]
+        decls = [f"{t} {v};" for v, t in locals_.items()] + [f"{t} {v}[{n}];" for v, (t, n) in local_arrays.items()] + raw_decls
         full = decls + ([""] if decls else []) + body
         doc = self.doc_block(spec["brief"], params, ret, None, [])
         sig = self.signature(ret, name, params)
@@ -1468,6 +1588,17 @@ class Generator:
         # Gap 2: extenders on the output sType struct (chained output).
         for cmd, op, ext in self.output_pairs():
             self.emit_output_convenience(cmd, op, ext)
+        # Gap 3: extenders on the element struct of a two-call enumeration (chained output array).
+        for cmd, ap, ext in self.output_array_pairs():
+            self.emit_tier0(cmd, out_ext=ext)
+        # Probe twins: policy-listed VkResult commands whose failure a caller may test.
+        by_name = {c.name: c for c in self.cmds}
+        for vk_name in self.policy.get("try_commands", []):
+            cmd = by_name.get(vk_name)
+            if cmd is None or cmd.return_type != "VkResult" or any(r == "n*" for r in self.roles(cmd)):
+                self.errors.append(f"try_commands: {vk_name} is not an in-profile, non-enumerating VkResult command")
+                continue
+            self.emit_tier0(cmd, probe=True)
         for f in self.FIXED:
             self.emit_fixed(f)
         # Chains and protocols compose each other: emit every chain whose steps are known,

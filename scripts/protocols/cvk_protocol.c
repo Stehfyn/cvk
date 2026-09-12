@@ -1037,3 +1037,52 @@ void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
                        dstDstStageMask,
                        dependencyFlags);
 }
+
+/**
+ * \brief Allocates and binds one memory object per memory requirement of a video session.
+ *
+ * \par Details:
+ *  The session form of cvkAllocateImageMemory: the session reports one requirement per
+ *  memory bind index; each gets a compatible memory type, its own allocation covering the
+ *  whole requirement, and a bind at offset zero. All binds are submitted in one call.
+ *
+ * \param[in]  physicalDevice          Physical device the memory is selected on
+ * \param[in]  device                  Logical device owning the session and memory
+ * \param[in]  videoSession            Session to back
+ * \param[in]  requiredProperties      Memory property flags every selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain for every VkMemoryAllocateInfo, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pMemories               Receives one VkDeviceMemory per requirement; up to CVK_MAX_MEMORY_REQUIREMENTS entries
+ *
+ * \retval Number of memory objects allocated and bound
+ */
+uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevice,
+                                       VkDevice                     device,
+                                       VkVideoSessionKHR            videoSession,
+                                       VkMemoryPropertyFlags        requiredProperties,
+                                       const void*                  pMemoryNext,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       VkDeviceMemory*              pMemories)
+{
+    VkVideoSessionMemoryRequirementsKHR memory_requirements[CVK_MAX_MEMORY_REQUIREMENTS];
+    VkBindVideoSessionMemoryInfoKHR     bind_session_memory_infos[CVK_MAX_MEMORY_REQUIREMENTS];
+    uint32_t                            memory_requirements_count;
+    uint32_t                            requirement_index;
+    uint32_t                            memory_type_index;
+
+    memory_requirements_count = cvkGetVideoSessionMemoryRequirements(device, videoSession, memory_requirements);
+    for (requirement_index = 0; requirement_index < memory_requirements_count; ++requirement_index)
+    {
+        memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements[requirement_index].memoryRequirements.memoryTypeBits, requiredProperties);
+        CVK_ASSERT(VK_INVALID != memory_type_index);
+        cvkAllocateMemory(device, pMemoryNext, memory_requirements[requirement_index].memoryRequirements.size, memory_type_index, pAllocator, &pMemories[requirement_index]);
+        cvkInitBindVideoSessionMemoryInfo(&bind_session_memory_infos[requirement_index],
+                                          NULL,
+                                          memory_requirements[requirement_index].memoryBindIndex,
+                                          pMemories[requirement_index],
+                                          0,
+                                          memory_requirements[requirement_index].memoryRequirements.size);
+    }
+    cvkBindVideoSessionMemory(device, videoSession, memory_requirements_count, bind_session_memory_infos);
+    return memory_requirements_count;
+}
