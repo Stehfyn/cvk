@@ -10574,7 +10574,7 @@ void cvkInitTraceRaysIndirectCommand(VkTraceRaysIndirectCommandKHR* pInfo, uint3
     pInfo->height = height;
     pInfo->depth  = depth;
 }
-void cvkInitTransformMatrix(VkTransformMatrixKHR* pInfo, const float matrix[3])
+void cvkInitTransformMatrix(VkTransformMatrixKHR* pInfo, const float matrix[3][4])
 {
     memcpy(pInfo->matrix, matrix, sizeof(pInfo->matrix));
 }
@@ -12001,7 +12001,7 @@ void cvkCmdBeginConditionalRendering(VkDevice device, VkCommandBuffer commandBuf
     function = (PFN_vkCmdBeginConditionalRenderingEXT)cvkGetDeviceProcAddr(device, "vkCmdBeginConditionalRenderingEXT");
     function(commandBuffer, &conditional_rendering_begin);
 }
-void cvkCmdBeginCustomResolve(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
+void cvkCmdBeginCustomResolve(VkDevice device, VkCommandBuffer commandBuffer, void* pNext)
 {
     VkBeginCustomResolveInfoEXT    begin_custom_resolve_info;
     PFN_vkCmdBeginCustomResolveEXT function;
@@ -12501,7 +12501,7 @@ void cvkCmdBuildAccelerationStructures(VkDevice                                 
 }
 void cvkCmdBuildClusterAccelerationStructureIndirect(VkDevice                                               device,
                                                      VkCommandBuffer                                        commandBuffer,
-                                                     const void*                                            pNext,
+                                                     void*                                                  pNext,
                                                      VkClusterAccelerationStructureInputInfoNV              input,
                                                      VkDeviceAddress                                        dstImplicitData,
                                                      VkDeviceAddress                                        scratchData,
@@ -12537,7 +12537,7 @@ void cvkCmdBuildMicromaps(VkDevice device, VkCommandBuffer commandBuffer, uint32
 }
 void cvkCmdBuildPartitionedAccelerationStructures(VkDevice                                           device,
                                                   VkCommandBuffer                                    commandBuffer,
-                                                  const void*                                        pNext,
+                                                  void*                                              pNext,
                                                   VkPartitionedAccelerationStructureInstancesInputNV input,
                                                   VkDeviceAddress                                    srcAccelerationStructureData,
                                                   VkDeviceAddress                                    dstAccelerationStructureData,
@@ -12961,7 +12961,7 @@ void cvkCmdCuLaunchKernel(VkDevice           device,
                           const void* const* pExtras)
 {
     VkCuLaunchInfoNVX          launch_info;
-    PFN_vkCmdCuLaunchKernelNVX function;
+    PFN_vkCmdCuLaunchKernelNVX function_pointer;
 
     launch_info.sType          = VK_STRUCTURE_TYPE_CU_LAUNCH_INFO_NVX;
     launch_info.pNext          = pNext;
@@ -12978,8 +12978,8 @@ void cvkCmdCuLaunchKernel(VkDevice           device,
     launch_info.extraCount     = extraCount;
     launch_info.pExtras        = pExtras;
 
-    function = (PFN_vkCmdCuLaunchKernelNVX)cvkGetDeviceProcAddr(device, "vkCmdCuLaunchKernelNVX");
-    function(commandBuffer, &launch_info);
+    function_pointer = (PFN_vkCmdCuLaunchKernelNVX)cvkGetDeviceProcAddr(device, "vkCmdCuLaunchKernelNVX");
+    function_pointer(commandBuffer, &launch_info);
 }
 void cvkCmdDebugMarkerBegin(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[4])
 {
@@ -13097,7 +13097,7 @@ void cvkCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint
 {
     vkCmdDispatchBase(commandBuffer, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
 }
-void cvkCmdDispatchDataGraph(VkDevice device, VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, const void* pNext, VkDataGraphPipelineDispatchFlagsARM flags)
+void cvkCmdDispatchDataGraph(VkDevice device, VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, void* pNext, VkDataGraphPipelineDispatchFlagsARM flags)
 {
     VkDataGraphPipelineDispatchInfoARM info;
     PFN_vkCmdDispatchDataGraphARM      function;
@@ -13670,7 +13670,7 @@ void cvkCmdNextSubpass2(VkCommandBuffer commandBuffer, const void* pSubpassBegin
 void cvkCmdOpticalFlowExecute(VkDevice                    device,
                               VkCommandBuffer             commandBuffer,
                               VkOpticalFlowSessionNV      session,
-                              const void*                 pNext,
+                              void*                       pNext,
                               VkOpticalFlowExecuteFlagsNV flags,
                               uint32_t                    regionCount,
                               const VkRect2D*             pRegions)
@@ -14205,7 +14205,7 @@ void cvkCmdSetDiscardRectangleMode(VkDevice device, VkCommandBuffer commandBuffe
     function = (PFN_vkCmdSetDiscardRectangleModeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleModeEXT");
     function(commandBuffer, discardRectangleMode);
 }
-void cvkCmdSetDispatchParameters(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t workGroupBatchSize, uint32_t maxQueuedWorkGroupBatches, uint32_t maxWarpsPerShaderCore)
+void cvkCmdSetDispatchParameters(VkDevice device, VkCommandBuffer commandBuffer, void* pNext, uint32_t workGroupBatchSize, uint32_t maxQueuedWorkGroupBatches, uint32_t maxWarpsPerShaderCore)
 {
     VkDispatchParametersARM           dispatch_parameters;
     PFN_vkCmdSetDispatchParametersARM function;
@@ -15668,7 +15668,7 @@ void cvkCreateMicromap(VkDevice                     device,
     CVK_ASSERT(VK_NULL_HANDLE != (*pMicromap));
 }
 void cvkCreateOpticalFlowSession(VkDevice                          device,
-                                 const void*                       pNext,
+                                 void*                             pNext,
                                  uint32_t                          width,
                                  uint32_t                          height,
                                  VkFormat                          imageFormat,
@@ -15968,7 +15968,7 @@ void cvkCreateSemaphore(VkDevice device, const void* pNext, VkSemaphoreCreateFla
     CVK_CHECK(vkCreateSemaphore(device, &create_info, pAllocator, pSemaphore));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSemaphore));
 }
-void cvkCreateShaderInstrumentation(VkDevice device, const void* pNext, const VkAllocationCallbacks* pAllocator, VkShaderInstrumentationARM* pInstrumentation)
+void cvkCreateShaderInstrumentation(VkDevice device, void* pNext, const VkAllocationCallbacks* pAllocator, VkShaderInstrumentationARM* pInstrumentation)
 {
     VkShaderInstrumentationCreateInfoARM create_info;
     PFN_vkCreateShaderInstrumentationARM function;
@@ -16250,10 +16250,10 @@ void cvkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkA
 }
 void cvkDestroyCuFunction(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyCuFunctionNVX function;
+    PFN_vkDestroyCuFunctionNVX function_pointer;
 
-    function = (PFN_vkDestroyCuFunctionNVX)cvkGetDeviceProcAddr(device, "vkDestroyCuFunctionNVX");
-    function(device, function, pAllocator);
+    function_pointer = (PFN_vkDestroyCuFunctionNVX)cvkGetDeviceProcAddr(device, "vkDestroyCuFunctionNVX");
+    function_pointer(device, function, pAllocator);
 }
 void cvkDestroyCuModule(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator)
 {
@@ -17273,17 +17273,17 @@ VkResult cvkGetEventStatus(VkDevice device, VkEvent event)
     CVK_ASSERT(0 <= result);
     return result;
 }
-void cvkGetExternalComputeQueueData(VkExternalComputeQueueNV externalQueue, void* pNext, VkExternalComputeQueueDataParamsNV* params, void* pData)
+void cvkGetExternalComputeQueueData(VkDevice device, VkExternalComputeQueueNV externalQueue, const void* pNext, uint32_t deviceIndex, void* pData)
 {
     VkExternalComputeQueueDataParamsNV  params;
     PFN_vkGetExternalComputeQueueDataNV function;
 
-    params.sType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV;
-    params.pNext = pNext;
+    params.sType       = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV;
+    params.pNext       = pNext;
+    params.deviceIndex = deviceIndex;
 
-    function = (PFN_vkGetExternalComputeQueueDataNV)cvkGetInstanceProcAddr(instance, "vkGetExternalComputeQueueDataNV");
+    function = (PFN_vkGetExternalComputeQueueDataNV)cvkGetDeviceProcAddr(device, "vkGetExternalComputeQueueDataNV");
     function(externalQueue, &params, pData);
-    (*params) = params;
 }
 void cvkGetFenceFd(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, int* pFd)
 {
@@ -17466,7 +17466,7 @@ void cvkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageS
 {
     vkGetImageSubresourceLayout(device, image, pSubresource, pLayout);
 }
-void cvkGetImageSubresourceLayout2(VkDevice device, VkImage image, const void* pSubresourceNext, VkImageSubresource imageSubresource, void* pLayoutNext, VkSubresourceLayout2* pLayout)
+void cvkGetImageSubresourceLayout2(VkDevice device, VkImage image, void* pSubresourceNext, VkImageSubresource imageSubresource, void* pLayoutNext, VkSubresourceLayout2* pLayout)
 {
     VkImageSubresource2  subresource;
     VkSubresourceLayout2 layout;
@@ -17626,7 +17626,7 @@ void cvkGetMicromapBuildSizes(VkDevice device, VkAccelerationStructureBuildTypeK
     (*pSizeInfo) = size_info;
 }
 void cvkGetPartitionedAccelerationStructuresBuildSizes(VkDevice                                  device,
-                                                       const void*                               pInfoNext,
+                                                       void*                                     pInfoNext,
                                                        VkBuildAccelerationStructureFlagsKHR      flags,
                                                        uint32_t                                  instanceCount,
                                                        uint32_t                                  maxInstancePerPartitionCount,
@@ -17884,15 +17884,15 @@ void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice               
     vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, pExternalFenceInfo, &external_fence_properties);
     (*pExternalFenceProperties) = external_fence_properties;
 }
-void cvkGetPhysicalDeviceExternalImageFormatProperties(VkInstance                         instance,
-                                                       VkPhysicalDevice                   physicalDevice,
-                                                       VkFormat                           format,
-                                                       VkImageType                        type,
-                                                       VkImageTiling                      tiling,
-                                                       VkImageUsageFlags                  usage,
-                                                       VkImageCreateFlags                 flags,
-                                                       VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
-                                                       VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties)
+void cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance                         instance,
+                                                         VkPhysicalDevice                   physicalDevice,
+                                                         VkFormat                           format,
+                                                         VkImageType                        type,
+                                                         VkImageTiling                      tiling,
+                                                         VkImageUsageFlags                  usage,
+                                                         VkImageCreateFlags                 flags,
+                                                         VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
+                                                         VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties)
 {
     PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV function;
 
@@ -18066,7 +18066,7 @@ void cvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, void* pNex
 void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationProperties(VkInstance                                   instance,
                                                                        VkPhysicalDevice                             physicalDevice,
                                                                        uint32_t                                     queueFamilyIndex,
-                                                                       const void*                                  pNext,
+                                                                       void*                                        pNext,
                                                                        VkPhysicalDeviceDataGraphProcessingEngineARM engine,
                                                                        VkPhysicalDeviceDataGraphOperationSupportARM operation,
                                                                        VkBaseOutStructure*                          pProperties)
@@ -18085,7 +18085,7 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationProperties(VkInstanc
 uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormats(VkInstance                                     instance,
                                                                          VkPhysicalDevice                               physicalDevice,
                                                                          uint32_t                                       queueFamilyIndex,
-                                                                         const void*                                    pQueueFamilyDataGraphPropertiesNext,
+                                                                         void*                                          pQueueFamilyDataGraphPropertiesNext,
                                                                          VkPhysicalDeviceDataGraphProcessingEngineARM   engine,
                                                                          VkPhysicalDeviceDataGraphOperationSupportARM   operation,
                                                                          const void*                                    pOpticalFlowImageFormatInfoNext,
@@ -18513,7 +18513,7 @@ void cvkGetPipelineIndirectMemoryRequirements(VkDevice                        de
     function(device, &create_info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
-void cvkGetPipelineKey(VkDevice device, const void* pPipelineCreateInfoNext, void* pPipelineKeyNext, VkPipelineBinaryKeyKHR* pPipelineKey)
+void cvkGetPipelineKey(VkDevice device, void* pPipelineCreateInfoNext, void* pPipelineKeyNext, VkPipelineBinaryKeyKHR* pPipelineKey)
 {
     VkPipelineCreateInfoKHR pipeline_create_info;
     VkPipelineBinaryKeyKHR  pipeline_key;
@@ -19042,7 +19042,7 @@ VkResult cvkQueuePresent(VkQueue               queue,
     CVK_ASSERT(0 <= result);
     return result;
 }
-void cvkQueueSetPerfHint(VkDevice device, VkQueue queue, const void* pNext, VkPerfHintTypeQCOM type, uint32_t scale)
+void cvkQueueSetPerfHint(VkDevice device, VkQueue queue, void* pNext, VkPerfHintTypeQCOM type, uint32_t scale)
 {
     VkPerfHintInfoQCOM         perf_hint_info;
     PFN_vkQueueSetPerfHintQCOM function;
@@ -19113,7 +19113,7 @@ void cvkRegisterDisplayEvent(VkDevice device, VkDisplayKHR display, const void* 
     CVK_CHECK(function(device, display, &display_event_info, pAllocator, pFence));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFence));
 }
-void cvkReleaseCapturedPipelineData(VkDevice device, const void* pNext, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
+void cvkReleaseCapturedPipelineData(VkDevice device, void* pNext, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
 {
     VkReleaseCapturedPipelineDataInfoKHR info;
     PFN_vkReleaseCapturedPipelineDataKHR function;
@@ -19223,17 +19223,19 @@ void cvkSetEvent(VkDevice device, VkEvent event)
 {
     CVK_CHECK(vkSetEvent(device, event));
 }
-void cvkSetGpaDeviceClockMode(VkDevice device, void* pNext, VkGpaDeviceClockModeInfoAMD* pInfo)
+void cvkSetGpaDeviceClockMode(VkDevice device, const void* pNext, VkGpaDeviceClockModeAMD clockMode, float memoryClockRatioToPeak, float engineClockRatioToPeak)
 {
     VkGpaDeviceClockModeInfoAMD    info;
     PFN_vkSetGpaDeviceClockModeAMD function;
 
-    info.sType = VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD;
-    info.pNext = pNext;
+    info.sType                  = VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD;
+    info.pNext                  = pNext;
+    info.clockMode              = clockMode;
+    info.memoryClockRatioToPeak = memoryClockRatioToPeak;
+    info.engineClockRatioToPeak = engineClockRatioToPeak;
 
     function = (PFN_vkSetGpaDeviceClockModeAMD)cvkGetDeviceProcAddr(device, "vkSetGpaDeviceClockModeAMD");
     CVK_CHECK(function(device, &info));
-    (*pInfo) = info;
 }
 void cvkSetHdrMetadata(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata)
 {
@@ -19567,7 +19569,7 @@ void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext,
     cvkGetBufferMemoryRequirements2(device, &info, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void cvkGetClusterAccelerationStructureInputInfo(VkDevice                                  device,
-                                                 const void*                               pInfoNext,
+                                                 void*                                     pInfoNext,
                                                  uint32_t                                  maxAccelerationStructureCount,
                                                  VkBuildAccelerationStructureFlagsKHR      flags,
                                                  VkClusterAccelerationStructureOpTypeNV    opType,
@@ -20009,7 +20011,7 @@ uint32_t cvkGetPhysicalDeviceVideoFormatInfo(VkInstance                 instance
     return cvkGetPhysicalDeviceVideoFormatProperties(instance, physicalDevice, &video_format_info, pVideoFormatProperties);
 }
 void cvkGetPipelineBinaryDataInfo(VkDevice                device,
-                                  const void*             pInfoNext,
+                                  void*                   pInfoNext,
                                   VkPipelineBinaryKHR     pipelineBinary,
                                   void*                   pPipelineBinaryKeyNext,
                                   VkPipelineBinaryKeyKHR* pPipelineBinaryKey,
@@ -20807,7 +20809,7 @@ void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice          
     cvkAllocateDescriptorSets(device, &descriptor_set_variable_descriptor_count_allocate_info, descriptorPool, descriptorSetCount, pSetLayouts, pDescriptorSets);
 }
 void cvkAllocateMemoryWithBufferDeviceAddressAlignmentInfo(VkDevice                     device,
-                                                           const void*                  pNext,
+                                                           void*                        pNext,
                                                            uint32_t                     alignment,
                                                            VkDeviceSize                 allocationSize,
                                                            uint32_t                     memoryTypeIndex,
@@ -21054,7 +21056,7 @@ void cvkCmdBeginRenderPassWithAttachmentInfo(VkCommandBuffer     commandBuffer,
     cvkCmdBeginRenderPass(commandBuffer, &render_pass_attachment_begin_info, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
 void cvkCmdBeginRenderPassWithPerformanceCountersByRegionInfo(VkCommandBuffer        commandBuffer,
-                                                              const void*            pNext,
+                                                              void*                  pNext,
                                                               uint32_t               counterAddressCount,
                                                               const VkDeviceAddress* pCounterAddresses,
                                                               VkBool32               serializeRegions,
@@ -21242,7 +21244,7 @@ void cvkCmdBeginRenderingWithMultiviewPerViewRenderAreasRenderPassInfo(VkCommand
                          pStencilAttachment);
 }
 void cvkCmdBeginRenderingWithRenderPassPerformanceCountersByRegionInfo(VkCommandBuffer                  commandBuffer,
-                                                                       const void*                      pNext,
+                                                                       void*                            pNext,
                                                                        uint32_t                         counterAddressCount,
                                                                        const VkDeviceAddress*           pCounterAddresses,
                                                                        VkBool32                         serializeRegions,
@@ -21300,7 +21302,7 @@ void cvkCmdBeginRenderingWithRenderPassStripeInfo(VkCommandBuffer               
 }
 void cvkCmdBeginRenderingWithRenderPassTileShadingInfo(VkCommandBuffer                  commandBuffer,
                                                        const void*                      pNext,
-                                                       VkTileShadingRenderPassFlagsQCOM renderPassTileShadingCreateFlags,
+                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
                                                        VkExtent2D                       tileApronSize,
                                                        VkRenderingFlags                 flags,
                                                        VkRect2D                         renderArea,
@@ -21315,7 +21317,7 @@ void cvkCmdBeginRenderingWithRenderPassTileShadingInfo(VkCommandBuffer          
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pNext;
-    render_pass_tile_shading_create_info.flags         = renderPassTileShadingCreateFlags;
+    render_pass_tile_shading_create_info.flags         = flagsTileShadingRenderPassQCOM;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkCmdBeginRendering(commandBuffer, &render_pass_tile_shading_create_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
@@ -21426,7 +21428,7 @@ void cvkCmdBeginVideoCodingWithEncodeAV1GopRemainingFrameInfo(VkDevice          
 void cvkCmdBeginVideoCodingWithEncodeAV1RateControlInfo(VkDevice                            device,
                                                         VkCommandBuffer                     commandBuffer,
                                                         const void*                         pNext,
-                                                        VkVideoEncodeAV1RateControlFlagsKHR encodeAV1RateControlFlags,
+                                                        VkVideoEncodeAV1RateControlFlagsKHR flagsEncodeAV1RateControl,
                                                         uint32_t                            gopFrameCount,
                                                         uint32_t                            keyFramePeriod,
                                                         uint32_t                            consecutiveBipredictiveFrameCount,
@@ -21441,7 +21443,7 @@ void cvkCmdBeginVideoCodingWithEncodeAV1RateControlInfo(VkDevice                
 
     video_encode_av1_rate_control_info.sType                             = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_RATE_CONTROL_INFO_KHR;
     video_encode_av1_rate_control_info.pNext                             = pNext;
-    video_encode_av1_rate_control_info.flags                             = encodeAV1RateControlFlags;
+    video_encode_av1_rate_control_info.flags                             = flagsEncodeAV1RateControl;
     video_encode_av1_rate_control_info.gopFrameCount                     = gopFrameCount;
     video_encode_av1_rate_control_info.keyFramePeriod                    = keyFramePeriod;
     video_encode_av1_rate_control_info.consecutiveBipredictiveFrameCount = consecutiveBipredictiveFrameCount;
@@ -21474,7 +21476,7 @@ void cvkCmdBeginVideoCodingWithEncodeH264GopRemainingFrameInfo(VkDevice         
 void cvkCmdBeginVideoCodingWithEncodeH264RateControlInfo(VkDevice                             device,
                                                          VkCommandBuffer                      commandBuffer,
                                                          const void*                          pNext,
-                                                         VkVideoEncodeH264RateControlFlagsKHR encodeH264RateControlFlags,
+                                                         VkVideoEncodeH264RateControlFlagsKHR flagsEncodeH264RateControl,
                                                          uint32_t                             gopFrameCount,
                                                          uint32_t                             idrPeriod,
                                                          uint32_t                             consecutiveBFrameCount,
@@ -21489,7 +21491,7 @@ void cvkCmdBeginVideoCodingWithEncodeH264RateControlInfo(VkDevice               
 
     video_encode_h264_rate_control_info.sType                  = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_RATE_CONTROL_INFO_KHR;
     video_encode_h264_rate_control_info.pNext                  = pNext;
-    video_encode_h264_rate_control_info.flags                  = encodeH264RateControlFlags;
+    video_encode_h264_rate_control_info.flags                  = flagsEncodeH264RateControl;
     video_encode_h264_rate_control_info.gopFrameCount          = gopFrameCount;
     video_encode_h264_rate_control_info.idrPeriod              = idrPeriod;
     video_encode_h264_rate_control_info.consecutiveBFrameCount = consecutiveBFrameCount;
@@ -21522,7 +21524,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265GopRemainingFrameInfo(VkDevice         
 void cvkCmdBeginVideoCodingWithEncodeH265RateControlInfo(VkDevice                             device,
                                                          VkCommandBuffer                      commandBuffer,
                                                          const void*                          pNext,
-                                                         VkVideoEncodeH265RateControlFlagsKHR encodeH265RateControlFlags,
+                                                         VkVideoEncodeH265RateControlFlagsKHR flagsEncodeH265RateControl,
                                                          uint32_t                             gopFrameCount,
                                                          uint32_t                             idrPeriod,
                                                          uint32_t                             consecutiveBFrameCount,
@@ -21537,7 +21539,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265RateControlInfo(VkDevice               
 
     video_encode_h265_rate_control_info.sType                  = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_RATE_CONTROL_INFO_KHR;
     video_encode_h265_rate_control_info.pNext                  = pNext;
-    video_encode_h265_rate_control_info.flags                  = encodeH265RateControlFlags;
+    video_encode_h265_rate_control_info.flags                  = flagsEncodeH265RateControl;
     video_encode_h265_rate_control_info.gopFrameCount          = gopFrameCount;
     video_encode_h265_rate_control_info.idrPeriod              = idrPeriod;
     video_encode_h265_rate_control_info.consecutiveBFrameCount = consecutiveBFrameCount;
@@ -21547,7 +21549,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265RateControlInfo(VkDevice               
 void cvkCmdBeginVideoCodingWithEncodeRateControlInfo(VkDevice                                    device,
                                                      VkCommandBuffer                             commandBuffer,
                                                      const void*                                 pNext,
-                                                     VkVideoEncodeRateControlFlagsKHR            encodeRateControlFlags,
+                                                     VkVideoEncodeRateControlFlagsKHR            flagsEncodeRateControl,
                                                      VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
                                                      uint32_t                                    layerCount,
                                                      const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
@@ -21563,7 +21565,7 @@ void cvkCmdBeginVideoCodingWithEncodeRateControlInfo(VkDevice                   
 
     video_encode_rate_control_info.sType                        = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RATE_CONTROL_INFO_KHR;
     video_encode_rate_control_info.pNext                        = pNext;
-    video_encode_rate_control_info.flags                        = encodeRateControlFlags;
+    video_encode_rate_control_info.flags                        = flagsEncodeRateControl;
     video_encode_rate_control_info.rateControlMode              = rateControlMode;
     video_encode_rate_control_info.layerCount                   = layerCount;
     video_encode_rate_control_info.pLayers                      = pLayers;
@@ -21641,7 +21643,7 @@ void cvkCmdBlitImageWithCubicWeightsInfo(VkCommandBuffer          commandBuffer,
 void cvkCmdControlVideoCodingWithEncodeAV1RateInfo(VkDevice                            device,
                                                    VkCommandBuffer                     commandBuffer,
                                                    const void*                         pNext,
-                                                   VkVideoEncodeAV1RateControlFlagsKHR encodeAV1RateFlags,
+                                                   VkVideoEncodeAV1RateControlFlagsKHR flagsEncodeAV1Rate,
                                                    uint32_t                            gopFrameCount,
                                                    uint32_t                            keyFramePeriod,
                                                    uint32_t                            consecutiveBipredictiveFrameCount,
@@ -21652,7 +21654,7 @@ void cvkCmdControlVideoCodingWithEncodeAV1RateInfo(VkDevice                     
 
     video_encode_av1_rate_control_info.sType                             = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_RATE_CONTROL_INFO_KHR;
     video_encode_av1_rate_control_info.pNext                             = pNext;
-    video_encode_av1_rate_control_info.flags                             = encodeAV1RateFlags;
+    video_encode_av1_rate_control_info.flags                             = flagsEncodeAV1Rate;
     video_encode_av1_rate_control_info.gopFrameCount                     = gopFrameCount;
     video_encode_av1_rate_control_info.keyFramePeriod                    = keyFramePeriod;
     video_encode_av1_rate_control_info.consecutiveBipredictiveFrameCount = consecutiveBipredictiveFrameCount;
@@ -21662,7 +21664,7 @@ void cvkCmdControlVideoCodingWithEncodeAV1RateInfo(VkDevice                     
 void cvkCmdControlVideoCodingWithEncodeH264RateInfo(VkDevice                             device,
                                                     VkCommandBuffer                      commandBuffer,
                                                     const void*                          pNext,
-                                                    VkVideoEncodeH264RateControlFlagsKHR encodeH264RateFlags,
+                                                    VkVideoEncodeH264RateControlFlagsKHR flagsEncodeH264Rate,
                                                     uint32_t                             gopFrameCount,
                                                     uint32_t                             idrPeriod,
                                                     uint32_t                             consecutiveBFrameCount,
@@ -21673,7 +21675,7 @@ void cvkCmdControlVideoCodingWithEncodeH264RateInfo(VkDevice                    
 
     video_encode_h264_rate_control_info.sType                  = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_RATE_CONTROL_INFO_KHR;
     video_encode_h264_rate_control_info.pNext                  = pNext;
-    video_encode_h264_rate_control_info.flags                  = encodeH264RateFlags;
+    video_encode_h264_rate_control_info.flags                  = flagsEncodeH264Rate;
     video_encode_h264_rate_control_info.gopFrameCount          = gopFrameCount;
     video_encode_h264_rate_control_info.idrPeriod              = idrPeriod;
     video_encode_h264_rate_control_info.consecutiveBFrameCount = consecutiveBFrameCount;
@@ -21683,7 +21685,7 @@ void cvkCmdControlVideoCodingWithEncodeH264RateInfo(VkDevice                    
 void cvkCmdControlVideoCodingWithEncodeH265RateInfo(VkDevice                             device,
                                                     VkCommandBuffer                      commandBuffer,
                                                     const void*                          pNext,
-                                                    VkVideoEncodeH265RateControlFlagsKHR encodeH265RateFlags,
+                                                    VkVideoEncodeH265RateControlFlagsKHR flagsEncodeH265Rate,
                                                     uint32_t                             gopFrameCount,
                                                     uint32_t                             idrPeriod,
                                                     uint32_t                             consecutiveBFrameCount,
@@ -21694,7 +21696,7 @@ void cvkCmdControlVideoCodingWithEncodeH265RateInfo(VkDevice                    
 
     video_encode_h265_rate_control_info.sType                  = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_RATE_CONTROL_INFO_KHR;
     video_encode_h265_rate_control_info.pNext                  = pNext;
-    video_encode_h265_rate_control_info.flags                  = encodeH265RateFlags;
+    video_encode_h265_rate_control_info.flags                  = flagsEncodeH265Rate;
     video_encode_h265_rate_control_info.gopFrameCount          = gopFrameCount;
     video_encode_h265_rate_control_info.idrPeriod              = idrPeriod;
     video_encode_h265_rate_control_info.consecutiveBFrameCount = consecutiveBFrameCount;
@@ -21713,7 +21715,7 @@ void cvkCmdControlVideoCodingWithEncodeQualityLevelInfo(VkDevice device, VkComma
 void cvkCmdControlVideoCodingWithEncodeRateInfo(VkDevice                                    device,
                                                 VkCommandBuffer                             commandBuffer,
                                                 const void*                                 pNext,
-                                                VkVideoEncodeRateControlFlagsKHR            encodeRateFlags,
+                                                VkVideoEncodeRateControlFlagsKHR            flagsEncodeRate,
                                                 VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
                                                 uint32_t                                    layerCount,
                                                 const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
@@ -21725,7 +21727,7 @@ void cvkCmdControlVideoCodingWithEncodeRateInfo(VkDevice                        
 
     video_encode_rate_control_info.sType                        = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RATE_CONTROL_INFO_KHR;
     video_encode_rate_control_info.pNext                        = pNext;
-    video_encode_rate_control_info.flags                        = encodeRateFlags;
+    video_encode_rate_control_info.flags                        = flagsEncodeRate;
     video_encode_rate_control_info.rateControlMode              = rateControlMode;
     video_encode_rate_control_info.layerCount                   = layerCount;
     video_encode_rate_control_info.pLayers                      = pLayers;
@@ -22002,8 +22004,8 @@ void cvkCmdDecodeVideoWithInlineQueryInfo(VkDevice                           dev
 void cvkCmdDispatchDataGraphWithOpticalFlowInfo(VkDevice                              device,
                                                 VkCommandBuffer                       commandBuffer,
                                                 VkDataGraphPipelineSessionARM         session,
-                                                const void*                           pNext,
-                                                VkDataGraphOpticalFlowExecuteFlagsARM opticalFlowFlags,
+                                                void*                                 pNext,
+                                                VkDataGraphOpticalFlowExecuteFlagsARM flagsOpticalFlowExecute,
                                                 uint32_t                              meanFlowL1NormHint,
                                                 VkDataGraphPipelineDispatchFlagsARM   flags)
 {
@@ -22011,7 +22013,7 @@ void cvkCmdDispatchDataGraphWithOpticalFlowInfo(VkDevice                        
 
     data_graph_pipeline_optical_flow_dispatch_info.sType              = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_DISPATCH_INFO_ARM;
     data_graph_pipeline_optical_flow_dispatch_info.pNext              = pNext;
-    data_graph_pipeline_optical_flow_dispatch_info.flags              = opticalFlowFlags;
+    data_graph_pipeline_optical_flow_dispatch_info.flags              = flagsOpticalFlowExecute;
     data_graph_pipeline_optical_flow_dispatch_info.meanFlowL1NormHint = meanFlowL1NormHint;
     cvkCmdDispatchDataGraph(device, commandBuffer, session, &data_graph_pipeline_optical_flow_dispatch_info, flags);
 }
@@ -22264,7 +22266,7 @@ void cvkCmdEndRenderingWithRenderPassFragmentDensityMapOffsetInfo(VkDevice      
 void cvkCmdExecuteGeneratedCommandsWithPipelineInfo(VkDevice                    device,
                                                     VkCommandBuffer             commandBuffer,
                                                     VkBool32                    isPreprocessed,
-                                                    const void*                 pNext,
+                                                    void*                       pNext,
                                                     VkPipeline                  pipeline,
                                                     VkShaderStageFlags          shaderStages,
                                                     VkIndirectExecutionSetEXT   indirectExecutionSet,
@@ -22300,7 +22302,7 @@ void cvkCmdExecuteGeneratedCommandsWithPipelineInfo(VkDevice                    
 void cvkCmdExecuteGeneratedCommandsWithShaderInfo(VkDevice                    device,
                                                   VkCommandBuffer             commandBuffer,
                                                   VkBool32                    isPreprocessed,
-                                                  const void*                 pNext,
+                                                  void*                       pNext,
                                                   uint32_t                    shaderCount,
                                                   const VkShaderEXT*          pShaders,
                                                   VkShaderStageFlags          shaderStages,
@@ -22431,7 +22433,7 @@ void cvkCmdPipelineBarrier2WithTensorMemoryBarrierInfo(VkCommandBuffer          
 }
 void cvkCmdPreprocessGeneratedCommandsWithPipelineInfo(VkDevice                    device,
                                                        VkCommandBuffer             commandBuffer,
-                                                       const void*                 pNext,
+                                                       void*                       pNext,
                                                        VkPipeline                  pipeline,
                                                        VkShaderStageFlags          shaderStages,
                                                        VkIndirectExecutionSetEXT   indirectExecutionSet,
@@ -22467,7 +22469,7 @@ void cvkCmdPreprocessGeneratedCommandsWithPipelineInfo(VkDevice                 
 }
 void cvkCmdPreprocessGeneratedCommandsWithShaderInfo(VkDevice                    device,
                                                      VkCommandBuffer             commandBuffer,
-                                                     const void*                 pNext,
+                                                     void*                       pNext,
                                                      uint32_t                    shaderCount,
                                                      const VkShaderEXT*          pShaders,
                                                      VkShaderStageFlags          shaderStages,
@@ -22836,7 +22838,7 @@ void cvkCreateAccelerationStructureWithOpaqueCaptureDescriptorDataInfoNV(VkDevic
     cvkCreateAccelerationStructureNV(device, &opaque_capture_descriptor_data_create_info, compactedSize, info, pAllocator, pAccelerationStructure);
 }
 void cvkCreateBufferWithDeviceAddressAlignmentInfo(VkDevice                     device,
-                                                   const void*                  pNext,
+                                                   void*                        pNext,
                                                    uint32_t                     alignment,
                                                    VkBufferCreateFlags          flags,
                                                    VkDeviceSize                 size,
@@ -22894,7 +22896,7 @@ void cvkCreateBufferWithOpaqueCaptureAddressInfo(VkDevice                     de
 }
 void cvkCreateBufferWithUsageFlags2Info(VkDevice                     device,
                                         const void*                  pNext,
-                                        VkBufferUsageFlags2          usageFlags2Usage,
+                                        VkBufferUsageFlags2          usage2,
                                         VkBufferCreateFlags          flags,
                                         VkDeviceSize                 size,
                                         VkBufferUsageFlags           usage,
@@ -22908,7 +22910,7 @@ void cvkCreateBufferWithUsageFlags2Info(VkDevice                     device,
 
     buffer_usage_flags2_create_info.sType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO;
     buffer_usage_flags2_create_info.pNext = pNext;
-    buffer_usage_flags2_create_info.usage = usageFlags2Usage;
+    buffer_usage_flags2_create_info.usage = usage2;
     cvkCreateBuffer(device, &buffer_usage_flags2_create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
 void cvkCreateBufferWithDedicatedAllocationInfo(VkDevice                     device,
@@ -23147,7 +23149,7 @@ void cvkCreateDescriptorSetLayoutWithMutableDescriptorTypeInfo(VkDevice         
 }
 void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                    physicalDevice,
                                                const void*                         pNext,
-                                               VkDeviceMemoryReportFlagsEXT        deviceMemoryReportFlags,
+                                               VkDeviceMemoryReportFlagsEXT        flagsMemoryReportEXT,
                                                PFN_vkDeviceMemoryReportCallbackEXT pfnUserCallback,
                                                void*                               pUserData,
                                                VkDeviceCreateFlags                 flags,
@@ -23165,7 +23167,7 @@ void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                 
 
     device_device_memory_report_create_info.sType           = VK_STRUCTURE_TYPE_DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT;
     device_device_memory_report_create_info.pNext           = pNext;
-    device_device_memory_report_create_info.flags           = deviceMemoryReportFlags;
+    device_device_memory_report_create_info.flags           = flagsMemoryReportEXT;
     device_device_memory_report_create_info.pfnUserCallback = pfnUserCallback;
     device_device_memory_report_create_info.pUserData       = pUserData;
     cvkCreateDevice(physicalDevice,
@@ -23183,7 +23185,7 @@ void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                 
 }
 void cvkCreateDeviceWithDiagnosticsConfigInfo(VkPhysicalDevice                 physicalDevice,
                                               const void*                      pNext,
-                                              VkDeviceDiagnosticsConfigFlagsNV diagnosticsConfigFlags,
+                                              VkDeviceDiagnosticsConfigFlagsNV flagsDiagnosticsConfigNV,
                                               VkDeviceCreateFlags              flags,
                                               uint32_t                         queueCreateInfoCount,
                                               const VkDeviceQueueCreateInfo*   pQueueCreateInfos,
@@ -23199,7 +23201,7 @@ void cvkCreateDeviceWithDiagnosticsConfigInfo(VkPhysicalDevice                 p
 
     device_diagnostics_config_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV;
     device_diagnostics_config_create_info.pNext = pNext;
-    device_diagnostics_config_create_info.flags = diagnosticsConfigFlags;
+    device_diagnostics_config_create_info.flags = flagsDiagnosticsConfigNV;
     cvkCreateDevice(physicalDevice,
                     &device_diagnostics_config_create_info,
                     flags,
@@ -23344,7 +23346,7 @@ void cvkCreateDeviceWithPrivateDataInfo(VkPhysicalDevice                physical
                     pDevice);
 }
 void cvkCreateDeviceWithQueueShaderCoreControlInfo(VkPhysicalDevice                physicalDevice,
-                                                   const void*                     pNext,
+                                                   void*                           pNext,
                                                    uint32_t                        shaderCoreCount,
                                                    VkDeviceCreateFlags             flags,
                                                    uint32_t                        queueCreateInfoCount,
@@ -23461,7 +23463,7 @@ void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                           
 }
 void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfo(VkDevice                                 device,
                                                            const void*                              pNext,
-                                                           VkDataGraphOpticalFlowImageUsageFlagsARM dataGraphOpticalFlowFormatUsage,
+                                                           VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
                                                            VkImageCreateFlags                       flags,
                                                            VkImageType                              imageType,
                                                            VkFormat                                 format,
@@ -23482,7 +23484,7 @@ void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfo(VkDevice             
 
     data_graph_optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
     data_graph_optical_flow_image_format_info.pNext = pNext;
-    data_graph_optical_flow_image_format_info.usage = dataGraphOpticalFlowFormatUsage;
+    data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlowARM;
     cvkCreateImage(device,
                    &data_graph_optical_flow_image_format_info,
                    flags,
@@ -23671,7 +23673,7 @@ void cvkCreateImageWithAlignmentControlInfo(VkDevice                     device,
 }
 void cvkCreateImageWithCompressionControlInfo(VkDevice                             device,
                                               const void*                          pNext,
-                                              VkImageCompressionFlagsEXT           compressionControlFlags,
+                                              VkImageCompressionFlagsEXT           flagsCompressionEXT,
                                               uint32_t                             compressionControlPlaneCount,
                                               VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                               VkImageCreateFlags                   flags,
@@ -23694,7 +23696,7 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
 
     image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     image_compression_control.pNext                        = pNext;
-    image_compression_control.flags                        = compressionControlFlags;
+    image_compression_control.flags                        = flagsCompressionEXT;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
     cvkCreateImage(device,
@@ -23716,8 +23718,8 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
                    pImage);
 }
 void cvkCreateImageWithFlags2Info(VkDevice                     device,
-                                  const void*                  pNext,
-                                  VkImageCreateFlags2KHR       flags2CreateFlags,
+                                  void*                        pNext,
+                                  VkImageCreateFlags2KHR       flags2KHR,
                                   VkImageCreateFlags           flags,
                                   VkImageType                  imageType,
                                   VkFormat                     format,
@@ -23738,7 +23740,7 @@ void cvkCreateImageWithFlags2Info(VkDevice                     device,
 
     image_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
     image_create_flags2_create_info.pNext = pNext;
-    image_create_flags2_create_info.flags = flags2CreateFlags;
+    image_create_flags2_create_info.flags = flags2KHR;
     cvkCreateImage(device,
                    &image_create_flags2_create_info,
                    flags,
@@ -23892,7 +23894,7 @@ void cvkCreateImageWithFormatListInfo(VkDevice                     device,
                    pImage);
 }
 void cvkCreateImageWithStencilUsage2Info(VkDevice                     device,
-                                         const void*                  pNext,
+                                         void*                        pNext,
                                          VkImageUsageFlags2KHR        stencilUsage,
                                          VkImageCreateFlags           flags,
                                          VkImageType                  imageType,
@@ -24060,8 +24062,8 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
                    pImage);
 }
 void cvkCreateImageWithUsageFlags2Info(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkImageUsageFlags2KHR        usageFlags2Usage,
+                                       void*                        pNext,
+                                       VkImageUsageFlags2KHR        usage2KHR,
                                        VkImageCreateFlags           flags,
                                        VkImageType                  imageType,
                                        VkFormat                     format,
@@ -24082,7 +24084,7 @@ void cvkCreateImageWithUsageFlags2Info(VkDevice                     device,
 
     image_usage_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info.pNext = pNext;
-    image_usage_flags2_create_info.usage = usageFlags2Usage;
+    image_usage_flags2_create_info.usage = usage2KHR;
     cvkCreateImage(device,
                    &image_usage_flags2_create_info,
                    flags,
@@ -24187,7 +24189,7 @@ void cvkCreateImageWithOpaqueCaptureDescriptorDataInfo(VkDevice                 
 }
 void cvkCreateImageWithOpticalFlowImageFormatInfo(VkDevice                     device,
                                                   const void*                  pNext,
-                                                  VkOpticalFlowUsageFlagsNV    opticalFlowFormatUsage,
+                                                  VkOpticalFlowUsageFlagsNV    usageOpticalFlowNV,
                                                   VkImageCreateFlags           flags,
                                                   VkImageType                  imageType,
                                                   VkFormat                     format,
@@ -24208,7 +24210,7 @@ void cvkCreateImageWithOpticalFlowImageFormatInfo(VkDevice                     d
 
     optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV;
     optical_flow_image_format_info.pNext = pNext;
-    optical_flow_image_format_info.usage = opticalFlowFormatUsage;
+    optical_flow_image_format_info.usage = usageOpticalFlowNV;
     cvkCreateImage(device,
                    &optical_flow_image_format_info,
                    flags,
@@ -24354,7 +24356,7 @@ void cvkCreateImageViewWithSlicedInfo(VkDevice                     device,
     cvkCreateImageView(device, &image_view_sliced_create_info, flags, image, viewType, format, components, subresourceRange, pAllocator, pView);
 }
 void cvkCreateImageViewWithUsage2Info(VkDevice                     device,
-                                      const void*                  pNext,
+                                      void*                        pNext,
                                       VkImageUsageFlags2KHR        usage,
                                       VkImageViewCreateFlags       flags,
                                       VkImage                      image,
@@ -24431,7 +24433,7 @@ void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                  
 }
 void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                                device,
                                                      const void*                             pNext,
-                                                     VkPipelineLayoutCreateFlags             pipelineFlags,
+                                                     VkPipelineLayoutCreateFlags             flagsPipelineCreate,
                                                      uint32_t                                setLayoutCount,
                                                      const VkDescriptorSetLayout*            pSetLayouts,
                                                      uint32_t                                pushConstantRangeCount,
@@ -24449,7 +24451,7 @@ void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                   
 
     pipeline_layout_create_info.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipeline_layout_create_info.pNext                  = pNext;
-    pipeline_layout_create_info.flags                  = pipelineFlags;
+    pipeline_layout_create_info.flags                  = flagsPipelineCreate;
     pipeline_layout_create_info.setLayoutCount         = setLayoutCount;
     pipeline_layout_create_info.pSetLayouts            = pSetLayouts;
     pipeline_layout_create_info.pushConstantRangeCount = pushConstantRangeCount;
@@ -24457,7 +24459,7 @@ void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                   
     cvkCreateIndirectCommandsLayout(device, &pipeline_layout_create_info, flags, shaderStages, indirectStride, pipelineLayout, tokenCount, pTokens, pAllocator, pIndirectCommandsLayout);
 }
 void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  pNext,
-                                                  VkDebugReportFlagsEXT        debugReportCallbackFlags,
+                                                  VkDebugReportFlagsEXT        flagsDebugReportEXT,
                                                   PFN_vkDebugReportCallbackEXT pfnCallback,
                                                   void*                        pUserData,
                                                   VkInstanceCreateFlags        flags,
@@ -24473,13 +24475,13 @@ void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  p
 
     debug_report_callback_create_info.sType       = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
     debug_report_callback_create_info.pNext       = pNext;
-    debug_report_callback_create_info.flags       = debugReportCallbackFlags;
+    debug_report_callback_create_info.flags       = flagsDebugReportEXT;
     debug_report_callback_create_info.pfnCallback = pfnCallback;
     debug_report_callback_create_info.pUserData   = pUserData;
     cvkCreateInstance(&debug_report_callback_create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                          pNext,
-                                                  VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
+                                                  VkDebugUtilsMessengerCreateFlagsEXT  flagsDebugUtilsMessengerEXT,
                                                   VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
                                                   VkDebugUtilsMessageTypeFlagsEXT      messageType,
                                                   PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
@@ -24497,7 +24499,7 @@ void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                   
 
     debug_utils_messenger_create_info.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     debug_utils_messenger_create_info.pNext           = pNext;
-    debug_utils_messenger_create_info.flags           = debugUtilsMessengerFlags;
+    debug_utils_messenger_create_info.flags           = flagsDebugUtilsMessengerEXT;
     debug_utils_messenger_create_info.messageSeverity = messageSeverity;
     debug_utils_messenger_create_info.messageType     = messageType;
     debug_utils_messenger_create_info.pfnUserCallback = pfnUserCallback;
@@ -24591,7 +24593,7 @@ void cvkCreateInstanceWithValidationFlagsInfo(const void*                  pNext
     cvkCreateInstance(&validation_flags, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void cvkCreateOpticalFlowSessionWithPrivateDataInfo(VkDevice                          device,
-                                                    const void*                       pNext,
+                                                    void*                             pNext,
                                                     uint32_t                          id,
                                                     uint32_t                          size,
                                                     const void*                       pPrivateData,
@@ -24970,7 +24972,7 @@ void cvkCreateRenderPassWithMultiviewInfo(VkDevice                       device,
 }
 void cvkCreateRenderPassWithTileShadingInfo(VkDevice                         device,
                                             const void*                      pNext,
-                                            VkTileShadingRenderPassFlagsQCOM tileShadingFlags,
+                                            VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
                                             VkExtent2D                       tileApronSize,
                                             VkRenderPassCreateFlags          flags,
                                             uint32_t                         attachmentCount,
@@ -24986,7 +24988,7 @@ void cvkCreateRenderPassWithTileShadingInfo(VkDevice                         dev
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pNext;
-    render_pass_tile_shading_create_info.flags         = tileShadingFlags;
+    render_pass_tile_shading_create_info.flags         = flagsTileShadingQCOM;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkCreateRenderPass(device, &render_pass_tile_shading_create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
@@ -25114,7 +25116,7 @@ void cvkCreateRenderPass2WithFragmentDensityMapInfo(VkDevice                    
 }
 void cvkCreateRenderPass2WithTileShadingInfo(VkDevice                         device,
                                              const void*                      pNext,
-                                             VkTileShadingRenderPassFlagsQCOM tileShadingFlags,
+                                             VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
                                              VkExtent2D                       tileApronSize,
                                              VkRenderPassCreateFlags          flags,
                                              uint32_t                         attachmentCount,
@@ -25132,7 +25134,7 @@ void cvkCreateRenderPass2WithTileShadingInfo(VkDevice                         de
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pNext;
-    render_pass_tile_shading_create_info.flags         = tileShadingFlags;
+    render_pass_tile_shading_create_info.flags         = flagsTileShadingQCOM;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkCreateRenderPass2(device,
                          &render_pass_tile_shading_create_info,
@@ -25625,7 +25627,7 @@ void cvkCreateSamplerWithYcbcrConversionInfo(VkDevice                     device
                      pSampler);
 }
 void cvkCreateSamplerYcbcrConversionWithYcbcrDegammaInfo(VkDevice                      device,
-                                                         const void*                   pNext,
+                                                         void*                         pNext,
                                                          VkBool32                      enableYDegamma,
                                                          VkBool32                      enableCbCrDegamma,
                                                          VkFormat                      format,
@@ -25790,7 +25792,7 @@ void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         devi
 }
 void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
                                                        const void*                          pNext,
-                                                       VkImageCompressionFlagsEXT           imageCompressionControlFlags,
+                                                       VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
                                                        uint32_t                             compressionControlPlaneCount,
                                                        VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                        VkSwapchainCreateFlagsKHR            flags,
@@ -25816,7 +25818,7 @@ void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                 
 
     image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     image_compression_control.pNext                        = pNext;
-    image_compression_control.flags                        = imageCompressionControlFlags;
+    image_compression_control.flags                        = flagsImageCompressionEXT;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
     cvkCreateSwapchain(device,
@@ -25891,7 +25893,7 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
                        pSwapchain);
 }
 void cvkCreateSwapchainWithImageUsageFlags2Info(VkDevice                      device,
-                                                const void*                   pNext,
+                                                void*                         pNext,
                                                 VkImageUsageFlags2KHR         usage,
                                                 VkSwapchainCreateFlagsKHR     flags,
                                                 VkSurfaceKHR                  surface,
@@ -26083,7 +26085,7 @@ void cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
                        pSwapchain);
 }
 void cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      device,
-                                              const void*                   pNext,
+                                              void*                         pNext,
                                               VkBool32                      presentBarrierEnable,
                                               VkSwapchainCreateFlagsKHR     flags,
                                               VkSurfaceKHR                  surface,
@@ -26840,7 +26842,7 @@ void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassTileProperties(V
                         pProperties);
 }
 void cvkGetDynamicRenderingRenderPassPerformanceCountersByRegionTileProperties(VkDevice                         device,
-                                                                               const void*                      pRenderingInfoNext,
+                                                                               void*                            pRenderingInfoNext,
                                                                                uint32_t                         counterAddressCount,
                                                                                const VkDeviceAddress*           pCounterAddresses,
                                                                                VkBool32                         serializeRegions,
@@ -26915,7 +26917,7 @@ void cvkGetDynamicRenderingRenderPassStripeTileProperties(VkDevice              
 }
 void cvkGetDynamicRenderingRenderPassTileShadingTileProperties(VkDevice                         device,
                                                                const void*                      pRenderingInfoNext,
-                                                               VkTileShadingRenderPassFlagsQCOM renderPassTileShadingCreateFlags,
+                                                               VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
                                                                VkExtent2D                       tileApronSize,
                                                                VkRenderingFlags                 flags,
                                                                VkRect2D                         renderArea,
@@ -26932,7 +26934,7 @@ void cvkGetDynamicRenderingRenderPassTileShadingTileProperties(VkDevice         
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pRenderingInfoNext;
-    render_pass_tile_shading_create_info.flags         = renderPassTileShadingCreateFlags;
+    render_pass_tile_shading_create_info.flags         = flagsTileShadingRenderPassQCOM;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkGetRenderingInfo(device,
                         &render_pass_tile_shading_create_info,
@@ -27098,7 +27100,7 @@ VkResult cvkGetVideoEncodeH265SessionParametersGetInfo(VkDevice                 
     return cvkGetVideoEncodeSessionParametersInfo(device, &video_encode_h265_session_parameters_get_info, videoSessionParameters, pFeedbackInfoNext, pFeedbackInfo, pDataSize, pData);
 }
 void cvkGetGeneratedCommandsPipelineMemoryRequirements(VkDevice                    device,
-                                                       const void*                 pInfoNext,
+                                                       void*                       pInfoNext,
                                                        VkPipeline                  pipeline,
                                                        VkIndirectExecutionSetEXT   indirectExecutionSet,
                                                        VkIndirectCommandsLayoutEXT indirectCommandsLayout,
@@ -27122,7 +27124,7 @@ void cvkGetGeneratedCommandsPipelineMemoryRequirements(VkDevice                 
                                                   pMemoryRequirements);
 }
 void cvkGetGeneratedCommandsShaderMemoryRequirements(VkDevice                    device,
-                                                     const void*                 pInfoNext,
+                                                     void*                       pInfoNext,
                                                      uint32_t                    shaderCount,
                                                      const VkShaderEXT*          pShaders,
                                                      VkIndirectExecutionSetEXT   indirectExecutionSet,
@@ -27162,7 +27164,7 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
     cvkGetImageMemoryRequirementsInfo2(device, &image_plane_memory_requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfo(VkDevice                                  device,
-                                                                    const void*                               pInfoNext,
+                                                                    void*                                     pInfoNext,
                                                                     VkBool32                                  enablePartitionTranslation,
                                                                     VkBuildAccelerationStructureFlagsKHR      flags,
                                                                     uint32_t                                  instanceCount,
@@ -27189,7 +27191,7 @@ void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfo(VkDevice    
 }
 void cvkGetPhysicalDeviceExternalBufferUsageFlags2Properties(VkPhysicalDevice                   physicalDevice,
                                                              const void*                        pExternalBufferInfoNext,
-                                                             VkBufferUsageFlags2                usageFlags2CreateUsage,
+                                                             VkBufferUsageFlags2                usage2,
                                                              VkBufferCreateFlags                flags,
                                                              VkBufferUsageFlags                 usage,
                                                              VkExternalMemoryHandleTypeFlagBits handleType,
@@ -27200,7 +27202,7 @@ void cvkGetPhysicalDeviceExternalBufferUsageFlags2Properties(VkPhysicalDevice   
 
     buffer_usage_flags2_create_info.sType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO;
     buffer_usage_flags2_create_info.pNext = pExternalBufferInfoNext;
-    buffer_usage_flags2_create_info.usage = usageFlags2CreateUsage;
+    buffer_usage_flags2_create_info.usage = usage2;
     cvkGetPhysicalDeviceExternalBufferInfo(physicalDevice, &buffer_usage_flags2_create_info, flags, usage, handleType, pExternalBufferPropertiesNext, pExternalBufferProperties);
 }
 void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice                      physicalDevice,
@@ -27221,7 +27223,7 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
 }
 void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
                                                                    const void*                              pImageFormatInfoNext,
-                                                                   VkDataGraphOpticalFlowImageUsageFlagsARM dataGraphOpticalFlowUsage,
+                                                                   VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
                                                                    VkFormat                                 format,
                                                                    VkImageType                              type,
                                                                    VkImageTiling                            tiling,
@@ -27234,12 +27236,12 @@ void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDev
 
     data_graph_optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
     data_graph_optical_flow_image_format_info.pNext = pImageFormatInfoNext;
-    data_graph_optical_flow_image_format_info.usage = dataGraphOpticalFlowUsage;
+    data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlowARM;
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &data_graph_optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
                                                                  const void*                          pImageFormatInfoNext,
-                                                                 VkImageCompressionFlagsEXT           compressionControlFlags,
+                                                                 VkImageCompressionFlagsEXT           flagsCompressionEXT,
                                                                  uint32_t                             compressionControlPlaneCount,
                                                                  VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                                  VkFormat                             format,
@@ -27254,14 +27256,14 @@ void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevic
 
     image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     image_compression_control.pNext                        = pImageFormatInfoNext;
-    image_compression_control.flags                        = compressionControlFlags;
+    image_compression_control.flags                        = flagsCompressionEXT;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_compression_control, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                           const void*               pImageFormatInfoNext,
-                                                           VkImageCreateFlags2KHR    createFlagsCreateFlags,
+                                                           void*                     pImageFormatInfoNext,
+                                                           VkImageCreateFlags2KHR    flags2KHR,
                                                            VkFormat                  format,
                                                            VkImageType               type,
                                                            VkImageTiling             tiling,
@@ -27274,7 +27276,7 @@ void cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice     
 
     image_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
     image_create_flags2_create_info.pNext = pImageFormatInfoNext;
-    image_create_flags2_create_info.flags = createFlagsCreateFlags;
+    image_create_flags2_create_info.flags = flags2KHR;
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_create_flags2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
@@ -27298,7 +27300,7 @@ void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          phy
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_format_list_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice          physicalDevice,
-                                                            const void*               pImageFormatInfoNext,
+                                                            void*                     pImageFormatInfoNext,
                                                             VkImageUsageFlags2KHR     stencilUsage,
                                                             VkFormat                  format,
                                                             VkImageType               type,
@@ -27334,8 +27336,8 @@ void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice     
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_stencil_usage_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageUsageFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                          const void*               pImageFormatInfoNext,
-                                                          VkImageUsageFlags2KHR     usageFlagsCreateUsage,
+                                                          void*                     pImageFormatInfoNext,
+                                                          VkImageUsageFlags2KHR     usage2KHR,
                                                           VkFormat                  format,
                                                           VkImageType               type,
                                                           VkImageTiling             tiling,
@@ -27348,12 +27350,12 @@ void cvkGetPhysicalDeviceImageUsageFormatFlags2Properties(VkPhysicalDevice      
 
     image_usage_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info.pNext = pImageFormatInfoNext;
-    image_usage_flags2_create_info.usage = usageFlagsCreateUsage;
+    image_usage_flags2_create_info.usage = usage2KHR;
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
                                                           const void*               pImageFormatInfoNext,
-                                                          VkOpticalFlowUsageFlagsNV opticalFlowUsage,
+                                                          VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
                                                           VkFormat                  format,
                                                           VkImageType               type,
                                                           VkImageTiling             tiling,
@@ -27366,7 +27368,7 @@ void cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice      
 
     optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV;
     optical_flow_image_format_info.pNext = pImageFormatInfoNext;
-    optical_flow_image_format_info.usage = opticalFlowUsage;
+    optical_flow_image_format_info.usage = usageOpticalFlowNV;
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
@@ -27412,7 +27414,7 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &physical_device_image_drm_format_modifier_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 void cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          physicalDevice,
-                                                  const void*               pImageFormatInfoNext,
+                                                  void*                     pImageFormatInfoNext,
                                                   VkImageViewType           imageViewType,
                                                   VkFormat                  format,
                                                   VkImageType               type,
@@ -27450,8 +27452,8 @@ void cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice 
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &video_profile_list_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2Properties(VkPhysicalDevice               physicalDevice,
-                                                                    const void*                    pNext,
-                                                                    VkImageUsageFlags2KHR          usageFlagsCreateUsage,
+                                                                    void*                          pNext,
+                                                                    VkImageUsageFlags2KHR          usage2KHR,
                                                                     VkFormat                       format,
                                                                     VkImageType                    type,
                                                                     VkSampleCountFlagBits          samples,
@@ -27463,11 +27465,11 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2Properties(VkPhysicalDe
 
     image_usage_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info.pNext = pNext;
-    image_usage_flags2_create_info.usage = usageFlagsCreateUsage;
+    image_usage_flags2_create_info.usage = usage2KHR;
     return cvkGetPhysicalDeviceSparseImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info, format, type, samples, usage, tiling, pProperties);
 }
 void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
-                                                        const void*                pSurfaceInfoNext,
+                                                        void*                      pSurfaceInfoNext,
                                                         VkPresentModeKHR           presentMode,
                                                         VkSurfaceKHR               surface,
                                                         void*                      pSurfaceCapabilitiesNext,
@@ -27481,7 +27483,7 @@ void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice        
     cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_present_mode, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physicalDevice,
-                                                       const void*         pNext,
+                                                       void*               pNext,
                                                        VkPresentModeKHR    presentMode,
                                                        VkSurfaceKHR        surface,
                                                        VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
@@ -27683,7 +27685,7 @@ void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance        
 }
 uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2Properties(VkInstance                 instance,
                                                                    VkPhysicalDevice           physicalDevice,
-                                                                   const void*                pNext,
+                                                                   void*                      pNext,
                                                                    VkImageUsageFlags2KHR      usage,
                                                                    VkImageUsageFlags          imageUsage,
                                                                    VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
@@ -27773,7 +27775,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithCompilerControlInfo(VkDevice   
 }
 void cvkGetPipelineIndirectMemoryRequirementsWithFlags2Info(VkDevice                        device,
                                                             const void*                     pCreateInfoNext,
-                                                            VkPipelineCreateFlags2          flags2CreateFlags,
+                                                            VkPipelineCreateFlags2          flags2,
                                                             VkPipelineCreateFlags           flags,
                                                             VkPipelineShaderStageCreateInfo stage,
                                                             VkPipelineLayout                layout,
@@ -27786,7 +27788,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithFlags2Info(VkDevice            
 
     pipeline_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
     pipeline_create_flags2_create_info.pNext = pCreateInfoNext;
-    pipeline_create_flags2_create_info.flags = flags2CreateFlags;
+    pipeline_create_flags2_create_info.flags = flags2;
     cvkGetPipelineIndirectMemoryRequirements(device, &pipeline_create_flags2_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void cvkGetPipelineIndirectMemoryRequirementsWithCreationFeedbackInfo(VkDevice                        device,
@@ -27844,7 +27846,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithRobustnessInfo(VkDevice        
     cvkGetPipelineIndirectMemoryRequirements(device, &pipeline_robustness_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pMemoryRequirementsNext, pMemoryRequirements);
 }
 void cvkGetPipelineIndirectMemoryRequirementsWithSubpassShadingInfo(VkDevice                        device,
-                                                                    const void*                     pCreateInfoNext,
+                                                                    void*                           pCreateInfoNext,
                                                                     VkRenderPass                    renderPass,
                                                                     uint32_t                        subpass,
                                                                     VkPipelineCreateFlags           flags,
@@ -28144,7 +28146,7 @@ VkResult cvkQueuePresentWithSetPresentConfigInfo(VkQueue               queue,
 }
 VkResult cvkQueuePresentWithSwapchainPresentFenceInfo(VkQueue               queue,
                                                       const void*           pNext,
-                                                      uint32_t              swapchainFenceSwapchainCount,
+                                                      uint32_t              swapchainPresentFenceSwapchainCount,
                                                       const VkFence*        pFences,
                                                       uint32_t              waitSemaphoreCount,
                                                       const VkSemaphore*    pWaitSemaphores,
@@ -28157,13 +28159,13 @@ VkResult cvkQueuePresentWithSwapchainPresentFenceInfo(VkQueue               queu
 
     swapchain_present_fence_info.sType          = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_FENCE_INFO_KHR;
     swapchain_present_fence_info.pNext          = pNext;
-    swapchain_present_fence_info.swapchainCount = swapchainFenceSwapchainCount;
+    swapchain_present_fence_info.swapchainCount = swapchainPresentFenceSwapchainCount;
     swapchain_present_fence_info.pFences        = pFences;
     return cvkQueuePresent(queue, &swapchain_present_fence_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
 VkResult cvkQueuePresentWithSwapchainPresentModeInfo(VkQueue                 queue,
                                                      const void*             pNext,
-                                                     uint32_t                swapchainModeSwapchainCount,
+                                                     uint32_t                swapchainPresentModeSwapchainCount,
                                                      const VkPresentModeKHR* pPresentModes,
                                                      uint32_t                waitSemaphoreCount,
                                                      const VkSemaphore*      pWaitSemaphores,
@@ -28176,15 +28178,15 @@ VkResult cvkQueuePresentWithSwapchainPresentModeInfo(VkQueue                 que
 
     swapchain_present_mode_info.sType          = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODE_INFO_KHR;
     swapchain_present_mode_info.pNext          = pNext;
-    swapchain_present_mode_info.swapchainCount = swapchainModeSwapchainCount;
+    swapchain_present_mode_info.swapchainCount = swapchainPresentModeSwapchainCount;
     swapchain_present_mode_info.pPresentModes  = pPresentModes;
     return cvkQueuePresent(queue, &swapchain_present_mode_info, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
 void cvkSubmitDebugUtilsMessageWithDeviceAddressBindingInfo(VkInstance                                instance,
                                                             VkDebugUtilsMessageSeverityFlagBitsEXT    messageSeverity,
                                                             VkDebugUtilsMessageTypeFlagsEXT           messageTypes,
-                                                            const void*                               pNext,
-                                                            VkDeviceAddressBindingFlagsEXT            deviceAddressBindingFlags,
+                                                            void*                                     pNext,
+                                                            VkDeviceAddressBindingFlagsEXT            flagsDeviceAddressBinding,
                                                             VkDeviceAddress                           baseAddress,
                                                             VkDeviceSize                              size,
                                                             VkDeviceAddressBindingTypeEXT             bindingType,
@@ -28203,7 +28205,7 @@ void cvkSubmitDebugUtilsMessageWithDeviceAddressBindingInfo(VkInstance          
 
     device_address_binding_callback_data.sType       = VK_STRUCTURE_TYPE_DEVICE_ADDRESS_BINDING_CALLBACK_DATA_EXT;
     device_address_binding_callback_data.pNext       = pNext;
-    device_address_binding_callback_data.flags       = deviceAddressBindingFlags;
+    device_address_binding_callback_data.flags       = flagsDeviceAddressBinding;
     device_address_binding_callback_data.baseAddress = baseAddress;
     device_address_binding_callback_data.size        = size;
     device_address_binding_callback_data.bindingType = bindingType;
@@ -28368,13 +28370,13 @@ void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFl
 {
     cvkBindPlaneImageMemories(device, 1, &pNext, &planeAspect, &image, &memory, &memoryOffset);
 }
-void cvkCmdUsageFlags2DescriptorBufferBindings(VkDevice                   device,
-                                               VkCommandBuffer            commandBuffer,
-                                               uint32_t                   bufferCount,
-                                               const void* const*         ppNexts,
-                                               const VkBufferUsageFlags2* pUsages,
-                                               const VkDeviceAddress*     pAddresss,
-                                               const VkBufferUsageFlags*  pUsages)
+void cvkCmdBindUsageFlags2DescriptorBuffers(VkDevice                   device,
+                                            VkCommandBuffer            commandBuffer,
+                                            uint32_t                   bufferCount,
+                                            const void* const*         ppNexts,
+                                            const VkBufferUsageFlags2* pUsage2s,
+                                            const VkDeviceAddress*     pAddress,
+                                            const VkBufferUsageFlags*  pUsages)
 {
     VkDescriptorBufferBindingInfoEXT binding_infos[CVK_MAX_BINDING_INFOS];
     VkBufferUsageFlags2CreateInfo    buffer_usage_flags2_create_infos[CVK_MAX_BINDING_INFOS];
@@ -28385,25 +28387,25 @@ void cvkCmdUsageFlags2DescriptorBufferBindings(VkDevice                   device
     {
         buffer_usage_flags2_create_infos[index].sType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO;
         buffer_usage_flags2_create_infos[index].pNext = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        buffer_usage_flags2_create_infos[index].usage = pUsages[index];
+        buffer_usage_flags2_create_infos[index].usage = pUsage2s[index];
         binding_infos[index].sType                    = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT;
         binding_infos[index].pNext                    = &buffer_usage_flags2_create_infos[index];
-        binding_infos[index].address                  = pAddresss[index];
+        binding_infos[index].address                  = pAddress[index];
         binding_infos[index].usage                    = pUsages[index];
     }
     cvkCmdBindDescriptorBuffers(device, commandBuffer, bufferCount, binding_infos);
 }
-void cvkCmdUsageFlags2DescriptorBufferBinding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBufferUsageFlags2 usage, VkDeviceAddress address, VkBufferUsageFlags usage)
+void cvkCmdBindUsageFlags2DescriptorBuffer(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBufferUsageFlags2 usage2, VkDeviceAddress address, VkBufferUsageFlags usage)
 {
-    cvkCmdUsageFlags2DescriptorBufferBindings(device, commandBuffer, 1, &pNext, &usage, &address, &usage);
+    cvkCmdBindUsageFlags2DescriptorBuffers(device, commandBuffer, 1, &pNext, &usage2, &address, &usage);
 }
-void cvkCmdPushDescriptorBufferHandleDescriptorBufferBindings(VkDevice                  device,
-                                                              VkCommandBuffer           commandBuffer,
-                                                              uint32_t                  bufferCount,
-                                                              const void* const*        ppNexts,
-                                                              const VkBuffer*           pBuffers,
-                                                              const VkDeviceAddress*    pAddresss,
-                                                              const VkBufferUsageFlags* pUsages)
+void cvkCmdBindPushDescriptorBufferHandleDescriptorBuffers(VkDevice                  device,
+                                                           VkCommandBuffer           commandBuffer,
+                                                           uint32_t                  bufferCount,
+                                                           const void* const*        ppNexts,
+                                                           const VkBuffer*           pBuffers,
+                                                           const VkDeviceAddress*    pAddress,
+                                                           const VkBufferUsageFlags* pUsages)
 {
     VkDescriptorBufferBindingInfoEXT                       binding_infos[CVK_MAX_BINDING_INFOS];
     VkDescriptorBufferBindingPushDescriptorBufferHandleEXT descriptor_buffer_binding_push_descriptor_buffer_handles[CVK_MAX_BINDING_INFOS];
@@ -28417,23 +28419,23 @@ void cvkCmdPushDescriptorBufferHandleDescriptorBufferBindings(VkDevice          
         descriptor_buffer_binding_push_descriptor_buffer_handles[index].buffer = pBuffers[index];
         binding_infos[index].sType                                             = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT;
         binding_infos[index].pNext                                             = &descriptor_buffer_binding_push_descriptor_buffer_handles[index];
-        binding_infos[index].address                                           = pAddresss[index];
+        binding_infos[index].address                                           = pAddress[index];
         binding_infos[index].usage                                             = pUsages[index];
     }
     cvkCmdBindDescriptorBuffers(device, commandBuffer, bufferCount, binding_infos);
 }
-void cvkCmdPushDescriptorBufferHandleDescriptorBufferBinding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBuffer buffer, VkDeviceAddress address, VkBufferUsageFlags usage)
+void cvkCmdBindPushDescriptorBufferHandleDescriptorBuffer(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBuffer buffer, VkDeviceAddress address, VkBufferUsageFlags usage)
 {
-    cvkCmdPushDescriptorBufferHandleDescriptorBufferBindings(device, commandBuffer, 1, &pNext, &buffer, &address, &usage);
+    cvkCmdBindPushDescriptorBufferHandleDescriptorBuffers(device, commandBuffer, 1, &pNext, &buffer, &address, &usage);
 }
 VkResult cvkCreateIndirectBufferComputePipelines(VkDevice                               device,
                                                  VkPipelineCache                        pipelineCache,
                                                  uint32_t                               createInfoCount,
                                                  const void* const*                     ppNexts,
-                                                 const VkDeviceAddress*                 pDeviceAddresss,
+                                                 const VkDeviceAddress*                 pDeviceAddress,
                                                  const VkDeviceSize*                    pSizes,
                                                  const VkDeviceAddress*                 pPipelineDeviceAddressCaptureReplaies,
-                                                 const VkPipelineCreateFlags*           pFlagss,
+                                                 const VkPipelineCreateFlags*           pFlags,
                                                  const VkPipelineShaderStageCreateInfo* pStages,
                                                  const VkPipelineLayout*                pLayouts,
                                                  const VkPipeline*                      pBasePipelineHandles,
@@ -28450,12 +28452,12 @@ VkResult cvkCreateIndirectBufferComputePipelines(VkDevice                       
     {
         compute_pipeline_indirect_buffer_infos[index].sType                              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_INDIRECT_BUFFER_INFO_NV;
         compute_pipeline_indirect_buffer_infos[index].pNext                              = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        compute_pipeline_indirect_buffer_infos[index].deviceAddress                      = pDeviceAddresss[index];
+        compute_pipeline_indirect_buffer_infos[index].deviceAddress                      = pDeviceAddress[index];
         compute_pipeline_indirect_buffer_infos[index].size                               = pSizes[index];
         compute_pipeline_indirect_buffer_infos[index].pipelineDeviceAddressCaptureReplay = pPipelineDeviceAddressCaptureReplaies[index];
         create_infos[index].sType                                                        = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         create_infos[index].pNext                                                        = &compute_pipeline_indirect_buffer_infos[index];
-        create_infos[index].flags                                                        = pFlagss[index];
+        create_infos[index].flags                                                        = pFlags[index];
         create_infos[index].stage                                                        = pStages[index];
         create_infos[index].layout                                                       = pLayouts[index];
         create_infos[index].basePipelineHandle                                           = pBasePipelineHandles[index];
@@ -28496,8 +28498,8 @@ VkResult cvkCreateCompilerControlComputePipelines(VkDevice                      
                                                   VkPipelineCache                          pipelineCache,
                                                   uint32_t                                 createInfoCount,
                                                   const void* const*                       ppNexts,
-                                                  const VkPipelineCompilerControlFlagsAMD* pCompilerControlFlagss,
-                                                  const VkPipelineCreateFlags*             pFlagss,
+                                                  const VkPipelineCompilerControlFlagsAMD* pCompilerControlFlags,
+                                                  const VkPipelineCreateFlags*             pFlags,
                                                   const VkPipelineShaderStageCreateInfo*   pStages,
                                                   const VkPipelineLayout*                  pLayouts,
                                                   const VkPipeline*                        pBasePipelineHandles,
@@ -28514,10 +28516,10 @@ VkResult cvkCreateCompilerControlComputePipelines(VkDevice                      
     {
         pipeline_compiler_control_create_infos[index].sType                = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD;
         pipeline_compiler_control_create_infos[index].pNext                = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        pipeline_compiler_control_create_infos[index].compilerControlFlags = pCompilerControlFlagss[index];
+        pipeline_compiler_control_create_infos[index].compilerControlFlags = pCompilerControlFlags[index];
         create_infos[index].sType                                          = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         create_infos[index].pNext                                          = &pipeline_compiler_control_create_infos[index];
-        create_infos[index].flags                                          = pFlagss[index];
+        create_infos[index].flags                                          = pFlags[index];
         create_infos[index].stage                                          = pStages[index];
         create_infos[index].layout                                         = pLayouts[index];
         create_infos[index].basePipelineHandle                             = pBasePipelineHandles[index];
@@ -28543,8 +28545,8 @@ VkResult cvkCreateFlags2ComputePipelines(VkDevice                               
                                          VkPipelineCache                        pipelineCache,
                                          uint32_t                               createInfoCount,
                                          const void* const*                     ppNexts,
-                                         const VkPipelineCreateFlags2*          pFlagss,
-                                         const VkPipelineCreateFlags*           pFlagss,
+                                         const VkPipelineCreateFlags2*          pFlags2s,
+                                         const VkPipelineCreateFlags*           pFlags,
                                          const VkPipelineShaderStageCreateInfo* pStages,
                                          const VkPipelineLayout*                pLayouts,
                                          const VkPipeline*                      pBasePipelineHandles,
@@ -28561,10 +28563,10 @@ VkResult cvkCreateFlags2ComputePipelines(VkDevice                               
     {
         pipeline_create_flags2_create_infos[index].sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
         pipeline_create_flags2_create_infos[index].pNext = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        pipeline_create_flags2_create_infos[index].flags = pFlagss[index];
+        pipeline_create_flags2_create_infos[index].flags = pFlags2s[index];
         create_infos[index].sType                        = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         create_infos[index].pNext                        = &pipeline_create_flags2_create_infos[index];
-        create_infos[index].flags                        = pFlagss[index];
+        create_infos[index].flags                        = pFlags[index];
         create_infos[index].stage                        = pStages[index];
         create_infos[index].layout                       = pLayouts[index];
         create_infos[index].basePipelineHandle           = pBasePipelineHandles[index];
@@ -28575,7 +28577,7 @@ VkResult cvkCreateFlags2ComputePipelines(VkDevice                               
 VkResult cvkCreateFlags2ComputePipeline(VkDevice                        device,
                                         VkPipelineCache                 pipelineCache,
                                         const void*                     pNext,
-                                        VkPipelineCreateFlags2          flags,
+                                        VkPipelineCreateFlags2          flags2,
                                         VkPipelineCreateFlags           flags,
                                         VkPipelineShaderStageCreateInfo stage,
                                         VkPipelineLayout                layout,
@@ -28584,17 +28586,17 @@ VkResult cvkCreateFlags2ComputePipeline(VkDevice                        device,
                                         const VkAllocationCallbacks*    pAllocator,
                                         VkPipeline*                     pPipelines)
 {
-    return cvkCreateFlags2ComputePipelines(device, pipelineCache, 1, &pNext, &flags, &flags, &stage, &layout, &basePipelineHandle, &basePipelineIndex, pAllocator, pPipelines);
+    return cvkCreateFlags2ComputePipelines(device, pipelineCache, 1, &pNext, &flags2, &flags, &stage, &layout, &basePipelineHandle, &basePipelineIndex, pAllocator, pPipelines);
 }
 VkResult cvkCreateRobustnessComputePipelines(VkDevice                                  device,
                                              VkPipelineCache                           pipelineCache,
                                              uint32_t                                  createInfoCount,
                                              const void* const*                        ppNexts,
-                                             const VkPipelineRobustnessBufferBehavior* pStorageBufferss,
-                                             const VkPipelineRobustnessBufferBehavior* pUniformBufferss,
-                                             const VkPipelineRobustnessBufferBehavior* pVertexInputss,
-                                             const VkPipelineRobustnessImageBehavior*  pImagess,
-                                             const VkPipelineCreateFlags*              pFlagss,
+                                             const VkPipelineRobustnessBufferBehavior* pStorageBuffers,
+                                             const VkPipelineRobustnessBufferBehavior* pUniformBuffers,
+                                             const VkPipelineRobustnessBufferBehavior* pVertexInputs,
+                                             const VkPipelineRobustnessImageBehavior*  pImages,
+                                             const VkPipelineCreateFlags*              pFlags,
                                              const VkPipelineShaderStageCreateInfo*    pStages,
                                              const VkPipelineLayout*                   pLayouts,
                                              const VkPipeline*                         pBasePipelineHandles,
@@ -28611,13 +28613,13 @@ VkResult cvkCreateRobustnessComputePipelines(VkDevice                           
     {
         pipeline_robustness_create_infos[index].sType          = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO;
         pipeline_robustness_create_infos[index].pNext          = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        pipeline_robustness_create_infos[index].storageBuffers = pStorageBufferss[index];
-        pipeline_robustness_create_infos[index].uniformBuffers = pUniformBufferss[index];
-        pipeline_robustness_create_infos[index].vertexInputs   = pVertexInputss[index];
-        pipeline_robustness_create_infos[index].images         = pImagess[index];
+        pipeline_robustness_create_infos[index].storageBuffers = pStorageBuffers[index];
+        pipeline_robustness_create_infos[index].uniformBuffers = pUniformBuffers[index];
+        pipeline_robustness_create_infos[index].vertexInputs   = pVertexInputs[index];
+        pipeline_robustness_create_infos[index].images         = pImages[index];
         create_infos[index].sType                              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         create_infos[index].pNext                              = &pipeline_robustness_create_infos[index];
-        create_infos[index].flags                              = pFlagss[index];
+        create_infos[index].flags                              = pFlags[index];
         create_infos[index].stage                              = pStages[index];
         create_infos[index].layout                             = pLayouts[index];
         create_infos[index].basePipelineHandle                 = pBasePipelineHandles[index];
@@ -28659,10 +28661,10 @@ VkResult cvkCreateRobustnessComputePipeline(VkDevice                           d
 VkResult cvkCreateSubpassShadingComputePipelines(VkDevice                               device,
                                                  VkPipelineCache                        pipelineCache,
                                                  uint32_t                               createInfoCount,
-                                                 const void* const*                     ppNexts,
-                                                 const VkRenderPass*                    pRenderPasss,
-                                                 const uint32_t*                        pSubpasss,
-                                                 const VkPipelineCreateFlags*           pFlagss,
+                                                 void* const*                           ppNexts,
+                                                 const VkRenderPass*                    pRenderPass,
+                                                 const uint32_t*                        pSubpass,
+                                                 const VkPipelineCreateFlags*           pFlags,
                                                  const VkPipelineShaderStageCreateInfo* pStages,
                                                  const VkPipelineLayout*                pLayouts,
                                                  const VkPipeline*                      pBasePipelineHandles,
@@ -28679,11 +28681,11 @@ VkResult cvkCreateSubpassShadingComputePipelines(VkDevice                       
     {
         subpass_shading_pipeline_create_infos[index].sType      = VK_STRUCTURE_TYPE_SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI;
         subpass_shading_pipeline_create_infos[index].pNext      = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        subpass_shading_pipeline_create_infos[index].renderPass = pRenderPasss[index];
-        subpass_shading_pipeline_create_infos[index].subpass    = pSubpasss[index];
+        subpass_shading_pipeline_create_infos[index].renderPass = pRenderPass[index];
+        subpass_shading_pipeline_create_infos[index].subpass    = pSubpass[index];
         create_infos[index].sType                               = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         create_infos[index].pNext                               = &subpass_shading_pipeline_create_infos[index];
-        create_infos[index].flags                               = pFlagss[index];
+        create_infos[index].flags                               = pFlags[index];
         create_infos[index].stage                               = pStages[index];
         create_infos[index].layout                              = pLayouts[index];
         create_infos[index].basePipelineHandle                  = pBasePipelineHandles[index];
@@ -28693,7 +28695,7 @@ VkResult cvkCreateSubpassShadingComputePipelines(VkDevice                       
 }
 VkResult cvkCreateSubpassShadingComputePipeline(VkDevice                        device,
                                                 VkPipelineCache                 pipelineCache,
-                                                const void*                     pNext,
+                                                void*                           pNext,
                                                 VkRenderPass                    renderPass,
                                                 uint32_t                        subpass,
                                                 VkPipelineCreateFlags           flags,
@@ -28745,28 +28747,28 @@ void cvkGetSwapchainCalibratedTimestamp(VkDevice               device,
 {
     cvkGetSwapchainCalibratedTimestamps(device, 1, &pNext, &swapchain, &presentStage, &timeDomainId, &timeDomain, pTimestamps, pMaxDeviation);
 }
-void cvkWriteBlockMatchWindowSamplers(VkDevice                                 device,
-                                      uint32_t                                 samplerCount,
-                                      const void* const*                       ppNexts,
-                                      const VkExtent2D*                        pWindowExtents,
-                                      const VkBlockMatchWindowCompareModeQCOM* pWindowCompareModes,
-                                      const VkSamplerCreateFlags*              pFlagss,
-                                      const VkFilter*                          pMagFilters,
-                                      const VkFilter*                          pMinFilters,
-                                      const VkSamplerMipmapMode*               pMipmapModes,
-                                      const VkSamplerAddressMode*              pAddressModeUs,
-                                      const VkSamplerAddressMode*              pAddressModeVs,
-                                      const VkSamplerAddressMode*              pAddressModeWs,
-                                      const float*                             pMipLodBiass,
-                                      const VkBool32*                          pAnisotropyEnables,
-                                      const float*                             pMaxAnisotropies,
-                                      const VkBool32*                          pCompareEnables,
-                                      const VkCompareOp*                       pCompareOps,
-                                      const float*                             pMinLods,
-                                      const float*                             pMaxLods,
-                                      const VkBorderColor*                     pBorderColors,
-                                      const VkBool32*                          pUnnormalizedCoordinatess,
-                                      const VkHostAddressRangeEXT*             pDescriptors)
+void cvkWriteBlockMatchWindowSamplerDescriptors(VkDevice                                 device,
+                                                uint32_t                                 samplerCount,
+                                                const void* const*                       ppNexts,
+                                                const VkExtent2D*                        pWindowExtents,
+                                                const VkBlockMatchWindowCompareModeQCOM* pWindowCompareModes,
+                                                const VkSamplerCreateFlags*              pFlags,
+                                                const VkFilter*                          pMagFilters,
+                                                const VkFilter*                          pMinFilters,
+                                                const VkSamplerMipmapMode*               pMipmapModes,
+                                                const VkSamplerAddressMode*              pAddressModeUs,
+                                                const VkSamplerAddressMode*              pAddressModeVs,
+                                                const VkSamplerAddressMode*              pAddressModeWs,
+                                                const float*                             pMipLodBias,
+                                                const VkBool32*                          pAnisotropyEnables,
+                                                const float*                             pMaxAnisotropies,
+                                                const VkBool32*                          pCompareEnables,
+                                                const VkCompareOp*                       pCompareOps,
+                                                const float*                             pMinLods,
+                                                const float*                             pMaxLods,
+                                                const VkBorderColor*                     pBorderColors,
+                                                const VkBool32*                          pUnnormalizedCoordinates,
+                                                const VkHostAddressRangeEXT*             pDescriptors)
 {
     VkSamplerCreateInfo                     samplers[CVK_MAX_SAMPLERS];
     VkSamplerBlockMatchWindowCreateInfoQCOM sampler_block_match_window_create_infos[CVK_MAX_SAMPLERS];
@@ -28781,14 +28783,14 @@ void cvkWriteBlockMatchWindowSamplers(VkDevice                                 d
         sampler_block_match_window_create_infos[index].windowCompareMode = pWindowCompareModes[index];
         samplers[index].sType                                            = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplers[index].pNext                                            = &sampler_block_match_window_create_infos[index];
-        samplers[index].flags                                            = pFlagss[index];
+        samplers[index].flags                                            = pFlags[index];
         samplers[index].magFilter                                        = pMagFilters[index];
         samplers[index].minFilter                                        = pMinFilters[index];
         samplers[index].mipmapMode                                       = pMipmapModes[index];
         samplers[index].addressModeU                                     = pAddressModeUs[index];
         samplers[index].addressModeV                                     = pAddressModeVs[index];
         samplers[index].addressModeW                                     = pAddressModeWs[index];
-        samplers[index].mipLodBias                                       = pMipLodBiass[index];
+        samplers[index].mipLodBias                                       = pMipLodBias[index];
         samplers[index].anisotropyEnable                                 = pAnisotropyEnables[index];
         samplers[index].maxAnisotropy                                    = pMaxAnisotropies[index];
         samplers[index].compareEnable                                    = pCompareEnables[index];
@@ -28796,77 +28798,77 @@ void cvkWriteBlockMatchWindowSamplers(VkDevice                                 d
         samplers[index].minLod                                           = pMinLods[index];
         samplers[index].maxLod                                           = pMaxLods[index];
         samplers[index].borderColor                                      = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates                          = pUnnormalizedCoordinatess[index];
+        samplers[index].unnormalizedCoordinates                          = pUnnormalizedCoordinates[index];
     }
     cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
 }
-void cvkWriteBlockMatchWindowSampler(VkDevice                          device,
-                                     const void*                       pNext,
-                                     VkExtent2D                        windowExtent,
-                                     VkBlockMatchWindowCompareModeQCOM windowCompareMode,
-                                     VkSamplerCreateFlags              flags,
-                                     VkFilter                          magFilter,
-                                     VkFilter                          minFilter,
-                                     VkSamplerMipmapMode               mipmapMode,
-                                     VkSamplerAddressMode              addressModeU,
-                                     VkSamplerAddressMode              addressModeV,
-                                     VkSamplerAddressMode              addressModeW,
-                                     float                             mipLodBias,
-                                     VkBool32                          anisotropyEnable,
-                                     float                             maxAnisotropy,
-                                     VkBool32                          compareEnable,
-                                     VkCompareOp                       compareOp,
-                                     float                             minLod,
-                                     float                             maxLod,
-                                     VkBorderColor                     borderColor,
-                                     VkBool32                          unnormalizedCoordinates,
-                                     const VkHostAddressRangeEXT*      pDescriptors)
+void cvkWriteBlockMatchWindowSamplerDescriptor(VkDevice                          device,
+                                               const void*                       pNext,
+                                               VkExtent2D                        windowExtent,
+                                               VkBlockMatchWindowCompareModeQCOM windowCompareMode,
+                                               VkSamplerCreateFlags              flags,
+                                               VkFilter                          magFilter,
+                                               VkFilter                          minFilter,
+                                               VkSamplerMipmapMode               mipmapMode,
+                                               VkSamplerAddressMode              addressModeU,
+                                               VkSamplerAddressMode              addressModeV,
+                                               VkSamplerAddressMode              addressModeW,
+                                               float                             mipLodBias,
+                                               VkBool32                          anisotropyEnable,
+                                               float                             maxAnisotropy,
+                                               VkBool32                          compareEnable,
+                                               VkCompareOp                       compareOp,
+                                               float                             minLod,
+                                               float                             maxLod,
+                                               VkBorderColor                     borderColor,
+                                               VkBool32                          unnormalizedCoordinates,
+                                               const VkHostAddressRangeEXT*      pDescriptors)
 {
-    cvkWriteBlockMatchWindowSamplers(device,
-                                     1,
-                                     &pNext,
-                                     &windowExtent,
-                                     &windowCompareMode,
-                                     &flags,
-                                     &magFilter,
-                                     &minFilter,
-                                     &mipmapMode,
-                                     &addressModeU,
-                                     &addressModeV,
-                                     &addressModeW,
-                                     &mipLodBias,
-                                     &anisotropyEnable,
-                                     &maxAnisotropy,
-                                     &compareEnable,
-                                     &compareOp,
-                                     &minLod,
-                                     &maxLod,
-                                     &borderColor,
-                                     &unnormalizedCoordinates,
-                                     pDescriptors);
+    cvkWriteBlockMatchWindowSamplerDescriptors(device,
+                                               1,
+                                               &pNext,
+                                               &windowExtent,
+                                               &windowCompareMode,
+                                               &flags,
+                                               &magFilter,
+                                               &minFilter,
+                                               &mipmapMode,
+                                               &addressModeU,
+                                               &addressModeV,
+                                               &addressModeW,
+                                               &mipLodBias,
+                                               &anisotropyEnable,
+                                               &maxAnisotropy,
+                                               &compareEnable,
+                                               &compareOp,
+                                               &minLod,
+                                               &maxLod,
+                                               &borderColor,
+                                               &unnormalizedCoordinates,
+                                               pDescriptors);
 }
-void cvkWriteBorderColorComponentMappingSamplers(VkDevice                     device,
-                                                 uint32_t                     samplerCount,
-                                                 const void* const*           ppNexts,
-                                                 const VkComponentMapping*    pComponentss,
-                                                 const VkBool32*              pSrgbs,
-                                                 const VkSamplerCreateFlags*  pFlagss,
-                                                 const VkFilter*              pMagFilters,
-                                                 const VkFilter*              pMinFilters,
-                                                 const VkSamplerMipmapMode*   pMipmapModes,
-                                                 const VkSamplerAddressMode*  pAddressModeUs,
-                                                 const VkSamplerAddressMode*  pAddressModeVs,
-                                                 const VkSamplerAddressMode*  pAddressModeWs,
-                                                 const float*                 pMipLodBiass,
-                                                 const VkBool32*              pAnisotropyEnables,
-                                                 const float*                 pMaxAnisotropies,
-                                                 const VkBool32*              pCompareEnables,
-                                                 const VkCompareOp*           pCompareOps,
-                                                 const float*                 pMinLods,
-                                                 const float*                 pMaxLods,
-                                                 const VkBorderColor*         pBorderColors,
-                                                 const VkBool32*              pUnnormalizedCoordinatess,
-                                                 const VkHostAddressRangeEXT* pDescriptors)
+void cvkWriteBorderColorComponentMappingSamplerDescriptors(VkDevice                     device,
+                                                           uint32_t                     samplerCount,
+                                                           const void* const*           ppNexts,
+                                                           const VkComponentMapping*    pComponents,
+                                                           const VkBool32*              pSrgbs,
+                                                           const VkSamplerCreateFlags*  pFlags,
+                                                           const VkFilter*              pMagFilters,
+                                                           const VkFilter*              pMinFilters,
+                                                           const VkSamplerMipmapMode*   pMipmapModes,
+                                                           const VkSamplerAddressMode*  pAddressModeUs,
+                                                           const VkSamplerAddressMode*  pAddressModeVs,
+                                                           const VkSamplerAddressMode*  pAddressModeWs,
+                                                           const float*                 pMipLodBias,
+                                                           const VkBool32*              pAnisotropyEnables,
+                                                           const float*                 pMaxAnisotropies,
+                                                           const VkBool32*              pCompareEnables,
+                                                           const VkCompareOp*           pCompareOps,
+                                                           const float*                 pMinLods,
+                                                           const float*                 pMaxLods,
+                                                           const VkBorderColor*         pBorderColors,
+                                                           const VkBool32*              pUnnormalizedCoordinates,
+                                                           const VkHostAddressRangeEXT* pDescriptors)
 {
     VkSamplerCreateInfo                               samplers[CVK_MAX_SAMPLERS];
     VkSamplerBorderColorComponentMappingCreateInfoEXT sampler_border_color_component_mapping_create_infos[CVK_MAX_SAMPLERS];
@@ -28877,18 +28879,18 @@ void cvkWriteBorderColorComponentMappingSamplers(VkDevice                     de
     {
         sampler_border_color_component_mapping_create_infos[index].sType      = VK_STRUCTURE_TYPE_SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT;
         sampler_border_color_component_mapping_create_infos[index].pNext      = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        sampler_border_color_component_mapping_create_infos[index].components = pComponentss[index];
+        sampler_border_color_component_mapping_create_infos[index].components = pComponents[index];
         sampler_border_color_component_mapping_create_infos[index].srgb       = pSrgbs[index];
         samplers[index].sType                                                 = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplers[index].pNext                                                 = &sampler_border_color_component_mapping_create_infos[index];
-        samplers[index].flags                                                 = pFlagss[index];
+        samplers[index].flags                                                 = pFlags[index];
         samplers[index].magFilter                                             = pMagFilters[index];
         samplers[index].minFilter                                             = pMinFilters[index];
         samplers[index].mipmapMode                                            = pMipmapModes[index];
         samplers[index].addressModeU                                          = pAddressModeUs[index];
         samplers[index].addressModeV                                          = pAddressModeVs[index];
         samplers[index].addressModeW                                          = pAddressModeWs[index];
-        samplers[index].mipLodBias                                            = pMipLodBiass[index];
+        samplers[index].mipLodBias                                            = pMipLodBias[index];
         samplers[index].anisotropyEnable                                      = pAnisotropyEnables[index];
         samplers[index].maxAnisotropy                                         = pMaxAnisotropies[index];
         samplers[index].compareEnable                                         = pCompareEnables[index];
@@ -28896,76 +28898,76 @@ void cvkWriteBorderColorComponentMappingSamplers(VkDevice                     de
         samplers[index].minLod                                                = pMinLods[index];
         samplers[index].maxLod                                                = pMaxLods[index];
         samplers[index].borderColor                                           = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates                               = pUnnormalizedCoordinatess[index];
+        samplers[index].unnormalizedCoordinates                               = pUnnormalizedCoordinates[index];
     }
     cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
 }
-void cvkWriteBorderColorComponentMappingSampler(VkDevice                     device,
-                                                const void*                  pNext,
-                                                VkComponentMapping           components,
-                                                VkBool32                     srgb,
-                                                VkSamplerCreateFlags         flags,
-                                                VkFilter                     magFilter,
-                                                VkFilter                     minFilter,
-                                                VkSamplerMipmapMode          mipmapMode,
-                                                VkSamplerAddressMode         addressModeU,
-                                                VkSamplerAddressMode         addressModeV,
-                                                VkSamplerAddressMode         addressModeW,
-                                                float                        mipLodBias,
-                                                VkBool32                     anisotropyEnable,
-                                                float                        maxAnisotropy,
-                                                VkBool32                     compareEnable,
-                                                VkCompareOp                  compareOp,
-                                                float                        minLod,
-                                                float                        maxLod,
-                                                VkBorderColor                borderColor,
-                                                VkBool32                     unnormalizedCoordinates,
-                                                const VkHostAddressRangeEXT* pDescriptors)
+void cvkWriteBorderColorComponentMappingSamplerDescriptor(VkDevice                     device,
+                                                          const void*                  pNext,
+                                                          VkComponentMapping           components,
+                                                          VkBool32                     srgb,
+                                                          VkSamplerCreateFlags         flags,
+                                                          VkFilter                     magFilter,
+                                                          VkFilter                     minFilter,
+                                                          VkSamplerMipmapMode          mipmapMode,
+                                                          VkSamplerAddressMode         addressModeU,
+                                                          VkSamplerAddressMode         addressModeV,
+                                                          VkSamplerAddressMode         addressModeW,
+                                                          float                        mipLodBias,
+                                                          VkBool32                     anisotropyEnable,
+                                                          float                        maxAnisotropy,
+                                                          VkBool32                     compareEnable,
+                                                          VkCompareOp                  compareOp,
+                                                          float                        minLod,
+                                                          float                        maxLod,
+                                                          VkBorderColor                borderColor,
+                                                          VkBool32                     unnormalizedCoordinates,
+                                                          const VkHostAddressRangeEXT* pDescriptors)
 {
-    cvkWriteBorderColorComponentMappingSamplers(device,
-                                                1,
-                                                &pNext,
-                                                &components,
-                                                &srgb,
-                                                &flags,
-                                                &magFilter,
-                                                &minFilter,
-                                                &mipmapMode,
-                                                &addressModeU,
-                                                &addressModeV,
-                                                &addressModeW,
-                                                &mipLodBias,
-                                                &anisotropyEnable,
-                                                &maxAnisotropy,
-                                                &compareEnable,
-                                                &compareOp,
-                                                &minLod,
-                                                &maxLod,
-                                                &borderColor,
-                                                &unnormalizedCoordinates,
-                                                pDescriptors);
+    cvkWriteBorderColorComponentMappingSamplerDescriptors(device,
+                                                          1,
+                                                          &pNext,
+                                                          &components,
+                                                          &srgb,
+                                                          &flags,
+                                                          &magFilter,
+                                                          &minFilter,
+                                                          &mipmapMode,
+                                                          &addressModeU,
+                                                          &addressModeV,
+                                                          &addressModeW,
+                                                          &mipLodBias,
+                                                          &anisotropyEnable,
+                                                          &maxAnisotropy,
+                                                          &compareEnable,
+                                                          &compareOp,
+                                                          &minLod,
+                                                          &maxLod,
+                                                          &borderColor,
+                                                          &unnormalizedCoordinates,
+                                                          pDescriptors);
 }
-void cvkWriteCubicWeightsSamplers(VkDevice                        device,
-                                  uint32_t                        samplerCount,
-                                  const void* const*              ppNexts,
-                                  const VkCubicFilterWeightsQCOM* pCubicWeightss,
-                                  const VkSamplerCreateFlags*     pFlagss,
-                                  const VkFilter*                 pMagFilters,
-                                  const VkFilter*                 pMinFilters,
-                                  const VkSamplerMipmapMode*      pMipmapModes,
-                                  const VkSamplerAddressMode*     pAddressModeUs,
-                                  const VkSamplerAddressMode*     pAddressModeVs,
-                                  const VkSamplerAddressMode*     pAddressModeWs,
-                                  const float*                    pMipLodBiass,
-                                  const VkBool32*                 pAnisotropyEnables,
-                                  const float*                    pMaxAnisotropies,
-                                  const VkBool32*                 pCompareEnables,
-                                  const VkCompareOp*              pCompareOps,
-                                  const float*                    pMinLods,
-                                  const float*                    pMaxLods,
-                                  const VkBorderColor*            pBorderColors,
-                                  const VkBool32*                 pUnnormalizedCoordinatess,
-                                  const VkHostAddressRangeEXT*    pDescriptors)
+void cvkWriteCubicWeightsSamplerDescriptors(VkDevice                        device,
+                                            uint32_t                        samplerCount,
+                                            const void* const*              ppNexts,
+                                            const VkCubicFilterWeightsQCOM* pCubicWeights,
+                                            const VkSamplerCreateFlags*     pFlags,
+                                            const VkFilter*                 pMagFilters,
+                                            const VkFilter*                 pMinFilters,
+                                            const VkSamplerMipmapMode*      pMipmapModes,
+                                            const VkSamplerAddressMode*     pAddressModeUs,
+                                            const VkSamplerAddressMode*     pAddressModeVs,
+                                            const VkSamplerAddressMode*     pAddressModeWs,
+                                            const float*                    pMipLodBias,
+                                            const VkBool32*                 pAnisotropyEnables,
+                                            const float*                    pMaxAnisotropies,
+                                            const VkBool32*                 pCompareEnables,
+                                            const VkCompareOp*              pCompareOps,
+                                            const float*                    pMinLods,
+                                            const float*                    pMaxLods,
+                                            const VkBorderColor*            pBorderColors,
+                                            const VkBool32*                 pUnnormalizedCoordinates,
+                                            const VkHostAddressRangeEXT*    pDescriptors)
 {
     VkSamplerCreateInfo                 samplers[CVK_MAX_SAMPLERS];
     VkSamplerCubicWeightsCreateInfoQCOM sampler_cubic_weights_create_infos[CVK_MAX_SAMPLERS];
@@ -28976,17 +28978,17 @@ void cvkWriteCubicWeightsSamplers(VkDevice                        device,
     {
         sampler_cubic_weights_create_infos[index].sType        = VK_STRUCTURE_TYPE_SAMPLER_CUBIC_WEIGHTS_CREATE_INFO_QCOM;
         sampler_cubic_weights_create_infos[index].pNext        = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        sampler_cubic_weights_create_infos[index].cubicWeights = pCubicWeightss[index];
+        sampler_cubic_weights_create_infos[index].cubicWeights = pCubicWeights[index];
         samplers[index].sType                                  = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplers[index].pNext                                  = &sampler_cubic_weights_create_infos[index];
-        samplers[index].flags                                  = pFlagss[index];
+        samplers[index].flags                                  = pFlags[index];
         samplers[index].magFilter                              = pMagFilters[index];
         samplers[index].minFilter                              = pMinFilters[index];
         samplers[index].mipmapMode                             = pMipmapModes[index];
         samplers[index].addressModeU                           = pAddressModeUs[index];
         samplers[index].addressModeV                           = pAddressModeVs[index];
         samplers[index].addressModeW                           = pAddressModeWs[index];
-        samplers[index].mipLodBias                             = pMipLodBiass[index];
+        samplers[index].mipLodBias                             = pMipLodBias[index];
         samplers[index].anisotropyEnable                       = pAnisotropyEnables[index];
         samplers[index].maxAnisotropy                          = pMaxAnisotropies[index];
         samplers[index].compareEnable                          = pCompareEnables[index];
@@ -28994,209 +28996,13 @@ void cvkWriteCubicWeightsSamplers(VkDevice                        device,
         samplers[index].minLod                                 = pMinLods[index];
         samplers[index].maxLod                                 = pMaxLods[index];
         samplers[index].borderColor                            = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates                = pUnnormalizedCoordinatess[index];
+        samplers[index].unnormalizedCoordinates                = pUnnormalizedCoordinates[index];
     }
     cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
 }
-void cvkWriteCubicWeightsSampler(VkDevice                     device,
-                                 const void*                  pNext,
-                                 VkCubicFilterWeightsQCOM     cubicWeights,
-                                 VkSamplerCreateFlags         flags,
-                                 VkFilter                     magFilter,
-                                 VkFilter                     minFilter,
-                                 VkSamplerMipmapMode          mipmapMode,
-                                 VkSamplerAddressMode         addressModeU,
-                                 VkSamplerAddressMode         addressModeV,
-                                 VkSamplerAddressMode         addressModeW,
-                                 float                        mipLodBias,
-                                 VkBool32                     anisotropyEnable,
-                                 float                        maxAnisotropy,
-                                 VkBool32                     compareEnable,
-                                 VkCompareOp                  compareOp,
-                                 float                        minLod,
-                                 float                        maxLod,
-                                 VkBorderColor                borderColor,
-                                 VkBool32                     unnormalizedCoordinates,
-                                 const VkHostAddressRangeEXT* pDescriptors)
-{
-    cvkWriteCubicWeightsSamplers(device,
-                                 1,
-                                 &pNext,
-                                 &cubicWeights,
-                                 &flags,
-                                 &magFilter,
-                                 &minFilter,
-                                 &mipmapMode,
-                                 &addressModeU,
-                                 &addressModeV,
-                                 &addressModeW,
-                                 &mipLodBias,
-                                 &anisotropyEnable,
-                                 &maxAnisotropy,
-                                 &compareEnable,
-                                 &compareOp,
-                                 &minLod,
-                                 &maxLod,
-                                 &borderColor,
-                                 &unnormalizedCoordinates,
-                                 pDescriptors);
-}
-void cvkWriteCustomBorderColorSamplers(VkDevice                     device,
-                                       uint32_t                     samplerCount,
-                                       const void* const*           ppNexts,
-                                       const VkClearColorValue*     pCustomBorderColors,
-                                       const VkFormat*              pFormats,
-                                       const VkSamplerCreateFlags*  pFlagss,
-                                       const VkFilter*              pMagFilters,
-                                       const VkFilter*              pMinFilters,
-                                       const VkSamplerMipmapMode*   pMipmapModes,
-                                       const VkSamplerAddressMode*  pAddressModeUs,
-                                       const VkSamplerAddressMode*  pAddressModeVs,
-                                       const VkSamplerAddressMode*  pAddressModeWs,
-                                       const float*                 pMipLodBiass,
-                                       const VkBool32*              pAnisotropyEnables,
-                                       const float*                 pMaxAnisotropies,
-                                       const VkBool32*              pCompareEnables,
-                                       const VkCompareOp*           pCompareOps,
-                                       const float*                 pMinLods,
-                                       const float*                 pMaxLods,
-                                       const VkBorderColor*         pBorderColors,
-                                       const VkBool32*              pUnnormalizedCoordinatess,
-                                       const VkHostAddressRangeEXT* pDescriptors)
-{
-    VkSamplerCreateInfo                     samplers[CVK_MAX_SAMPLERS];
-    VkSamplerCustomBorderColorCreateInfoEXT sampler_custom_border_color_create_infos[CVK_MAX_SAMPLERS];
-    uint32_t                                index;
-
-    CVK_ASSERT(CVK_MAX_SAMPLERS >= samplerCount);
-    for (index = 0; index < samplerCount; ++index)
-    {
-        sampler_custom_border_color_create_infos[index].sType             = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
-        sampler_custom_border_color_create_infos[index].pNext             = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        sampler_custom_border_color_create_infos[index].customBorderColor = pCustomBorderColors[index];
-        sampler_custom_border_color_create_infos[index].format            = pFormats[index];
-        samplers[index].sType                                             = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        samplers[index].pNext                                             = &sampler_custom_border_color_create_infos[index];
-        samplers[index].flags                                             = pFlagss[index];
-        samplers[index].magFilter                                         = pMagFilters[index];
-        samplers[index].minFilter                                         = pMinFilters[index];
-        samplers[index].mipmapMode                                        = pMipmapModes[index];
-        samplers[index].addressModeU                                      = pAddressModeUs[index];
-        samplers[index].addressModeV                                      = pAddressModeVs[index];
-        samplers[index].addressModeW                                      = pAddressModeWs[index];
-        samplers[index].mipLodBias                                        = pMipLodBiass[index];
-        samplers[index].anisotropyEnable                                  = pAnisotropyEnables[index];
-        samplers[index].maxAnisotropy                                     = pMaxAnisotropies[index];
-        samplers[index].compareEnable                                     = pCompareEnables[index];
-        samplers[index].compareOp                                         = pCompareOps[index];
-        samplers[index].minLod                                            = pMinLods[index];
-        samplers[index].maxLod                                            = pMaxLods[index];
-        samplers[index].borderColor                                       = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates                           = pUnnormalizedCoordinatess[index];
-    }
-    cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
-}
-void cvkWriteCustomBorderColorSampler(VkDevice                     device,
-                                      const void*                  pNext,
-                                      VkClearColorValue            customBorderColor,
-                                      VkFormat                     format,
-                                      VkSamplerCreateFlags         flags,
-                                      VkFilter                     magFilter,
-                                      VkFilter                     minFilter,
-                                      VkSamplerMipmapMode          mipmapMode,
-                                      VkSamplerAddressMode         addressModeU,
-                                      VkSamplerAddressMode         addressModeV,
-                                      VkSamplerAddressMode         addressModeW,
-                                      float                        mipLodBias,
-                                      VkBool32                     anisotropyEnable,
-                                      float                        maxAnisotropy,
-                                      VkBool32                     compareEnable,
-                                      VkCompareOp                  compareOp,
-                                      float                        minLod,
-                                      float                        maxLod,
-                                      VkBorderColor                borderColor,
-                                      VkBool32                     unnormalizedCoordinates,
-                                      const VkHostAddressRangeEXT* pDescriptors)
-{
-    cvkWriteCustomBorderColorSamplers(device,
-                                      1,
-                                      &pNext,
-                                      &customBorderColor,
-                                      &format,
-                                      &flags,
-                                      &magFilter,
-                                      &minFilter,
-                                      &mipmapMode,
-                                      &addressModeU,
-                                      &addressModeV,
-                                      &addressModeW,
-                                      &mipLodBias,
-                                      &anisotropyEnable,
-                                      &maxAnisotropy,
-                                      &compareEnable,
-                                      &compareOp,
-                                      &minLod,
-                                      &maxLod,
-                                      &borderColor,
-                                      &unnormalizedCoordinates,
-                                      pDescriptors);
-}
-void cvkWriteCustomBorderColorIndexSamplers(VkDevice                     device,
-                                            uint32_t                     samplerCount,
-                                            const void* const*           ppNexts,
-                                            const uint32_t*              pIndices,
-                                            const VkSamplerCreateFlags*  pFlagss,
-                                            const VkFilter*              pMagFilters,
-                                            const VkFilter*              pMinFilters,
-                                            const VkSamplerMipmapMode*   pMipmapModes,
-                                            const VkSamplerAddressMode*  pAddressModeUs,
-                                            const VkSamplerAddressMode*  pAddressModeVs,
-                                            const VkSamplerAddressMode*  pAddressModeWs,
-                                            const float*                 pMipLodBiass,
-                                            const VkBool32*              pAnisotropyEnables,
-                                            const float*                 pMaxAnisotropies,
-                                            const VkBool32*              pCompareEnables,
-                                            const VkCompareOp*           pCompareOps,
-                                            const float*                 pMinLods,
-                                            const float*                 pMaxLods,
-                                            const VkBorderColor*         pBorderColors,
-                                            const VkBool32*              pUnnormalizedCoordinatess,
-                                            const VkHostAddressRangeEXT* pDescriptors)
-{
-    VkSamplerCreateInfo                          samplers[CVK_MAX_SAMPLERS];
-    VkSamplerCustomBorderColorIndexCreateInfoEXT sampler_custom_border_color_index_create_infos[CVK_MAX_SAMPLERS];
-    uint32_t                                     index;
-
-    CVK_ASSERT(CVK_MAX_SAMPLERS >= samplerCount);
-    for (index = 0; index < samplerCount; ++index)
-    {
-        sampler_custom_border_color_index_create_infos[index].sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_INDEX_CREATE_INFO_EXT;
-        sampler_custom_border_color_index_create_infos[index].pNext = (NULL != ppNexts) ? ppNexts[index] : NULL;
-        sampler_custom_border_color_index_create_infos[index].index = pIndices[index];
-        samplers[index].sType                                       = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        samplers[index].pNext                                       = &sampler_custom_border_color_index_create_infos[index];
-        samplers[index].flags                                       = pFlagss[index];
-        samplers[index].magFilter                                   = pMagFilters[index];
-        samplers[index].minFilter                                   = pMinFilters[index];
-        samplers[index].mipmapMode                                  = pMipmapModes[index];
-        samplers[index].addressModeU                                = pAddressModeUs[index];
-        samplers[index].addressModeV                                = pAddressModeVs[index];
-        samplers[index].addressModeW                                = pAddressModeWs[index];
-        samplers[index].mipLodBias                                  = pMipLodBiass[index];
-        samplers[index].anisotropyEnable                            = pAnisotropyEnables[index];
-        samplers[index].maxAnisotropy                               = pMaxAnisotropies[index];
-        samplers[index].compareEnable                               = pCompareEnables[index];
-        samplers[index].compareOp                                   = pCompareOps[index];
-        samplers[index].minLod                                      = pMinLods[index];
-        samplers[index].maxLod                                      = pMaxLods[index];
-        samplers[index].borderColor                                 = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates                     = pUnnormalizedCoordinatess[index];
-    }
-    cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
-}
-void cvkWriteCustomBorderColorIndexSampler(VkDevice                     device,
+void cvkWriteCubicWeightsSamplerDescriptor(VkDevice                     device,
                                            const void*                  pNext,
-                                           uint32_t                     index,
+                                           VkCubicFilterWeightsQCOM     cubicWeights,
                                            VkSamplerCreateFlags         flags,
                                            VkFilter                     magFilter,
                                            VkFilter                     minFilter,
@@ -29215,10 +29021,10 @@ void cvkWriteCustomBorderColorIndexSampler(VkDevice                     device,
                                            VkBool32                     unnormalizedCoordinates,
                                            const VkHostAddressRangeEXT* pDescriptors)
 {
-    cvkWriteCustomBorderColorIndexSamplers(device,
+    cvkWriteCubicWeightsSamplerDescriptors(device,
                                            1,
                                            &pNext,
-                                           &index,
+                                           &cubicWeights,
                                            &flags,
                                            &magFilter,
                                            &minFilter,
@@ -29237,27 +29043,223 @@ void cvkWriteCustomBorderColorIndexSampler(VkDevice                     device,
                                            &unnormalizedCoordinates,
                                            pDescriptors);
 }
-void cvkWriteReductionModeSamplers(VkDevice                      device,
-                                   uint32_t                      samplerCount,
-                                   const void* const*            ppNexts,
-                                   const VkSamplerReductionMode* pReductionModes,
-                                   const VkSamplerCreateFlags*   pFlagss,
-                                   const VkFilter*               pMagFilters,
-                                   const VkFilter*               pMinFilters,
-                                   const VkSamplerMipmapMode*    pMipmapModes,
-                                   const VkSamplerAddressMode*   pAddressModeUs,
-                                   const VkSamplerAddressMode*   pAddressModeVs,
-                                   const VkSamplerAddressMode*   pAddressModeWs,
-                                   const float*                  pMipLodBiass,
-                                   const VkBool32*               pAnisotropyEnables,
-                                   const float*                  pMaxAnisotropies,
-                                   const VkBool32*               pCompareEnables,
-                                   const VkCompareOp*            pCompareOps,
-                                   const float*                  pMinLods,
-                                   const float*                  pMaxLods,
-                                   const VkBorderColor*          pBorderColors,
-                                   const VkBool32*               pUnnormalizedCoordinatess,
-                                   const VkHostAddressRangeEXT*  pDescriptors)
+void cvkWriteCustomBorderColorSamplerDescriptors(VkDevice                     device,
+                                                 uint32_t                     samplerCount,
+                                                 const void* const*           ppNexts,
+                                                 const VkClearColorValue*     pCustomBorderColors,
+                                                 const VkFormat*              pFormats,
+                                                 const VkSamplerCreateFlags*  pFlags,
+                                                 const VkFilter*              pMagFilters,
+                                                 const VkFilter*              pMinFilters,
+                                                 const VkSamplerMipmapMode*   pMipmapModes,
+                                                 const VkSamplerAddressMode*  pAddressModeUs,
+                                                 const VkSamplerAddressMode*  pAddressModeVs,
+                                                 const VkSamplerAddressMode*  pAddressModeWs,
+                                                 const float*                 pMipLodBias,
+                                                 const VkBool32*              pAnisotropyEnables,
+                                                 const float*                 pMaxAnisotropies,
+                                                 const VkBool32*              pCompareEnables,
+                                                 const VkCompareOp*           pCompareOps,
+                                                 const float*                 pMinLods,
+                                                 const float*                 pMaxLods,
+                                                 const VkBorderColor*         pBorderColors,
+                                                 const VkBool32*              pUnnormalizedCoordinates,
+                                                 const VkHostAddressRangeEXT* pDescriptors)
+{
+    VkSamplerCreateInfo                     samplers[CVK_MAX_SAMPLERS];
+    VkSamplerCustomBorderColorCreateInfoEXT sampler_custom_border_color_create_infos[CVK_MAX_SAMPLERS];
+    uint32_t                                index;
+
+    CVK_ASSERT(CVK_MAX_SAMPLERS >= samplerCount);
+    for (index = 0; index < samplerCount; ++index)
+    {
+        sampler_custom_border_color_create_infos[index].sType             = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
+        sampler_custom_border_color_create_infos[index].pNext             = (NULL != ppNexts) ? ppNexts[index] : NULL;
+        sampler_custom_border_color_create_infos[index].customBorderColor = pCustomBorderColors[index];
+        sampler_custom_border_color_create_infos[index].format            = pFormats[index];
+        samplers[index].sType                                             = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplers[index].pNext                                             = &sampler_custom_border_color_create_infos[index];
+        samplers[index].flags                                             = pFlags[index];
+        samplers[index].magFilter                                         = pMagFilters[index];
+        samplers[index].minFilter                                         = pMinFilters[index];
+        samplers[index].mipmapMode                                        = pMipmapModes[index];
+        samplers[index].addressModeU                                      = pAddressModeUs[index];
+        samplers[index].addressModeV                                      = pAddressModeVs[index];
+        samplers[index].addressModeW                                      = pAddressModeWs[index];
+        samplers[index].mipLodBias                                        = pMipLodBias[index];
+        samplers[index].anisotropyEnable                                  = pAnisotropyEnables[index];
+        samplers[index].maxAnisotropy                                     = pMaxAnisotropies[index];
+        samplers[index].compareEnable                                     = pCompareEnables[index];
+        samplers[index].compareOp                                         = pCompareOps[index];
+        samplers[index].minLod                                            = pMinLods[index];
+        samplers[index].maxLod                                            = pMaxLods[index];
+        samplers[index].borderColor                                       = pBorderColors[index];
+        samplers[index].unnormalizedCoordinates                           = pUnnormalizedCoordinates[index];
+    }
+    cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
+}
+void cvkWriteCustomBorderColorSamplerDescriptor(VkDevice                     device,
+                                                const void*                  pNext,
+                                                VkClearColorValue            customBorderColor,
+                                                VkFormat                     format,
+                                                VkSamplerCreateFlags         flags,
+                                                VkFilter                     magFilter,
+                                                VkFilter                     minFilter,
+                                                VkSamplerMipmapMode          mipmapMode,
+                                                VkSamplerAddressMode         addressModeU,
+                                                VkSamplerAddressMode         addressModeV,
+                                                VkSamplerAddressMode         addressModeW,
+                                                float                        mipLodBias,
+                                                VkBool32                     anisotropyEnable,
+                                                float                        maxAnisotropy,
+                                                VkBool32                     compareEnable,
+                                                VkCompareOp                  compareOp,
+                                                float                        minLod,
+                                                float                        maxLod,
+                                                VkBorderColor                borderColor,
+                                                VkBool32                     unnormalizedCoordinates,
+                                                const VkHostAddressRangeEXT* pDescriptors)
+{
+    cvkWriteCustomBorderColorSamplerDescriptors(device,
+                                                1,
+                                                &pNext,
+                                                &customBorderColor,
+                                                &format,
+                                                &flags,
+                                                &magFilter,
+                                                &minFilter,
+                                                &mipmapMode,
+                                                &addressModeU,
+                                                &addressModeV,
+                                                &addressModeW,
+                                                &mipLodBias,
+                                                &anisotropyEnable,
+                                                &maxAnisotropy,
+                                                &compareEnable,
+                                                &compareOp,
+                                                &minLod,
+                                                &maxLod,
+                                                &borderColor,
+                                                &unnormalizedCoordinates,
+                                                pDescriptors);
+}
+void cvkWriteCustomBorderColorIndexSamplerDescriptors(VkDevice                     device,
+                                                      uint32_t                     samplerCount,
+                                                      const void* const*           ppNexts,
+                                                      const uint32_t*              pIndices,
+                                                      const VkSamplerCreateFlags*  pFlags,
+                                                      const VkFilter*              pMagFilters,
+                                                      const VkFilter*              pMinFilters,
+                                                      const VkSamplerMipmapMode*   pMipmapModes,
+                                                      const VkSamplerAddressMode*  pAddressModeUs,
+                                                      const VkSamplerAddressMode*  pAddressModeVs,
+                                                      const VkSamplerAddressMode*  pAddressModeWs,
+                                                      const float*                 pMipLodBias,
+                                                      const VkBool32*              pAnisotropyEnables,
+                                                      const float*                 pMaxAnisotropies,
+                                                      const VkBool32*              pCompareEnables,
+                                                      const VkCompareOp*           pCompareOps,
+                                                      const float*                 pMinLods,
+                                                      const float*                 pMaxLods,
+                                                      const VkBorderColor*         pBorderColors,
+                                                      const VkBool32*              pUnnormalizedCoordinates,
+                                                      const VkHostAddressRangeEXT* pDescriptors)
+{
+    VkSamplerCreateInfo                          samplers[CVK_MAX_SAMPLERS];
+    VkSamplerCustomBorderColorIndexCreateInfoEXT sampler_custom_border_color_index_create_infos[CVK_MAX_SAMPLERS];
+    uint32_t                                     index;
+
+    CVK_ASSERT(CVK_MAX_SAMPLERS >= samplerCount);
+    for (index = 0; index < samplerCount; ++index)
+    {
+        sampler_custom_border_color_index_create_infos[index].sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_INDEX_CREATE_INFO_EXT;
+        sampler_custom_border_color_index_create_infos[index].pNext = (NULL != ppNexts) ? ppNexts[index] : NULL;
+        sampler_custom_border_color_index_create_infos[index].index = pIndices[index];
+        samplers[index].sType                                       = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplers[index].pNext                                       = &sampler_custom_border_color_index_create_infos[index];
+        samplers[index].flags                                       = pFlags[index];
+        samplers[index].magFilter                                   = pMagFilters[index];
+        samplers[index].minFilter                                   = pMinFilters[index];
+        samplers[index].mipmapMode                                  = pMipmapModes[index];
+        samplers[index].addressModeU                                = pAddressModeUs[index];
+        samplers[index].addressModeV                                = pAddressModeVs[index];
+        samplers[index].addressModeW                                = pAddressModeWs[index];
+        samplers[index].mipLodBias                                  = pMipLodBias[index];
+        samplers[index].anisotropyEnable                            = pAnisotropyEnables[index];
+        samplers[index].maxAnisotropy                               = pMaxAnisotropies[index];
+        samplers[index].compareEnable                               = pCompareEnables[index];
+        samplers[index].compareOp                                   = pCompareOps[index];
+        samplers[index].minLod                                      = pMinLods[index];
+        samplers[index].maxLod                                      = pMaxLods[index];
+        samplers[index].borderColor                                 = pBorderColors[index];
+        samplers[index].unnormalizedCoordinates                     = pUnnormalizedCoordinates[index];
+    }
+    cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
+}
+void cvkWriteCustomBorderColorIndexSamplerDescriptor(VkDevice                     device,
+                                                     const void*                  pNext,
+                                                     uint32_t                     index,
+                                                     VkSamplerCreateFlags         flags,
+                                                     VkFilter                     magFilter,
+                                                     VkFilter                     minFilter,
+                                                     VkSamplerMipmapMode          mipmapMode,
+                                                     VkSamplerAddressMode         addressModeU,
+                                                     VkSamplerAddressMode         addressModeV,
+                                                     VkSamplerAddressMode         addressModeW,
+                                                     float                        mipLodBias,
+                                                     VkBool32                     anisotropyEnable,
+                                                     float                        maxAnisotropy,
+                                                     VkBool32                     compareEnable,
+                                                     VkCompareOp                  compareOp,
+                                                     float                        minLod,
+                                                     float                        maxLod,
+                                                     VkBorderColor                borderColor,
+                                                     VkBool32                     unnormalizedCoordinates,
+                                                     const VkHostAddressRangeEXT* pDescriptors)
+{
+    cvkWriteCustomBorderColorIndexSamplerDescriptors(device,
+                                                     1,
+                                                     &pNext,
+                                                     &index,
+                                                     &flags,
+                                                     &magFilter,
+                                                     &minFilter,
+                                                     &mipmapMode,
+                                                     &addressModeU,
+                                                     &addressModeV,
+                                                     &addressModeW,
+                                                     &mipLodBias,
+                                                     &anisotropyEnable,
+                                                     &maxAnisotropy,
+                                                     &compareEnable,
+                                                     &compareOp,
+                                                     &minLod,
+                                                     &maxLod,
+                                                     &borderColor,
+                                                     &unnormalizedCoordinates,
+                                                     pDescriptors);
+}
+void cvkWriteReductionModeSamplerDescriptors(VkDevice                      device,
+                                             uint32_t                      samplerCount,
+                                             const void* const*            ppNexts,
+                                             const VkSamplerReductionMode* pReductionModes,
+                                             const VkSamplerCreateFlags*   pFlags,
+                                             const VkFilter*               pMagFilters,
+                                             const VkFilter*               pMinFilters,
+                                             const VkSamplerMipmapMode*    pMipmapModes,
+                                             const VkSamplerAddressMode*   pAddressModeUs,
+                                             const VkSamplerAddressMode*   pAddressModeVs,
+                                             const VkSamplerAddressMode*   pAddressModeWs,
+                                             const float*                  pMipLodBias,
+                                             const VkBool32*               pAnisotropyEnables,
+                                             const float*                  pMaxAnisotropies,
+                                             const VkBool32*               pCompareEnables,
+                                             const VkCompareOp*            pCompareOps,
+                                             const float*                  pMinLods,
+                                             const float*                  pMaxLods,
+                                             const VkBorderColor*          pBorderColors,
+                                             const VkBool32*               pUnnormalizedCoordinates,
+                                             const VkHostAddressRangeEXT*  pDescriptors)
 {
     VkSamplerCreateInfo              samplers[CVK_MAX_SAMPLERS];
     VkSamplerReductionModeCreateInfo sampler_reduction_mode_create_infos[CVK_MAX_SAMPLERS];
@@ -29271,14 +29273,14 @@ void cvkWriteReductionModeSamplers(VkDevice                      device,
         sampler_reduction_mode_create_infos[index].reductionMode = pReductionModes[index];
         samplers[index].sType                                    = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplers[index].pNext                                    = &sampler_reduction_mode_create_infos[index];
-        samplers[index].flags                                    = pFlagss[index];
+        samplers[index].flags                                    = pFlags[index];
         samplers[index].magFilter                                = pMagFilters[index];
         samplers[index].minFilter                                = pMinFilters[index];
         samplers[index].mipmapMode                               = pMipmapModes[index];
         samplers[index].addressModeU                             = pAddressModeUs[index];
         samplers[index].addressModeV                             = pAddressModeVs[index];
         samplers[index].addressModeW                             = pAddressModeWs[index];
-        samplers[index].mipLodBias                               = pMipLodBiass[index];
+        samplers[index].mipLodBias                               = pMipLodBias[index];
         samplers[index].anisotropyEnable                         = pAnisotropyEnables[index];
         samplers[index].maxAnisotropy                            = pMaxAnisotropies[index];
         samplers[index].compareEnable                            = pCompareEnables[index];
@@ -29286,74 +29288,74 @@ void cvkWriteReductionModeSamplers(VkDevice                      device,
         samplers[index].minLod                                   = pMinLods[index];
         samplers[index].maxLod                                   = pMaxLods[index];
         samplers[index].borderColor                              = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates                  = pUnnormalizedCoordinatess[index];
+        samplers[index].unnormalizedCoordinates                  = pUnnormalizedCoordinates[index];
     }
     cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
 }
-void cvkWriteReductionModeSampler(VkDevice                     device,
-                                  const void*                  pNext,
-                                  VkSamplerReductionMode       reductionMode,
-                                  VkSamplerCreateFlags         flags,
-                                  VkFilter                     magFilter,
-                                  VkFilter                     minFilter,
-                                  VkSamplerMipmapMode          mipmapMode,
-                                  VkSamplerAddressMode         addressModeU,
-                                  VkSamplerAddressMode         addressModeV,
-                                  VkSamplerAddressMode         addressModeW,
-                                  float                        mipLodBias,
-                                  VkBool32                     anisotropyEnable,
-                                  float                        maxAnisotropy,
-                                  VkBool32                     compareEnable,
-                                  VkCompareOp                  compareOp,
-                                  float                        minLod,
-                                  float                        maxLod,
-                                  VkBorderColor                borderColor,
-                                  VkBool32                     unnormalizedCoordinates,
-                                  const VkHostAddressRangeEXT* pDescriptors)
+void cvkWriteReductionModeSamplerDescriptor(VkDevice                     device,
+                                            const void*                  pNext,
+                                            VkSamplerReductionMode       reductionMode,
+                                            VkSamplerCreateFlags         flags,
+                                            VkFilter                     magFilter,
+                                            VkFilter                     minFilter,
+                                            VkSamplerMipmapMode          mipmapMode,
+                                            VkSamplerAddressMode         addressModeU,
+                                            VkSamplerAddressMode         addressModeV,
+                                            VkSamplerAddressMode         addressModeW,
+                                            float                        mipLodBias,
+                                            VkBool32                     anisotropyEnable,
+                                            float                        maxAnisotropy,
+                                            VkBool32                     compareEnable,
+                                            VkCompareOp                  compareOp,
+                                            float                        minLod,
+                                            float                        maxLod,
+                                            VkBorderColor                borderColor,
+                                            VkBool32                     unnormalizedCoordinates,
+                                            const VkHostAddressRangeEXT* pDescriptors)
 {
-    cvkWriteReductionModeSamplers(device,
-                                  1,
-                                  &pNext,
-                                  &reductionMode,
-                                  &flags,
-                                  &magFilter,
-                                  &minFilter,
-                                  &mipmapMode,
-                                  &addressModeU,
-                                  &addressModeV,
-                                  &addressModeW,
-                                  &mipLodBias,
-                                  &anisotropyEnable,
-                                  &maxAnisotropy,
-                                  &compareEnable,
-                                  &compareOp,
-                                  &minLod,
-                                  &maxLod,
-                                  &borderColor,
-                                  &unnormalizedCoordinates,
-                                  pDescriptors);
+    cvkWriteReductionModeSamplerDescriptors(device,
+                                            1,
+                                            &pNext,
+                                            &reductionMode,
+                                            &flags,
+                                            &magFilter,
+                                            &minFilter,
+                                            &mipmapMode,
+                                            &addressModeU,
+                                            &addressModeV,
+                                            &addressModeW,
+                                            &mipLodBias,
+                                            &anisotropyEnable,
+                                            &maxAnisotropy,
+                                            &compareEnable,
+                                            &compareOp,
+                                            &minLod,
+                                            &maxLod,
+                                            &borderColor,
+                                            &unnormalizedCoordinates,
+                                            pDescriptors);
 }
-void cvkWriteYcbcrConversionSamplers(VkDevice                        device,
-                                     uint32_t                        samplerCount,
-                                     const void* const*              ppNexts,
-                                     const VkSamplerYcbcrConversion* pConversions,
-                                     const VkSamplerCreateFlags*     pFlagss,
-                                     const VkFilter*                 pMagFilters,
-                                     const VkFilter*                 pMinFilters,
-                                     const VkSamplerMipmapMode*      pMipmapModes,
-                                     const VkSamplerAddressMode*     pAddressModeUs,
-                                     const VkSamplerAddressMode*     pAddressModeVs,
-                                     const VkSamplerAddressMode*     pAddressModeWs,
-                                     const float*                    pMipLodBiass,
-                                     const VkBool32*                 pAnisotropyEnables,
-                                     const float*                    pMaxAnisotropies,
-                                     const VkBool32*                 pCompareEnables,
-                                     const VkCompareOp*              pCompareOps,
-                                     const float*                    pMinLods,
-                                     const float*                    pMaxLods,
-                                     const VkBorderColor*            pBorderColors,
-                                     const VkBool32*                 pUnnormalizedCoordinatess,
-                                     const VkHostAddressRangeEXT*    pDescriptors)
+void cvkWriteYcbcrConversionSamplerDescriptors(VkDevice                        device,
+                                               uint32_t                        samplerCount,
+                                               const void* const*              ppNexts,
+                                               const VkSamplerYcbcrConversion* pConversions,
+                                               const VkSamplerCreateFlags*     pFlags,
+                                               const VkFilter*                 pMagFilters,
+                                               const VkFilter*                 pMinFilters,
+                                               const VkSamplerMipmapMode*      pMipmapModes,
+                                               const VkSamplerAddressMode*     pAddressModeUs,
+                                               const VkSamplerAddressMode*     pAddressModeVs,
+                                               const VkSamplerAddressMode*     pAddressModeWs,
+                                               const float*                    pMipLodBias,
+                                               const VkBool32*                 pAnisotropyEnables,
+                                               const float*                    pMaxAnisotropies,
+                                               const VkBool32*                 pCompareEnables,
+                                               const VkCompareOp*              pCompareOps,
+                                               const float*                    pMinLods,
+                                               const float*                    pMaxLods,
+                                               const VkBorderColor*            pBorderColors,
+                                               const VkBool32*                 pUnnormalizedCoordinates,
+                                               const VkHostAddressRangeEXT*    pDescriptors)
 {
     VkSamplerCreateInfo          samplers[CVK_MAX_SAMPLERS];
     VkSamplerYcbcrConversionInfo sampler_ycbcr_conversion_infos[CVK_MAX_SAMPLERS];
@@ -29367,14 +29369,14 @@ void cvkWriteYcbcrConversionSamplers(VkDevice                        device,
         sampler_ycbcr_conversion_infos[index].conversion = pConversions[index];
         samplers[index].sType                            = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplers[index].pNext                            = &sampler_ycbcr_conversion_infos[index];
-        samplers[index].flags                            = pFlagss[index];
+        samplers[index].flags                            = pFlags[index];
         samplers[index].magFilter                        = pMagFilters[index];
         samplers[index].minFilter                        = pMinFilters[index];
         samplers[index].mipmapMode                       = pMipmapModes[index];
         samplers[index].addressModeU                     = pAddressModeUs[index];
         samplers[index].addressModeV                     = pAddressModeVs[index];
         samplers[index].addressModeW                     = pAddressModeWs[index];
-        samplers[index].mipLodBias                       = pMipLodBiass[index];
+        samplers[index].mipLodBias                       = pMipLodBias[index];
         samplers[index].anisotropyEnable                 = pAnisotropyEnables[index];
         samplers[index].maxAnisotropy                    = pMaxAnisotropies[index];
         samplers[index].compareEnable                    = pCompareEnables[index];
@@ -29382,52 +29384,52 @@ void cvkWriteYcbcrConversionSamplers(VkDevice                        device,
         samplers[index].minLod                           = pMinLods[index];
         samplers[index].maxLod                           = pMaxLods[index];
         samplers[index].borderColor                      = pBorderColors[index];
-        samplers[index].unnormalizedCoordinates          = pUnnormalizedCoordinatess[index];
+        samplers[index].unnormalizedCoordinates          = pUnnormalizedCoordinates[index];
     }
     cvkWriteSamplerDescriptors(device, samplerCount, samplers, pDescriptors);
 }
-void cvkWriteYcbcrConversionSampler(VkDevice                     device,
-                                    const void*                  pNext,
-                                    VkSamplerYcbcrConversion     conversion,
-                                    VkSamplerCreateFlags         flags,
-                                    VkFilter                     magFilter,
-                                    VkFilter                     minFilter,
-                                    VkSamplerMipmapMode          mipmapMode,
-                                    VkSamplerAddressMode         addressModeU,
-                                    VkSamplerAddressMode         addressModeV,
-                                    VkSamplerAddressMode         addressModeW,
-                                    float                        mipLodBias,
-                                    VkBool32                     anisotropyEnable,
-                                    float                        maxAnisotropy,
-                                    VkBool32                     compareEnable,
-                                    VkCompareOp                  compareOp,
-                                    float                        minLod,
-                                    float                        maxLod,
-                                    VkBorderColor                borderColor,
-                                    VkBool32                     unnormalizedCoordinates,
-                                    const VkHostAddressRangeEXT* pDescriptors)
+void cvkWriteYcbcrConversionSamplerDescriptor(VkDevice                     device,
+                                              const void*                  pNext,
+                                              VkSamplerYcbcrConversion     conversion,
+                                              VkSamplerCreateFlags         flags,
+                                              VkFilter                     magFilter,
+                                              VkFilter                     minFilter,
+                                              VkSamplerMipmapMode          mipmapMode,
+                                              VkSamplerAddressMode         addressModeU,
+                                              VkSamplerAddressMode         addressModeV,
+                                              VkSamplerAddressMode         addressModeW,
+                                              float                        mipLodBias,
+                                              VkBool32                     anisotropyEnable,
+                                              float                        maxAnisotropy,
+                                              VkBool32                     compareEnable,
+                                              VkCompareOp                  compareOp,
+                                              float                        minLod,
+                                              float                        maxLod,
+                                              VkBorderColor                borderColor,
+                                              VkBool32                     unnormalizedCoordinates,
+                                              const VkHostAddressRangeEXT* pDescriptors)
 {
-    cvkWriteYcbcrConversionSamplers(device,
-                                    1,
-                                    &pNext,
-                                    &conversion,
-                                    &flags,
-                                    &magFilter,
-                                    &minFilter,
-                                    &mipmapMode,
-                                    &addressModeU,
-                                    &addressModeV,
-                                    &addressModeW,
-                                    &mipLodBias,
-                                    &anisotropyEnable,
-                                    &maxAnisotropy,
-                                    &compareEnable,
-                                    &compareOp,
-                                    &minLod,
-                                    &maxLod,
-                                    &borderColor,
-                                    &unnormalizedCoordinates,
-                                    pDescriptors);
+    cvkWriteYcbcrConversionSamplerDescriptors(device,
+                                              1,
+                                              &pNext,
+                                              &conversion,
+                                              &flags,
+                                              &magFilter,
+                                              &minFilter,
+                                              &mipmapMode,
+                                              &addressModeU,
+                                              &addressModeV,
+                                              &addressModeW,
+                                              &mipLodBias,
+                                              &anisotropyEnable,
+                                              &maxAnisotropy,
+                                              &compareEnable,
+                                              &compareOp,
+                                              &minLod,
+                                              &maxLod,
+                                              &borderColor,
+                                              &unnormalizedCoordinates,
+                                              pDescriptors);
 }
 void cvkGetAccelerationStructureMemoryDedicatedRequirements(VkDevice                                        device,
                                                             const void*                                     pInfoNext,
@@ -29559,7 +29561,7 @@ void cvkGetDeviceBufferTileMemoryRequirementsQCOM(VkDevice                      
     cvkGetDeviceBufferMemoryRequirements(device, pInfoNext, pCreateInfo, &tile_memory_requirements_qcom, &memory_requirements);
     (*pTileMemoryRequirementsQCOM) = tile_memory_requirements_qcom;
 }
-VkResult cvkGetDeviceFaultShaderAbortMessageInfo(VkDevice device, void* pDeviceFaultShaderAbortMessageInfoNext, VkDeviceFaultShaderAbortMessageInfoKHR* pDeviceFaultShaderAbortMessageInfo)
+VkResult cvkGetDeviceFaultDebugInfoWithShaderAbortMessageInfo(VkDevice device, void* pDeviceFaultShaderAbortMessageInfoNext, VkDeviceFaultShaderAbortMessageInfoKHR* pDeviceFaultShaderAbortMessageInfo)
 {
     VkResult                               result;
     VkDeviceFaultDebugInfoKHR              debug_info;
@@ -29617,12 +29619,12 @@ void cvkGetDeviceImageImageCompressionProperties(VkDevice                       
     cvkGetDeviceImageSubresourceInfo(device, pInfoNext, pCreateInfo, pSubresource, &image_compression_properties, &layout);
     (*pImageCompressionProperties) = image_compression_properties;
 }
-void cvkGetDeviceImageSubresourceHostMemcpySize(VkDevice                     device,
-                                                const void*                  pInfoNext,
-                                                const VkImageCreateInfo*     pCreateInfo,
-                                                const VkImageSubresource2*   pSubresource,
-                                                void*                        pSubresourceHostMemcpySizeNext,
-                                                VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize)
+void cvkGetDeviceImageSubresourceLayoutWithHostMemcpySize(VkDevice                     device,
+                                                          const void*                  pInfoNext,
+                                                          const VkImageCreateInfo*     pCreateInfo,
+                                                          const VkImageSubresource2*   pSubresource,
+                                                          void*                        pSubresourceHostMemcpySizeNext,
+                                                          VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize)
 {
     VkSubresourceLayout2        layout;
     VkSubresourceHostMemcpySize subresource_host_memcpy_size;
@@ -29660,13 +29662,13 @@ void cvkGetDeviceTensorTileMemoryRequirementsQCOM(VkDevice                      
     cvkGetDeviceTensorMemoryRequirements(device, pInfoNext, pCreateInfo, &tile_memory_requirements_qcom, &memory_requirements);
     (*pTileMemoryRequirementsQCOM) = tile_memory_requirements_qcom;
 }
-VkResult cvkGetVideoEncodeSessionParametersInfoWithH264(VkDevice                                           device,
-                                                        const void*                                        pVideoSessionParametersInfoNext,
-                                                        VkVideoSessionParametersKHR                        videoSessionParameters,
-                                                        void*                                              pVideoEncodeH264SessionParametersFeedbackInfoNext,
-                                                        size_t*                                            pDataSize,
-                                                        void*                                              pData,
-                                                        VkVideoEncodeH264SessionParametersFeedbackInfoKHR* pVideoEncodeH264SessionParametersFeedbackInfo)
+VkResult cvkGetEncodedVideoSessionParametersWithH264Info(VkDevice                                           device,
+                                                         const void*                                        pVideoSessionParametersInfoNext,
+                                                         VkVideoSessionParametersKHR                        videoSessionParameters,
+                                                         void*                                              pVideoEncodeH264SessionParametersFeedbackInfoNext,
+                                                         size_t*                                            pDataSize,
+                                                         void*                                              pData,
+                                                         VkVideoEncodeH264SessionParametersFeedbackInfoKHR* pVideoEncodeH264SessionParametersFeedbackInfo)
 {
     VkResult                                          result;
     VkVideoEncodeSessionParametersFeedbackInfoKHR     feedback_info;
@@ -29679,13 +29681,13 @@ VkResult cvkGetVideoEncodeSessionParametersInfoWithH264(VkDevice                
     (*pVideoEncodeH264SessionParametersFeedbackInfo) = video_encode_h264_session_parameters_feedback_info;
     return result;
 }
-VkResult cvkGetVideoEncodeSessionParametersInfoWithH265(VkDevice                                           device,
-                                                        const void*                                        pVideoSessionParametersInfoNext,
-                                                        VkVideoSessionParametersKHR                        videoSessionParameters,
-                                                        void*                                              pVideoEncodeH265SessionParametersFeedbackInfoNext,
-                                                        size_t*                                            pDataSize,
-                                                        void*                                              pData,
-                                                        VkVideoEncodeH265SessionParametersFeedbackInfoKHR* pVideoEncodeH265SessionParametersFeedbackInfo)
+VkResult cvkGetEncodedVideoSessionParametersWithH265Info(VkDevice                                           device,
+                                                         const void*                                        pVideoSessionParametersInfoNext,
+                                                         VkVideoSessionParametersKHR                        videoSessionParameters,
+                                                         void*                                              pVideoEncodeH265SessionParametersFeedbackInfoNext,
+                                                         size_t*                                            pDataSize,
+                                                         void*                                              pData,
+                                                         VkVideoEncodeH265SessionParametersFeedbackInfoKHR* pVideoEncodeH265SessionParametersFeedbackInfo)
 {
     VkResult                                          result;
     VkVideoEncodeSessionParametersFeedbackInfoKHR     feedback_info;
@@ -29802,7 +29804,7 @@ void cvkGetImageTileMemoryRequirementsQCOM(VkDevice device, const void* pInfoNex
 }
 void cvkGetImageImageCompressionProperties(VkDevice                         device,
                                            VkImage                          image,
-                                           const void*                      pSubresourceNext,
+                                           void*                            pSubresourceNext,
                                            VkImageSubresource               imageSubresource,
                                            void*                            pImageCompressionPropertiesNext,
                                            VkImageCompressionPropertiesEXT* pImageCompressionProperties)
@@ -29815,12 +29817,12 @@ void cvkGetImageImageCompressionProperties(VkDevice                         devi
     cvkGetImageSubresourceLayout2(device, image, pSubresourceNext, imageSubresource, &image_compression_properties, &layout);
     (*pImageCompressionProperties) = image_compression_properties;
 }
-void cvkGetImageSubresourceHostMemcpySize(VkDevice                     device,
-                                          VkImage                      image,
-                                          const void*                  pSubresourceNext,
-                                          VkImageSubresource           imageSubresource,
-                                          void*                        pSubresourceHostMemcpySizeNext,
-                                          VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize)
+void cvkGetImageSubresourceLayoutWithHostMemcpySize(VkDevice                     device,
+                                                    VkImage                      image,
+                                                    void*                        pSubresourceNext,
+                                                    VkImageSubresource           imageSubresource,
+                                                    void*                        pSubresourceHostMemcpySizeNext,
+                                                    VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize)
 {
     VkSubresourceLayout2        layout;
     VkSubresourceHostMemcpySize subresource_host_memcpy_size;
@@ -33049,10 +33051,10 @@ void cvkGetPhysicalDeviceFormatProperties4(VkPhysicalDevice physicalDevice, VkFo
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &format_properties4, &format_properties);
     (*pFormatProperties4) = format_properties4;
 }
-void cvkGetPhysicalDeviceSubpassResolvePerformanceQuery(VkPhysicalDevice                     physicalDevice,
-                                                        VkFormat                             format,
-                                                        void*                                pSubpassResolvePerformanceQueryNext,
-                                                        VkSubpassResolvePerformanceQueryEXT* pSubpassResolvePerformanceQuery)
+void cvkGetPhysicalDeviceFormatPropertiesWithSubpassResolvePerformanceQuery(VkPhysicalDevice                     physicalDevice,
+                                                                            VkFormat                             format,
+                                                                            void*                                pSubpassResolvePerformanceQueryNext,
+                                                                            VkSubpassResolvePerformanceQueryEXT* pSubpassResolvePerformanceQuery)
 {
     VkFormatProperties2                 format_properties;
     VkSubpassResolvePerformanceQueryEXT subpass_resolve_performance_query;
@@ -33085,15 +33087,15 @@ void cvkGetPhysicalDeviceTensorFormatProperties(VkPhysicalDevice physicalDevice,
     cvkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &tensor_format_properties, &format_properties);
     (*pTensorFormatProperties) = tensor_format_properties;
 }
-void cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties(VkPhysicalDevice                 physicalDevice,
-                                                                const void*                      pImageFormatInfoNext,
-                                                                VkFormat                         format,
-                                                                VkImageType                      type,
-                                                                VkImageTiling                    tiling,
-                                                                VkImageUsageFlags                usage,
-                                                                VkImageCreateFlags               flags,
-                                                                void*                            pExternalImageFormatPropertiesNext,
-                                                                VkExternalImageFormatProperties* pExternalImageFormatProperties)
+void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
+                                                       const void*                      pImageFormatInfoNext,
+                                                       VkFormat                         format,
+                                                       VkImageType                      type,
+                                                       VkImageTiling                    tiling,
+                                                       VkImageUsageFlags                usage,
+                                                       VkImageCreateFlags               flags,
+                                                       void*                            pExternalImageFormatPropertiesNext,
+                                                       VkExternalImageFormatProperties* pExternalImageFormatProperties)
 {
     VkImageFormatProperties2        image_format_properties;
     VkExternalImageFormatProperties external_image_format_properties;
@@ -33121,15 +33123,15 @@ void cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDev
     cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, pImageFormatInfoNext, format, type, tiling, usage, flags, &filter_cubic_image_view_image_format_properties, &image_format_properties);
     (*pFilterCubicImageViewImageFormatProperties) = filter_cubic_image_view_image_format_properties;
 }
-void cvkGetPhysicalDeviceHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
-                                                             const void*                            pImageFormatInfoNext,
-                                                             VkFormat                               format,
-                                                             VkImageType                            type,
-                                                             VkImageTiling                          tiling,
-                                                             VkImageUsageFlags                      usage,
-                                                             VkImageCreateFlags                     flags,
-                                                             void*                                  pHostImageCopyDevicePerformanceQueryNext,
-                                                             VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery)
+void cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
+                                                                                      const void*                            pImageFormatInfoNext,
+                                                                                      VkFormat                               format,
+                                                                                      VkImageType                            type,
+                                                                                      VkImageTiling                          tiling,
+                                                                                      VkImageUsageFlags                      usage,
+                                                                                      VkImageCreateFlags                     flags,
+                                                                                      void*                                  pHostImageCopyDevicePerformanceQueryNext,
+                                                                                      VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery)
 {
     VkImageFormatProperties2              image_format_properties;
     VkHostImageCopyDevicePerformanceQuery host_image_copy_device_performance_query;
@@ -34667,11 +34669,11 @@ void cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice   
     cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &display_native_hdr_surface_capabilities, &surface_capabilities);
     (*pDisplayNativeHdrSurfaceCapabilities) = display_native_hdr_surface_capabilities;
 }
-void cvkGetPhysicalDeviceImageUsageFlags2CreateInfo(VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pSurfaceInfoNext,
-                                                    VkSurfaceKHR                     surface,
-                                                    void*                            pImageUsageFlags2CreateInfoNext,
-                                                    VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfo)
+void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2Info(VkPhysicalDevice                 physicalDevice,
+                                                                     const void*                      pSurfaceInfoNext,
+                                                                     VkSurfaceKHR                     surface,
+                                                                     void*                            pImageUsageFlags2CreateInfoNext,
+                                                                     VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfo)
 {
     VkSurfaceCapabilities2KHR       surface_capabilities;
     VkImageUsageFlags2CreateInfoKHR image_usage_flags2_create_info;
@@ -34780,11 +34782,11 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice       
     cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_present_wait2, &surface_capabilities);
     (*pSurfaceCapabilitiesPresentWait2) = surface_capabilities_present_wait2;
 }
-void cvkGetPhysicalDeviceSurfacePresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
-                                                         const void*                           pSurfaceInfoNext,
-                                                         VkSurfaceKHR                          surface,
-                                                         void*                                 pSurfacePresentModeCompatibilityNext,
-                                                         VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility)
+void cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
+                                                                         const void*                           pSurfaceInfoNext,
+                                                                         VkSurfaceKHR                          surface,
+                                                                         void*                                 pSurfacePresentModeCompatibilityNext,
+                                                                         VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility)
 {
     VkSurfaceCapabilities2KHR            surface_capabilities;
     VkSurfacePresentModeCompatibilityKHR surface_present_mode_compatibility;
@@ -35390,43 +35392,39 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, V
     queue_family_property_count = cvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, queue_family_properties);
     return cvkGetQueueFamilyIndex(queue_family_property_count, queue_family_properties, requiredFlags);
 }
-VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkInstance                         instance,
-                                                        VkPhysicalDevice                   physicalDevice,
+VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice                   physicalDevice,
                                                         VkExternalMemoryHandleTypeFlagBits handleType,
                                                         VkFormat                           format,
                                                         VkImageType                        type,
                                                         VkImageTiling                      tiling,
                                                         VkImageUsageFlags                  usage,
                                                         VkImageCreateFlags                 flags,
-                                                        VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
                                                         const void*                        pImageFormatInfoNext,
                                                         VkBool32*                          pDedicatedOnly)
 {
     VkPhysicalDeviceExternalImageFormatInfo external_image_format_info;
-    VkExternalImageFormatPropertiesNV       external_image_format_properties;
+    VkExternalImageFormatProperties         external_image_format_properties;
 
     cvkInitPhysicalDeviceExternalImageFormatInfo(&external_image_format_info, pImageFormatInfoNext, handleType);
-    cvkGetPhysicalDeviceExternalImageFormatProperties(instance, physicalDevice, format, type, tiling, usage, flags, externalHandleType, &external_image_format_properties);
+    cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
     (*pDedicatedOnly) = (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
     return (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
 }
-VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkInstance                         instance,
-                                                        VkPhysicalDevice                   physicalDevice,
+VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkPhysicalDevice                   physicalDevice,
                                                         VkExternalMemoryHandleTypeFlagBits handleType,
                                                         VkFormat                           format,
                                                         VkImageType                        type,
                                                         VkImageTiling                      tiling,
                                                         VkImageUsageFlags                  usage,
                                                         VkImageCreateFlags                 flags,
-                                                        VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
                                                         const void*                        pImageFormatInfoNext,
                                                         VkBool32*                          pDedicatedOnly)
 {
     VkPhysicalDeviceExternalImageFormatInfo external_image_format_info;
-    VkExternalImageFormatPropertiesNV       external_image_format_properties;
+    VkExternalImageFormatProperties         external_image_format_properties;
 
     cvkInitPhysicalDeviceExternalImageFormatInfo(&external_image_format_info, pImageFormatInfoNext, handleType);
-    cvkGetPhysicalDeviceExternalImageFormatProperties(instance, physicalDevice, format, type, tiling, usage, flags, externalHandleType, &external_image_format_properties);
+    cvkGetPhysicalDeviceExternalImageFormatProperties(physicalDevice, &external_image_format_info, format, type, tiling, usage, flags, NULL, &external_image_format_properties);
     (*pDedicatedOnly) = (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE;
     return (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE;
 }

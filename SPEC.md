@@ -8,8 +8,10 @@ first, then the generator, then regenerate and re-run the studies.
 ## 1. Inputs
 
 - `external/Vulkan-Headers/registry/vk.xml` (pinned by the submodule).
-- `cvk.policy.json`: profile (core version, extension list, platforms), capacity constants,
-  the tier-1' substitution table, and the tier-2 chain table.
+- `cvk.policy.json`: profile (core version, extension list or `"all"`, platforms), capacity
+  constants, `role_overrides` for registry quirks, the tier-1' substitution table, and the
+  tier-2 chain table. The profile is `VK_VERSION_1_4` with every extension whose platform is
+  none or one of the profile's platforms (`win32`, `xlib`).
 
 ## 2. Outputs
 
@@ -28,10 +30,10 @@ wrong by definition.
 
 | Thing | Name |
 |---|---|
-| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target |
+| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target. **Canonical suffix rule:** when several in-profile commands (or structs) share a stem after suffix stripping, only the canonical one drops its suffix: lowest vendor rank (core, then `KHR`, then `EXT`, then any other vendor) when that rank is held by exactly one of them; the rest keep their suffix (`cvkCmdDrawMeshTasks` for `EXT`, `cvkCmdDrawMeshTasksNV`; `cvkInitExportMemoryAllocateInfo`, `cvkInitExportMemoryAllocateInfoNV`). Same rank held by several of the same kind: all keep the suffix. An output extender's replacement name (section 6) competes in the command group of that name, so `vkGetPhysicalDeviceExternalImageFormatPropertiesNV` keeps its suffix beside the core `VkExternalImageFormatProperties` convenience; a tie between a command and a struct at the same rank is settled by tier-0 ownership: the command keeps the plain name and the convenience takes its `With` form (`cvkGetPhysicalDeviceCooperativeMatrixProperties` is the `KHR` enumeration, `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties` the limits query). A kept suffix always trails the whole derived name, every suffix in order of appearance (`cvkCreateImageWithExternalMemoryInfoNV`, `cvkGetGeneratedCommandsMemoryRequirementsWithTileRequirementsNVQCOM`) |
 | builder for `VkAbcInfo` | `cvkInitAbcInfo` |
-| single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Operation extenders** (`Import*`, `Export*`): the extender names the operation, so the name is `cvk<Verb><ExtenderStruct minus kind/Info>`, the `vkImportSemaphoreFdKHR` idiom: `cvkAllocateImportMemoryFd`, `cvkAllocateExportMemory`, `cvkCreateExportSemaphoreWin32Handle`, and on any platform `cvkAllocateImportMemoryZirconHandle`, `cvkAllocateImportAndroidHardwareBuffer`; when one such extender serves several bases with the same verb (`VkExportMetalObjectCreateInfoEXT`) it falls back to the next form. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `…Memory2With…`; a flattened sibling named after a struct keeps the struct's digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). A collision is a generation error |
-| qualifier for extender `E` of base `B` (used only to disambiguate colliding parameter names) | CamelCase tokens of `E` minus the multiset of tokens of `B`, vendor suffix dropped, in `E`'s order |
+| single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Operation extenders** (`Import*`, `Export*`): the extender names the operation, so the name is `cvk<Verb><ExtenderStruct minus kind/Info>`, the `vkImportSemaphoreFdKHR` idiom: `cvkAllocateImportMemoryFd`, `cvkAllocateExportMemory`, `cvkCreateExportSemaphoreWin32Handle`, and on any platform `cvkAllocateImportMemoryZirconHandle`, `cvkAllocateImportAndroidHardwareBuffer`; when one such extender serves several bases with the same verb (`VkExportMetalObjectCreateInfoEXT`) it falls back to the next form. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `…Memory2With…`; a flattened sibling named after a struct keeps the struct's digit), unless the digit-less command is in the profile and is itself extensible, that is, takes an sType input of its own: then the digit is part of the name (`cvkCreateRenderPassWithFragmentDensityMapInfo` from `vkCreateRenderPass`, `cvkCreateRenderPass2WithFragmentDensityMapInfo` from `vkCreateRenderPass2`; `vkBindImageMemory` has no info struct, so `vkBindImageMemory2` drops its digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). The command may name the run in full or, when the run starts with the handle the base struct is about and the command is dispatched elsewhere, only its tail: `VkSurfaceFullScreenExclusiveInfoEXT` on `VkPhysicalDeviceSurfaceInfo2KHR` gives `cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes` from `vkGetPhysicalDeviceSurfacePresentModes2EXT` and `cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes` from `vkGetDeviceGroupSurfacePresentModes2EXT`; any other missing qualifier (`Compute` of `VkComputePipelineCreateInfo` in `vkGetPipelineIndirectMemoryRequirementsNV`) means the run is absent and the name is the `With` form (`cvkGetPipelineIndirectMemoryRequirementsWithBinaryInfo`). A collision is a generation error |
+| extender member sharing a base member's name | The tokens of its type absent from the base member's type distinguish it (`VkPipelineCreateFlags2 flags` beside `VkPipelineCreateFlags flags` → `flags2`, `VkBufferUsageFlags2 usage` → `usage2`); with the same type, the extender's distinct part qualifies it (`VkImageViewUsageCreateInfo::usage` on `VkPhysicalDeviceImageFormatInfo2` → `imageViewUsage`). Parallel-array names keep a name that is already plural (`flags` → `pFlags`) |
 | capacity constant for enumeration array `pFooBars` | `CVK_MAX_FOO_BARS` |
 
 Collisions after suffix stripping are a generation error, never silently resolved.
@@ -49,7 +51,7 @@ Parameters in registry order, transformed by role:
 | Role | Emitted |
 |---|---|
 | handle, scalar, enum, flags, POD by value | verbatim |
-| single sType input struct (`I`) | **construction/recording kinds** (`CreateInfo`, `AllocateInfo`, `BeginInfo`, `BindInfo`, `SubmitInfo`, `EndInfo`): flattened, members in order, `sType` dropped, `pNext` kept as `const void* pNext`. **Plain `Info` structs when the command also fills an output sType struct** (`VkBufferMemoryRequirementsInfo2` with `VkMemoryRequirements2`, `VkPhysicalDeviceImageFormatInfo2` with `VkImageFormatProperties2`): tier 0 keeps the input pointer as Vulkan declares it and does only the output, and a flattened sibling `cvk<Verb><InfoStruct>` (verb token removed once from the struct name: `cvkGetBufferMemoryRequirementsInfo2`, `cvkGetPhysicalDeviceImageFormatInfo2`) builds the input and calls tier 0, so each function does one thing. A plain-Info input with no output struct (`vkGetMemoryFdKHR`, `vkGetBufferOpaqueCaptureAddress`, `vkImportSemaphoreFdKHR`) flattens at tier 0 like everything else; a pointer-keeping wrapper there would do nothing. Conveniences chain onto the flattened sibling where one exists |
+| single sType input struct (`I`) | **construction/recording kinds** (`CreateInfo`, `AllocateInfo`, `BeginInfo`, `BindInfo`, `SubmitInfo`, `EndInfo`): flattened, members in order, `sType` dropped, `pNext` kept with the struct member's own type (`const void* pNext`, or `void* pNext` for the registry's few inputs declared without const). **Plain `Info` structs when the command also fills an output sType struct** (`VkBufferMemoryRequirementsInfo2` with `VkMemoryRequirements2`, `VkPhysicalDeviceImageFormatInfo2` with `VkImageFormatProperties2`): tier 0 keeps the input pointer as Vulkan declares it and does only the output, and a flattened sibling `cvk<Verb><InfoStruct>` (verb token removed once from the struct name: `cvkGetBufferMemoryRequirementsInfo2`, `cvkGetPhysicalDeviceImageFormatInfo2`) builds the input and calls tier 0, so each function does one thing. A plain-Info input with no output struct (`vkGetMemoryFdKHR`, `vkGetBufferOpaqueCaptureAddress`, `vkImportSemaphoreFdKHR`) flattens at tier 0 like everything else; a pointer-keeping wrapper there would do nothing. Conveniences chain onto the flattened sibling where one exists |
 | pointer to sType struct inside an `I` struct | kept as pointer (builders exist for it) |
 | sType input array (`I[]`), POD array, handle array, scalar array | count + pointer verbatim |
 | `pAllocator` | verbatim |
@@ -76,10 +78,14 @@ extension command is resolved per call: `cvkGetDeviceProcAddr` for device-level 
 `cvkGetInstanceProcAddr` otherwise, both fatal if absent. The generated wrappers of
 `vkGet*ProcAddr` are that infrastructure (they assert a non-null result). The function pointer
 is declared with the other locals and loaded immediately before the first call, never in its
-declaration. A resolved command
-whose dispatch handle is a `VkQueue` or `VkCommandBuffer` gains `VkDevice device` as its first
-parameter; one dispatched on a `VkPhysicalDevice` gains `VkInstance instance`. Reason: no
-global table, no init order, and the parent is the only stateless way to resolve.
+declaration. The level of a command is read from its first handle's parent chain in the
+registry: device level when the chain reaches `VkDevice` (`VkQueue`, `VkCommandBuffer` via
+`VkCommandPool`, `VkExternalComputeQueueNV`), instance level when it reaches only `VkInstance`
+(`VkPhysicalDevice`). A resolved command whose first handle is not the level handle gains that
+handle as its first parameter (`VkDevice device`, `VkInstance instance`). Reason: no global
+table, no init order, and the parent is the only stateless way to resolve. The pointer local
+is `function`, or `function_pointer` when a parameter is named `function`
+(`vkDestroyCuFunctionNVX`).
 
 Block-scope variables are `snake_case` and follow the Vulkan parameter they stand for: the
 flattened input struct is named after its parameter minus the `p` (`pCreateInfo` →
@@ -88,6 +94,11 @@ flattened input struct is named after its parameter minus the `p` (`pCreateInfo`
 (`VkMemoryDedicatedAllocateInfo` → `memory_dedicated_allocate_info`), and resolved commands
 and results are `function` and `result`. Declarations are ordered by first access in the
 statements that follow.
+
+**Registry quirks (policy).** `role_overrides` in the policy file maps `vkCommand::param` to
+a role when the registry's declaration misleads the derivation: an input struct passed through
+a non-const pointer is declared `I` (`vkGetExternalComputeQueueDataNV::params`,
+`vkSetGpaDeviceClockModeAMD::pInfo`). Every entry is a recorded decision.
 
 ## 5. Assertions (derived from `optional` and `len`)
 
@@ -141,8 +152,10 @@ Only generated when neither the base nor the extender has pointer or array membe
 parallel arrays would otherwise nest; the caller builds such arrays with the builders. The
 element array is sized by `CVK_MAX_<ArrayParam>` and the count is asserted against it. The
 **singular** (count = 1) flattens one element and forwards to the plural; it is named
-`cvk<Verb><D><base noun run>`: `cvkBindPlaneImageMemory(device, pNext, planeAspect, image, memory, memoryOffset)`,
-`cvkBindSwapchainImageMemory`. The plural pluralizes the last word: `cvkBindPlaneImageMemories`.
+`cvk<Verb><D><noun run>` where the noun run is the command's own noun, depluralized and without
+its version digit, and a `Cmd` verb carries its action word: `cvkBindPlaneImageMemory(device, pNext, planeAspect, image, memory, memoryOffset)`,
+`cvkBindSwapchainImageMemory`, `cvkCmdBindPushDescriptorBufferHandleDescriptorBuffer`. The plural
+pluralizes the last word: `cvkBindPlaneImageMemories`.
 
 **Extenders on the output sType struct** (`VkMemoryDedicatedRequirements` on
 `VkMemoryRequirements2`, `VkExternalImageFormatProperties` on `VkImageFormatProperties2`,
@@ -153,8 +166,13 @@ struct names with `Get` in front: `cvkGetPhysicalDeviceHostQueryResetFeatures`,
 `cvkGetPhysicalDeviceIDProperties`, `cvkGetPhysicalDeviceExternalImageFormatProperties`,
 `cvkGetImageMemoryDedicatedRequirements`, `cvkGetPhysicalDeviceDrmFormatModifierPropertiesList2`,
 `cvkGetDescriptorSetVariableDescriptorCountLayoutSupport`. The call goes to the flattened
-sibling when one exists, so the input stays flattened. `<target>With<D><Kind>` is the fallback
-when the command's tail is not the run; no profile command needs it today.
+sibling when one exists, so the input stays flattened. Two fallbacks: `<target>With<D><Kind>`
+when the command's tail is not the run, or when the replacement name is owned by a tier-0
+command (section 3: `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties`); and
+`<base>With<D>[Info]` when the extender carries no kind word at all (`Properties`,
+`Requirements`, `Features`, `Support`, `Capabilities`), since an `Info`-named or bare extender
+cannot stand in for the run: `cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2Info`,
+`cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility`.
 The function takes `p<ExtenderStruct>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
 chains it into the base output struct, which stays a local, and returns exactly the struct it is
 named after through the out-parameter `p<ExtenderStruct>`. An output extender with pointer
@@ -170,7 +188,10 @@ Two derived forms and one policy form.
   (and no other array) gets a count-of-one form. A plural command name is depluralized
   (`cvkCreateComputePipeline`, `cvkFlushMappedMemoryRange`, `cvkWaitForFence`, `cvkResetFence`,
   `cvkFreeCommandBuffer`); otherwise the element struct names it with the verb removed once
-  (`cvkQueueSubmitInfo`, `cvkBindImageMemoryInfo`, `cvkQueueBindSparseInfo`). An sType element is
+  (`cvkQueueSubmitInfo`, `cvkBindImageMemoryInfo`, `cvkQueueBindSparseInfo`); when one element
+  struct serves several commands of the same verb, the singular is named after the command,
+  `<tier-0>Info` (`cvkCmdBeginTransformFeedback2Info`, `cvkCmdEndTransformFeedback2Info`, the
+  flattened-sibling rule of section 4). An sType element is
   flattened; a handle element is passed by value and its out-array counterpart, when present,
   becomes a single out-pointer. A handle singular whose element name is taken by another
   parameter is not generated (`vkCmdExecuteCommands`).
@@ -322,3 +343,10 @@ Not yet written: buffer import and export.
   reference does for surface formats; the spec guarantees ≥ 1 there, not in general).
 - Whether `pAllocator` should be threaded at all given the policy always passes NULL.
 - Builder naming for aliased structs (`VkPhysicalDeviceProperties2KHR`): emit only the core name.
+- **Thin distinct parts from the `Flags2` structs.** `VkPipelineCreateFlags2CreateInfo` against
+  `VkComputePipelineCreateInfo` leaves `Flags2`, so the rules give
+  `cvkCreateComputePipelinesWithFlags2Info` and the per-element singular
+  `cvkCreateFlags2ComputePipeline`. Rule-consistent, reads oddly; a candidate for the
+  adjective-first discussion above, not an edit.
+- **Handle singulars with no plural noun** (`vkGetImageOpaqueCaptureDataEXT` takes `pImages`
+  but is not named in the plural) fall back to `<tier-0>Single`. Two commands today.

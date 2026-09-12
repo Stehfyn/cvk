@@ -15409,7 +15409,7 @@ void cvkInitTraceRaysIndirectCommand(VkTraceRaysIndirectCommandKHR* pInfo, uint3
  *
  * \retval None
  */
-void cvkInitTransformMatrix(VkTransformMatrixKHR* pInfo, const float matrix[3]);
+void cvkInitTransformMatrix(VkTransformMatrixKHR* pInfo, const float matrix[3][4]);
 /**
  * \brief Initializes a VkValidationCacheCreateInfoEXT.
  *
@@ -17506,7 +17506,7 @@ void cvkCmdBeginConditionalRendering(VkDevice device, VkCommandBuffer commandBuf
  *
  * \retval None
  */
-void cvkCmdBeginCustomResolve(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext);
+void cvkCmdBeginCustomResolve(VkDevice device, VkCommandBuffer commandBuffer, void* pNext);
 /**
  * \brief Records begin debug utils label.
  *
@@ -18284,7 +18284,7 @@ void cvkCmdBuildAccelerationStructures(VkDevice                                 
  */
 void cvkCmdBuildClusterAccelerationStructureIndirect(VkDevice                                               device,
                                                      VkCommandBuffer                                        commandBuffer,
-                                                     const void*                                            pNext,
+                                                     void*                                                  pNext,
                                                      VkClusterAccelerationStructureInputInfoNV              input,
                                                      VkDeviceAddress                                        dstImplicitData,
                                                      VkDeviceAddress                                        scratchData,
@@ -18327,7 +18327,7 @@ void cvkCmdBuildMicromaps(VkDevice device, VkCommandBuffer commandBuffer, uint32
  */
 void cvkCmdBuildPartitionedAccelerationStructures(VkDevice                                           device,
                                                   VkCommandBuffer                                    commandBuffer,
-                                                  const void*                                        pNext,
+                                                  void*                                              pNext,
                                                   VkPartitionedAccelerationStructureInstancesInputNV input,
                                                   VkDeviceAddress                                    srcAccelerationStructureData,
                                                   VkDeviceAddress                                    dstAccelerationStructureData,
@@ -19138,7 +19138,7 @@ void cvkCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint
  *
  * \retval None
  */
-void cvkCmdDispatchDataGraph(VkDevice device, VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, const void* pNext, VkDataGraphPipelineDispatchFlagsARM flags);
+void cvkCmdDispatchDataGraph(VkDevice device, VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, void* pNext, VkDataGraphPipelineDispatchFlagsARM flags);
 /**
  * \brief Records dispatch indirect.
  *
@@ -20057,7 +20057,7 @@ void cvkCmdNextSubpass2(VkCommandBuffer commandBuffer, const void* pSubpassBegin
 void cvkCmdOpticalFlowExecute(VkDevice                    device,
                               VkCommandBuffer             commandBuffer,
                               VkOpticalFlowSessionNV      session,
-                              const void*                 pNext,
+                              void*                       pNext,
                               VkOpticalFlowExecuteFlagsNV flags,
                               uint32_t                    regionCount,
                               const VkRect2D*             pRegions);
@@ -20963,7 +20963,7 @@ void cvkCmdSetDiscardRectangleMode(VkDevice device, VkCommandBuffer commandBuffe
  *
  * \retval None
  */
-void cvkCmdSetDispatchParameters(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t workGroupBatchSize, uint32_t maxQueuedWorkGroupBatches, uint32_t maxWarpsPerShaderCore);
+void cvkCmdSetDispatchParameters(VkDevice device, VkCommandBuffer commandBuffer, void* pNext, uint32_t workGroupBatchSize, uint32_t maxQueuedWorkGroupBatches, uint32_t maxWarpsPerShaderCore);
 /**
  * \brief Records set event.
  *
@@ -23075,7 +23075,7 @@ void cvkCreateMicromap(VkDevice                     device,
  * \retval None
  */
 void cvkCreateOpticalFlowSession(VkDevice                          device,
-                                 const void*                       pNext,
+                                 void*                             pNext,
                                  uint32_t                          width,
                                  uint32_t                          height,
                                  VkFormat                          imageFormat,
@@ -23422,7 +23422,7 @@ void cvkCreateSemaphore(VkDevice device, const void* pNext, VkSemaphoreCreateFla
  *
  * \retval None
  */
-void cvkCreateShaderInstrumentation(VkDevice device, const void* pNext, const VkAllocationCallbacks* pAllocator, VkShaderInstrumentationARM* pInstrumentation);
+void cvkCreateShaderInstrumentation(VkDevice device, void* pNext, const VkAllocationCallbacks* pAllocator, VkShaderInstrumentationARM* pInstrumentation);
 /**
  * \brief Creates a shader module.
  *
@@ -25346,14 +25346,15 @@ VkResult cvkGetEventStatus(VkDevice device, VkEvent event);
  * \par Details:
  *  Wraps vkGetExternalComputeQueueDataNV.
  *
+ * \param[in] device         Parent handle used to resolve the extension command
  * \param[in] externalQueue  VkExternalComputeQueueNV value
- * \param[in] pNext          Optional output extension chain attached to VkExternalComputeQueueDataParamsNV, or NULL
- * \param[out] params         Receives the VkExternalComputeQueueDataParamsNV
+ * \param[in] pNext          Optional extension chain attached to VkExternalComputeQueueDataParamsNV, or NULL
+ * \param[in] deviceIndex    VkExternalComputeQueueDataParamsNV::deviceIndex
  * \param[out] pData          Receives the void
  *
  * \retval None
  */
-void cvkGetExternalComputeQueueData(VkExternalComputeQueueNV externalQueue, void* pNext, VkExternalComputeQueueDataParamsNV* params, void* pData);
+void cvkGetExternalComputeQueueData(VkDevice device, VkExternalComputeQueueNV externalQueue, const void* pNext, uint32_t deviceIndex, void* pData);
 /**
  * \brief Retrieves fence fd.
  *
@@ -25599,7 +25600,7 @@ void cvkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageS
  *
  * \retval None
  */
-void cvkGetImageSubresourceLayout2(VkDevice device, VkImage image, const void* pSubresourceNext, VkImageSubresource imageSubresource, void* pLayoutNext, VkSubresourceLayout2* pLayout);
+void cvkGetImageSubresourceLayout2(VkDevice device, VkImage image, void* pSubresourceNext, VkImageSubresource imageSubresource, void* pLayoutNext, VkSubresourceLayout2* pLayout);
 /**
  * \brief Retrieves image view address.
  *
@@ -25794,7 +25795,7 @@ void cvkGetMicromapBuildSizes(VkDevice device, VkAccelerationStructureBuildTypeK
  * \retval None
  */
 void cvkGetPartitionedAccelerationStructuresBuildSizes(VkDevice                                  device,
-                                                       const void*                               pInfoNext,
+                                                       void*                                     pInfoNext,
                                                        VkBuildAccelerationStructureFlagsKHR      flags,
                                                        uint32_t                                  instanceCount,
                                                        uint32_t                                  maxInstancePerPartitionCount,
@@ -26042,15 +26043,15 @@ void cvkGetPhysicalDeviceExternalFenceProperties(VkPhysicalDevice               
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceExternalImageFormatProperties(VkInstance                         instance,
-                                                       VkPhysicalDevice                   physicalDevice,
-                                                       VkFormat                           format,
-                                                       VkImageType                        type,
-                                                       VkImageTiling                      tiling,
-                                                       VkImageUsageFlags                  usage,
-                                                       VkImageCreateFlags                 flags,
-                                                       VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
-                                                       VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
+void cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance                         instance,
+                                                         VkPhysicalDevice                   physicalDevice,
+                                                         VkFormat                           format,
+                                                         VkImageType                        type,
+                                                         VkImageTiling                      tiling,
+                                                         VkImageUsageFlags                  usage,
+                                                         VkImageCreateFlags                 flags,
+                                                         VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
+                                                         VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties);
 /**
  * \brief Retrieves physical device external semaphore properties.
  *
@@ -26306,7 +26307,7 @@ void cvkGetPhysicalDeviceProperties2(VkPhysicalDevice physicalDevice, void* pNex
 void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationProperties(VkInstance                                   instance,
                                                                        VkPhysicalDevice                             physicalDevice,
                                                                        uint32_t                                     queueFamilyIndex,
-                                                                       const void*                                  pNext,
+                                                                       void*                                        pNext,
                                                                        VkPhysicalDeviceDataGraphProcessingEngineARM engine,
                                                                        VkPhysicalDeviceDataGraphOperationSupportARM operation,
                                                                        VkBaseOutStructure*                          pProperties);
@@ -26331,7 +26332,7 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationProperties(VkInstanc
 uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormats(VkInstance                                     instance,
                                                                          VkPhysicalDevice                               physicalDevice,
                                                                          uint32_t                                       queueFamilyIndex,
-                                                                         const void*                                    pQueueFamilyDataGraphPropertiesNext,
+                                                                         void*                                          pQueueFamilyDataGraphPropertiesNext,
                                                                          VkPhysicalDeviceDataGraphProcessingEngineARM   engine,
                                                                          VkPhysicalDeviceDataGraphOperationSupportARM   operation,
                                                                          const void*                                    pOpticalFlowImageFormatInfoNext,
@@ -26760,7 +26761,7 @@ void cvkGetPipelineIndirectMemoryRequirements(VkDevice                        de
  *
  * \retval None
  */
-void cvkGetPipelineKey(VkDevice device, const void* pPipelineCreateInfoNext, void* pPipelineKeyNext, VkPipelineBinaryKeyKHR* pPipelineKey);
+void cvkGetPipelineKey(VkDevice device, void* pPipelineCreateInfoNext, void* pPipelineKeyNext, VkPipelineBinaryKeyKHR* pPipelineKey);
 /**
  * \brief Retrieves pipeline properties.
  *
@@ -27489,7 +27490,7 @@ VkResult cvkQueuePresent(VkQueue               queue,
  *
  * \retval None
  */
-void cvkQueueSetPerfHint(VkDevice device, VkQueue queue, const void* pNext, VkPerfHintTypeQCOM type, uint32_t scale);
+void cvkQueueSetPerfHint(VkDevice device, VkQueue queue, void* pNext, VkPerfHintTypeQCOM type, uint32_t scale);
 /**
  * \brief Queues set performance configuration.
  *
@@ -27602,7 +27603,7 @@ void cvkRegisterDisplayEvent(VkDevice device, VkDisplayKHR display, const void* 
  *
  * \retval None
  */
-void cvkReleaseCapturedPipelineData(VkDevice device, const void* pNext, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator);
+void cvkReleaseCapturedPipelineData(VkDevice device, void* pNext, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator);
 /**
  * \brief Releases display.
  *
@@ -27805,13 +27806,15 @@ void cvkSetEvent(VkDevice device, VkEvent event);
  * \par Details:
  *  Wraps vkSetGpaDeviceClockModeAMD. Aborts on any error result.
  *
- * \param[in] device  VkDevice value
- * \param[in] pNext   Optional output extension chain attached to VkGpaDeviceClockModeInfoAMD, or NULL
- * \param[out] pInfo   Receives the VkGpaDeviceClockModeInfoAMD
+ * \param[in] device                  VkDevice value
+ * \param[in] pNext                   Optional extension chain attached to VkGpaDeviceClockModeInfoAMD, or NULL
+ * \param[in] clockMode               VkGpaDeviceClockModeInfoAMD::clockMode
+ * \param[in] memoryClockRatioToPeak  VkGpaDeviceClockModeInfoAMD::memoryClockRatioToPeak
+ * \param[in] engineClockRatioToPeak  VkGpaDeviceClockModeInfoAMD::engineClockRatioToPeak
  *
  * \retval None
  */
-void cvkSetGpaDeviceClockMode(VkDevice device, void* pNext, VkGpaDeviceClockModeInfoAMD* pInfo);
+void cvkSetGpaDeviceClockMode(VkDevice device, const void* pNext, VkGpaDeviceClockModeAMD clockMode, float memoryClockRatioToPeak, float engineClockRatioToPeak);
 /**
  * \brief Sets hdr metadata.
  *
@@ -28350,7 +28353,7 @@ void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext,
  * \retval None
  */
 void cvkGetClusterAccelerationStructureInputInfo(VkDevice                                  device,
-                                                 const void*                               pInfoNext,
+                                                 void*                                     pInfoNext,
                                                  uint32_t                                  maxAccelerationStructureCount,
                                                  VkBuildAccelerationStructureFlagsKHR      flags,
                                                  VkClusterAccelerationStructureOpTypeNV    opType,
@@ -28870,7 +28873,7 @@ uint32_t cvkGetPhysicalDeviceVideoFormatInfo(VkInstance                 instance
  * \retval None
  */
 void cvkGetPipelineBinaryDataInfo(VkDevice                device,
-                                  const void*             pInfoNext,
+                                  void*                   pInfoNext,
                                   VkPipelineBinaryKHR     pipelineBinary,
                                   void*                   pPipelineBinaryKeyNext,
                                   VkPipelineBinaryKeyKHR* pPipelineBinaryKey,
@@ -29845,7 +29848,7 @@ void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice          
  * \brief Allocates memory with VkBufferDeviceAddressAlignmentAllocateInfoVALVE chained.
  *
  * \param[in] device           See cvkAllocateMemory
- * \param[in] pNext            See cvkAllocateMemory
+ * \param[out] pNext            See cvkAllocateMemory
  * \param[in] alignment        VkBufferDeviceAddressAlignmentAllocateInfoVALVE::alignment
  * \param[in] allocationSize   See cvkAllocateMemory
  * \param[in] memoryTypeIndex  See cvkAllocateMemory
@@ -29855,7 +29858,7 @@ void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice          
  * \retval None
  */
 void cvkAllocateMemoryWithBufferDeviceAddressAlignmentInfo(VkDevice                     device,
-                                                           const void*                  pNext,
+                                                           void*                        pNext,
                                                            uint32_t                     alignment,
                                                            VkDeviceSize                 allocationSize,
                                                            uint32_t                     memoryTypeIndex,
@@ -30171,7 +30174,7 @@ void cvkCmdBeginRenderPassWithAttachmentInfo(VkCommandBuffer     commandBuffer,
  * \brief Records begin render pass with VkRenderPassPerformanceCountersByRegionBeginInfoARM chained.
  *
  * \param[in] commandBuffer        See cvkCmdBeginRenderPass
- * \param[in] pNext                See cvkCmdBeginRenderPass
+ * \param[out] pNext                See cvkCmdBeginRenderPass
  * \param[in] counterAddressCount  VkRenderPassPerformanceCountersByRegionBeginInfoARM::counterAddressCount
  * \param[in] pCounterAddresses    VkRenderPassPerformanceCountersByRegionBeginInfoARM::pCounterAddresses
  * \param[in] serializeRegions     VkRenderPassPerformanceCountersByRegionBeginInfoARM::serializeRegions
@@ -30187,7 +30190,7 @@ void cvkCmdBeginRenderPassWithAttachmentInfo(VkCommandBuffer     commandBuffer,
  * \retval None
  */
 void cvkCmdBeginRenderPassWithPerformanceCountersByRegionInfo(VkCommandBuffer        commandBuffer,
-                                                              const void*            pNext,
+                                                              void*                  pNext,
                                                               uint32_t               counterAddressCount,
                                                               const VkDeviceAddress* pCounterAddresses,
                                                               VkBool32               serializeRegions,
@@ -30405,7 +30408,7 @@ void cvkCmdBeginRenderingWithMultiviewPerViewRenderAreasRenderPassInfo(VkCommand
  * \brief Records begin rendering with VkRenderPassPerformanceCountersByRegionBeginInfoARM chained.
  *
  * \param[in] commandBuffer         See cvkCmdBeginRendering
- * \param[in] pNext                 See cvkCmdBeginRendering
+ * \param[out] pNext                 See cvkCmdBeginRendering
  * \param[in] counterAddressCount   VkRenderPassPerformanceCountersByRegionBeginInfoARM::counterAddressCount
  * \param[in] pCounterAddresses     VkRenderPassPerformanceCountersByRegionBeginInfoARM::pCounterAddresses
  * \param[in] serializeRegions      VkRenderPassPerformanceCountersByRegionBeginInfoARM::serializeRegions
@@ -30423,7 +30426,7 @@ void cvkCmdBeginRenderingWithMultiviewPerViewRenderAreasRenderPassInfo(VkCommand
  * \retval None
  */
 void cvkCmdBeginRenderingWithRenderPassPerformanceCountersByRegionInfo(VkCommandBuffer                  commandBuffer,
-                                                                       const void*                      pNext,
+                                                                       void*                            pNext,
                                                                        uint32_t                         counterAddressCount,
                                                                        const VkDeviceAddress*           pCounterAddresses,
                                                                        VkBool32                         serializeRegions,
@@ -30470,24 +30473,24 @@ void cvkCmdBeginRenderingWithRenderPassStripeInfo(VkCommandBuffer               
 /**
  * \brief Records begin rendering with VkRenderPassTileShadingCreateInfoQCOM chained.
  *
- * \param[in] commandBuffer                     See cvkCmdBeginRendering
- * \param[in] pNext                             See cvkCmdBeginRendering
- * \param[in] renderPassTileShadingCreateFlags  VkRenderPassTileShadingCreateInfoQCOM::renderPassTileShadingCreateFlags
- * \param[in] tileApronSize                     VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
- * \param[in] flags                             See cvkCmdBeginRendering
- * \param[in] renderArea                        See cvkCmdBeginRendering
- * \param[in] layerCount                        See cvkCmdBeginRendering
- * \param[in] viewMask                          See cvkCmdBeginRendering
- * \param[in] colorAttachmentCount              See cvkCmdBeginRendering
- * \param[in] pColorAttachments                 See cvkCmdBeginRendering
- * \param[in] pDepthAttachment                  See cvkCmdBeginRendering
- * \param[in] pStencilAttachment                See cvkCmdBeginRendering
+ * \param[in] commandBuffer                   See cvkCmdBeginRendering
+ * \param[in] pNext                           See cvkCmdBeginRendering
+ * \param[in] flagsTileShadingRenderPassQCOM  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingRenderPassQCOM
+ * \param[in] tileApronSize                   VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
+ * \param[in] flags                           See cvkCmdBeginRendering
+ * \param[in] renderArea                      See cvkCmdBeginRendering
+ * \param[in] layerCount                      See cvkCmdBeginRendering
+ * \param[in] viewMask                        See cvkCmdBeginRendering
+ * \param[in] colorAttachmentCount            See cvkCmdBeginRendering
+ * \param[in] pColorAttachments               See cvkCmdBeginRendering
+ * \param[in] pDepthAttachment                See cvkCmdBeginRendering
+ * \param[in] pStencilAttachment              See cvkCmdBeginRendering
  *
  * \retval None
  */
 void cvkCmdBeginRenderingWithRenderPassTileShadingInfo(VkCommandBuffer                  commandBuffer,
                                                        const void*                      pNext,
-                                                       VkTileShadingRenderPassFlagsQCOM renderPassTileShadingCreateFlags,
+                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
                                                        VkExtent2D                       tileApronSize,
                                                        VkRenderingFlags                 flags,
                                                        VkRect2D                         renderArea,
@@ -30623,7 +30626,7 @@ void cvkCmdBeginVideoCodingWithEncodeAV1GopRemainingFrameInfo(VkDevice          
  * \param[in] device                             See cvkCmdBeginVideoCoding
  * \param[in] commandBuffer                      See cvkCmdBeginVideoCoding
  * \param[in] pNext                              See cvkCmdBeginVideoCoding
- * \param[in] encodeAV1RateControlFlags          VkVideoEncodeAV1RateControlInfoKHR::encodeAV1RateControlFlags
+ * \param[in] flagsEncodeAV1RateControl          VkVideoEncodeAV1RateControlInfoKHR::flagsEncodeAV1RateControl
  * \param[in] gopFrameCount                      VkVideoEncodeAV1RateControlInfoKHR::gopFrameCount
  * \param[in] keyFramePeriod                     VkVideoEncodeAV1RateControlInfoKHR::keyFramePeriod
  * \param[in] consecutiveBipredictiveFrameCount  VkVideoEncodeAV1RateControlInfoKHR::consecutiveBipredictiveFrameCount
@@ -30639,7 +30642,7 @@ void cvkCmdBeginVideoCodingWithEncodeAV1GopRemainingFrameInfo(VkDevice          
 void cvkCmdBeginVideoCodingWithEncodeAV1RateControlInfo(VkDevice                            device,
                                                         VkCommandBuffer                     commandBuffer,
                                                         const void*                         pNext,
-                                                        VkVideoEncodeAV1RateControlFlagsKHR encodeAV1RateControlFlags,
+                                                        VkVideoEncodeAV1RateControlFlagsKHR flagsEncodeAV1RateControl,
                                                         uint32_t                            gopFrameCount,
                                                         uint32_t                            keyFramePeriod,
                                                         uint32_t                            consecutiveBipredictiveFrameCount,
@@ -30685,7 +30688,7 @@ void cvkCmdBeginVideoCodingWithEncodeH264GopRemainingFrameInfo(VkDevice         
  * \param[in] device                      See cvkCmdBeginVideoCoding
  * \param[in] commandBuffer               See cvkCmdBeginVideoCoding
  * \param[in] pNext                       See cvkCmdBeginVideoCoding
- * \param[in] encodeH264RateControlFlags  VkVideoEncodeH264RateControlInfoKHR::encodeH264RateControlFlags
+ * \param[in] flagsEncodeH264RateControl  VkVideoEncodeH264RateControlInfoKHR::flagsEncodeH264RateControl
  * \param[in] gopFrameCount               VkVideoEncodeH264RateControlInfoKHR::gopFrameCount
  * \param[in] idrPeriod                   VkVideoEncodeH264RateControlInfoKHR::idrPeriod
  * \param[in] consecutiveBFrameCount      VkVideoEncodeH264RateControlInfoKHR::consecutiveBFrameCount
@@ -30701,7 +30704,7 @@ void cvkCmdBeginVideoCodingWithEncodeH264GopRemainingFrameInfo(VkDevice         
 void cvkCmdBeginVideoCodingWithEncodeH264RateControlInfo(VkDevice                             device,
                                                          VkCommandBuffer                      commandBuffer,
                                                          const void*                          pNext,
-                                                         VkVideoEncodeH264RateControlFlagsKHR encodeH264RateControlFlags,
+                                                         VkVideoEncodeH264RateControlFlagsKHR flagsEncodeH264RateControl,
                                                          uint32_t                             gopFrameCount,
                                                          uint32_t                             idrPeriod,
                                                          uint32_t                             consecutiveBFrameCount,
@@ -30747,7 +30750,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265GopRemainingFrameInfo(VkDevice         
  * \param[in] device                      See cvkCmdBeginVideoCoding
  * \param[in] commandBuffer               See cvkCmdBeginVideoCoding
  * \param[in] pNext                       See cvkCmdBeginVideoCoding
- * \param[in] encodeH265RateControlFlags  VkVideoEncodeH265RateControlInfoKHR::encodeH265RateControlFlags
+ * \param[in] flagsEncodeH265RateControl  VkVideoEncodeH265RateControlInfoKHR::flagsEncodeH265RateControl
  * \param[in] gopFrameCount               VkVideoEncodeH265RateControlInfoKHR::gopFrameCount
  * \param[in] idrPeriod                   VkVideoEncodeH265RateControlInfoKHR::idrPeriod
  * \param[in] consecutiveBFrameCount      VkVideoEncodeH265RateControlInfoKHR::consecutiveBFrameCount
@@ -30763,7 +30766,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265GopRemainingFrameInfo(VkDevice         
 void cvkCmdBeginVideoCodingWithEncodeH265RateControlInfo(VkDevice                             device,
                                                          VkCommandBuffer                      commandBuffer,
                                                          const void*                          pNext,
-                                                         VkVideoEncodeH265RateControlFlagsKHR encodeH265RateControlFlags,
+                                                         VkVideoEncodeH265RateControlFlagsKHR flagsEncodeH265RateControl,
                                                          uint32_t                             gopFrameCount,
                                                          uint32_t                             idrPeriod,
                                                          uint32_t                             consecutiveBFrameCount,
@@ -30779,7 +30782,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265RateControlInfo(VkDevice               
  * \param[in] device                        See cvkCmdBeginVideoCoding
  * \param[in] commandBuffer                 See cvkCmdBeginVideoCoding
  * \param[in] pNext                         See cvkCmdBeginVideoCoding
- * \param[in] encodeRateControlFlags        VkVideoEncodeRateControlInfoKHR::encodeRateControlFlags
+ * \param[in] flagsEncodeRateControl        VkVideoEncodeRateControlInfoKHR::flagsEncodeRateControl
  * \param[in] rateControlMode               VkVideoEncodeRateControlInfoKHR::rateControlMode
  * \param[in] layerCount                    VkVideoEncodeRateControlInfoKHR::layerCount
  * \param[in] pLayers                       VkVideoEncodeRateControlInfoKHR::pLayers
@@ -30796,7 +30799,7 @@ void cvkCmdBeginVideoCodingWithEncodeH265RateControlInfo(VkDevice               
 void cvkCmdBeginVideoCodingWithEncodeRateControlInfo(VkDevice                                    device,
                                                      VkCommandBuffer                             commandBuffer,
                                                      const void*                                 pNext,
-                                                     VkVideoEncodeRateControlFlagsKHR            encodeRateControlFlags,
+                                                     VkVideoEncodeRateControlFlagsKHR            flagsEncodeRateControl,
                                                      VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
                                                      uint32_t                                    layerCount,
                                                      const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
@@ -30901,7 +30904,7 @@ void cvkCmdBlitImageWithCubicWeightsInfo(VkCommandBuffer          commandBuffer,
  * \param[in] device                             See cvkCmdControlVideoCoding
  * \param[in] commandBuffer                      See cvkCmdControlVideoCoding
  * \param[in] pNext                              See cvkCmdControlVideoCoding
- * \param[in] encodeAV1RateFlags                 VkVideoEncodeAV1RateControlInfoKHR::encodeAV1RateFlags
+ * \param[in] flagsEncodeAV1Rate                 VkVideoEncodeAV1RateControlInfoKHR::flagsEncodeAV1Rate
  * \param[in] gopFrameCount                      VkVideoEncodeAV1RateControlInfoKHR::gopFrameCount
  * \param[in] keyFramePeriod                     VkVideoEncodeAV1RateControlInfoKHR::keyFramePeriod
  * \param[in] consecutiveBipredictiveFrameCount  VkVideoEncodeAV1RateControlInfoKHR::consecutiveBipredictiveFrameCount
@@ -30913,7 +30916,7 @@ void cvkCmdBlitImageWithCubicWeightsInfo(VkCommandBuffer          commandBuffer,
 void cvkCmdControlVideoCodingWithEncodeAV1RateInfo(VkDevice                            device,
                                                    VkCommandBuffer                     commandBuffer,
                                                    const void*                         pNext,
-                                                   VkVideoEncodeAV1RateControlFlagsKHR encodeAV1RateFlags,
+                                                   VkVideoEncodeAV1RateControlFlagsKHR flagsEncodeAV1Rate,
                                                    uint32_t                            gopFrameCount,
                                                    uint32_t                            keyFramePeriod,
                                                    uint32_t                            consecutiveBipredictiveFrameCount,
@@ -30925,7 +30928,7 @@ void cvkCmdControlVideoCodingWithEncodeAV1RateInfo(VkDevice                     
  * \param[in] device                  See cvkCmdControlVideoCoding
  * \param[in] commandBuffer           See cvkCmdControlVideoCoding
  * \param[in] pNext                   See cvkCmdControlVideoCoding
- * \param[in] encodeH264RateFlags     VkVideoEncodeH264RateControlInfoKHR::encodeH264RateFlags
+ * \param[in] flagsEncodeH264Rate     VkVideoEncodeH264RateControlInfoKHR::flagsEncodeH264Rate
  * \param[in] gopFrameCount           VkVideoEncodeH264RateControlInfoKHR::gopFrameCount
  * \param[in] idrPeriod               VkVideoEncodeH264RateControlInfoKHR::idrPeriod
  * \param[in] consecutiveBFrameCount  VkVideoEncodeH264RateControlInfoKHR::consecutiveBFrameCount
@@ -30937,7 +30940,7 @@ void cvkCmdControlVideoCodingWithEncodeAV1RateInfo(VkDevice                     
 void cvkCmdControlVideoCodingWithEncodeH264RateInfo(VkDevice                             device,
                                                     VkCommandBuffer                      commandBuffer,
                                                     const void*                          pNext,
-                                                    VkVideoEncodeH264RateControlFlagsKHR encodeH264RateFlags,
+                                                    VkVideoEncodeH264RateControlFlagsKHR flagsEncodeH264Rate,
                                                     uint32_t                             gopFrameCount,
                                                     uint32_t                             idrPeriod,
                                                     uint32_t                             consecutiveBFrameCount,
@@ -30949,7 +30952,7 @@ void cvkCmdControlVideoCodingWithEncodeH264RateInfo(VkDevice                    
  * \param[in] device                  See cvkCmdControlVideoCoding
  * \param[in] commandBuffer           See cvkCmdControlVideoCoding
  * \param[in] pNext                   See cvkCmdControlVideoCoding
- * \param[in] encodeH265RateFlags     VkVideoEncodeH265RateControlInfoKHR::encodeH265RateFlags
+ * \param[in] flagsEncodeH265Rate     VkVideoEncodeH265RateControlInfoKHR::flagsEncodeH265Rate
  * \param[in] gopFrameCount           VkVideoEncodeH265RateControlInfoKHR::gopFrameCount
  * \param[in] idrPeriod               VkVideoEncodeH265RateControlInfoKHR::idrPeriod
  * \param[in] consecutiveBFrameCount  VkVideoEncodeH265RateControlInfoKHR::consecutiveBFrameCount
@@ -30961,7 +30964,7 @@ void cvkCmdControlVideoCodingWithEncodeH264RateInfo(VkDevice                    
 void cvkCmdControlVideoCodingWithEncodeH265RateInfo(VkDevice                             device,
                                                     VkCommandBuffer                      commandBuffer,
                                                     const void*                          pNext,
-                                                    VkVideoEncodeH265RateControlFlagsKHR encodeH265RateFlags,
+                                                    VkVideoEncodeH265RateControlFlagsKHR flagsEncodeH265Rate,
                                                     uint32_t                             gopFrameCount,
                                                     uint32_t                             idrPeriod,
                                                     uint32_t                             consecutiveBFrameCount,
@@ -30985,7 +30988,7 @@ void cvkCmdControlVideoCodingWithEncodeQualityLevelInfo(VkDevice device, VkComma
  * \param[in] device                        See cvkCmdControlVideoCoding
  * \param[in] commandBuffer                 See cvkCmdControlVideoCoding
  * \param[in] pNext                         See cvkCmdControlVideoCoding
- * \param[in] encodeRateFlags               VkVideoEncodeRateControlInfoKHR::encodeRateFlags
+ * \param[in] flagsEncodeRate               VkVideoEncodeRateControlInfoKHR::flagsEncodeRate
  * \param[in] rateControlMode               VkVideoEncodeRateControlInfoKHR::rateControlMode
  * \param[in] layerCount                    VkVideoEncodeRateControlInfoKHR::layerCount
  * \param[in] pLayers                       VkVideoEncodeRateControlInfoKHR::pLayers
@@ -30998,7 +31001,7 @@ void cvkCmdControlVideoCodingWithEncodeQualityLevelInfo(VkDevice device, VkComma
 void cvkCmdControlVideoCodingWithEncodeRateInfo(VkDevice                                    device,
                                                 VkCommandBuffer                             commandBuffer,
                                                 const void*                                 pNext,
-                                                VkVideoEncodeRateControlFlagsKHR            encodeRateFlags,
+                                                VkVideoEncodeRateControlFlagsKHR            flagsEncodeRate,
                                                 VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
                                                 uint32_t                                    layerCount,
                                                 const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
@@ -31284,21 +31287,21 @@ void cvkCmdDecodeVideoWithInlineQueryInfo(VkDevice                           dev
 /**
  * \brief Records dispatch data graph with VkDataGraphPipelineOpticalFlowDispatchInfoARM chained.
  *
- * \param[in] device              See cvkCmdDispatchDataGraph
- * \param[in] commandBuffer       See cvkCmdDispatchDataGraph
- * \param[in] session             See cvkCmdDispatchDataGraph
- * \param[in] pNext               See cvkCmdDispatchDataGraph
- * \param[in] opticalFlowFlags    VkDataGraphPipelineOpticalFlowDispatchInfoARM::opticalFlowFlags
- * \param[in] meanFlowL1NormHint  VkDataGraphPipelineOpticalFlowDispatchInfoARM::meanFlowL1NormHint
- * \param[in] flags               See cvkCmdDispatchDataGraph
+ * \param[in] device                   See cvkCmdDispatchDataGraph
+ * \param[in] commandBuffer            See cvkCmdDispatchDataGraph
+ * \param[in] session                  See cvkCmdDispatchDataGraph
+ * \param[out] pNext                    See cvkCmdDispatchDataGraph
+ * \param[in] flagsOpticalFlowExecute  VkDataGraphPipelineOpticalFlowDispatchInfoARM::flagsOpticalFlowExecute
+ * \param[in] meanFlowL1NormHint       VkDataGraphPipelineOpticalFlowDispatchInfoARM::meanFlowL1NormHint
+ * \param[in] flags                    See cvkCmdDispatchDataGraph
  *
  * \retval None
  */
 void cvkCmdDispatchDataGraphWithOpticalFlowInfo(VkDevice                              device,
                                                 VkCommandBuffer                       commandBuffer,
                                                 VkDataGraphPipelineSessionARM         session,
-                                                const void*                           pNext,
-                                                VkDataGraphOpticalFlowExecuteFlagsARM opticalFlowFlags,
+                                                void*                                 pNext,
+                                                VkDataGraphOpticalFlowExecuteFlagsARM flagsOpticalFlowExecute,
                                                 uint32_t                              meanFlowL1NormHint,
                                                 VkDataGraphPipelineDispatchFlagsARM   flags);
 /**
@@ -31556,7 +31559,7 @@ void cvkCmdEndRenderingWithRenderPassFragmentDensityMapOffsetInfo(VkDevice      
  * \param[in] device                  See cvkCmdExecuteGeneratedCommands
  * \param[in] commandBuffer           See cvkCmdExecuteGeneratedCommands
  * \param[in] isPreprocessed          See cvkCmdExecuteGeneratedCommands
- * \param[in] pNext                   See cvkCmdExecuteGeneratedCommands
+ * \param[out] pNext                   See cvkCmdExecuteGeneratedCommands
  * \param[in] pipeline                VkGeneratedCommandsPipelineInfoEXT::pipeline
  * \param[in] shaderStages            See cvkCmdExecuteGeneratedCommands
  * \param[in] indirectExecutionSet    See cvkCmdExecuteGeneratedCommands
@@ -31574,7 +31577,7 @@ void cvkCmdEndRenderingWithRenderPassFragmentDensityMapOffsetInfo(VkDevice      
 void cvkCmdExecuteGeneratedCommandsWithPipelineInfo(VkDevice                    device,
                                                     VkCommandBuffer             commandBuffer,
                                                     VkBool32                    isPreprocessed,
-                                                    const void*                 pNext,
+                                                    void*                       pNext,
                                                     VkPipeline                  pipeline,
                                                     VkShaderStageFlags          shaderStages,
                                                     VkIndirectExecutionSetEXT   indirectExecutionSet,
@@ -31592,7 +31595,7 @@ void cvkCmdExecuteGeneratedCommandsWithPipelineInfo(VkDevice                    
  * \param[in] device                  See cvkCmdExecuteGeneratedCommands
  * \param[in] commandBuffer           See cvkCmdExecuteGeneratedCommands
  * \param[in] isPreprocessed          See cvkCmdExecuteGeneratedCommands
- * \param[in] pNext                   See cvkCmdExecuteGeneratedCommands
+ * \param[out] pNext                   See cvkCmdExecuteGeneratedCommands
  * \param[in] shaderCount             VkGeneratedCommandsShaderInfoEXT::shaderCount
  * \param[in] pShaders                VkGeneratedCommandsShaderInfoEXT::pShaders
  * \param[in] shaderStages            See cvkCmdExecuteGeneratedCommands
@@ -31611,7 +31614,7 @@ void cvkCmdExecuteGeneratedCommandsWithPipelineInfo(VkDevice                    
 void cvkCmdExecuteGeneratedCommandsWithShaderInfo(VkDevice                    device,
                                                   VkCommandBuffer             commandBuffer,
                                                   VkBool32                    isPreprocessed,
-                                                  const void*                 pNext,
+                                                  void*                       pNext,
                                                   uint32_t                    shaderCount,
                                                   const VkShaderEXT*          pShaders,
                                                   VkShaderStageFlags          shaderStages,
@@ -31723,7 +31726,7 @@ void cvkCmdPipelineBarrier2WithTensorMemoryBarrierInfo(VkCommandBuffer          
  *
  * \param[in] device                  See cvkCmdPreprocessGeneratedCommands
  * \param[in] commandBuffer           See cvkCmdPreprocessGeneratedCommands
- * \param[in] pNext                   See cvkCmdPreprocessGeneratedCommands
+ * \param[out] pNext                   See cvkCmdPreprocessGeneratedCommands
  * \param[in] pipeline                VkGeneratedCommandsPipelineInfoEXT::pipeline
  * \param[in] shaderStages            See cvkCmdPreprocessGeneratedCommands
  * \param[in] indirectExecutionSet    See cvkCmdPreprocessGeneratedCommands
@@ -31741,7 +31744,7 @@ void cvkCmdPipelineBarrier2WithTensorMemoryBarrierInfo(VkCommandBuffer          
  */
 void cvkCmdPreprocessGeneratedCommandsWithPipelineInfo(VkDevice                    device,
                                                        VkCommandBuffer             commandBuffer,
-                                                       const void*                 pNext,
+                                                       void*                       pNext,
                                                        VkPipeline                  pipeline,
                                                        VkShaderStageFlags          shaderStages,
                                                        VkIndirectExecutionSetEXT   indirectExecutionSet,
@@ -31759,7 +31762,7 @@ void cvkCmdPreprocessGeneratedCommandsWithPipelineInfo(VkDevice                 
  *
  * \param[in] device                  See cvkCmdPreprocessGeneratedCommands
  * \param[in] commandBuffer           See cvkCmdPreprocessGeneratedCommands
- * \param[in] pNext                   See cvkCmdPreprocessGeneratedCommands
+ * \param[out] pNext                   See cvkCmdPreprocessGeneratedCommands
  * \param[in] shaderCount             VkGeneratedCommandsShaderInfoEXT::shaderCount
  * \param[in] pShaders                VkGeneratedCommandsShaderInfoEXT::pShaders
  * \param[in] shaderStages            See cvkCmdPreprocessGeneratedCommands
@@ -31778,7 +31781,7 @@ void cvkCmdPreprocessGeneratedCommandsWithPipelineInfo(VkDevice                 
  */
 void cvkCmdPreprocessGeneratedCommandsWithShaderInfo(VkDevice                    device,
                                                      VkCommandBuffer             commandBuffer,
-                                                     const void*                 pNext,
+                                                     void*                       pNext,
                                                      uint32_t                    shaderCount,
                                                      const VkShaderEXT*          pShaders,
                                                      VkShaderStageFlags          shaderStages,
@@ -32205,7 +32208,7 @@ void cvkCreateAccelerationStructureWithOpaqueCaptureDescriptorDataInfoNV(VkDevic
  * \brief Creates a buffer with VkBufferDeviceAddressAlignmentAllocateInfoVALVE chained.
  *
  * \param[in] device                 See cvkCreateBuffer
- * \param[in] pNext                  See cvkCreateBuffer
+ * \param[out] pNext                  See cvkCreateBuffer
  * \param[in] alignment              VkBufferDeviceAddressAlignmentAllocateInfoVALVE::alignment
  * \param[in] flags                  See cvkCreateBuffer
  * \param[in] size                   See cvkCreateBuffer
@@ -32219,7 +32222,7 @@ void cvkCreateAccelerationStructureWithOpaqueCaptureDescriptorDataInfoNV(VkDevic
  * \retval None
  */
 void cvkCreateBufferWithDeviceAddressAlignmentInfo(VkDevice                     device,
-                                                   const void*                  pNext,
+                                                   void*                        pNext,
                                                    uint32_t                     alignment,
                                                    VkBufferCreateFlags          flags,
                                                    VkDeviceSize                 size,
@@ -32290,7 +32293,7 @@ void cvkCreateBufferWithOpaqueCaptureAddressInfo(VkDevice                     de
  *
  * \param[in] device                 See cvkCreateBuffer
  * \param[in] pNext                  See cvkCreateBuffer
- * \param[in] usageFlags2Usage       VkBufferUsageFlags2CreateInfo::usageFlags2Usage
+ * \param[in] usage2                 VkBufferUsageFlags2CreateInfo::usage2
  * \param[in] flags                  See cvkCreateBuffer
  * \param[in] size                   See cvkCreateBuffer
  * \param[in] usage                  See cvkCreateBuffer
@@ -32304,7 +32307,7 @@ void cvkCreateBufferWithOpaqueCaptureAddressInfo(VkDevice                     de
  */
 void cvkCreateBufferWithUsageFlags2Info(VkDevice                     device,
                                         const void*                  pNext,
-                                        VkBufferUsageFlags2          usageFlags2Usage,
+                                        VkBufferUsageFlags2          usage2,
                                         VkBufferCreateFlags          flags,
                                         VkDeviceSize                 size,
                                         VkBufferUsageFlags           usage,
@@ -32644,7 +32647,7 @@ void cvkCreateDescriptorSetLayoutWithMutableDescriptorTypeInfo(VkDevice         
  *
  * \param[in] physicalDevice           See cvkCreateDevice
  * \param[in] pNext                    See cvkCreateDevice
- * \param[in] deviceMemoryReportFlags  VkDeviceDeviceMemoryReportCreateInfoEXT::deviceMemoryReportFlags
+ * \param[in] flagsMemoryReportEXT     VkDeviceDeviceMemoryReportCreateInfoEXT::flagsMemoryReportEXT
  * \param[in] pfnUserCallback          VkDeviceDeviceMemoryReportCreateInfoEXT::pfnUserCallback
  * \param[out] pUserData                VkDeviceDeviceMemoryReportCreateInfoEXT::pUserData
  * \param[in] flags                    See cvkCreateDevice
@@ -32662,7 +32665,7 @@ void cvkCreateDescriptorSetLayoutWithMutableDescriptorTypeInfo(VkDevice         
  */
 void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                    physicalDevice,
                                                const void*                         pNext,
-                                               VkDeviceMemoryReportFlagsEXT        deviceMemoryReportFlags,
+                                               VkDeviceMemoryReportFlagsEXT        flagsMemoryReportEXT,
                                                PFN_vkDeviceMemoryReportCallbackEXT pfnUserCallback,
                                                void*                               pUserData,
                                                VkDeviceCreateFlags                 flags,
@@ -32678,25 +32681,25 @@ void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                 
 /**
  * \brief Creates a device with VkDeviceDiagnosticsConfigCreateInfoNV chained.
  *
- * \param[in] physicalDevice           See cvkCreateDevice
- * \param[in] pNext                    See cvkCreateDevice
- * \param[in] diagnosticsConfigFlags   VkDeviceDiagnosticsConfigCreateInfoNV::diagnosticsConfigFlags
- * \param[in] flags                    See cvkCreateDevice
- * \param[in] queueCreateInfoCount     See cvkCreateDevice
- * \param[in] pQueueCreateInfos        See cvkCreateDevice
- * \param[in] enabledLayerCount        See cvkCreateDevice
- * \param[in] ppEnabledLayerNames      See cvkCreateDevice
- * \param[in] enabledExtensionCount    See cvkCreateDevice
- * \param[in] ppEnabledExtensionNames  See cvkCreateDevice
- * \param[in] pEnabledFeatures         See cvkCreateDevice
- * \param[in] pAllocator               See cvkCreateDevice
- * \param[out] pDevice                  See cvkCreateDevice
+ * \param[in] physicalDevice            See cvkCreateDevice
+ * \param[in] pNext                     See cvkCreateDevice
+ * \param[in] flagsDiagnosticsConfigNV  VkDeviceDiagnosticsConfigCreateInfoNV::flagsDiagnosticsConfigNV
+ * \param[in] flags                     See cvkCreateDevice
+ * \param[in] queueCreateInfoCount      See cvkCreateDevice
+ * \param[in] pQueueCreateInfos         See cvkCreateDevice
+ * \param[in] enabledLayerCount         See cvkCreateDevice
+ * \param[in] ppEnabledLayerNames       See cvkCreateDevice
+ * \param[in] enabledExtensionCount     See cvkCreateDevice
+ * \param[in] ppEnabledExtensionNames   See cvkCreateDevice
+ * \param[in] pEnabledFeatures          See cvkCreateDevice
+ * \param[in] pAllocator                See cvkCreateDevice
+ * \param[out] pDevice                   See cvkCreateDevice
  *
  * \retval None
  */
 void cvkCreateDeviceWithDiagnosticsConfigInfo(VkPhysicalDevice                 physicalDevice,
                                               const void*                      pNext,
-                                              VkDeviceDiagnosticsConfigFlagsNV diagnosticsConfigFlags,
+                                              VkDeviceDiagnosticsConfigFlagsNV flagsDiagnosticsConfigNV,
                                               VkDeviceCreateFlags              flags,
                                               uint32_t                         queueCreateInfoCount,
                                               const VkDeviceQueueCreateInfo*   pQueueCreateInfos,
@@ -32841,7 +32844,7 @@ void cvkCreateDeviceWithPrivateDataInfo(VkPhysicalDevice                physical
  * \brief Creates a device with VkDeviceQueueShaderCoreControlCreateInfoARM chained.
  *
  * \param[in] physicalDevice           See cvkCreateDevice
- * \param[in] pNext                    See cvkCreateDevice
+ * \param[out] pNext                    See cvkCreateDevice
  * \param[in] shaderCoreCount          VkDeviceQueueShaderCoreControlCreateInfoARM::shaderCoreCount
  * \param[in] flags                    See cvkCreateDevice
  * \param[in] queueCreateInfoCount     See cvkCreateDevice
@@ -32857,7 +32860,7 @@ void cvkCreateDeviceWithPrivateDataInfo(VkPhysicalDevice                physical
  * \retval None
  */
 void cvkCreateDeviceWithQueueShaderCoreControlInfo(VkPhysicalDevice                physicalDevice,
-                                                   const void*                     pNext,
+                                                   void*                           pNext,
                                                    uint32_t                        shaderCoreCount,
                                                    VkDeviceCreateFlags             flags,
                                                    uint32_t                        queueCreateInfoCount,
@@ -32981,30 +32984,30 @@ void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                           
 /**
  * \brief Creates a image with VkDataGraphOpticalFlowImageFormatInfoARM chained.
  *
- * \param[in] device                           See cvkCreateImage
- * \param[in] pNext                            See cvkCreateImage
- * \param[in] dataGraphOpticalFlowFormatUsage  VkDataGraphOpticalFlowImageFormatInfoARM::dataGraphOpticalFlowFormatUsage
- * \param[in] flags                            See cvkCreateImage
- * \param[in] imageType                        See cvkCreateImage
- * \param[in] format                           See cvkCreateImage
- * \param[in] extent                           See cvkCreateImage
- * \param[in] mipLevels                        See cvkCreateImage
- * \param[in] arrayLayers                      See cvkCreateImage
- * \param[in] samples                          See cvkCreateImage
- * \param[in] tiling                           See cvkCreateImage
- * \param[in] usage                            See cvkCreateImage
- * \param[in] sharingMode                      See cvkCreateImage
- * \param[in] queueFamilyIndexCount            See cvkCreateImage
- * \param[in] pQueueFamilyIndices              See cvkCreateImage
- * \param[in] initialLayout                    See cvkCreateImage
- * \param[in] pAllocator                       See cvkCreateImage
- * \param[out] pImage                           See cvkCreateImage
+ * \param[in] device                        See cvkCreateImage
+ * \param[in] pNext                         See cvkCreateImage
+ * \param[in] usageDataGraphOpticalFlowARM  VkDataGraphOpticalFlowImageFormatInfoARM::usageDataGraphOpticalFlowARM
+ * \param[in] flags                         See cvkCreateImage
+ * \param[in] imageType                     See cvkCreateImage
+ * \param[in] format                        See cvkCreateImage
+ * \param[in] extent                        See cvkCreateImage
+ * \param[in] mipLevels                     See cvkCreateImage
+ * \param[in] arrayLayers                   See cvkCreateImage
+ * \param[in] samples                       See cvkCreateImage
+ * \param[in] tiling                        See cvkCreateImage
+ * \param[in] usage                         See cvkCreateImage
+ * \param[in] sharingMode                   See cvkCreateImage
+ * \param[in] queueFamilyIndexCount         See cvkCreateImage
+ * \param[in] pQueueFamilyIndices           See cvkCreateImage
+ * \param[in] initialLayout                 See cvkCreateImage
+ * \param[in] pAllocator                    See cvkCreateImage
+ * \param[out] pImage                        See cvkCreateImage
  *
  * \retval None
  */
 void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfo(VkDevice                                 device,
                                                            const void*                              pNext,
-                                                           VkDataGraphOpticalFlowImageUsageFlagsARM dataGraphOpticalFlowFormatUsage,
+                                                           VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
                                                            VkImageCreateFlags                       flags,
                                                            VkImageType                              imageType,
                                                            VkFormat                                 format,
@@ -33193,7 +33196,7 @@ void cvkCreateImageWithAlignmentControlInfo(VkDevice                     device,
  *
  * \param[in] device                        See cvkCreateImage
  * \param[in] pNext                         See cvkCreateImage
- * \param[in] compressionControlFlags       VkImageCompressionControlEXT::compressionControlFlags
+ * \param[in] flagsCompressionEXT           VkImageCompressionControlEXT::flagsCompressionEXT
  * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
  * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
  * \param[in] flags                         See cvkCreateImage
@@ -33216,7 +33219,7 @@ void cvkCreateImageWithAlignmentControlInfo(VkDevice                     device,
  */
 void cvkCreateImageWithCompressionControlInfo(VkDevice                             device,
                                               const void*                          pNext,
-                                              VkImageCompressionFlagsEXT           compressionControlFlags,
+                                              VkImageCompressionFlagsEXT           flagsCompressionEXT,
                                               uint32_t                             compressionControlPlaneCount,
                                               VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                               VkImageCreateFlags                   flags,
@@ -33238,8 +33241,8 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
  * \brief Creates a image with VkImageCreateFlags2CreateInfoKHR chained.
  *
  * \param[in] device                 See cvkCreateImage
- * \param[in] pNext                  See cvkCreateImage
- * \param[in] flags2CreateFlags      VkImageCreateFlags2CreateInfoKHR::flags2CreateFlags
+ * \param[out] pNext                  See cvkCreateImage
+ * \param[in] flags2KHR              VkImageCreateFlags2CreateInfoKHR::flags2KHR
  * \param[in] flags                  See cvkCreateImage
  * \param[in] imageType              See cvkCreateImage
  * \param[in] format                 See cvkCreateImage
@@ -33259,8 +33262,8 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
  * \retval None
  */
 void cvkCreateImageWithFlags2Info(VkDevice                     device,
-                                  const void*                  pNext,
-                                  VkImageCreateFlags2KHR       flags2CreateFlags,
+                                  void*                        pNext,
+                                  VkImageCreateFlags2KHR       flags2KHR,
                                   VkImageCreateFlags           flags,
                                   VkImageType                  imageType,
                                   VkFormat                     format,
@@ -33414,7 +33417,7 @@ void cvkCreateImageWithFormatListInfo(VkDevice                     device,
  * \brief Creates a image with VkImageStencilUsage2CreateInfoKHR chained.
  *
  * \param[in] device                 See cvkCreateImage
- * \param[in] pNext                  See cvkCreateImage
+ * \param[out] pNext                  See cvkCreateImage
  * \param[in] stencilUsage           VkImageStencilUsage2CreateInfoKHR::stencilUsage
  * \param[in] flags                  See cvkCreateImage
  * \param[in] imageType              See cvkCreateImage
@@ -33435,7 +33438,7 @@ void cvkCreateImageWithFormatListInfo(VkDevice                     device,
  * \retval None
  */
 void cvkCreateImageWithStencilUsage2Info(VkDevice                     device,
-                                         const void*                  pNext,
+                                         void*                        pNext,
                                          VkImageUsageFlags2KHR        stencilUsage,
                                          VkImageCreateFlags           flags,
                                          VkImageType                  imageType,
@@ -33582,8 +33585,8 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
  * \brief Creates a image with VkImageUsageFlags2CreateInfoKHR chained.
  *
  * \param[in] device                 See cvkCreateImage
- * \param[in] pNext                  See cvkCreateImage
- * \param[in] usageFlags2Usage       VkImageUsageFlags2CreateInfoKHR::usageFlags2Usage
+ * \param[out] pNext                  See cvkCreateImage
+ * \param[in] usage2KHR              VkImageUsageFlags2CreateInfoKHR::usage2KHR
  * \param[in] flags                  See cvkCreateImage
  * \param[in] imageType              See cvkCreateImage
  * \param[in] format                 See cvkCreateImage
@@ -33603,8 +33606,8 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
  * \retval None
  */
 void cvkCreateImageWithUsageFlags2Info(VkDevice                     device,
-                                       const void*                  pNext,
-                                       VkImageUsageFlags2KHR        usageFlags2Usage,
+                                       void*                        pNext,
+                                       VkImageUsageFlags2KHR        usage2KHR,
                                        VkImageCreateFlags           flags,
                                        VkImageType                  imageType,
                                        VkFormat                     format,
@@ -33707,30 +33710,30 @@ void cvkCreateImageWithOpaqueCaptureDescriptorDataInfo(VkDevice                 
 /**
  * \brief Creates a image with VkOpticalFlowImageFormatInfoNV chained.
  *
- * \param[in] device                  See cvkCreateImage
- * \param[in] pNext                   See cvkCreateImage
- * \param[in] opticalFlowFormatUsage  VkOpticalFlowImageFormatInfoNV::opticalFlowFormatUsage
- * \param[in] flags                   See cvkCreateImage
- * \param[in] imageType               See cvkCreateImage
- * \param[in] format                  See cvkCreateImage
- * \param[in] extent                  See cvkCreateImage
- * \param[in] mipLevels               See cvkCreateImage
- * \param[in] arrayLayers             See cvkCreateImage
- * \param[in] samples                 See cvkCreateImage
- * \param[in] tiling                  See cvkCreateImage
- * \param[in] usage                   See cvkCreateImage
- * \param[in] sharingMode             See cvkCreateImage
- * \param[in] queueFamilyIndexCount   See cvkCreateImage
- * \param[in] pQueueFamilyIndices     See cvkCreateImage
- * \param[in] initialLayout           See cvkCreateImage
- * \param[in] pAllocator              See cvkCreateImage
- * \param[out] pImage                  See cvkCreateImage
+ * \param[in] device                 See cvkCreateImage
+ * \param[in] pNext                  See cvkCreateImage
+ * \param[in] usageOpticalFlowNV     VkOpticalFlowImageFormatInfoNV::usageOpticalFlowNV
+ * \param[in] flags                  See cvkCreateImage
+ * \param[in] imageType              See cvkCreateImage
+ * \param[in] format                 See cvkCreateImage
+ * \param[in] extent                 See cvkCreateImage
+ * \param[in] mipLevels              See cvkCreateImage
+ * \param[in] arrayLayers            See cvkCreateImage
+ * \param[in] samples                See cvkCreateImage
+ * \param[in] tiling                 See cvkCreateImage
+ * \param[in] usage                  See cvkCreateImage
+ * \param[in] sharingMode            See cvkCreateImage
+ * \param[in] queueFamilyIndexCount  See cvkCreateImage
+ * \param[in] pQueueFamilyIndices    See cvkCreateImage
+ * \param[in] initialLayout          See cvkCreateImage
+ * \param[in] pAllocator             See cvkCreateImage
+ * \param[out] pImage                 See cvkCreateImage
  *
  * \retval None
  */
 void cvkCreateImageWithOpticalFlowImageFormatInfo(VkDevice                     device,
                                                   const void*                  pNext,
-                                                  VkOpticalFlowUsageFlagsNV    opticalFlowFormatUsage,
+                                                  VkOpticalFlowUsageFlagsNV    usageOpticalFlowNV,
                                                   VkImageCreateFlags           flags,
                                                   VkImageType                  imageType,
                                                   VkFormat                     format,
@@ -33912,7 +33915,7 @@ void cvkCreateImageViewWithSlicedInfo(VkDevice                     device,
  * \brief Creates a image view with VkImageViewUsage2CreateInfoKHR chained.
  *
  * \param[in] device            See cvkCreateImageView
- * \param[in] pNext             See cvkCreateImageView
+ * \param[out] pNext             See cvkCreateImageView
  * \param[in] usage             VkImageViewUsage2CreateInfoKHR::usage
  * \param[in] flags             See cvkCreateImageView
  * \param[in] image             See cvkCreateImageView
@@ -33926,7 +33929,7 @@ void cvkCreateImageViewWithSlicedInfo(VkDevice                     device,
  * \retval None
  */
 void cvkCreateImageViewWithUsage2Info(VkDevice                     device,
-                                      const void*                  pNext,
+                                      void*                        pNext,
                                       VkImageUsageFlags2KHR        usage,
                                       VkImageViewCreateFlags       flags,
                                       VkImage                      image,
@@ -34025,7 +34028,7 @@ void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                  
  *
  * \param[in] device                   See cvkCreateIndirectCommandsLayout
  * \param[in] pNext                    See cvkCreateIndirectCommandsLayout
- * \param[in] pipelineFlags            VkPipelineLayoutCreateInfo::pipelineFlags
+ * \param[in] flagsPipelineCreate      VkPipelineLayoutCreateInfo::flagsPipelineCreate
  * \param[in] setLayoutCount           VkPipelineLayoutCreateInfo::setLayoutCount
  * \param[in] pSetLayouts              VkPipelineLayoutCreateInfo::pSetLayouts
  * \param[in] pushConstantRangeCount   VkPipelineLayoutCreateInfo::pushConstantRangeCount
@@ -34043,7 +34046,7 @@ void cvkCreateImageViewWithSamplerYcbcrConversionInfo(VkDevice                  
  */
 void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                                device,
                                                      const void*                             pNext,
-                                                     VkPipelineLayoutCreateFlags             pipelineFlags,
+                                                     VkPipelineLayoutCreateFlags             flagsPipelineCreate,
                                                      uint32_t                                setLayoutCount,
                                                      const VkDescriptorSetLayout*            pSetLayouts,
                                                      uint32_t                                pushConstantRangeCount,
@@ -34059,23 +34062,23 @@ void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                   
 /**
  * \brief Creates a instance with VkDebugReportCallbackCreateInfoEXT chained.
  *
- * \param[in] pNext                     See cvkCreateInstance
- * \param[in] debugReportCallbackFlags  VkDebugReportCallbackCreateInfoEXT::debugReportCallbackFlags
- * \param[in] pfnCallback               VkDebugReportCallbackCreateInfoEXT::pfnCallback
- * \param[out] pUserData                 VkDebugReportCallbackCreateInfoEXT::pUserData
- * \param[in] flags                     See cvkCreateInstance
- * \param[in] pApplicationInfo          See cvkCreateInstance
- * \param[in] enabledLayerCount         See cvkCreateInstance
- * \param[in] ppEnabledLayerNames       See cvkCreateInstance
- * \param[in] enabledExtensionCount     See cvkCreateInstance
- * \param[in] ppEnabledExtensionNames   See cvkCreateInstance
- * \param[in] pAllocator                See cvkCreateInstance
- * \param[out] pInstance                 See cvkCreateInstance
+ * \param[in] pNext                    See cvkCreateInstance
+ * \param[in] flagsDebugReportEXT      VkDebugReportCallbackCreateInfoEXT::flagsDebugReportEXT
+ * \param[in] pfnCallback              VkDebugReportCallbackCreateInfoEXT::pfnCallback
+ * \param[out] pUserData                VkDebugReportCallbackCreateInfoEXT::pUserData
+ * \param[in] flags                    See cvkCreateInstance
+ * \param[in] pApplicationInfo         See cvkCreateInstance
+ * \param[in] enabledLayerCount        See cvkCreateInstance
+ * \param[in] ppEnabledLayerNames      See cvkCreateInstance
+ * \param[in] enabledExtensionCount    See cvkCreateInstance
+ * \param[in] ppEnabledExtensionNames  See cvkCreateInstance
+ * \param[in] pAllocator               See cvkCreateInstance
+ * \param[out] pInstance                See cvkCreateInstance
  *
  * \retval None
  */
 void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  pNext,
-                                                  VkDebugReportFlagsEXT        debugReportCallbackFlags,
+                                                  VkDebugReportFlagsEXT        flagsDebugReportEXT,
                                                   PFN_vkDebugReportCallbackEXT pfnCallback,
                                                   void*                        pUserData,
                                                   VkInstanceCreateFlags        flags,
@@ -34089,25 +34092,25 @@ void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  p
 /**
  * \brief Creates a instance with VkDebugUtilsMessengerCreateInfoEXT chained.
  *
- * \param[in] pNext                     See cvkCreateInstance
- * \param[in] debugUtilsMessengerFlags  VkDebugUtilsMessengerCreateInfoEXT::debugUtilsMessengerFlags
- * \param[in] messageSeverity           VkDebugUtilsMessengerCreateInfoEXT::messageSeverity
- * \param[in] messageType               VkDebugUtilsMessengerCreateInfoEXT::messageType
- * \param[in] pfnUserCallback           VkDebugUtilsMessengerCreateInfoEXT::pfnUserCallback
- * \param[out] pUserData                 VkDebugUtilsMessengerCreateInfoEXT::pUserData
- * \param[in] flags                     See cvkCreateInstance
- * \param[in] pApplicationInfo          See cvkCreateInstance
- * \param[in] enabledLayerCount         See cvkCreateInstance
- * \param[in] ppEnabledLayerNames       See cvkCreateInstance
- * \param[in] enabledExtensionCount     See cvkCreateInstance
- * \param[in] ppEnabledExtensionNames   See cvkCreateInstance
- * \param[in] pAllocator                See cvkCreateInstance
- * \param[out] pInstance                 See cvkCreateInstance
+ * \param[in] pNext                        See cvkCreateInstance
+ * \param[in] flagsDebugUtilsMessengerEXT  VkDebugUtilsMessengerCreateInfoEXT::flagsDebugUtilsMessengerEXT
+ * \param[in] messageSeverity              VkDebugUtilsMessengerCreateInfoEXT::messageSeverity
+ * \param[in] messageType                  VkDebugUtilsMessengerCreateInfoEXT::messageType
+ * \param[in] pfnUserCallback              VkDebugUtilsMessengerCreateInfoEXT::pfnUserCallback
+ * \param[out] pUserData                    VkDebugUtilsMessengerCreateInfoEXT::pUserData
+ * \param[in] flags                        See cvkCreateInstance
+ * \param[in] pApplicationInfo             See cvkCreateInstance
+ * \param[in] enabledLayerCount            See cvkCreateInstance
+ * \param[in] ppEnabledLayerNames          See cvkCreateInstance
+ * \param[in] enabledExtensionCount        See cvkCreateInstance
+ * \param[in] ppEnabledExtensionNames      See cvkCreateInstance
+ * \param[in] pAllocator                   See cvkCreateInstance
+ * \param[out] pInstance                    See cvkCreateInstance
  *
  * \retval None
  */
 void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                          pNext,
-                                                  VkDebugUtilsMessengerCreateFlagsEXT  debugUtilsMessengerFlags,
+                                                  VkDebugUtilsMessengerCreateFlagsEXT  flagsDebugUtilsMessengerEXT,
                                                   VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
                                                   VkDebugUtilsMessageTypeFlagsEXT      messageType,
                                                   PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
@@ -34242,7 +34245,7 @@ void cvkCreateInstanceWithValidationFlagsInfo(const void*                  pNext
  * \brief Creates a optical flow session with VkOpticalFlowSessionCreatePrivateDataInfoNV chained.
  *
  * \param[in] device            See cvkCreateOpticalFlowSession
- * \param[in] pNext             See cvkCreateOpticalFlowSession
+ * \param[out] pNext             See cvkCreateOpticalFlowSession
  * \param[in] id                VkOpticalFlowSessionCreatePrivateDataInfoNV::id
  * \param[in] size              VkOpticalFlowSessionCreatePrivateDataInfoNV::size
  * \param[in] pPrivateData      VkOpticalFlowSessionCreatePrivateDataInfoNV::pPrivateData
@@ -34261,7 +34264,7 @@ void cvkCreateInstanceWithValidationFlagsInfo(const void*                  pNext
  * \retval None
  */
 void cvkCreateOpticalFlowSessionWithPrivateDataInfo(VkDevice                          device,
-                                                    const void*                       pNext,
+                                                    void*                             pNext,
                                                     uint32_t                          id,
                                                     uint32_t                          size,
                                                     const void*                       pPrivateData,
@@ -34737,25 +34740,25 @@ void cvkCreateRenderPassWithMultiviewInfo(VkDevice                       device,
 /**
  * \brief Creates a render pass with VkRenderPassTileShadingCreateInfoQCOM chained.
  *
- * \param[in] device            See cvkCreateRenderPass
- * \param[in] pNext             See cvkCreateRenderPass
- * \param[in] tileShadingFlags  VkRenderPassTileShadingCreateInfoQCOM::tileShadingFlags
- * \param[in] tileApronSize     VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
- * \param[in] flags             See cvkCreateRenderPass
- * \param[in] attachmentCount   See cvkCreateRenderPass
- * \param[in] pAttachments      See cvkCreateRenderPass
- * \param[in] subpassCount      See cvkCreateRenderPass
- * \param[in] pSubpasses        See cvkCreateRenderPass
- * \param[in] dependencyCount   See cvkCreateRenderPass
- * \param[in] pDependencies     See cvkCreateRenderPass
- * \param[in] pAllocator        See cvkCreateRenderPass
- * \param[out] pRenderPass       See cvkCreateRenderPass
+ * \param[in] device                See cvkCreateRenderPass
+ * \param[in] pNext                 See cvkCreateRenderPass
+ * \param[in] flagsTileShadingQCOM  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingQCOM
+ * \param[in] tileApronSize         VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
+ * \param[in] flags                 See cvkCreateRenderPass
+ * \param[in] attachmentCount       See cvkCreateRenderPass
+ * \param[in] pAttachments          See cvkCreateRenderPass
+ * \param[in] subpassCount          See cvkCreateRenderPass
+ * \param[in] pSubpasses            See cvkCreateRenderPass
+ * \param[in] dependencyCount       See cvkCreateRenderPass
+ * \param[in] pDependencies         See cvkCreateRenderPass
+ * \param[in] pAllocator            See cvkCreateRenderPass
+ * \param[out] pRenderPass           See cvkCreateRenderPass
  *
  * \retval None
  */
 void cvkCreateRenderPassWithTileShadingInfo(VkDevice                         device,
                                             const void*                      pNext,
-                                            VkTileShadingRenderPassFlagsQCOM tileShadingFlags,
+                                            VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
                                             VkExtent2D                       tileApronSize,
                                             VkRenderPassCreateFlags          flags,
                                             uint32_t                         attachmentCount,
@@ -34903,7 +34906,7 @@ void cvkCreateRenderPass2WithFragmentDensityMapInfo(VkDevice                    
  *
  * \param[in] device                   See cvkCreateRenderPass2
  * \param[in] pNext                    See cvkCreateRenderPass2
- * \param[in] tileShadingFlags         VkRenderPassTileShadingCreateInfoQCOM::tileShadingFlags
+ * \param[in] flagsTileShadingQCOM     VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingQCOM
  * \param[in] tileApronSize            VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
  * \param[in] flags                    See cvkCreateRenderPass2
  * \param[in] attachmentCount          See cvkCreateRenderPass2
@@ -34921,7 +34924,7 @@ void cvkCreateRenderPass2WithFragmentDensityMapInfo(VkDevice                    
  */
 void cvkCreateRenderPass2WithTileShadingInfo(VkDevice                         device,
                                              const void*                      pNext,
-                                             VkTileShadingRenderPassFlagsQCOM tileShadingFlags,
+                                             VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
                                              VkExtent2D                       tileApronSize,
                                              VkRenderPassCreateFlags          flags,
                                              uint32_t                         attachmentCount,
@@ -35414,7 +35417,7 @@ void cvkCreateSamplerWithYcbcrConversionInfo(VkDevice                     device
  * \brief Creates a sampler ycbcr conversion with VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM chained.
  *
  * \param[in] device                       See cvkCreateSamplerYcbcrConversion
- * \param[in] pNext                        See cvkCreateSamplerYcbcrConversion
+ * \param[out] pNext                        See cvkCreateSamplerYcbcrConversion
  * \param[in] enableYDegamma               VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM::enableYDegamma
  * \param[in] enableCbCrDegamma            VkSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM::enableCbCrDegamma
  * \param[in] format                       See cvkCreateSamplerYcbcrConversion
@@ -35431,7 +35434,7 @@ void cvkCreateSamplerWithYcbcrConversionInfo(VkDevice                     device
  * \retval None
  */
 void cvkCreateSamplerYcbcrConversionWithYcbcrDegammaInfo(VkDevice                      device,
-                                                         const void*                   pNext,
+                                                         void*                         pNext,
                                                          VkBool32                      enableYDegamma,
                                                          VkBool32                      enableCbCrDegamma,
                                                          VkFormat                      format,
@@ -35603,7 +35606,7 @@ void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         devi
  *
  * \param[in] device                        See cvkCreateSwapchain
  * \param[in] pNext                         See cvkCreateSwapchain
- * \param[in] imageCompressionControlFlags  VkImageCompressionControlEXT::imageCompressionControlFlags
+ * \param[in] flagsImageCompressionEXT      VkImageCompressionControlEXT::flagsImageCompressionEXT
  * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
  * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
  * \param[in] flags                         See cvkCreateSwapchain
@@ -35629,7 +35632,7 @@ void cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         devi
  */
 void cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
                                                        const void*                          pNext,
-                                                       VkImageCompressionFlagsEXT           imageCompressionControlFlags,
+                                                       VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
                                                        uint32_t                             compressionControlPlaneCount,
                                                        VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                        VkSwapchainCreateFlagsKHR            flags,
@@ -35704,7 +35707,7 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
  * \brief Creates a swapchain with VkImageUsageFlags2CreateInfoKHR chained.
  *
  * \param[in] device                 See cvkCreateSwapchain
- * \param[in] pNext                  See cvkCreateSwapchain
+ * \param[out] pNext                  See cvkCreateSwapchain
  * \param[in] usage                  VkImageUsageFlags2CreateInfoKHR::usage
  * \param[in] flags                  See cvkCreateSwapchain
  * \param[in] surface                See cvkCreateSwapchain
@@ -35728,7 +35731,7 @@ void cvkCreateSwapchainWithImageFormatListInfo(VkDevice                      dev
  * \retval None
  */
 void cvkCreateSwapchainWithImageUsageFlags2Info(VkDevice                      device,
-                                                const void*                   pNext,
+                                                void*                         pNext,
                                                 VkImageUsageFlags2KHR         usage,
                                                 VkSwapchainCreateFlagsKHR     flags,
                                                 VkSurfaceKHR                  surface,
@@ -35896,7 +35899,7 @@ void cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
  * \brief Creates a swapchain with VkSwapchainPresentBarrierCreateInfoNV chained.
  *
  * \param[in] device                 See cvkCreateSwapchain
- * \param[in] pNext                  See cvkCreateSwapchain
+ * \param[out] pNext                  See cvkCreateSwapchain
  * \param[in] presentBarrierEnable   VkSwapchainPresentBarrierCreateInfoNV::presentBarrierEnable
  * \param[in] flags                  See cvkCreateSwapchain
  * \param[in] surface                See cvkCreateSwapchain
@@ -35920,7 +35923,7 @@ void cvkCreateSwapchainWithLatencyInfo(VkDevice                      device,
  * \retval None
  */
 void cvkCreateSwapchainWithPresentBarrierInfo(VkDevice                      device,
-                                              const void*                   pNext,
+                                              void*                         pNext,
                                               VkBool32                      presentBarrierEnable,
                                               VkSwapchainCreateFlagsKHR     flags,
                                               VkSurfaceKHR                  surface,
@@ -36756,7 +36759,7 @@ void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassTileProperties(V
  * \brief Retrieves dynamic rendering tile properties with VkRenderPassPerformanceCountersByRegionBeginInfoARM chained.
  *
  * \param[in] device                See cvkGetRenderingInfo
- * \param[in] pRenderingInfoNext    See cvkGetRenderingInfo
+ * \param[out] pRenderingInfoNext    See cvkGetRenderingInfo
  * \param[in] counterAddressCount   VkRenderPassPerformanceCountersByRegionBeginInfoARM::counterAddressCount
  * \param[in] pCounterAddresses     VkRenderPassPerformanceCountersByRegionBeginInfoARM::pCounterAddresses
  * \param[in] serializeRegions      VkRenderPassPerformanceCountersByRegionBeginInfoARM::serializeRegions
@@ -36776,7 +36779,7 @@ void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassTileProperties(V
  * \retval None
  */
 void cvkGetDynamicRenderingRenderPassPerformanceCountersByRegionTileProperties(VkDevice                         device,
-                                                                               const void*                      pRenderingInfoNext,
+                                                                               void*                            pRenderingInfoNext,
                                                                                uint32_t                         counterAddressCount,
                                                                                const VkDeviceAddress*           pCounterAddresses,
                                                                                VkBool32                         serializeRegions,
@@ -36829,26 +36832,26 @@ void cvkGetDynamicRenderingRenderPassStripeTileProperties(VkDevice              
 /**
  * \brief Retrieves dynamic rendering tile properties with VkRenderPassTileShadingCreateInfoQCOM chained.
  *
- * \param[in] device                            See cvkGetRenderingInfo
- * \param[in] pRenderingInfoNext                See cvkGetRenderingInfo
- * \param[in] renderPassTileShadingCreateFlags  VkRenderPassTileShadingCreateInfoQCOM::renderPassTileShadingCreateFlags
- * \param[in] tileApronSize                     VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
- * \param[in] flags                             See cvkGetRenderingInfo
- * \param[in] renderArea                        See cvkGetRenderingInfo
- * \param[in] layerCount                        See cvkGetRenderingInfo
- * \param[in] viewMask                          See cvkGetRenderingInfo
- * \param[in] colorAttachmentCount              See cvkGetRenderingInfo
- * \param[in] pColorAttachments                 See cvkGetRenderingInfo
- * \param[in] pDepthAttachment                  See cvkGetRenderingInfo
- * \param[in] pStencilAttachment                See cvkGetRenderingInfo
- * \param[out] pPropertiesNext                   See cvkGetRenderingInfo
- * \param[out] pProperties                       See cvkGetRenderingInfo
+ * \param[in] device                          See cvkGetRenderingInfo
+ * \param[in] pRenderingInfoNext              See cvkGetRenderingInfo
+ * \param[in] flagsTileShadingRenderPassQCOM  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingRenderPassQCOM
+ * \param[in] tileApronSize                   VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
+ * \param[in] flags                           See cvkGetRenderingInfo
+ * \param[in] renderArea                      See cvkGetRenderingInfo
+ * \param[in] layerCount                      See cvkGetRenderingInfo
+ * \param[in] viewMask                        See cvkGetRenderingInfo
+ * \param[in] colorAttachmentCount            See cvkGetRenderingInfo
+ * \param[in] pColorAttachments               See cvkGetRenderingInfo
+ * \param[in] pDepthAttachment                See cvkGetRenderingInfo
+ * \param[in] pStencilAttachment              See cvkGetRenderingInfo
+ * \param[out] pPropertiesNext                 See cvkGetRenderingInfo
+ * \param[out] pProperties                     See cvkGetRenderingInfo
  *
  * \retval None
  */
 void cvkGetDynamicRenderingRenderPassTileShadingTileProperties(VkDevice                         device,
                                                                const void*                      pRenderingInfoNext,
-                                                               VkTileShadingRenderPassFlagsQCOM renderPassTileShadingCreateFlags,
+                                                               VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
                                                                VkExtent2D                       tileApronSize,
                                                                VkRenderingFlags                 flags,
                                                                VkRect2D                         renderArea,
@@ -37026,7 +37029,7 @@ VkResult cvkGetVideoEncodeH265SessionParametersGetInfo(VkDevice                 
  * \brief Retrieves generated commands memory requirements with VkGeneratedCommandsPipelineInfoEXT chained.
  *
  * \param[in] device                   See cvkGetGeneratedCommandsMemoryRequirementsInfo
- * \param[in] pInfoNext                See cvkGetGeneratedCommandsMemoryRequirementsInfo
+ * \param[out] pInfoNext                See cvkGetGeneratedCommandsMemoryRequirementsInfo
  * \param[in] pipeline                 VkGeneratedCommandsPipelineInfoEXT::pipeline
  * \param[in] indirectExecutionSet     See cvkGetGeneratedCommandsMemoryRequirementsInfo
  * \param[in] indirectCommandsLayout   See cvkGetGeneratedCommandsMemoryRequirementsInfo
@@ -37038,7 +37041,7 @@ VkResult cvkGetVideoEncodeH265SessionParametersGetInfo(VkDevice                 
  * \retval None
  */
 void cvkGetGeneratedCommandsPipelineMemoryRequirements(VkDevice                    device,
-                                                       const void*                 pInfoNext,
+                                                       void*                       pInfoNext,
                                                        VkPipeline                  pipeline,
                                                        VkIndirectExecutionSetEXT   indirectExecutionSet,
                                                        VkIndirectCommandsLayoutEXT indirectCommandsLayout,
@@ -37050,7 +37053,7 @@ void cvkGetGeneratedCommandsPipelineMemoryRequirements(VkDevice                 
  * \brief Retrieves generated commands memory requirements with VkGeneratedCommandsShaderInfoEXT chained.
  *
  * \param[in] device                   See cvkGetGeneratedCommandsMemoryRequirementsInfo
- * \param[in] pInfoNext                See cvkGetGeneratedCommandsMemoryRequirementsInfo
+ * \param[out] pInfoNext                See cvkGetGeneratedCommandsMemoryRequirementsInfo
  * \param[in] shaderCount              VkGeneratedCommandsShaderInfoEXT::shaderCount
  * \param[in] pShaders                 VkGeneratedCommandsShaderInfoEXT::pShaders
  * \param[in] indirectExecutionSet     See cvkGetGeneratedCommandsMemoryRequirementsInfo
@@ -37063,7 +37066,7 @@ void cvkGetGeneratedCommandsPipelineMemoryRequirements(VkDevice                 
  * \retval None
  */
 void cvkGetGeneratedCommandsShaderMemoryRequirements(VkDevice                    device,
-                                                     const void*                 pInfoNext,
+                                                     void*                       pInfoNext,
                                                      uint32_t                    shaderCount,
                                                      const VkShaderEXT*          pShaders,
                                                      VkIndirectExecutionSetEXT   indirectExecutionSet,
@@ -37094,7 +37097,7 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
  * \brief Retrieves partitioned acceleration structures build sizes with VkPartitionedAccelerationStructureFlagsNV chained.
  *
  * \param[in] device                             See cvkGetPartitionedAccelerationStructuresBuildSizes
- * \param[in] pInfoNext                          See cvkGetPartitionedAccelerationStructuresBuildSizes
+ * \param[out] pInfoNext                          See cvkGetPartitionedAccelerationStructuresBuildSizes
  * \param[in] enablePartitionTranslation         VkPartitionedAccelerationStructureFlagsNV::enablePartitionTranslation
  * \param[in] flags                              See cvkGetPartitionedAccelerationStructuresBuildSizes
  * \param[in] instanceCount                      See cvkGetPartitionedAccelerationStructuresBuildSizes
@@ -37107,7 +37110,7 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
  * \retval None
  */
 void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfo(VkDevice                                  device,
-                                                                    const void*                               pInfoNext,
+                                                                    void*                                     pInfoNext,
                                                                     VkBool32                                  enablePartitionTranslation,
                                                                     VkBuildAccelerationStructureFlagsKHR      flags,
                                                                     uint32_t                                  instanceCount,
@@ -37121,7 +37124,7 @@ void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfo(VkDevice    
  *
  * \param[in] physicalDevice                 See cvkGetPhysicalDeviceExternalBufferInfo
  * \param[in] pExternalBufferInfoNext        See cvkGetPhysicalDeviceExternalBufferInfo
- * \param[in] usageFlags2CreateUsage         VkBufferUsageFlags2CreateInfo::usageFlags2CreateUsage
+ * \param[in] usage2                         VkBufferUsageFlags2CreateInfo::usage2
  * \param[in] flags                          See cvkGetPhysicalDeviceExternalBufferInfo
  * \param[in] usage                          See cvkGetPhysicalDeviceExternalBufferInfo
  * \param[in] handleType                     See cvkGetPhysicalDeviceExternalBufferInfo
@@ -37132,7 +37135,7 @@ void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfo(VkDevice    
  */
 void cvkGetPhysicalDeviceExternalBufferUsageFlags2Properties(VkPhysicalDevice                   physicalDevice,
                                                              const void*                        pExternalBufferInfoNext,
-                                                             VkBufferUsageFlags2                usageFlags2CreateUsage,
+                                                             VkBufferUsageFlags2                usage2,
                                                              VkBufferCreateFlags                flags,
                                                              VkBufferUsageFlags                 usage,
                                                              VkExternalMemoryHandleTypeFlagBits handleType,
@@ -37161,22 +37164,22 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
 /**
  * \brief Retrieves physical device image format properties 2 with VkDataGraphOpticalFlowImageFormatInfoARM chained.
  *
- * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] dataGraphOpticalFlowUsage   VkDataGraphOpticalFlowImageFormatInfoARM::dataGraphOpticalFlowUsage
- * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] physicalDevice                See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] pImageFormatInfoNext          See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usageDataGraphOpticalFlowARM  VkDataGraphOpticalFlowImageFormatInfoARM::usageDataGraphOpticalFlowARM
+ * \param[in] format                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] type                          See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] tiling                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage                         See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags                         See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatPropertiesNext    See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatProperties        See cvkGetPhysicalDeviceImageFormatInfo2
  *
  * \retval None
  */
 void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
                                                                    const void*                              pImageFormatInfoNext,
-                                                                   VkDataGraphOpticalFlowImageUsageFlagsARM dataGraphOpticalFlowUsage,
+                                                                   VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
                                                                    VkFormat                                 format,
                                                                    VkImageType                              type,
                                                                    VkImageTiling                            tiling,
@@ -37189,7 +37192,7 @@ void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDev
  *
  * \param[in] physicalDevice                See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] pImageFormatInfoNext          See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] compressionControlFlags       VkImageCompressionControlEXT::compressionControlFlags
+ * \param[in] flagsCompressionEXT           VkImageCompressionControlEXT::flagsCompressionEXT
  * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
  * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
  * \param[in] format                        See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37204,7 +37207,7 @@ void cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDev
  */
 void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
                                                                  const void*                          pImageFormatInfoNext,
-                                                                 VkImageCompressionFlagsEXT           compressionControlFlags,
+                                                                 VkImageCompressionFlagsEXT           flagsCompressionEXT,
                                                                  uint32_t                             compressionControlPlaneCount,
                                                                  VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                                  VkFormat                             format,
@@ -37218,8 +37221,8 @@ void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevic
  * \brief Retrieves physical device image format properties 2 with VkImageCreateFlags2CreateInfoKHR chained.
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] createFlagsCreateFlags      VkImageCreateFlags2CreateInfoKHR::createFlagsCreateFlags
+ * \param[out] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags2KHR                   VkImageCreateFlags2CreateInfoKHR::flags2KHR
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37231,8 +37234,8 @@ void cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevic
  * \retval None
  */
 void cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                           const void*               pImageFormatInfoNext,
-                                                           VkImageCreateFlags2KHR    createFlagsCreateFlags,
+                                                           void*                     pImageFormatInfoNext,
+                                                           VkImageCreateFlags2KHR    flags2KHR,
                                                            VkFormat                  format,
                                                            VkImageType               type,
                                                            VkImageTiling             tiling,
@@ -37272,7 +37275,7 @@ void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          phy
  * \brief Retrieves physical device image format properties 2 with VkImageStencilUsage2CreateInfoKHR chained.
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] stencilUsage                VkImageStencilUsage2CreateInfoKHR::stencilUsage
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37285,7 +37288,7 @@ void cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          phy
  * \retval None
  */
 void cvkGetPhysicalDeviceImageStencilFormatUsage2Properties(VkPhysicalDevice          physicalDevice,
-                                                            const void*               pImageFormatInfoNext,
+                                                            void*                     pImageFormatInfoNext,
                                                             VkImageUsageFlags2KHR     stencilUsage,
                                                             VkFormat                  format,
                                                             VkImageType               type,
@@ -37324,8 +37327,8 @@ void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice     
  * \brief Retrieves physical device image format properties 2 with VkImageUsageFlags2CreateInfoKHR chained.
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] usageFlagsCreateUsage       VkImageUsageFlags2CreateInfoKHR::usageFlagsCreateUsage
+ * \param[out] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage2KHR                   VkImageUsageFlags2CreateInfoKHR::usage2KHR
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37337,8 +37340,8 @@ void cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice     
  * \retval None
  */
 void cvkGetPhysicalDeviceImageUsageFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
-                                                          const void*               pImageFormatInfoNext,
-                                                          VkImageUsageFlags2KHR     usageFlagsCreateUsage,
+                                                          void*                     pImageFormatInfoNext,
+                                                          VkImageUsageFlags2KHR     usage2KHR,
                                                           VkFormat                  format,
                                                           VkImageType               type,
                                                           VkImageTiling             tiling,
@@ -37351,7 +37354,7 @@ void cvkGetPhysicalDeviceImageUsageFormatFlags2Properties(VkPhysicalDevice      
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] opticalFlowUsage            VkOpticalFlowImageFormatInfoNV::opticalFlowUsage
+ * \param[in] usageOpticalFlowNV          VkOpticalFlowImageFormatInfoNV::usageOpticalFlowNV
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37364,7 +37367,7 @@ void cvkGetPhysicalDeviceImageUsageFormatFlags2Properties(VkPhysicalDevice      
  */
 void cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
                                                           const void*               pImageFormatInfoNext,
-                                                          VkOpticalFlowUsageFlagsNV opticalFlowUsage,
+                                                          VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
                                                           VkFormat                  format,
                                                           VkImageType               type,
                                                           VkImageTiling             tiling,
@@ -37434,7 +37437,7 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
  * \brief Retrieves physical device image format properties 2 with VkPhysicalDeviceImageViewImageFormatInfoEXT chained.
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] imageViewType               VkPhysicalDeviceImageViewImageFormatInfoEXT::imageViewType
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37447,7 +37450,7 @@ void cvkGetPhysicalDeviceImageDrmFormatModifierInfo(VkPhysicalDevice          ph
  * \retval None
  */
 void cvkGetPhysicalDeviceImageViewImageFormatInfo(VkPhysicalDevice          physicalDevice,
-                                                  const void*               pImageFormatInfoNext,
+                                                  void*                     pImageFormatInfoNext,
                                                   VkImageViewType           imageViewType,
                                                   VkFormat                  format,
                                                   VkImageType               type,
@@ -37487,21 +37490,21 @@ void cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDevice 
 /**
  * \brief Retrieves physical device sparse image format properties 2 with VkImageUsageFlags2CreateInfoKHR chained.
  *
- * \param[in] physicalDevice         See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] pNext                  See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] usageFlagsCreateUsage  VkImageUsageFlags2CreateInfoKHR::usageFlagsCreateUsage
- * \param[in] format                 See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] type                   See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] samples                See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] usage                  See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] tiling                 See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] pProperties            See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[out] pNext           See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] usage2KHR       VkImageUsageFlags2CreateInfoKHR::usage2KHR
+ * \param[in] format          See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] type            See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] samples         See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] usage           See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] tiling          See cvkGetPhysicalDeviceSparseImageFormatInfo2
+ * \param[in] pProperties     See cvkGetPhysicalDeviceSparseImageFormatInfo2
  *
  * \return The uint32_t returned by the command.
  */
 uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2Properties(VkPhysicalDevice               physicalDevice,
-                                                                    const void*                    pNext,
-                                                                    VkImageUsageFlags2KHR          usageFlagsCreateUsage,
+                                                                    void*                          pNext,
+                                                                    VkImageUsageFlags2KHR          usage2KHR,
                                                                     VkFormat                       format,
                                                                     VkImageType                    type,
                                                                     VkSampleCountFlagBits          samples,
@@ -37512,7 +37515,7 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2Properties(VkPhysicalDe
  * \brief Retrieves physical device surface capabilities 2 with VkSurfacePresentModeKHR chained.
  *
  * \param[in] physicalDevice            See cvkGetPhysicalDeviceSurfaceCapabilities2Info
- * \param[in] pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[out] pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[in] presentMode               VkSurfacePresentModeKHR::presentMode
  * \param[in] surface                   See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilitiesNext  See cvkGetPhysicalDeviceSurfaceCapabilities2Info
@@ -37521,7 +37524,7 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2Properties(VkPhysicalDe
  * \retval None
  */
 void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
-                                                        const void*                pSurfaceInfoNext,
+                                                        void*                      pSurfaceInfoNext,
                                                         VkPresentModeKHR           presentMode,
                                                         VkSurfaceKHR               surface,
                                                         void*                      pSurfaceCapabilitiesNext,
@@ -37530,7 +37533,7 @@ void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice        
  * \brief Retrieves physical device surface formats 2 with VkSurfacePresentModeKHR chained.
  *
  * \param[in] physicalDevice   See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] pNext            See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[out] pNext            See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[in] presentMode      VkSurfacePresentModeKHR::presentMode
  * \param[in] surface          See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[in] pSurfaceFormats  See cvkGetPhysicalDeviceSurfaceFormats2Info
@@ -37538,7 +37541,7 @@ void cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice        
  * \return The uint32_t returned by the command.
  */
 uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physicalDevice,
-                                                       const void*         pNext,
+                                                       void*               pNext,
                                                        VkPresentModeKHR    presentMode,
                                                        VkSurfaceKHR        surface,
                                                        VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS]);
@@ -37815,7 +37818,7 @@ void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance        
  *
  * \param[in] instance                See cvkGetPhysicalDeviceVideoFormatInfo
  * \param[in] physicalDevice          See cvkGetPhysicalDeviceVideoFormatInfo
- * \param[in] pNext                   See cvkGetPhysicalDeviceVideoFormatInfo
+ * \param[out] pNext                   See cvkGetPhysicalDeviceVideoFormatInfo
  * \param[in] usage                   VkImageUsageFlags2CreateInfoKHR::usage
  * \param[in] imageUsage              See cvkGetPhysicalDeviceVideoFormatInfo
  * \param[in] pVideoFormatProperties  See cvkGetPhysicalDeviceVideoFormatInfo
@@ -37824,7 +37827,7 @@ void cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkInstance        
  */
 uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2Properties(VkInstance                 instance,
                                                                    VkPhysicalDevice           physicalDevice,
-                                                                   const void*                pNext,
+                                                                   void*                      pNext,
                                                                    VkImageUsageFlags2KHR      usage,
                                                                    VkImageUsageFlags          imageUsage,
                                                                    VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES]);
@@ -37937,7 +37940,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithCompilerControlInfo(VkDevice   
  *
  * \param[in] device                   See cvkGetPipelineIndirectMemoryRequirements
  * \param[in] pCreateInfoNext          See cvkGetPipelineIndirectMemoryRequirements
- * \param[in] flags2CreateFlags        VkPipelineCreateFlags2CreateInfo::flags2CreateFlags
+ * \param[in] flags2                   VkPipelineCreateFlags2CreateInfo::flags2
  * \param[in] flags                    See cvkGetPipelineIndirectMemoryRequirements
  * \param[in] stage                    See cvkGetPipelineIndirectMemoryRequirements
  * \param[in] layout                   See cvkGetPipelineIndirectMemoryRequirements
@@ -37950,7 +37953,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithCompilerControlInfo(VkDevice   
  */
 void cvkGetPipelineIndirectMemoryRequirementsWithFlags2Info(VkDevice                        device,
                                                             const void*                     pCreateInfoNext,
-                                                            VkPipelineCreateFlags2          flags2CreateFlags,
+                                                            VkPipelineCreateFlags2          flags2,
                                                             VkPipelineCreateFlags           flags,
                                                             VkPipelineShaderStageCreateInfo stage,
                                                             VkPipelineLayout                layout,
@@ -38024,7 +38027,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithRobustnessInfo(VkDevice        
  * \brief Retrieves pipeline indirect memory requirements with VkSubpassShadingPipelineCreateInfoHUAWEI chained.
  *
  * \param[in] device                   See cvkGetPipelineIndirectMemoryRequirements
- * \param[in] pCreateInfoNext          See cvkGetPipelineIndirectMemoryRequirements
+ * \param[out] pCreateInfoNext          See cvkGetPipelineIndirectMemoryRequirements
  * \param[in] renderPass               VkSubpassShadingPipelineCreateInfoHUAWEI::renderPass
  * \param[in] subpass                  VkSubpassShadingPipelineCreateInfoHUAWEI::subpass
  * \param[in] flags                    See cvkGetPipelineIndirectMemoryRequirements
@@ -38038,7 +38041,7 @@ void cvkGetPipelineIndirectMemoryRequirementsWithRobustnessInfo(VkDevice        
  * \retval None
  */
 void cvkGetPipelineIndirectMemoryRequirementsWithSubpassShadingInfo(VkDevice                        device,
-                                                                    const void*                     pCreateInfoNext,
+                                                                    void*                           pCreateInfoNext,
                                                                     VkRenderPass                    renderPass,
                                                                     uint32_t                        subpass,
                                                                     VkPipelineCreateFlags           flags,
@@ -38426,22 +38429,22 @@ VkResult cvkQueuePresentWithSetPresentConfigInfo(VkQueue               queue,
 /**
  * \brief Queues present with VkSwapchainPresentFenceInfoKHR chained.
  *
- * \param[in] queue                         See cvkQueuePresent
- * \param[in] pNext                         See cvkQueuePresent
- * \param[in] swapchainFenceSwapchainCount  VkSwapchainPresentFenceInfoKHR::swapchainFenceSwapchainCount
- * \param[in] pFences                       VkSwapchainPresentFenceInfoKHR::pFences
- * \param[in] waitSemaphoreCount            See cvkQueuePresent
- * \param[in] pWaitSemaphores               See cvkQueuePresent
- * \param[in] swapchainCount                See cvkQueuePresent
- * \param[in] pSwapchains                   See cvkQueuePresent
- * \param[in] pImageIndices                 See cvkQueuePresent
- * \param[out] pResults                      See cvkQueuePresent
+ * \param[in] queue                                See cvkQueuePresent
+ * \param[in] pNext                                See cvkQueuePresent
+ * \param[in] swapchainPresentFenceSwapchainCount  VkSwapchainPresentFenceInfoKHR::swapchainPresentFenceSwapchainCount
+ * \param[in] pFences                              VkSwapchainPresentFenceInfoKHR::pFences
+ * \param[in] waitSemaphoreCount                   See cvkQueuePresent
+ * \param[in] pWaitSemaphores                      See cvkQueuePresent
+ * \param[in] swapchainCount                       See cvkQueuePresent
+ * \param[in] pSwapchains                          See cvkQueuePresent
+ * \param[in] pImageIndices                        See cvkQueuePresent
+ * \param[out] pResults                             See cvkQueuePresent
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
 VkResult cvkQueuePresentWithSwapchainPresentFenceInfo(VkQueue               queue,
                                                       const void*           pNext,
-                                                      uint32_t              swapchainFenceSwapchainCount,
+                                                      uint32_t              swapchainPresentFenceSwapchainCount,
                                                       const VkFence*        pFences,
                                                       uint32_t              waitSemaphoreCount,
                                                       const VkSemaphore*    pWaitSemaphores,
@@ -38452,22 +38455,22 @@ VkResult cvkQueuePresentWithSwapchainPresentFenceInfo(VkQueue               queu
 /**
  * \brief Queues present with VkSwapchainPresentModeInfoKHR chained.
  *
- * \param[in] queue                        See cvkQueuePresent
- * \param[in] pNext                        See cvkQueuePresent
- * \param[in] swapchainModeSwapchainCount  VkSwapchainPresentModeInfoKHR::swapchainModeSwapchainCount
- * \param[in] pPresentModes                VkSwapchainPresentModeInfoKHR::pPresentModes
- * \param[in] waitSemaphoreCount           See cvkQueuePresent
- * \param[in] pWaitSemaphores              See cvkQueuePresent
- * \param[in] swapchainCount               See cvkQueuePresent
- * \param[in] pSwapchains                  See cvkQueuePresent
- * \param[in] pImageIndices                See cvkQueuePresent
- * \param[out] pResults                     See cvkQueuePresent
+ * \param[in] queue                               See cvkQueuePresent
+ * \param[in] pNext                               See cvkQueuePresent
+ * \param[in] swapchainPresentModeSwapchainCount  VkSwapchainPresentModeInfoKHR::swapchainPresentModeSwapchainCount
+ * \param[in] pPresentModes                       VkSwapchainPresentModeInfoKHR::pPresentModes
+ * \param[in] waitSemaphoreCount                  See cvkQueuePresent
+ * \param[in] pWaitSemaphores                     See cvkQueuePresent
+ * \param[in] swapchainCount                      See cvkQueuePresent
+ * \param[in] pSwapchains                         See cvkQueuePresent
+ * \param[in] pImageIndices                       See cvkQueuePresent
+ * \param[out] pResults                            See cvkQueuePresent
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
 VkResult cvkQueuePresentWithSwapchainPresentModeInfo(VkQueue                 queue,
                                                      const void*             pNext,
-                                                     uint32_t                swapchainModeSwapchainCount,
+                                                     uint32_t                swapchainPresentModeSwapchainCount,
                                                      const VkPresentModeKHR* pPresentModes,
                                                      uint32_t                waitSemaphoreCount,
                                                      const VkSemaphore*      pWaitSemaphores,
@@ -38481,8 +38484,8 @@ VkResult cvkQueuePresentWithSwapchainPresentModeInfo(VkQueue                 que
  * \param[in] instance                   See cvkSubmitDebugUtilsMessage
  * \param[in] messageSeverity            See cvkSubmitDebugUtilsMessage
  * \param[in] messageTypes               See cvkSubmitDebugUtilsMessage
- * \param[in] pNext                      See cvkSubmitDebugUtilsMessage
- * \param[in] deviceAddressBindingFlags  VkDeviceAddressBindingCallbackDataEXT::deviceAddressBindingFlags
+ * \param[out] pNext                      See cvkSubmitDebugUtilsMessage
+ * \param[in] flagsDeviceAddressBinding  VkDeviceAddressBindingCallbackDataEXT::flagsDeviceAddressBinding
  * \param[in] baseAddress                VkDeviceAddressBindingCallbackDataEXT::baseAddress
  * \param[in] size                       VkDeviceAddressBindingCallbackDataEXT::size
  * \param[in] bindingType                VkDeviceAddressBindingCallbackDataEXT::bindingType
@@ -38502,8 +38505,8 @@ VkResult cvkQueuePresentWithSwapchainPresentModeInfo(VkQueue                 que
 void cvkSubmitDebugUtilsMessageWithDeviceAddressBindingInfo(VkInstance                                instance,
                                                             VkDebugUtilsMessageSeverityFlagBitsEXT    messageSeverity,
                                                             VkDebugUtilsMessageTypeFlagsEXT           messageTypes,
-                                                            const void*                               pNext,
-                                                            VkDeviceAddressBindingFlagsEXT            deviceAddressBindingFlags,
+                                                            void*                                     pNext,
+                                                            VkDeviceAddressBindingFlagsEXT            flagsDeviceAddressBinding,
                                                             VkDeviceAddress                           baseAddress,
                                                             VkDeviceSize                              size,
                                                             VkDeviceAddressBindingTypeEXT             bindingType,
@@ -38689,32 +38692,32 @@ void cvkBindPlaneImageMemory(VkDevice device, const void* pNext, VkImageAspectFl
  * \param[in] commandBuffer  VkCommandBuffer value
  * \param[in] bufferCount    uint32_t value
  * \param[in] ppNexts        Optional per-element extension chains attached to VkBufferUsageFlags2CreateInfo, or NULL
- * \param[in] pUsages        VkBufferUsageFlags2CreateInfo::usage per element
- * \param[in] pAddresss      VkDescriptorBufferBindingInfoEXT::address per element
+ * \param[in] pUsage2s       VkBufferUsageFlags2CreateInfo::usage per element
+ * \param[in] pAddress       VkDescriptorBufferBindingInfoEXT::address per element
  * \param[in] pUsages        VkDescriptorBufferBindingInfoEXT::usage per element
  *
  * \retval None
  */
-void cvkCmdUsageFlags2DescriptorBufferBindings(VkDevice                   device,
-                                               VkCommandBuffer            commandBuffer,
-                                               uint32_t                   bufferCount,
-                                               const void* const*         ppNexts,
-                                               const VkBufferUsageFlags2* pUsages,
-                                               const VkDeviceAddress*     pAddresss,
-                                               const VkBufferUsageFlags*  pUsages);
+void cvkCmdBindUsageFlags2DescriptorBuffers(VkDevice                   device,
+                                            VkCommandBuffer            commandBuffer,
+                                            uint32_t                   bufferCount,
+                                            const void* const*         ppNexts,
+                                            const VkBufferUsageFlags2* pUsage2s,
+                                            const VkDeviceAddress*     pAddress,
+                                            const VkBufferUsageFlags*  pUsages);
 /**
  * \brief Records bind descriptor buffers for one element with VkBufferUsageFlags2CreateInfo chained.
  *
  * \param[in] device         Parent handle used to resolve the extension command
  * \param[in] commandBuffer  VkCommandBuffer value
  * \param[in] pNext          Optional extension chain attached to VkBufferUsageFlags2CreateInfo, or NULL
- * \param[in] usage          VkBufferUsageFlags2CreateInfo::usage
+ * \param[in] usage2         VkBufferUsageFlags2CreateInfo::usage
  * \param[in] address        VkDescriptorBufferBindingInfoEXT::address
  * \param[in] usage          VkDescriptorBufferBindingInfoEXT::usage
  *
  * \retval None
  */
-void cvkCmdUsageFlags2DescriptorBufferBinding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBufferUsageFlags2 usage, VkDeviceAddress address, VkBufferUsageFlags usage);
+void cvkCmdBindUsageFlags2DescriptorBuffer(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBufferUsageFlags2 usage2, VkDeviceAddress address, VkBufferUsageFlags usage);
 /**
  * \brief Records bind descriptor buffers with VkDescriptorBufferBindingPushDescriptorBufferHandleEXT chained to every element.
  *
@@ -38723,18 +38726,18 @@ void cvkCmdUsageFlags2DescriptorBufferBinding(VkDevice device, VkCommandBuffer c
  * \param[in] bufferCount    uint32_t value
  * \param[in] ppNexts        Optional per-element extension chains attached to VkDescriptorBufferBindingPushDescriptorBufferHandleEXT, or NULL
  * \param[in] pBuffers       VkDescriptorBufferBindingPushDescriptorBufferHandleEXT::buffer per element
- * \param[in] pAddresss      VkDescriptorBufferBindingInfoEXT::address per element
+ * \param[in] pAddress       VkDescriptorBufferBindingInfoEXT::address per element
  * \param[in] pUsages        VkDescriptorBufferBindingInfoEXT::usage per element
  *
  * \retval None
  */
-void cvkCmdPushDescriptorBufferHandleDescriptorBufferBindings(VkDevice                  device,
-                                                              VkCommandBuffer           commandBuffer,
-                                                              uint32_t                  bufferCount,
-                                                              const void* const*        ppNexts,
-                                                              const VkBuffer*           pBuffers,
-                                                              const VkDeviceAddress*    pAddresss,
-                                                              const VkBufferUsageFlags* pUsages);
+void cvkCmdBindPushDescriptorBufferHandleDescriptorBuffers(VkDevice                  device,
+                                                           VkCommandBuffer           commandBuffer,
+                                                           uint32_t                  bufferCount,
+                                                           const void* const*        ppNexts,
+                                                           const VkBuffer*           pBuffers,
+                                                           const VkDeviceAddress*    pAddress,
+                                                           const VkBufferUsageFlags* pUsages);
 /**
  * \brief Records bind descriptor buffers for one element with VkDescriptorBufferBindingPushDescriptorBufferHandleEXT chained.
  *
@@ -38747,7 +38750,7 @@ void cvkCmdPushDescriptorBufferHandleDescriptorBufferBindings(VkDevice          
  *
  * \retval None
  */
-void cvkCmdPushDescriptorBufferHandleDescriptorBufferBinding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBuffer buffer, VkDeviceAddress address, VkBufferUsageFlags usage);
+void cvkCmdBindPushDescriptorBufferHandleDescriptorBuffer(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBuffer buffer, VkDeviceAddress address, VkBufferUsageFlags usage);
 /**
  * \brief Creates a compute pipelines with VkComputePipelineIndirectBufferInfoNV chained to every element.
  *
@@ -38755,10 +38758,10 @@ void cvkCmdPushDescriptorBufferHandleDescriptorBufferBinding(VkDevice device, Vk
  * \param[in] pipelineCache                          VkPipelineCache value
  * \param[in] createInfoCount                        uint32_t value
  * \param[in] ppNexts                                Optional per-element extension chains attached to VkComputePipelineIndirectBufferInfoNV, or NULL
- * \param[in] pDeviceAddresss                        VkComputePipelineIndirectBufferInfoNV::deviceAddress per element
+ * \param[in] pDeviceAddress                         VkComputePipelineIndirectBufferInfoNV::deviceAddress per element
  * \param[in] pSizes                                 VkComputePipelineIndirectBufferInfoNV::size per element
  * \param[in] pPipelineDeviceAddressCaptureReplaies  VkComputePipelineIndirectBufferInfoNV::pipelineDeviceAddressCaptureReplay per element
- * \param[in] pFlagss                                VkComputePipelineCreateInfo::flags per element
+ * \param[in] pFlags                                 VkComputePipelineCreateInfo::flags per element
  * \param[in] pStages                                VkComputePipelineCreateInfo::stage per element
  * \param[in] pLayouts                               VkComputePipelineCreateInfo::layout per element
  * \param[in] pBasePipelineHandles                   VkComputePipelineCreateInfo::basePipelineHandle per element
@@ -38772,10 +38775,10 @@ VkResult cvkCreateIndirectBufferComputePipelines(VkDevice                       
                                                  VkPipelineCache                        pipelineCache,
                                                  uint32_t                               createInfoCount,
                                                  const void* const*                     ppNexts,
-                                                 const VkDeviceAddress*                 pDeviceAddresss,
+                                                 const VkDeviceAddress*                 pDeviceAddress,
                                                  const VkDeviceSize*                    pSizes,
                                                  const VkDeviceAddress*                 pPipelineDeviceAddressCaptureReplaies,
-                                                 const VkPipelineCreateFlags*           pFlagss,
+                                                 const VkPipelineCreateFlags*           pFlags,
                                                  const VkPipelineShaderStageCreateInfo* pStages,
                                                  const VkPipelineLayout*                pLayouts,
                                                  const VkPipeline*                      pBasePipelineHandles,
@@ -38817,18 +38820,18 @@ VkResult cvkCreateIndirectBufferComputePipeline(VkDevice                        
 /**
  * \brief Creates a compute pipelines with VkPipelineCompilerControlCreateInfoAMD chained to every element.
  *
- * \param[in] device                  VkDevice value
- * \param[in] pipelineCache           VkPipelineCache value
- * \param[in] createInfoCount         uint32_t value
- * \param[in] ppNexts                 Optional per-element extension chains attached to VkPipelineCompilerControlCreateInfoAMD, or NULL
- * \param[in] pCompilerControlFlagss  VkPipelineCompilerControlCreateInfoAMD::compilerControlFlags per element
- * \param[in] pFlagss                 VkComputePipelineCreateInfo::flags per element
- * \param[in] pStages                 VkComputePipelineCreateInfo::stage per element
- * \param[in] pLayouts                VkComputePipelineCreateInfo::layout per element
- * \param[in] pBasePipelineHandles    VkComputePipelineCreateInfo::basePipelineHandle per element
- * \param[in] pBasePipelineIndices    VkComputePipelineCreateInfo::basePipelineIndex per element
- * \param[in] pAllocator              Optional allocation callbacks, or NULL
- * \param[out] pPipelines              Receives the VkPipeline
+ * \param[in] device                 VkDevice value
+ * \param[in] pipelineCache          VkPipelineCache value
+ * \param[in] createInfoCount        uint32_t value
+ * \param[in] ppNexts                Optional per-element extension chains attached to VkPipelineCompilerControlCreateInfoAMD, or NULL
+ * \param[in] pCompilerControlFlags  VkPipelineCompilerControlCreateInfoAMD::compilerControlFlags per element
+ * \param[in] pFlags                 VkComputePipelineCreateInfo::flags per element
+ * \param[in] pStages                VkComputePipelineCreateInfo::stage per element
+ * \param[in] pLayouts               VkComputePipelineCreateInfo::layout per element
+ * \param[in] pBasePipelineHandles   VkComputePipelineCreateInfo::basePipelineHandle per element
+ * \param[in] pBasePipelineIndices   VkComputePipelineCreateInfo::basePipelineIndex per element
+ * \param[in] pAllocator             Optional allocation callbacks, or NULL
+ * \param[out] pPipelines             Receives the VkPipeline
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
@@ -38836,8 +38839,8 @@ VkResult cvkCreateCompilerControlComputePipelines(VkDevice                      
                                                   VkPipelineCache                          pipelineCache,
                                                   uint32_t                                 createInfoCount,
                                                   const void* const*                       ppNexts,
-                                                  const VkPipelineCompilerControlFlagsAMD* pCompilerControlFlagss,
-                                                  const VkPipelineCreateFlags*             pFlagss,
+                                                  const VkPipelineCompilerControlFlagsAMD* pCompilerControlFlags,
+                                                  const VkPipelineCreateFlags*             pFlags,
                                                   const VkPipelineShaderStageCreateInfo*   pStages,
                                                   const VkPipelineLayout*                  pLayouts,
                                                   const VkPipeline*                        pBasePipelineHandles,
@@ -38879,8 +38882,8 @@ VkResult cvkCreateCompilerControlComputePipeline(VkDevice                       
  * \param[in] pipelineCache         VkPipelineCache value
  * \param[in] createInfoCount       uint32_t value
  * \param[in] ppNexts               Optional per-element extension chains attached to VkPipelineCreateFlags2CreateInfo, or NULL
- * \param[in] pFlagss               VkPipelineCreateFlags2CreateInfo::flags per element
- * \param[in] pFlagss               VkComputePipelineCreateInfo::flags per element
+ * \param[in] pFlags2s              VkPipelineCreateFlags2CreateInfo::flags per element
+ * \param[in] pFlags                VkComputePipelineCreateInfo::flags per element
  * \param[in] pStages               VkComputePipelineCreateInfo::stage per element
  * \param[in] pLayouts              VkComputePipelineCreateInfo::layout per element
  * \param[in] pBasePipelineHandles  VkComputePipelineCreateInfo::basePipelineHandle per element
@@ -38894,8 +38897,8 @@ VkResult cvkCreateFlags2ComputePipelines(VkDevice                               
                                          VkPipelineCache                        pipelineCache,
                                          uint32_t                               createInfoCount,
                                          const void* const*                     ppNexts,
-                                         const VkPipelineCreateFlags2*          pFlagss,
-                                         const VkPipelineCreateFlags*           pFlagss,
+                                         const VkPipelineCreateFlags2*          pFlags2s,
+                                         const VkPipelineCreateFlags*           pFlags,
                                          const VkPipelineShaderStageCreateInfo* pStages,
                                          const VkPipelineLayout*                pLayouts,
                                          const VkPipeline*                      pBasePipelineHandles,
@@ -38908,7 +38911,7 @@ VkResult cvkCreateFlags2ComputePipelines(VkDevice                               
  * \param[in] device              VkDevice value
  * \param[in] pipelineCache       VkPipelineCache value
  * \param[in] pNext               Optional extension chain attached to VkPipelineCreateFlags2CreateInfo, or NULL
- * \param[in] flags               VkPipelineCreateFlags2CreateInfo::flags
+ * \param[in] flags2              VkPipelineCreateFlags2CreateInfo::flags
  * \param[in] flags               VkComputePipelineCreateInfo::flags
  * \param[in] stage               VkComputePipelineCreateInfo::stage
  * \param[in] layout              VkComputePipelineCreateInfo::layout
@@ -38922,7 +38925,7 @@ VkResult cvkCreateFlags2ComputePipelines(VkDevice                               
 VkResult cvkCreateFlags2ComputePipeline(VkDevice                        device,
                                         VkPipelineCache                 pipelineCache,
                                         const void*                     pNext,
-                                        VkPipelineCreateFlags2          flags,
+                                        VkPipelineCreateFlags2          flags2,
                                         VkPipelineCreateFlags           flags,
                                         VkPipelineShaderStageCreateInfo stage,
                                         VkPipelineLayout                layout,
@@ -38937,11 +38940,11 @@ VkResult cvkCreateFlags2ComputePipeline(VkDevice                        device,
  * \param[in] pipelineCache         VkPipelineCache value
  * \param[in] createInfoCount       uint32_t value
  * \param[in] ppNexts               Optional per-element extension chains attached to VkPipelineRobustnessCreateInfo, or NULL
- * \param[in] pStorageBufferss      VkPipelineRobustnessCreateInfo::storageBuffers per element
- * \param[in] pUniformBufferss      VkPipelineRobustnessCreateInfo::uniformBuffers per element
- * \param[in] pVertexInputss        VkPipelineRobustnessCreateInfo::vertexInputs per element
- * \param[in] pImagess              VkPipelineRobustnessCreateInfo::images per element
- * \param[in] pFlagss               VkComputePipelineCreateInfo::flags per element
+ * \param[in] pStorageBuffers       VkPipelineRobustnessCreateInfo::storageBuffers per element
+ * \param[in] pUniformBuffers       VkPipelineRobustnessCreateInfo::uniformBuffers per element
+ * \param[in] pVertexInputs         VkPipelineRobustnessCreateInfo::vertexInputs per element
+ * \param[in] pImages               VkPipelineRobustnessCreateInfo::images per element
+ * \param[in] pFlags                VkComputePipelineCreateInfo::flags per element
  * \param[in] pStages               VkComputePipelineCreateInfo::stage per element
  * \param[in] pLayouts              VkComputePipelineCreateInfo::layout per element
  * \param[in] pBasePipelineHandles  VkComputePipelineCreateInfo::basePipelineHandle per element
@@ -38955,11 +38958,11 @@ VkResult cvkCreateRobustnessComputePipelines(VkDevice                           
                                              VkPipelineCache                           pipelineCache,
                                              uint32_t                                  createInfoCount,
                                              const void* const*                        ppNexts,
-                                             const VkPipelineRobustnessBufferBehavior* pStorageBufferss,
-                                             const VkPipelineRobustnessBufferBehavior* pUniformBufferss,
-                                             const VkPipelineRobustnessBufferBehavior* pVertexInputss,
-                                             const VkPipelineRobustnessImageBehavior*  pImagess,
-                                             const VkPipelineCreateFlags*              pFlagss,
+                                             const VkPipelineRobustnessBufferBehavior* pStorageBuffers,
+                                             const VkPipelineRobustnessBufferBehavior* pUniformBuffers,
+                                             const VkPipelineRobustnessBufferBehavior* pVertexInputs,
+                                             const VkPipelineRobustnessImageBehavior*  pImages,
+                                             const VkPipelineCreateFlags*              pFlags,
                                              const VkPipelineShaderStageCreateInfo*    pStages,
                                              const VkPipelineLayout*                   pLayouts,
                                              const VkPipeline*                         pBasePipelineHandles,
@@ -39007,9 +39010,9 @@ VkResult cvkCreateRobustnessComputePipeline(VkDevice                           d
  * \param[in] pipelineCache         VkPipelineCache value
  * \param[in] createInfoCount       uint32_t value
  * \param[in] ppNexts               Optional per-element extension chains attached to VkSubpassShadingPipelineCreateInfoHUAWEI, or NULL
- * \param[in] pRenderPasss          VkSubpassShadingPipelineCreateInfoHUAWEI::renderPass per element
- * \param[in] pSubpasss             VkSubpassShadingPipelineCreateInfoHUAWEI::subpass per element
- * \param[in] pFlagss               VkComputePipelineCreateInfo::flags per element
+ * \param[in] pRenderPass           VkSubpassShadingPipelineCreateInfoHUAWEI::renderPass per element
+ * \param[in] pSubpass              VkSubpassShadingPipelineCreateInfoHUAWEI::subpass per element
+ * \param[in] pFlags                VkComputePipelineCreateInfo::flags per element
  * \param[in] pStages               VkComputePipelineCreateInfo::stage per element
  * \param[in] pLayouts              VkComputePipelineCreateInfo::layout per element
  * \param[in] pBasePipelineHandles  VkComputePipelineCreateInfo::basePipelineHandle per element
@@ -39022,10 +39025,10 @@ VkResult cvkCreateRobustnessComputePipeline(VkDevice                           d
 VkResult cvkCreateSubpassShadingComputePipelines(VkDevice                               device,
                                                  VkPipelineCache                        pipelineCache,
                                                  uint32_t                               createInfoCount,
-                                                 const void* const*                     ppNexts,
-                                                 const VkRenderPass*                    pRenderPasss,
-                                                 const uint32_t*                        pSubpasss,
-                                                 const VkPipelineCreateFlags*           pFlagss,
+                                                 void* const*                           ppNexts,
+                                                 const VkRenderPass*                    pRenderPass,
+                                                 const uint32_t*                        pSubpass,
+                                                 const VkPipelineCreateFlags*           pFlags,
                                                  const VkPipelineShaderStageCreateInfo* pStages,
                                                  const VkPipelineLayout*                pLayouts,
                                                  const VkPipeline*                      pBasePipelineHandles,
@@ -39052,7 +39055,7 @@ VkResult cvkCreateSubpassShadingComputePipelines(VkDevice                       
  */
 VkResult cvkCreateSubpassShadingComputePipeline(VkDevice                        device,
                                                 VkPipelineCache                 pipelineCache,
-                                                const void*                     pNext,
+                                                void*                           pNext,
                                                 VkRenderPass                    renderPass,
                                                 uint32_t                        subpass,
                                                 VkPipelineCreateFlags           flags,
@@ -39111,53 +39114,53 @@ void cvkGetSwapchainCalibratedTimestamp(VkDevice               device,
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerBlockMatchWindowCreateInfoQCOM chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerBlockMatchWindowCreateInfoQCOM, or NULL
- * \param[in] pWindowExtents             VkSamplerBlockMatchWindowCreateInfoQCOM::windowExtent per element
- * \param[in] pWindowCompareModes        VkSamplerBlockMatchWindowCreateInfoQCOM::windowCompareMode per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerBlockMatchWindowCreateInfoQCOM, or NULL
+ * \param[in] pWindowExtents            VkSamplerBlockMatchWindowCreateInfoQCOM::windowExtent per element
+ * \param[in] pWindowCompareModes       VkSamplerBlockMatchWindowCreateInfoQCOM::windowCompareMode per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteBlockMatchWindowSamplers(VkDevice                                 device,
-                                      uint32_t                                 samplerCount,
-                                      const void* const*                       ppNexts,
-                                      const VkExtent2D*                        pWindowExtents,
-                                      const VkBlockMatchWindowCompareModeQCOM* pWindowCompareModes,
-                                      const VkSamplerCreateFlags*              pFlagss,
-                                      const VkFilter*                          pMagFilters,
-                                      const VkFilter*                          pMinFilters,
-                                      const VkSamplerMipmapMode*               pMipmapModes,
-                                      const VkSamplerAddressMode*              pAddressModeUs,
-                                      const VkSamplerAddressMode*              pAddressModeVs,
-                                      const VkSamplerAddressMode*              pAddressModeWs,
-                                      const float*                             pMipLodBiass,
-                                      const VkBool32*                          pAnisotropyEnables,
-                                      const float*                             pMaxAnisotropies,
-                                      const VkBool32*                          pCompareEnables,
-                                      const VkCompareOp*                       pCompareOps,
-                                      const float*                             pMinLods,
-                                      const float*                             pMaxLods,
-                                      const VkBorderColor*                     pBorderColors,
-                                      const VkBool32*                          pUnnormalizedCoordinatess,
-                                      const VkHostAddressRangeEXT*             pDescriptors);
+void cvkWriteBlockMatchWindowSamplerDescriptors(VkDevice                                 device,
+                                                uint32_t                                 samplerCount,
+                                                const void* const*                       ppNexts,
+                                                const VkExtent2D*                        pWindowExtents,
+                                                const VkBlockMatchWindowCompareModeQCOM* pWindowCompareModes,
+                                                const VkSamplerCreateFlags*              pFlags,
+                                                const VkFilter*                          pMagFilters,
+                                                const VkFilter*                          pMinFilters,
+                                                const VkSamplerMipmapMode*               pMipmapModes,
+                                                const VkSamplerAddressMode*              pAddressModeUs,
+                                                const VkSamplerAddressMode*              pAddressModeVs,
+                                                const VkSamplerAddressMode*              pAddressModeWs,
+                                                const float*                             pMipLodBias,
+                                                const VkBool32*                          pAnisotropyEnables,
+                                                const float*                             pMaxAnisotropies,
+                                                const VkBool32*                          pCompareEnables,
+                                                const VkCompareOp*                       pCompareOps,
+                                                const float*                             pMinLods,
+                                                const float*                             pMaxLods,
+                                                const VkBorderColor*                     pBorderColors,
+                                                const VkBool32*                          pUnnormalizedCoordinates,
+                                                const VkHostAddressRangeEXT*             pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerBlockMatchWindowCreateInfoQCOM chained.
  *
@@ -39185,77 +39188,77 @@ void cvkWriteBlockMatchWindowSamplers(VkDevice                                 d
  *
  * \retval None
  */
-void cvkWriteBlockMatchWindowSampler(VkDevice                          device,
-                                     const void*                       pNext,
-                                     VkExtent2D                        windowExtent,
-                                     VkBlockMatchWindowCompareModeQCOM windowCompareMode,
-                                     VkSamplerCreateFlags              flags,
-                                     VkFilter                          magFilter,
-                                     VkFilter                          minFilter,
-                                     VkSamplerMipmapMode               mipmapMode,
-                                     VkSamplerAddressMode              addressModeU,
-                                     VkSamplerAddressMode              addressModeV,
-                                     VkSamplerAddressMode              addressModeW,
-                                     float                             mipLodBias,
-                                     VkBool32                          anisotropyEnable,
-                                     float                             maxAnisotropy,
-                                     VkBool32                          compareEnable,
-                                     VkCompareOp                       compareOp,
-                                     float                             minLod,
-                                     float                             maxLod,
-                                     VkBorderColor                     borderColor,
-                                     VkBool32                          unnormalizedCoordinates,
-                                     const VkHostAddressRangeEXT*      pDescriptors);
+void cvkWriteBlockMatchWindowSamplerDescriptor(VkDevice                          device,
+                                               const void*                       pNext,
+                                               VkExtent2D                        windowExtent,
+                                               VkBlockMatchWindowCompareModeQCOM windowCompareMode,
+                                               VkSamplerCreateFlags              flags,
+                                               VkFilter                          magFilter,
+                                               VkFilter                          minFilter,
+                                               VkSamplerMipmapMode               mipmapMode,
+                                               VkSamplerAddressMode              addressModeU,
+                                               VkSamplerAddressMode              addressModeV,
+                                               VkSamplerAddressMode              addressModeW,
+                                               float                             mipLodBias,
+                                               VkBool32                          anisotropyEnable,
+                                               float                             maxAnisotropy,
+                                               VkBool32                          compareEnable,
+                                               VkCompareOp                       compareOp,
+                                               float                             minLod,
+                                               float                             maxLod,
+                                               VkBorderColor                     borderColor,
+                                               VkBool32                          unnormalizedCoordinates,
+                                               const VkHostAddressRangeEXT*      pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerBorderColorComponentMappingCreateInfoEXT chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerBorderColorComponentMappingCreateInfoEXT, or NULL
- * \param[in] pComponentss               VkSamplerBorderColorComponentMappingCreateInfoEXT::components per element
- * \param[in] pSrgbs                     VkSamplerBorderColorComponentMappingCreateInfoEXT::srgb per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerBorderColorComponentMappingCreateInfoEXT, or NULL
+ * \param[in] pComponents               VkSamplerBorderColorComponentMappingCreateInfoEXT::components per element
+ * \param[in] pSrgbs                    VkSamplerBorderColorComponentMappingCreateInfoEXT::srgb per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteBorderColorComponentMappingSamplers(VkDevice                     device,
-                                                 uint32_t                     samplerCount,
-                                                 const void* const*           ppNexts,
-                                                 const VkComponentMapping*    pComponentss,
-                                                 const VkBool32*              pSrgbs,
-                                                 const VkSamplerCreateFlags*  pFlagss,
-                                                 const VkFilter*              pMagFilters,
-                                                 const VkFilter*              pMinFilters,
-                                                 const VkSamplerMipmapMode*   pMipmapModes,
-                                                 const VkSamplerAddressMode*  pAddressModeUs,
-                                                 const VkSamplerAddressMode*  pAddressModeVs,
-                                                 const VkSamplerAddressMode*  pAddressModeWs,
-                                                 const float*                 pMipLodBiass,
-                                                 const VkBool32*              pAnisotropyEnables,
-                                                 const float*                 pMaxAnisotropies,
-                                                 const VkBool32*              pCompareEnables,
-                                                 const VkCompareOp*           pCompareOps,
-                                                 const float*                 pMinLods,
-                                                 const float*                 pMaxLods,
-                                                 const VkBorderColor*         pBorderColors,
-                                                 const VkBool32*              pUnnormalizedCoordinatess,
-                                                 const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteBorderColorComponentMappingSamplerDescriptors(VkDevice                     device,
+                                                           uint32_t                     samplerCount,
+                                                           const void* const*           ppNexts,
+                                                           const VkComponentMapping*    pComponents,
+                                                           const VkBool32*              pSrgbs,
+                                                           const VkSamplerCreateFlags*  pFlags,
+                                                           const VkFilter*              pMagFilters,
+                                                           const VkFilter*              pMinFilters,
+                                                           const VkSamplerMipmapMode*   pMipmapModes,
+                                                           const VkSamplerAddressMode*  pAddressModeUs,
+                                                           const VkSamplerAddressMode*  pAddressModeVs,
+                                                           const VkSamplerAddressMode*  pAddressModeWs,
+                                                           const float*                 pMipLodBias,
+                                                           const VkBool32*              pAnisotropyEnables,
+                                                           const float*                 pMaxAnisotropies,
+                                                           const VkBool32*              pCompareEnables,
+                                                           const VkCompareOp*           pCompareOps,
+                                                           const float*                 pMinLods,
+                                                           const float*                 pMaxLods,
+                                                           const VkBorderColor*         pBorderColors,
+                                                           const VkBool32*              pUnnormalizedCoordinates,
+                                                           const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerBorderColorComponentMappingCreateInfoEXT chained.
  *
@@ -39283,75 +39286,75 @@ void cvkWriteBorderColorComponentMappingSamplers(VkDevice                     de
  *
  * \retval None
  */
-void cvkWriteBorderColorComponentMappingSampler(VkDevice                     device,
-                                                const void*                  pNext,
-                                                VkComponentMapping           components,
-                                                VkBool32                     srgb,
-                                                VkSamplerCreateFlags         flags,
-                                                VkFilter                     magFilter,
-                                                VkFilter                     minFilter,
-                                                VkSamplerMipmapMode          mipmapMode,
-                                                VkSamplerAddressMode         addressModeU,
-                                                VkSamplerAddressMode         addressModeV,
-                                                VkSamplerAddressMode         addressModeW,
-                                                float                        mipLodBias,
-                                                VkBool32                     anisotropyEnable,
-                                                float                        maxAnisotropy,
-                                                VkBool32                     compareEnable,
-                                                VkCompareOp                  compareOp,
-                                                float                        minLod,
-                                                float                        maxLod,
-                                                VkBorderColor                borderColor,
-                                                VkBool32                     unnormalizedCoordinates,
-                                                const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteBorderColorComponentMappingSamplerDescriptor(VkDevice                     device,
+                                                          const void*                  pNext,
+                                                          VkComponentMapping           components,
+                                                          VkBool32                     srgb,
+                                                          VkSamplerCreateFlags         flags,
+                                                          VkFilter                     magFilter,
+                                                          VkFilter                     minFilter,
+                                                          VkSamplerMipmapMode          mipmapMode,
+                                                          VkSamplerAddressMode         addressModeU,
+                                                          VkSamplerAddressMode         addressModeV,
+                                                          VkSamplerAddressMode         addressModeW,
+                                                          float                        mipLodBias,
+                                                          VkBool32                     anisotropyEnable,
+                                                          float                        maxAnisotropy,
+                                                          VkBool32                     compareEnable,
+                                                          VkCompareOp                  compareOp,
+                                                          float                        minLod,
+                                                          float                        maxLod,
+                                                          VkBorderColor                borderColor,
+                                                          VkBool32                     unnormalizedCoordinates,
+                                                          const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerCubicWeightsCreateInfoQCOM chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerCubicWeightsCreateInfoQCOM, or NULL
- * \param[in] pCubicWeightss             VkSamplerCubicWeightsCreateInfoQCOM::cubicWeights per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerCubicWeightsCreateInfoQCOM, or NULL
+ * \param[in] pCubicWeights             VkSamplerCubicWeightsCreateInfoQCOM::cubicWeights per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteCubicWeightsSamplers(VkDevice                        device,
-                                  uint32_t                        samplerCount,
-                                  const void* const*              ppNexts,
-                                  const VkCubicFilterWeightsQCOM* pCubicWeightss,
-                                  const VkSamplerCreateFlags*     pFlagss,
-                                  const VkFilter*                 pMagFilters,
-                                  const VkFilter*                 pMinFilters,
-                                  const VkSamplerMipmapMode*      pMipmapModes,
-                                  const VkSamplerAddressMode*     pAddressModeUs,
-                                  const VkSamplerAddressMode*     pAddressModeVs,
-                                  const VkSamplerAddressMode*     pAddressModeWs,
-                                  const float*                    pMipLodBiass,
-                                  const VkBool32*                 pAnisotropyEnables,
-                                  const float*                    pMaxAnisotropies,
-                                  const VkBool32*                 pCompareEnables,
-                                  const VkCompareOp*              pCompareOps,
-                                  const float*                    pMinLods,
-                                  const float*                    pMaxLods,
-                                  const VkBorderColor*            pBorderColors,
-                                  const VkBool32*                 pUnnormalizedCoordinatess,
-                                  const VkHostAddressRangeEXT*    pDescriptors);
+void cvkWriteCubicWeightsSamplerDescriptors(VkDevice                        device,
+                                            uint32_t                        samplerCount,
+                                            const void* const*              ppNexts,
+                                            const VkCubicFilterWeightsQCOM* pCubicWeights,
+                                            const VkSamplerCreateFlags*     pFlags,
+                                            const VkFilter*                 pMagFilters,
+                                            const VkFilter*                 pMinFilters,
+                                            const VkSamplerMipmapMode*      pMipmapModes,
+                                            const VkSamplerAddressMode*     pAddressModeUs,
+                                            const VkSamplerAddressMode*     pAddressModeVs,
+                                            const VkSamplerAddressMode*     pAddressModeWs,
+                                            const float*                    pMipLodBias,
+                                            const VkBool32*                 pAnisotropyEnables,
+                                            const float*                    pMaxAnisotropies,
+                                            const VkBool32*                 pCompareEnables,
+                                            const VkCompareOp*              pCompareOps,
+                                            const float*                    pMinLods,
+                                            const float*                    pMaxLods,
+                                            const VkBorderColor*            pBorderColors,
+                                            const VkBool32*                 pUnnormalizedCoordinates,
+                                            const VkHostAddressRangeEXT*    pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerCubicWeightsCreateInfoQCOM chained.
  *
@@ -39378,76 +39381,76 @@ void cvkWriteCubicWeightsSamplers(VkDevice                        device,
  *
  * \retval None
  */
-void cvkWriteCubicWeightsSampler(VkDevice                     device,
-                                 const void*                  pNext,
-                                 VkCubicFilterWeightsQCOM     cubicWeights,
-                                 VkSamplerCreateFlags         flags,
-                                 VkFilter                     magFilter,
-                                 VkFilter                     minFilter,
-                                 VkSamplerMipmapMode          mipmapMode,
-                                 VkSamplerAddressMode         addressModeU,
-                                 VkSamplerAddressMode         addressModeV,
-                                 VkSamplerAddressMode         addressModeW,
-                                 float                        mipLodBias,
-                                 VkBool32                     anisotropyEnable,
-                                 float                        maxAnisotropy,
-                                 VkBool32                     compareEnable,
-                                 VkCompareOp                  compareOp,
-                                 float                        minLod,
-                                 float                        maxLod,
-                                 VkBorderColor                borderColor,
-                                 VkBool32                     unnormalizedCoordinates,
-                                 const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteCubicWeightsSamplerDescriptor(VkDevice                     device,
+                                           const void*                  pNext,
+                                           VkCubicFilterWeightsQCOM     cubicWeights,
+                                           VkSamplerCreateFlags         flags,
+                                           VkFilter                     magFilter,
+                                           VkFilter                     minFilter,
+                                           VkSamplerMipmapMode          mipmapMode,
+                                           VkSamplerAddressMode         addressModeU,
+                                           VkSamplerAddressMode         addressModeV,
+                                           VkSamplerAddressMode         addressModeW,
+                                           float                        mipLodBias,
+                                           VkBool32                     anisotropyEnable,
+                                           float                        maxAnisotropy,
+                                           VkBool32                     compareEnable,
+                                           VkCompareOp                  compareOp,
+                                           float                        minLod,
+                                           float                        maxLod,
+                                           VkBorderColor                borderColor,
+                                           VkBool32                     unnormalizedCoordinates,
+                                           const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerCustomBorderColorCreateInfoEXT chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerCustomBorderColorCreateInfoEXT, or NULL
- * \param[in] pCustomBorderColors        VkSamplerCustomBorderColorCreateInfoEXT::customBorderColor per element
- * \param[in] pFormats                   VkSamplerCustomBorderColorCreateInfoEXT::format per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerCustomBorderColorCreateInfoEXT, or NULL
+ * \param[in] pCustomBorderColors       VkSamplerCustomBorderColorCreateInfoEXT::customBorderColor per element
+ * \param[in] pFormats                  VkSamplerCustomBorderColorCreateInfoEXT::format per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteCustomBorderColorSamplers(VkDevice                     device,
-                                       uint32_t                     samplerCount,
-                                       const void* const*           ppNexts,
-                                       const VkClearColorValue*     pCustomBorderColors,
-                                       const VkFormat*              pFormats,
-                                       const VkSamplerCreateFlags*  pFlagss,
-                                       const VkFilter*              pMagFilters,
-                                       const VkFilter*              pMinFilters,
-                                       const VkSamplerMipmapMode*   pMipmapModes,
-                                       const VkSamplerAddressMode*  pAddressModeUs,
-                                       const VkSamplerAddressMode*  pAddressModeVs,
-                                       const VkSamplerAddressMode*  pAddressModeWs,
-                                       const float*                 pMipLodBiass,
-                                       const VkBool32*              pAnisotropyEnables,
-                                       const float*                 pMaxAnisotropies,
-                                       const VkBool32*              pCompareEnables,
-                                       const VkCompareOp*           pCompareOps,
-                                       const float*                 pMinLods,
-                                       const float*                 pMaxLods,
-                                       const VkBorderColor*         pBorderColors,
-                                       const VkBool32*              pUnnormalizedCoordinatess,
-                                       const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteCustomBorderColorSamplerDescriptors(VkDevice                     device,
+                                                 uint32_t                     samplerCount,
+                                                 const void* const*           ppNexts,
+                                                 const VkClearColorValue*     pCustomBorderColors,
+                                                 const VkFormat*              pFormats,
+                                                 const VkSamplerCreateFlags*  pFlags,
+                                                 const VkFilter*              pMagFilters,
+                                                 const VkFilter*              pMinFilters,
+                                                 const VkSamplerMipmapMode*   pMipmapModes,
+                                                 const VkSamplerAddressMode*  pAddressModeUs,
+                                                 const VkSamplerAddressMode*  pAddressModeVs,
+                                                 const VkSamplerAddressMode*  pAddressModeWs,
+                                                 const float*                 pMipLodBias,
+                                                 const VkBool32*              pAnisotropyEnables,
+                                                 const float*                 pMaxAnisotropies,
+                                                 const VkBool32*              pCompareEnables,
+                                                 const VkCompareOp*           pCompareOps,
+                                                 const float*                 pMinLods,
+                                                 const float*                 pMaxLods,
+                                                 const VkBorderColor*         pBorderColors,
+                                                 const VkBool32*              pUnnormalizedCoordinates,
+                                                 const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerCustomBorderColorCreateInfoEXT chained.
  *
@@ -39475,75 +39478,75 @@ void cvkWriteCustomBorderColorSamplers(VkDevice                     device,
  *
  * \retval None
  */
-void cvkWriteCustomBorderColorSampler(VkDevice                     device,
-                                      const void*                  pNext,
-                                      VkClearColorValue            customBorderColor,
-                                      VkFormat                     format,
-                                      VkSamplerCreateFlags         flags,
-                                      VkFilter                     magFilter,
-                                      VkFilter                     minFilter,
-                                      VkSamplerMipmapMode          mipmapMode,
-                                      VkSamplerAddressMode         addressModeU,
-                                      VkSamplerAddressMode         addressModeV,
-                                      VkSamplerAddressMode         addressModeW,
-                                      float                        mipLodBias,
-                                      VkBool32                     anisotropyEnable,
-                                      float                        maxAnisotropy,
-                                      VkBool32                     compareEnable,
-                                      VkCompareOp                  compareOp,
-                                      float                        minLod,
-                                      float                        maxLod,
-                                      VkBorderColor                borderColor,
-                                      VkBool32                     unnormalizedCoordinates,
-                                      const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteCustomBorderColorSamplerDescriptor(VkDevice                     device,
+                                                const void*                  pNext,
+                                                VkClearColorValue            customBorderColor,
+                                                VkFormat                     format,
+                                                VkSamplerCreateFlags         flags,
+                                                VkFilter                     magFilter,
+                                                VkFilter                     minFilter,
+                                                VkSamplerMipmapMode          mipmapMode,
+                                                VkSamplerAddressMode         addressModeU,
+                                                VkSamplerAddressMode         addressModeV,
+                                                VkSamplerAddressMode         addressModeW,
+                                                float                        mipLodBias,
+                                                VkBool32                     anisotropyEnable,
+                                                float                        maxAnisotropy,
+                                                VkBool32                     compareEnable,
+                                                VkCompareOp                  compareOp,
+                                                float                        minLod,
+                                                float                        maxLod,
+                                                VkBorderColor                borderColor,
+                                                VkBool32                     unnormalizedCoordinates,
+                                                const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerCustomBorderColorIndexCreateInfoEXT chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerCustomBorderColorIndexCreateInfoEXT, or NULL
- * \param[in] pIndices                   VkSamplerCustomBorderColorIndexCreateInfoEXT::index per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerCustomBorderColorIndexCreateInfoEXT, or NULL
+ * \param[in] pIndices                  VkSamplerCustomBorderColorIndexCreateInfoEXT::index per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteCustomBorderColorIndexSamplers(VkDevice                     device,
-                                            uint32_t                     samplerCount,
-                                            const void* const*           ppNexts,
-                                            const uint32_t*              pIndices,
-                                            const VkSamplerCreateFlags*  pFlagss,
-                                            const VkFilter*              pMagFilters,
-                                            const VkFilter*              pMinFilters,
-                                            const VkSamplerMipmapMode*   pMipmapModes,
-                                            const VkSamplerAddressMode*  pAddressModeUs,
-                                            const VkSamplerAddressMode*  pAddressModeVs,
-                                            const VkSamplerAddressMode*  pAddressModeWs,
-                                            const float*                 pMipLodBiass,
-                                            const VkBool32*              pAnisotropyEnables,
-                                            const float*                 pMaxAnisotropies,
-                                            const VkBool32*              pCompareEnables,
-                                            const VkCompareOp*           pCompareOps,
-                                            const float*                 pMinLods,
-                                            const float*                 pMaxLods,
-                                            const VkBorderColor*         pBorderColors,
-                                            const VkBool32*              pUnnormalizedCoordinatess,
-                                            const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteCustomBorderColorIndexSamplerDescriptors(VkDevice                     device,
+                                                      uint32_t                     samplerCount,
+                                                      const void* const*           ppNexts,
+                                                      const uint32_t*              pIndices,
+                                                      const VkSamplerCreateFlags*  pFlags,
+                                                      const VkFilter*              pMagFilters,
+                                                      const VkFilter*              pMinFilters,
+                                                      const VkSamplerMipmapMode*   pMipmapModes,
+                                                      const VkSamplerAddressMode*  pAddressModeUs,
+                                                      const VkSamplerAddressMode*  pAddressModeVs,
+                                                      const VkSamplerAddressMode*  pAddressModeWs,
+                                                      const float*                 pMipLodBias,
+                                                      const VkBool32*              pAnisotropyEnables,
+                                                      const float*                 pMaxAnisotropies,
+                                                      const VkBool32*              pCompareEnables,
+                                                      const VkCompareOp*           pCompareOps,
+                                                      const float*                 pMinLods,
+                                                      const float*                 pMaxLods,
+                                                      const VkBorderColor*         pBorderColors,
+                                                      const VkBool32*              pUnnormalizedCoordinates,
+                                                      const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerCustomBorderColorIndexCreateInfoEXT chained.
  *
@@ -39570,74 +39573,74 @@ void cvkWriteCustomBorderColorIndexSamplers(VkDevice                     device,
  *
  * \retval None
  */
-void cvkWriteCustomBorderColorIndexSampler(VkDevice                     device,
-                                           const void*                  pNext,
-                                           uint32_t                     index,
-                                           VkSamplerCreateFlags         flags,
-                                           VkFilter                     magFilter,
-                                           VkFilter                     minFilter,
-                                           VkSamplerMipmapMode          mipmapMode,
-                                           VkSamplerAddressMode         addressModeU,
-                                           VkSamplerAddressMode         addressModeV,
-                                           VkSamplerAddressMode         addressModeW,
-                                           float                        mipLodBias,
-                                           VkBool32                     anisotropyEnable,
-                                           float                        maxAnisotropy,
-                                           VkBool32                     compareEnable,
-                                           VkCompareOp                  compareOp,
-                                           float                        minLod,
-                                           float                        maxLod,
-                                           VkBorderColor                borderColor,
-                                           VkBool32                     unnormalizedCoordinates,
-                                           const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteCustomBorderColorIndexSamplerDescriptor(VkDevice                     device,
+                                                     const void*                  pNext,
+                                                     uint32_t                     index,
+                                                     VkSamplerCreateFlags         flags,
+                                                     VkFilter                     magFilter,
+                                                     VkFilter                     minFilter,
+                                                     VkSamplerMipmapMode          mipmapMode,
+                                                     VkSamplerAddressMode         addressModeU,
+                                                     VkSamplerAddressMode         addressModeV,
+                                                     VkSamplerAddressMode         addressModeW,
+                                                     float                        mipLodBias,
+                                                     VkBool32                     anisotropyEnable,
+                                                     float                        maxAnisotropy,
+                                                     VkBool32                     compareEnable,
+                                                     VkCompareOp                  compareOp,
+                                                     float                        minLod,
+                                                     float                        maxLod,
+                                                     VkBorderColor                borderColor,
+                                                     VkBool32                     unnormalizedCoordinates,
+                                                     const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerReductionModeCreateInfo chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerReductionModeCreateInfo, or NULL
- * \param[in] pReductionModes            VkSamplerReductionModeCreateInfo::reductionMode per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerReductionModeCreateInfo, or NULL
+ * \param[in] pReductionModes           VkSamplerReductionModeCreateInfo::reductionMode per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteReductionModeSamplers(VkDevice                      device,
-                                   uint32_t                      samplerCount,
-                                   const void* const*            ppNexts,
-                                   const VkSamplerReductionMode* pReductionModes,
-                                   const VkSamplerCreateFlags*   pFlagss,
-                                   const VkFilter*               pMagFilters,
-                                   const VkFilter*               pMinFilters,
-                                   const VkSamplerMipmapMode*    pMipmapModes,
-                                   const VkSamplerAddressMode*   pAddressModeUs,
-                                   const VkSamplerAddressMode*   pAddressModeVs,
-                                   const VkSamplerAddressMode*   pAddressModeWs,
-                                   const float*                  pMipLodBiass,
-                                   const VkBool32*               pAnisotropyEnables,
-                                   const float*                  pMaxAnisotropies,
-                                   const VkBool32*               pCompareEnables,
-                                   const VkCompareOp*            pCompareOps,
-                                   const float*                  pMinLods,
-                                   const float*                  pMaxLods,
-                                   const VkBorderColor*          pBorderColors,
-                                   const VkBool32*               pUnnormalizedCoordinatess,
-                                   const VkHostAddressRangeEXT*  pDescriptors);
+void cvkWriteReductionModeSamplerDescriptors(VkDevice                      device,
+                                             uint32_t                      samplerCount,
+                                             const void* const*            ppNexts,
+                                             const VkSamplerReductionMode* pReductionModes,
+                                             const VkSamplerCreateFlags*   pFlags,
+                                             const VkFilter*               pMagFilters,
+                                             const VkFilter*               pMinFilters,
+                                             const VkSamplerMipmapMode*    pMipmapModes,
+                                             const VkSamplerAddressMode*   pAddressModeUs,
+                                             const VkSamplerAddressMode*   pAddressModeVs,
+                                             const VkSamplerAddressMode*   pAddressModeWs,
+                                             const float*                  pMipLodBias,
+                                             const VkBool32*               pAnisotropyEnables,
+                                             const float*                  pMaxAnisotropies,
+                                             const VkBool32*               pCompareEnables,
+                                             const VkCompareOp*            pCompareOps,
+                                             const float*                  pMinLods,
+                                             const float*                  pMaxLods,
+                                             const VkBorderColor*          pBorderColors,
+                                             const VkBool32*               pUnnormalizedCoordinates,
+                                             const VkHostAddressRangeEXT*  pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerReductionModeCreateInfo chained.
  *
@@ -39664,74 +39667,74 @@ void cvkWriteReductionModeSamplers(VkDevice                      device,
  *
  * \retval None
  */
-void cvkWriteReductionModeSampler(VkDevice                     device,
-                                  const void*                  pNext,
-                                  VkSamplerReductionMode       reductionMode,
-                                  VkSamplerCreateFlags         flags,
-                                  VkFilter                     magFilter,
-                                  VkFilter                     minFilter,
-                                  VkSamplerMipmapMode          mipmapMode,
-                                  VkSamplerAddressMode         addressModeU,
-                                  VkSamplerAddressMode         addressModeV,
-                                  VkSamplerAddressMode         addressModeW,
-                                  float                        mipLodBias,
-                                  VkBool32                     anisotropyEnable,
-                                  float                        maxAnisotropy,
-                                  VkBool32                     compareEnable,
-                                  VkCompareOp                  compareOp,
-                                  float                        minLod,
-                                  float                        maxLod,
-                                  VkBorderColor                borderColor,
-                                  VkBool32                     unnormalizedCoordinates,
-                                  const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteReductionModeSamplerDescriptor(VkDevice                     device,
+                                            const void*                  pNext,
+                                            VkSamplerReductionMode       reductionMode,
+                                            VkSamplerCreateFlags         flags,
+                                            VkFilter                     magFilter,
+                                            VkFilter                     minFilter,
+                                            VkSamplerMipmapMode          mipmapMode,
+                                            VkSamplerAddressMode         addressModeU,
+                                            VkSamplerAddressMode         addressModeV,
+                                            VkSamplerAddressMode         addressModeW,
+                                            float                        mipLodBias,
+                                            VkBool32                     anisotropyEnable,
+                                            float                        maxAnisotropy,
+                                            VkBool32                     compareEnable,
+                                            VkCompareOp                  compareOp,
+                                            float                        minLod,
+                                            float                        maxLod,
+                                            VkBorderColor                borderColor,
+                                            VkBool32                     unnormalizedCoordinates,
+                                            const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT with VkSamplerYcbcrConversionInfo chained to every element.
  *
- * \param[in] device                     VkDevice value
- * \param[in] samplerCount               uint32_t value
- * \param[in] ppNexts                    Optional per-element extension chains attached to VkSamplerYcbcrConversionInfo, or NULL
- * \param[in] pConversions               VkSamplerYcbcrConversionInfo::conversion per element
- * \param[in] pFlagss                    VkSamplerCreateInfo::flags per element
- * \param[in] pMagFilters                VkSamplerCreateInfo::magFilter per element
- * \param[in] pMinFilters                VkSamplerCreateInfo::minFilter per element
- * \param[in] pMipmapModes               VkSamplerCreateInfo::mipmapMode per element
- * \param[in] pAddressModeUs             VkSamplerCreateInfo::addressModeU per element
- * \param[in] pAddressModeVs             VkSamplerCreateInfo::addressModeV per element
- * \param[in] pAddressModeWs             VkSamplerCreateInfo::addressModeW per element
- * \param[in] pMipLodBiass               VkSamplerCreateInfo::mipLodBias per element
- * \param[in] pAnisotropyEnables         VkSamplerCreateInfo::anisotropyEnable per element
- * \param[in] pMaxAnisotropies           VkSamplerCreateInfo::maxAnisotropy per element
- * \param[in] pCompareEnables            VkSamplerCreateInfo::compareEnable per element
- * \param[in] pCompareOps                VkSamplerCreateInfo::compareOp per element
- * \param[in] pMinLods                   VkSamplerCreateInfo::minLod per element
- * \param[in] pMaxLods                   VkSamplerCreateInfo::maxLod per element
- * \param[in] pBorderColors              VkSamplerCreateInfo::borderColor per element
- * \param[in] pUnnormalizedCoordinatess  VkSamplerCreateInfo::unnormalizedCoordinates per element
- * \param[in] pDescriptors               Array of samplerCount entries
+ * \param[in] device                    VkDevice value
+ * \param[in] samplerCount              uint32_t value
+ * \param[in] ppNexts                   Optional per-element extension chains attached to VkSamplerYcbcrConversionInfo, or NULL
+ * \param[in] pConversions              VkSamplerYcbcrConversionInfo::conversion per element
+ * \param[in] pFlags                    VkSamplerCreateInfo::flags per element
+ * \param[in] pMagFilters               VkSamplerCreateInfo::magFilter per element
+ * \param[in] pMinFilters               VkSamplerCreateInfo::minFilter per element
+ * \param[in] pMipmapModes              VkSamplerCreateInfo::mipmapMode per element
+ * \param[in] pAddressModeUs            VkSamplerCreateInfo::addressModeU per element
+ * \param[in] pAddressModeVs            VkSamplerCreateInfo::addressModeV per element
+ * \param[in] pAddressModeWs            VkSamplerCreateInfo::addressModeW per element
+ * \param[in] pMipLodBias               VkSamplerCreateInfo::mipLodBias per element
+ * \param[in] pAnisotropyEnables        VkSamplerCreateInfo::anisotropyEnable per element
+ * \param[in] pMaxAnisotropies          VkSamplerCreateInfo::maxAnisotropy per element
+ * \param[in] pCompareEnables           VkSamplerCreateInfo::compareEnable per element
+ * \param[in] pCompareOps               VkSamplerCreateInfo::compareOp per element
+ * \param[in] pMinLods                  VkSamplerCreateInfo::minLod per element
+ * \param[in] pMaxLods                  VkSamplerCreateInfo::maxLod per element
+ * \param[in] pBorderColors             VkSamplerCreateInfo::borderColor per element
+ * \param[in] pUnnormalizedCoordinates  VkSamplerCreateInfo::unnormalizedCoordinates per element
+ * \param[in] pDescriptors              Array of samplerCount entries
  *
  * \retval None
  */
-void cvkWriteYcbcrConversionSamplers(VkDevice                        device,
-                                     uint32_t                        samplerCount,
-                                     const void* const*              ppNexts,
-                                     const VkSamplerYcbcrConversion* pConversions,
-                                     const VkSamplerCreateFlags*     pFlagss,
-                                     const VkFilter*                 pMagFilters,
-                                     const VkFilter*                 pMinFilters,
-                                     const VkSamplerMipmapMode*      pMipmapModes,
-                                     const VkSamplerAddressMode*     pAddressModeUs,
-                                     const VkSamplerAddressMode*     pAddressModeVs,
-                                     const VkSamplerAddressMode*     pAddressModeWs,
-                                     const float*                    pMipLodBiass,
-                                     const VkBool32*                 pAnisotropyEnables,
-                                     const float*                    pMaxAnisotropies,
-                                     const VkBool32*                 pCompareEnables,
-                                     const VkCompareOp*              pCompareOps,
-                                     const float*                    pMinLods,
-                                     const float*                    pMaxLods,
-                                     const VkBorderColor*            pBorderColors,
-                                     const VkBool32*                 pUnnormalizedCoordinatess,
-                                     const VkHostAddressRangeEXT*    pDescriptors);
+void cvkWriteYcbcrConversionSamplerDescriptors(VkDevice                        device,
+                                               uint32_t                        samplerCount,
+                                               const void* const*              ppNexts,
+                                               const VkSamplerYcbcrConversion* pConversions,
+                                               const VkSamplerCreateFlags*     pFlags,
+                                               const VkFilter*                 pMagFilters,
+                                               const VkFilter*                 pMinFilters,
+                                               const VkSamplerMipmapMode*      pMipmapModes,
+                                               const VkSamplerAddressMode*     pAddressModeUs,
+                                               const VkSamplerAddressMode*     pAddressModeVs,
+                                               const VkSamplerAddressMode*     pAddressModeWs,
+                                               const float*                    pMipLodBias,
+                                               const VkBool32*                 pAnisotropyEnables,
+                                               const float*                    pMaxAnisotropies,
+                                               const VkBool32*                 pCompareEnables,
+                                               const VkCompareOp*              pCompareOps,
+                                               const float*                    pMinLods,
+                                               const float*                    pMaxLods,
+                                               const VkBorderColor*            pBorderColors,
+                                               const VkBool32*                 pUnnormalizedCoordinates,
+                                               const VkHostAddressRangeEXT*    pDescriptors);
 /**
  * \brief Calls vkWriteSamplerDescriptorsEXT for one element with VkSamplerYcbcrConversionInfo chained.
  *
@@ -39758,26 +39761,26 @@ void cvkWriteYcbcrConversionSamplers(VkDevice                        device,
  *
  * \retval None
  */
-void cvkWriteYcbcrConversionSampler(VkDevice                     device,
-                                    const void*                  pNext,
-                                    VkSamplerYcbcrConversion     conversion,
-                                    VkSamplerCreateFlags         flags,
-                                    VkFilter                     magFilter,
-                                    VkFilter                     minFilter,
-                                    VkSamplerMipmapMode          mipmapMode,
-                                    VkSamplerAddressMode         addressModeU,
-                                    VkSamplerAddressMode         addressModeV,
-                                    VkSamplerAddressMode         addressModeW,
-                                    float                        mipLodBias,
-                                    VkBool32                     anisotropyEnable,
-                                    float                        maxAnisotropy,
-                                    VkBool32                     compareEnable,
-                                    VkCompareOp                  compareOp,
-                                    float                        minLod,
-                                    float                        maxLod,
-                                    VkBorderColor                borderColor,
-                                    VkBool32                     unnormalizedCoordinates,
-                                    const VkHostAddressRangeEXT* pDescriptors);
+void cvkWriteYcbcrConversionSamplerDescriptor(VkDevice                     device,
+                                              const void*                  pNext,
+                                              VkSamplerYcbcrConversion     conversion,
+                                              VkSamplerCreateFlags         flags,
+                                              VkFilter                     magFilter,
+                                              VkFilter                     minFilter,
+                                              VkSamplerMipmapMode          mipmapMode,
+                                              VkSamplerAddressMode         addressModeU,
+                                              VkSamplerAddressMode         addressModeV,
+                                              VkSamplerAddressMode         addressModeW,
+                                              float                        mipLodBias,
+                                              VkBool32                     anisotropyEnable,
+                                              float                        maxAnisotropy,
+                                              VkBool32                     compareEnable,
+                                              VkCompareOp                  compareOp,
+                                              float                        minLod,
+                                              float                        maxLod,
+                                              VkBorderColor                borderColor,
+                                              VkBool32                     unnormalizedCoordinates,
+                                              const VkHostAddressRangeEXT* pDescriptors);
 /**
  * \brief Retrieves acceleration structure memory requirements with VkMemoryDedicatedRequirements chained to the output.
  *
@@ -39943,7 +39946,9 @@ void cvkGetDeviceBufferTileMemoryRequirementsQCOM(VkDevice                      
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
-VkResult cvkGetDeviceFaultShaderAbortMessageInfo(VkDevice device, void* pDeviceFaultShaderAbortMessageInfoNext, VkDeviceFaultShaderAbortMessageInfoKHR* pDeviceFaultShaderAbortMessageInfo);
+VkResult cvkGetDeviceFaultDebugInfoWithShaderAbortMessageInfo(VkDevice                                device,
+                                                              void*                                   pDeviceFaultShaderAbortMessageInfoNext,
+                                                              VkDeviceFaultShaderAbortMessageInfoKHR* pDeviceFaultShaderAbortMessageInfo);
 /**
  * \brief Retrieves device image memory requirements with VkMemoryDedicatedRequirements chained to the output.
  *
@@ -40010,12 +40015,12 @@ void cvkGetDeviceImageImageCompressionProperties(VkDevice                       
  *
  * \retval None
  */
-void cvkGetDeviceImageSubresourceHostMemcpySize(VkDevice                     device,
-                                                const void*                  pInfoNext,
-                                                const VkImageCreateInfo*     pCreateInfo,
-                                                const VkImageSubresource2*   pSubresource,
-                                                void*                        pSubresourceHostMemcpySizeNext,
-                                                VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize);
+void cvkGetDeviceImageSubresourceLayoutWithHostMemcpySize(VkDevice                     device,
+                                                          const void*                  pInfoNext,
+                                                          const VkImageCreateInfo*     pCreateInfo,
+                                                          const VkImageSubresource2*   pSubresource,
+                                                          void*                        pSubresourceHostMemcpySizeNext,
+                                                          VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize);
 /**
  * \brief Retrieves device tensor memory requirements with VkMemoryDedicatedRequirements chained to the output.
  *
@@ -40061,13 +40066,13 @@ void cvkGetDeviceTensorTileMemoryRequirementsQCOM(VkDevice                      
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
-VkResult cvkGetVideoEncodeSessionParametersInfoWithH264(VkDevice                                           device,
-                                                        const void*                                        pVideoSessionParametersInfoNext,
-                                                        VkVideoSessionParametersKHR                        videoSessionParameters,
-                                                        void*                                              pVideoEncodeH264SessionParametersFeedbackInfoNext,
-                                                        size_t*                                            pDataSize,
-                                                        void*                                              pData,
-                                                        VkVideoEncodeH264SessionParametersFeedbackInfoKHR* pVideoEncodeH264SessionParametersFeedbackInfo);
+VkResult cvkGetEncodedVideoSessionParametersWithH264Info(VkDevice                                           device,
+                                                         const void*                                        pVideoSessionParametersInfoNext,
+                                                         VkVideoSessionParametersKHR                        videoSessionParameters,
+                                                         void*                                              pVideoEncodeH264SessionParametersFeedbackInfoNext,
+                                                         size_t*                                            pDataSize,
+                                                         void*                                              pData,
+                                                         VkVideoEncodeH264SessionParametersFeedbackInfoKHR* pVideoEncodeH264SessionParametersFeedbackInfo);
 /**
  * \brief Retrieves encoded video session parameters with VkVideoEncodeH265SessionParametersFeedbackInfoKHR chained to the output.
  *
@@ -40081,13 +40086,13 @@ VkResult cvkGetVideoEncodeSessionParametersInfoWithH264(VkDevice                
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
-VkResult cvkGetVideoEncodeSessionParametersInfoWithH265(VkDevice                                           device,
-                                                        const void*                                        pVideoSessionParametersInfoNext,
-                                                        VkVideoSessionParametersKHR                        videoSessionParameters,
-                                                        void*                                              pVideoEncodeH265SessionParametersFeedbackInfoNext,
-                                                        size_t*                                            pDataSize,
-                                                        void*                                              pData,
-                                                        VkVideoEncodeH265SessionParametersFeedbackInfoKHR* pVideoEncodeH265SessionParametersFeedbackInfo);
+VkResult cvkGetEncodedVideoSessionParametersWithH265Info(VkDevice                                           device,
+                                                         const void*                                        pVideoSessionParametersInfoNext,
+                                                         VkVideoSessionParametersKHR                        videoSessionParameters,
+                                                         void*                                              pVideoEncodeH265SessionParametersFeedbackInfoNext,
+                                                         size_t*                                            pDataSize,
+                                                         void*                                              pData,
+                                                         VkVideoEncodeH265SessionParametersFeedbackInfoKHR* pVideoEncodeH265SessionParametersFeedbackInfo);
 /**
  * \brief Retrieves generated commands memory requirements with VkMemoryDedicatedRequirements chained to the output.
  *
@@ -40214,7 +40219,7 @@ void cvkGetImageTileMemoryRequirementsQCOM(VkDevice device, const void* pInfoNex
  */
 void cvkGetImageImageCompressionProperties(VkDevice                         device,
                                            VkImage                          image,
-                                           const void*                      pSubresourceNext,
+                                           void*                            pSubresourceNext,
                                            VkImageSubresource               imageSubresource,
                                            void*                            pImageCompressionPropertiesNext,
                                            VkImageCompressionPropertiesEXT* pImageCompressionProperties);
@@ -40230,12 +40235,12 @@ void cvkGetImageImageCompressionProperties(VkDevice                         devi
  *
  * \retval None
  */
-void cvkGetImageSubresourceHostMemcpySize(VkDevice                     device,
-                                          VkImage                      image,
-                                          const void*                  pSubresourceNext,
-                                          VkImageSubresource           imageSubresource,
-                                          void*                        pSubresourceHostMemcpySizeNext,
-                                          VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize);
+void cvkGetImageSubresourceLayoutWithHostMemcpySize(VkDevice                     device,
+                                                    VkImage                      image,
+                                                    void*                        pSubresourceNext,
+                                                    VkImageSubresource           imageSubresource,
+                                                    void*                        pSubresourceHostMemcpySizeNext,
+                                                    VkSubresourceHostMemcpySize* pSubresourceHostMemcpySize);
 /**
  * \brief Retrieves physical device features 2 with VkPhysicalDevice16BitStorageFeatures chained to the output.
  *
@@ -43479,10 +43484,10 @@ void cvkGetPhysicalDeviceFormatProperties4(VkPhysicalDevice physicalDevice, VkFo
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceSubpassResolvePerformanceQuery(VkPhysicalDevice                     physicalDevice,
-                                                        VkFormat                             format,
-                                                        void*                                pSubpassResolvePerformanceQueryNext,
-                                                        VkSubpassResolvePerformanceQueryEXT* pSubpassResolvePerformanceQuery);
+void cvkGetPhysicalDeviceFormatPropertiesWithSubpassResolvePerformanceQuery(VkPhysicalDevice                     physicalDevice,
+                                                                            VkFormat                             format,
+                                                                            void*                                pSubpassResolvePerformanceQueryNext,
+                                                                            VkSubpassResolvePerformanceQueryEXT* pSubpassResolvePerformanceQuery);
 /**
  * \brief Retrieves physical device format properties 2 with VkTensorExplicitTilingFormatPropertiesARM chained to the output.
  *
@@ -43523,15 +43528,15 @@ void cvkGetPhysicalDeviceTensorFormatProperties(VkPhysicalDevice physicalDevice,
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageFormatInfo2WithExternalProperties(VkPhysicalDevice                 physicalDevice,
-                                                                const void*                      pImageFormatInfoNext,
-                                                                VkFormat                         format,
-                                                                VkImageType                      type,
-                                                                VkImageTiling                    tiling,
-                                                                VkImageUsageFlags                usage,
-                                                                VkImageCreateFlags               flags,
-                                                                void*                            pExternalImageFormatPropertiesNext,
-                                                                VkExternalImageFormatProperties* pExternalImageFormatProperties);
+void cvkGetPhysicalDeviceExternalImageFormatProperties(VkPhysicalDevice                 physicalDevice,
+                                                       const void*                      pImageFormatInfoNext,
+                                                       VkFormat                         format,
+                                                       VkImageType                      type,
+                                                       VkImageTiling                    tiling,
+                                                       VkImageUsageFlags                usage,
+                                                       VkImageCreateFlags               flags,
+                                                       void*                            pExternalImageFormatPropertiesNext,
+                                                       VkExternalImageFormatProperties* pExternalImageFormatProperties);
 /**
  * \brief Retrieves physical device image format properties 2 with VkFilterCubicImageViewImageFormatPropertiesEXT chained to the output.
  *
@@ -43571,15 +43576,15 @@ void cvkGetPhysicalDeviceFilterCubicImageViewImageFormatProperties(VkPhysicalDev
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
-                                                             const void*                            pImageFormatInfoNext,
-                                                             VkFormat                               format,
-                                                             VkImageType                            type,
-                                                             VkImageTiling                          tiling,
-                                                             VkImageUsageFlags                      usage,
-                                                             VkImageCreateFlags                     flags,
-                                                             void*                                  pHostImageCopyDevicePerformanceQueryNext,
-                                                             VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery);
+void cvkGetPhysicalDeviceImageFormatPropertiesWithHostImageCopyDevicePerformanceQuery(VkPhysicalDevice                       physicalDevice,
+                                                                                      const void*                            pImageFormatInfoNext,
+                                                                                      VkFormat                               format,
+                                                                                      VkImageType                            type,
+                                                                                      VkImageTiling                          tiling,
+                                                                                      VkImageUsageFlags                      usage,
+                                                                                      VkImageCreateFlags                     flags,
+                                                                                      void*                                  pHostImageCopyDevicePerformanceQueryNext,
+                                                                                      VkHostImageCopyDevicePerformanceQuery* pHostImageCopyDevicePerformanceQuery);
 /**
  * \brief Retrieves physical device image format properties 2 with VkImageCompressionPropertiesEXT chained to the output.
  *
@@ -45141,11 +45146,11 @@ void cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilities(VkPhysicalDevice   
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceImageUsageFlags2CreateInfo(VkPhysicalDevice                 physicalDevice,
-                                                    const void*                      pSurfaceInfoNext,
-                                                    VkSurfaceKHR                     surface,
-                                                    void*                            pImageUsageFlags2CreateInfoNext,
-                                                    VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfo);
+void cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2Info(VkPhysicalDevice                 physicalDevice,
+                                                                     const void*                      pSurfaceInfoNext,
+                                                                     VkSurfaceKHR                     surface,
+                                                                     void*                            pImageUsageFlags2CreateInfoNext,
+                                                                     VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfo);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkLatencySurfaceCapabilitiesNV chained to the output.
  *
@@ -45269,11 +45274,11 @@ void cvkGetPhysicalDeviceSurfaceCapabilitiesPresentWait2(VkPhysicalDevice       
  *
  * \retval None
  */
-void cvkGetPhysicalDeviceSurfacePresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
-                                                         const void*                           pSurfaceInfoNext,
-                                                         VkSurfaceKHR                          surface,
-                                                         void*                                 pSurfacePresentModeCompatibilityNext,
-                                                         VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility);
+void cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility(VkPhysicalDevice                      physicalDevice,
+                                                                         const void*                           pSurfaceInfoNext,
+                                                                         VkSurfaceKHR                          surface,
+                                                                         void*                                 pSurfacePresentModeCompatibilityNext,
+                                                                         VkSurfacePresentModeCompatibilityKHR* pSurfacePresentModeCompatibility);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfacePresentScalingCapabilitiesKHR chained to the output.
  *
@@ -45952,7 +45957,6 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, V
 /**
  * \brief Reports whether an image description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.
  *
- * \param[in] instance              See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] physicalDevice        See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] handleType            See cvkInitPhysicalDeviceExternalImageFormatInfo
  * \param[in] format                See cvkGetPhysicalDeviceExternalImageFormatProperties
@@ -45960,27 +45964,23 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, V
  * \param[in] tiling                See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] usage                 See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] flags                 See cvkGetPhysicalDeviceExternalImageFormatProperties
- * \param[in] externalHandleType    See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] pImageFormatInfoNext  Optional extension chain for the image format query, or NULL
  * \param[out] pDedicatedOnly        Receives the dedicatedOnly
  *
  * \return The VkBool32 returned by the command.
  */
-VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkInstance                         instance,
-                                                        VkPhysicalDevice                   physicalDevice,
+VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice                   physicalDevice,
                                                         VkExternalMemoryHandleTypeFlagBits handleType,
                                                         VkFormat                           format,
                                                         VkImageType                        type,
                                                         VkImageTiling                      tiling,
                                                         VkImageUsageFlags                  usage,
                                                         VkImageCreateFlags                 flags,
-                                                        VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
                                                         const void*                        pImageFormatInfoNext,
                                                         VkBool32*                          pDedicatedOnly);
 /**
  * \brief Reports whether an image description can be exported through an external memory handle type, and whether only dedicated allocations are allowed.
  *
- * \param[in] instance              See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] physicalDevice        See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] handleType            See cvkInitPhysicalDeviceExternalImageFormatInfo
  * \param[in] format                See cvkGetPhysicalDeviceExternalImageFormatProperties
@@ -45988,21 +45988,18 @@ VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkInstance              
  * \param[in] tiling                See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] usage                 See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] flags                 See cvkGetPhysicalDeviceExternalImageFormatProperties
- * \param[in] externalHandleType    See cvkGetPhysicalDeviceExternalImageFormatProperties
  * \param[in] pImageFormatInfoNext  Optional extension chain for the image format query, or NULL
  * \param[out] pDedicatedOnly        Receives the dedicatedOnly
  *
  * \return The VkBool32 returned by the command.
  */
-VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkInstance                         instance,
-                                                        VkPhysicalDevice                   physicalDevice,
+VkBool32 cvkGetPhysicalDeviceExternalImageExportSupport(VkPhysicalDevice                   physicalDevice,
                                                         VkExternalMemoryHandleTypeFlagBits handleType,
                                                         VkFormat                           format,
                                                         VkImageType                        type,
                                                         VkImageTiling                      tiling,
                                                         VkImageUsageFlags                  usage,
                                                         VkImageCreateFlags                 flags,
-                                                        VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
                                                         const void*                        pImageFormatInfoNext,
                                                         VkBool32*                          pDedicatedOnly);
 /**

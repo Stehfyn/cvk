@@ -207,7 +207,7 @@ class Generator:
         for cmd, op, ext in self.output_pairs():
             spliced = self.splice_output_name(self.with_base(cmd), ext, self.reg.struct_of(op.type), [])
             if spliced:
-                groups["cmd:v" + strip_vendor(spliced[1:])].append(ext.name)
+                groups["cmd:" + strip_vendor(spliced[1:])].append(ext.name)
         for names in groups.values():
             if len(names) < 2:
                 continue
@@ -313,7 +313,20 @@ class Generator:
         while rest and rest[-1].isdigit():
             rest.pop()
         nrest = [norm(t) for t in rest]
-        start = next((i for i in range(len(nrest) - len(nrun) + 1) if nrest[i:i + len(nrun)] == nrun), -1)
+        # The command names the base run in full (PhysicalDevice Surface in
+        # vkGetPhysicalDeviceSurfacePresentModes2EXT) or, when the run starts with the handle
+        # the base struct is about and the command is dispatched elsewhere, only its tail
+        # (Surface in vkGetDeviceGroupSurfacePresentModes2EXT): the run minus a leading handle
+        # name is still the run. Any other qualifier (Compute in VkComputePipelineCreateInfo)
+        # must be present, else the With form.
+        start, sub = -1, run
+        for k in range(len(nrun), 0, -1):
+            if k < len(nrun) and "Vk" + "".join(run[:-k]) not in self.reg.handles:
+                continue
+            i = next((i for i in range(len(nrest) - k + 1) if nrest[i:i + k] == nrun[-k:]), -1)
+            if i >= 0:
+                start, sub = i, run[-k:]
+                break
         if start < 0:
             return self.with_base(cmd) + "With" + "".join(d) + "Info"
 
@@ -321,9 +334,9 @@ class Generator:
         # follows the last matched base word; the remainder of the run follows; then the rest
         # of the distinct part; then the command's tail.
         matched_norm = {norm(t) for t in e if t not in d}   # extender tokens aligned with the base
-        last = max((i for i, t in enumerate(run) if norm(t) in matched_norm), default=len(run) - 1)
-        head, run_rest = run[: last + 1], run[last + 1:]
-        spliced = rest[:start] + head + d[:1] + run_rest + d[1:] + rest[start + len(run):]
+        last = max((i for i, t in enumerate(sub) if norm(t) in matched_norm), default=len(sub) - 1)
+        head, run_rest = sub[: last + 1], sub[last + 1:]
+        spliced = rest[:start] + head + d[:1] + run_rest + d[1:] + rest[start + len(sub):]
         return "cvk" + verb + "".join(spliced)
 
     def capacity_name(self, array_param: str) -> str:
@@ -347,7 +360,32 @@ class Generator:
 
     # --------------------------------------------------------------- roles
     def roles(self, cmd: Command) -> List[str]:
-        return [role_of(self.reg, cmd, p, cmd.params) for p in cmd.params]
+        """Parameter roles, with the policy's `role_overrides` applied ("vkCmd::param": role)
+        for registry quirks such as an input struct passed through a non-const pointer."""
+        overrides = self.policy.get("role_overrides", {})
+        return [overrides.get(f"{cmd.name}::{p.name}", role_of(self.reg, cmd, p, cmd.params)) for p in cmd.params]
+
+    def level_of(self, cmd: Command) -> Optional[str]:
+        """The dispatch level of a command from its first handle's parent chain: VkDevice when
+        the chain reaches a device (VkCommandBuffer -> VkCommandPool -> VkDevice,
+        VkExternalComputeQueueNV -> VkDevice), VkInstance when it reaches only an instance,
+        None for global commands."""
+        if not cmd.params or cmd.params[0].is_pointer:
+            return None
+        h = cmd.params[0].type
+        seen = set()
+        while h and h not in seen:
+            seen.add(h)
+            if h in ("VkDevice", "VkInstance"):
+                return h
+            h = self.reg.handles.get(h)
+        return None
+
+    @staticmethod
+    def pnext_type(s: Struct) -> str:
+        """The struct's own pNext member type: `const void*` for inputs, `void*` for outputs and
+        the registry's few inputs declared without const."""
+        return next((m.full_type for m in s.members if m.name == "pNext"), "const void*")
 
     def member_assert(self, m: Param, prefix: str, siblings: List[Param]) -> List[str]:
         """Assertions for a flattened member or a command parameter named by its wrapper name."""
@@ -427,12 +465,10 @@ class Generator:
 
         # Device/instance-level extension commands dispatched on a child handle need the parent.
         parent: Optional[str] = None
+        level = self.level_of(cmd)
         if not self.linked(cmd):
-            dh = cmd.dispatch_handle
-            if dh in ("VkQueue", "VkCommandBuffer"):
-                parent = "VkDevice device"
-            elif dh == "VkPhysicalDevice":
-                parent = "VkInstance instance"
+            if level and cmd.params[0].type != level:
+                parent = f"{level} {level[2:].lower()}"
             if parent:
                 params.append(EmittedParam(parent, parent.split()[1], "Parent handle used to resolve the extension command", False))
                 pre.append(f"CVK_ASSERT(VK_NULL_HANDLE != {parent.split()[1]});")
@@ -450,7 +486,7 @@ class Generator:
                         continue
                     if m.name == "pNext":
                         pn = "pNext" if filled == 1 else f"p{stem}Next"
-                        params.append(EmittedParam(f"const void* {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
+                        params.append(EmittedParam(f"{self.pnext_type(s)} {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
                         locals_.append(f"{var}.pNext = {pn};")
                         continue
                     if m.array_len:
@@ -499,12 +535,12 @@ class Generator:
         fn = cmd.name
         resolve: Optional[str] = None
         if not self.linked(cmd):
-            dh = cmd.dispatch_handle
-            resolver = "cvkGetDeviceProcAddr(device" if dh in DEVICE_LEVEL else "cvkGetInstanceProcAddr(instance"
+            resolver = "cvkGetDeviceProcAddr(device" if level == "VkDevice" else "cvkGetInstanceProcAddr(instance"
             # Declaration only here; the load is emitted immediately before the first call.
-            locals_.insert(0, f"PFN_{cmd.name} function;")
-            resolve = f"function = (PFN_{cmd.name}){resolver}, \"{cmd.name}\");"
-            fn = "function"
+            # The local is `function` unless a parameter takes that name (vkDestroyCuFunctionNVX).
+            fn = "function_pointer" if any(q.name == "function" for q in params) else "function"
+            locals_.insert(0, f"PFN_{cmd.name} {fn};")
+            resolve = f"{fn} = (PFN_{cmd.name}){resolver}, \"{cmd.name}\");"
         call = f"{fn}({', '.join(call_args)})"
 
         informational = [c for c in cmd.successcodes if c not in ("VK_SUCCESS",)]
@@ -565,9 +601,9 @@ class Generator:
 
         # Order: declarations first (C89-style block), then asserts, then statements.
         if resolve:
-            first_call = next(i for i, l in enumerate(body) if "function(" in l)
+            first_call = next(i for i, l in enumerate(body) if f"{fn}(" in l)
             body[first_call:first_call] = ["", resolve]
-        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+;)", l)]
+        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function(_pointer)?;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+;)", l)]
         other = [l for l in body if l not in decl_lines]
 
         # Declarations in order of first access in the statements that follow.
@@ -739,7 +775,7 @@ class Generator:
                     if m.name == "sType":
                         continue
                     if m.name == "pNext":
-                        params.append(EmittedParam("const void* pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
+                        params.append(EmittedParam(f"{self.pnext_type(s)} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
                         body.append(f"{var}.pNext = pNext;")
                     elif m.array_len:
                         params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
@@ -804,7 +840,7 @@ class Generator:
                 if m.name == "sType":
                     continue
                 if m.name == "pNext":
-                    params.append(EmittedParam(f"const void* {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
+                    params.append(EmittedParam(f"{self.pnext_type(s)} {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
                     body.append(f"{var}.pNext = {pn};")
                 elif m.array_len:
                     params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
@@ -838,12 +874,12 @@ class Generator:
         ext_var = snake(self.struct_short(ext))
         body = [f"{ext.name} {ext_var};", "", f"{ext_var}.sType = {ext.stype};", f"{ext_var}.pNext = {pn};"]
         base_names = {p.split()[-1].split("[")[0] for p in base_params}
-        qlower = q[0].lower() + q[1:]
+        # The chain parameter now feeds the extender: its type is the extender's pNext type.
+        base_params[idx] = f"{self.pnext_type(ext)} {pn}"
         for em in ext.members:
             if em.name in ("sType", "pNext"):
                 continue
-            # SPEC 6: an extender member whose name collides with a base parameter is prefixed with the qualifier.
-            pname = em.name if em.name not in base_names else qlower + em.name[0].upper() + em.name[1:]
+            pname = em.name if em.name not in base_names else self.member_alias(em, base, ext)
             if em.array_len:
                 ext_params.append(f"const {em.full_type} {pname}[{em.array_len}]")
                 body.append(f"memcpy({ext_var}.{em.name}, {pname}, sizeof({ext_var}.{em.name}));")
@@ -865,15 +901,36 @@ class Generator:
         plats = self.platforms_for(cmd.extensions, cmd.core_version) | self.platforms_for(ext.extensions, ext.core_version)
         self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
+    def member_alias(self, em: Param, base: Struct, ext: Struct) -> str:
+        """SPEC.md section 6: an extender member sharing a base member's name. The tokens of
+        its type absent from the base member's type distinguish it (VkPipelineCreateFlags2 flags
+        beside VkPipelineCreateFlags flags -> flags2); with the same type, the extender's distinct
+        part qualifies it (VkImageViewUsageCreateInfo::usage -> imageViewUsage)."""
+        bm = next((m for m in base.members if m.name == em.name), None)
+        if bm is not None:
+            bt = tokens(bm.type)
+            extra = [t for t in tokens(em.type) if t not in bt]
+            if extra and bm.type != em.type:
+                return em.name + "".join(extra)
+        d = self.distinct_part(ext, base)
+        cap = em.name[0].upper() + em.name[1:]
+        if d and d[-1] == cap:
+            d = d[:-1]
+        head = "".join(d)
+        return (head[0].lower() + head[1:] + cap) if head else em.name + "Ext"
+
     # ------------------------------------------------ array and output extenders
     @staticmethod
     def plural(name: str) -> str:
-        """Parallel-array parameter name for a member: image -> pImages, memory -> pMemories, imageIndex -> pImageIndices."""
+        """Parallel-array parameter name for a member: image -> pImages, memory -> pMemories,
+        imageIndex -> pImageIndices; a name that is already plural keeps it (flags -> pFlags)."""
         cap = name[0].upper() + name[1:]
         if cap.endswith("Index"):
             return "p" + cap[:-5] + "Indices"
         if cap.endswith("y"):
             return "p" + cap[:-1] + "ies"
+        if cap.endswith("s"):
+            return "p" + cap
         return "p" + cap + "s"
 
     KINDS_OUT = ("Properties", "Requirements", "Features", "Support", "Capabilities")
@@ -907,10 +964,18 @@ class Generator:
         extender members become parallel arrays sized by the command's count parameter."""
         base = self.reg.struct_of(ap.type)
         d = "".join(self.distinct_part(ext, base))
-        # Singular first: cvk<Verb><D><base noun run> (cvkBindPlaneImageMemory,
-        # cvkBindSwapchainImageMemory). The plural is the singular with its last word pluralized.
-        run = [t for t in tokens(self.struct_short(base)) if t not in self.KIND and t != "Info" and not t.isdigit() and t != cmd.verb]
-        single = self.register("cvk" + cmd.verb + d + "".join(run), f"{cmd.name}+{ext.name}[1]")
+        # Singular first: cvk<Verb><D><noun run> where the run is the command's own noun
+        # (vkBindImageMemory2 -> ImageMemory, vkCmdBindDescriptorBuffersEXT -> DescriptorBuffer)
+        # depluralized and without its version digit; a Cmd verb carries its action word
+        # (CmdBind). cvkBindPlaneImageMemory, cvkBindSwapchainImageMemory,
+        # cvkCmdBindPushDescriptorBufferHandleDescriptorBuffer. The plural pluralizes the last word.
+        ct = tokens(self.with_base(cmd)[3:])
+        ct = [t for t in ct if t not in VENDORS]
+        verb = ct[0] + (ct[1] if ct[0] == "Cmd" and len(ct) > 1 else "")
+        noun = ct[2:] if ct[0] == "Cmd" else ct[1:]
+        if noun and noun[-1].endswith("s") and not noun[-1].endswith("ss"):
+            noun[-1] = noun[-1][:-3] + "y" if noun[-1].endswith("ies") else noun[-1][:-1]
+        single = self.register("cvk" + verb + d + "".join(noun), f"{cmd.name}+{ext.name}[1]")
         last = tokens(single[3:])[-1]
         name = self.register(single[: -len(last)] + self.plural(last)[1:], f"{cmd.name}+{ext.name}[]")
         t0 = self.cmd_name(cmd)
@@ -922,22 +987,27 @@ class Generator:
         params: List[EmittedParam] = []
         args: List[str] = []
         fill: List[str] = []
+        singles: Dict[str, str] = {}                            # parallel array -> element parameter
         for p in t0_params:
             if p.name != ap.name:
                 params.append(p)
                 args.append(p.name)
                 continue
-            params.append(EmittedParam("const void* const* ppNexts", "ppNexts", f"Optional per-element extension chains attached to {ext.name}, or NULL", False))
+            params.append(EmittedParam(f"{self.pnext_type(ext)} const* ppNexts", "ppNexts", f"Optional per-element extension chains attached to {ext.name}, or NULL", False))
+            base_names = {m.name for m in base.members}
             for m in ext.members:
                 if m.name in ("sType", "pNext"):
                     continue
-                pn = self.plural(m.name)
+                alias = m.name if m.name not in base_names else self.member_alias(m, base, ext)
+                pn = self.plural(alias)
+                singles[pn] = alias
                 params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{ext.name}::{m.name} per element", False))
                 fill.append(f"{ext_var}[index].{m.name} = {pn}[index];")
             for m in base.members:
                 if m.name in ("sType", "pNext"):
                     continue
                 pn = self.plural(m.name)
+                singles[pn] = m.name
                 params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{base.name}::{m.name} per element", False))
                 fill.append(f"{base_var}[index].{m.name} = {pn}[index];")
             args.append(base_var)
@@ -963,11 +1033,11 @@ class Generator:
             if p.name == count:
                 s_args.append("1")
             elif p.name == "ppNexts":
-                s_params.append(EmittedParam("const void* pNext", "pNext", f"Optional extension chain attached to {ext.name}, or NULL", False))
+                s_params.append(EmittedParam(f"{self.pnext_type(ext)} pNext", "pNext", f"Optional extension chain attached to {ext.name}, or NULL", False))
                 s_args.append("&pNext")
-            elif p.text.startswith("const ") and p.text.rstrip(p.name).rstrip().endswith("*") and p.name.startswith("p") and p.name[1:2].isupper() and p.doc.endswith("per element"):
+            elif p.name in singles:
                 elem_type = p.text.rsplit(" ", 1)[0][len("const "):].rstrip("*").strip()
-                member = p.doc.split("::")[1].split(" ")[0]
+                member = singles[p.name]
                 s_params.append(EmittedParam(f"{elem_type} {member}", member, p.doc[: -len(" per element")], False))
                 s_args.append(f"&{member}")
             else:
@@ -1012,6 +1082,12 @@ class Generator:
         spliced = self.splice_output_name(prefix, ext, base, d_tokens)
         if spliced in self.tier0_names:
             spliced = None                                   # the plain name is a command's (vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR)
+        ext_tokens = [t for t in tokens(self.struct_short(ext)) if not t.isdigit() and t not in VENDORS]
+        if not any(t in self.KINDS_OUT for t in ext_tokens):
+            # An output extender without a kind word (VkImageUsageFlags2CreateInfoKHR,
+            # VkSurfacePresentModeCompatibilityEXT on VkSurfaceCapabilities2KHR) cannot replace
+            # the run: <base>With<D>, keeping a trailing Info.
+            spliced = prefix + "With" + "".join(self.distinct_part(ext, base)) + ("Info" if ext_tokens[-1] == "Info" else "")
         name = self.register(spliced if spliced else target + "With" + d + kind, f"{cmd.name}+{ext.name}:out")
         ret, t_params = self.sigs[target]
         out_stem = op.name[1:] if op.name.startswith("p") else op.name

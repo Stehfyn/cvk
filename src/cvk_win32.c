@@ -464,7 +464,7 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
     cvkCreateSemaphore(device, &export_semaphore_win32_handle_info, flags, pAllocator, pSemaphore);
 }
 void cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
-                                                          const void*                   pNext,
+                                                          void*                         pNext,
                                                           VkFullScreenExclusiveEXT      fullScreenExclusive,
                                                           VkSwapchainCreateFlagsKHR     flags,
                                                           VkSurfaceKHR                  surface,
@@ -559,11 +559,7 @@ void cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice         
                        pAllocator,
                        pSwapchain);
 }
-void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveInfo(VkDevice                          device,
-                                                                     const void*                       pNext,
-                                                                     VkFullScreenExclusiveEXT          fullScreenExclusive,
-                                                                     VkSurfaceKHR                      surface,
-                                                                     VkDeviceGroupPresentModeFlagsKHR* pModes)
+void cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice device, void* pNext, VkFullScreenExclusiveEXT fullScreenExclusive, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
 
@@ -572,7 +568,7 @@ void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveInfo(VkDevice   
     surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
     cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_info, surface, pModes);
 }
-void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveWin32Info(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+void cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
 
@@ -581,7 +577,7 @@ void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveWin32Info(VkDevi
     surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
     cvkGetDeviceGroupSurfacePresentModes2(device, &surface_full_screen_exclusive_win32_info, surface, pModes);
 }
-void cvkGetDeviceGroupSurfacePresentModesWithPresentModeInfo(VkDevice device, const void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
+void cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
 {
     VkSurfacePresentModeKHR surface_present_mode;
 
@@ -591,7 +587,7 @@ void cvkGetDeviceGroupSurfacePresentModesWithPresentModeInfo(VkDevice device, co
     cvkGetDeviceGroupSurfacePresentModes2(device, &surface_present_mode, surface, pModes);
 }
 void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice           physicalDevice,
-                                                                const void*                pSurfaceInfoNext,
+                                                                void*                      pSurfaceInfoNext,
                                                                 VkFullScreenExclusiveEXT   fullScreenExclusive,
                                                                 VkSurfaceKHR               surface,
                                                                 void*                      pSurfaceCapabilitiesNext,
@@ -619,7 +615,7 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalD
     cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_full_screen_exclusive_win32_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice         physicalDevice,
-                                                               const void*              pNext,
+                                                               void*                    pNext,
                                                                VkFullScreenExclusiveEXT fullScreenExclusive,
                                                                VkSurfaceKHR             surface,
                                                                VkSurfaceFormat2KHR      pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
@@ -646,7 +642,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDe
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkInstance               instance,
                                                                     VkPhysicalDevice         physicalDevice,
-                                                                    const void*              pNext,
+                                                                    void*                    pNext,
                                                                     VkFullScreenExclusiveEXT fullScreenExclusive,
                                                                     VkSurfaceKHR             surface,
                                                                     VkPresentModeKHR         pPresentModes[CVK_MAX_PRESENT_MODES])
@@ -674,7 +670,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkInsta
 }
 uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkInstance       instance,
                                                             VkPhysicalDevice physicalDevice,
-                                                            const void*      pNext,
+                                                            void*            pNext,
                                                             VkPresentModeKHR presentMode,
                                                             VkSurfaceKHR     surface,
                                                             VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])

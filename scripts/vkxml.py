@@ -312,11 +312,12 @@ class Registry:
         raw = _text(elem)
         name = elem.findtext("name") or ""
         typ = elem.findtext("type") or ""
-        # Fixed-size array suffix: "name[3]" or "name[VK_UUID_SIZE]"
+        # Fixed-size array suffix: "name[3]", "name[VK_UUID_SIZE]" or "name[3][4]"; a multi-
+        # dimensional array keeps every dimension ("3][4") so "[{array_len}]" declares it whole.
         array_len = None
-        m = re.search(r"\[\s*([A-Za-z0-9_]+)\s*\]", raw.split(name, 1)[1] if name in raw else "")
-        if m:
-            array_len = m.group(1)
+        dims = re.findall(r"\[\s*([A-Za-z0-9_]+)\s*\]", raw.split(name, 1)[1] if name in raw else "")
+        if dims:
+            array_len = "][".join(dims)
         decl = raw
         if name:
             idx = decl.rfind(name)

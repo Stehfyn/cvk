@@ -634,7 +634,7 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
  * \brief Creates a swapchain with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in] device                 See cvkCreateSwapchain
- * \param[in] pNext                  See cvkCreateSwapchain
+ * \param[out] pNext                  See cvkCreateSwapchain
  * \param[in] fullScreenExclusive    VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
  * \param[in] flags                  See cvkCreateSwapchain
  * \param[in] surface                See cvkCreateSwapchain
@@ -658,7 +658,7 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
  * \retval None
  */
 void cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
-                                                          const void*                   pNext,
+                                                          void*                         pNext,
                                                           VkFullScreenExclusiveEXT      fullScreenExclusive,
                                                           VkSwapchainCreateFlagsKHR     flags,
                                                           VkSurfaceKHR                  surface,
@@ -730,18 +730,18 @@ void cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice         
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in] device               See cvkGetDeviceGroupSurfacePresentModes2
- * \param[in] pNext                See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[out] pNext                See cvkGetDeviceGroupSurfacePresentModes2
  * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
  * \param[in] surface              See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pModes               See cvkGetDeviceGroupSurfacePresentModes2
  *
  * \retval None
  */
-void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveInfo(VkDevice                          device,
-                                                                     const void*                       pNext,
-                                                                     VkFullScreenExclusiveEXT          fullScreenExclusive,
-                                                                     VkSurfaceKHR                      surface,
-                                                                     VkDeviceGroupPresentModeFlagsKHR* pModes);
+void cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice                          device,
+                                                             void*                             pNext,
+                                                             VkFullScreenExclusiveEXT          fullScreenExclusive,
+                                                             VkSurfaceKHR                      surface,
+                                                             VkDeviceGroupPresentModeFlagsKHR* pModes);
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
  *
@@ -753,24 +753,24 @@ void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveInfo(VkDevice   
  *
  * \retval None
  */
-void cvkGetDeviceGroupSurfacePresentModesWithFullScreenExclusiveWin32Info(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes);
+void cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes);
 /**
  * \brief Retrieves device group surface present modes 2 with VkSurfacePresentModeKHR chained.
  *
  * \param[in] device       See cvkGetDeviceGroupSurfacePresentModes2
- * \param[in] pNext        See cvkGetDeviceGroupSurfacePresentModes2
+ * \param[out] pNext        See cvkGetDeviceGroupSurfacePresentModes2
  * \param[in] presentMode  VkSurfacePresentModeKHR::presentMode
  * \param[in] surface      See cvkGetDeviceGroupSurfacePresentModes2
  * \param[out] pModes       See cvkGetDeviceGroupSurfacePresentModes2
  *
  * \retval None
  */
-void cvkGetDeviceGroupSurfacePresentModesWithPresentModeInfo(VkDevice device, const void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes);
+void cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes);
 /**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in] physicalDevice            See cvkGetPhysicalDeviceSurfaceCapabilities2Info
- * \param[in] pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
+ * \param[out] pSurfaceInfoNext          See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[in] fullScreenExclusive       VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
  * \param[in] surface                   See cvkGetPhysicalDeviceSurfaceCapabilities2Info
  * \param[out] pSurfaceCapabilitiesNext  See cvkGetPhysicalDeviceSurfaceCapabilities2Info
@@ -779,7 +779,7 @@ void cvkGetDeviceGroupSurfacePresentModesWithPresentModeInfo(VkDevice device, co
  * \retval None
  */
 void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice           physicalDevice,
-                                                                const void*                pSurfaceInfoNext,
+                                                                void*                      pSurfaceInfoNext,
                                                                 VkFullScreenExclusiveEXT   fullScreenExclusive,
                                                                 VkSurfaceKHR               surface,
                                                                 void*                      pSurfaceCapabilitiesNext,
@@ -806,7 +806,7 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalD
  * \brief Retrieves physical device surface formats 2 with VkSurfaceFullScreenExclusiveInfoEXT chained.
  *
  * \param[in] physicalDevice       See cvkGetPhysicalDeviceSurfaceFormats2Info
- * \param[in] pNext                See cvkGetPhysicalDeviceSurfaceFormats2Info
+ * \param[out] pNext                See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
  * \param[in] surface              See cvkGetPhysicalDeviceSurfaceFormats2Info
  * \param[in] pSurfaceFormats      See cvkGetPhysicalDeviceSurfaceFormats2Info
@@ -814,7 +814,7 @@ void cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalD
  * \return The uint32_t returned by the command.
  */
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice         physicalDevice,
-                                                               const void*              pNext,
+                                                               void*                    pNext,
                                                                VkFullScreenExclusiveEXT fullScreenExclusive,
                                                                VkSurfaceKHR             surface,
                                                                VkSurfaceFormat2KHR      pSurfaceFormats[CVK_MAX_SURFACE_FORMATS]);
@@ -839,7 +839,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDe
  *
  * \param[in] instance             See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[in] physicalDevice       See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] pNext                See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[out] pNext                See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[in] fullScreenExclusive  VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
  * \param[in] surface              See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[in] pPresentModes        See cvkGetPhysicalDeviceSurfacePresentModes2
@@ -848,7 +848,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDe
  */
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkInstance               instance,
                                                                     VkPhysicalDevice         physicalDevice,
-                                                                    const void*              pNext,
+                                                                    void*                    pNext,
                                                                     VkFullScreenExclusiveEXT fullScreenExclusive,
                                                                     VkSurfaceKHR             surface,
                                                                     VkPresentModeKHR         pPresentModes[CVK_MAX_PRESENT_MODES]);
@@ -875,7 +875,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkInsta
  *
  * \param[in] instance        See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[in] physicalDevice  See cvkGetPhysicalDeviceSurfacePresentModes2
- * \param[in] pNext           See cvkGetPhysicalDeviceSurfacePresentModes2
+ * \param[out] pNext           See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[in] presentMode     VkSurfacePresentModeKHR::presentMode
  * \param[in] surface         See cvkGetPhysicalDeviceSurfacePresentModes2
  * \param[in] pPresentModes   See cvkGetPhysicalDeviceSurfacePresentModes2
@@ -884,7 +884,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkInsta
  */
 uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkInstance       instance,
                                                             VkPhysicalDevice physicalDevice,
-                                                            const void*      pNext,
+                                                            void*            pNext,
                                                             VkPresentModeKHR presentMode,
                                                             VkSurfaceKHR     surface,
                                                             VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES]);

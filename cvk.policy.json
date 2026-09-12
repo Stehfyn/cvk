@@ -20,6 +20,10 @@
   },
   "default_capacity": 64,
   "input_asserts": false,
+  "role_overrides": {
+    "vkGetExternalComputeQueueDataNV::params": "I",
+    "vkSetGpaDeviceClockModeAMD::pInfo": "I"
+  },
   "chains": {
     "cvkGetPhysicalDeviceMemoryTypeIndex": {
       "brief": "Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.",
