@@ -151,7 +151,8 @@ the given flags; both return `VK_INVALID` if none, and `cvk.h` defines `VK_INVAL
 `UINT32_MAX`), is fixed text in the generator and composes like any other function. Chains that go on to allocate carry an
 `assert` step on the index, so an impossible selection is fatal at the chain, not in the helper.
 
-Seeded chains: `cvkGetPhysicalDeviceMemoryTypeIndex`, `cvkAllocate{Image,Buffer}Memory`
+Seeded chains: `cvkGetPhysicalDevice{,Compatible}MemoryTypeIndex` (memory properties, then the
+exact or the covering selector), `cvkAllocate{Image,Buffer}Memory`
 (requirements → type index → assert → allocate, all in one body; no import mask, that
 constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the
 extensible `2` form is used only where something is chained (dedicated requirements, plane),

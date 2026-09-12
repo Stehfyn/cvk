@@ -7877,7 +7877,17 @@ uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMe
  */
 uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
 /**
- * \brief Selects a memory type index of the physical device covering the required properties.
+ * \brief Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceMemoryProperties
+ * \param[in] memoryTypeBits  See cvkGetMemoryTypeIndex
+ * \param[in] properties      See cvkGetMemoryTypeIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties);
+/**
+ * \brief Returns the physical device's first memory type index whose property flags cover the required flags, or VK_INVALID.
  *
  * \param[in] physicalDevice      See cvkGetPhysicalDeviceMemoryProperties
  * \param[in] memoryTypeBits      See cvkGetCompatibleMemoryTypeIndex
@@ -7885,14 +7895,14 @@ uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemor
  *
  * \return The uint32_t returned by the command.
  */
-uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
+uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
 /**
  * \brief Allocates memory sized and typed for a image.
  *
- * \param[in] physicalDevice      See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] physicalDevice      See cvkGetPhysicalDeviceCompatibleMemoryTypeIndex
  * \param[in] device              See cvkGetImageMemoryRequirements
  * \param[in] image               See cvkGetImageMemoryRequirements
- * \param[in] requiredProperties  See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] requiredProperties  See cvkGetPhysicalDeviceCompatibleMemoryTypeIndex
  * \param[in] pMemoryNext         See cvkAllocateMemory
  * \param[in] pAllocator          See cvkAllocateMemory
  * \param[out] pMemory             Receives the created VkDeviceMemory
@@ -7909,10 +7919,10 @@ void cvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
 /**
  * \brief Allocates memory sized and typed for a buffer.
  *
- * \param[in] physicalDevice      See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] physicalDevice      See cvkGetPhysicalDeviceCompatibleMemoryTypeIndex
  * \param[in] device              See cvkGetBufferMemoryRequirements
  * \param[in] buffer              See cvkGetBufferMemoryRequirements
- * \param[in] requiredProperties  See cvkGetPhysicalDeviceMemoryTypeIndex
+ * \param[in] requiredProperties  See cvkGetPhysicalDeviceCompatibleMemoryTypeIndex
  * \param[in] pMemoryNext         See cvkAllocateMemory
  * \param[in] pAllocator          See cvkAllocateMemory
  * \param[out] pMemory             Receives the created VkDeviceMemory

@@ -5348,7 +5348,14 @@ uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemor
     }
     return VK_INVALID;
 }
-uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties)
+uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
+{
+    VkPhysicalDeviceMemoryProperties memory_properties;
+
+    cvkGetPhysicalDeviceMemoryProperties(physicalDevice, &memory_properties);
+    return cvkGetMemoryTypeIndex(memory_properties.memoryTypeCount, memory_properties.memoryTypes, memoryTypeBits, properties);
+}
+uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties)
 {
     VkPhysicalDeviceMemoryProperties memory_properties;
 
@@ -5367,7 +5374,7 @@ void cvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
     uint32_t             memory_type_index;
 
     cvkGetImageMemoryRequirements(device, image, &memory_requirements);
-    memory_type_index = cvkGetPhysicalDeviceMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
+    memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
     CVK_ASSERT(VK_INVALID != memory_type_index);
     cvkAllocateMemory(device, pMemoryNext, memory_requirements.size, memory_type_index, pAllocator, pMemory);
 }
@@ -5383,7 +5390,7 @@ void cvkAllocateBufferMemory(VkPhysicalDevice             physicalDevice,
     uint32_t             memory_type_index;
 
     cvkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
-    memory_type_index = cvkGetPhysicalDeviceMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
+    memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
     CVK_ASSERT(VK_INVALID != memory_type_index);
     cvkAllocateMemory(device, pMemoryNext, memory_requirements.size, memory_type_index, pAllocator, pMemory);
 }

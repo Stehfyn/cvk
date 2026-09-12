@@ -29,7 +29,26 @@
   "input_asserts": false,
   "chains": {
     "cvkGetPhysicalDeviceMemoryTypeIndex": {
-      "brief": "Selects a memory type index of the physical device covering the required properties.",
+      "brief": "Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceMemoryProperties",
+          "local": {
+            "pMemoryProperties": "memory_properties"
+          }
+        },
+        {
+          "call": "cvkGetMemoryTypeIndex",
+          "bind": {
+            "memoryTypeCount": "memory_properties.memoryTypeCount",
+            "pMemoryTypes": "memory_properties.memoryTypes"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceCompatibleMemoryTypeIndex": {
+      "brief": "Returns the physical device's first memory type index whose property flags cover the required flags, or VK_INVALID.",
       "steps": [
         {
           "call": "cvkGetPhysicalDeviceMemoryProperties",
@@ -57,7 +76,7 @@
           }
         },
         {
-          "call": "cvkGetPhysicalDeviceMemoryTypeIndex",
+          "call": "cvkGetPhysicalDeviceCompatibleMemoryTypeIndex",
           "bind": {
             "memoryTypeBits": "memory_requirements.memoryTypeBits"
           },
@@ -84,7 +103,7 @@
           }
         },
         {
-          "call": "cvkGetPhysicalDeviceMemoryTypeIndex",
+          "call": "cvkGetPhysicalDeviceCompatibleMemoryTypeIndex",
           "bind": {
             "memoryTypeBits": "memory_requirements.memoryTypeBits"
           },
