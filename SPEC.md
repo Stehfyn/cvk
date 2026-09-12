@@ -194,6 +194,9 @@ the given flags; both return `VK_INVALID` if none, and `cvk.h` defines `VK_INVAL
 Seeded chains: `cvkGetPhysicalDevice{,Compatible}MemoryTypeIndex` (memory properties, then the
 exact or the covering selector), `cvkGetPhysicalDeviceExternalImage{Import,Export}Support`
 (external format query → `VkBool32` for the feature bit, `pDedicatedOnly` out),
+`cvkGet{Instance,PhysicalDevice}ExtensionSupport` and `cvkGetPhysicalDeviceQueueFamilyIndex`
+(enumeration into a fixed-capacity local, then the fixed selector), `cvkSetupDeviceQueue`
+(extension support asserted, one queue create info built, device created, queue retrieved),
 `cvkAllocate{Image,Buffer}Memory`
 (requirements → type index → assert → allocate, all in one body; no import mask, that
 constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the
@@ -232,6 +235,14 @@ acceptance test of the surface: anything they cannot express is a generator defe
   per memory object: descriptor memory types; single object: requirements with dedicated,
   select, `dup`, allocate (dedicated when required), bind; several objects: per-plane
   requirements intersected per object, select, `dup`, allocate, bind all planes at once.
+
+- Core protocols (`cvk_protocol.c` -> `cvk.h/.c`): `cvkWriteDebugUtilsMessage`, a
+  `VK_EXT_debug_utils` callback printing to stderr; `cvkCreateDebugInstance`, which appends
+  `VK_EXT_debug_utils` to the requested extensions, asserts instance support, creates the
+  instance with the messenger info chained so creation itself is reported, then creates the
+  messenger (the reference preferred the deprecated `VK_EXT_debug_report`; this does not);
+  `cvkGetPhysicalDeviceByLuid` and `cvkGetPhysicalDeviceByPciBusInfo`, adapter identity
+  matching over the enumerated physical devices (`VK_NULL_HANDLE` when none matches).
 
 Not yet written: buffer import and export.
 

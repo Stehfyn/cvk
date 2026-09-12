@@ -25,7 +25,8 @@
     "CVK_MAX_SWAPCHAIN_IMAGES": 16,
     "CVK_MAX_DISPLAYS": 32,
     "CVK_MAX_DRM_FORMAT_MODIFIERS": 64,
-    "CVK_MAX_DRM_FORMAT_MODIFIER_PLANES": 4
+    "CVK_MAX_DRM_FORMAT_MODIFIER_PLANES": 4,
+    "CVK_MAX_INSTANCE_EXTENSIONS": 64
   },
   "default_capacity": 64,
   "input_asserts": false,
@@ -63,6 +64,69 @@
           "bind": {
             "memoryTypeCount": "memory_properties.memoryTypeCount",
             "pMemoryTypes": "memory_properties.memoryTypes"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetInstanceExtensionSupport": {
+      "brief": "Reports whether the instance supports every required extension.",
+      "ret": "VkBool32",
+      "steps": [
+        {
+          "call": "cvkEnumerateInstanceExtensionProperties",
+          "local": {
+            "pProperties": "properties"
+          },
+          "into": "property_count"
+        },
+        {
+          "call": "cvkGetExtensionsSupport",
+          "bind": {
+            "propertyCount": "property_count",
+            "pProperties": "properties"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceExtensionSupport": {
+      "brief": "Reports whether a physical device supports every required extension.",
+      "ret": "VkBool32",
+      "steps": [
+        {
+          "call": "cvkEnumerateDeviceExtensionProperties",
+          "local": {
+            "pProperties": "properties"
+          },
+          "into": "property_count"
+        },
+        {
+          "call": "cvkGetExtensionsSupport",
+          "bind": {
+            "propertyCount": "property_count",
+            "pProperties": "properties"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkGetPhysicalDeviceQueueFamilyIndex": {
+      "brief": "Returns the physical device's first queue family whose flags cover the required flags, or VK_INVALID.",
+      "ret": "uint32_t",
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceQueueFamilyProperties",
+          "local": {
+            "pQueueFamilyProperties": "queue_family_properties"
+          },
+          "into": "queue_family_property_count"
+        },
+        {
+          "call": "cvkGetQueueFamilyIndex",
+          "bind": {
+            "propertyCount": "queue_family_property_count",
+            "pProperties": "queue_family_properties"
           },
           "return": true
         }
@@ -244,6 +308,65 @@
           "call": "cvkBindBufferMemory",
           "bind": {
             "memoryOffset": "0"
+          }
+        }
+      ]
+    },
+    "cvkSetupDeviceQueue": {
+      "brief": "Creates a logical device with one queue of one family and retrieves that queue; every requested extension must be supported.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pQueueNext",
+          "doc": "Optional extension chain for VkDeviceQueueCreateInfo, or NULL"
+        },
+        {
+          "type": "VkDeviceQueueCreateFlags",
+          "name": "queueFlags",
+          "doc": "VkDeviceQueueCreateInfo::flags"
+        },
+        {
+          "type": "float",
+          "name": "queuePriority",
+          "doc": "Priority of the single queue, 0.0 through 1.0"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkGetPhysicalDeviceExtensionSupport",
+          "bind": {
+            "pLayerName": "NULL",
+            "requiredExtensionCount": "enabledExtensionCount",
+            "ppRequiredExtensionNames": "ppEnabledExtensionNames"
+          },
+          "into": "extensions_supported"
+        },
+        {
+          "assert": "extensions_supported"
+        },
+        {
+          "call": "cvkInitDeviceQueueCreateInfo",
+          "local": {
+            "pInfo": "device_queue_create_info"
+          },
+          "bind": {
+            "pNext": "pQueueNext",
+            "flags": "queueFlags",
+            "queueCount": "1",
+            "pQueuePriorities": "&queuePriority"
+          }
+        },
+        {
+          "call": "cvkCreateDevice",
+          "bind": {
+            "queueCreateInfoCount": "1",
+            "pQueueCreateInfos": "&device_queue_create_info"
+          }
+        },
+        {
+          "call": "cvkGetDeviceQueue",
+          "bind": {
+            "queueIndex": "0"
           }
         }
       ]

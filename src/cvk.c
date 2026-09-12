@@ -5929,6 +5929,45 @@ uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemor
     }
     return VK_INVALID;
 }
+VkBool32 cvkGetExtensionSupport(uint32_t propertyCount, const VkExtensionProperties* pProperties, const char* pRequiredExtensionName)
+{
+    uint32_t property_index;
+
+    for (property_index = 0; property_index < propertyCount; ++property_index)
+    {
+        if (0 == strncmp(pProperties[property_index].extensionName, pRequiredExtensionName, VK_MAX_EXTENSION_NAME_SIZE))
+        {
+            return VK_TRUE;
+        }
+    }
+    return VK_FALSE;
+}
+VkBool32 cvkGetExtensionsSupport(uint32_t propertyCount, const VkExtensionProperties* pProperties, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames)
+{
+    uint32_t required_index;
+
+    for (required_index = 0; required_index < requiredExtensionCount; ++required_index)
+    {
+        if (!cvkGetExtensionSupport(propertyCount, pProperties, ppRequiredExtensionNames[required_index]))
+        {
+            return VK_FALSE;
+        }
+    }
+    return VK_TRUE;
+}
+uint32_t cvkGetQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamilyProperties* pProperties, VkQueueFlags requiredFlags)
+{
+    uint32_t property_index;
+
+    for (property_index = 0; property_index < propertyCount; ++property_index)
+    {
+        if ((0 != pProperties[property_index].queueCount) && ((pProperties[property_index].queueFlags & requiredFlags) == requiredFlags))
+        {
+            return property_index;
+        }
+    }
+    return VK_INVALID;
+}
 uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {
     VkPhysicalDeviceMemoryProperties memory_properties;
@@ -5942,6 +5981,30 @@ uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physical
 
     cvkGetPhysicalDeviceMemoryProperties(physicalDevice, &memory_properties);
     return cvkGetCompatibleMemoryTypeIndex(memory_properties.memoryTypeCount, memory_properties.memoryTypes, memoryTypeBits, requiredProperties);
+}
+VkBool32 cvkGetInstanceExtensionSupport(const char* pLayerName, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames)
+{
+    VkExtensionProperties properties[CVK_MAX_PROPERTIES];
+    uint32_t              property_count;
+
+    property_count = cvkEnumerateInstanceExtensionProperties(pLayerName, properties);
+    return cvkGetExtensionsSupport(property_count, properties, requiredExtensionCount, ppRequiredExtensionNames);
+}
+VkBool32 cvkGetPhysicalDeviceExtensionSupport(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames)
+{
+    VkExtensionProperties properties[CVK_MAX_PROPERTIES];
+    uint32_t              property_count;
+
+    property_count = cvkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, properties);
+    return cvkGetExtensionsSupport(property_count, properties, requiredExtensionCount, ppRequiredExtensionNames);
+}
+uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkQueueFlags requiredFlags)
+{
+    VkQueueFamilyProperties queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
+    uint32_t                queue_family_property_count;
+
+    queue_family_property_count = cvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, queue_family_properties);
+    return cvkGetQueueFamilyIndex(queue_family_property_count, queue_family_properties, requiredFlags);
 }
 VkBool32 cvkGetPhysicalDeviceExternalImageImportSupport(VkPhysicalDevice                   physicalDevice,
                                                         VkExternalMemoryHandleTypeFlagBits handleType,
@@ -6071,4 +6134,148 @@ void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
     cvkCreateBuffer(device, pBufferNext, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
     cvkAllocateBufferMemory(physicalDevice, device, (*pBuffer), requiredProperties, pMemoryNext, pAllocator, pMemory);
     cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+}
+void cvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
+                         uint32_t                        queueFamilyIndex,
+                         const void*                     pDeviceNext,
+                         VkDeviceCreateFlags             flags,
+                         uint32_t                        enabledLayerCount,
+                         const char* const*              ppEnabledLayerNames,
+                         uint32_t                        enabledExtensionCount,
+                         const char* const*              ppEnabledExtensionNames,
+                         const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                         const void*                     pQueueNext,
+                         VkDeviceQueueCreateFlags        queueFlags,
+                         float                           queuePriority,
+                         const VkAllocationCallbacks*    pAllocator,
+                         VkDevice*                       pDevice,
+                         VkQueue*                        pQueue)
+{
+    VkBool32                extensions_supported;
+    VkDeviceQueueCreateInfo device_queue_create_info;
+
+    extensions_supported = cvkGetPhysicalDeviceExtensionSupport(physicalDevice, NULL, enabledExtensionCount, ppEnabledExtensionNames);
+    CVK_ASSERT(extensions_supported);
+    cvkInitDeviceQueueCreateInfo(&device_queue_create_info, pQueueNext, queueFlags, queueFamilyIndex, 1, &queuePriority);
+    cvkCreateDevice(physicalDevice,
+                    pDeviceNext,
+                    flags,
+                    1,
+                    &device_queue_create_info,
+                    enabledLayerCount,
+                    ppEnabledLayerNames,
+                    enabledExtensionCount,
+                    ppEnabledExtensionNames,
+                    pEnabledFeatures,
+                    pAllocator,
+                    pDevice);
+    cvkGetDeviceQueue((*pDevice), queueFamilyIndex, 0, pQueue);
+}
+VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
+                                                         VkDebugUtilsMessageTypeFlagsEXT             messageTypes,
+                                                         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                         void*                                       pUserData)
+{
+    const char* message_id_name;
+    const char* message;
+
+    (void)pUserData;
+    message_id_name = ((NULL != pCallbackData) && (NULL != pCallbackData->pMessageIdName)) ? pCallbackData->pMessageIdName : "";
+    message         = ((NULL != pCallbackData) && (NULL != pCallbackData->pMessage)) ? pCallbackData->pMessage : "";
+    (void)fprintf(stderr, "vulkan severity 0x%x type 0x%x %s: %s\n", (unsigned)messageSeverity, (unsigned)messageTypes, message_id_name, message);
+    return VK_FALSE;
+}
+void cvkCreateDebugInstance(const void*                          pNext,
+                            VkInstanceCreateFlags                flags,
+                            const VkApplicationInfo*             pApplicationInfo,
+                            uint32_t                             enabledLayerCount,
+                            const char* const*                   ppEnabledLayerNames,
+                            uint32_t                             enabledExtensionCount,
+                            const char* const*                   ppEnabledExtensionNames,
+                            VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
+                            VkDebugUtilsMessageTypeFlagsEXT      messageType,
+                            PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
+                            void*                                pUserData,
+                            const VkAllocationCallbacks*         pAllocator,
+                            VkInstance*                          pInstance,
+                            VkDebugUtilsMessengerEXT*            pMessenger)
+{
+    const char* extensions[CVK_MAX_INSTANCE_EXTENSIONS];
+    uint32_t    extension_count;
+    uint32_t    extension_index;
+    VkBool32    supported;
+
+    /* the debug utilities extension joins the requested set */
+    CVK_ASSERT(CVK_MAX_INSTANCE_EXTENSIONS > enabledExtensionCount);
+    for (extension_index = 0; extension_index < enabledExtensionCount; ++extension_index)
+    {
+        extensions[extension_index] = ppEnabledExtensionNames[extension_index];
+    }
+    extension_count               = enabledExtensionCount;
+    extensions[extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
+
+    /* capability: every extension must be supported; nothing is dropped silently */
+    supported = cvkGetInstanceExtensionSupport(NULL, extension_count, extensions);
+    CVK_ASSERT(supported);
+
+    /* create with the messenger info chained, so creation itself is reported */
+    cvkCreateInstanceWithDebugUtilsMessengerInfo(pNext,
+                                                 0,
+                                                 messageSeverity,
+                                                 messageType,
+                                                 pfnUserCallback,
+                                                 pUserData,
+                                                 flags,
+                                                 pApplicationInfo,
+                                                 enabledLayerCount,
+                                                 ppEnabledLayerNames,
+                                                 extension_count,
+                                                 extensions,
+                                                 pAllocator,
+                                                 pInstance);
+
+    /* the messenger for every later message */
+    cvkCreateDebugUtilsMessenger((*pInstance), NULL, 0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
+}
+VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t pLuid[VK_LUID_SIZE])
+{
+    VkPhysicalDevice             physical_devices[CVK_MAX_PHYSICAL_DEVICES];
+    VkPhysicalDeviceIDProperties physical_device_id_properties;
+    uint32_t                     physical_device_count;
+    uint32_t                     physical_device_index;
+
+    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
+    {
+        cvkGetPhysicalDeviceIDProperties(physical_devices[physical_device_index], NULL, &physical_device_id_properties);
+        if (physical_device_id_properties.deviceLUIDValid && (0 == memcmp(physical_device_id_properties.deviceLUID, pLuid, VK_LUID_SIZE)))
+        {
+            return physical_devices[physical_device_index];
+        }
+    }
+    return VK_NULL_HANDLE;
+}
+VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t pciDomain, uint32_t pciBus, uint32_t pciDevice, uint32_t pciFunction)
+{
+    static const char* const                pci_bus_info_extension = VK_EXT_PCI_BUS_INFO_EXTENSION_NAME;
+    VkPhysicalDevice                        physical_devices[CVK_MAX_PHYSICAL_DEVICES];
+    VkPhysicalDevicePCIBusInfoPropertiesEXT physical_device_pci_bus_info_properties;
+    uint32_t                                physical_device_count;
+    uint32_t                                physical_device_index;
+
+    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
+    {
+        if (!cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, &pci_bus_info_extension))
+        {
+            continue;
+        }
+        cvkGetPhysicalDevicePCIBusInfoProperties(physical_devices[physical_device_index], NULL, &physical_device_pci_bus_info_properties);
+        if ((pciDomain == physical_device_pci_bus_info_properties.pciDomain) && (pciBus == physical_device_pci_bus_info_properties.pciBus) &&
+            (pciDevice == physical_device_pci_bus_info_properties.pciDevice) && (pciFunction == physical_device_pci_bus_info_properties.pciFunction))
+        {
+            return physical_devices[physical_device_index];
+        }
+    }
+    return VK_NULL_HANDLE;
 }

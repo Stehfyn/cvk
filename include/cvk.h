@@ -37,6 +37,9 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #ifndef CVK_MAX_DRM_FORMAT_MODIFIER_PLANES
 #define CVK_MAX_DRM_FORMAT_MODIFIER_PLANES (4U)
 #endif
+#ifndef CVK_MAX_INSTANCE_EXTENSIONS
+#define CVK_MAX_INSTANCE_EXTENSIONS (64U)
+#endif
 #ifndef CVK_MAX_PHYSICAL_DEVICES
 #define CVK_MAX_PHYSICAL_DEVICES (32U)
 #endif
@@ -8491,6 +8494,37 @@ uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMe
  */
 uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
 /**
+ * \brief Reports whether an enumerated extension array contains one extension name.
+ *
+ * \param[in] propertyCount           propertyCount value
+ * \param[in] pProperties             pProperties value
+ * \param[in] pRequiredExtensionName  pRequiredExtensionName value
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetExtensionSupport(uint32_t propertyCount, const VkExtensionProperties* pProperties, const char* pRequiredExtensionName);
+/**
+ * \brief Reports whether an enumerated extension array contains every required extension name.
+ *
+ * \param[in] propertyCount             propertyCount value
+ * \param[in] pProperties               pProperties value
+ * \param[in] requiredExtensionCount    requiredExtensionCount value
+ * \param[in] ppRequiredExtensionNames  ppRequiredExtensionNames value
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetExtensionsSupport(uint32_t propertyCount, const VkExtensionProperties* pProperties, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames);
+/**
+ * \brief Returns the first queue family whose flags cover the required flags, or VK_INVALID.
+ *
+ * \param[in] propertyCount  propertyCount value
+ * \param[in] pProperties    pProperties value
+ * \param[in] requiredFlags  requiredFlags value
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamilyProperties* pProperties, VkQueueFlags requiredFlags);
+/**
  * \brief Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.
  *
  * \param[in] physicalDevice  See cvkGetPhysicalDeviceMemoryProperties
@@ -8510,6 +8544,36 @@ uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, ui
  * \return The uint32_t returned by the command.
  */
 uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags requiredProperties);
+/**
+ * \brief Reports whether the instance supports every required extension.
+ *
+ * \param[in] pLayerName                See cvkEnumerateInstanceExtensionProperties
+ * \param[in] requiredExtensionCount    See cvkGetExtensionsSupport
+ * \param[in] ppRequiredExtensionNames  See cvkGetExtensionsSupport
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetInstanceExtensionSupport(const char* pLayerName, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames);
+/**
+ * \brief Reports whether a physical device supports every required extension.
+ *
+ * \param[in] physicalDevice            See cvkEnumerateDeviceExtensionProperties
+ * \param[in] pLayerName                See cvkEnumerateDeviceExtensionProperties
+ * \param[in] requiredExtensionCount    See cvkGetExtensionsSupport
+ * \param[in] ppRequiredExtensionNames  See cvkGetExtensionsSupport
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceExtensionSupport(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames);
+/**
+ * \brief Returns the physical device's first queue family whose flags cover the required flags, or VK_INVALID.
+ *
+ * \param[in] physicalDevice  See cvkGetPhysicalDeviceQueueFamilyProperties
+ * \param[in] requiredFlags   See cvkGetQueueFamilyIndex
+ *
+ * \return The uint32_t returned by the command.
+ */
+uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkQueueFlags requiredFlags);
 /**
  * \brief Reports whether an image description can be imported through an external memory handle type, and whether only dedicated allocations are allowed.
  *
@@ -8680,6 +8744,129 @@ void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
                     const VkAllocationCallbacks* pAllocator,
                     VkBuffer*                    pBuffer,
                     VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a logical device with one queue of one family and retrieves that queue; every requested extension must be supported.
+ *
+ * \param[in] physicalDevice           See cvkGetPhysicalDeviceExtensionSupport
+ * \param[in] queueFamilyIndex         See cvkInitDeviceQueueCreateInfo
+ * \param[in] pDeviceNext              See cvkCreateDevice
+ * \param[in] flags                    See cvkCreateDevice
+ * \param[in] enabledLayerCount        See cvkCreateDevice
+ * \param[in] ppEnabledLayerNames      See cvkCreateDevice
+ * \param[in] enabledExtensionCount    See cvkCreateDevice
+ * \param[in] ppEnabledExtensionNames  See cvkCreateDevice
+ * \param[in] pEnabledFeatures         See cvkCreateDevice
+ * \param[in] pQueueNext               Optional extension chain for VkDeviceQueueCreateInfo, or NULL
+ * \param[in] queueFlags               VkDeviceQueueCreateInfo::flags
+ * \param[in] queuePriority            Priority of the single queue, 0.0 through 1.0
+ * \param[in] pAllocator               See cvkCreateDevice
+ * \param[out] pDevice                  Receives the created VkDevice
+ * \param[out] pQueue                   Receives the created VkQueue
+ *
+ * \retval None
+ */
+void cvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
+                         uint32_t                        queueFamilyIndex,
+                         const void*                     pDeviceNext,
+                         VkDeviceCreateFlags             flags,
+                         uint32_t                        enabledLayerCount,
+                         const char* const*              ppEnabledLayerNames,
+                         uint32_t                        enabledExtensionCount,
+                         const char* const*              ppEnabledExtensionNames,
+                         const VkPhysicalDeviceFeatures* pEnabledFeatures,
+                         const void*                     pQueueNext,
+                         VkDeviceQueueCreateFlags        queueFlags,
+                         float                           queuePriority,
+                         const VkAllocationCallbacks*    pAllocator,
+                         VkDevice*                       pDevice,
+                         VkQueue*                        pQueue);
+/**
+ * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
+ *
+ * \par Details:
+ *  Prints the severity and type masks in hexadecimal, the message identifier name when present,
+ *  and the message text. Suitable as pfnUserCallback for cvkCreateDebugInstance.
+ *
+ * \param[in] messageSeverity  Severity bit of the message
+ * \param[in] messageTypes     General, validation, and performance type mask
+ * \param[in] pCallbackData    Message identifier and text supplied by the loader, or NULL
+ * \param[in] pUserData        Unused application context
+ *
+ * \retval VK_FALSE The triggering Vulkan call is never aborted.
+ */
+VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
+                                                         VkDebugUtilsMessageTypeFlagsEXT             messageTypes,
+                                                         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+                                                         void*                                       pUserData);
+/**
+ * \brief Creates an instance with VK_EXT_debug_utils enabled and a messenger receiving every message, creation included.
+ *
+ * \par Details:
+ *  Appends VK_EXT_debug_utils to the requested extensions, asserts the instance supports every
+ *  resulting extension, creates the instance with the messenger create info chained so that
+ *  messages from instance creation itself are delivered, then creates the messenger that
+ *  receives all later messages. The instance and messenger are the caller's to destroy.
+ *
+ * \param[in]  pNext                    Optional extension chain for VkInstanceCreateInfo, or NULL
+ * \param[in]  flags                    VkInstanceCreateInfo::flags
+ * \param[in]  pApplicationInfo         Optional application and engine metadata, or NULL
+ * \param[in]  enabledLayerCount        Number of names in ppEnabledLayerNames
+ * \param[in]  ppEnabledLayerNames      Layer names to enable, or NULL when the count is zero
+ * \param[in]  enabledExtensionCount    Number of names in ppEnabledExtensionNames, below CVK_MAX_INSTANCE_EXTENSIONS
+ * \param[in]  ppEnabledExtensionNames  Extension names to enable, or NULL when the count is zero
+ * \param[in]  messageSeverity          Severities delivered to the callback
+ * \param[in]  messageType              Types delivered to the callback
+ * \param[in]  pfnUserCallback          Callback receiving the messages, for example cvkWriteDebugUtilsMessage
+ * \param[in]  pUserData                Context passed to the callback
+ * \param[in]  pAllocator               Optional allocation callbacks, or NULL
+ * \param[out] pInstance                Receives the created VkInstance
+ * \param[out] pMessenger               Receives the created VkDebugUtilsMessengerEXT
+ *
+ * \retval None
+ */
+void cvkCreateDebugInstance(const void*                          pNext,
+                            VkInstanceCreateFlags                flags,
+                            const VkApplicationInfo*             pApplicationInfo,
+                            uint32_t                             enabledLayerCount,
+                            const char* const*                   ppEnabledLayerNames,
+                            uint32_t                             enabledExtensionCount,
+                            const char* const*                   ppEnabledExtensionNames,
+                            VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
+                            VkDebugUtilsMessageTypeFlagsEXT      messageType,
+                            PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
+                            void*                                pUserData,
+                            const VkAllocationCallbacks*         pAllocator,
+                            VkInstance*                          pInstance,
+                            VkDebugUtilsMessengerEXT*            pMessenger);
+/**
+ * \brief Finds the physical device whose locally unique identifier matches.
+ *
+ * \par Details:
+ *  Enumerates the instance's physical devices and compares each device's LUID from
+ *  VkPhysicalDeviceIDProperties when the device reports one as valid.
+ *
+ * \param[in] instance  Instance whose physical devices are searched
+ * \param[in] pLuid     Locally unique identifier of VK_LUID_SIZE bytes
+ *
+ * \return The matching physical device, or VK_NULL_HANDLE when none matches.
+ */
+VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t pLuid[VK_LUID_SIZE]);
+/**
+ * \brief Finds the physical device at a PCI address.
+ *
+ * \par Details:
+ *  Enumerates the instance's physical devices and, for each device supporting
+ *  VK_EXT_pci_bus_info, compares its domain, bus, device, and function.
+ *
+ * \param[in] instance     Instance whose physical devices are searched
+ * \param[in] pciDomain    PCI domain of the adapter
+ * \param[in] pciBus       PCI bus of the adapter
+ * \param[in] pciDevice    PCI device of the adapter
+ * \param[in] pciFunction  PCI function of the adapter
+ *
+ * \return The matching physical device, or VK_NULL_HANDLE when none matches.
+ */
+VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t pciDomain, uint32_t pciBus, uint32_t pciDevice, uint32_t pciFunction);
 
 #ifdef __cplusplus
 }

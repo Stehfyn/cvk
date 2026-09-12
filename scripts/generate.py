@@ -913,6 +913,64 @@ class Generator:
         },
     ]
 
+    FIXED += [
+        {
+            "name": "cvkGetExtensionSupport",
+            "ret": "VkBool32",
+            "brief": "Reports whether an enumerated extension array contains one extension name.",
+            "params": [("uint32_t", "propertyCount"), ("const VkExtensionProperties*", "pProperties"), ("const char*", "pRequiredExtensionName")],
+            "body": [
+                "uint32_t property_index;",
+                "",
+                "for (property_index = 0; property_index < propertyCount; ++property_index)",
+                "{",
+                "    if (0 == strncmp(pProperties[property_index].extensionName, pRequiredExtensionName, VK_MAX_EXTENSION_NAME_SIZE))",
+                "    {",
+                "        return VK_TRUE;",
+                "    }",
+                "}",
+                "return VK_FALSE;",
+            ],
+        },
+        {
+            "name": "cvkGetExtensionsSupport",
+            "ret": "VkBool32",
+            "brief": "Reports whether an enumerated extension array contains every required extension name.",
+            "params": [("uint32_t", "propertyCount"), ("const VkExtensionProperties*", "pProperties"),
+                       ("uint32_t", "requiredExtensionCount"), ("const char* const*", "ppRequiredExtensionNames")],
+            "body": [
+                "uint32_t required_index;",
+                "",
+                "for (required_index = 0; required_index < requiredExtensionCount; ++required_index)",
+                "{",
+                "    if (!cvkGetExtensionSupport(propertyCount, pProperties, ppRequiredExtensionNames[required_index]))",
+                "    {",
+                "        return VK_FALSE;",
+                "    }",
+                "}",
+                "return VK_TRUE;",
+            ],
+        },
+        {
+            "name": "cvkGetQueueFamilyIndex",
+            "ret": "uint32_t",
+            "brief": "Returns the first queue family whose flags cover the required flags, or VK_INVALID.",
+            "params": [("uint32_t", "propertyCount"), ("const VkQueueFamilyProperties*", "pProperties"), ("VkQueueFlags", "requiredFlags")],
+            "body": [
+                "uint32_t property_index;",
+                "",
+                "for (property_index = 0; property_index < propertyCount; ++property_index)",
+                "{",
+                "    if ((0 != pProperties[property_index].queueCount) && ((pProperties[property_index].queueFlags & requiredFlags) == requiredFlags))",
+                "    {",
+                "        return property_index;",
+                "    }",
+                "}",
+                "return VK_INVALID;",
+            ],
+        },
+    ]
+
     def emit_fixed(self, f: dict) -> None:
         name = self.register(f["name"], "policy:" + f["name"])
         params = [EmittedParam(f"{t} {n}", n, f"{n} value", False) for t, n in f["params"]]
@@ -930,7 +988,8 @@ class Generator:
         Doxygen block plus signature goes to the header, each definition to the source, and
         its system includes to the source. Composed from the generated surface only: every
         cvk* it calls must exist, and it may not call vk* directly."""
-        plat = re.search(r"cvk_protocol_(\w+)\.c$", os.path.basename(path)).group(1)
+        m_plat = re.search(r"cvk_protocol(?:_(\w+))?\.c$", os.path.basename(path))
+        plat = m_plat.group(1) or ""                      # cvk_protocol.c is the core pair
         with open(path, encoding="utf-8") as fh:
             text = fh.read()
         stripped = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
@@ -958,7 +1017,7 @@ class Generator:
                 pm = re.match(r"(.*?)\b(\w+)\s*(\[[^\]]*\])?$", piece)
                 params.append(EmittedParam(piece, pm.group(2) if pm else piece, "", not piece.startswith("const") and "*" in piece))
             self.sigs[name] = (ret, params)
-            self.place(frozenset([plat]), doc + sig + ";", sig + "\n" + body)
+            self.place(frozenset([plat]) if plat else frozenset(), doc + sig + ";", sig + "\n" + body)
 
     # ---------------------------------------------------------------- chains
     LEVELS = ["instance", "physicalDevice", "device", "queue", "commandBuffer"]
@@ -1014,9 +1073,16 @@ class Generator:
                     args.append(bind[p.name])
                 elif p.name in local:
                     var = local[p.name]
-                    locals_[var] = ptype.rstrip("*").strip()
-                    available[stem(p.name)] = var
-                    args.append(f"&{var}")
+                    if "[" in p.text:
+                        # Fixed-capacity enumeration array: declared as an array, passed by name.
+                        cap = p.text[p.text.index("[") + 1: p.text.index("]")]
+                        locals_[f"{var}[{cap}]"] = p.text.split(" ", 1)[0]
+                        available[stem(p.name)] = var
+                        args.append(var)
+                    else:
+                        locals_[var] = ptype.rstrip("*").strip()
+                        available[stem(p.name)] = var
+                        args.append(f"&{var}")
                 elif p.is_out:
                     outputs.setdefault(p.name, p)
                     available[stem(p.name)] = f"(*{p.name})"
@@ -1131,7 +1197,7 @@ class Generator:
         for chain_name, spec in self.policy.get("chains", {}).items():
             self.emit_chain(chain_name, spec)
         for path in sorted(os.listdir(self.PROTOCOL_DIR)) if os.path.isdir(self.PROTOCOL_DIR) else []:
-            if re.fullmatch(r"cvk_protocol_\w+\.c", path):
+            if re.fullmatch(r"cvk_protocol(_\w+)?\.c", path):
                 self.emit_protocol_file(os.path.join(self.PROTOCOL_DIR, path))
 
     # Header includes per platform pair. "posix" is a home the registry does not name:
@@ -1209,7 +1275,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+{"".join(f"#include {i}{chr(10)}" for i in self.PLATFORM_SOURCE_INCLUDES.get("", []) if i not in ("<stdio.h>", "<stdlib.h>", "<string.h>"))}
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {{
     (void)fprintf(stderr, "%s:%d: cvk fatal: %s\\n", pFile, line, pExpression);
