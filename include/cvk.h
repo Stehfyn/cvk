@@ -30473,24 +30473,24 @@ void cvkCmdBeginRenderingWithRenderPassStripeInfo(VkCommandBuffer               
 /**
  * \brief Records begin rendering with VkRenderPassTileShadingCreateInfoQCOM chained.
  *
- * \param[in] commandBuffer                   See cvkCmdBeginRendering
- * \param[in] pNext                           See cvkCmdBeginRendering
- * \param[in] flagsTileShadingRenderPassQCOM  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingRenderPassQCOM
- * \param[in] tileApronSize                   VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
- * \param[in] flags                           See cvkCmdBeginRendering
- * \param[in] renderArea                      See cvkCmdBeginRendering
- * \param[in] layerCount                      See cvkCmdBeginRendering
- * \param[in] viewMask                        See cvkCmdBeginRendering
- * \param[in] colorAttachmentCount            See cvkCmdBeginRendering
- * \param[in] pColorAttachments               See cvkCmdBeginRendering
- * \param[in] pDepthAttachment                See cvkCmdBeginRendering
- * \param[in] pStencilAttachment              See cvkCmdBeginRendering
+ * \param[in] commandBuffer               See cvkCmdBeginRendering
+ * \param[in] pNext                       See cvkCmdBeginRendering
+ * \param[in] flagsTileShadingRenderPass  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingRenderPass
+ * \param[in] tileApronSize               VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
+ * \param[in] flags                       See cvkCmdBeginRendering
+ * \param[in] renderArea                  See cvkCmdBeginRendering
+ * \param[in] layerCount                  See cvkCmdBeginRendering
+ * \param[in] viewMask                    See cvkCmdBeginRendering
+ * \param[in] colorAttachmentCount        See cvkCmdBeginRendering
+ * \param[in] pColorAttachments           See cvkCmdBeginRendering
+ * \param[in] pDepthAttachment            See cvkCmdBeginRendering
+ * \param[in] pStencilAttachment          See cvkCmdBeginRendering
  *
  * \retval None
  */
 void cvkCmdBeginRenderingWithRenderPassTileShadingInfo(VkCommandBuffer                  commandBuffer,
                                                        const void*                      pNext,
-                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
+                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
                                                        VkExtent2D                       tileApronSize,
                                                        VkRenderingFlags                 flags,
                                                        VkRect2D                         renderArea,
@@ -32647,7 +32647,7 @@ void cvkCreateDescriptorSetLayoutWithMutableDescriptorTypeInfo(VkDevice         
  *
  * \param[in] physicalDevice           See cvkCreateDevice
  * \param[in] pNext                    See cvkCreateDevice
- * \param[in] flagsMemoryReportEXT     VkDeviceDeviceMemoryReportCreateInfoEXT::flagsMemoryReportEXT
+ * \param[in] flagsMemoryReport        VkDeviceDeviceMemoryReportCreateInfoEXT::flagsMemoryReport
  * \param[in] pfnUserCallback          VkDeviceDeviceMemoryReportCreateInfoEXT::pfnUserCallback
  * \param[out] pUserData                VkDeviceDeviceMemoryReportCreateInfoEXT::pUserData
  * \param[in] flags                    See cvkCreateDevice
@@ -32665,7 +32665,7 @@ void cvkCreateDescriptorSetLayoutWithMutableDescriptorTypeInfo(VkDevice         
  */
 void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                    physicalDevice,
                                                const void*                         pNext,
-                                               VkDeviceMemoryReportFlagsEXT        flagsMemoryReportEXT,
+                                               VkDeviceMemoryReportFlagsEXT        flagsMemoryReport,
                                                PFN_vkDeviceMemoryReportCallbackEXT pfnUserCallback,
                                                void*                               pUserData,
                                                VkDeviceCreateFlags                 flags,
@@ -32681,25 +32681,25 @@ void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                 
 /**
  * \brief Creates a device with VkDeviceDiagnosticsConfigCreateInfoNV chained.
  *
- * \param[in] physicalDevice            See cvkCreateDevice
- * \param[in] pNext                     See cvkCreateDevice
- * \param[in] flagsDiagnosticsConfigNV  VkDeviceDiagnosticsConfigCreateInfoNV::flagsDiagnosticsConfigNV
- * \param[in] flags                     See cvkCreateDevice
- * \param[in] queueCreateInfoCount      See cvkCreateDevice
- * \param[in] pQueueCreateInfos         See cvkCreateDevice
- * \param[in] enabledLayerCount         See cvkCreateDevice
- * \param[in] ppEnabledLayerNames       See cvkCreateDevice
- * \param[in] enabledExtensionCount     See cvkCreateDevice
- * \param[in] ppEnabledExtensionNames   See cvkCreateDevice
- * \param[in] pEnabledFeatures          See cvkCreateDevice
- * \param[in] pAllocator                See cvkCreateDevice
- * \param[out] pDevice                   See cvkCreateDevice
+ * \param[in] physicalDevice           See cvkCreateDevice
+ * \param[in] pNext                    See cvkCreateDevice
+ * \param[in] flagsDiagnosticsConfig   VkDeviceDiagnosticsConfigCreateInfoNV::flagsDiagnosticsConfig
+ * \param[in] flags                    See cvkCreateDevice
+ * \param[in] queueCreateInfoCount     See cvkCreateDevice
+ * \param[in] pQueueCreateInfos        See cvkCreateDevice
+ * \param[in] enabledLayerCount        See cvkCreateDevice
+ * \param[in] ppEnabledLayerNames      See cvkCreateDevice
+ * \param[in] enabledExtensionCount    See cvkCreateDevice
+ * \param[in] ppEnabledExtensionNames  See cvkCreateDevice
+ * \param[in] pEnabledFeatures         See cvkCreateDevice
+ * \param[in] pAllocator               See cvkCreateDevice
+ * \param[out] pDevice                  See cvkCreateDevice
  *
  * \retval None
  */
 void cvkCreateDeviceWithDiagnosticsConfigInfo(VkPhysicalDevice                 physicalDevice,
                                               const void*                      pNext,
-                                              VkDeviceDiagnosticsConfigFlagsNV flagsDiagnosticsConfigNV,
+                                              VkDeviceDiagnosticsConfigFlagsNV flagsDiagnosticsConfig,
                                               VkDeviceCreateFlags              flags,
                                               uint32_t                         queueCreateInfoCount,
                                               const VkDeviceQueueCreateInfo*   pQueueCreateInfos,
@@ -32984,30 +32984,30 @@ void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                           
 /**
  * \brief Creates a image with VkDataGraphOpticalFlowImageFormatInfoARM chained.
  *
- * \param[in] device                        See cvkCreateImage
- * \param[in] pNext                         See cvkCreateImage
- * \param[in] usageDataGraphOpticalFlowARM  VkDataGraphOpticalFlowImageFormatInfoARM::usageDataGraphOpticalFlowARM
- * \param[in] flags                         See cvkCreateImage
- * \param[in] imageType                     See cvkCreateImage
- * \param[in] format                        See cvkCreateImage
- * \param[in] extent                        See cvkCreateImage
- * \param[in] mipLevels                     See cvkCreateImage
- * \param[in] arrayLayers                   See cvkCreateImage
- * \param[in] samples                       See cvkCreateImage
- * \param[in] tiling                        See cvkCreateImage
- * \param[in] usage                         See cvkCreateImage
- * \param[in] sharingMode                   See cvkCreateImage
- * \param[in] queueFamilyIndexCount         See cvkCreateImage
- * \param[in] pQueueFamilyIndices           See cvkCreateImage
- * \param[in] initialLayout                 See cvkCreateImage
- * \param[in] pAllocator                    See cvkCreateImage
- * \param[out] pImage                        See cvkCreateImage
+ * \param[in] device                     See cvkCreateImage
+ * \param[in] pNext                      See cvkCreateImage
+ * \param[in] usageDataGraphOpticalFlow  VkDataGraphOpticalFlowImageFormatInfoARM::usageDataGraphOpticalFlow
+ * \param[in] flags                      See cvkCreateImage
+ * \param[in] imageType                  See cvkCreateImage
+ * \param[in] format                     See cvkCreateImage
+ * \param[in] extent                     See cvkCreateImage
+ * \param[in] mipLevels                  See cvkCreateImage
+ * \param[in] arrayLayers                See cvkCreateImage
+ * \param[in] samples                    See cvkCreateImage
+ * \param[in] tiling                     See cvkCreateImage
+ * \param[in] usage                      See cvkCreateImage
+ * \param[in] sharingMode                See cvkCreateImage
+ * \param[in] queueFamilyIndexCount      See cvkCreateImage
+ * \param[in] pQueueFamilyIndices        See cvkCreateImage
+ * \param[in] initialLayout              See cvkCreateImage
+ * \param[in] pAllocator                 See cvkCreateImage
+ * \param[out] pImage                     See cvkCreateImage
  *
  * \retval None
  */
 void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfo(VkDevice                                 device,
                                                            const void*                              pNext,
-                                                           VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
+                                                           VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlow,
                                                            VkImageCreateFlags                       flags,
                                                            VkImageType                              imageType,
                                                            VkFormat                                 format,
@@ -33196,7 +33196,7 @@ void cvkCreateImageWithAlignmentControlInfo(VkDevice                     device,
  *
  * \param[in] device                        See cvkCreateImage
  * \param[in] pNext                         See cvkCreateImage
- * \param[in] flagsCompressionEXT           VkImageCompressionControlEXT::flagsCompressionEXT
+ * \param[in] flagsCompression              VkImageCompressionControlEXT::flagsCompression
  * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
  * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
  * \param[in] flags                         See cvkCreateImage
@@ -33219,7 +33219,7 @@ void cvkCreateImageWithAlignmentControlInfo(VkDevice                     device,
  */
 void cvkCreateImageWithCompressionControlInfo(VkDevice                             device,
                                               const void*                          pNext,
-                                              VkImageCompressionFlagsEXT           flagsCompressionEXT,
+                                              VkImageCompressionFlagsEXT           flagsCompression,
                                               uint32_t                             compressionControlPlaneCount,
                                               VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                               VkImageCreateFlags                   flags,
@@ -33242,7 +33242,7 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
  *
  * \param[in] device                 See cvkCreateImage
  * \param[out] pNext                  See cvkCreateImage
- * \param[in] flags2KHR              VkImageCreateFlags2CreateInfoKHR::flags2KHR
+ * \param[in] flags2                 VkImageCreateFlags2CreateInfoKHR::flags2
  * \param[in] flags                  See cvkCreateImage
  * \param[in] imageType              See cvkCreateImage
  * \param[in] format                 See cvkCreateImage
@@ -33263,7 +33263,7 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
  */
 void cvkCreateImageWithFlags2Info(VkDevice                     device,
                                   void*                        pNext,
-                                  VkImageCreateFlags2KHR       flags2KHR,
+                                  VkImageCreateFlags2KHR       flags2,
                                   VkImageCreateFlags           flags,
                                   VkImageType                  imageType,
                                   VkFormat                     format,
@@ -33586,7 +33586,7 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
  *
  * \param[in] device                 See cvkCreateImage
  * \param[out] pNext                  See cvkCreateImage
- * \param[in] usage2KHR              VkImageUsageFlags2CreateInfoKHR::usage2KHR
+ * \param[in] usage2                 VkImageUsageFlags2CreateInfoKHR::usage2
  * \param[in] flags                  See cvkCreateImage
  * \param[in] imageType              See cvkCreateImage
  * \param[in] format                 See cvkCreateImage
@@ -33607,7 +33607,7 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
  */
 void cvkCreateImageWithUsageFlags2InfoKHR(VkDevice                     device,
                                           void*                        pNext,
-                                          VkImageUsageFlags2KHR        usage2KHR,
+                                          VkImageUsageFlags2KHR        usage2,
                                           VkImageCreateFlags           flags,
                                           VkImageType                  imageType,
                                           VkFormat                     format,
@@ -33712,7 +33712,7 @@ void cvkCreateImageWithOpaqueCaptureDescriptorDataInfo(VkDevice                 
  *
  * \param[in] device                 See cvkCreateImage
  * \param[in] pNext                  See cvkCreateImage
- * \param[in] usageOpticalFlowNV     VkOpticalFlowImageFormatInfoNV::usageOpticalFlowNV
+ * \param[in] usageOpticalFlow       VkOpticalFlowImageFormatInfoNV::usageOpticalFlow
  * \param[in] flags                  See cvkCreateImage
  * \param[in] imageType              See cvkCreateImage
  * \param[in] format                 See cvkCreateImage
@@ -33733,7 +33733,7 @@ void cvkCreateImageWithOpaqueCaptureDescriptorDataInfo(VkDevice                 
  */
 void cvkCreateImageWithOpticalFlowImageFormatInfo(VkDevice                     device,
                                                   const void*                  pNext,
-                                                  VkOpticalFlowUsageFlagsNV    usageOpticalFlowNV,
+                                                  VkOpticalFlowUsageFlagsNV    usageOpticalFlow,
                                                   VkImageCreateFlags           flags,
                                                   VkImageType                  imageType,
                                                   VkFormat                     format,
@@ -34063,7 +34063,7 @@ void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                   
  * \brief Creates a instance with VkDebugReportCallbackCreateInfoEXT chained.
  *
  * \param[in] pNext                    See cvkCreateInstance
- * \param[in] flagsDebugReportEXT      VkDebugReportCallbackCreateInfoEXT::flagsDebugReportEXT
+ * \param[in] flagsDebugReport         VkDebugReportCallbackCreateInfoEXT::flagsDebugReport
  * \param[in] pfnCallback              VkDebugReportCallbackCreateInfoEXT::pfnCallback
  * \param[out] pUserData                VkDebugReportCallbackCreateInfoEXT::pUserData
  * \param[in] flags                    See cvkCreateInstance
@@ -34078,7 +34078,7 @@ void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                   
  * \retval None
  */
 void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  pNext,
-                                                  VkDebugReportFlagsEXT        flagsDebugReportEXT,
+                                                  VkDebugReportFlagsEXT        flagsDebugReport,
                                                   PFN_vkDebugReportCallbackEXT pfnCallback,
                                                   void*                        pUserData,
                                                   VkInstanceCreateFlags        flags,
@@ -34092,25 +34092,25 @@ void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  p
 /**
  * \brief Creates a instance with VkDebugUtilsMessengerCreateInfoEXT chained.
  *
- * \param[in] pNext                        See cvkCreateInstance
- * \param[in] flagsDebugUtilsMessengerEXT  VkDebugUtilsMessengerCreateInfoEXT::flagsDebugUtilsMessengerEXT
- * \param[in] messageSeverity              VkDebugUtilsMessengerCreateInfoEXT::messageSeverity
- * \param[in] messageType                  VkDebugUtilsMessengerCreateInfoEXT::messageType
- * \param[in] pfnUserCallback              VkDebugUtilsMessengerCreateInfoEXT::pfnUserCallback
- * \param[out] pUserData                    VkDebugUtilsMessengerCreateInfoEXT::pUserData
- * \param[in] flags                        See cvkCreateInstance
- * \param[in] pApplicationInfo             See cvkCreateInstance
- * \param[in] enabledLayerCount            See cvkCreateInstance
- * \param[in] ppEnabledLayerNames          See cvkCreateInstance
- * \param[in] enabledExtensionCount        See cvkCreateInstance
- * \param[in] ppEnabledExtensionNames      See cvkCreateInstance
- * \param[in] pAllocator                   See cvkCreateInstance
- * \param[out] pInstance                    See cvkCreateInstance
+ * \param[in] pNext                     See cvkCreateInstance
+ * \param[in] flagsDebugUtilsMessenger  VkDebugUtilsMessengerCreateInfoEXT::flagsDebugUtilsMessenger
+ * \param[in] messageSeverity           VkDebugUtilsMessengerCreateInfoEXT::messageSeverity
+ * \param[in] messageType               VkDebugUtilsMessengerCreateInfoEXT::messageType
+ * \param[in] pfnUserCallback           VkDebugUtilsMessengerCreateInfoEXT::pfnUserCallback
+ * \param[out] pUserData                 VkDebugUtilsMessengerCreateInfoEXT::pUserData
+ * \param[in] flags                     See cvkCreateInstance
+ * \param[in] pApplicationInfo          See cvkCreateInstance
+ * \param[in] enabledLayerCount         See cvkCreateInstance
+ * \param[in] ppEnabledLayerNames       See cvkCreateInstance
+ * \param[in] enabledExtensionCount     See cvkCreateInstance
+ * \param[in] ppEnabledExtensionNames   See cvkCreateInstance
+ * \param[in] pAllocator                See cvkCreateInstance
+ * \param[out] pInstance                 See cvkCreateInstance
  *
  * \retval None
  */
 void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                          pNext,
-                                                  VkDebugUtilsMessengerCreateFlagsEXT  flagsDebugUtilsMessengerEXT,
+                                                  VkDebugUtilsMessengerCreateFlagsEXT  flagsDebugUtilsMessenger,
                                                   VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
                                                   VkDebugUtilsMessageTypeFlagsEXT      messageType,
                                                   PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
@@ -34740,25 +34740,25 @@ void cvkCreateRenderPassWithMultiviewInfo(VkDevice                       device,
 /**
  * \brief Creates a render pass with VkRenderPassTileShadingCreateInfoQCOM chained.
  *
- * \param[in] device                See cvkCreateRenderPass
- * \param[in] pNext                 See cvkCreateRenderPass
- * \param[in] flagsTileShadingQCOM  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingQCOM
- * \param[in] tileApronSize         VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
- * \param[in] flags                 See cvkCreateRenderPass
- * \param[in] attachmentCount       See cvkCreateRenderPass
- * \param[in] pAttachments          See cvkCreateRenderPass
- * \param[in] subpassCount          See cvkCreateRenderPass
- * \param[in] pSubpasses            See cvkCreateRenderPass
- * \param[in] dependencyCount       See cvkCreateRenderPass
- * \param[in] pDependencies         See cvkCreateRenderPass
- * \param[in] pAllocator            See cvkCreateRenderPass
- * \param[out] pRenderPass           See cvkCreateRenderPass
+ * \param[in] device            See cvkCreateRenderPass
+ * \param[in] pNext             See cvkCreateRenderPass
+ * \param[in] flagsTileShading  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShading
+ * \param[in] tileApronSize     VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
+ * \param[in] flags             See cvkCreateRenderPass
+ * \param[in] attachmentCount   See cvkCreateRenderPass
+ * \param[in] pAttachments      See cvkCreateRenderPass
+ * \param[in] subpassCount      See cvkCreateRenderPass
+ * \param[in] pSubpasses        See cvkCreateRenderPass
+ * \param[in] dependencyCount   See cvkCreateRenderPass
+ * \param[in] pDependencies     See cvkCreateRenderPass
+ * \param[in] pAllocator        See cvkCreateRenderPass
+ * \param[out] pRenderPass       See cvkCreateRenderPass
  *
  * \retval None
  */
 void cvkCreateRenderPassWithTileShadingInfo(VkDevice                         device,
                                             const void*                      pNext,
-                                            VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
+                                            VkTileShadingRenderPassFlagsQCOM flagsTileShading,
                                             VkExtent2D                       tileApronSize,
                                             VkRenderPassCreateFlags          flags,
                                             uint32_t                         attachmentCount,
@@ -34906,7 +34906,7 @@ void cvkCreateRenderPass2WithFragmentDensityMapInfo(VkDevice                    
  *
  * \param[in] device                   See cvkCreateRenderPass2
  * \param[in] pNext                    See cvkCreateRenderPass2
- * \param[in] flagsTileShadingQCOM     VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingQCOM
+ * \param[in] flagsTileShading         VkRenderPassTileShadingCreateInfoQCOM::flagsTileShading
  * \param[in] tileApronSize            VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
  * \param[in] flags                    See cvkCreateRenderPass2
  * \param[in] attachmentCount          See cvkCreateRenderPass2
@@ -34924,7 +34924,7 @@ void cvkCreateRenderPass2WithFragmentDensityMapInfo(VkDevice                    
  */
 void cvkCreateRenderPass2WithTileShadingInfo(VkDevice                         device,
                                              const void*                      pNext,
-                                             VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
+                                             VkTileShadingRenderPassFlagsQCOM flagsTileShading,
                                              VkExtent2D                       tileApronSize,
                                              VkRenderPassCreateFlags          flags,
                                              uint32_t                         attachmentCount,
@@ -35606,7 +35606,7 @@ VkResult cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         
  *
  * \param[in] device                        See cvkCreateSwapchain
  * \param[in] pNext                         See cvkCreateSwapchain
- * \param[in] flagsImageCompressionEXT      VkImageCompressionControlEXT::flagsImageCompressionEXT
+ * \param[in] flagsImageCompression         VkImageCompressionControlEXT::flagsImageCompression
  * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
  * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
  * \param[in] flags                         See cvkCreateSwapchain
@@ -35632,7 +35632,7 @@ VkResult cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         
  */
 VkResult cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
                                                            const void*                          pNext,
-                                                           VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
+                                                           VkImageCompressionFlagsEXT           flagsImageCompression,
                                                            uint32_t                             compressionControlPlaneCount,
                                                            VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                            VkSwapchainCreateFlagsKHR            flags,
@@ -36832,26 +36832,26 @@ void cvkGetDynamicRenderingRenderPassStripeTileProperties(VkDevice              
 /**
  * \brief Retrieves dynamic rendering tile properties with VkRenderPassTileShadingCreateInfoQCOM chained.
  *
- * \param[in] device                          See cvkGetRenderingInfo
- * \param[in] pRenderingInfoNext              See cvkGetRenderingInfo
- * \param[in] flagsTileShadingRenderPassQCOM  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingRenderPassQCOM
- * \param[in] tileApronSize                   VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
- * \param[in] flags                           See cvkGetRenderingInfo
- * \param[in] renderArea                      See cvkGetRenderingInfo
- * \param[in] layerCount                      See cvkGetRenderingInfo
- * \param[in] viewMask                        See cvkGetRenderingInfo
- * \param[in] colorAttachmentCount            See cvkGetRenderingInfo
- * \param[in] pColorAttachments               See cvkGetRenderingInfo
- * \param[in] pDepthAttachment                See cvkGetRenderingInfo
- * \param[in] pStencilAttachment              See cvkGetRenderingInfo
- * \param[out] pPropertiesNext                 See cvkGetRenderingInfo
- * \param[out] pProperties                     See cvkGetRenderingInfo
+ * \param[in] device                      See cvkGetRenderingInfo
+ * \param[in] pRenderingInfoNext          See cvkGetRenderingInfo
+ * \param[in] flagsTileShadingRenderPass  VkRenderPassTileShadingCreateInfoQCOM::flagsTileShadingRenderPass
+ * \param[in] tileApronSize               VkRenderPassTileShadingCreateInfoQCOM::tileApronSize
+ * \param[in] flags                       See cvkGetRenderingInfo
+ * \param[in] renderArea                  See cvkGetRenderingInfo
+ * \param[in] layerCount                  See cvkGetRenderingInfo
+ * \param[in] viewMask                    See cvkGetRenderingInfo
+ * \param[in] colorAttachmentCount        See cvkGetRenderingInfo
+ * \param[in] pColorAttachments           See cvkGetRenderingInfo
+ * \param[in] pDepthAttachment            See cvkGetRenderingInfo
+ * \param[in] pStencilAttachment          See cvkGetRenderingInfo
+ * \param[out] pPropertiesNext             See cvkGetRenderingInfo
+ * \param[out] pProperties                 See cvkGetRenderingInfo
  *
  * \retval None
  */
 void cvkGetDynamicRenderingRenderPassTileShadingTileProperties(VkDevice                         device,
                                                                const void*                      pRenderingInfoNext,
-                                                               VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
+                                                               VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
                                                                VkExtent2D                       tileApronSize,
                                                                VkRenderingFlags                 flags,
                                                                VkRect2D                         renderArea,
@@ -37164,22 +37164,22 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
 /**
  * \brief Retrieves physical device image format properties 2 with VkDataGraphOpticalFlowImageFormatInfoARM chained.
  *
- * \param[in] physicalDevice                See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] pImageFormatInfoNext          See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] usageDataGraphOpticalFlowARM  VkDataGraphOpticalFlowImageFormatInfoARM::usageDataGraphOpticalFlowARM
- * \param[in] format                        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] type                          See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] tiling                        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] usage                         See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] flags                         See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[out] pImageFormatPropertiesNext    See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[out] pImageFormatProperties        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usageDataGraphOpticalFlow   VkDataGraphOpticalFlowImageFormatInfoARM::usageDataGraphOpticalFlow
+ * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] usage                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[in] flags                       See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatPropertiesNext  See cvkGetPhysicalDeviceImageFormatInfo2
+ * \param[out] pImageFormatProperties      See cvkGetPhysicalDeviceImageFormatInfo2
  *
  * \return VK_SUCCESS or one of: . Error results abort.
  */
 VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
                                                                        const void*                              pImageFormatInfoNext,
-                                                                       VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
+                                                                       VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlow,
                                                                        VkFormat                                 format,
                                                                        VkImageType                              type,
                                                                        VkImageTiling                            tiling,
@@ -37192,7 +37192,7 @@ VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysica
  *
  * \param[in] physicalDevice                See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] pImageFormatInfoNext          See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] flagsCompressionEXT           VkImageCompressionControlEXT::flagsCompressionEXT
+ * \param[in] flagsCompression              VkImageCompressionControlEXT::flagsCompression
  * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
  * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
  * \param[in] format                        See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37207,7 +37207,7 @@ VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysica
  */
 VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
                                                                      const void*                          pImageFormatInfoNext,
-                                                                     VkImageCompressionFlagsEXT           flagsCompressionEXT,
+                                                                     VkImageCompressionFlagsEXT           flagsCompression,
                                                                      uint32_t                             compressionControlPlaneCount,
                                                                      VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                                      VkFormat                             format,
@@ -37222,7 +37222,7 @@ VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalD
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] flags2KHR                   VkImageCreateFlags2CreateInfoKHR::flags2KHR
+ * \param[in] flags2                      VkImageCreateFlags2CreateInfoKHR::flags2
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37235,7 +37235,7 @@ VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalD
  */
 VkResult cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
                                                                void*                     pImageFormatInfoNext,
-                                                               VkImageCreateFlags2KHR    flags2KHR,
+                                                               VkImageCreateFlags2KHR    flags2,
                                                                VkFormat                  format,
                                                                VkImageType               type,
                                                                VkImageTiling             tiling,
@@ -37328,7 +37328,7 @@ VkResult cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice 
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[out] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] usage2KHR                   VkImageUsageFlags2CreateInfoKHR::usage2KHR
+ * \param[in] usage2                      VkImageUsageFlags2CreateInfoKHR::usage2
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37341,7 +37341,7 @@ VkResult cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice 
  */
 VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
                                                                            void*                     pImageFormatInfoNext,
-                                                                           VkImageUsageFlags2KHR     usage2KHR,
+                                                                           VkImageUsageFlags2KHR     usage2,
                                                                            VkFormat                  format,
                                                                            VkImageType               type,
                                                                            VkImageTiling             tiling,
@@ -37354,7 +37354,7 @@ VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhy
  *
  * \param[in] physicalDevice              See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] pImageFormatInfoNext        See cvkGetPhysicalDeviceImageFormatInfo2
- * \param[in] usageOpticalFlowNV          VkOpticalFlowImageFormatInfoNV::usageOpticalFlowNV
+ * \param[in] usageOpticalFlow            VkOpticalFlowImageFormatInfoNV::usageOpticalFlow
  * \param[in] format                      See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] type                        See cvkGetPhysicalDeviceImageFormatInfo2
  * \param[in] tiling                      See cvkGetPhysicalDeviceImageFormatInfo2
@@ -37367,7 +37367,7 @@ VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhy
  */
 VkResult cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
                                                               const void*               pImageFormatInfoNext,
-                                                              VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
+                                                              VkOpticalFlowUsageFlagsNV usageOpticalFlow,
                                                               VkFormat                  format,
                                                               VkImageType               type,
                                                               VkImageTiling             tiling,
@@ -37492,7 +37492,7 @@ VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDev
  *
  * \param[in] physicalDevice  See cvkGetPhysicalDeviceSparseImageFormatInfo2
  * \param[out] pNext           See cvkGetPhysicalDeviceSparseImageFormatInfo2
- * \param[in] usage2KHR       VkImageUsageFlags2CreateInfoKHR::usage2KHR
+ * \param[in] usage2          VkImageUsageFlags2CreateInfoKHR::usage2
  * \param[in] format          See cvkGetPhysicalDeviceSparseImageFormatInfo2
  * \param[in] type            See cvkGetPhysicalDeviceSparseImageFormatInfo2
  * \param[in] samples         See cvkGetPhysicalDeviceSparseImageFormatInfo2
@@ -37504,7 +37504,7 @@ VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDev
  */
 uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice               physicalDevice,
                                                                                  void*                          pNext,
-                                                                                 VkImageUsageFlags2KHR          usage2KHR,
+                                                                                 VkImageUsageFlags2KHR          usage2,
                                                                                  VkFormat                       format,
                                                                                  VkImageType                    type,
                                                                                  VkSampleCountFlagBits          samples,
@@ -38616,6 +38616,3618 @@ void cvkUpdateVideoSessionParametersWithEncodeH265AddInfo(VkDevice              
                                                           uint32_t                                stdPPSCount,
                                                           const StdVideoH265PictureParameterSet*  pStdPPSs,
                                                           uint32_t                                updateSequenceCount);
+/**
+ * \brief Binds buffer memory 2 with VkBindBufferMemoryDeviceGroupInfo chained.
+ *
+ * \param[in] device            See cvkBindBufferMemoryInfo
+ * \param[in] pNext             See cvkBindBufferMemoryInfo
+ * \param[in] deviceIndexCount  VkBindBufferMemoryDeviceGroupInfo::deviceIndexCount
+ * \param[in] pDeviceIndices    VkBindBufferMemoryDeviceGroupInfo::pDeviceIndices
+ * \param[in] buffer            See cvkBindBufferMemoryInfo
+ * \param[in] memory            See cvkBindBufferMemoryInfo
+ * \param[in] memoryOffset      See cvkBindBufferMemoryInfo
+ *
+ * \retval None
+ */
+void cvkBindBufferMemoryInfoWithDeviceGroupInfo(VkDevice        device,
+                                                const void*     pNext,
+                                                uint32_t        deviceIndexCount,
+                                                const uint32_t* pDeviceIndices,
+                                                VkBuffer        buffer,
+                                                VkDeviceMemory  memory,
+                                                VkDeviceSize    memoryOffset);
+/**
+ * \brief Binds buffer memory 2 with VkBindMemoryStatus chained.
+ *
+ * \param[in] device        See cvkBindBufferMemoryInfo
+ * \param[in] pNext         See cvkBindBufferMemoryInfo
+ * \param[out] pResult       VkBindMemoryStatus::pResult
+ * \param[in] buffer        See cvkBindBufferMemoryInfo
+ * \param[in] memory        See cvkBindBufferMemoryInfo
+ * \param[in] memoryOffset  See cvkBindBufferMemoryInfo
+ *
+ * \retval None
+ */
+void cvkBindBufferMemoryInfoWithMemoryStatusInfo(VkDevice device, const void* pNext, VkResult* pResult, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+/**
+ * \brief Binds image memory 2 with VkBindImageMemoryDeviceGroupInfo chained.
+ *
+ * \param[in] device                        See cvkBindImageMemoryInfo
+ * \param[in] pNext                         See cvkBindImageMemoryInfo
+ * \param[in] deviceIndexCount              VkBindImageMemoryDeviceGroupInfo::deviceIndexCount
+ * \param[in] pDeviceIndices                VkBindImageMemoryDeviceGroupInfo::pDeviceIndices
+ * \param[in] splitInstanceBindRegionCount  VkBindImageMemoryDeviceGroupInfo::splitInstanceBindRegionCount
+ * \param[in] pSplitInstanceBindRegions     VkBindImageMemoryDeviceGroupInfo::pSplitInstanceBindRegions
+ * \param[in] image                         See cvkBindImageMemoryInfo
+ * \param[in] memory                        See cvkBindImageMemoryInfo
+ * \param[in] memoryOffset                  See cvkBindImageMemoryInfo
+ *
+ * \retval None
+ */
+void cvkBindImageMemoryInfoWithDeviceGroupInfo(VkDevice        device,
+                                               const void*     pNext,
+                                               uint32_t        deviceIndexCount,
+                                               const uint32_t* pDeviceIndices,
+                                               uint32_t        splitInstanceBindRegionCount,
+                                               const VkRect2D* pSplitInstanceBindRegions,
+                                               VkImage         image,
+                                               VkDeviceMemory  memory,
+                                               VkDeviceSize    memoryOffset);
+/**
+ * \brief Binds image memory 2 with VkBindImageMemorySwapchainInfoKHR chained.
+ *
+ * \param[in] device        See cvkBindImageMemoryInfo
+ * \param[in] pNext         See cvkBindImageMemoryInfo
+ * \param[in] swapchain     VkBindImageMemorySwapchainInfoKHR::swapchain
+ * \param[in] imageIndex    VkBindImageMemorySwapchainInfoKHR::imageIndex
+ * \param[in] image         See cvkBindImageMemoryInfo
+ * \param[in] memory        See cvkBindImageMemoryInfo
+ * \param[in] memoryOffset  See cvkBindImageMemoryInfo
+ *
+ * \retval None
+ */
+void cvkBindImageMemoryInfoWithSwapchainInfo(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndex, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+/**
+ * \brief Binds image memory 2 with VkBindImagePlaneMemoryInfo chained.
+ *
+ * \param[in] device        See cvkBindImageMemoryInfo
+ * \param[in] pNext         See cvkBindImageMemoryInfo
+ * \param[in] planeAspect   VkBindImagePlaneMemoryInfo::planeAspect
+ * \param[in] image         See cvkBindImageMemoryInfo
+ * \param[in] memory        See cvkBindImageMemoryInfo
+ * \param[in] memoryOffset  See cvkBindImageMemoryInfo
+ *
+ * \retval None
+ */
+void cvkBindImageMemoryInfoWithPlaneInfo(VkDevice device, const void* pNext, VkImageAspectFlagBits planeAspect, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+/**
+ * \brief Binds image memory 2 with VkBindMemoryStatus chained.
+ *
+ * \param[in] device        See cvkBindImageMemoryInfo
+ * \param[in] pNext         See cvkBindImageMemoryInfo
+ * \param[out] pResult       VkBindMemoryStatus::pResult
+ * \param[in] image         See cvkBindImageMemoryInfo
+ * \param[in] memory        See cvkBindImageMemoryInfo
+ * \param[in] memoryOffset  See cvkBindImageMemoryInfo
+ *
+ * \retval None
+ */
+void cvkBindImageMemoryInfoWithMemoryStatusInfo(VkDevice device, const void* pNext, VkResult* pResult, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+/**
+ * \brief Records bind descriptor buffers with VkBufferUsageFlags2CreateInfo chained.
+ *
+ * \param[in] device         See cvkCmdBindDescriptorBuffer
+ * \param[in] commandBuffer  See cvkCmdBindDescriptorBuffer
+ * \param[in] pNext          See cvkCmdBindDescriptorBuffer
+ * \param[in] usage2         VkBufferUsageFlags2CreateInfo::usage2
+ * \param[in] address        See cvkCmdBindDescriptorBuffer
+ * \param[in] usage          See cvkCmdBindDescriptorBuffer
+ *
+ * \retval None
+ */
+void cvkCmdBindDescriptorBufferWithUsageFlags2Info(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBufferUsageFlags2 usage2, VkDeviceAddress address, VkBufferUsageFlags usage);
+/**
+ * \brief Records bind descriptor buffers with VkDescriptorBufferBindingPushDescriptorBufferHandleEXT chained.
+ *
+ * \param[in] device         See cvkCmdBindDescriptorBuffer
+ * \param[in] commandBuffer  See cvkCmdBindDescriptorBuffer
+ * \param[in] pNext          See cvkCmdBindDescriptorBuffer
+ * \param[in] buffer         VkDescriptorBufferBindingPushDescriptorBufferHandleEXT::buffer
+ * \param[in] address        See cvkCmdBindDescriptorBuffer
+ * \param[in] usage          See cvkCmdBindDescriptorBuffer
+ *
+ * \retval None
+ */
+void cvkCmdBindDescriptorBufferWithPushDescriptorBufferHandleInfo(VkDevice           device,
+                                                                  VkCommandBuffer    commandBuffer,
+                                                                  const void*        pNext,
+                                                                  VkBuffer           buffer,
+                                                                  VkDeviceAddress    address,
+                                                                  VkBufferUsageFlags usage);
+/**
+ * \brief Records push descriptor set with VkWriteDescriptorSetAccelerationStructureKHR chained.
+ *
+ * \param[in] commandBuffer               See cvkCmdWriteDescriptorSet
+ * \param[in] pipelineBindPoint           See cvkCmdWriteDescriptorSet
+ * \param[in] layout                      See cvkCmdWriteDescriptorSet
+ * \param[in] set                         See cvkCmdWriteDescriptorSet
+ * \param[in] pNext                       See cvkCmdWriteDescriptorSet
+ * \param[in] accelerationStructureCount  VkWriteDescriptorSetAccelerationStructureKHR::accelerationStructureCount
+ * \param[in] pAccelerationStructures     VkWriteDescriptorSetAccelerationStructureKHR::pAccelerationStructures
+ * \param[in] dstSet                      See cvkCmdWriteDescriptorSet
+ * \param[in] dstBinding                  See cvkCmdWriteDescriptorSet
+ * \param[in] dstArrayElement             See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorCount             See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorType              See cvkCmdWriteDescriptorSet
+ * \param[in] pImageInfo                  See cvkCmdWriteDescriptorSet
+ * \param[in] pBufferInfo                 See cvkCmdWriteDescriptorSet
+ * \param[in] pTexelBufferView            See cvkCmdWriteDescriptorSet
+ *
+ * \retval None
+ */
+void cvkCmdWriteDescriptorSetWithAccelerationStructureInfo(VkCommandBuffer                   commandBuffer,
+                                                           VkPipelineBindPoint               pipelineBindPoint,
+                                                           VkPipelineLayout                  layout,
+                                                           uint32_t                          set,
+                                                           const void*                       pNext,
+                                                           uint32_t                          accelerationStructureCount,
+                                                           const VkAccelerationStructureKHR* pAccelerationStructures,
+                                                           VkDescriptorSet                   dstSet,
+                                                           uint32_t                          dstBinding,
+                                                           uint32_t                          dstArrayElement,
+                                                           uint32_t                          descriptorCount,
+                                                           VkDescriptorType                  descriptorType,
+                                                           const VkDescriptorImageInfo*      pImageInfo,
+                                                           const VkDescriptorBufferInfo*     pBufferInfo,
+                                                           const VkBufferView*               pTexelBufferView);
+/**
+ * \brief Records push descriptor set with VkWriteDescriptorSetAccelerationStructureNV chained.
+ *
+ * \param[in] commandBuffer               See cvkCmdWriteDescriptorSet
+ * \param[in] pipelineBindPoint           See cvkCmdWriteDescriptorSet
+ * \param[in] layout                      See cvkCmdWriteDescriptorSet
+ * \param[in] set                         See cvkCmdWriteDescriptorSet
+ * \param[in] pNext                       See cvkCmdWriteDescriptorSet
+ * \param[in] accelerationStructureCount  VkWriteDescriptorSetAccelerationStructureNV::accelerationStructureCount
+ * \param[in] pAccelerationStructures     VkWriteDescriptorSetAccelerationStructureNV::pAccelerationStructures
+ * \param[in] dstSet                      See cvkCmdWriteDescriptorSet
+ * \param[in] dstBinding                  See cvkCmdWriteDescriptorSet
+ * \param[in] dstArrayElement             See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorCount             See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorType              See cvkCmdWriteDescriptorSet
+ * \param[in] pImageInfo                  See cvkCmdWriteDescriptorSet
+ * \param[in] pBufferInfo                 See cvkCmdWriteDescriptorSet
+ * \param[in] pTexelBufferView            See cvkCmdWriteDescriptorSet
+ *
+ * \retval None
+ */
+void cvkCmdWriteDescriptorSetWithAccelerationStructureInfoNV(VkCommandBuffer                  commandBuffer,
+                                                             VkPipelineBindPoint              pipelineBindPoint,
+                                                             VkPipelineLayout                 layout,
+                                                             uint32_t                         set,
+                                                             const void*                      pNext,
+                                                             uint32_t                         accelerationStructureCount,
+                                                             const VkAccelerationStructureNV* pAccelerationStructures,
+                                                             VkDescriptorSet                  dstSet,
+                                                             uint32_t                         dstBinding,
+                                                             uint32_t                         dstArrayElement,
+                                                             uint32_t                         descriptorCount,
+                                                             VkDescriptorType                 descriptorType,
+                                                             const VkDescriptorImageInfo*     pImageInfo,
+                                                             const VkDescriptorBufferInfo*    pBufferInfo,
+                                                             const VkBufferView*              pTexelBufferView);
+/**
+ * \brief Records push descriptor set with VkWriteDescriptorSetInlineUniformBlock chained.
+ *
+ * \param[in] commandBuffer      See cvkCmdWriteDescriptorSet
+ * \param[in] pipelineBindPoint  See cvkCmdWriteDescriptorSet
+ * \param[in] layout             See cvkCmdWriteDescriptorSet
+ * \param[in] set                See cvkCmdWriteDescriptorSet
+ * \param[in] pNext              See cvkCmdWriteDescriptorSet
+ * \param[in] dataSize           VkWriteDescriptorSetInlineUniformBlock::dataSize
+ * \param[in] pData              VkWriteDescriptorSetInlineUniformBlock::pData
+ * \param[in] dstSet             See cvkCmdWriteDescriptorSet
+ * \param[in] dstBinding         See cvkCmdWriteDescriptorSet
+ * \param[in] dstArrayElement    See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorCount    See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorType     See cvkCmdWriteDescriptorSet
+ * \param[in] pImageInfo         See cvkCmdWriteDescriptorSet
+ * \param[in] pBufferInfo        See cvkCmdWriteDescriptorSet
+ * \param[in] pTexelBufferView   See cvkCmdWriteDescriptorSet
+ *
+ * \retval None
+ */
+void cvkCmdWriteDescriptorSetWithInlineUniformBlockInfo(VkCommandBuffer               commandBuffer,
+                                                        VkPipelineBindPoint           pipelineBindPoint,
+                                                        VkPipelineLayout              layout,
+                                                        uint32_t                      set,
+                                                        const void*                   pNext,
+                                                        uint32_t                      dataSize,
+                                                        const void*                   pData,
+                                                        VkDescriptorSet               dstSet,
+                                                        uint32_t                      dstBinding,
+                                                        uint32_t                      dstArrayElement,
+                                                        uint32_t                      descriptorCount,
+                                                        VkDescriptorType              descriptorType,
+                                                        const VkDescriptorImageInfo*  pImageInfo,
+                                                        const VkDescriptorBufferInfo* pBufferInfo,
+                                                        const VkBufferView*           pTexelBufferView);
+/**
+ * \brief Records push descriptor set with VkWriteDescriptorSetPartitionedAccelerationStructureNV chained.
+ *
+ * \param[in] commandBuffer               See cvkCmdWriteDescriptorSet
+ * \param[in] pipelineBindPoint           See cvkCmdWriteDescriptorSet
+ * \param[in] layout                      See cvkCmdWriteDescriptorSet
+ * \param[in] set                         See cvkCmdWriteDescriptorSet
+ * \param[out] pNext                       See cvkCmdWriteDescriptorSet
+ * \param[in] accelerationStructureCount  VkWriteDescriptorSetPartitionedAccelerationStructureNV::accelerationStructureCount
+ * \param[in] pAccelerationStructures     VkWriteDescriptorSetPartitionedAccelerationStructureNV::pAccelerationStructures
+ * \param[in] dstSet                      See cvkCmdWriteDescriptorSet
+ * \param[in] dstBinding                  See cvkCmdWriteDescriptorSet
+ * \param[in] dstArrayElement             See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorCount             See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorType              See cvkCmdWriteDescriptorSet
+ * \param[in] pImageInfo                  See cvkCmdWriteDescriptorSet
+ * \param[in] pBufferInfo                 See cvkCmdWriteDescriptorSet
+ * \param[in] pTexelBufferView            See cvkCmdWriteDescriptorSet
+ *
+ * \retval None
+ */
+void cvkCmdWriteDescriptorSetWithPartitionedAccelerationStructureInfo(VkCommandBuffer               commandBuffer,
+                                                                      VkPipelineBindPoint           pipelineBindPoint,
+                                                                      VkPipelineLayout              layout,
+                                                                      uint32_t                      set,
+                                                                      void*                         pNext,
+                                                                      uint32_t                      accelerationStructureCount,
+                                                                      const VkDeviceAddress*        pAccelerationStructures,
+                                                                      VkDescriptorSet               dstSet,
+                                                                      uint32_t                      dstBinding,
+                                                                      uint32_t                      dstArrayElement,
+                                                                      uint32_t                      descriptorCount,
+                                                                      VkDescriptorType              descriptorType,
+                                                                      const VkDescriptorImageInfo*  pImageInfo,
+                                                                      const VkDescriptorBufferInfo* pBufferInfo,
+                                                                      const VkBufferView*           pTexelBufferView);
+/**
+ * \brief Records push descriptor set with VkWriteDescriptorSetTensorARM chained.
+ *
+ * \param[in] commandBuffer      See cvkCmdWriteDescriptorSet
+ * \param[in] pipelineBindPoint  See cvkCmdWriteDescriptorSet
+ * \param[in] layout             See cvkCmdWriteDescriptorSet
+ * \param[in] set                See cvkCmdWriteDescriptorSet
+ * \param[in] pNext              See cvkCmdWriteDescriptorSet
+ * \param[in] tensorViewCount    VkWriteDescriptorSetTensorARM::tensorViewCount
+ * \param[in] pTensorViews       VkWriteDescriptorSetTensorARM::pTensorViews
+ * \param[in] dstSet             See cvkCmdWriteDescriptorSet
+ * \param[in] dstBinding         See cvkCmdWriteDescriptorSet
+ * \param[in] dstArrayElement    See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorCount    See cvkCmdWriteDescriptorSet
+ * \param[in] descriptorType     See cvkCmdWriteDescriptorSet
+ * \param[in] pImageInfo         See cvkCmdWriteDescriptorSet
+ * \param[in] pBufferInfo        See cvkCmdWriteDescriptorSet
+ * \param[in] pTexelBufferView   See cvkCmdWriteDescriptorSet
+ *
+ * \retval None
+ */
+void cvkCmdWriteDescriptorSetWithTensorInfo(VkCommandBuffer               commandBuffer,
+                                            VkPipelineBindPoint           pipelineBindPoint,
+                                            VkPipelineLayout              layout,
+                                            uint32_t                      set,
+                                            const void*                   pNext,
+                                            uint32_t                      tensorViewCount,
+                                            const VkTensorViewARM*        pTensorViews,
+                                            VkDescriptorSet               dstSet,
+                                            uint32_t                      dstBinding,
+                                            uint32_t                      dstArrayElement,
+                                            uint32_t                      descriptorCount,
+                                            VkDescriptorType              descriptorType,
+                                            const VkDescriptorImageInfo*  pImageInfo,
+                                            const VkDescriptorBufferInfo* pBufferInfo,
+                                            const VkBufferView*           pTexelBufferView);
+/**
+ * \brief Creates a compute pipelines with VkComputePipelineIndirectBufferInfoNV chained.
+ *
+ * \param[in] device                              See cvkCreateComputePipeline
+ * \param[in] pipelineCache                       See cvkCreateComputePipeline
+ * \param[in] pNext                               See cvkCreateComputePipeline
+ * \param[in] deviceAddress                       VkComputePipelineIndirectBufferInfoNV::deviceAddress
+ * \param[in] size                                VkComputePipelineIndirectBufferInfoNV::size
+ * \param[in] pipelineDeviceAddressCaptureReplay  VkComputePipelineIndirectBufferInfoNV::pipelineDeviceAddressCaptureReplay
+ * \param[in] flags                               See cvkCreateComputePipeline
+ * \param[in] stage                               See cvkCreateComputePipeline
+ * \param[in] layout                              See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle                  See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex                   See cvkCreateComputePipeline
+ * \param[in] pAllocator                          See cvkCreateComputePipeline
+ * \param[out] pPipeline                           See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithIndirectBufferInfo(VkDevice                        device,
+                                                        VkPipelineCache                 pipelineCache,
+                                                        const void*                     pNext,
+                                                        VkDeviceAddress                 deviceAddress,
+                                                        VkDeviceSize                    size,
+                                                        VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
+                                                        VkPipelineCreateFlags           flags,
+                                                        VkPipelineShaderStageCreateInfo stage,
+                                                        VkPipelineLayout                layout,
+                                                        VkPipeline                      basePipelineHandle,
+                                                        int32_t                         basePipelineIndex,
+                                                        const VkAllocationCallbacks*    pAllocator,
+                                                        VkPipeline*                     pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkPipelineBinaryInfoKHR chained.
+ *
+ * \param[in] device              See cvkCreateComputePipeline
+ * \param[in] pipelineCache       See cvkCreateComputePipeline
+ * \param[in] pNext               See cvkCreateComputePipeline
+ * \param[in] binaryCount         VkPipelineBinaryInfoKHR::binaryCount
+ * \param[in] pPipelineBinaries   VkPipelineBinaryInfoKHR::pPipelineBinaries
+ * \param[in] flags               See cvkCreateComputePipeline
+ * \param[in] stage               See cvkCreateComputePipeline
+ * \param[in] layout              See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle  See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex   See cvkCreateComputePipeline
+ * \param[in] pAllocator          See cvkCreateComputePipeline
+ * \param[out] pPipeline           See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithBinaryInfo(VkDevice                        device,
+                                                VkPipelineCache                 pipelineCache,
+                                                const void*                     pNext,
+                                                uint32_t                        binaryCount,
+                                                const VkPipelineBinaryKHR*      pPipelineBinaries,
+                                                VkPipelineCreateFlags           flags,
+                                                VkPipelineShaderStageCreateInfo stage,
+                                                VkPipelineLayout                layout,
+                                                VkPipeline                      basePipelineHandle,
+                                                int32_t                         basePipelineIndex,
+                                                const VkAllocationCallbacks*    pAllocator,
+                                                VkPipeline*                     pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkPipelineCompilerControlCreateInfoAMD chained.
+ *
+ * \param[in] device                See cvkCreateComputePipeline
+ * \param[in] pipelineCache         See cvkCreateComputePipeline
+ * \param[in] pNext                 See cvkCreateComputePipeline
+ * \param[in] compilerControlFlags  VkPipelineCompilerControlCreateInfoAMD::compilerControlFlags
+ * \param[in] flags                 See cvkCreateComputePipeline
+ * \param[in] stage                 See cvkCreateComputePipeline
+ * \param[in] layout                See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle    See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex     See cvkCreateComputePipeline
+ * \param[in] pAllocator            See cvkCreateComputePipeline
+ * \param[out] pPipeline             See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithCompilerControlInfo(VkDevice                          device,
+                                                         VkPipelineCache                   pipelineCache,
+                                                         const void*                       pNext,
+                                                         VkPipelineCompilerControlFlagsAMD compilerControlFlags,
+                                                         VkPipelineCreateFlags             flags,
+                                                         VkPipelineShaderStageCreateInfo   stage,
+                                                         VkPipelineLayout                  layout,
+                                                         VkPipeline                        basePipelineHandle,
+                                                         int32_t                           basePipelineIndex,
+                                                         const VkAllocationCallbacks*      pAllocator,
+                                                         VkPipeline*                       pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkPipelineCreateFlags2CreateInfo chained.
+ *
+ * \param[in] device              See cvkCreateComputePipeline
+ * \param[in] pipelineCache       See cvkCreateComputePipeline
+ * \param[in] pNext               See cvkCreateComputePipeline
+ * \param[in] flags2              VkPipelineCreateFlags2CreateInfo::flags2
+ * \param[in] flags               See cvkCreateComputePipeline
+ * \param[in] stage               See cvkCreateComputePipeline
+ * \param[in] layout              See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle  See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex   See cvkCreateComputePipeline
+ * \param[in] pAllocator          See cvkCreateComputePipeline
+ * \param[out] pPipeline           See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithFlags2Info(VkDevice                        device,
+                                                VkPipelineCache                 pipelineCache,
+                                                const void*                     pNext,
+                                                VkPipelineCreateFlags2          flags2,
+                                                VkPipelineCreateFlags           flags,
+                                                VkPipelineShaderStageCreateInfo stage,
+                                                VkPipelineLayout                layout,
+                                                VkPipeline                      basePipelineHandle,
+                                                int32_t                         basePipelineIndex,
+                                                const VkAllocationCallbacks*    pAllocator,
+                                                VkPipeline*                     pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkPipelineCreationFeedbackCreateInfo chained.
+ *
+ * \param[in] device                              See cvkCreateComputePipeline
+ * \param[in] pipelineCache                       See cvkCreateComputePipeline
+ * \param[in] pNext                               See cvkCreateComputePipeline
+ * \param[out] pPipelineCreationFeedback           VkPipelineCreationFeedbackCreateInfo::pPipelineCreationFeedback
+ * \param[in] pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
+ * \param[out] pPipelineStageCreationFeedbacks     VkPipelineCreationFeedbackCreateInfo::pPipelineStageCreationFeedbacks
+ * \param[in] flags                               See cvkCreateComputePipeline
+ * \param[in] stage                               See cvkCreateComputePipeline
+ * \param[in] layout                              See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle                  See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex                   See cvkCreateComputePipeline
+ * \param[in] pAllocator                          See cvkCreateComputePipeline
+ * \param[out] pPipeline                           See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithCreationFeedbackInfo(VkDevice                        device,
+                                                          VkPipelineCache                 pipelineCache,
+                                                          const void*                     pNext,
+                                                          VkPipelineCreationFeedback*     pPipelineCreationFeedback,
+                                                          uint32_t                        pipelineStageCreationFeedbackCount,
+                                                          VkPipelineCreationFeedback*     pPipelineStageCreationFeedbacks,
+                                                          VkPipelineCreateFlags           flags,
+                                                          VkPipelineShaderStageCreateInfo stage,
+                                                          VkPipelineLayout                layout,
+                                                          VkPipeline                      basePipelineHandle,
+                                                          int32_t                         basePipelineIndex,
+                                                          const VkAllocationCallbacks*    pAllocator,
+                                                          VkPipeline*                     pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkPipelineRobustnessCreateInfo chained.
+ *
+ * \param[in] device              See cvkCreateComputePipeline
+ * \param[in] pipelineCache       See cvkCreateComputePipeline
+ * \param[in] pNext               See cvkCreateComputePipeline
+ * \param[in] storageBuffers      VkPipelineRobustnessCreateInfo::storageBuffers
+ * \param[in] uniformBuffers      VkPipelineRobustnessCreateInfo::uniformBuffers
+ * \param[in] vertexInputs        VkPipelineRobustnessCreateInfo::vertexInputs
+ * \param[in] images              VkPipelineRobustnessCreateInfo::images
+ * \param[in] flags               See cvkCreateComputePipeline
+ * \param[in] stage               See cvkCreateComputePipeline
+ * \param[in] layout              See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle  See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex   See cvkCreateComputePipeline
+ * \param[in] pAllocator          See cvkCreateComputePipeline
+ * \param[out] pPipeline           See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithRobustnessInfo(VkDevice                           device,
+                                                    VkPipelineCache                    pipelineCache,
+                                                    const void*                        pNext,
+                                                    VkPipelineRobustnessBufferBehavior storageBuffers,
+                                                    VkPipelineRobustnessBufferBehavior uniformBuffers,
+                                                    VkPipelineRobustnessBufferBehavior vertexInputs,
+                                                    VkPipelineRobustnessImageBehavior  images,
+                                                    VkPipelineCreateFlags              flags,
+                                                    VkPipelineShaderStageCreateInfo    stage,
+                                                    VkPipelineLayout                   layout,
+                                                    VkPipeline                         basePipelineHandle,
+                                                    int32_t                            basePipelineIndex,
+                                                    const VkAllocationCallbacks*       pAllocator,
+                                                    VkPipeline*                        pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkSubpassShadingPipelineCreateInfoHUAWEI chained.
+ *
+ * \param[in] device              See cvkCreateComputePipeline
+ * \param[in] pipelineCache       See cvkCreateComputePipeline
+ * \param[out] pNext               See cvkCreateComputePipeline
+ * \param[in] renderPass          VkSubpassShadingPipelineCreateInfoHUAWEI::renderPass
+ * \param[in] subpass             VkSubpassShadingPipelineCreateInfoHUAWEI::subpass
+ * \param[in] flags               See cvkCreateComputePipeline
+ * \param[in] stage               See cvkCreateComputePipeline
+ * \param[in] layout              See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle  See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex   See cvkCreateComputePipeline
+ * \param[in] pAllocator          See cvkCreateComputePipeline
+ * \param[out] pPipeline           See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithSubpassShadingInfo(VkDevice                        device,
+                                                        VkPipelineCache                 pipelineCache,
+                                                        void*                           pNext,
+                                                        VkRenderPass                    renderPass,
+                                                        uint32_t                        subpass,
+                                                        VkPipelineCreateFlags           flags,
+                                                        VkPipelineShaderStageCreateInfo stage,
+                                                        VkPipelineLayout                layout,
+                                                        VkPipeline                      basePipelineHandle,
+                                                        int32_t                         basePipelineIndex,
+                                                        const VkAllocationCallbacks*    pAllocator,
+                                                        VkPipeline*                     pPipeline);
+/**
+ * \brief Creates a compute pipelines with VkValidationFeaturesEXT chained.
+ *
+ * \param[in] device                          See cvkCreateComputePipeline
+ * \param[in] pipelineCache                   See cvkCreateComputePipeline
+ * \param[in] pNext                           See cvkCreateComputePipeline
+ * \param[in] enabledValidationFeatureCount   VkValidationFeaturesEXT::enabledValidationFeatureCount
+ * \param[in] pEnabledValidationFeatures      VkValidationFeaturesEXT::pEnabledValidationFeatures
+ * \param[in] disabledValidationFeatureCount  VkValidationFeaturesEXT::disabledValidationFeatureCount
+ * \param[in] pDisabledValidationFeatures     VkValidationFeaturesEXT::pDisabledValidationFeatures
+ * \param[in] flags                           See cvkCreateComputePipeline
+ * \param[in] stage                           See cvkCreateComputePipeline
+ * \param[in] layout                          See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle              See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex               See cvkCreateComputePipeline
+ * \param[in] pAllocator                      See cvkCreateComputePipeline
+ * \param[out] pPipeline                       See cvkCreateComputePipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipelineWithValidationFeaturesInfo(VkDevice                             device,
+                                                            VkPipelineCache                      pipelineCache,
+                                                            const void*                          pNext,
+                                                            uint32_t                             enabledValidationFeatureCount,
+                                                            const VkValidationFeatureEnableEXT*  pEnabledValidationFeatures,
+                                                            uint32_t                             disabledValidationFeatureCount,
+                                                            const VkValidationFeatureDisableEXT* pDisabledValidationFeatures,
+                                                            VkPipelineCreateFlags                flags,
+                                                            VkPipelineShaderStageCreateInfo      stage,
+                                                            VkPipelineLayout                     layout,
+                                                            VkPipeline                           basePipelineHandle,
+                                                            int32_t                              basePipelineIndex,
+                                                            const VkAllocationCallbacks*         pAllocator,
+                                                            VkPipeline*                          pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineBuiltinModelCreateInfoQCOM chained.
+ *
+ * \param[in] device             See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation  See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache      See cvkCreateDataGraphPipeline
+ * \param[in] pNext              See cvkCreateDataGraphPipeline
+ * \param[in] pOperation         VkDataGraphPipelineBuiltinModelCreateInfoQCOM::pOperation
+ * \param[in] flags              See cvkCreateDataGraphPipeline
+ * \param[in] layout             See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount  See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos     See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator         See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline          See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithBuiltinModelInfo(VkDevice                                            device,
+                                                        VkDeferredOperationKHR                              deferredOperation,
+                                                        VkPipelineCache                                     pipelineCache,
+                                                        const void*                                         pNext,
+                                                        const VkPhysicalDeviceDataGraphOperationSupportARM* pOperation,
+                                                        VkPipelineCreateFlags2                              flags,
+                                                        VkPipelineLayout                                    layout,
+                                                        uint32_t                                            resourceInfoCount,
+                                                        const VkDataGraphPipelineResourceInfoARM*           pResourceInfos,
+                                                        const VkAllocationCallbacks*                        pAllocator,
+                                                        VkPipeline*                                         pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineCompilerControlCreateInfoARM chained.
+ *
+ * \param[in] device             See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation  See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache      See cvkCreateDataGraphPipeline
+ * \param[in] pNext              See cvkCreateDataGraphPipeline
+ * \param[in] pVendorOptions     VkDataGraphPipelineCompilerControlCreateInfoARM::pVendorOptions
+ * \param[in] flags              See cvkCreateDataGraphPipeline
+ * \param[in] layout             See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount  See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos     See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator         See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline          See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithCompilerControlInfo(VkDevice                                  device,
+                                                           VkDeferredOperationKHR                    deferredOperation,
+                                                           VkPipelineCache                           pipelineCache,
+                                                           const void*                               pNext,
+                                                           const char*                               pVendorOptions,
+                                                           VkPipelineCreateFlags2                    flags,
+                                                           VkPipelineLayout                          layout,
+                                                           uint32_t                                  resourceInfoCount,
+                                                           const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                           const VkAllocationCallbacks*              pAllocator,
+                                                           VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineIdentifierCreateInfoARM chained.
+ *
+ * \param[in] device             See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation  See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache      See cvkCreateDataGraphPipeline
+ * \param[in] pNext              See cvkCreateDataGraphPipeline
+ * \param[in] identifierSize     VkDataGraphPipelineIdentifierCreateInfoARM::identifierSize
+ * \param[in] pIdentifier        VkDataGraphPipelineIdentifierCreateInfoARM::pIdentifier
+ * \param[in] flags              See cvkCreateDataGraphPipeline
+ * \param[in] layout             See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount  See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos     See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator         See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline          See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithIdentifierInfo(VkDevice                                  device,
+                                                      VkDeferredOperationKHR                    deferredOperation,
+                                                      VkPipelineCache                           pipelineCache,
+                                                      const void*                               pNext,
+                                                      uint32_t                                  identifierSize,
+                                                      const uint8_t*                            pIdentifier,
+                                                      VkPipelineCreateFlags2                    flags,
+                                                      VkPipelineLayout                          layout,
+                                                      uint32_t                                  resourceInfoCount,
+                                                      const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                      const VkAllocationCallbacks*              pAllocator,
+                                                      VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineNeuralStatisticsCreateInfoARM chained.
+ *
+ * \param[in] device                 See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation      See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache          See cvkCreateDataGraphPipeline
+ * \param[in] pNext                  See cvkCreateDataGraphPipeline
+ * \param[in] allowNeuralStatistics  VkDataGraphPipelineNeuralStatisticsCreateInfoARM::allowNeuralStatistics
+ * \param[in] flags                  See cvkCreateDataGraphPipeline
+ * \param[in] layout                 See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount      See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos         See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator             See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline              See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithNeuralStatisticsInfo(VkDevice                                  device,
+                                                            VkDeferredOperationKHR                    deferredOperation,
+                                                            VkPipelineCache                           pipelineCache,
+                                                            const void*                               pNext,
+                                                            VkBool32                                  allowNeuralStatistics,
+                                                            VkPipelineCreateFlags2                    flags,
+                                                            VkPipelineLayout                          layout,
+                                                            uint32_t                                  resourceInfoCount,
+                                                            const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                            const VkAllocationCallbacks*              pAllocator,
+                                                            VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineOpticalFlowCreateInfoARM chained.
+ *
+ * \param[in] device                     See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation          See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache              See cvkCreateDataGraphPipeline
+ * \param[out] pNext                      See cvkCreateDataGraphPipeline
+ * \param[in] width                      VkDataGraphPipelineOpticalFlowCreateInfoARM::width
+ * \param[in] height                     VkDataGraphPipelineOpticalFlowCreateInfoARM::height
+ * \param[in] imageFormat                VkDataGraphPipelineOpticalFlowCreateInfoARM::imageFormat
+ * \param[in] flowVectorFormat           VkDataGraphPipelineOpticalFlowCreateInfoARM::flowVectorFormat
+ * \param[in] costFormat                 VkDataGraphPipelineOpticalFlowCreateInfoARM::costFormat
+ * \param[in] outputGridSize             VkDataGraphPipelineOpticalFlowCreateInfoARM::outputGridSize
+ * \param[in] hintGridSize               VkDataGraphPipelineOpticalFlowCreateInfoARM::hintGridSize
+ * \param[in] performanceLevel           VkDataGraphPipelineOpticalFlowCreateInfoARM::performanceLevel
+ * \param[in] flagsDataGraphOpticalFlow  VkDataGraphPipelineOpticalFlowCreateInfoARM::flagsDataGraphOpticalFlow
+ * \param[in] flags                      See cvkCreateDataGraphPipeline
+ * \param[in] layout                     See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount          See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos             See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator                 See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline                  See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithOpticalFlowInfo(VkDevice                                  device,
+                                                       VkDeferredOperationKHR                    deferredOperation,
+                                                       VkPipelineCache                           pipelineCache,
+                                                       void*                                     pNext,
+                                                       uint32_t                                  width,
+                                                       uint32_t                                  height,
+                                                       VkFormat                                  imageFormat,
+                                                       VkFormat                                  flowVectorFormat,
+                                                       VkFormat                                  costFormat,
+                                                       VkDataGraphOpticalFlowGridSizeFlagsARM    outputGridSize,
+                                                       VkDataGraphOpticalFlowGridSizeFlagsARM    hintGridSize,
+                                                       VkDataGraphOpticalFlowPerformanceLevelARM performanceLevel,
+                                                       VkDataGraphOpticalFlowCreateFlagsARM      flagsDataGraphOpticalFlow,
+                                                       VkPipelineCreateFlags2                    flags,
+                                                       VkPipelineLayout                          layout,
+                                                       uint32_t                                  resourceInfoCount,
+                                                       const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                       const VkAllocationCallbacks*              pAllocator,
+                                                       VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineShaderModuleCreateInfoARM chained.
+ *
+ * \param[in] device               See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation    See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache        See cvkCreateDataGraphPipeline
+ * \param[in] pNext                See cvkCreateDataGraphPipeline
+ * \param[in] module               VkDataGraphPipelineShaderModuleCreateInfoARM::module
+ * \param[in] pName                VkDataGraphPipelineShaderModuleCreateInfoARM::pName
+ * \param[in] pSpecializationInfo  VkDataGraphPipelineShaderModuleCreateInfoARM::pSpecializationInfo
+ * \param[in] constantCount        VkDataGraphPipelineShaderModuleCreateInfoARM::constantCount
+ * \param[in] pConstants           VkDataGraphPipelineShaderModuleCreateInfoARM::pConstants
+ * \param[in] flags                See cvkCreateDataGraphPipeline
+ * \param[in] layout               See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount    See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos       See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator           See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline            See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithDataGraphPipelineShaderModuleInfo(VkDevice                                  device,
+                                                                         VkDeferredOperationKHR                    deferredOperation,
+                                                                         VkPipelineCache                           pipelineCache,
+                                                                         const void*                               pNext,
+                                                                         VkShaderModule                            module,
+                                                                         const char*                               pName,
+                                                                         const VkSpecializationInfo*               pSpecializationInfo,
+                                                                         uint32_t                                  constantCount,
+                                                                         const VkDataGraphPipelineConstantARM*     pConstants,
+                                                                         VkPipelineCreateFlags2                    flags,
+                                                                         VkPipelineLayout                          layout,
+                                                                         uint32_t                                  resourceInfoCount,
+                                                                         const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                         const VkAllocationCallbacks*              pAllocator,
+                                                                         VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphPipelineSingleNodeCreateInfoARM chained.
+ *
+ * \param[in] device             See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation  See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache      See cvkCreateDataGraphPipeline
+ * \param[out] pNext              See cvkCreateDataGraphPipeline
+ * \param[in] nodeType           VkDataGraphPipelineSingleNodeCreateInfoARM::nodeType
+ * \param[in] connectionCount    VkDataGraphPipelineSingleNodeCreateInfoARM::connectionCount
+ * \param[in] pConnections       VkDataGraphPipelineSingleNodeCreateInfoARM::pConnections
+ * \param[in] flags              See cvkCreateDataGraphPipeline
+ * \param[in] layout             See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount  See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos     See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator         See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline          See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithSingleNodeInfo(VkDevice                                          device,
+                                                      VkDeferredOperationKHR                            deferredOperation,
+                                                      VkPipelineCache                                   pipelineCache,
+                                                      void*                                             pNext,
+                                                      VkDataGraphPipelineNodeTypeARM                    nodeType,
+                                                      uint32_t                                          connectionCount,
+                                                      const VkDataGraphPipelineSingleNodeConnectionARM* pConnections,
+                                                      VkPipelineCreateFlags2                            flags,
+                                                      VkPipelineLayout                                  layout,
+                                                      uint32_t                                          resourceInfoCount,
+                                                      const VkDataGraphPipelineResourceInfoARM*         pResourceInfos,
+                                                      const VkAllocationCallbacks*                      pAllocator,
+                                                      VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkDataGraphProcessingEngineCreateInfoARM chained.
+ *
+ * \param[in] device                 See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation      See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache          See cvkCreateDataGraphPipeline
+ * \param[in] pNext                  See cvkCreateDataGraphPipeline
+ * \param[in] processingEngineCount  VkDataGraphProcessingEngineCreateInfoARM::processingEngineCount
+ * \param[out] pProcessingEngines     VkDataGraphProcessingEngineCreateInfoARM::pProcessingEngines
+ * \param[in] flags                  See cvkCreateDataGraphPipeline
+ * \param[in] layout                 See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount      See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos         See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator             See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline              See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithProcessingEngineInfo(VkDevice                                      device,
+                                                            VkDeferredOperationKHR                        deferredOperation,
+                                                            VkPipelineCache                               pipelineCache,
+                                                            const void*                                   pNext,
+                                                            uint32_t                                      processingEngineCount,
+                                                            VkPhysicalDeviceDataGraphProcessingEngineARM* pProcessingEngines,
+                                                            VkPipelineCreateFlags2                        flags,
+                                                            VkPipelineLayout                              layout,
+                                                            uint32_t                                      resourceInfoCount,
+                                                            const VkDataGraphPipelineResourceInfoARM*     pResourceInfos,
+                                                            const VkAllocationCallbacks*                  pAllocator,
+                                                            VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkPipelineCreationFeedbackCreateInfo chained.
+ *
+ * \param[in] device                              See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation                   See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache                       See cvkCreateDataGraphPipeline
+ * \param[in] pNext                               See cvkCreateDataGraphPipeline
+ * \param[out] pPipelineCreationFeedback           VkPipelineCreationFeedbackCreateInfo::pPipelineCreationFeedback
+ * \param[in] pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
+ * \param[out] pPipelineStageCreationFeedbacks     VkPipelineCreationFeedbackCreateInfo::pPipelineStageCreationFeedbacks
+ * \param[in] flags                               See cvkCreateDataGraphPipeline
+ * \param[in] layout                              See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount                   See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos                      See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator                          See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline                           See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithCreationFeedbackInfo(VkDevice                                  device,
+                                                            VkDeferredOperationKHR                    deferredOperation,
+                                                            VkPipelineCache                           pipelineCache,
+                                                            const void*                               pNext,
+                                                            VkPipelineCreationFeedback*               pPipelineCreationFeedback,
+                                                            uint32_t                                  pipelineStageCreationFeedbackCount,
+                                                            VkPipelineCreationFeedback*               pPipelineStageCreationFeedbacks,
+                                                            VkPipelineCreateFlags2                    flags,
+                                                            VkPipelineLayout                          layout,
+                                                            uint32_t                                  resourceInfoCount,
+                                                            const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                            const VkAllocationCallbacks*              pAllocator,
+                                                            VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a data graph pipelines with VkShaderModuleCreateInfo chained.
+ *
+ * \param[in] device             See cvkCreateDataGraphPipeline
+ * \param[in] deferredOperation  See cvkCreateDataGraphPipeline
+ * \param[in] pipelineCache      See cvkCreateDataGraphPipeline
+ * \param[in] pNext              See cvkCreateDataGraphPipeline
+ * \param[in] flagsShaderModule  VkShaderModuleCreateInfo::flagsShaderModule
+ * \param[in] codeSize           VkShaderModuleCreateInfo::codeSize
+ * \param[in] pCode              VkShaderModuleCreateInfo::pCode
+ * \param[in] flags              See cvkCreateDataGraphPipeline
+ * \param[in] layout             See cvkCreateDataGraphPipeline
+ * \param[in] resourceInfoCount  See cvkCreateDataGraphPipeline
+ * \param[in] pResourceInfos     See cvkCreateDataGraphPipeline
+ * \param[in] pAllocator         See cvkCreateDataGraphPipeline
+ * \param[out] pPipeline          See cvkCreateDataGraphPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateDataGraphPipelineWithShaderModuleInfo(VkDevice                                  device,
+                                                        VkDeferredOperationKHR                    deferredOperation,
+                                                        VkPipelineCache                           pipelineCache,
+                                                        const void*                               pNext,
+                                                        VkShaderModuleCreateFlags                 flagsShaderModule,
+                                                        size_t                                    codeSize,
+                                                        const uint32_t*                           pCode,
+                                                        VkPipelineCreateFlags2                    flags,
+                                                        VkPipelineLayout                          layout,
+                                                        uint32_t                                  resourceInfoCount,
+                                                        const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                        const VkAllocationCallbacks*              pAllocator,
+                                                        VkPipeline*                               pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkAttachmentSampleCountInfoAMD chained.
+ *
+ * \param[in] device                         See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                  See cvkCreateGraphicsPipeline
+ * \param[in] pNext                          See cvkCreateGraphicsPipeline
+ * \param[in] colorAttachmentCount           VkAttachmentSampleCountInfoAMD::colorAttachmentCount
+ * \param[in] pColorAttachmentSamples        VkAttachmentSampleCountInfoAMD::pColorAttachmentSamples
+ * \param[in] depthStencilAttachmentSamples  VkAttachmentSampleCountInfoAMD::depthStencilAttachmentSamples
+ * \param[in] flags                          See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                     See cvkCreateGraphicsPipeline
+ * \param[in] pStages                        See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState              See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState            See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState             See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState                 See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState            See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState              See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState             See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState               See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                  See cvkCreateGraphicsPipeline
+ * \param[in] layout                         See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                     See cvkCreateGraphicsPipeline
+ * \param[in] subpass                        See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle             See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex              See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                     See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                      See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithAttachmentSampleCountInfo(VkDevice                                      device,
+                                                                VkPipelineCache                               pipelineCache,
+                                                                const void*                                   pNext,
+                                                                uint32_t                                      colorAttachmentCount,
+                                                                const VkSampleCountFlagBits*                  pColorAttachmentSamples,
+                                                                VkSampleCountFlagBits                         depthStencilAttachmentSamples,
+                                                                VkPipelineCreateFlags                         flags,
+                                                                uint32_t                                      stageCount,
+                                                                const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                VkPipelineLayout                              layout,
+                                                                VkRenderPass                                  renderPass,
+                                                                uint32_t                                      subpass,
+                                                                VkPipeline                                    basePipelineHandle,
+                                                                int32_t                                       basePipelineIndex,
+                                                                const VkAllocationCallbacks*                  pAllocator,
+                                                                VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkCustomResolveCreateInfoEXT chained.
+ *
+ * \param[in] device                   See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache            See cvkCreateGraphicsPipeline
+ * \param[in] pNext                    See cvkCreateGraphicsPipeline
+ * \param[in] customResolve            VkCustomResolveCreateInfoEXT::customResolve
+ * \param[in] colorAttachmentCount     VkCustomResolveCreateInfoEXT::colorAttachmentCount
+ * \param[in] pColorAttachmentFormats  VkCustomResolveCreateInfoEXT::pColorAttachmentFormats
+ * \param[in] depthAttachmentFormat    VkCustomResolveCreateInfoEXT::depthAttachmentFormat
+ * \param[in] stencilAttachmentFormat  VkCustomResolveCreateInfoEXT::stencilAttachmentFormat
+ * \param[in] flags                    See cvkCreateGraphicsPipeline
+ * \param[in] stageCount               See cvkCreateGraphicsPipeline
+ * \param[in] pStages                  See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState        See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState      See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState       See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState           See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState      See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState        See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState       See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState         See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState            See cvkCreateGraphicsPipeline
+ * \param[in] layout                   See cvkCreateGraphicsPipeline
+ * \param[in] renderPass               See cvkCreateGraphicsPipeline
+ * \param[in] subpass                  See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle       See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex        See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator               See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithCustomResolveInfo(VkDevice                                      device,
+                                                        VkPipelineCache                               pipelineCache,
+                                                        const void*                                   pNext,
+                                                        VkBool32                                      customResolve,
+                                                        uint32_t                                      colorAttachmentCount,
+                                                        const VkFormat*                               pColorAttachmentFormats,
+                                                        VkFormat                                      depthAttachmentFormat,
+                                                        VkFormat                                      stencilAttachmentFormat,
+                                                        VkPipelineCreateFlags                         flags,
+                                                        uint32_t                                      stageCount,
+                                                        const VkPipelineShaderStageCreateInfo*        pStages,
+                                                        const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                        const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                        const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                        const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                        const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                        const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                        const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                        const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                        const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                        VkPipelineLayout                              layout,
+                                                        VkRenderPass                                  renderPass,
+                                                        uint32_t                                      subpass,
+                                                        VkPipeline                                    basePipelineHandle,
+                                                        int32_t                                       basePipelineIndex,
+                                                        const VkAllocationCallbacks*                  pAllocator,
+                                                        VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkGraphicsPipelineLibraryCreateInfoEXT chained.
+ *
+ * \param[in] device                See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache         See cvkCreateGraphicsPipeline
+ * \param[in] pNext                 See cvkCreateGraphicsPipeline
+ * \param[in] flagsGraphicsLibrary  VkGraphicsPipelineLibraryCreateInfoEXT::flagsGraphicsLibrary
+ * \param[in] flags                 See cvkCreateGraphicsPipeline
+ * \param[in] stageCount            See cvkCreateGraphicsPipeline
+ * \param[in] pStages               See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState     See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState   See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState    See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState        See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState   See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState     See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState    See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState      See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState         See cvkCreateGraphicsPipeline
+ * \param[in] layout                See cvkCreateGraphicsPipeline
+ * \param[in] renderPass            See cvkCreateGraphicsPipeline
+ * \param[in] subpass               See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle    See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex     See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator            See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline             See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo(VkDevice                                      device,
+                                                                  VkPipelineCache                               pipelineCache,
+                                                                  const void*                                   pNext,
+                                                                  VkGraphicsPipelineLibraryFlagsEXT             flagsGraphicsLibrary,
+                                                                  VkPipelineCreateFlags                         flags,
+                                                                  uint32_t                                      stageCount,
+                                                                  const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                  const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                  const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                  const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                  const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                  const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                  const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                  const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                  const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                  const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                  VkPipelineLayout                              layout,
+                                                                  VkRenderPass                                  renderPass,
+                                                                  uint32_t                                      subpass,
+                                                                  VkPipeline                                    basePipelineHandle,
+                                                                  int32_t                                       basePipelineIndex,
+                                                                  const VkAllocationCallbacks*                  pAllocator,
+                                                                  VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkGraphicsPipelineShaderGroupsCreateInfoNV chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] groupCount           VkGraphicsPipelineShaderGroupsCreateInfoNV::groupCount
+ * \param[in] pGroups              VkGraphicsPipelineShaderGroupsCreateInfoNV::pGroups
+ * \param[in] pipelineCount        VkGraphicsPipelineShaderGroupsCreateInfoNV::pipelineCount
+ * \param[in] pPipelines           VkGraphicsPipelineShaderGroupsCreateInfoNV::pPipelines
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithShaderGroupsInfo(VkDevice                                      device,
+                                                       VkPipelineCache                               pipelineCache,
+                                                       const void*                                   pNext,
+                                                       uint32_t                                      groupCount,
+                                                       const VkGraphicsShaderGroupCreateInfoNV*      pGroups,
+                                                       uint32_t                                      pipelineCount,
+                                                       const VkPipeline*                             pPipelines,
+                                                       VkPipelineCreateFlags                         flags,
+                                                       uint32_t                                      stageCount,
+                                                       const VkPipelineShaderStageCreateInfo*        pStages,
+                                                       const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                       const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                       const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                       const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                       const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                       const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                       const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                       const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                       const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                       VkPipelineLayout                              layout,
+                                                       VkRenderPass                                  renderPass,
+                                                       uint32_t                                      subpass,
+                                                       VkPipeline                                    basePipelineHandle,
+                                                       int32_t                                       basePipelineIndex,
+                                                       const VkAllocationCallbacks*                  pAllocator,
+                                                       VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkMultiviewPerViewAttributesInfoNVX chained.
+ *
+ * \param[in] device                          See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                   See cvkCreateGraphicsPipeline
+ * \param[in] pNext                           See cvkCreateGraphicsPipeline
+ * \param[in] perViewAttributes               VkMultiviewPerViewAttributesInfoNVX::perViewAttributes
+ * \param[in] perViewAttributesPositionXOnly  VkMultiviewPerViewAttributesInfoNVX::perViewAttributesPositionXOnly
+ * \param[in] flags                           See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                      See cvkCreateGraphicsPipeline
+ * \param[in] pStages                         See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState               See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState             See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState              See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState                  See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState             See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState               See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState              See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState                See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                   See cvkCreateGraphicsPipeline
+ * \param[in] layout                          See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                      See cvkCreateGraphicsPipeline
+ * \param[in] subpass                         See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex               See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                      See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                       See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithMultiviewPerViewAttributesInfo(VkDevice                                      device,
+                                                                     VkPipelineCache                               pipelineCache,
+                                                                     const void*                                   pNext,
+                                                                     VkBool32                                      perViewAttributes,
+                                                                     VkBool32                                      perViewAttributesPositionXOnly,
+                                                                     VkPipelineCreateFlags                         flags,
+                                                                     uint32_t                                      stageCount,
+                                                                     const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                     const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                     const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                     const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                     VkPipelineLayout                              layout,
+                                                                     VkRenderPass                                  renderPass,
+                                                                     uint32_t                                      subpass,
+                                                                     VkPipeline                                    basePipelineHandle,
+                                                                     int32_t                                       basePipelineIndex,
+                                                                     const VkAllocationCallbacks*                  pAllocator,
+                                                                     VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineBinaryInfoKHR chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] binaryCount          VkPipelineBinaryInfoKHR::binaryCount
+ * \param[in] pPipelineBinaries    VkPipelineBinaryInfoKHR::pPipelineBinaries
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithBinaryInfo(VkDevice                                      device,
+                                                 VkPipelineCache                               pipelineCache,
+                                                 const void*                                   pNext,
+                                                 uint32_t                                      binaryCount,
+                                                 const VkPipelineBinaryKHR*                    pPipelineBinaries,
+                                                 VkPipelineCreateFlags                         flags,
+                                                 uint32_t                                      stageCount,
+                                                 const VkPipelineShaderStageCreateInfo*        pStages,
+                                                 const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                 const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                 const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                 const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                 const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                 const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                 const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                 const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                 const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                 VkPipelineLayout                              layout,
+                                                 VkRenderPass                                  renderPass,
+                                                 uint32_t                                      subpass,
+                                                 VkPipeline                                    basePipelineHandle,
+                                                 int32_t                                       basePipelineIndex,
+                                                 const VkAllocationCallbacks*                  pAllocator,
+                                                 VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineCompilerControlCreateInfoAMD chained.
+ *
+ * \param[in] device                See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache         See cvkCreateGraphicsPipeline
+ * \param[in] pNext                 See cvkCreateGraphicsPipeline
+ * \param[in] compilerControlFlags  VkPipelineCompilerControlCreateInfoAMD::compilerControlFlags
+ * \param[in] flags                 See cvkCreateGraphicsPipeline
+ * \param[in] stageCount            See cvkCreateGraphicsPipeline
+ * \param[in] pStages               See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState     See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState   See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState    See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState        See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState   See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState     See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState    See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState      See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState         See cvkCreateGraphicsPipeline
+ * \param[in] layout                See cvkCreateGraphicsPipeline
+ * \param[in] renderPass            See cvkCreateGraphicsPipeline
+ * \param[in] subpass               See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle    See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex     See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator            See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline             See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithCompilerControlInfo(VkDevice                                      device,
+                                                          VkPipelineCache                               pipelineCache,
+                                                          const void*                                   pNext,
+                                                          VkPipelineCompilerControlFlagsAMD             compilerControlFlags,
+                                                          VkPipelineCreateFlags                         flags,
+                                                          uint32_t                                      stageCount,
+                                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                          VkPipelineLayout                              layout,
+                                                          VkRenderPass                                  renderPass,
+                                                          uint32_t                                      subpass,
+                                                          VkPipeline                                    basePipelineHandle,
+                                                          int32_t                                       basePipelineIndex,
+                                                          const VkAllocationCallbacks*                  pAllocator,
+                                                          VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineCreateFlags2CreateInfo chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] flags2               VkPipelineCreateFlags2CreateInfo::flags2
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithFlags2Info(VkDevice                                      device,
+                                                 VkPipelineCache                               pipelineCache,
+                                                 const void*                                   pNext,
+                                                 VkPipelineCreateFlags2                        flags2,
+                                                 VkPipelineCreateFlags                         flags,
+                                                 uint32_t                                      stageCount,
+                                                 const VkPipelineShaderStageCreateInfo*        pStages,
+                                                 const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                 const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                 const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                 const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                 const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                 const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                 const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                 const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                 const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                 VkPipelineLayout                              layout,
+                                                 VkRenderPass                                  renderPass,
+                                                 uint32_t                                      subpass,
+                                                 VkPipeline                                    basePipelineHandle,
+                                                 int32_t                                       basePipelineIndex,
+                                                 const VkAllocationCallbacks*                  pAllocator,
+                                                 VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineCreationFeedbackCreateInfo chained.
+ *
+ * \param[in] device                              See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                       See cvkCreateGraphicsPipeline
+ * \param[in] pNext                               See cvkCreateGraphicsPipeline
+ * \param[out] pPipelineCreationFeedback           VkPipelineCreationFeedbackCreateInfo::pPipelineCreationFeedback
+ * \param[in] pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
+ * \param[out] pPipelineStageCreationFeedbacks     VkPipelineCreationFeedbackCreateInfo::pPipelineStageCreationFeedbacks
+ * \param[in] flags                               See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                          See cvkCreateGraphicsPipeline
+ * \param[in] pStages                             See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState                   See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState                 See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState                  See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState                      See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState                 See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState                   See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState                  See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState                    See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                       See cvkCreateGraphicsPipeline
+ * \param[in] layout                              See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                          See cvkCreateGraphicsPipeline
+ * \param[in] subpass                             See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle                  See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex                   See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                          See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                           See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithCreationFeedbackInfo(VkDevice                                      device,
+                                                           VkPipelineCache                               pipelineCache,
+                                                           const void*                                   pNext,
+                                                           VkPipelineCreationFeedback*                   pPipelineCreationFeedback,
+                                                           uint32_t                                      pipelineStageCreationFeedbackCount,
+                                                           VkPipelineCreationFeedback*                   pPipelineStageCreationFeedbacks,
+                                                           VkPipelineCreateFlags                         flags,
+                                                           uint32_t                                      stageCount,
+                                                           const VkPipelineShaderStageCreateInfo*        pStages,
+                                                           const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                           const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                           const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                           const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                           const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                           const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                           const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                           const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                           const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                           VkPipelineLayout                              layout,
+                                                           VkRenderPass                                  renderPass,
+                                                           uint32_t                                      subpass,
+                                                           VkPipeline                                    basePipelineHandle,
+                                                           int32_t                                       basePipelineIndex,
+                                                           const VkAllocationCallbacks*                  pAllocator,
+                                                           VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineDiscardRectangleStateCreateInfoEXT chained.
+ *
+ * \param[in] device                      See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache               See cvkCreateGraphicsPipeline
+ * \param[in] pNext                       See cvkCreateGraphicsPipeline
+ * \param[in] flagsDiscardRectangleState  VkPipelineDiscardRectangleStateCreateInfoEXT::flagsDiscardRectangleState
+ * \param[in] discardRectangleMode        VkPipelineDiscardRectangleStateCreateInfoEXT::discardRectangleMode
+ * \param[in] discardRectangleCount       VkPipelineDiscardRectangleStateCreateInfoEXT::discardRectangleCount
+ * \param[in] pDiscardRectangles          VkPipelineDiscardRectangleStateCreateInfoEXT::pDiscardRectangles
+ * \param[in] flags                       See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                  See cvkCreateGraphicsPipeline
+ * \param[in] pStages                     See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState           See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState         See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState          See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState              See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState         See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState           See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState          See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState            See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState               See cvkCreateGraphicsPipeline
+ * \param[in] layout                      See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                  See cvkCreateGraphicsPipeline
+ * \param[in] subpass                     See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle          See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex           See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                  See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                   See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(VkDevice                                      device,
+                                                                VkPipelineCache                               pipelineCache,
+                                                                const void*                                   pNext,
+                                                                VkPipelineDiscardRectangleStateCreateFlagsEXT flagsDiscardRectangleState,
+                                                                VkDiscardRectangleModeEXT                     discardRectangleMode,
+                                                                uint32_t                                      discardRectangleCount,
+                                                                const VkRect2D*                               pDiscardRectangles,
+                                                                VkPipelineCreateFlags                         flags,
+                                                                uint32_t                                      stageCount,
+                                                                const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                VkPipelineLayout                              layout,
+                                                                VkRenderPass                                  renderPass,
+                                                                uint32_t                                      subpass,
+                                                                VkPipeline                                    basePipelineHandle,
+                                                                int32_t                                       basePipelineIndex,
+                                                                const VkAllocationCallbacks*                  pAllocator,
+                                                                VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineFragmentDensityMapLayeredCreateInfoVALVE chained.
+ *
+ * \param[in] device                       See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                See cvkCreateGraphicsPipeline
+ * \param[in] pNext                        See cvkCreateGraphicsPipeline
+ * \param[in] maxFragmentDensityMapLayers  VkPipelineFragmentDensityMapLayeredCreateInfoVALVE::maxFragmentDensityMapLayers
+ * \param[in] flags                        See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                   See cvkCreateGraphicsPipeline
+ * \param[in] pStages                      See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState            See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState          See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState           See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState               See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState          See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState            See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState           See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState             See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                See cvkCreateGraphicsPipeline
+ * \param[in] layout                       See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                   See cvkCreateGraphicsPipeline
+ * \param[in] subpass                      See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle           See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex            See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                   See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                    See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithFragmentDensityMapLayeredInfo(VkDevice                                      device,
+                                                                    VkPipelineCache                               pipelineCache,
+                                                                    const void*                                   pNext,
+                                                                    uint32_t                                      maxFragmentDensityMapLayers,
+                                                                    VkPipelineCreateFlags                         flags,
+                                                                    uint32_t                                      stageCount,
+                                                                    const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                    const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                    const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                    const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                    const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                    const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                    const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                    const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                    const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                    const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                    VkPipelineLayout                              layout,
+                                                                    VkRenderPass                                  renderPass,
+                                                                    uint32_t                                      subpass,
+                                                                    VkPipeline                                    basePipelineHandle,
+                                                                    int32_t                                       basePipelineIndex,
+                                                                    const VkAllocationCallbacks*                  pAllocator,
+                                                                    VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineFragmentShadingRateEnumStateCreateInfoNV chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] shadingRateType      VkPipelineFragmentShadingRateEnumStateCreateInfoNV::shadingRateType
+ * \param[in] shadingRate          VkPipelineFragmentShadingRateEnumStateCreateInfoNV::shadingRate
+ * \param[in] combinerOps          VkPipelineFragmentShadingRateEnumStateCreateInfoNV::combinerOps
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithFragmentShadingRateEnumStateInfo(VkDevice                                      device,
+                                                                       VkPipelineCache                               pipelineCache,
+                                                                       const void*                                   pNext,
+                                                                       VkFragmentShadingRateTypeNV                   shadingRateType,
+                                                                       VkFragmentShadingRateNV                       shadingRate,
+                                                                       const VkFragmentShadingRateCombinerOpKHR      combinerOps[2],
+                                                                       VkPipelineCreateFlags                         flags,
+                                                                       uint32_t                                      stageCount,
+                                                                       const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                       const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                       const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                       const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                       const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                       const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                       const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                       const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                       const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                       const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                       VkPipelineLayout                              layout,
+                                                                       VkRenderPass                                  renderPass,
+                                                                       uint32_t                                      subpass,
+                                                                       VkPipeline                                    basePipelineHandle,
+                                                                       int32_t                                       basePipelineIndex,
+                                                                       const VkAllocationCallbacks*                  pAllocator,
+                                                                       VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineFragmentShadingRateStateCreateInfoKHR chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] fragmentSize         VkPipelineFragmentShadingRateStateCreateInfoKHR::fragmentSize
+ * \param[in] combinerOps          VkPipelineFragmentShadingRateStateCreateInfoKHR::combinerOps
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithFragmentShadingRateStateInfo(VkDevice                                      device,
+                                                                   VkPipelineCache                               pipelineCache,
+                                                                   const void*                                   pNext,
+                                                                   VkExtent2D                                    fragmentSize,
+                                                                   const VkFragmentShadingRateCombinerOpKHR      combinerOps[2],
+                                                                   VkPipelineCreateFlags                         flags,
+                                                                   uint32_t                                      stageCount,
+                                                                   const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                   VkPipelineLayout                              layout,
+                                                                   VkRenderPass                                  renderPass,
+                                                                   uint32_t                                      subpass,
+                                                                   VkPipeline                                    basePipelineHandle,
+                                                                   int32_t                                       basePipelineIndex,
+                                                                   const VkAllocationCallbacks*                  pAllocator,
+                                                                   VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineLibraryCreateInfoKHR chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] libraryCount         VkPipelineLibraryCreateInfoKHR::libraryCount
+ * \param[in] pLibraries           VkPipelineLibraryCreateInfoKHR::pLibraries
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithPipelineLibraryInfo(VkDevice                                      device,
+                                                          VkPipelineCache                               pipelineCache,
+                                                          const void*                                   pNext,
+                                                          uint32_t                                      libraryCount,
+                                                          const VkPipeline*                             pLibraries,
+                                                          VkPipelineCreateFlags                         flags,
+                                                          uint32_t                                      stageCount,
+                                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                          VkPipelineLayout                              layout,
+                                                          VkRenderPass                                  renderPass,
+                                                          uint32_t                                      subpass,
+                                                          VkPipeline                                    basePipelineHandle,
+                                                          int32_t                                       basePipelineIndex,
+                                                          const VkAllocationCallbacks*                  pAllocator,
+                                                          VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineRenderingCreateInfo chained.
+ *
+ * \param[in] device                   See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache            See cvkCreateGraphicsPipeline
+ * \param[in] pNext                    See cvkCreateGraphicsPipeline
+ * \param[in] viewMask                 VkPipelineRenderingCreateInfo::viewMask
+ * \param[in] colorAttachmentCount     VkPipelineRenderingCreateInfo::colorAttachmentCount
+ * \param[in] pColorAttachmentFormats  VkPipelineRenderingCreateInfo::pColorAttachmentFormats
+ * \param[in] depthAttachmentFormat    VkPipelineRenderingCreateInfo::depthAttachmentFormat
+ * \param[in] stencilAttachmentFormat  VkPipelineRenderingCreateInfo::stencilAttachmentFormat
+ * \param[in] flags                    See cvkCreateGraphicsPipeline
+ * \param[in] stageCount               See cvkCreateGraphicsPipeline
+ * \param[in] pStages                  See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState        See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState      See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState       See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState           See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState      See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState        See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState       See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState         See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState            See cvkCreateGraphicsPipeline
+ * \param[in] layout                   See cvkCreateGraphicsPipeline
+ * \param[in] renderPass               See cvkCreateGraphicsPipeline
+ * \param[in] subpass                  See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle       See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex        See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator               See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithRenderingInfo(VkDevice                                      device,
+                                                    VkPipelineCache                               pipelineCache,
+                                                    const void*                                   pNext,
+                                                    uint32_t                                      viewMask,
+                                                    uint32_t                                      colorAttachmentCount,
+                                                    const VkFormat*                               pColorAttachmentFormats,
+                                                    VkFormat                                      depthAttachmentFormat,
+                                                    VkFormat                                      stencilAttachmentFormat,
+                                                    VkPipelineCreateFlags                         flags,
+                                                    uint32_t                                      stageCount,
+                                                    const VkPipelineShaderStageCreateInfo*        pStages,
+                                                    const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                    const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                    const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                    const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                    const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                    const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                    const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                    const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                    const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                    VkPipelineLayout                              layout,
+                                                    VkRenderPass                                  renderPass,
+                                                    uint32_t                                      subpass,
+                                                    VkPipeline                                    basePipelineHandle,
+                                                    int32_t                                       basePipelineIndex,
+                                                    const VkAllocationCallbacks*                  pAllocator,
+                                                    VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineRepresentativeFragmentTestStateCreateInfoNV chained.
+ *
+ * \param[in] device                            See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                     See cvkCreateGraphicsPipeline
+ * \param[in] pNext                             See cvkCreateGraphicsPipeline
+ * \param[in] representativeFragmentTestEnable  VkPipelineRepresentativeFragmentTestStateCreateInfoNV::representativeFragmentTestEnable
+ * \param[in] flags                             See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                        See cvkCreateGraphicsPipeline
+ * \param[in] pStages                           See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState                 See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState               See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState                See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState                    See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState               See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState                 See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState                See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState                  See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                     See cvkCreateGraphicsPipeline
+ * \param[in] layout                            See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                        See cvkCreateGraphicsPipeline
+ * \param[in] subpass                           See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle                See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex                 See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                        See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                         See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithRepresentativeFragmentTestStateInfo(VkDevice                                      device,
+                                                                          VkPipelineCache                               pipelineCache,
+                                                                          const void*                                   pNext,
+                                                                          VkBool32                                      representativeFragmentTestEnable,
+                                                                          VkPipelineCreateFlags                         flags,
+                                                                          uint32_t                                      stageCount,
+                                                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                          VkPipelineLayout                              layout,
+                                                                          VkRenderPass                                  renderPass,
+                                                                          uint32_t                                      subpass,
+                                                                          VkPipeline                                    basePipelineHandle,
+                                                                          int32_t                                       basePipelineIndex,
+                                                                          const VkAllocationCallbacks*                  pAllocator,
+                                                                          VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkPipelineRobustnessCreateInfo chained.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipeline
+ * \param[in] pNext                See cvkCreateGraphicsPipeline
+ * \param[in] storageBuffers       VkPipelineRobustnessCreateInfo::storageBuffers
+ * \param[in] uniformBuffers       VkPipelineRobustnessCreateInfo::uniformBuffers
+ * \param[in] vertexInputs         VkPipelineRobustnessCreateInfo::vertexInputs
+ * \param[in] images               VkPipelineRobustnessCreateInfo::images
+ * \param[in] flags                See cvkCreateGraphicsPipeline
+ * \param[in] stageCount           See cvkCreateGraphicsPipeline
+ * \param[in] pStages              See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState       See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState    See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState   See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState     See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipeline
+ * \param[in] layout               See cvkCreateGraphicsPipeline
+ * \param[in] renderPass           See cvkCreateGraphicsPipeline
+ * \param[in] subpass              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle   See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex    See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator           See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithRobustnessInfo(VkDevice                                      device,
+                                                     VkPipelineCache                               pipelineCache,
+                                                     const void*                                   pNext,
+                                                     VkPipelineRobustnessBufferBehavior            storageBuffers,
+                                                     VkPipelineRobustnessBufferBehavior            uniformBuffers,
+                                                     VkPipelineRobustnessBufferBehavior            vertexInputs,
+                                                     VkPipelineRobustnessImageBehavior             images,
+                                                     VkPipelineCreateFlags                         flags,
+                                                     uint32_t                                      stageCount,
+                                                     const VkPipelineShaderStageCreateInfo*        pStages,
+                                                     const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                     const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                     const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                     VkPipelineLayout                              layout,
+                                                     VkRenderPass                                  renderPass,
+                                                     uint32_t                                      subpass,
+                                                     VkPipeline                                    basePipelineHandle,
+                                                     int32_t                                       basePipelineIndex,
+                                                     const VkAllocationCallbacks*                  pAllocator,
+                                                     VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkRenderingAttachmentLocationInfo chained.
+ *
+ * \param[in] device                     See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache              See cvkCreateGraphicsPipeline
+ * \param[in] pNext                      See cvkCreateGraphicsPipeline
+ * \param[in] colorAttachmentCount       VkRenderingAttachmentLocationInfo::colorAttachmentCount
+ * \param[in] pColorAttachmentLocations  VkRenderingAttachmentLocationInfo::pColorAttachmentLocations
+ * \param[in] flags                      See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                 See cvkCreateGraphicsPipeline
+ * \param[in] pStages                    See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState          See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState        See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState         See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState             See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState        See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState          See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState         See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState           See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState              See cvkCreateGraphicsPipeline
+ * \param[in] layout                     See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                 See cvkCreateGraphicsPipeline
+ * \param[in] subpass                    See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle         See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex          See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                 See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                  See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithRenderingAttachmentLocationInfo(VkDevice                                      device,
+                                                                      VkPipelineCache                               pipelineCache,
+                                                                      const void*                                   pNext,
+                                                                      uint32_t                                      colorAttachmentCount,
+                                                                      const uint32_t*                               pColorAttachmentLocations,
+                                                                      VkPipelineCreateFlags                         flags,
+                                                                      uint32_t                                      stageCount,
+                                                                      const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                      const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                      const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                      const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                      const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                      const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                      const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                      const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                      const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                      const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                      VkPipelineLayout                              layout,
+                                                                      VkRenderPass                                  renderPass,
+                                                                      uint32_t                                      subpass,
+                                                                      VkPipeline                                    basePipelineHandle,
+                                                                      int32_t                                       basePipelineIndex,
+                                                                      const VkAllocationCallbacks*                  pAllocator,
+                                                                      VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkRenderingInputAttachmentIndexInfo chained.
+ *
+ * \param[in] device                        See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                 See cvkCreateGraphicsPipeline
+ * \param[in] pNext                         See cvkCreateGraphicsPipeline
+ * \param[in] colorAttachmentCount          VkRenderingInputAttachmentIndexInfo::colorAttachmentCount
+ * \param[in] pColorAttachmentInputIndices  VkRenderingInputAttachmentIndexInfo::pColorAttachmentInputIndices
+ * \param[in] pDepthInputAttachmentIndex    VkRenderingInputAttachmentIndexInfo::pDepthInputAttachmentIndex
+ * \param[in] pStencilInputAttachmentIndex  VkRenderingInputAttachmentIndexInfo::pStencilInputAttachmentIndex
+ * \param[in] flags                         See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                    See cvkCreateGraphicsPipeline
+ * \param[in] pStages                       See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState             See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState           See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState            See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState                See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState           See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState             See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState            See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState              See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                 See cvkCreateGraphicsPipeline
+ * \param[in] layout                        See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                    See cvkCreateGraphicsPipeline
+ * \param[in] subpass                       See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle            See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex             See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                    See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                     See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithRenderingInputAttachmentIndexInfo(VkDevice                                      device,
+                                                                        VkPipelineCache                               pipelineCache,
+                                                                        const void*                                   pNext,
+                                                                        uint32_t                                      colorAttachmentCount,
+                                                                        const uint32_t*                               pColorAttachmentInputIndices,
+                                                                        const uint32_t*                               pDepthInputAttachmentIndex,
+                                                                        const uint32_t*                               pStencilInputAttachmentIndex,
+                                                                        VkPipelineCreateFlags                         flags,
+                                                                        uint32_t                                      stageCount,
+                                                                        const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                        const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                        const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                        const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                        const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                        const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                        const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                        const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                        const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                        const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                        VkPipelineLayout                              layout,
+                                                                        VkRenderPass                                  renderPass,
+                                                                        uint32_t                                      subpass,
+                                                                        VkPipeline                                    basePipelineHandle,
+                                                                        int32_t                                       basePipelineIndex,
+                                                                        const VkAllocationCallbacks*                  pAllocator,
+                                                                        VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipelines with VkValidationFeaturesEXT chained.
+ *
+ * \param[in] device                          See cvkCreateGraphicsPipeline
+ * \param[in] pipelineCache                   See cvkCreateGraphicsPipeline
+ * \param[in] pNext                           See cvkCreateGraphicsPipeline
+ * \param[in] enabledValidationFeatureCount   VkValidationFeaturesEXT::enabledValidationFeatureCount
+ * \param[in] pEnabledValidationFeatures      VkValidationFeaturesEXT::pEnabledValidationFeatures
+ * \param[in] disabledValidationFeatureCount  VkValidationFeaturesEXT::disabledValidationFeatureCount
+ * \param[in] pDisabledValidationFeatures     VkValidationFeaturesEXT::pDisabledValidationFeatures
+ * \param[in] flags                           See cvkCreateGraphicsPipeline
+ * \param[in] stageCount                      See cvkCreateGraphicsPipeline
+ * \param[in] pStages                         See cvkCreateGraphicsPipeline
+ * \param[in] pVertexInputState               See cvkCreateGraphicsPipeline
+ * \param[in] pInputAssemblyState             See cvkCreateGraphicsPipeline
+ * \param[in] pTessellationState              See cvkCreateGraphicsPipeline
+ * \param[in] pViewportState                  See cvkCreateGraphicsPipeline
+ * \param[in] pRasterizationState             See cvkCreateGraphicsPipeline
+ * \param[in] pMultisampleState               See cvkCreateGraphicsPipeline
+ * \param[in] pDepthStencilState              See cvkCreateGraphicsPipeline
+ * \param[in] pColorBlendState                See cvkCreateGraphicsPipeline
+ * \param[in] pDynamicState                   See cvkCreateGraphicsPipeline
+ * \param[in] layout                          See cvkCreateGraphicsPipeline
+ * \param[in] renderPass                      See cvkCreateGraphicsPipeline
+ * \param[in] subpass                         See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineHandle              See cvkCreateGraphicsPipeline
+ * \param[in] basePipelineIndex               See cvkCreateGraphicsPipeline
+ * \param[in] pAllocator                      See cvkCreateGraphicsPipeline
+ * \param[out] pPipeline                       See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineWithValidationFeaturesInfo(VkDevice                                      device,
+                                                             VkPipelineCache                               pipelineCache,
+                                                             const void*                                   pNext,
+                                                             uint32_t                                      enabledValidationFeatureCount,
+                                                             const VkValidationFeatureEnableEXT*           pEnabledValidationFeatures,
+                                                             uint32_t                                      disabledValidationFeatureCount,
+                                                             const VkValidationFeatureDisableEXT*          pDisabledValidationFeatures,
+                                                             VkPipelineCreateFlags                         flags,
+                                                             uint32_t                                      stageCount,
+                                                             const VkPipelineShaderStageCreateInfo*        pStages,
+                                                             const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                             const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                             const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                             const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                             const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                             const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                             const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                             const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                             const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                             VkPipelineLayout                              layout,
+                                                             VkRenderPass                                  renderPass,
+                                                             uint32_t                                      subpass,
+                                                             VkPipeline                                    basePipelineHandle,
+                                                             int32_t                                       basePipelineIndex,
+                                                             const VkAllocationCallbacks*                  pAllocator,
+                                                             VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkPipelineBinaryInfoKHR chained.
+ *
+ * \param[in] device                        See cvkCreateRayTracingPipeline
+ * \param[in] deferredOperation             See cvkCreateRayTracingPipeline
+ * \param[in] pipelineCache                 See cvkCreateRayTracingPipeline
+ * \param[in] pNext                         See cvkCreateRayTracingPipeline
+ * \param[in] binaryCount                   VkPipelineBinaryInfoKHR::binaryCount
+ * \param[in] pPipelineBinaries             VkPipelineBinaryInfoKHR::pPipelineBinaries
+ * \param[in] flags                         See cvkCreateRayTracingPipeline
+ * \param[in] stageCount                    See cvkCreateRayTracingPipeline
+ * \param[in] pStages                       See cvkCreateRayTracingPipeline
+ * \param[in] groupCount                    See cvkCreateRayTracingPipeline
+ * \param[in] pGroups                       See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth  See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInfo                  See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInterface             See cvkCreateRayTracingPipeline
+ * \param[in] pDynamicState                 See cvkCreateRayTracingPipeline
+ * \param[in] layout                        See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineHandle            See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineIndex             See cvkCreateRayTracingPipeline
+ * \param[in] pAllocator                    See cvkCreateRayTracingPipeline
+ * \param[out] pPipeline                     See cvkCreateRayTracingPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineWithBinaryInfo(VkDevice                                          device,
+                                                   VkDeferredOperationKHR                            deferredOperation,
+                                                   VkPipelineCache                                   pipelineCache,
+                                                   const void*                                       pNext,
+                                                   uint32_t                                          binaryCount,
+                                                   const VkPipelineBinaryKHR*                        pPipelineBinaries,
+                                                   VkPipelineCreateFlags                             flags,
+                                                   uint32_t                                          stageCount,
+                                                   const VkPipelineShaderStageCreateInfo*            pStages,
+                                                   uint32_t                                          groupCount,
+                                                   const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                   uint32_t                                          maxPipelineRayRecursionDepth,
+                                                   const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                   const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                   const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                   VkPipelineLayout                                  layout,
+                                                   VkPipeline                                        basePipelineHandle,
+                                                   int32_t                                           basePipelineIndex,
+                                                   const VkAllocationCallbacks*                      pAllocator,
+                                                   VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkPipelineCreateFlags2CreateInfo chained.
+ *
+ * \param[in] device                        See cvkCreateRayTracingPipeline
+ * \param[in] deferredOperation             See cvkCreateRayTracingPipeline
+ * \param[in] pipelineCache                 See cvkCreateRayTracingPipeline
+ * \param[in] pNext                         See cvkCreateRayTracingPipeline
+ * \param[in] flags2                        VkPipelineCreateFlags2CreateInfo::flags2
+ * \param[in] flags                         See cvkCreateRayTracingPipeline
+ * \param[in] stageCount                    See cvkCreateRayTracingPipeline
+ * \param[in] pStages                       See cvkCreateRayTracingPipeline
+ * \param[in] groupCount                    See cvkCreateRayTracingPipeline
+ * \param[in] pGroups                       See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth  See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInfo                  See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInterface             See cvkCreateRayTracingPipeline
+ * \param[in] pDynamicState                 See cvkCreateRayTracingPipeline
+ * \param[in] layout                        See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineHandle            See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineIndex             See cvkCreateRayTracingPipeline
+ * \param[in] pAllocator                    See cvkCreateRayTracingPipeline
+ * \param[out] pPipeline                     See cvkCreateRayTracingPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineWithFlags2Info(VkDevice                                          device,
+                                                   VkDeferredOperationKHR                            deferredOperation,
+                                                   VkPipelineCache                                   pipelineCache,
+                                                   const void*                                       pNext,
+                                                   VkPipelineCreateFlags2                            flags2,
+                                                   VkPipelineCreateFlags                             flags,
+                                                   uint32_t                                          stageCount,
+                                                   const VkPipelineShaderStageCreateInfo*            pStages,
+                                                   uint32_t                                          groupCount,
+                                                   const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                   uint32_t                                          maxPipelineRayRecursionDepth,
+                                                   const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                   const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                   const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                   VkPipelineLayout                                  layout,
+                                                   VkPipeline                                        basePipelineHandle,
+                                                   int32_t                                           basePipelineIndex,
+                                                   const VkAllocationCallbacks*                      pAllocator,
+                                                   VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkPipelineCreationFeedbackCreateInfo chained.
+ *
+ * \param[in] device                              See cvkCreateRayTracingPipeline
+ * \param[in] deferredOperation                   See cvkCreateRayTracingPipeline
+ * \param[in] pipelineCache                       See cvkCreateRayTracingPipeline
+ * \param[in] pNext                               See cvkCreateRayTracingPipeline
+ * \param[out] pPipelineCreationFeedback           VkPipelineCreationFeedbackCreateInfo::pPipelineCreationFeedback
+ * \param[in] pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
+ * \param[out] pPipelineStageCreationFeedbacks     VkPipelineCreationFeedbackCreateInfo::pPipelineStageCreationFeedbacks
+ * \param[in] flags                               See cvkCreateRayTracingPipeline
+ * \param[in] stageCount                          See cvkCreateRayTracingPipeline
+ * \param[in] pStages                             See cvkCreateRayTracingPipeline
+ * \param[in] groupCount                          See cvkCreateRayTracingPipeline
+ * \param[in] pGroups                             See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth        See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInfo                        See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInterface                   See cvkCreateRayTracingPipeline
+ * \param[in] pDynamicState                       See cvkCreateRayTracingPipeline
+ * \param[in] layout                              See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineHandle                  See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineIndex                   See cvkCreateRayTracingPipeline
+ * \param[in] pAllocator                          See cvkCreateRayTracingPipeline
+ * \param[out] pPipeline                           See cvkCreateRayTracingPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineWithCreationFeedbackInfo(VkDevice                                          device,
+                                                             VkDeferredOperationKHR                            deferredOperation,
+                                                             VkPipelineCache                                   pipelineCache,
+                                                             const void*                                       pNext,
+                                                             VkPipelineCreationFeedback*                       pPipelineCreationFeedback,
+                                                             uint32_t                                          pipelineStageCreationFeedbackCount,
+                                                             VkPipelineCreationFeedback*                       pPipelineStageCreationFeedbacks,
+                                                             VkPipelineCreateFlags                             flags,
+                                                             uint32_t                                          stageCount,
+                                                             const VkPipelineShaderStageCreateInfo*            pStages,
+                                                             uint32_t                                          groupCount,
+                                                             const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                             uint32_t                                          maxPipelineRayRecursionDepth,
+                                                             const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                             const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                             const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                             VkPipelineLayout                                  layout,
+                                                             VkPipeline                                        basePipelineHandle,
+                                                             int32_t                                           basePipelineIndex,
+                                                             const VkAllocationCallbacks*                      pAllocator,
+                                                             VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkPipelineRobustnessCreateInfo chained.
+ *
+ * \param[in] device                        See cvkCreateRayTracingPipeline
+ * \param[in] deferredOperation             See cvkCreateRayTracingPipeline
+ * \param[in] pipelineCache                 See cvkCreateRayTracingPipeline
+ * \param[in] pNext                         See cvkCreateRayTracingPipeline
+ * \param[in] storageBuffers                VkPipelineRobustnessCreateInfo::storageBuffers
+ * \param[in] uniformBuffers                VkPipelineRobustnessCreateInfo::uniformBuffers
+ * \param[in] vertexInputs                  VkPipelineRobustnessCreateInfo::vertexInputs
+ * \param[in] images                        VkPipelineRobustnessCreateInfo::images
+ * \param[in] flags                         See cvkCreateRayTracingPipeline
+ * \param[in] stageCount                    See cvkCreateRayTracingPipeline
+ * \param[in] pStages                       See cvkCreateRayTracingPipeline
+ * \param[in] groupCount                    See cvkCreateRayTracingPipeline
+ * \param[in] pGroups                       See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth  See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInfo                  See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInterface             See cvkCreateRayTracingPipeline
+ * \param[in] pDynamicState                 See cvkCreateRayTracingPipeline
+ * \param[in] layout                        See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineHandle            See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineIndex             See cvkCreateRayTracingPipeline
+ * \param[in] pAllocator                    See cvkCreateRayTracingPipeline
+ * \param[out] pPipeline                     See cvkCreateRayTracingPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineWithRobustnessInfo(VkDevice                                          device,
+                                                       VkDeferredOperationKHR                            deferredOperation,
+                                                       VkPipelineCache                                   pipelineCache,
+                                                       const void*                                       pNext,
+                                                       VkPipelineRobustnessBufferBehavior                storageBuffers,
+                                                       VkPipelineRobustnessBufferBehavior                uniformBuffers,
+                                                       VkPipelineRobustnessBufferBehavior                vertexInputs,
+                                                       VkPipelineRobustnessImageBehavior                 images,
+                                                       VkPipelineCreateFlags                             flags,
+                                                       uint32_t                                          stageCount,
+                                                       const VkPipelineShaderStageCreateInfo*            pStages,
+                                                       uint32_t                                          groupCount,
+                                                       const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                       uint32_t                                          maxPipelineRayRecursionDepth,
+                                                       const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                       const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                       const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                       VkPipelineLayout                                  layout,
+                                                       VkPipeline                                        basePipelineHandle,
+                                                       int32_t                                           basePipelineIndex,
+                                                       const VkAllocationCallbacks*                      pAllocator,
+                                                       VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkRayTracingPipelineClusterAccelerationStructureCreateInfoNV chained.
+ *
+ * \param[in] device                             See cvkCreateRayTracingPipeline
+ * \param[in] deferredOperation                  See cvkCreateRayTracingPipeline
+ * \param[in] pipelineCache                      See cvkCreateRayTracingPipeline
+ * \param[out] pNext                              See cvkCreateRayTracingPipeline
+ * \param[in] allowClusterAccelerationStructure  VkRayTracingPipelineClusterAccelerationStructureCreateInfoNV::allowClusterAccelerationStructure
+ * \param[in] flags                              See cvkCreateRayTracingPipeline
+ * \param[in] stageCount                         See cvkCreateRayTracingPipeline
+ * \param[in] pStages                            See cvkCreateRayTracingPipeline
+ * \param[in] groupCount                         See cvkCreateRayTracingPipeline
+ * \param[in] pGroups                            See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth       See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInfo                       See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInterface                  See cvkCreateRayTracingPipeline
+ * \param[in] pDynamicState                      See cvkCreateRayTracingPipeline
+ * \param[in] layout                             See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineHandle                 See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineIndex                  See cvkCreateRayTracingPipeline
+ * \param[in] pAllocator                         See cvkCreateRayTracingPipeline
+ * \param[out] pPipeline                          See cvkCreateRayTracingPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineWithClusterAccelerationStructureInfo(VkDevice                                          device,
+                                                                         VkDeferredOperationKHR                            deferredOperation,
+                                                                         VkPipelineCache                                   pipelineCache,
+                                                                         void*                                             pNext,
+                                                                         VkBool32                                          allowClusterAccelerationStructure,
+                                                                         VkPipelineCreateFlags                             flags,
+                                                                         uint32_t                                          stageCount,
+                                                                         const VkPipelineShaderStageCreateInfo*            pStages,
+                                                                         uint32_t                                          groupCount,
+                                                                         const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                                         uint32_t                                          maxPipelineRayRecursionDepth,
+                                                                         const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                                         const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                                         const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                                         VkPipelineLayout                                  layout,
+                                                                         VkPipeline                                        basePipelineHandle,
+                                                                         int32_t                                           basePipelineIndex,
+                                                                         const VkAllocationCallbacks*                      pAllocator,
+                                                                         VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkValidationFeaturesEXT chained.
+ *
+ * \param[in] device                          See cvkCreateRayTracingPipeline
+ * \param[in] deferredOperation               See cvkCreateRayTracingPipeline
+ * \param[in] pipelineCache                   See cvkCreateRayTracingPipeline
+ * \param[in] pNext                           See cvkCreateRayTracingPipeline
+ * \param[in] enabledValidationFeatureCount   VkValidationFeaturesEXT::enabledValidationFeatureCount
+ * \param[in] pEnabledValidationFeatures      VkValidationFeaturesEXT::pEnabledValidationFeatures
+ * \param[in] disabledValidationFeatureCount  VkValidationFeaturesEXT::disabledValidationFeatureCount
+ * \param[in] pDisabledValidationFeatures     VkValidationFeaturesEXT::pDisabledValidationFeatures
+ * \param[in] flags                           See cvkCreateRayTracingPipeline
+ * \param[in] stageCount                      See cvkCreateRayTracingPipeline
+ * \param[in] pStages                         See cvkCreateRayTracingPipeline
+ * \param[in] groupCount                      See cvkCreateRayTracingPipeline
+ * \param[in] pGroups                         See cvkCreateRayTracingPipeline
+ * \param[in] maxPipelineRayRecursionDepth    See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInfo                    See cvkCreateRayTracingPipeline
+ * \param[in] pLibraryInterface               See cvkCreateRayTracingPipeline
+ * \param[in] pDynamicState                   See cvkCreateRayTracingPipeline
+ * \param[in] layout                          See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineHandle              See cvkCreateRayTracingPipeline
+ * \param[in] basePipelineIndex               See cvkCreateRayTracingPipeline
+ * \param[in] pAllocator                      See cvkCreateRayTracingPipeline
+ * \param[out] pPipeline                       See cvkCreateRayTracingPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineWithValidationFeaturesInfo(VkDevice                                          device,
+                                                               VkDeferredOperationKHR                            deferredOperation,
+                                                               VkPipelineCache                                   pipelineCache,
+                                                               const void*                                       pNext,
+                                                               uint32_t                                          enabledValidationFeatureCount,
+                                                               const VkValidationFeatureEnableEXT*               pEnabledValidationFeatures,
+                                                               uint32_t                                          disabledValidationFeatureCount,
+                                                               const VkValidationFeatureDisableEXT*              pDisabledValidationFeatures,
+                                                               VkPipelineCreateFlags                             flags,
+                                                               uint32_t                                          stageCount,
+                                                               const VkPipelineShaderStageCreateInfo*            pStages,
+                                                               uint32_t                                          groupCount,
+                                                               const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                               uint32_t                                          maxPipelineRayRecursionDepth,
+                                                               const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                               const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                               const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                               VkPipelineLayout                                  layout,
+                                                               VkPipeline                                        basePipelineHandle,
+                                                               int32_t                                           basePipelineIndex,
+                                                               const VkAllocationCallbacks*                      pAllocator,
+                                                               VkPipeline*                                       pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkPipelineCreateFlags2CreateInfo chained.
+ *
+ * \param[in] device              See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pipelineCache       See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pNext               See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] flags2              VkPipelineCreateFlags2CreateInfo::flags2
+ * \param[in] flags               See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] stageCount          See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pStages             See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] groupCount          See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pGroups             See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] maxRecursionDepth   See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] layout              See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] basePipelineHandle  See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] basePipelineIndex   See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pAllocator          See cvkCreateRayTracingPipelineInfoNV
+ * \param[out] pPipeline           See cvkCreateRayTracingPipelineInfoNV
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineInfoWithFlags2InfoNV(VkDevice                                   device,
+                                                         VkPipelineCache                            pipelineCache,
+                                                         const void*                                pNext,
+                                                         VkPipelineCreateFlags2                     flags2,
+                                                         VkPipelineCreateFlags                      flags,
+                                                         uint32_t                                   stageCount,
+                                                         const VkPipelineShaderStageCreateInfo*     pStages,
+                                                         uint32_t                                   groupCount,
+                                                         const VkRayTracingShaderGroupCreateInfoNV* pGroups,
+                                                         uint32_t                                   maxRecursionDepth,
+                                                         VkPipelineLayout                           layout,
+                                                         VkPipeline                                 basePipelineHandle,
+                                                         int32_t                                    basePipelineIndex,
+                                                         const VkAllocationCallbacks*               pAllocator,
+                                                         VkPipeline*                                pPipeline);
+/**
+ * \brief Creates a ray tracing pipelines with VkPipelineCreationFeedbackCreateInfo chained.
+ *
+ * \param[in] device                              See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pipelineCache                       See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pNext                               See cvkCreateRayTracingPipelineInfoNV
+ * \param[out] pPipelineCreationFeedback           VkPipelineCreationFeedbackCreateInfo::pPipelineCreationFeedback
+ * \param[in] pipelineStageCreationFeedbackCount  VkPipelineCreationFeedbackCreateInfo::pipelineStageCreationFeedbackCount
+ * \param[out] pPipelineStageCreationFeedbacks     VkPipelineCreationFeedbackCreateInfo::pPipelineStageCreationFeedbacks
+ * \param[in] flags                               See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] stageCount                          See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pStages                             See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] groupCount                          See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pGroups                             See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] maxRecursionDepth                   See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] layout                              See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] basePipelineHandle                  See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] basePipelineIndex                   See cvkCreateRayTracingPipelineInfoNV
+ * \param[in] pAllocator                          See cvkCreateRayTracingPipelineInfoNV
+ * \param[out] pPipeline                           See cvkCreateRayTracingPipelineInfoNV
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateRayTracingPipelineInfoWithCreationFeedbackInfoNV(VkDevice                                   device,
+                                                                   VkPipelineCache                            pipelineCache,
+                                                                   const void*                                pNext,
+                                                                   VkPipelineCreationFeedback*                pPipelineCreationFeedback,
+                                                                   uint32_t                                   pipelineStageCreationFeedbackCount,
+                                                                   VkPipelineCreationFeedback*                pPipelineStageCreationFeedbacks,
+                                                                   VkPipelineCreateFlags                      flags,
+                                                                   uint32_t                                   stageCount,
+                                                                   const VkPipelineShaderStageCreateInfo*     pStages,
+                                                                   uint32_t                                   groupCount,
+                                                                   const VkRayTracingShaderGroupCreateInfoNV* pGroups,
+                                                                   uint32_t                                   maxRecursionDepth,
+                                                                   VkPipelineLayout                           layout,
+                                                                   VkPipeline                                 basePipelineHandle,
+                                                                   int32_t                                    basePipelineIndex,
+                                                                   const VkAllocationCallbacks*               pAllocator,
+                                                                   VkPipeline*                                pPipeline);
+/**
+ * \brief Creates a shaders with VkCustomResolveCreateInfoEXT chained.
+ *
+ * \param[in] device                   See cvkCreateShader
+ * \param[in] pNext                    See cvkCreateShader
+ * \param[in] customResolve            VkCustomResolveCreateInfoEXT::customResolve
+ * \param[in] colorAttachmentCount     VkCustomResolveCreateInfoEXT::colorAttachmentCount
+ * \param[in] pColorAttachmentFormats  VkCustomResolveCreateInfoEXT::pColorAttachmentFormats
+ * \param[in] depthAttachmentFormat    VkCustomResolveCreateInfoEXT::depthAttachmentFormat
+ * \param[in] stencilAttachmentFormat  VkCustomResolveCreateInfoEXT::stencilAttachmentFormat
+ * \param[in] flags                    See cvkCreateShader
+ * \param[in] stage                    See cvkCreateShader
+ * \param[in] nextStage                See cvkCreateShader
+ * \param[in] codeType                 See cvkCreateShader
+ * \param[in] codeSize                 See cvkCreateShader
+ * \param[in] pCode                    See cvkCreateShader
+ * \param[in] pName                    See cvkCreateShader
+ * \param[in] setLayoutCount           See cvkCreateShader
+ * \param[in] pSetLayouts              See cvkCreateShader
+ * \param[in] pushConstantRangeCount   See cvkCreateShader
+ * \param[in] pPushConstantRanges      See cvkCreateShader
+ * \param[in] pSpecializationInfo      See cvkCreateShader
+ * \param[in] pAllocator               See cvkCreateShader
+ * \param[out] pShader                  See cvkCreateShader
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateShaderWithCustomResolveInfo(VkDevice                     device,
+                                              const void*                  pNext,
+                                              VkBool32                     customResolve,
+                                              uint32_t                     colorAttachmentCount,
+                                              const VkFormat*              pColorAttachmentFormats,
+                                              VkFormat                     depthAttachmentFormat,
+                                              VkFormat                     stencilAttachmentFormat,
+                                              VkShaderCreateFlagsEXT       flags,
+                                              VkShaderStageFlagBits        stage,
+                                              VkShaderStageFlags           nextStage,
+                                              VkShaderCodeTypeEXT          codeType,
+                                              size_t                       codeSize,
+                                              const void*                  pCode,
+                                              const char*                  pName,
+                                              uint32_t                     setLayoutCount,
+                                              const VkDescriptorSetLayout* pSetLayouts,
+                                              uint32_t                     pushConstantRangeCount,
+                                              const VkPushConstantRange*   pPushConstantRanges,
+                                              const VkSpecializationInfo*  pSpecializationInfo,
+                                              const VkAllocationCallbacks* pAllocator,
+                                              VkShaderEXT*                 pShader);
+/**
+ * \brief Creates a shaders with VkPipelineShaderStageRequiredSubgroupSizeCreateInfo chained.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pNext                   See cvkCreateShader
+ * \param[in] requiredSubgroupSize    VkPipelineShaderStageRequiredSubgroupSizeCreateInfo::requiredSubgroupSize
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] stage                   See cvkCreateShader
+ * \param[in] nextStage               See cvkCreateShader
+ * \param[in] codeType                See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 See cvkCreateShader
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateShaderWithPipelineShaderStageRequiredSubgroupSizeInfo(VkDevice                     device,
+                                                                        const void*                  pNext,
+                                                                        uint32_t                     requiredSubgroupSize,
+                                                                        VkShaderCreateFlagsEXT       flags,
+                                                                        VkShaderStageFlagBits        stage,
+                                                                        VkShaderStageFlags           nextStage,
+                                                                        VkShaderCodeTypeEXT          codeType,
+                                                                        size_t                       codeSize,
+                                                                        const void*                  pCode,
+                                                                        const char*                  pName,
+                                                                        uint32_t                     setLayoutCount,
+                                                                        const VkDescriptorSetLayout* pSetLayouts,
+                                                                        uint32_t                     pushConstantRangeCount,
+                                                                        const VkPushConstantRange*   pPushConstantRanges,
+                                                                        const VkSpecializationInfo*  pSpecializationInfo,
+                                                                        const VkAllocationCallbacks* pAllocator,
+                                                                        VkShaderEXT*                 pShader);
+/**
+ * \brief Creates a shaders with VkShaderDescriptorSetAndBindingMappingInfoEXT chained.
+ *
+ * \param[in] device                  See cvkCreateShader
+ * \param[in] pNext                   See cvkCreateShader
+ * \param[in] mappingCount            VkShaderDescriptorSetAndBindingMappingInfoEXT::mappingCount
+ * \param[in] pMappings               VkShaderDescriptorSetAndBindingMappingInfoEXT::pMappings
+ * \param[in] flags                   See cvkCreateShader
+ * \param[in] stage                   See cvkCreateShader
+ * \param[in] nextStage               See cvkCreateShader
+ * \param[in] codeType                See cvkCreateShader
+ * \param[in] codeSize                See cvkCreateShader
+ * \param[in] pCode                   See cvkCreateShader
+ * \param[in] pName                   See cvkCreateShader
+ * \param[in] setLayoutCount          See cvkCreateShader
+ * \param[in] pSetLayouts             See cvkCreateShader
+ * \param[in] pushConstantRangeCount  See cvkCreateShader
+ * \param[in] pPushConstantRanges     See cvkCreateShader
+ * \param[in] pSpecializationInfo     See cvkCreateShader
+ * \param[in] pAllocator              See cvkCreateShader
+ * \param[out] pShader                 See cvkCreateShader
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateShaderWithDescriptorSetAndBindingMappingInfo(VkDevice                                   device,
+                                                               const void*                                pNext,
+                                                               uint32_t                                   mappingCount,
+                                                               const VkDescriptorSetAndBindingMappingEXT* pMappings,
+                                                               VkShaderCreateFlagsEXT                     flags,
+                                                               VkShaderStageFlagBits                      stage,
+                                                               VkShaderStageFlags                         nextStage,
+                                                               VkShaderCodeTypeEXT                        codeType,
+                                                               size_t                                     codeSize,
+                                                               const void*                                pCode,
+                                                               const char*                                pName,
+                                                               uint32_t                                   setLayoutCount,
+                                                               const VkDescriptorSetLayout*               pSetLayouts,
+                                                               uint32_t                                   pushConstantRangeCount,
+                                                               const VkPushConstantRange*                 pPushConstantRanges,
+                                                               const VkSpecializationInfo*                pSpecializationInfo,
+                                                               const VkAllocationCallbacks*               pAllocator,
+                                                               VkShaderEXT*                               pShader);
+/**
+ * \brief Creates a shaders with VkValidationFeaturesEXT chained.
+ *
+ * \param[in] device                          See cvkCreateShader
+ * \param[in] pNext                           See cvkCreateShader
+ * \param[in] enabledValidationFeatureCount   VkValidationFeaturesEXT::enabledValidationFeatureCount
+ * \param[in] pEnabledValidationFeatures      VkValidationFeaturesEXT::pEnabledValidationFeatures
+ * \param[in] disabledValidationFeatureCount  VkValidationFeaturesEXT::disabledValidationFeatureCount
+ * \param[in] pDisabledValidationFeatures     VkValidationFeaturesEXT::pDisabledValidationFeatures
+ * \param[in] flags                           See cvkCreateShader
+ * \param[in] stage                           See cvkCreateShader
+ * \param[in] nextStage                       See cvkCreateShader
+ * \param[in] codeType                        See cvkCreateShader
+ * \param[in] codeSize                        See cvkCreateShader
+ * \param[in] pCode                           See cvkCreateShader
+ * \param[in] pName                           See cvkCreateShader
+ * \param[in] setLayoutCount                  See cvkCreateShader
+ * \param[in] pSetLayouts                     See cvkCreateShader
+ * \param[in] pushConstantRangeCount          See cvkCreateShader
+ * \param[in] pPushConstantRanges             See cvkCreateShader
+ * \param[in] pSpecializationInfo             See cvkCreateShader
+ * \param[in] pAllocator                      See cvkCreateShader
+ * \param[out] pShader                         See cvkCreateShader
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateShaderWithValidationFeaturesInfo(VkDevice                             device,
+                                                   const void*                          pNext,
+                                                   uint32_t                             enabledValidationFeatureCount,
+                                                   const VkValidationFeatureEnableEXT*  pEnabledValidationFeatures,
+                                                   uint32_t                             disabledValidationFeatureCount,
+                                                   const VkValidationFeatureDisableEXT* pDisabledValidationFeatures,
+                                                   VkShaderCreateFlagsEXT               flags,
+                                                   VkShaderStageFlagBits                stage,
+                                                   VkShaderStageFlags                   nextStage,
+                                                   VkShaderCodeTypeEXT                  codeType,
+                                                   size_t                               codeSize,
+                                                   const void*                          pCode,
+                                                   const char*                          pName,
+                                                   uint32_t                             setLayoutCount,
+                                                   const VkDescriptorSetLayout*         pSetLayouts,
+                                                   uint32_t                             pushConstantRangeCount,
+                                                   const VkPushConstantRange*           pPushConstantRanges,
+                                                   const VkSpecializationInfo*          pSpecializationInfo,
+                                                   const VkAllocationCallbacks*         pAllocator,
+                                                   VkShaderEXT*                         pShader);
+/**
+ * \brief Creates a shared swapchains with VkDeviceGroupSwapchainCreateInfoKHR chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] modes                  VkDeviceGroupSwapchainCreateInfoKHR::modes
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithDeviceGroupInfo(VkDevice                         device,
+                                                     const void*                      pNext,
+                                                     VkDeviceGroupPresentModeFlagsKHR modes,
+                                                     VkSwapchainCreateFlagsKHR        flags,
+                                                     VkSurfaceKHR                     surface,
+                                                     uint32_t                         minImageCount,
+                                                     VkFormat                         imageFormat,
+                                                     VkColorSpaceKHR                  imageColorSpace,
+                                                     VkExtent2D                       imageExtent,
+                                                     uint32_t                         imageArrayLayers,
+                                                     VkImageUsageFlags                imageUsage,
+                                                     VkSharingMode                    imageSharingMode,
+                                                     uint32_t                         queueFamilyIndexCount,
+                                                     const uint32_t*                  pQueueFamilyIndices,
+                                                     VkSurfaceTransformFlagBitsKHR    preTransform,
+                                                     VkCompositeAlphaFlagBitsKHR      compositeAlpha,
+                                                     VkPresentModeKHR                 presentMode,
+                                                     VkBool32                         clipped,
+                                                     VkSwapchainKHR                   oldSwapchain,
+                                                     const VkAllocationCallbacks*     pAllocator,
+                                                     VkSwapchainKHR*                  pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkImageCompressionControlEXT chained.
+ *
+ * \param[in] device                        See cvkCreateSharedSwapchain
+ * \param[in] pNext                         See cvkCreateSharedSwapchain
+ * \param[in] flagsImageCompression         VkImageCompressionControlEXT::flagsImageCompression
+ * \param[in] compressionControlPlaneCount  VkImageCompressionControlEXT::compressionControlPlaneCount
+ * \param[out] pFixedRateFlags               VkImageCompressionControlEXT::pFixedRateFlags
+ * \param[in] flags                         See cvkCreateSharedSwapchain
+ * \param[in] surface                       See cvkCreateSharedSwapchain
+ * \param[in] minImageCount                 See cvkCreateSharedSwapchain
+ * \param[in] imageFormat                   See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace               See cvkCreateSharedSwapchain
+ * \param[in] imageExtent                   See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers              See cvkCreateSharedSwapchain
+ * \param[in] imageUsage                    See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode              See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount         See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices           See cvkCreateSharedSwapchain
+ * \param[in] preTransform                  See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha                See cvkCreateSharedSwapchain
+ * \param[in] presentMode                   See cvkCreateSharedSwapchain
+ * \param[in] clipped                       See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain                  See cvkCreateSharedSwapchain
+ * \param[in] pAllocator                    See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain                    See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithImageCompressionControlInfo(VkDevice                             device,
+                                                                 const void*                          pNext,
+                                                                 VkImageCompressionFlagsEXT           flagsImageCompression,
+                                                                 uint32_t                             compressionControlPlaneCount,
+                                                                 VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
+                                                                 VkSwapchainCreateFlagsKHR            flags,
+                                                                 VkSurfaceKHR                         surface,
+                                                                 uint32_t                             minImageCount,
+                                                                 VkFormat                             imageFormat,
+                                                                 VkColorSpaceKHR                      imageColorSpace,
+                                                                 VkExtent2D                           imageExtent,
+                                                                 uint32_t                             imageArrayLayers,
+                                                                 VkImageUsageFlags                    imageUsage,
+                                                                 VkSharingMode                        imageSharingMode,
+                                                                 uint32_t                             queueFamilyIndexCount,
+                                                                 const uint32_t*                      pQueueFamilyIndices,
+                                                                 VkSurfaceTransformFlagBitsKHR        preTransform,
+                                                                 VkCompositeAlphaFlagBitsKHR          compositeAlpha,
+                                                                 VkPresentModeKHR                     presentMode,
+                                                                 VkBool32                             clipped,
+                                                                 VkSwapchainKHR                       oldSwapchain,
+                                                                 const VkAllocationCallbacks*         pAllocator,
+                                                                 VkSwapchainKHR*                      pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkImageFormatListCreateInfo chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] viewFormatCount        VkImageFormatListCreateInfo::viewFormatCount
+ * \param[in] pViewFormats           VkImageFormatListCreateInfo::pViewFormats
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithImageFormatListInfo(VkDevice                      device,
+                                                         const void*                   pNext,
+                                                         uint32_t                      viewFormatCount,
+                                                         const VkFormat*               pViewFormats,
+                                                         VkSwapchainCreateFlagsKHR     flags,
+                                                         VkSurfaceKHR                  surface,
+                                                         uint32_t                      minImageCount,
+                                                         VkFormat                      imageFormat,
+                                                         VkColorSpaceKHR               imageColorSpace,
+                                                         VkExtent2D                    imageExtent,
+                                                         uint32_t                      imageArrayLayers,
+                                                         VkImageUsageFlags             imageUsage,
+                                                         VkSharingMode                 imageSharingMode,
+                                                         uint32_t                      queueFamilyIndexCount,
+                                                         const uint32_t*               pQueueFamilyIndices,
+                                                         VkSurfaceTransformFlagBitsKHR preTransform,
+                                                         VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                         VkPresentModeKHR              presentMode,
+                                                         VkBool32                      clipped,
+                                                         VkSwapchainKHR                oldSwapchain,
+                                                         const VkAllocationCallbacks*  pAllocator,
+                                                         VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkImageUsageFlags2CreateInfoKHR chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[out] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] usage                  VkImageUsageFlags2CreateInfoKHR::usage
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
+                                                             void*                         pNext,
+                                                             VkImageUsageFlags2KHR         usage,
+                                                             VkSwapchainCreateFlagsKHR     flags,
+                                                             VkSurfaceKHR                  surface,
+                                                             uint32_t                      minImageCount,
+                                                             VkFormat                      imageFormat,
+                                                             VkColorSpaceKHR               imageColorSpace,
+                                                             VkExtent2D                    imageExtent,
+                                                             uint32_t                      imageArrayLayers,
+                                                             VkImageUsageFlags             imageUsage,
+                                                             VkSharingMode                 imageSharingMode,
+                                                             uint32_t                      queueFamilyIndexCount,
+                                                             const uint32_t*               pQueueFamilyIndices,
+                                                             VkSurfaceTransformFlagBitsKHR preTransform,
+                                                             VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                             VkPresentModeKHR              presentMode,
+                                                             VkBool32                      clipped,
+                                                             VkSwapchainKHR                oldSwapchain,
+                                                             const VkAllocationCallbacks*  pAllocator,
+                                                             VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSwapchainCounterCreateInfoEXT chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] surfaceCounters        VkSwapchainCounterCreateInfoEXT::surfaceCounters
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithCounterInfo(VkDevice                      device,
+                                                 const void*                   pNext,
+                                                 VkSurfaceCounterFlagsEXT      surfaceCounters,
+                                                 VkSwapchainCreateFlagsKHR     flags,
+                                                 VkSurfaceKHR                  surface,
+                                                 uint32_t                      minImageCount,
+                                                 VkFormat                      imageFormat,
+                                                 VkColorSpaceKHR               imageColorSpace,
+                                                 VkExtent2D                    imageExtent,
+                                                 uint32_t                      imageArrayLayers,
+                                                 VkImageUsageFlags             imageUsage,
+                                                 VkSharingMode                 imageSharingMode,
+                                                 uint32_t                      queueFamilyIndexCount,
+                                                 const uint32_t*               pQueueFamilyIndices,
+                                                 VkSurfaceTransformFlagBitsKHR preTransform,
+                                                 VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                 VkPresentModeKHR              presentMode,
+                                                 VkBool32                      clipped,
+                                                 VkSwapchainKHR                oldSwapchain,
+                                                 const VkAllocationCallbacks*  pAllocator,
+                                                 VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSwapchainDisplayNativeHdrCreateInfoAMD chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] localDimmingEnable     VkSwapchainDisplayNativeHdrCreateInfoAMD::localDimmingEnable
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithDisplayNativeHdrInfo(VkDevice                      device,
+                                                          const void*                   pNext,
+                                                          VkBool32                      localDimmingEnable,
+                                                          VkSwapchainCreateFlagsKHR     flags,
+                                                          VkSurfaceKHR                  surface,
+                                                          uint32_t                      minImageCount,
+                                                          VkFormat                      imageFormat,
+                                                          VkColorSpaceKHR               imageColorSpace,
+                                                          VkExtent2D                    imageExtent,
+                                                          uint32_t                      imageArrayLayers,
+                                                          VkImageUsageFlags             imageUsage,
+                                                          VkSharingMode                 imageSharingMode,
+                                                          uint32_t                      queueFamilyIndexCount,
+                                                          const uint32_t*               pQueueFamilyIndices,
+                                                          VkSurfaceTransformFlagBitsKHR preTransform,
+                                                          VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                          VkPresentModeKHR              presentMode,
+                                                          VkBool32                      clipped,
+                                                          VkSwapchainKHR                oldSwapchain,
+                                                          const VkAllocationCallbacks*  pAllocator,
+                                                          VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSwapchainLatencyCreateInfoNV chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] latencyModeEnable      VkSwapchainLatencyCreateInfoNV::latencyModeEnable
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithLatencyInfo(VkDevice                      device,
+                                                 const void*                   pNext,
+                                                 VkBool32                      latencyModeEnable,
+                                                 VkSwapchainCreateFlagsKHR     flags,
+                                                 VkSurfaceKHR                  surface,
+                                                 uint32_t                      minImageCount,
+                                                 VkFormat                      imageFormat,
+                                                 VkColorSpaceKHR               imageColorSpace,
+                                                 VkExtent2D                    imageExtent,
+                                                 uint32_t                      imageArrayLayers,
+                                                 VkImageUsageFlags             imageUsage,
+                                                 VkSharingMode                 imageSharingMode,
+                                                 uint32_t                      queueFamilyIndexCount,
+                                                 const uint32_t*               pQueueFamilyIndices,
+                                                 VkSurfaceTransformFlagBitsKHR preTransform,
+                                                 VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                 VkPresentModeKHR              presentMode,
+                                                 VkBool32                      clipped,
+                                                 VkSwapchainKHR                oldSwapchain,
+                                                 const VkAllocationCallbacks*  pAllocator,
+                                                 VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSwapchainPresentBarrierCreateInfoNV chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[out] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] presentBarrierEnable   VkSwapchainPresentBarrierCreateInfoNV::presentBarrierEnable
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithPresentBarrierInfo(VkDevice                      device,
+                                                        void*                         pNext,
+                                                        VkBool32                      presentBarrierEnable,
+                                                        VkSwapchainCreateFlagsKHR     flags,
+                                                        VkSurfaceKHR                  surface,
+                                                        uint32_t                      minImageCount,
+                                                        VkFormat                      imageFormat,
+                                                        VkColorSpaceKHR               imageColorSpace,
+                                                        VkExtent2D                    imageExtent,
+                                                        uint32_t                      imageArrayLayers,
+                                                        VkImageUsageFlags             imageUsage,
+                                                        VkSharingMode                 imageSharingMode,
+                                                        uint32_t                      queueFamilyIndexCount,
+                                                        const uint32_t*               pQueueFamilyIndices,
+                                                        VkSurfaceTransformFlagBitsKHR preTransform,
+                                                        VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                        VkPresentModeKHR              presentMode,
+                                                        VkBool32                      clipped,
+                                                        VkSwapchainKHR                oldSwapchain,
+                                                        const VkAllocationCallbacks*  pAllocator,
+                                                        VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSwapchainPresentModesCreateInfoKHR chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] presentModeCount       VkSwapchainPresentModesCreateInfoKHR::presentModeCount
+ * \param[in] pPresentModes          VkSwapchainPresentModesCreateInfoKHR::pPresentModes
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithPresentModesInfo(VkDevice                      device,
+                                                      const void*                   pNext,
+                                                      uint32_t                      presentModeCount,
+                                                      const VkPresentModeKHR*       pPresentModes,
+                                                      VkSwapchainCreateFlagsKHR     flags,
+                                                      VkSurfaceKHR                  surface,
+                                                      uint32_t                      minImageCount,
+                                                      VkFormat                      imageFormat,
+                                                      VkColorSpaceKHR               imageColorSpace,
+                                                      VkExtent2D                    imageExtent,
+                                                      uint32_t                      imageArrayLayers,
+                                                      VkImageUsageFlags             imageUsage,
+                                                      VkSharingMode                 imageSharingMode,
+                                                      uint32_t                      queueFamilyIndexCount,
+                                                      const uint32_t*               pQueueFamilyIndices,
+                                                      VkSurfaceTransformFlagBitsKHR preTransform,
+                                                      VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                      VkPresentModeKHR              presentMode,
+                                                      VkBool32                      clipped,
+                                                      VkSwapchainKHR                oldSwapchain,
+                                                      const VkAllocationCallbacks*  pAllocator,
+                                                      VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSwapchainPresentScalingCreateInfoKHR chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] scalingBehavior        VkSwapchainPresentScalingCreateInfoKHR::scalingBehavior
+ * \param[in] presentGravityX        VkSwapchainPresentScalingCreateInfoKHR::presentGravityX
+ * \param[in] presentGravityY        VkSwapchainPresentScalingCreateInfoKHR::presentGravityY
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithPresentScalingInfo(VkDevice                      device,
+                                                        const void*                   pNext,
+                                                        VkPresentScalingFlagsKHR      scalingBehavior,
+                                                        VkPresentGravityFlagsKHR      presentGravityX,
+                                                        VkPresentGravityFlagsKHR      presentGravityY,
+                                                        VkSwapchainCreateFlagsKHR     flags,
+                                                        VkSurfaceKHR                  surface,
+                                                        uint32_t                      minImageCount,
+                                                        VkFormat                      imageFormat,
+                                                        VkColorSpaceKHR               imageColorSpace,
+                                                        VkExtent2D                    imageExtent,
+                                                        uint32_t                      imageArrayLayers,
+                                                        VkImageUsageFlags             imageUsage,
+                                                        VkSharingMode                 imageSharingMode,
+                                                        uint32_t                      queueFamilyIndexCount,
+                                                        const uint32_t*               pQueueFamilyIndices,
+                                                        VkSurfaceTransformFlagBitsKHR preTransform,
+                                                        VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                        VkPresentModeKHR              presentMode,
+                                                        VkBool32                      clipped,
+                                                        VkSwapchainKHR                oldSwapchain,
+                                                        const VkAllocationCallbacks*  pAllocator,
+                                                        VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Retrieves calibrated timestamps with VkSwapchainCalibratedTimestampInfoEXT chained.
+ *
+ * \param[in] device         See cvkGetCalibratedTimestamp
+ * \param[in] pNext          See cvkGetCalibratedTimestamp
+ * \param[in] swapchain      VkSwapchainCalibratedTimestampInfoEXT::swapchain
+ * \param[in] presentStage   VkSwapchainCalibratedTimestampInfoEXT::presentStage
+ * \param[in] timeDomainId   VkSwapchainCalibratedTimestampInfoEXT::timeDomainId
+ * \param[in] timeDomain     See cvkGetCalibratedTimestamp
+ * \param[out] pTimestamps    See cvkGetCalibratedTimestamp
+ * \param[out] pMaxDeviation  See cvkGetCalibratedTimestamp
+ *
+ * \retval None
+ */
+void cvkGetCalibratedTimestampWithSwapchainInfo(VkDevice               device,
+                                                const void*            pNext,
+                                                VkSwapchainKHR         swapchain,
+                                                VkPresentStageFlagsEXT presentStage,
+                                                uint64_t               timeDomainId,
+                                                VkTimeDomainKHR        timeDomain,
+                                                uint64_t*              pTimestamps,
+                                                uint64_t*              pMaxDeviation);
+/**
+ * \brief Queues bind sparse with VkDeviceGroupBindSparseInfo chained.
+ *
+ * \param[in] queue                 See cvkQueueBindSparseInfo
+ * \param[in] pNext                 See cvkQueueBindSparseInfo
+ * \param[in] resourceDeviceIndex   VkDeviceGroupBindSparseInfo::resourceDeviceIndex
+ * \param[in] memoryDeviceIndex     VkDeviceGroupBindSparseInfo::memoryDeviceIndex
+ * \param[in] waitSemaphoreCount    See cvkQueueBindSparseInfo
+ * \param[in] pWaitSemaphores       See cvkQueueBindSparseInfo
+ * \param[in] bufferBindCount       See cvkQueueBindSparseInfo
+ * \param[in] pBufferBinds          See cvkQueueBindSparseInfo
+ * \param[in] imageOpaqueBindCount  See cvkQueueBindSparseInfo
+ * \param[in] pImageOpaqueBinds     See cvkQueueBindSparseInfo
+ * \param[in] imageBindCount        See cvkQueueBindSparseInfo
+ * \param[in] pImageBinds           See cvkQueueBindSparseInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueBindSparseInfo
+ * \param[in] pSignalSemaphores     See cvkQueueBindSparseInfo
+ * \param[in] fence                 See cvkQueueBindSparseInfo
+ *
+ * \retval None
+ */
+void cvkQueueBindSparseInfoWithDeviceGroupInfo(VkQueue                                  queue,
+                                               const void*                              pNext,
+                                               uint32_t                                 resourceDeviceIndex,
+                                               uint32_t                                 memoryDeviceIndex,
+                                               uint32_t                                 waitSemaphoreCount,
+                                               const VkSemaphore*                       pWaitSemaphores,
+                                               uint32_t                                 bufferBindCount,
+                                               const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                               uint32_t                                 imageOpaqueBindCount,
+                                               const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                               uint32_t                                 imageBindCount,
+                                               const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                               uint32_t                                 signalSemaphoreCount,
+                                               const VkSemaphore*                       pSignalSemaphores,
+                                               VkFence                                  fence);
+/**
+ * \brief Queues bind sparse with VkFrameBoundaryEXT chained.
+ *
+ * \param[in] queue                 See cvkQueueBindSparseInfo
+ * \param[in] pNext                 See cvkQueueBindSparseInfo
+ * \param[in] flags                 VkFrameBoundaryEXT::flags
+ * \param[in] frameID               VkFrameBoundaryEXT::frameID
+ * \param[in] imageCount            VkFrameBoundaryEXT::imageCount
+ * \param[in] pImages               VkFrameBoundaryEXT::pImages
+ * \param[in] bufferCount           VkFrameBoundaryEXT::bufferCount
+ * \param[in] pBuffers              VkFrameBoundaryEXT::pBuffers
+ * \param[in] tagName               VkFrameBoundaryEXT::tagName
+ * \param[in] tagSize               VkFrameBoundaryEXT::tagSize
+ * \param[in] pTag                  VkFrameBoundaryEXT::pTag
+ * \param[in] waitSemaphoreCount    See cvkQueueBindSparseInfo
+ * \param[in] pWaitSemaphores       See cvkQueueBindSparseInfo
+ * \param[in] bufferBindCount       See cvkQueueBindSparseInfo
+ * \param[in] pBufferBinds          See cvkQueueBindSparseInfo
+ * \param[in] imageOpaqueBindCount  See cvkQueueBindSparseInfo
+ * \param[in] pImageOpaqueBinds     See cvkQueueBindSparseInfo
+ * \param[in] imageBindCount        See cvkQueueBindSparseInfo
+ * \param[in] pImageBinds           See cvkQueueBindSparseInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueBindSparseInfo
+ * \param[in] pSignalSemaphores     See cvkQueueBindSparseInfo
+ * \param[in] fence                 See cvkQueueBindSparseInfo
+ *
+ * \retval None
+ */
+void cvkQueueBindSparseInfoWithFrameBoundaryInfo(VkQueue                                  queue,
+                                                 const void*                              pNext,
+                                                 VkFrameBoundaryFlagsEXT                  flags,
+                                                 uint64_t                                 frameID,
+                                                 uint32_t                                 imageCount,
+                                                 const VkImage*                           pImages,
+                                                 uint32_t                                 bufferCount,
+                                                 const VkBuffer*                          pBuffers,
+                                                 uint64_t                                 tagName,
+                                                 size_t                                   tagSize,
+                                                 const void*                              pTag,
+                                                 uint32_t                                 waitSemaphoreCount,
+                                                 const VkSemaphore*                       pWaitSemaphores,
+                                                 uint32_t                                 bufferBindCount,
+                                                 const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                                 uint32_t                                 imageOpaqueBindCount,
+                                                 const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                                 uint32_t                                 imageBindCount,
+                                                 const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                                 uint32_t                                 signalSemaphoreCount,
+                                                 const VkSemaphore*                       pSignalSemaphores,
+                                                 VkFence                                  fence);
+/**
+ * \brief Queues bind sparse with VkFrameBoundaryTensorsARM chained.
+ *
+ * \param[in] queue                 See cvkQueueBindSparseInfo
+ * \param[in] pNext                 See cvkQueueBindSparseInfo
+ * \param[in] tensorCount           VkFrameBoundaryTensorsARM::tensorCount
+ * \param[in] pTensors              VkFrameBoundaryTensorsARM::pTensors
+ * \param[in] waitSemaphoreCount    See cvkQueueBindSparseInfo
+ * \param[in] pWaitSemaphores       See cvkQueueBindSparseInfo
+ * \param[in] bufferBindCount       See cvkQueueBindSparseInfo
+ * \param[in] pBufferBinds          See cvkQueueBindSparseInfo
+ * \param[in] imageOpaqueBindCount  See cvkQueueBindSparseInfo
+ * \param[in] pImageOpaqueBinds     See cvkQueueBindSparseInfo
+ * \param[in] imageBindCount        See cvkQueueBindSparseInfo
+ * \param[in] pImageBinds           See cvkQueueBindSparseInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueBindSparseInfo
+ * \param[in] pSignalSemaphores     See cvkQueueBindSparseInfo
+ * \param[in] fence                 See cvkQueueBindSparseInfo
+ *
+ * \retval None
+ */
+void cvkQueueBindSparseInfoWithFrameBoundaryTensorsInfo(VkQueue                                  queue,
+                                                        const void*                              pNext,
+                                                        uint32_t                                 tensorCount,
+                                                        const VkTensorARM*                       pTensors,
+                                                        uint32_t                                 waitSemaphoreCount,
+                                                        const VkSemaphore*                       pWaitSemaphores,
+                                                        uint32_t                                 bufferBindCount,
+                                                        const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                                        uint32_t                                 imageOpaqueBindCount,
+                                                        const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                                        uint32_t                                 imageBindCount,
+                                                        const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                                        uint32_t                                 signalSemaphoreCount,
+                                                        const VkSemaphore*                       pSignalSemaphores,
+                                                        VkFence                                  fence);
+/**
+ * \brief Queues bind sparse with VkTimelineSemaphoreSubmitInfo chained.
+ *
+ * \param[in] queue                      See cvkQueueBindSparseInfo
+ * \param[in] pNext                      See cvkQueueBindSparseInfo
+ * \param[in] waitSemaphoreValueCount    VkTimelineSemaphoreSubmitInfo::waitSemaphoreValueCount
+ * \param[in] pWaitSemaphoreValues       VkTimelineSemaphoreSubmitInfo::pWaitSemaphoreValues
+ * \param[in] signalSemaphoreValueCount  VkTimelineSemaphoreSubmitInfo::signalSemaphoreValueCount
+ * \param[in] pSignalSemaphoreValues     VkTimelineSemaphoreSubmitInfo::pSignalSemaphoreValues
+ * \param[in] waitSemaphoreCount         See cvkQueueBindSparseInfo
+ * \param[in] pWaitSemaphores            See cvkQueueBindSparseInfo
+ * \param[in] bufferBindCount            See cvkQueueBindSparseInfo
+ * \param[in] pBufferBinds               See cvkQueueBindSparseInfo
+ * \param[in] imageOpaqueBindCount       See cvkQueueBindSparseInfo
+ * \param[in] pImageOpaqueBinds          See cvkQueueBindSparseInfo
+ * \param[in] imageBindCount             See cvkQueueBindSparseInfo
+ * \param[in] pImageBinds                See cvkQueueBindSparseInfo
+ * \param[in] signalSemaphoreCount       See cvkQueueBindSparseInfo
+ * \param[in] pSignalSemaphores          See cvkQueueBindSparseInfo
+ * \param[in] fence                      See cvkQueueBindSparseInfo
+ *
+ * \retval None
+ */
+void cvkQueueBindSparseInfoWithTimelineSemaphoreInfo(VkQueue                                  queue,
+                                                     const void*                              pNext,
+                                                     uint32_t                                 waitSemaphoreValueCount,
+                                                     const uint64_t*                          pWaitSemaphoreValues,
+                                                     uint32_t                                 signalSemaphoreValueCount,
+                                                     const uint64_t*                          pSignalSemaphoreValues,
+                                                     uint32_t                                 waitSemaphoreCount,
+                                                     const VkSemaphore*                       pWaitSemaphores,
+                                                     uint32_t                                 bufferBindCount,
+                                                     const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                                     uint32_t                                 imageOpaqueBindCount,
+                                                     const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                                     uint32_t                                 imageBindCount,
+                                                     const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                                     uint32_t                                 signalSemaphoreCount,
+                                                     const VkSemaphore*                       pSignalSemaphores,
+                                                     VkFence                                  fence);
+/**
+ * \brief Queues submit with VkAmigoProfilingSubmitInfoSEC chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] firstDrawTimestamp    VkAmigoProfilingSubmitInfoSEC::firstDrawTimestamp
+ * \param[in] swapBufferTimestamp   VkAmigoProfilingSubmitInfoSEC::swapBufferTimestamp
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithAmigoProfilingInfo(VkQueue                     queue,
+                                              const void*                 pNext,
+                                              uint64_t                    firstDrawTimestamp,
+                                              uint64_t                    swapBufferTimestamp,
+                                              uint32_t                    waitSemaphoreCount,
+                                              const VkSemaphore*          pWaitSemaphores,
+                                              const VkPipelineStageFlags* pWaitDstStageMask,
+                                              uint32_t                    commandBufferCount,
+                                              const VkCommandBuffer*      pCommandBuffers,
+                                              uint32_t                    signalSemaphoreCount,
+                                              const VkSemaphore*          pSignalSemaphores,
+                                              VkFence                     fence);
+/**
+ * \brief Queues submit with VkDeviceGroupSubmitInfo chained.
+ *
+ * \param[in] queue                            See cvkQueueSubmitInfo
+ * \param[in] pNext                            See cvkQueueSubmitInfo
+ * \param[in] deviceGroupWaitSemaphoreCount    VkDeviceGroupSubmitInfo::deviceGroupWaitSemaphoreCount
+ * \param[in] pWaitSemaphoreDeviceIndices      VkDeviceGroupSubmitInfo::pWaitSemaphoreDeviceIndices
+ * \param[in] deviceGroupCommandBufferCount    VkDeviceGroupSubmitInfo::deviceGroupCommandBufferCount
+ * \param[in] pCommandBufferDeviceMasks        VkDeviceGroupSubmitInfo::pCommandBufferDeviceMasks
+ * \param[in] deviceGroupSignalSemaphoreCount  VkDeviceGroupSubmitInfo::deviceGroupSignalSemaphoreCount
+ * \param[in] pSignalSemaphoreDeviceIndices    VkDeviceGroupSubmitInfo::pSignalSemaphoreDeviceIndices
+ * \param[in] waitSemaphoreCount               See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores                  See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask                See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount               See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers                  See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount             See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores                See cvkQueueSubmitInfo
+ * \param[in] fence                            See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithDeviceGroupInfo(VkQueue                     queue,
+                                           const void*                 pNext,
+                                           uint32_t                    deviceGroupWaitSemaphoreCount,
+                                           const uint32_t*             pWaitSemaphoreDeviceIndices,
+                                           uint32_t                    deviceGroupCommandBufferCount,
+                                           const uint32_t*             pCommandBufferDeviceMasks,
+                                           uint32_t                    deviceGroupSignalSemaphoreCount,
+                                           const uint32_t*             pSignalSemaphoreDeviceIndices,
+                                           uint32_t                    waitSemaphoreCount,
+                                           const VkSemaphore*          pWaitSemaphores,
+                                           const VkPipelineStageFlags* pWaitDstStageMask,
+                                           uint32_t                    commandBufferCount,
+                                           const VkCommandBuffer*      pCommandBuffers,
+                                           uint32_t                    signalSemaphoreCount,
+                                           const VkSemaphore*          pSignalSemaphores,
+                                           VkFence                     fence);
+/**
+ * \brief Queues submit with VkFrameBoundaryEXT chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] flags                 VkFrameBoundaryEXT::flags
+ * \param[in] frameID               VkFrameBoundaryEXT::frameID
+ * \param[in] imageCount            VkFrameBoundaryEXT::imageCount
+ * \param[in] pImages               VkFrameBoundaryEXT::pImages
+ * \param[in] bufferCount           VkFrameBoundaryEXT::bufferCount
+ * \param[in] pBuffers              VkFrameBoundaryEXT::pBuffers
+ * \param[in] tagName               VkFrameBoundaryEXT::tagName
+ * \param[in] tagSize               VkFrameBoundaryEXT::tagSize
+ * \param[in] pTag                  VkFrameBoundaryEXT::pTag
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithFrameBoundaryInfo(VkQueue                     queue,
+                                             const void*                 pNext,
+                                             VkFrameBoundaryFlagsEXT     flags,
+                                             uint64_t                    frameID,
+                                             uint32_t                    imageCount,
+                                             const VkImage*              pImages,
+                                             uint32_t                    bufferCount,
+                                             const VkBuffer*             pBuffers,
+                                             uint64_t                    tagName,
+                                             size_t                      tagSize,
+                                             const void*                 pTag,
+                                             uint32_t                    waitSemaphoreCount,
+                                             const VkSemaphore*          pWaitSemaphores,
+                                             const VkPipelineStageFlags* pWaitDstStageMask,
+                                             uint32_t                    commandBufferCount,
+                                             const VkCommandBuffer*      pCommandBuffers,
+                                             uint32_t                    signalSemaphoreCount,
+                                             const VkSemaphore*          pSignalSemaphores,
+                                             VkFence                     fence);
+/**
+ * \brief Queues submit with VkFrameBoundaryTensorsARM chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] tensorCount           VkFrameBoundaryTensorsARM::tensorCount
+ * \param[in] pTensors              VkFrameBoundaryTensorsARM::pTensors
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithFrameBoundaryTensorsInfo(VkQueue                     queue,
+                                                    const void*                 pNext,
+                                                    uint32_t                    tensorCount,
+                                                    const VkTensorARM*          pTensors,
+                                                    uint32_t                    waitSemaphoreCount,
+                                                    const VkSemaphore*          pWaitSemaphores,
+                                                    const VkPipelineStageFlags* pWaitDstStageMask,
+                                                    uint32_t                    commandBufferCount,
+                                                    const VkCommandBuffer*      pCommandBuffers,
+                                                    uint32_t                    signalSemaphoreCount,
+                                                    const VkSemaphore*          pSignalSemaphores,
+                                                    VkFence                     fence);
+/**
+ * \brief Queues submit with VkLatencySubmissionPresentIdNV chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] presentID             VkLatencySubmissionPresentIdNV::presentID
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithLatencySubmissionPresentIdInfo(VkQueue                     queue,
+                                                          const void*                 pNext,
+                                                          uint64_t                    presentID,
+                                                          uint32_t                    waitSemaphoreCount,
+                                                          const VkSemaphore*          pWaitSemaphores,
+                                                          const VkPipelineStageFlags* pWaitDstStageMask,
+                                                          uint32_t                    commandBufferCount,
+                                                          const VkCommandBuffer*      pCommandBuffers,
+                                                          uint32_t                    signalSemaphoreCount,
+                                                          const VkSemaphore*          pSignalSemaphores,
+                                                          VkFence                     fence);
+/**
+ * \brief Queues submit with VkPerformanceQuerySubmitInfoKHR chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] counterPassIndex      VkPerformanceQuerySubmitInfoKHR::counterPassIndex
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithPerformanceQueryInfo(VkQueue                     queue,
+                                                const void*                 pNext,
+                                                uint32_t                    counterPassIndex,
+                                                uint32_t                    waitSemaphoreCount,
+                                                const VkSemaphore*          pWaitSemaphores,
+                                                const VkPipelineStageFlags* pWaitDstStageMask,
+                                                uint32_t                    commandBufferCount,
+                                                const VkCommandBuffer*      pCommandBuffers,
+                                                uint32_t                    signalSemaphoreCount,
+                                                const VkSemaphore*          pSignalSemaphores,
+                                                VkFence                     fence);
+/**
+ * \brief Queues submit with VkProtectedSubmitInfo chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] protectedSubmit       VkProtectedSubmitInfo::protectedSubmit
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithProtectedInfo(VkQueue                     queue,
+                                         const void*                 pNext,
+                                         VkBool32                    protectedSubmit,
+                                         uint32_t                    waitSemaphoreCount,
+                                         const VkSemaphore*          pWaitSemaphores,
+                                         const VkPipelineStageFlags* pWaitDstStageMask,
+                                         uint32_t                    commandBufferCount,
+                                         const VkCommandBuffer*      pCommandBuffers,
+                                         uint32_t                    signalSemaphoreCount,
+                                         const VkSemaphore*          pSignalSemaphores,
+                                         VkFence                     fence);
+/**
+ * \brief Queues submit with VkThrottleHintSubmitInfoSEC chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] throttleHint          VkThrottleHintSubmitInfoSEC::throttleHint
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithThrottleHintInfo(VkQueue                     queue,
+                                            const void*                 pNext,
+                                            VkThrottleHintTypeSEC       throttleHint,
+                                            uint32_t                    waitSemaphoreCount,
+                                            const VkSemaphore*          pWaitSemaphores,
+                                            const VkPipelineStageFlags* pWaitDstStageMask,
+                                            uint32_t                    commandBufferCount,
+                                            const VkCommandBuffer*      pCommandBuffers,
+                                            uint32_t                    signalSemaphoreCount,
+                                            const VkSemaphore*          pSignalSemaphores,
+                                            VkFence                     fence);
+/**
+ * \brief Queues submit with VkTimelineSemaphoreSubmitInfo chained.
+ *
+ * \param[in] queue                      See cvkQueueSubmitInfo
+ * \param[in] pNext                      See cvkQueueSubmitInfo
+ * \param[in] waitSemaphoreValueCount    VkTimelineSemaphoreSubmitInfo::waitSemaphoreValueCount
+ * \param[in] pWaitSemaphoreValues       VkTimelineSemaphoreSubmitInfo::pWaitSemaphoreValues
+ * \param[in] signalSemaphoreValueCount  VkTimelineSemaphoreSubmitInfo::signalSemaphoreValueCount
+ * \param[in] pSignalSemaphoreValues     VkTimelineSemaphoreSubmitInfo::pSignalSemaphoreValues
+ * \param[in] waitSemaphoreCount         See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores            See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask          See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount         See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers            See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount       See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores          See cvkQueueSubmitInfo
+ * \param[in] fence                      See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithTimelineSemaphoreInfo(VkQueue                     queue,
+                                                 const void*                 pNext,
+                                                 uint32_t                    waitSemaphoreValueCount,
+                                                 const uint64_t*             pWaitSemaphoreValues,
+                                                 uint32_t                    signalSemaphoreValueCount,
+                                                 const uint64_t*             pSignalSemaphoreValues,
+                                                 uint32_t                    waitSemaphoreCount,
+                                                 const VkSemaphore*          pWaitSemaphores,
+                                                 const VkPipelineStageFlags* pWaitDstStageMask,
+                                                 uint32_t                    commandBufferCount,
+                                                 const VkCommandBuffer*      pCommandBuffers,
+                                                 uint32_t                    signalSemaphoreCount,
+                                                 const VkSemaphore*          pSignalSemaphores,
+                                                 VkFence                     fence);
+/**
+ * \brief Queues submit 2 with VkFrameBoundaryEXT chained.
+ *
+ * \param[in] queue                     See cvkQueueSubmitInfo2
+ * \param[in] pNext                     See cvkQueueSubmitInfo2
+ * \param[in] flagsFrameBoundary        VkFrameBoundaryEXT::flagsFrameBoundary
+ * \param[in] frameID                   VkFrameBoundaryEXT::frameID
+ * \param[in] imageCount                VkFrameBoundaryEXT::imageCount
+ * \param[in] pImages                   VkFrameBoundaryEXT::pImages
+ * \param[in] bufferCount               VkFrameBoundaryEXT::bufferCount
+ * \param[in] pBuffers                  VkFrameBoundaryEXT::pBuffers
+ * \param[in] tagName                   VkFrameBoundaryEXT::tagName
+ * \param[in] tagSize                   VkFrameBoundaryEXT::tagSize
+ * \param[in] pTag                      VkFrameBoundaryEXT::pTag
+ * \param[in] flags                     See cvkQueueSubmitInfo2
+ * \param[in] waitSemaphoreInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pWaitSemaphoreInfos       See cvkQueueSubmitInfo2
+ * \param[in] commandBufferInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pCommandBufferInfos       See cvkQueueSubmitInfo2
+ * \param[in] signalSemaphoreInfoCount  See cvkQueueSubmitInfo2
+ * \param[in] pSignalSemaphoreInfos     See cvkQueueSubmitInfo2
+ * \param[in] fence                     See cvkQueueSubmitInfo2
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo2WithFrameBoundaryInfo(VkQueue                          queue,
+                                              const void*                      pNext,
+                                              VkFrameBoundaryFlagsEXT          flagsFrameBoundary,
+                                              uint64_t                         frameID,
+                                              uint32_t                         imageCount,
+                                              const VkImage*                   pImages,
+                                              uint32_t                         bufferCount,
+                                              const VkBuffer*                  pBuffers,
+                                              uint64_t                         tagName,
+                                              size_t                           tagSize,
+                                              const void*                      pTag,
+                                              VkSubmitFlags                    flags,
+                                              uint32_t                         waitSemaphoreInfoCount,
+                                              const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                              uint32_t                         commandBufferInfoCount,
+                                              const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                              uint32_t                         signalSemaphoreInfoCount,
+                                              const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                              VkFence                          fence);
+/**
+ * \brief Queues submit 2 with VkFrameBoundaryTensorsARM chained.
+ *
+ * \param[in] queue                     See cvkQueueSubmitInfo2
+ * \param[in] pNext                     See cvkQueueSubmitInfo2
+ * \param[in] tensorCount               VkFrameBoundaryTensorsARM::tensorCount
+ * \param[in] pTensors                  VkFrameBoundaryTensorsARM::pTensors
+ * \param[in] flags                     See cvkQueueSubmitInfo2
+ * \param[in] waitSemaphoreInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pWaitSemaphoreInfos       See cvkQueueSubmitInfo2
+ * \param[in] commandBufferInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pCommandBufferInfos       See cvkQueueSubmitInfo2
+ * \param[in] signalSemaphoreInfoCount  See cvkQueueSubmitInfo2
+ * \param[in] pSignalSemaphoreInfos     See cvkQueueSubmitInfo2
+ * \param[in] fence                     See cvkQueueSubmitInfo2
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo2WithFrameBoundaryTensorsInfo(VkQueue                          queue,
+                                                     const void*                      pNext,
+                                                     uint32_t                         tensorCount,
+                                                     const VkTensorARM*               pTensors,
+                                                     VkSubmitFlags                    flags,
+                                                     uint32_t                         waitSemaphoreInfoCount,
+                                                     const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                     uint32_t                         commandBufferInfoCount,
+                                                     const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                     uint32_t                         signalSemaphoreInfoCount,
+                                                     const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                     VkFence                          fence);
+/**
+ * \brief Queues submit 2 with VkLatencySubmissionPresentIdNV chained.
+ *
+ * \param[in] queue                     See cvkQueueSubmitInfo2
+ * \param[in] pNext                     See cvkQueueSubmitInfo2
+ * \param[in] presentID                 VkLatencySubmissionPresentIdNV::presentID
+ * \param[in] flags                     See cvkQueueSubmitInfo2
+ * \param[in] waitSemaphoreInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pWaitSemaphoreInfos       See cvkQueueSubmitInfo2
+ * \param[in] commandBufferInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pCommandBufferInfos       See cvkQueueSubmitInfo2
+ * \param[in] signalSemaphoreInfoCount  See cvkQueueSubmitInfo2
+ * \param[in] pSignalSemaphoreInfos     See cvkQueueSubmitInfo2
+ * \param[in] fence                     See cvkQueueSubmitInfo2
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo2WithLatencySubmissionPresentIdInfo(VkQueue                          queue,
+                                                           const void*                      pNext,
+                                                           uint64_t                         presentID,
+                                                           VkSubmitFlags                    flags,
+                                                           uint32_t                         waitSemaphoreInfoCount,
+                                                           const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                           uint32_t                         commandBufferInfoCount,
+                                                           const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                           uint32_t                         signalSemaphoreInfoCount,
+                                                           const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                           VkFence                          fence);
+/**
+ * \brief Queues submit 2 with VkPerformanceQuerySubmitInfoKHR chained.
+ *
+ * \param[in] queue                     See cvkQueueSubmitInfo2
+ * \param[in] pNext                     See cvkQueueSubmitInfo2
+ * \param[in] counterPassIndex          VkPerformanceQuerySubmitInfoKHR::counterPassIndex
+ * \param[in] flags                     See cvkQueueSubmitInfo2
+ * \param[in] waitSemaphoreInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pWaitSemaphoreInfos       See cvkQueueSubmitInfo2
+ * \param[in] commandBufferInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pCommandBufferInfos       See cvkQueueSubmitInfo2
+ * \param[in] signalSemaphoreInfoCount  See cvkQueueSubmitInfo2
+ * \param[in] pSignalSemaphoreInfos     See cvkQueueSubmitInfo2
+ * \param[in] fence                     See cvkQueueSubmitInfo2
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo2WithPerformanceQueryInfo(VkQueue                          queue,
+                                                 const void*                      pNext,
+                                                 uint32_t                         counterPassIndex,
+                                                 VkSubmitFlags                    flags,
+                                                 uint32_t                         waitSemaphoreInfoCount,
+                                                 const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                 uint32_t                         commandBufferInfoCount,
+                                                 const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                 uint32_t                         signalSemaphoreInfoCount,
+                                                 const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                 VkFence                          fence);
 /**
  * \brief Binds image memory 2 with VkBindImageMemorySwapchainInfoKHR chained to every element.
  *
@@ -46117,6 +49729,24 @@ uint32_t cvkGetQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamilyPrope
  */
 uint32_t cvkGetVideoQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamilyVideoPropertiesKHR* pVideoProperties, VkVideoCodecOperationFlagsKHR requiredOperations);
 /**
+ * \brief Rounds a size or offset up to a power-of-two alignment.
+ *
+ * \param[in] value      value value
+ * \param[in] alignment  alignment value
+ *
+ * \return The VkDeviceSize returned by the command.
+ */
+VkDeviceSize cvkAlignDeviceSize(VkDeviceSize value, VkDeviceSize alignment);
+/**
+ * \brief Returns the first DPB slot that is not active, or -1 when every slot is active.
+ *
+ * \param[in] slotCount    slotCount value
+ * \param[in] pSlotActive  pSlotActive value
+ *
+ * \return The int32_t returned by the command.
+ */
+int32_t cvkGetInactiveVideoReferenceSlotIndex(uint32_t slotCount, const VkBool32* pSlotActive);
+/**
  * \brief Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.
  *
  * \param[in] physicalDevice  See cvkGetPhysicalDeviceMemoryProperties
@@ -48895,16 +52525,6 @@ uint32_t cvkGetPhysicalDeviceVideoEncodeQueueFamilyIndex(VkPhysicalDevice physic
  */
 VkBool32 cvkGetPhysicalDeviceVideoProfileSupport(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile);
 /**
- * \brief Resets the video coding state of the bound session.
- *
- * \param[in] device         See cvkCmdControlVideoCoding
- * \param[in] commandBuffer  See cvkCmdControlVideoCoding
- * \param[in] pNext          See cvkCmdControlVideoCoding
- *
- * \retval None
- */
-void cvkCmdControlResetVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext);
-/**
  * \brief Creates a query pool of result status queries.
  *
  * \param[in] device          See cvkCreateQueryPool
@@ -49045,6 +52665,867 @@ void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkInstance                
                                                       VkImageUsageFlags           imageUsage,
                                                       uint32_t                    videoFormatPropertyIndex,
                                                       VkVideoFormatPropertiesKHR* pVideoFormatProperties);
+/**
+ * \brief Resets the coding state of the bound video session.
+ *
+ * \param[in] device         See cvkCmdControlVideoCoding
+ * \param[in] commandBuffer  See cvkCmdControlVideoCoding
+ * \param[in] pNext          See cvkCmdControlVideoCoding
+ *
+ * \retval None
+ */
+void cvkCmdResetVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext);
+/**
+ * \brief Sets the rate control of the bound video encode session.
+ *
+ * \param[in] device                        See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] commandBuffer                 See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] pNext                         See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] flagsEncodeRate               See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] rateControlMode               See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] layerCount                    See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] pLayers                       See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] virtualBufferSizeInMs         See cvkCmdControlVideoCodingWithEncodeRateInfo
+ * \param[in] initialVirtualBufferSizeInMs  See cvkCmdControlVideoCodingWithEncodeRateInfo
+ *
+ * \retval None
+ */
+void cvkCmdSetVideoEncodeRateControl(VkDevice                                    device,
+                                     VkCommandBuffer                             commandBuffer,
+                                     const void*                                 pNext,
+                                     VkVideoEncodeRateControlFlagsKHR            flagsEncodeRate,
+                                     VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
+                                     uint32_t                                    layerCount,
+                                     const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
+                                     uint32_t                                    virtualBufferSizeInMs,
+                                     uint32_t                                    initialVirtualBufferSizeInMs);
+/**
+ * \brief Sets the quality level of the bound video encode session.
+ *
+ * \param[in] device         See cvkCmdControlVideoCodingWithEncodeQualityLevelInfo
+ * \param[in] commandBuffer  See cvkCmdControlVideoCodingWithEncodeQualityLevelInfo
+ * \param[in] pNext          See cvkCmdControlVideoCodingWithEncodeQualityLevelInfo
+ * \param[in] qualityLevel   See cvkCmdControlVideoCodingWithEncodeQualityLevelInfo
+ *
+ * \retval None
+ */
+void cvkCmdSetVideoEncodeQualityLevel(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t qualityLevel);
+/**
+ * \brief Creates a 2D image view over mip level zero of one array layer of one aspect.
+ *
+ * \param[in] device      See cvkCreateImageView2D
+ * \param[in] aspectMask  See cvkInitImageSubresourceRange
+ * \param[in] pViewNext   See cvkCreateImageView2D
+ * \param[in] flags       See cvkCreateImageView2D
+ * \param[in] image       See cvkCreateImageView2D
+ * \param[in] format      See cvkCreateImageView2D
+ * \param[in] arrayLayer  Array layer the view covers
+ * \param[in] pAllocator  See cvkCreateImageView2D
+ * \param[out] pView       Receives the created VkImageView
+ *
+ * \retval None
+ */
+void cvkCreateLayerImageView2D(VkDevice                     device,
+                               VkImageAspectFlags           aspectMask,
+                               const void*                  pViewNext,
+                               VkImageViewCreateFlags       flags,
+                               VkImage                      image,
+                               VkFormat                     format,
+                               uint32_t                     arrayLayer,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkImageView*                 pView);
+/**
+ * \brief Initializes a video picture resource at coded offset zero.
+ *
+ * \param[out] pInfo             Receives the initialized VkVideoPictureResourceInfoKHR
+ * \param[in] pNext             See cvkInitVideoPictureResourceInfo
+ * \param[in] codedExtent       See cvkInitVideoPictureResourceInfo
+ * \param[in] baseArrayLayer    See cvkInitVideoPictureResourceInfo
+ * \param[in] imageViewBinding  See cvkInitVideoPictureResourceInfo
+ *
+ * \retval None
+ */
+void cvkInitOriginVideoPictureResourceInfo(VkVideoPictureResourceInfoKHR* pInfo, const void* pNext, VkExtent2D codedExtent, uint32_t baseArrayLayer, VkImageView imageViewBinding);
+/**
+ * \brief Initializes a reference slot bound to no DPB slot: a picture resource in the coding scope that is not yet a reference.
+ *
+ * \param[out] pInfo             Receives the initialized VkVideoReferenceSlotInfoKHR
+ * \param[in] pNext             See cvkInitVideoReferenceSlotInfo
+ * \param[in] pPictureResource  See cvkInitVideoReferenceSlotInfo
+ *
+ * \retval None
+ */
+void cvkInitInactiveVideoReferenceSlotInfo(VkVideoReferenceSlotInfoKHR* pInfo, const void* pNext, const VkVideoPictureResourceInfoKHR* pPictureResource);
+/**
+ * \brief Creates a 2D, single-level, single-sample, optimally tiled image usable with the listed video profiles, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] device                 See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] pImageNext             See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] profileCount           See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] pProfiles              See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] flags                  See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] format                 See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] arrayLayers            See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] usage                  See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] sharingMode            See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] queueFamilyIndexCount  See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] pQueueFamilyIndices    See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] requiredProperties     See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] codedExtent            Picture size; the array layers are the pictures
+ * \param[in] pMemoryNext            See cvkSetupImageWithVideoProfileListInfo
+ * \param[in] pAllocator             See cvkSetupImageWithVideoProfileListInfo
+ * \param[out] pImage                 See cvkCreateImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoImage(VkPhysicalDevice             physicalDevice,
+                        VkDevice                     device,
+                        const void*                  pImageNext,
+                        uint32_t                     profileCount,
+                        const VkVideoProfileInfoKHR* pProfiles,
+                        VkImageCreateFlags           flags,
+                        VkFormat                     format,
+                        uint32_t                     arrayLayers,
+                        VkImageUsageFlags            usage,
+                        VkSharingMode                sharingMode,
+                        uint32_t                     queueFamilyIndexCount,
+                        const uint32_t*              pQueueFamilyIndices,
+                        VkMemoryPropertyFlags        requiredProperties,
+                        VkExtent2D                   codedExtent,
+                        const void*                  pMemoryNext,
+                        const VkAllocationCallbacks* pAllocator,
+                        VkImage*                     pImage,
+                        VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a video image for VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR.
+ *
+ * \param[in] physicalDevice         See cvkSetupVideoImage
+ * \param[in] device                 See cvkSetupVideoImage
+ * \param[in] pImageNext             See cvkSetupVideoImage
+ * \param[in] profileCount           See cvkSetupVideoImage
+ * \param[in] pProfiles              See cvkSetupVideoImage
+ * \param[in] flags                  See cvkSetupVideoImage
+ * \param[in] format                 See cvkSetupVideoImage
+ * \param[in] arrayLayers            See cvkSetupVideoImage
+ * \param[in] sharingMode            See cvkSetupVideoImage
+ * \param[in] queueFamilyIndexCount  See cvkSetupVideoImage
+ * \param[in] pQueueFamilyIndices    See cvkSetupVideoImage
+ * \param[in] requiredProperties     See cvkSetupVideoImage
+ * \param[in] codedExtent            See cvkSetupVideoImage
+ * \param[in] pMemoryNext            See cvkSetupVideoImage
+ * \param[in] pAllocator             See cvkSetupVideoImage
+ * \param[out] pImage                 See cvkCreateImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoDecodeDpbImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a video image for VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR.
+ *
+ * \param[in] physicalDevice         See cvkSetupVideoImage
+ * \param[in] device                 See cvkSetupVideoImage
+ * \param[in] pImageNext             See cvkSetupVideoImage
+ * \param[in] profileCount           See cvkSetupVideoImage
+ * \param[in] pProfiles              See cvkSetupVideoImage
+ * \param[in] flags                  See cvkSetupVideoImage
+ * \param[in] format                 See cvkSetupVideoImage
+ * \param[in] arrayLayers            See cvkSetupVideoImage
+ * \param[in] sharingMode            See cvkSetupVideoImage
+ * \param[in] queueFamilyIndexCount  See cvkSetupVideoImage
+ * \param[in] pQueueFamilyIndices    See cvkSetupVideoImage
+ * \param[in] requiredProperties     See cvkSetupVideoImage
+ * \param[in] codedExtent            See cvkSetupVideoImage
+ * \param[in] pMemoryNext            See cvkSetupVideoImage
+ * \param[in] pAllocator             See cvkSetupVideoImage
+ * \param[out] pImage                 See cvkCreateImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoDecodeDstImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a video image for VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR.
+ *
+ * \param[in] physicalDevice         See cvkSetupVideoImage
+ * \param[in] device                 See cvkSetupVideoImage
+ * \param[in] pImageNext             See cvkSetupVideoImage
+ * \param[in] profileCount           See cvkSetupVideoImage
+ * \param[in] pProfiles              See cvkSetupVideoImage
+ * \param[in] flags                  See cvkSetupVideoImage
+ * \param[in] format                 See cvkSetupVideoImage
+ * \param[in] arrayLayers            See cvkSetupVideoImage
+ * \param[in] sharingMode            See cvkSetupVideoImage
+ * \param[in] queueFamilyIndexCount  See cvkSetupVideoImage
+ * \param[in] pQueueFamilyIndices    See cvkSetupVideoImage
+ * \param[in] requiredProperties     See cvkSetupVideoImage
+ * \param[in] codedExtent            See cvkSetupVideoImage
+ * \param[in] pMemoryNext            See cvkSetupVideoImage
+ * \param[in] pAllocator             See cvkSetupVideoImage
+ * \param[out] pImage                 See cvkCreateImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoEncodeSrcImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a video image for VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR.
+ *
+ * \param[in] physicalDevice         See cvkSetupVideoImage
+ * \param[in] device                 See cvkSetupVideoImage
+ * \param[in] pImageNext             See cvkSetupVideoImage
+ * \param[in] profileCount           See cvkSetupVideoImage
+ * \param[in] pProfiles              See cvkSetupVideoImage
+ * \param[in] flags                  See cvkSetupVideoImage
+ * \param[in] format                 See cvkSetupVideoImage
+ * \param[in] arrayLayers            See cvkSetupVideoImage
+ * \param[in] sharingMode            See cvkSetupVideoImage
+ * \param[in] queueFamilyIndexCount  See cvkSetupVideoImage
+ * \param[in] pQueueFamilyIndices    See cvkSetupVideoImage
+ * \param[in] requiredProperties     See cvkSetupVideoImage
+ * \param[in] codedExtent            See cvkSetupVideoImage
+ * \param[in] pMemoryNext            See cvkSetupVideoImage
+ * \param[in] pAllocator             See cvkSetupVideoImage
+ * \param[out] pImage                 See cvkCreateImage
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoEncodeDpbImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a bitstream buffer for VK_BUFFER_USAGE_VIDEO_DECODE_SRC_BIT_KHR usable with the listed video profiles, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] device                 See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pBufferNext            See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] profileCount           See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pProfiles              See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] flags                  See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] size                   See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] sharingMode            See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] queueFamilyIndexCount  See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pQueueFamilyIndices    See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] requiredProperties     See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pMemoryNext            See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pAllocator             See cvkSetupBufferWithVideoProfileListInfo
+ * \param[out] pBuffer                See cvkCreateBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoDecodeSrcBuffer(VkPhysicalDevice             physicalDevice,
+                                  VkDevice                     device,
+                                  const void*                  pBufferNext,
+                                  uint32_t                     profileCount,
+                                  const VkVideoProfileInfoKHR* pProfiles,
+                                  VkBufferCreateFlags          flags,
+                                  VkDeviceSize                 size,
+                                  VkSharingMode                sharingMode,
+                                  uint32_t                     queueFamilyIndexCount,
+                                  const uint32_t*              pQueueFamilyIndices,
+                                  VkMemoryPropertyFlags        requiredProperties,
+                                  const void*                  pMemoryNext,
+                                  const VkAllocationCallbacks* pAllocator,
+                                  VkBuffer*                    pBuffer,
+                                  VkDeviceMemory*              pMemory);
+/**
+ * \brief Creates a bitstream buffer for VK_BUFFER_USAGE_VIDEO_ENCODE_DST_BIT_KHR usable with the listed video profiles, allocates memory for it, and binds the memory.
+ *
+ * \param[in] physicalDevice         See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] device                 See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pBufferNext            See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] profileCount           See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pProfiles              See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] flags                  See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] size                   See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] sharingMode            See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] queueFamilyIndexCount  See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pQueueFamilyIndices    See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] requiredProperties     See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pMemoryNext            See cvkSetupBufferWithVideoProfileListInfo
+ * \param[in] pAllocator             See cvkSetupBufferWithVideoProfileListInfo
+ * \param[out] pBuffer                See cvkCreateBuffer
+ * \param[out] pMemory                Receives the created VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkSetupVideoEncodeDstBuffer(VkPhysicalDevice             physicalDevice,
+                                  VkDevice                     device,
+                                  const void*                  pBufferNext,
+                                  uint32_t                     profileCount,
+                                  const VkVideoProfileInfoKHR* pProfiles,
+                                  VkBufferCreateFlags          flags,
+                                  VkDeviceSize                 size,
+                                  VkSharingMode                sharingMode,
+                                  uint32_t                     queueFamilyIndexCount,
+                                  const uint32_t*              pQueueFamilyIndices,
+                                  VkMemoryPropertyFlags        requiredProperties,
+                                  const void*                  pMemoryNext,
+                                  const VkAllocationCallbacks* pAllocator,
+                                  VkBuffer*                    pBuffer,
+                                  VkDeviceMemory*              pMemory);
+/**
+ * \brief Decodes one picture in its own coding scope: begins coding with the bound slots, decodes, ends coding.
+ *
+ * \param[in] device                   See cvkCmdBeginVideoCoding
+ * \param[in] commandBuffer            See cvkCmdBeginVideoCoding
+ * \param[in] videoSession             See cvkCmdBeginVideoCoding
+ * \param[in] videoSessionParameters   See cvkCmdBeginVideoCoding
+ * \param[in] pNext                    See cvkCmdDecodeVideo
+ * \param[in] flags                    See cvkCmdDecodeVideo
+ * \param[in] srcBuffer                See cvkCmdDecodeVideo
+ * \param[in] srcBufferOffset          See cvkCmdDecodeVideo
+ * \param[in] srcBufferRange           See cvkCmdDecodeVideo
+ * \param[in] dstPictureResource       See cvkCmdDecodeVideo
+ * \param[in] pSetupReferenceSlot      See cvkCmdDecodeVideo
+ * \param[in] referenceSlotCount       See cvkCmdDecodeVideo
+ * \param[in] pReferenceSlots          See cvkCmdDecodeVideo
+ * \param[in] pBeginNext               Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL
+ * \param[in] boundReferenceSlotCount  Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource
+ * \param[in] pBoundReferenceSlots     Reference slots bound to the coding scope
+ *
+ * \retval None
+ */
+void cvkCmdDecodeVideoPicture(VkDevice                           device,
+                              VkCommandBuffer                    commandBuffer,
+                              VkVideoSessionKHR                  videoSession,
+                              VkVideoSessionParametersKHR        videoSessionParameters,
+                              const void*                        pNext,
+                              VkVideoDecodeFlagsKHR              flags,
+                              VkBuffer                           srcBuffer,
+                              VkDeviceSize                       srcBufferOffset,
+                              VkDeviceSize                       srcBufferRange,
+                              VkVideoPictureResourceInfoKHR      dstPictureResource,
+                              const VkVideoReferenceSlotInfoKHR* pSetupReferenceSlot,
+                              uint32_t                           referenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
+                              const void*                        pBeginNext,
+                              uint32_t                           boundReferenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots);
+/**
+ * \brief Decodes the first picture of a session in its own coding scope, resetting the coding state first.
+ *
+ * \param[in] device                   See cvkCmdBeginVideoCoding
+ * \param[in] commandBuffer            See cvkCmdBeginVideoCoding
+ * \param[in] videoSession             See cvkCmdBeginVideoCoding
+ * \param[in] videoSessionParameters   See cvkCmdBeginVideoCoding
+ * \param[in] pNext                    See cvkCmdDecodeVideo
+ * \param[in] flags                    See cvkCmdDecodeVideo
+ * \param[in] srcBuffer                See cvkCmdDecodeVideo
+ * \param[in] srcBufferOffset          See cvkCmdDecodeVideo
+ * \param[in] srcBufferRange           See cvkCmdDecodeVideo
+ * \param[in] dstPictureResource       See cvkCmdDecodeVideo
+ * \param[in] pSetupReferenceSlot      See cvkCmdDecodeVideo
+ * \param[in] referenceSlotCount       See cvkCmdDecodeVideo
+ * \param[in] pReferenceSlots          See cvkCmdDecodeVideo
+ * \param[in] pBeginNext               Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL
+ * \param[in] boundReferenceSlotCount  Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource
+ * \param[in] pBoundReferenceSlots     Reference slots bound to the coding scope
+ *
+ * \retval None
+ */
+void cvkCmdDecodeInitialVideoPicture(VkDevice                           device,
+                                     VkCommandBuffer                    commandBuffer,
+                                     VkVideoSessionKHR                  videoSession,
+                                     VkVideoSessionParametersKHR        videoSessionParameters,
+                                     const void*                        pNext,
+                                     VkVideoDecodeFlagsKHR              flags,
+                                     VkBuffer                           srcBuffer,
+                                     VkDeviceSize                       srcBufferOffset,
+                                     VkDeviceSize                       srcBufferRange,
+                                     VkVideoPictureResourceInfoKHR      dstPictureResource,
+                                     const VkVideoReferenceSlotInfoKHR* pSetupReferenceSlot,
+                                     uint32_t                           referenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
+                                     const void*                        pBeginNext,
+                                     uint32_t                           boundReferenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots);
+/**
+ * \brief Encodes one picture in its own coding scope: begins coding with the bound slots, encodes, ends coding.
+ *
+ * \param[in] device                           See cvkCmdBeginVideoCoding
+ * \param[in] commandBuffer                    See cvkCmdBeginVideoCoding
+ * \param[in] videoSession                     See cvkCmdBeginVideoCoding
+ * \param[in] videoSessionParameters           See cvkCmdBeginVideoCoding
+ * \param[in] pNext                            See cvkCmdEncodeVideo
+ * \param[in] flags                            See cvkCmdEncodeVideo
+ * \param[in] dstBuffer                        See cvkCmdEncodeVideo
+ * \param[in] dstBufferOffset                  See cvkCmdEncodeVideo
+ * \param[in] dstBufferRange                   See cvkCmdEncodeVideo
+ * \param[in] srcPictureResource               See cvkCmdEncodeVideo
+ * \param[in] pSetupReferenceSlot              See cvkCmdEncodeVideo
+ * \param[in] referenceSlotCount               See cvkCmdEncodeVideo
+ * \param[in] pReferenceSlots                  See cvkCmdEncodeVideo
+ * \param[in] precedingExternallyEncodedBytes  See cvkCmdEncodeVideo
+ * \param[in] pBeginNext                       Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL
+ * \param[in] boundReferenceSlotCount          Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource
+ * \param[in] pBoundReferenceSlots             Reference slots bound to the coding scope
+ *
+ * \retval None
+ */
+void cvkCmdEncodeVideoPicture(VkDevice                           device,
+                              VkCommandBuffer                    commandBuffer,
+                              VkVideoSessionKHR                  videoSession,
+                              VkVideoSessionParametersKHR        videoSessionParameters,
+                              const void*                        pNext,
+                              VkVideoEncodeFlagsKHR              flags,
+                              VkBuffer                           dstBuffer,
+                              VkDeviceSize                       dstBufferOffset,
+                              VkDeviceSize                       dstBufferRange,
+                              VkVideoPictureResourceInfoKHR      srcPictureResource,
+                              const VkVideoReferenceSlotInfoKHR* pSetupReferenceSlot,
+                              uint32_t                           referenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
+                              uint32_t                           precedingExternallyEncodedBytes,
+                              const void*                        pBeginNext,
+                              uint32_t                           boundReferenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots);
+/**
+ * \brief Encodes the first picture of a session in its own coding scope: resets the coding state, sets the rate control, encodes.
+ *
+ * \param[in] device                           See cvkCmdBeginVideoCoding
+ * \param[in] commandBuffer                    See cvkCmdBeginVideoCoding
+ * \param[in] videoSession                     See cvkCmdBeginVideoCoding
+ * \param[in] videoSessionParameters           See cvkCmdBeginVideoCoding
+ * \param[in] flagsEncodeRate                  See cvkCmdSetVideoEncodeRateControl
+ * \param[in] rateControlMode                  See cvkCmdSetVideoEncodeRateControl
+ * \param[in] layerCount                       See cvkCmdSetVideoEncodeRateControl
+ * \param[in] pLayers                          See cvkCmdSetVideoEncodeRateControl
+ * \param[in] virtualBufferSizeInMs            See cvkCmdSetVideoEncodeRateControl
+ * \param[in] initialVirtualBufferSizeInMs     See cvkCmdSetVideoEncodeRateControl
+ * \param[in] pNext                            See cvkCmdEncodeVideo
+ * \param[in] flags                            See cvkCmdEncodeVideo
+ * \param[in] dstBuffer                        See cvkCmdEncodeVideo
+ * \param[in] dstBufferOffset                  See cvkCmdEncodeVideo
+ * \param[in] dstBufferRange                   See cvkCmdEncodeVideo
+ * \param[in] srcPictureResource               See cvkCmdEncodeVideo
+ * \param[in] pSetupReferenceSlot              See cvkCmdEncodeVideo
+ * \param[in] referenceSlotCount               See cvkCmdEncodeVideo
+ * \param[in] pReferenceSlots                  See cvkCmdEncodeVideo
+ * \param[in] precedingExternallyEncodedBytes  See cvkCmdEncodeVideo
+ * \param[in] pBeginNext                       Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL
+ * \param[in] boundReferenceSlotCount          Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource
+ * \param[in] pBoundReferenceSlots             Reference slots bound to the coding scope
+ * \param[in] pRateControlNext                 Optional extension chain for VkVideoEncodeRateControlInfoKHR (codec rate control), or NULL
+ *
+ * \retval None
+ */
+void cvkCmdEncodeInitialVideoPicture(VkDevice                                    device,
+                                     VkCommandBuffer                             commandBuffer,
+                                     VkVideoSessionKHR                           videoSession,
+                                     VkVideoSessionParametersKHR                 videoSessionParameters,
+                                     VkVideoEncodeRateControlFlagsKHR            flagsEncodeRate,
+                                     VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
+                                     uint32_t                                    layerCount,
+                                     const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
+                                     uint32_t                                    virtualBufferSizeInMs,
+                                     uint32_t                                    initialVirtualBufferSizeInMs,
+                                     const void*                                 pNext,
+                                     VkVideoEncodeFlagsKHR                       flags,
+                                     VkBuffer                                    dstBuffer,
+                                     VkDeviceSize                                dstBufferOffset,
+                                     VkDeviceSize                                dstBufferRange,
+                                     VkVideoPictureResourceInfoKHR               srcPictureResource,
+                                     const VkVideoReferenceSlotInfoKHR*          pSetupReferenceSlot,
+                                     uint32_t                                    referenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR*          pReferenceSlots,
+                                     uint32_t                                    precedingExternallyEncodedBytes,
+                                     const void*                                 pBeginNext,
+                                     uint32_t                                    boundReferenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR*          pBoundReferenceSlots,
+                                     const void*                                 pRateControlNext);
+/**
+ * \brief Waits for one query and returns its result status.
+ *
+ * \param[in] device     See cvkGetQueryPoolResults
+ * \param[in] queryPool  See cvkGetQueryPoolResults
+ * \param[in] query      Index of the query
+ *
+ * \return The VkQueryResultStatusKHR returned by the command.
+ */
+VkQueryResultStatusKHR cvkGetQueryResultStatus(VkDevice device, VkQueryPool queryPool, uint32_t query);
+/**
+ * \brief Creates a query pool of video encode feedback queries reporting the bitstream buffer offset and bytes written; the video profile is chained through pNext.
+ *
+ * \param[in] device          See cvkCreateVideoEncodeFeedbackQueryPool
+ * \param[in] pQueryPoolNext  See cvkCreateVideoEncodeFeedbackQueryPool
+ * \param[in] flags           See cvkCreateVideoEncodeFeedbackQueryPool
+ * \param[in] queryCount      See cvkCreateVideoEncodeFeedbackQueryPool
+ * \param[in] pAllocator      See cvkCreateVideoEncodeFeedbackQueryPool
+ * \param[out] pQueryPool      See cvkCreateQueryPool
+ *
+ * \retval None
+ */
+void cvkCreateVideoEncodeBitstreamFeedbackQueryPool(VkDevice                     device,
+                                                    const void*                  pQueryPoolNext,
+                                                    VkQueryPoolCreateFlags       flags,
+                                                    uint32_t                     queryCount,
+                                                    const VkAllocationCallbacks* pAllocator,
+                                                    VkQueryPool*                 pQueryPool);
+/**
+ * \brief Waits for one query of a cvkCreateVideoEncodeBitstreamFeedbackQueryPool pool and returns its status with the bitstream buffer offset and bytes written.
+ *
+ * \param[in] device                  See cvkGetQueryPoolResults
+ * \param[in] queryPool               See cvkGetQueryPoolResults
+ * \param[in] query                   Index of the query
+ * \param[out] pBitstreamBufferOffset  Receives the bitstreamBufferOffset
+ * \param[out] pBitstreamBytesWritten  Receives the bitstreamBytesWritten
+ *
+ * \return The VkQueryResultStatusKHR returned by the command.
+ */
+VkQueryResultStatusKHR cvkGetVideoEncodeBitstreamFeedback(VkDevice device, VkQueryPool queryPool, uint32_t query, uint32_t* pBitstreamBufferOffset, uint32_t* pBitstreamBytesWritten);
+/**
+ * \brief Creates a graphics pipeline library providing the given subsets of the graphics pipeline.
+ *
+ * \param[in] device                See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pipelineCache         See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pPipelineNext         See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] flagsGraphicsLibrary  See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] stageCount            See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pStages               See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pVertexInputState     See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pInputAssemblyState   See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pTessellationState    See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pViewportState        See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pRasterizationState   See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pMultisampleState     See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pDepthStencilState    See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pColorBlendState      See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] pDynamicState         See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] layout                See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] renderPass            See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] subpass               See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[in] flags                 VkGraphicsPipelineCreateInfo::flags; VK_PIPELINE_CREATE_LIBRARY_BIT_KHR is added
+ * \param[in] pAllocator            See cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo
+ * \param[out] pPipeline             See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipelineLibrary(VkDevice                                      device,
+                                          VkPipelineCache                               pipelineCache,
+                                          const void*                                   pPipelineNext,
+                                          VkGraphicsPipelineLibraryFlagsEXT             flagsGraphicsLibrary,
+                                          uint32_t                                      stageCount,
+                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                          VkPipelineLayout                              layout,
+                                          VkRenderPass                                  renderPass,
+                                          uint32_t                                      subpass,
+                                          VkPipelineCreateFlags                         flags,
+                                          const VkAllocationCallbacks*                  pAllocator,
+                                          VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT subset; only the state that subset consumes is taken.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pPipelineNext        See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pVertexInputState    See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pInputAssemblyState  See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipelineLibrary
+ * \param[in] flags                See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pAllocator           See cvkCreateGraphicsPipelineLibrary
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateVertexInputInterfaceGraphicsPipelineLibrary(VkDevice                                      device,
+                                                              VkPipelineCache                               pipelineCache,
+                                                              const void*                                   pPipelineNext,
+                                                              const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                              const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                              const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                              VkPipelineCreateFlags                         flags,
+                                                              const VkAllocationCallbacks*                  pAllocator,
+                                                              VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT subset; only the state that subset consumes is taken.
+ *
+ * \param[in] device               See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pipelineCache        See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pPipelineNext        See cvkCreateGraphicsPipelineLibrary
+ * \param[in] stageCount           See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pStages              See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pTessellationState   See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pViewportState       See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pRasterizationState  See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pDynamicState        See cvkCreateGraphicsPipelineLibrary
+ * \param[in] layout               See cvkCreateGraphicsPipelineLibrary
+ * \param[in] renderPass           See cvkCreateGraphicsPipelineLibrary
+ * \param[in] subpass              See cvkCreateGraphicsPipelineLibrary
+ * \param[in] flags                See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pAllocator           See cvkCreateGraphicsPipelineLibrary
+ * \param[out] pPipeline            See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreatePreRasterizationShadersGraphicsPipelineLibrary(VkDevice                                      device,
+                                                                 VkPipelineCache                               pipelineCache,
+                                                                 const void*                                   pPipelineNext,
+                                                                 uint32_t                                      stageCount,
+                                                                 const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                 const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                 const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                 const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                 const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                 VkPipelineLayout                              layout,
+                                                                 VkRenderPass                                  renderPass,
+                                                                 uint32_t                                      subpass,
+                                                                 VkPipelineCreateFlags                         flags,
+                                                                 const VkAllocationCallbacks*                  pAllocator,
+                                                                 VkPipeline*                                   pPipeline);
+/**
+ * \brief Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT subset; only the state that subset consumes is taken.
+ *
+ * \param[in] device              See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pipelineCache       See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pPipelineNext       See cvkCreateGraphicsPipelineLibrary
+ * \param[in] stageCount          See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pStages             See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pMultisampleState   See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pDepthStencilState  See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pDynamicState       See cvkCreateGraphicsPipelineLibrary
+ * \param[in] layout              See cvkCreateGraphicsPipelineLibrary
+ * \param[in] renderPass          See cvkCreateGraphicsPipelineLibrary
+ * \param[in] subpass             See cvkCreateGraphicsPipelineLibrary
+ * \param[in] flags               See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pAllocator          See cvkCreateGraphicsPipelineLibrary
+ * \param[out] pPipeline           See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateFragmentShaderGraphicsPipelineLibrary(VkDevice                                     device,
+                                                        VkPipelineCache                              pipelineCache,
+                                                        const void*                                  pPipelineNext,
+                                                        uint32_t                                     stageCount,
+                                                        const VkPipelineShaderStageCreateInfo*       pStages,
+                                                        const VkPipelineMultisampleStateCreateInfo*  pMultisampleState,
+                                                        const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState,
+                                                        const VkPipelineDynamicStateCreateInfo*      pDynamicState,
+                                                        VkPipelineLayout                             layout,
+                                                        VkRenderPass                                 renderPass,
+                                                        uint32_t                                     subpass,
+                                                        VkPipelineCreateFlags                        flags,
+                                                        const VkAllocationCallbacks*                 pAllocator,
+                                                        VkPipeline*                                  pPipeline);
+/**
+ * \brief Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT subset; only the state that subset consumes is taken.
+ *
+ * \param[in] device             See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pipelineCache      See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pPipelineNext      See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pMultisampleState  See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pColorBlendState   See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pDynamicState      See cvkCreateGraphicsPipelineLibrary
+ * \param[in] renderPass         See cvkCreateGraphicsPipelineLibrary
+ * \param[in] subpass            See cvkCreateGraphicsPipelineLibrary
+ * \param[in] flags              See cvkCreateGraphicsPipelineLibrary
+ * \param[in] pAllocator         See cvkCreateGraphicsPipelineLibrary
+ * \param[out] pPipeline          See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateFragmentOutputInterfaceGraphicsPipelineLibrary(VkDevice                                    device,
+                                                                 VkPipelineCache                             pipelineCache,
+                                                                 const void*                                 pPipelineNext,
+                                                                 const VkPipelineMultisampleStateCreateInfo* pMultisampleState,
+                                                                 const VkPipelineColorBlendStateCreateInfo*  pColorBlendState,
+                                                                 const VkPipelineDynamicStateCreateInfo*     pDynamicState,
+                                                                 VkRenderPass                                renderPass,
+                                                                 uint32_t                                    subpass,
+                                                                 VkPipelineCreateFlags                       flags,
+                                                                 const VkAllocationCallbacks*                pAllocator,
+                                                                 VkPipeline*                                 pPipeline);
+/**
+ * \brief Links graphics pipeline libraries into a complete graphics pipeline with no state of its own.
+ *
+ * \param[in] device         See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] pipelineCache  See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] pPipelineNext  See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] libraryCount   See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] pLibraries     See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] flags          See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] layout         See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[in] pAllocator     See cvkCreateGraphicsPipelineWithPipelineLibraryInfo
+ * \param[out] pPipeline      See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateLinkedGraphicsPipeline(VkDevice                     device,
+                                         VkPipelineCache              pipelineCache,
+                                         const void*                  pPipelineNext,
+                                         uint32_t                     libraryCount,
+                                         const VkPipeline*            pLibraries,
+                                         VkPipelineCreateFlags        flags,
+                                         VkPipelineLayout             layout,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkPipeline*                  pPipeline);
+/**
+ * \brief cvkSetupGraphicsPipeline for dynamic rendering: the attachment formats replace the render pass.
+ *
+ * \param[in] device                       See cvkCreateShaderModule
+ * \param[in] pPipelineLayoutNext          See cvkCreateGraphicsPipelineLayout
+ * \param[in] setLayoutCount               See cvkCreateGraphicsPipelineLayout
+ * \param[in] pSetLayouts                  See cvkCreateGraphicsPipelineLayout
+ * \param[in] pushConstantOffset           See cvkCreateGraphicsPipelineLayout
+ * \param[in] pushConstantSize             See cvkCreateGraphicsPipelineLayout
+ * \param[in] pipelineCache                See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pPipelineNext                See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] viewMask                     See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] colorAttachmentCount         See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pColorAttachmentFormats      See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] depthAttachmentFormat        See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] stencilAttachmentFormat      See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] flags                        See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pVertexInputState            See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pInputAssemblyState          See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pTessellationState           See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pViewportState               See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pRasterizationState          See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pMultisampleState            See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pDepthStencilState           See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pColorBlendState             See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] pDynamicState                See cvkCreateGraphicsPipelineWithRenderingInfo
+ * \param[in] shaderModuleFlags            VkShaderModuleCreateInfo::flags of both modules
+ * \param[in] pipelineLayoutFlags          VkPipelineLayoutCreateInfo::flags
+ * \param[in] pVertexShaderModuleNext      Optional extension chain for the vertex VkShaderModuleCreateInfo, or NULL
+ * \param[in] vertexCodeSize               Size in bytes of the vertex shader code
+ * \param[in] pVertexCode                  Vertex shader SPIR-V code
+ * \param[in] pFragmentShaderModuleNext    Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL
+ * \param[in] fragmentCodeSize             Size in bytes of the fragment shader code
+ * \param[in] pFragmentCode                Fragment shader SPIR-V code
+ * \param[in] pVertexStageNext             Optional extension chain for the vertex VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] pFragmentStageNext           Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] stageFlags                   VkPipelineShaderStageCreateInfo::flags of both stages
+ * \param[in] pVertexEntryPoint            Entry point name of the vertex shader
+ * \param[in] pVertexSpecializationInfo    Specialization of the vertex shader, or NULL
+ * \param[in] pFragmentEntryPoint          Entry point name of the fragment shader
+ * \param[in] pFragmentSpecializationInfo  Specialization of the fragment shader, or NULL
+ * \param[in] pAllocator                   See cvkCreateShaderModule
+ * \param[out] pVertexShaderModule          Receives the vertexShaderModule
+ * \param[out] pFragmentShaderModule        Receives the fragmentShaderModule
+ * \param[out] pPipelineLayout              Receives the created VkPipelineLayout
+ * \param[out] pPipeline                    See cvkCreateGraphicsPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkSetupGraphicsPipelineWithRenderingInfo(VkDevice                                      device,
+                                                   const void*                                   pPipelineLayoutNext,
+                                                   uint32_t                                      setLayoutCount,
+                                                   const VkDescriptorSetLayout*                  pSetLayouts,
+                                                   uint32_t                                      pushConstantOffset,
+                                                   uint32_t                                      pushConstantSize,
+                                                   VkPipelineCache                               pipelineCache,
+                                                   const void*                                   pPipelineNext,
+                                                   uint32_t                                      viewMask,
+                                                   uint32_t                                      colorAttachmentCount,
+                                                   const VkFormat*                               pColorAttachmentFormats,
+                                                   VkFormat                                      depthAttachmentFormat,
+                                                   VkFormat                                      stencilAttachmentFormat,
+                                                   VkPipelineCreateFlags                         flags,
+                                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                   VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                                   VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                                   const void*                                   pVertexShaderModuleNext,
+                                                   size_t                                        vertexCodeSize,
+                                                   const uint32_t*                               pVertexCode,
+                                                   const void*                                   pFragmentShaderModuleNext,
+                                                   size_t                                        fragmentCodeSize,
+                                                   const uint32_t*                               pFragmentCode,
+                                                   const void*                                   pVertexStageNext,
+                                                   const void*                                   pFragmentStageNext,
+                                                   VkPipelineShaderStageCreateFlags              stageFlags,
+                                                   const char*                                   pVertexEntryPoint,
+                                                   const VkSpecializationInfo*                   pVertexSpecializationInfo,
+                                                   const char*                                   pFragmentEntryPoint,
+                                                   const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                                   const VkAllocationCallbacks*                  pAllocator,
+                                                   VkShaderModule*                               pVertexShaderModule,
+                                                   VkShaderModule*                               pFragmentShaderModule,
+                                                   VkPipelineLayout*                             pPipelineLayout,
+                                                   VkPipeline*                                   pPipeline);
 /**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
  *

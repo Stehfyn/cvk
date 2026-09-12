@@ -3326,17 +3326,6 @@
         }
       ]
     },
-    "cvkCmdControlResetVideoCoding": {
-      "brief": "Resets the video coding state of the bound session.",
-      "steps": [
-        {
-          "call": "cvkCmdControlVideoCoding",
-          "bind": {
-            "flags": "VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR"
-          }
-        }
-      ]
-    },
     "cvkCreateResultStatusQueryPool": {
       "brief": "Creates a query pool of result status queries.",
       "steps": [
@@ -3425,6 +3414,768 @@
           "set": {
             "pVideoFormatProperties": "video_format_properties[videoFormatPropertyIndex]"
           }
+        }
+      ]
+    },
+    "cvkCmdResetVideoCoding": {
+      "brief": "Resets the coding state of the bound video session.",
+      "steps": [
+        {
+          "call": "cvkCmdControlVideoCoding",
+          "bind": {
+            "flags": "VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetVideoEncodeRateControl": {
+      "brief": "Sets the rate control of the bound video encode session.",
+      "steps": [
+        {
+          "call": "cvkCmdControlVideoCodingWithEncodeRateInfo",
+          "bind": {
+            "flags": "VK_VIDEO_CODING_CONTROL_ENCODE_RATE_CONTROL_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdSetVideoEncodeQualityLevel": {
+      "brief": "Sets the quality level of the bound video encode session.",
+      "steps": [
+        {
+          "call": "cvkCmdControlVideoCodingWithEncodeQualityLevelInfo",
+          "bind": {
+            "flags": "VK_VIDEO_CODING_CONTROL_ENCODE_QUALITY_LEVEL_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCreateLayerImageView2D": {
+      "brief": "Creates a 2D image view over mip level zero of one array layer of one aspect.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "arrayLayer",
+          "doc": "Array layer the view covers"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitImageSubresourceRange",
+          "local": {
+            "pInfo": "subresource_range"
+          },
+          "bind": {
+            "baseMipLevel": "0",
+            "levelCount": "1",
+            "baseArrayLayer": "arrayLayer",
+            "layerCount": "1"
+          }
+        },
+        {
+          "call": "cvkCreateImageView2D",
+          "bind": {
+            "subresourceRange": "subresource_range"
+          }
+        }
+      ]
+    },
+    "cvkInitOriginVideoPictureResourceInfo": {
+      "brief": "Initializes a video picture resource at coded offset zero.",
+      "steps": [
+        {
+          "call": "cvkInitOffset2D",
+          "local": {
+            "pInfo": "coded_offset"
+          },
+          "bind": {
+            "x": "0",
+            "y": "0"
+          }
+        },
+        {
+          "call": "cvkInitVideoPictureResourceInfo",
+          "bind": {
+            "codedOffset": "coded_offset"
+          }
+        }
+      ]
+    },
+    "cvkInitInactiveVideoReferenceSlotInfo": {
+      "brief": "Initializes a reference slot bound to no DPB slot: a picture resource in the coding scope that is not yet a reference.",
+      "steps": [
+        {
+          "call": "cvkInitVideoReferenceSlotInfo",
+          "bind": {
+            "slotIndex": "-1"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoImage": {
+      "brief": "Creates a 2D, single-level, single-sample, optimally tiled image usable with the listed video profiles, allocates memory for it, and binds the memory.",
+      "inputs": [
+        {
+          "type": "VkExtent2D",
+          "name": "codedExtent",
+          "doc": "Picture size; the array layers are the pictures"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitExtent3D",
+          "local": {
+            "pInfo": "extent"
+          },
+          "bind": {
+            "width": "codedExtent.width",
+            "height": "codedExtent.height",
+            "depth": "1"
+          }
+        },
+        {
+          "call": "cvkSetupImageWithVideoProfileListInfo",
+          "bind": {
+            "imageType": "VK_IMAGE_TYPE_2D",
+            "extent": "extent",
+            "mipLevels": "1",
+            "samples": "VK_SAMPLE_COUNT_1_BIT",
+            "tiling": "VK_IMAGE_TILING_OPTIMAL",
+            "initialLayout": "VK_IMAGE_LAYOUT_UNDEFINED"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoDecodeDpbImage": {
+      "brief": "Creates a video image for VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR.",
+      "steps": [
+        {
+          "call": "cvkSetupVideoImage",
+          "bind": {
+            "usage": "VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoDecodeDstImage": {
+      "brief": "Creates a video image for VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR.",
+      "steps": [
+        {
+          "call": "cvkSetupVideoImage",
+          "bind": {
+            "usage": "VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoEncodeSrcImage": {
+      "brief": "Creates a video image for VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR.",
+      "steps": [
+        {
+          "call": "cvkSetupVideoImage",
+          "bind": {
+            "usage": "VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoEncodeDpbImage": {
+      "brief": "Creates a video image for VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR.",
+      "steps": [
+        {
+          "call": "cvkSetupVideoImage",
+          "bind": {
+            "usage": "VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoDecodeSrcBuffer": {
+      "brief": "Creates a bitstream buffer for VK_BUFFER_USAGE_VIDEO_DECODE_SRC_BIT_KHR usable with the listed video profiles, allocates memory for it, and binds the memory.",
+      "steps": [
+        {
+          "call": "cvkSetupBufferWithVideoProfileListInfo",
+          "bind": {
+            "usage": "VK_BUFFER_USAGE_VIDEO_DECODE_SRC_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkSetupVideoEncodeDstBuffer": {
+      "brief": "Creates a bitstream buffer for VK_BUFFER_USAGE_VIDEO_ENCODE_DST_BIT_KHR usable with the listed video profiles, allocates memory for it, and binds the memory.",
+      "steps": [
+        {
+          "call": "cvkSetupBufferWithVideoProfileListInfo",
+          "bind": {
+            "usage": "VK_BUFFER_USAGE_VIDEO_ENCODE_DST_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkCmdDecodeVideoPicture": {
+      "brief": "Decodes one picture in its own coding scope: begins coding with the bound slots, decodes, ends coding.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pBeginNext",
+          "doc": "Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL"
+        },
+        {
+          "type": "uint32_t",
+          "name": "boundReferenceSlotCount",
+          "doc": "Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource"
+        },
+        {
+          "type": "const VkVideoReferenceSlotInfoKHR*",
+          "name": "pBoundReferenceSlots",
+          "doc": "Reference slots bound to the coding scope"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBeginVideoCoding",
+          "bind": {
+            "pNext": "pBeginNext",
+            "flags": "0",
+            "referenceSlotCount": "boundReferenceSlotCount",
+            "pReferenceSlots": "pBoundReferenceSlots"
+          }
+        },
+        {
+          "call": "cvkCmdDecodeVideo"
+        },
+        {
+          "call": "cvkCmdEndVideoCoding",
+          "bind": {
+            "pNext": "NULL",
+            "flags": "0"
+          }
+        }
+      ]
+    },
+    "cvkCmdDecodeInitialVideoPicture": {
+      "brief": "Decodes the first picture of a session in its own coding scope, resetting the coding state first.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pBeginNext",
+          "doc": "Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL"
+        },
+        {
+          "type": "uint32_t",
+          "name": "boundReferenceSlotCount",
+          "doc": "Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource"
+        },
+        {
+          "type": "const VkVideoReferenceSlotInfoKHR*",
+          "name": "pBoundReferenceSlots",
+          "doc": "Reference slots bound to the coding scope"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBeginVideoCoding",
+          "bind": {
+            "pNext": "pBeginNext",
+            "flags": "0",
+            "referenceSlotCount": "boundReferenceSlotCount",
+            "pReferenceSlots": "pBoundReferenceSlots"
+          }
+        },
+        {
+          "call": "cvkCmdResetVideoCoding",
+          "bind": {
+            "pNext": "NULL"
+          }
+        },
+        {
+          "call": "cvkCmdDecodeVideo"
+        },
+        {
+          "call": "cvkCmdEndVideoCoding",
+          "bind": {
+            "pNext": "NULL",
+            "flags": "0"
+          }
+        }
+      ]
+    },
+    "cvkCmdEncodeVideoPicture": {
+      "brief": "Encodes one picture in its own coding scope: begins coding with the bound slots, encodes, ends coding.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pBeginNext",
+          "doc": "Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL"
+        },
+        {
+          "type": "uint32_t",
+          "name": "boundReferenceSlotCount",
+          "doc": "Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource"
+        },
+        {
+          "type": "const VkVideoReferenceSlotInfoKHR*",
+          "name": "pBoundReferenceSlots",
+          "doc": "Reference slots bound to the coding scope"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBeginVideoCoding",
+          "bind": {
+            "pNext": "pBeginNext",
+            "flags": "0",
+            "referenceSlotCount": "boundReferenceSlotCount",
+            "pReferenceSlots": "pBoundReferenceSlots"
+          }
+        },
+        {
+          "call": "cvkCmdEncodeVideo"
+        },
+        {
+          "call": "cvkCmdEndVideoCoding",
+          "bind": {
+            "pNext": "NULL",
+            "flags": "0"
+          }
+        }
+      ]
+    },
+    "cvkCmdEncodeInitialVideoPicture": {
+      "brief": "Encodes the first picture of a session in its own coding scope: resets the coding state, sets the rate control, encodes.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pBeginNext",
+          "doc": "Optional extension chain for VkVideoBeginCodingInfoKHR (rate control, GOP state), or NULL"
+        },
+        {
+          "type": "uint32_t",
+          "name": "boundReferenceSlotCount",
+          "doc": "Number of reference slots bound to the coding scope: every active DPB slot plus the setup slot's resource"
+        },
+        {
+          "type": "const VkVideoReferenceSlotInfoKHR*",
+          "name": "pBoundReferenceSlots",
+          "doc": "Reference slots bound to the coding scope"
+        },
+        {
+          "type": "const void*",
+          "name": "pRateControlNext",
+          "doc": "Optional extension chain for VkVideoEncodeRateControlInfoKHR (codec rate control), or NULL"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBeginVideoCoding",
+          "bind": {
+            "pNext": "pBeginNext",
+            "flags": "0",
+            "referenceSlotCount": "boundReferenceSlotCount",
+            "pReferenceSlots": "pBoundReferenceSlots"
+          }
+        },
+        {
+          "call": "cvkCmdResetVideoCoding",
+          "bind": {
+            "pNext": "NULL"
+          }
+        },
+        {
+          "call": "cvkCmdSetVideoEncodeRateControl",
+          "bind": {
+            "pNext": "pRateControlNext"
+          }
+        },
+        {
+          "call": "cvkCmdEncodeVideo"
+        },
+        {
+          "call": "cvkCmdEndVideoCoding",
+          "bind": {
+            "pNext": "NULL",
+            "flags": "0"
+          }
+        }
+      ]
+    },
+    "cvkGetQueryResultStatus": {
+      "brief": "Waits for one query and returns its result status.",
+      "ret": "VkQueryResultStatusKHR",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "query",
+          "doc": "Index of the query"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "int32_t status"
+        },
+        {
+          "call": "cvkGetQueryPoolResults",
+          "into": "result",
+          "bind": {
+            "firstQuery": "query",
+            "queryCount": "1",
+            "dataSize": "sizeof(status)",
+            "pData": "&status",
+            "stride": "sizeof(status)",
+            "flags": "VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT"
+          }
+        },
+        {
+          "assert": "VK_SUCCESS == result"
+        },
+        {
+          "return": "(VkQueryResultStatusKHR)status"
+        }
+      ]
+    },
+    "cvkCreateVideoEncodeBitstreamFeedbackQueryPool": {
+      "brief": "Creates a query pool of video encode feedback queries reporting the bitstream buffer offset and bytes written; the video profile is chained through pNext.",
+      "steps": [
+        {
+          "call": "cvkCreateVideoEncodeFeedbackQueryPool",
+          "bind": {
+            "encodeFeedbackFlags": "VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR | VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR"
+          }
+        }
+      ]
+    },
+    "cvkGetVideoEncodeBitstreamFeedback": {
+      "brief": "Waits for one query of a cvkCreateVideoEncodeBitstreamFeedbackQueryPool pool and returns its status with the bitstream buffer offset and bytes written.",
+      "ret": "VkQueryResultStatusKHR",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "query",
+          "doc": "Index of the query"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint32_t",
+          "name": "pBitstreamBufferOffset"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pBitstreamBytesWritten"
+        }
+      ],
+      "steps": [
+        {
+          "declare": "uint32_t feedback[3]"
+        },
+        {
+          "call": "cvkGetQueryPoolResults",
+          "into": "result",
+          "bind": {
+            "firstQuery": "query",
+            "queryCount": "1",
+            "dataSize": "sizeof(feedback)",
+            "pData": "feedback",
+            "stride": "sizeof(feedback)",
+            "flags": "VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT"
+          }
+        },
+        {
+          "assert": "VK_SUCCESS == result"
+        },
+        {
+          "set": {
+            "pBitstreamBufferOffset": "feedback[0]",
+            "pBitstreamBytesWritten": "feedback[1]"
+          }
+        },
+        {
+          "return": "(VkQueryResultStatusKHR)feedback[2]"
+        }
+      ]
+    },
+    "cvkCreateGraphicsPipelineLibrary": {
+      "brief": "Creates a graphics pipeline library providing the given subsets of the graphics pipeline.",
+      "inputs": [
+        {
+          "type": "VkPipelineCreateFlags",
+          "name": "flags",
+          "doc": "VkGraphicsPipelineCreateInfo::flags; VK_PIPELINE_CREATE_LIBRARY_BIT_KHR is added"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo",
+          "bind": {
+            "flags": "flags | VK_PIPELINE_CREATE_LIBRARY_BIT_KHR",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateVertexInputInterfaceGraphicsPipelineLibrary": {
+      "brief": "Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT subset; only the state that subset consumes is taken.",
+      "steps": [
+        {
+          "call": "cvkCreateGraphicsPipelineLibrary",
+          "bind": {
+            "stageCount": "0",
+            "pStages": "NULL",
+            "pTessellationState": "NULL",
+            "pViewportState": "NULL",
+            "pRasterizationState": "NULL",
+            "pMultisampleState": "NULL",
+            "pDepthStencilState": "NULL",
+            "pColorBlendState": "NULL",
+            "layout": "VK_NULL_HANDLE",
+            "renderPass": "VK_NULL_HANDLE",
+            "subpass": "0",
+            "flagsGraphicsLibrary": "VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreatePreRasterizationShadersGraphicsPipelineLibrary": {
+      "brief": "Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT subset; only the state that subset consumes is taken.",
+      "steps": [
+        {
+          "call": "cvkCreateGraphicsPipelineLibrary",
+          "bind": {
+            "pVertexInputState": "NULL",
+            "pInputAssemblyState": "NULL",
+            "pMultisampleState": "NULL",
+            "pDepthStencilState": "NULL",
+            "pColorBlendState": "NULL",
+            "flagsGraphicsLibrary": "VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateFragmentShaderGraphicsPipelineLibrary": {
+      "brief": "Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT subset; only the state that subset consumes is taken.",
+      "steps": [
+        {
+          "call": "cvkCreateGraphicsPipelineLibrary",
+          "bind": {
+            "pVertexInputState": "NULL",
+            "pInputAssemblyState": "NULL",
+            "pTessellationState": "NULL",
+            "pViewportState": "NULL",
+            "pRasterizationState": "NULL",
+            "pColorBlendState": "NULL",
+            "flagsGraphicsLibrary": "VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateFragmentOutputInterfaceGraphicsPipelineLibrary": {
+      "brief": "Creates a graphics pipeline library providing the VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT subset; only the state that subset consumes is taken.",
+      "steps": [
+        {
+          "call": "cvkCreateGraphicsPipelineLibrary",
+          "bind": {
+            "stageCount": "0",
+            "pStages": "NULL",
+            "pVertexInputState": "NULL",
+            "pInputAssemblyState": "NULL",
+            "pTessellationState": "NULL",
+            "pViewportState": "NULL",
+            "pRasterizationState": "NULL",
+            "pDepthStencilState": "NULL",
+            "layout": "VK_NULL_HANDLE",
+            "flagsGraphicsLibrary": "VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCreateLinkedGraphicsPipeline": {
+      "brief": "Links graphics pipeline libraries into a complete graphics pipeline with no state of its own.",
+      "steps": [
+        {
+          "call": "cvkCreateGraphicsPipelineWithPipelineLibraryInfo",
+          "bind": {
+            "pVertexInputState": "NULL",
+            "pInputAssemblyState": "NULL",
+            "pTessellationState": "NULL",
+            "pViewportState": "NULL",
+            "pRasterizationState": "NULL",
+            "pMultisampleState": "NULL",
+            "pDepthStencilState": "NULL",
+            "pColorBlendState": "NULL",
+            "stageCount": "0",
+            "pStages": "NULL",
+            "pDynamicState": "NULL",
+            "renderPass": "VK_NULL_HANDLE",
+            "subpass": "0",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupGraphicsPipelineWithRenderingInfo": {
+      "brief": "cvkSetupGraphicsPipeline for dynamic rendering: the attachment formats replace the render pass.",
+      "inputs": [
+        {
+          "type": "VkShaderModuleCreateFlags",
+          "name": "shaderModuleFlags",
+          "doc": "VkShaderModuleCreateInfo::flags of both modules"
+        },
+        {
+          "type": "VkPipelineLayoutCreateFlags",
+          "name": "pipelineLayoutFlags",
+          "doc": "VkPipelineLayoutCreateInfo::flags"
+        },
+        {
+          "type": "const void*",
+          "name": "pVertexShaderModuleNext",
+          "doc": "Optional extension chain for the vertex VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "vertexCodeSize",
+          "doc": "Size in bytes of the vertex shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pVertexCode",
+          "doc": "Vertex shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentShaderModuleNext",
+          "doc": "Optional extension chain for the fragment VkShaderModuleCreateInfo, or NULL"
+        },
+        {
+          "type": "size_t",
+          "name": "fragmentCodeSize",
+          "doc": "Size in bytes of the fragment shader code"
+        },
+        {
+          "type": "const uint32_t*",
+          "name": "pFragmentCode",
+          "doc": "Fragment shader SPIR-V code"
+        },
+        {
+          "type": "const void*",
+          "name": "pVertexStageNext",
+          "doc": "Optional extension chain for the vertex VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "const void*",
+          "name": "pFragmentStageNext",
+          "doc": "Optional extension chain for the fragment VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "VkPipelineShaderStageCreateFlags",
+          "name": "stageFlags",
+          "doc": "VkPipelineShaderStageCreateInfo::flags of both stages"
+        },
+        {
+          "type": "const char*",
+          "name": "pVertexEntryPoint",
+          "doc": "Entry point name of the vertex shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pVertexSpecializationInfo",
+          "doc": "Specialization of the vertex shader, or NULL"
+        },
+        {
+          "type": "const char*",
+          "name": "pFragmentEntryPoint",
+          "doc": "Entry point name of the fragment shader"
+        },
+        {
+          "type": "const VkSpecializationInfo*",
+          "name": "pFragmentSpecializationInfo",
+          "doc": "Specialization of the fragment shader, or NULL"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "VkShaderModule",
+          "name": "pVertexShaderModule"
+        },
+        {
+          "type": "VkShaderModule",
+          "name": "pFragmentShaderModule"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pVertexShaderModuleNext",
+            "codeSize": "vertexCodeSize",
+            "pCode": "pVertexCode",
+            "pShaderModule": "pVertexShaderModule",
+            "flags": "shaderModuleFlags"
+          }
+        },
+        {
+          "call": "cvkCreateShaderModule",
+          "bind": {
+            "pNext": "pFragmentShaderModuleNext",
+            "codeSize": "fragmentCodeSize",
+            "pCode": "pFragmentCode",
+            "pShaderModule": "pFragmentShaderModule",
+            "flags": "shaderModuleFlags"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[0]"
+          },
+          "bind": {
+            "pNext": "pVertexStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_VERTEX_BIT",
+            "module": "(*pVertexShaderModule)",
+            "pName": "pVertexEntryPoint",
+            "pSpecializationInfo": "pVertexSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "shader_stages[1]"
+          },
+          "bind": {
+            "pNext": "pFragmentStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_FRAGMENT_BIT",
+            "module": "(*pFragmentShaderModule)",
+            "pName": "pFragmentEntryPoint",
+            "pSpecializationInfo": "pFragmentSpecializationInfo"
+          }
+        },
+        {
+          "call": "cvkCreateGraphicsPipelineLayout",
+          "bind": {
+            "flags": "pipelineLayoutFlags"
+          }
+        },
+        {
+          "call": "cvkCreateGraphicsPipelineWithRenderingInfo",
+          "bind": {
+            "stageCount": "2",
+            "pStages": "shader_stages",
+            "layout": "(*pPipelineLayout)",
+            "basePipelineHandle": "VK_NULL_HANDLE",
+            "basePipelineIndex": "-1",
+            "renderPass": "VK_NULL_HANDLE",
+            "subpass": "0"
+          },
+          "return": true
         }
       ]
     }

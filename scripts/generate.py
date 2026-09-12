@@ -922,18 +922,24 @@ class Generator:
         self.place(self.platforms_for(cmd.extensions, cmd.core_version), doc + sig + ";",
                    sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
-    def emit_convenience(self, cmd: Command, ip: Param, ext: Struct) -> None:
+    def emit_convenience(self, cmd: Command, ip: Param, ext: Struct, singular: Optional[str] = None, name_override: Optional[str] = None) -> None:
+        """SPEC.md section 6. With `singular`, the extender is chained onto the singular of an
+        array-input command (cvkCreateGraphicsPipeline + VkPipelineRenderingCreateInfo ->
+        cvkCreateGraphicsPipelineWithRenderingInfo); the name is computed by the caller."""
         reg = self.reg
         base = reg.struct_of(ip.type)
-        q = self.qualifier(ext, base)
-        # Chain onto the flattened form: the flat sibling when tier 0 keeps the pointer.
-        t0 = self.flat_name(cmd, base) if self.flip_param(cmd) is not None else self.cmd_name(cmd)
-        name = self.register(self.convenience_name(cmd, base, ext), f"{cmd.name}+{ext.name}")
+        if singular is not None:
+            t0 = singular
+            name = self.register(name_override, f"{cmd.name}:singular+{ext.name}")
+        else:
+            # Chain onto the flattened form: the flat sibling when tier 0 keeps the pointer.
+            t0 = self.flat_name(cmd, base) if self.flip_param(cmd) is not None else self.cmd_name(cmd)
+            name = self.register(self.convenience_name(cmd, base, ext), f"{cmd.name}+{ext.name}")
         ret, t0_params = self.sigs[t0]
         base_params = [p.text for p in t0_params]
         filled = sum(1 for r in self.roles(cmd) if r in ("I", "P"))
         stem = ip.name[1:] if ip.name.startswith("p") else ip.name
-        pn = "pNext" if filled == 1 else f"p{stem}Next"
+        pn = "pNext" if (singular is not None or filled == 1) else f"p{stem}Next"
         idx = next(i for i, p in enumerate(base_params) if p.split()[-1] == pn)
         ext_params: List[str] = []
         ext_var = snake(self.struct_short(ext))
@@ -974,7 +980,7 @@ class Generator:
         bm = next((m for m in base.members if m.name == em.name), None)
         if bm is not None:
             bt = tokens(bm.type)
-            extra = [t for t in tokens(em.type) if t not in bt]
+            extra = [t for t in tokens(em.type) if t not in bt and t not in VENDORS]
             if extra and bm.type != em.type:
                 return em.name + "".join(extra)
         d = self.distinct_part(ext, base)
@@ -1323,6 +1329,35 @@ class Generator:
         ],
     })
 
+    FIXED.append({
+        "name": "cvkAlignDeviceSize",
+        "ret": "VkDeviceSize",
+        "brief": "Rounds a size or offset up to a power-of-two alignment.",
+        "params": [("VkDeviceSize", "value"), ("VkDeviceSize", "alignment")],
+        "body": [
+            "CVK_ASSERT((0 != alignment) && (0 == (alignment & (alignment - 1))));",
+            "return (value + alignment - 1) & ~(alignment - 1);",
+        ],
+    })
+    FIXED.append({
+        "name": "cvkGetInactiveVideoReferenceSlotIndex",
+        "ret": "int32_t",
+        "brief": "Returns the first DPB slot that is not active, or -1 when every slot is active.",
+        "params": [("uint32_t", "slotCount"), ("const VkBool32*", "pSlotActive")],
+        "body": [
+            "uint32_t slot_index;",
+            "",
+            "for (slot_index = 0; slot_index < slotCount; ++slot_index)",
+            "{",
+            "    if (!pSlotActive[slot_index])",
+            "    {",
+            "        return (int32_t)slot_index;",
+            "    }",
+            "}",
+            "return -1;",
+        ],
+    })
+
     def emit_fixed(self, f: dict) -> None:
         name = self.register(f["name"], "policy:" + f["name"])
         params = [EmittedParam(f"{t} {n}", n, f"{n} value", False) for t, n in f["params"]]
@@ -1566,6 +1601,34 @@ class Generator:
             self.convenience_pairs[(cmd.verb, ext.name)] += 1
         for cmd, ip, ext in pairs:
             self.emit_convenience(cmd, ip, ext)
+        # Gap 4: extenders on the singular of an array-input command (SPEC.md section 6):
+        # <singular>With<D>Info. Two extenders of one base with the same distinct part
+        # (VkPipelineLibraryCreateInfoKHR and VkGraphicsPipelineLibraryCreateInfoEXT both
+        # leave `Library`) each take their whole struct name instead.
+        singular_ext: List[Tuple[Command, Param, Struct, str]] = []
+        for cmd in self.cmds:
+            s_elem = self.singular_struct(cmd)
+            if s_elem is None:
+                continue
+            sname = self.singular_name(cmd, s_elem)
+            if sname not in self.sigs:
+                continue
+            ap = next(p for p, r in zip(cmd.params, self.roles(cmd)) if r == "I[]")
+            for ext in sorted(self.reg.extenders_of(s_elem.name), key=lambda e: e.name):
+                if not self.struct_in_profile(ext) or re.match(r"VkPhysicalDevice\w*Features", ext.name):
+                    continue
+                d = self.distinct_part(ext, s_elem)
+                singular_ext.append((cmd, ap, ext, sname + "With" + "".join(d) + "Info"))
+        by_name: Dict[str, int] = defaultdict(int)
+        for _, _, _, nm in singular_ext:
+            by_name[nm] += 1
+        for cmd, ap, ext, nm in singular_ext:
+            if by_name[nm] > 1:
+                whole = tokens(self.struct_short(ext))
+                while whole and (whole[-1] in self.KIND or whole[-1] == "Info" or whole[-1].isdigit()):
+                    whole.pop()
+                nm = self.singular_name(cmd, self.reg.struct_of(ap.type)) + "With" + "".join(whole) + "Info"
+            self.emit_convenience(cmd, ap, ext, singular=self.singular_name(cmd, self.reg.struct_of(ap.type)), name_override=nm)
         # Gap 1: per-element extenders on array inputs (parallel-array form).
         for cmd in self.cmds:
             roles = self.roles(cmd)

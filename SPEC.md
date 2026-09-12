@@ -157,6 +157,17 @@ An extender member whose name collides with a tier-0 parameter name (for example
 Stacking more than one extender is done by the caller with builders in one frame. No
 multi-qualifier function is generated (policy: 2^n explosion; see `study/MEMORY.md`).
 
+**Extenders on the singular of an array-input command** (`VkPipelineRenderingCreateInfo` on
+`VkGraphicsPipelineCreateInfo`, whose command takes an array): `<singular>With<D>Info` on the
+singular (`cvkCreateGraphicsPipelineWithRenderingInfo`, `cvkCreateComputePipelineWithFlags2Info`,
+`cvkCreateRayTracingPipelineWithBinaryInfo`). Two extenders of one base whose distinct parts
+coincide (`VkPipelineLibraryCreateInfoKHR` and `VkGraphicsPipelineLibraryCreateInfoEXT` both
+leave `Library`) each take their whole struct name instead
+(`cvkCreateGraphicsPipelineWithPipelineLibraryInfo`, `cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo`).
+An extender member colliding with a base member is disambiguated as in section 3, vendor tags
+excluded (`VkGraphicsPipelineLibraryFlagsEXT flags` beside `VkPipelineCreateFlags flags` →
+`flagsGraphicsLibrary`).
+
 **Per-element extenders on array inputs** (`VkBindImagePlaneMemoryInfo` on
 `VkBindImageMemoryInfo`) are emitted as the parallel-array form
 `(handle, count, ppNexts, <extender member arrays>, <base member arrays>)`, named as the
@@ -222,6 +233,10 @@ Two derived forms and one policy form.
   becomes a single out-pointer. A handle singular whose element name is taken by another
   parameter is not generated (`vkCmdExecuteCommands`).
 - **Per-element extender singulars** (derived): section 6.
+- **Control operations** (policy): `vkCmdControlVideoCodingKHR` is one command for several
+  operations selected by a flag; a substitution binding one flag is named by the operation,
+  not by `Control`: `cvkCmdResetVideoCoding`, `cvkCmdSetVideoEncodeRateControl`,
+  `cvkCmdSetVideoEncodeQualityLevel` (the last two on the tier-1 forms carrying the info).
 - **Constant substitutions** (policy): a one-step chain (section 8) whose `bind` fixes
   arguments: `cvkCmdBindComputePipeline`, `cvkCmdImageBarrier` (queue families ignored),
   `cvkCmdAcquireImageFromExternal` and `cvkCmdReleaseImageToExternal` (top or bottom of pipe,
@@ -323,15 +338,19 @@ counterpart in the others. `<Kind>` is `Compute`, `Graphics`, or `Video`.
 | object | `cvkSetupComputePipeline` (module, stage, layout, pipeline) | `cvkSetupGraphicsPipeline` (two modules, two stages, layout, pipeline over caller-provided state) | `cvkSetupVideoSession` (session, then `cvkAllocateVideoSessionMemory`: one allocation and bind per requirement, a protocol), `cvkSetup{Buffer,Image}WithVideoProfileListInfo` |
 | bind | `cvkCmdBindComputePipeline`, `cvkCmdBindComputeDescriptorSets`, `cvkCmdPushComputeConstants`, `cvkCmdBindComputeShader` | `cvkCmdBindGraphicsPipeline`, `cvkCmdBindGraphicsDescriptorSets`, `cvkCmdPushGraphicsConstants`, `cvkCmdSetFirst{Viewport,Scissor}[2D]`, `cvkCmdSetFirstViewportAndScissor2D` | `cvkCmdBeginVideoCoding[With<RateControl>Info]`, `cvkCmdControlVideoCoding`, `cvkCmdControlResetVideoCoding`, `cvkCmdEndVideoCoding` |
 | work | `cvkCmdDispatchItems`, `cvkCmdDispatchComputeItems` (bind, bind, push, dispatch) and 2D forms | `cvkCmdDrawGraphicsVertices`, `cvkCmdDrawGraphicsIndices` (bind, bind, push, draw) | `cvkCmdDecodeVideo[With<Codec>PictureInfo]`, `cvkCmdEncodeVideo[With<Codec>PictureInfo]` |
-| queries | `cvkCreateTimestampQueryPool` | same | `cvkCreateResultStatusQueryPool`, `cvkCreateVideoEncodeFeedbackQueryPool` |
+| queries | `cvkCreateTimestampQueryPool` | same | `cvkCreateResultStatusQueryPool`, `cvkGetQueryResultStatus`; `cvkCreateVideoEncode[Bitstream]FeedbackQueryPool`, `cvkGetVideoEncodeBitstreamFeedback` (offset and bytes written, status returned) |
+| resources | `cvkSetup{DeviceLocal,HostVisible}Buffer` | attachments: `cvkCreateWholeImageView2D`, `cvkCreateColorRenderPass`, `cvkCreateSingleAttachmentFramebuffer` | `cvkSetupVideoImage` (2D, one level, one sample, optimal, undefined; the array layers are the pictures) and `cvkSetupVideo{DecodeDpb,DecodeDst,EncodeSrc,EncodeDpb}Image`; `cvkSetupVideo{DecodeSrc,EncodeDst}Buffer`; `cvkCreateLayerImageView2D` (one picture of the DPB array); `cvkAlignDeviceSize` for the bitstream alignments |
+| DPB | — | — | `cvkInitOriginVideoPictureResourceInfo`, `cvkInitInactiveVideoReferenceSlotInfo` (slot -1: a resource in scope that is not yet a reference), `cvkGetInactiveVideoReferenceSlotIndex` over the caller's activity flags. The DPB itself is caller state: which slot a picture takes and when it is retired is the codec's decision, encoded in the codec picture infos the tier-1 forms carry |
+| loop | `cvkQueueSubmitCommandBufferAndWaitIdle` | `cvkCmdBeginColorRendering` … `cvkCmdEndRendering` | one picture per coding scope: `cvkCmd{Decode,Encode}VideoPicture` (begin with the bound slots, decode or encode, end) and `cvkCmd{Decode,Encode}InitialVideoPicture` (reset first; encode also sets the rate control); `cvkCmdSetVideoEncode{RateControl,QualityLevel}` between scopes |
+| libraries | — | `cvkCreateGraphicsPipelineLibrary` (`LIBRARY_BIT` added), one per subset taking only the state that subset consumes: `cvkCreate{VertexInputInterface,PreRasterizationShaders,FragmentShader,FragmentOutputInterface}GraphicsPipelineLibrary`, and `cvkCreateLinkedGraphicsPipeline` (no state of its own); `cvkSetupGraphicsPipelineWithRenderingInfo` for dynamic rendering | — |
 
 The `<Kind>` word binds the bind point (`VK_PIPELINE_BIND_POINT_<KIND>`), the stage set
 (`COMPUTE_BIT`, `ALL_GRAPHICS`), or the queue flag; a codec is never a `<Kind>`, it is the
 extender's distinct part (`H264`, `AV1`), which tier 1 already names. The video family has no
 layout or fixed-function level: its state lives in the session and its parameters objects,
-which the object level creates. Not designed here: a full decode or encode loop (DPB slot
-management is application policy), and pipeline libraries or shader-object graphics binding
-(the stage set bound per draw is application policy).
+which the object level creates. Left to the caller: the codec picture infos (tier 1 carries
+them), the DPB activity flags, and shader-object graphics binding (the stage set bound per
+draw is the application's).
 
 ## 8b. Tier 3: protocols (authored C, folded in by the generator)
 

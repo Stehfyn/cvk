@@ -21386,7 +21386,7 @@ void cvkCmdBeginRenderingWithRenderPassStripeInfo(VkCommandBuffer               
 }
 void cvkCmdBeginRenderingWithRenderPassTileShadingInfo(VkCommandBuffer                  commandBuffer,
                                                        const void*                      pNext,
-                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
+                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
                                                        VkExtent2D                       tileApronSize,
                                                        VkRenderingFlags                 flags,
                                                        VkRect2D                         renderArea,
@@ -21401,7 +21401,7 @@ void cvkCmdBeginRenderingWithRenderPassTileShadingInfo(VkCommandBuffer          
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pNext;
-    render_pass_tile_shading_create_info.flags         = flagsTileShadingRenderPassQCOM;
+    render_pass_tile_shading_create_info.flags         = flagsTileShadingRenderPass;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkCmdBeginRendering(commandBuffer, &render_pass_tile_shading_create_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
@@ -23233,7 +23233,7 @@ void cvkCreateDescriptorSetLayoutWithMutableDescriptorTypeInfo(VkDevice         
 }
 void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                    physicalDevice,
                                                const void*                         pNext,
-                                               VkDeviceMemoryReportFlagsEXT        flagsMemoryReportEXT,
+                                               VkDeviceMemoryReportFlagsEXT        flagsMemoryReport,
                                                PFN_vkDeviceMemoryReportCallbackEXT pfnUserCallback,
                                                void*                               pUserData,
                                                VkDeviceCreateFlags                 flags,
@@ -23251,7 +23251,7 @@ void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                 
 
     device_device_memory_report_create_info.sType           = VK_STRUCTURE_TYPE_DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT;
     device_device_memory_report_create_info.pNext           = pNext;
-    device_device_memory_report_create_info.flags           = flagsMemoryReportEXT;
+    device_device_memory_report_create_info.flags           = flagsMemoryReport;
     device_device_memory_report_create_info.pfnUserCallback = pfnUserCallback;
     device_device_memory_report_create_info.pUserData       = pUserData;
     cvkCreateDevice(physicalDevice,
@@ -23269,7 +23269,7 @@ void cvkCreateDeviceWithDeviceMemoryReportInfo(VkPhysicalDevice                 
 }
 void cvkCreateDeviceWithDiagnosticsConfigInfo(VkPhysicalDevice                 physicalDevice,
                                               const void*                      pNext,
-                                              VkDeviceDiagnosticsConfigFlagsNV flagsDiagnosticsConfigNV,
+                                              VkDeviceDiagnosticsConfigFlagsNV flagsDiagnosticsConfig,
                                               VkDeviceCreateFlags              flags,
                                               uint32_t                         queueCreateInfoCount,
                                               const VkDeviceQueueCreateInfo*   pQueueCreateInfos,
@@ -23285,7 +23285,7 @@ void cvkCreateDeviceWithDiagnosticsConfigInfo(VkPhysicalDevice                 p
 
     device_diagnostics_config_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV;
     device_diagnostics_config_create_info.pNext = pNext;
-    device_diagnostics_config_create_info.flags = flagsDiagnosticsConfigNV;
+    device_diagnostics_config_create_info.flags = flagsDiagnosticsConfig;
     cvkCreateDevice(physicalDevice,
                     &device_diagnostics_config_create_info,
                     flags,
@@ -23547,7 +23547,7 @@ void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                           
 }
 void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfo(VkDevice                                 device,
                                                            const void*                              pNext,
-                                                           VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
+                                                           VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlow,
                                                            VkImageCreateFlags                       flags,
                                                            VkImageType                              imageType,
                                                            VkFormat                                 format,
@@ -23568,7 +23568,7 @@ void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfo(VkDevice             
 
     data_graph_optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
     data_graph_optical_flow_image_format_info.pNext = pNext;
-    data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlowARM;
+    data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlow;
     cvkCreateImage(device,
                    &data_graph_optical_flow_image_format_info,
                    flags,
@@ -23757,7 +23757,7 @@ void cvkCreateImageWithAlignmentControlInfo(VkDevice                     device,
 }
 void cvkCreateImageWithCompressionControlInfo(VkDevice                             device,
                                               const void*                          pNext,
-                                              VkImageCompressionFlagsEXT           flagsCompressionEXT,
+                                              VkImageCompressionFlagsEXT           flagsCompression,
                                               uint32_t                             compressionControlPlaneCount,
                                               VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                               VkImageCreateFlags                   flags,
@@ -23780,7 +23780,7 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
 
     image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     image_compression_control.pNext                        = pNext;
-    image_compression_control.flags                        = flagsCompressionEXT;
+    image_compression_control.flags                        = flagsCompression;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
     cvkCreateImage(device,
@@ -23803,7 +23803,7 @@ void cvkCreateImageWithCompressionControlInfo(VkDevice                          
 }
 void cvkCreateImageWithFlags2Info(VkDevice                     device,
                                   void*                        pNext,
-                                  VkImageCreateFlags2KHR       flags2KHR,
+                                  VkImageCreateFlags2KHR       flags2,
                                   VkImageCreateFlags           flags,
                                   VkImageType                  imageType,
                                   VkFormat                     format,
@@ -23824,7 +23824,7 @@ void cvkCreateImageWithFlags2Info(VkDevice                     device,
 
     image_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
     image_create_flags2_create_info.pNext = pNext;
-    image_create_flags2_create_info.flags = flags2KHR;
+    image_create_flags2_create_info.flags = flags2;
     cvkCreateImage(device,
                    &image_create_flags2_create_info,
                    flags,
@@ -24147,7 +24147,7 @@ void cvkCreateImageWithTilingControlInfo(VkDevice                     device,
 }
 void cvkCreateImageWithUsageFlags2InfoKHR(VkDevice                     device,
                                           void*                        pNext,
-                                          VkImageUsageFlags2KHR        usage2KHR,
+                                          VkImageUsageFlags2KHR        usage2,
                                           VkImageCreateFlags           flags,
                                           VkImageType                  imageType,
                                           VkFormat                     format,
@@ -24168,7 +24168,7 @@ void cvkCreateImageWithUsageFlags2InfoKHR(VkDevice                     device,
 
     image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info_khr.pNext = pNext;
-    image_usage_flags2_create_info_khr.usage = usage2KHR;
+    image_usage_flags2_create_info_khr.usage = usage2;
     cvkCreateImage(device,
                    &image_usage_flags2_create_info_khr,
                    flags,
@@ -24273,7 +24273,7 @@ void cvkCreateImageWithOpaqueCaptureDescriptorDataInfo(VkDevice                 
 }
 void cvkCreateImageWithOpticalFlowImageFormatInfo(VkDevice                     device,
                                                   const void*                  pNext,
-                                                  VkOpticalFlowUsageFlagsNV    usageOpticalFlowNV,
+                                                  VkOpticalFlowUsageFlagsNV    usageOpticalFlow,
                                                   VkImageCreateFlags           flags,
                                                   VkImageType                  imageType,
                                                   VkFormat                     format,
@@ -24294,7 +24294,7 @@ void cvkCreateImageWithOpticalFlowImageFormatInfo(VkDevice                     d
 
     optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV;
     optical_flow_image_format_info.pNext = pNext;
-    optical_flow_image_format_info.usage = usageOpticalFlowNV;
+    optical_flow_image_format_info.usage = usageOpticalFlow;
     cvkCreateImage(device,
                    &optical_flow_image_format_info,
                    flags,
@@ -24543,7 +24543,7 @@ void cvkCreateIndirectCommandsLayoutWithPipelineInfo(VkDevice                   
     cvkCreateIndirectCommandsLayout(device, &pipeline_layout_create_info, flags, shaderStages, indirectStride, pipelineLayout, tokenCount, pTokens, pAllocator, pIndirectCommandsLayout);
 }
 void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  pNext,
-                                                  VkDebugReportFlagsEXT        flagsDebugReportEXT,
+                                                  VkDebugReportFlagsEXT        flagsDebugReport,
                                                   PFN_vkDebugReportCallbackEXT pfnCallback,
                                                   void*                        pUserData,
                                                   VkInstanceCreateFlags        flags,
@@ -24559,13 +24559,13 @@ void cvkCreateInstanceWithDebugReportCallbackInfo(const void*                  p
 
     debug_report_callback_create_info.sType       = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
     debug_report_callback_create_info.pNext       = pNext;
-    debug_report_callback_create_info.flags       = flagsDebugReportEXT;
+    debug_report_callback_create_info.flags       = flagsDebugReport;
     debug_report_callback_create_info.pfnCallback = pfnCallback;
     debug_report_callback_create_info.pUserData   = pUserData;
     cvkCreateInstance(&debug_report_callback_create_info, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
 void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                          pNext,
-                                                  VkDebugUtilsMessengerCreateFlagsEXT  flagsDebugUtilsMessengerEXT,
+                                                  VkDebugUtilsMessengerCreateFlagsEXT  flagsDebugUtilsMessenger,
                                                   VkDebugUtilsMessageSeverityFlagsEXT  messageSeverity,
                                                   VkDebugUtilsMessageTypeFlagsEXT      messageType,
                                                   PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
@@ -24583,7 +24583,7 @@ void cvkCreateInstanceWithDebugUtilsMessengerInfo(const void*                   
 
     debug_utils_messenger_create_info.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     debug_utils_messenger_create_info.pNext           = pNext;
-    debug_utils_messenger_create_info.flags           = flagsDebugUtilsMessengerEXT;
+    debug_utils_messenger_create_info.flags           = flagsDebugUtilsMessenger;
     debug_utils_messenger_create_info.messageSeverity = messageSeverity;
     debug_utils_messenger_create_info.messageType     = messageType;
     debug_utils_messenger_create_info.pfnUserCallback = pfnUserCallback;
@@ -25056,7 +25056,7 @@ void cvkCreateRenderPassWithMultiviewInfo(VkDevice                       device,
 }
 void cvkCreateRenderPassWithTileShadingInfo(VkDevice                         device,
                                             const void*                      pNext,
-                                            VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
+                                            VkTileShadingRenderPassFlagsQCOM flagsTileShading,
                                             VkExtent2D                       tileApronSize,
                                             VkRenderPassCreateFlags          flags,
                                             uint32_t                         attachmentCount,
@@ -25072,7 +25072,7 @@ void cvkCreateRenderPassWithTileShadingInfo(VkDevice                         dev
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pNext;
-    render_pass_tile_shading_create_info.flags         = flagsTileShadingQCOM;
+    render_pass_tile_shading_create_info.flags         = flagsTileShading;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkCreateRenderPass(device, &render_pass_tile_shading_create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
@@ -25200,7 +25200,7 @@ void cvkCreateRenderPass2WithFragmentDensityMapInfo(VkDevice                    
 }
 void cvkCreateRenderPass2WithTileShadingInfo(VkDevice                         device,
                                              const void*                      pNext,
-                                             VkTileShadingRenderPassFlagsQCOM flagsTileShadingQCOM,
+                                             VkTileShadingRenderPassFlagsQCOM flagsTileShading,
                                              VkExtent2D                       tileApronSize,
                                              VkRenderPassCreateFlags          flags,
                                              uint32_t                         attachmentCount,
@@ -25218,7 +25218,7 @@ void cvkCreateRenderPass2WithTileShadingInfo(VkDevice                         de
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pNext;
-    render_pass_tile_shading_create_info.flags         = flagsTileShadingQCOM;
+    render_pass_tile_shading_create_info.flags         = flagsTileShading;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkCreateRenderPass2(device,
                          &render_pass_tile_shading_create_info,
@@ -25876,7 +25876,7 @@ VkResult cvkCreateSwapchainWithDeviceGroupInfo(VkDevice                         
 }
 VkResult cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice                             device,
                                                            const void*                          pNext,
-                                                           VkImageCompressionFlagsEXT           flagsImageCompressionEXT,
+                                                           VkImageCompressionFlagsEXT           flagsImageCompression,
                                                            uint32_t                             compressionControlPlaneCount,
                                                            VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                            VkSwapchainCreateFlagsKHR            flags,
@@ -25902,7 +25902,7 @@ VkResult cvkCreateSwapchainWithImageCompressionControlInfo(VkDevice             
 
     image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     image_compression_control.pNext                        = pNext;
-    image_compression_control.flags                        = flagsImageCompressionEXT;
+    image_compression_control.flags                        = flagsImageCompression;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
     return cvkCreateSwapchain(device,
@@ -27001,7 +27001,7 @@ void cvkGetDynamicRenderingRenderPassStripeTileProperties(VkDevice              
 }
 void cvkGetDynamicRenderingRenderPassTileShadingTileProperties(VkDevice                         device,
                                                                const void*                      pRenderingInfoNext,
-                                                               VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPassQCOM,
+                                                               VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
                                                                VkExtent2D                       tileApronSize,
                                                                VkRenderingFlags                 flags,
                                                                VkRect2D                         renderArea,
@@ -27018,7 +27018,7 @@ void cvkGetDynamicRenderingRenderPassTileShadingTileProperties(VkDevice         
 
     render_pass_tile_shading_create_info.sType         = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     render_pass_tile_shading_create_info.pNext         = pRenderingInfoNext;
-    render_pass_tile_shading_create_info.flags         = flagsTileShadingRenderPassQCOM;
+    render_pass_tile_shading_create_info.flags         = flagsTileShadingRenderPass;
     render_pass_tile_shading_create_info.tileApronSize = tileApronSize;
     cvkGetRenderingInfo(device,
                         &render_pass_tile_shading_create_info,
@@ -27307,7 +27307,7 @@ void cvkGetPhysicalDeviceExternalSemaphoreTypeProperties(VkPhysicalDevice       
 }
 VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysicalDevice                         physicalDevice,
                                                                        const void*                              pImageFormatInfoNext,
-                                                                       VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlowARM,
+                                                                       VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlow,
                                                                        VkFormat                                 format,
                                                                        VkImageType                              type,
                                                                        VkImageTiling                            tiling,
@@ -27320,12 +27320,12 @@ VkResult cvkGetPhysicalDeviceImageFormatDataGraphOpticalFlowProperties(VkPhysica
 
     data_graph_optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
     data_graph_optical_flow_image_format_info.pNext = pImageFormatInfoNext;
-    data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlowARM;
+    data_graph_optical_flow_image_format_info.usage = usageDataGraphOpticalFlow;
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &data_graph_optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalDevice                     physicalDevice,
                                                                      const void*                          pImageFormatInfoNext,
-                                                                     VkImageCompressionFlagsEXT           flagsCompressionEXT,
+                                                                     VkImageCompressionFlagsEXT           flagsCompression,
                                                                      uint32_t                             compressionControlPlaneCount,
                                                                      VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
                                                                      VkFormat                             format,
@@ -27340,14 +27340,14 @@ VkResult cvkGetPhysicalDeviceImageCompressionFormatControlProperties(VkPhysicalD
 
     image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     image_compression_control.pNext                        = pImageFormatInfoNext;
-    image_compression_control.flags                        = flagsCompressionEXT;
+    image_compression_control.flags                        = flagsCompression;
     image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
     image_compression_control.pFixedRateFlags              = pFixedRateFlags;
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_compression_control, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 VkResult cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice          physicalDevice,
                                                                void*                     pImageFormatInfoNext,
-                                                               VkImageCreateFlags2KHR    flags2KHR,
+                                                               VkImageCreateFlags2KHR    flags2,
                                                                VkFormat                  format,
                                                                VkImageType               type,
                                                                VkImageTiling             tiling,
@@ -27360,7 +27360,7 @@ VkResult cvkGetPhysicalDeviceImageCreateFormatFlags2Properties(VkPhysicalDevice 
 
     image_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
     image_create_flags2_create_info.pNext = pImageFormatInfoNext;
-    image_create_flags2_create_info.flags = flags2KHR;
+    image_create_flags2_create_info.flags = flags2;
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_create_flags2_create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 VkResult cvkGetPhysicalDeviceImageFormatListProperties(VkPhysicalDevice          physicalDevice,
@@ -27421,7 +27421,7 @@ VkResult cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice 
 }
 VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
                                                                            void*                     pImageFormatInfoNext,
-                                                                           VkImageUsageFlags2KHR     usage2KHR,
+                                                                           VkImageUsageFlags2KHR     usage2,
                                                                            VkFormat                  format,
                                                                            VkImageType               type,
                                                                            VkImageTiling             tiling,
@@ -27434,12 +27434,12 @@ VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhy
 
     image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info_khr.pNext = pImageFormatInfoNext;
-    image_usage_flags2_create_info_khr.usage = usage2KHR;
+    image_usage_flags2_create_info_khr.usage = usage2;
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info_khr, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 VkResult cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice          physicalDevice,
                                                               const void*               pImageFormatInfoNext,
-                                                              VkOpticalFlowUsageFlagsNV usageOpticalFlowNV,
+                                                              VkOpticalFlowUsageFlagsNV usageOpticalFlow,
                                                               VkFormat                  format,
                                                               VkImageType               type,
                                                               VkImageTiling             tiling,
@@ -27452,7 +27452,7 @@ VkResult cvkGetPhysicalDeviceImageFormatOpticalFlowProperties(VkPhysicalDevice  
 
     optical_flow_image_format_info.sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV;
     optical_flow_image_format_info.pNext = pImageFormatInfoNext;
-    optical_flow_image_format_info.usage = usageOpticalFlowNV;
+    optical_flow_image_format_info.usage = usageOpticalFlow;
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &optical_flow_image_format_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
 VkResult cvkGetPhysicalDeviceExternalImageFormatInfo(VkPhysicalDevice                   physicalDevice,
@@ -27545,7 +27545,7 @@ VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDev
 }
 uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice               physicalDevice,
                                                                                  void*                          pNext,
-                                                                                 VkImageUsageFlags2KHR          usage2KHR,
+                                                                                 VkImageUsageFlags2KHR          usage2,
                                                                                  VkFormat                       format,
                                                                                  VkImageType                    type,
                                                                                  VkSampleCountFlagBits          samples,
@@ -27557,7 +27557,7 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR
 
     image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     image_usage_flags2_create_info_khr.pNext = pNext;
-    image_usage_flags2_create_info_khr.usage = usage2KHR;
+    image_usage_flags2_create_info_khr.usage = usage2;
     return cvkGetPhysicalDeviceSparseImageFormatInfo2(physicalDevice, &image_usage_flags2_create_info_khr, format, type, samples, usage, tiling, pProperties);
 }
 VkResult cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
@@ -28407,6 +28407,3406 @@ void cvkUpdateVideoSessionParametersWithEncodeH265AddInfo(VkDevice              
     video_encode_h265_session_parameters_add_info.stdPPSCount = stdPPSCount;
     video_encode_h265_session_parameters_add_info.pStdPPSs    = pStdPPSs;
     cvkUpdateVideoSessionParameters(device, videoSessionParameters, &video_encode_h265_session_parameters_add_info, updateSequenceCount);
+}
+void cvkBindBufferMemoryInfoWithDeviceGroupInfo(VkDevice        device,
+                                                const void*     pNext,
+                                                uint32_t        deviceIndexCount,
+                                                const uint32_t* pDeviceIndices,
+                                                VkBuffer        buffer,
+                                                VkDeviceMemory  memory,
+                                                VkDeviceSize    memoryOffset)
+{
+    VkBindBufferMemoryDeviceGroupInfo bind_buffer_memory_device_group_info;
+
+    bind_buffer_memory_device_group_info.sType            = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
+    bind_buffer_memory_device_group_info.pNext            = pNext;
+    bind_buffer_memory_device_group_info.deviceIndexCount = deviceIndexCount;
+    bind_buffer_memory_device_group_info.pDeviceIndices   = pDeviceIndices;
+    cvkBindBufferMemoryInfo(device, &bind_buffer_memory_device_group_info, buffer, memory, memoryOffset);
+}
+void cvkBindBufferMemoryInfoWithMemoryStatusInfo(VkDevice device, const void* pNext, VkResult* pResult, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    VkBindMemoryStatus bind_memory_status;
+
+    bind_memory_status.sType   = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS;
+    bind_memory_status.pNext   = pNext;
+    bind_memory_status.pResult = pResult;
+    cvkBindBufferMemoryInfo(device, &bind_memory_status, buffer, memory, memoryOffset);
+}
+void cvkBindImageMemoryInfoWithDeviceGroupInfo(VkDevice        device,
+                                               const void*     pNext,
+                                               uint32_t        deviceIndexCount,
+                                               const uint32_t* pDeviceIndices,
+                                               uint32_t        splitInstanceBindRegionCount,
+                                               const VkRect2D* pSplitInstanceBindRegions,
+                                               VkImage         image,
+                                               VkDeviceMemory  memory,
+                                               VkDeviceSize    memoryOffset)
+{
+    VkBindImageMemoryDeviceGroupInfo bind_image_memory_device_group_info;
+
+    bind_image_memory_device_group_info.sType                        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
+    bind_image_memory_device_group_info.pNext                        = pNext;
+    bind_image_memory_device_group_info.deviceIndexCount             = deviceIndexCount;
+    bind_image_memory_device_group_info.pDeviceIndices               = pDeviceIndices;
+    bind_image_memory_device_group_info.splitInstanceBindRegionCount = splitInstanceBindRegionCount;
+    bind_image_memory_device_group_info.pSplitInstanceBindRegions    = pSplitInstanceBindRegions;
+    cvkBindImageMemoryInfo(device, &bind_image_memory_device_group_info, image, memory, memoryOffset);
+}
+void cvkBindImageMemoryInfoWithSwapchainInfo(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndex, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    VkBindImageMemorySwapchainInfoKHR bind_image_memory_swapchain_info;
+
+    bind_image_memory_swapchain_info.sType      = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
+    bind_image_memory_swapchain_info.pNext      = pNext;
+    bind_image_memory_swapchain_info.swapchain  = swapchain;
+    bind_image_memory_swapchain_info.imageIndex = imageIndex;
+    cvkBindImageMemoryInfo(device, &bind_image_memory_swapchain_info, image, memory, memoryOffset);
+}
+void cvkBindImageMemoryInfoWithPlaneInfo(VkDevice device, const void* pNext, VkImageAspectFlagBits planeAspect, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    VkBindImagePlaneMemoryInfo bind_image_plane_memory_info;
+
+    bind_image_plane_memory_info.sType       = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
+    bind_image_plane_memory_info.pNext       = pNext;
+    bind_image_plane_memory_info.planeAspect = planeAspect;
+    cvkBindImageMemoryInfo(device, &bind_image_plane_memory_info, image, memory, memoryOffset);
+}
+void cvkBindImageMemoryInfoWithMemoryStatusInfo(VkDevice device, const void* pNext, VkResult* pResult, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    VkBindMemoryStatus bind_memory_status;
+
+    bind_memory_status.sType   = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS;
+    bind_memory_status.pNext   = pNext;
+    bind_memory_status.pResult = pResult;
+    cvkBindImageMemoryInfo(device, &bind_memory_status, image, memory, memoryOffset);
+}
+void cvkCmdBindDescriptorBufferWithUsageFlags2Info(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBufferUsageFlags2 usage2, VkDeviceAddress address, VkBufferUsageFlags usage)
+{
+    VkBufferUsageFlags2CreateInfo buffer_usage_flags2_create_info;
+
+    buffer_usage_flags2_create_info.sType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO;
+    buffer_usage_flags2_create_info.pNext = pNext;
+    buffer_usage_flags2_create_info.usage = usage2;
+    cvkCmdBindDescriptorBuffer(device, commandBuffer, &buffer_usage_flags2_create_info, address, usage);
+}
+void cvkCmdBindDescriptorBufferWithPushDescriptorBufferHandleInfo(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBuffer buffer, VkDeviceAddress address, VkBufferUsageFlags usage)
+{
+    VkDescriptorBufferBindingPushDescriptorBufferHandleEXT descriptor_buffer_binding_push_descriptor_buffer_handle;
+
+    descriptor_buffer_binding_push_descriptor_buffer_handle.sType  = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT;
+    descriptor_buffer_binding_push_descriptor_buffer_handle.pNext  = pNext;
+    descriptor_buffer_binding_push_descriptor_buffer_handle.buffer = buffer;
+    cvkCmdBindDescriptorBuffer(device, commandBuffer, &descriptor_buffer_binding_push_descriptor_buffer_handle, address, usage);
+}
+void cvkCmdWriteDescriptorSetWithAccelerationStructureInfo(VkCommandBuffer                   commandBuffer,
+                                                           VkPipelineBindPoint               pipelineBindPoint,
+                                                           VkPipelineLayout                  layout,
+                                                           uint32_t                          set,
+                                                           const void*                       pNext,
+                                                           uint32_t                          accelerationStructureCount,
+                                                           const VkAccelerationStructureKHR* pAccelerationStructures,
+                                                           VkDescriptorSet                   dstSet,
+                                                           uint32_t                          dstBinding,
+                                                           uint32_t                          dstArrayElement,
+                                                           uint32_t                          descriptorCount,
+                                                           VkDescriptorType                  descriptorType,
+                                                           const VkDescriptorImageInfo*      pImageInfo,
+                                                           const VkDescriptorBufferInfo*     pBufferInfo,
+                                                           const VkBufferView*               pTexelBufferView)
+{
+    VkWriteDescriptorSetAccelerationStructureKHR write_descriptor_set_acceleration_structure;
+
+    write_descriptor_set_acceleration_structure.sType                      = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
+    write_descriptor_set_acceleration_structure.pNext                      = pNext;
+    write_descriptor_set_acceleration_structure.accelerationStructureCount = accelerationStructureCount;
+    write_descriptor_set_acceleration_structure.pAccelerationStructures    = pAccelerationStructures;
+    cvkCmdWriteDescriptorSet(commandBuffer,
+                             pipelineBindPoint,
+                             layout,
+                             set,
+                             &write_descriptor_set_acceleration_structure,
+                             dstSet,
+                             dstBinding,
+                             dstArrayElement,
+                             descriptorCount,
+                             descriptorType,
+                             pImageInfo,
+                             pBufferInfo,
+                             pTexelBufferView);
+}
+void cvkCmdWriteDescriptorSetWithAccelerationStructureInfoNV(VkCommandBuffer                  commandBuffer,
+                                                             VkPipelineBindPoint              pipelineBindPoint,
+                                                             VkPipelineLayout                 layout,
+                                                             uint32_t                         set,
+                                                             const void*                      pNext,
+                                                             uint32_t                         accelerationStructureCount,
+                                                             const VkAccelerationStructureNV* pAccelerationStructures,
+                                                             VkDescriptorSet                  dstSet,
+                                                             uint32_t                         dstBinding,
+                                                             uint32_t                         dstArrayElement,
+                                                             uint32_t                         descriptorCount,
+                                                             VkDescriptorType                 descriptorType,
+                                                             const VkDescriptorImageInfo*     pImageInfo,
+                                                             const VkDescriptorBufferInfo*    pBufferInfo,
+                                                             const VkBufferView*              pTexelBufferView)
+{
+    VkWriteDescriptorSetAccelerationStructureNV write_descriptor_set_acceleration_structure_nv;
+
+    write_descriptor_set_acceleration_structure_nv.sType                      = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
+    write_descriptor_set_acceleration_structure_nv.pNext                      = pNext;
+    write_descriptor_set_acceleration_structure_nv.accelerationStructureCount = accelerationStructureCount;
+    write_descriptor_set_acceleration_structure_nv.pAccelerationStructures    = pAccelerationStructures;
+    cvkCmdWriteDescriptorSet(commandBuffer,
+                             pipelineBindPoint,
+                             layout,
+                             set,
+                             &write_descriptor_set_acceleration_structure_nv,
+                             dstSet,
+                             dstBinding,
+                             dstArrayElement,
+                             descriptorCount,
+                             descriptorType,
+                             pImageInfo,
+                             pBufferInfo,
+                             pTexelBufferView);
+}
+void cvkCmdWriteDescriptorSetWithInlineUniformBlockInfo(VkCommandBuffer               commandBuffer,
+                                                        VkPipelineBindPoint           pipelineBindPoint,
+                                                        VkPipelineLayout              layout,
+                                                        uint32_t                      set,
+                                                        const void*                   pNext,
+                                                        uint32_t                      dataSize,
+                                                        const void*                   pData,
+                                                        VkDescriptorSet               dstSet,
+                                                        uint32_t                      dstBinding,
+                                                        uint32_t                      dstArrayElement,
+                                                        uint32_t                      descriptorCount,
+                                                        VkDescriptorType              descriptorType,
+                                                        const VkDescriptorImageInfo*  pImageInfo,
+                                                        const VkDescriptorBufferInfo* pBufferInfo,
+                                                        const VkBufferView*           pTexelBufferView)
+{
+    VkWriteDescriptorSetInlineUniformBlock write_descriptor_set_inline_uniform_block;
+
+    write_descriptor_set_inline_uniform_block.sType    = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK;
+    write_descriptor_set_inline_uniform_block.pNext    = pNext;
+    write_descriptor_set_inline_uniform_block.dataSize = dataSize;
+    write_descriptor_set_inline_uniform_block.pData    = pData;
+    cvkCmdWriteDescriptorSet(commandBuffer,
+                             pipelineBindPoint,
+                             layout,
+                             set,
+                             &write_descriptor_set_inline_uniform_block,
+                             dstSet,
+                             dstBinding,
+                             dstArrayElement,
+                             descriptorCount,
+                             descriptorType,
+                             pImageInfo,
+                             pBufferInfo,
+                             pTexelBufferView);
+}
+void cvkCmdWriteDescriptorSetWithPartitionedAccelerationStructureInfo(VkCommandBuffer               commandBuffer,
+                                                                      VkPipelineBindPoint           pipelineBindPoint,
+                                                                      VkPipelineLayout              layout,
+                                                                      uint32_t                      set,
+                                                                      void*                         pNext,
+                                                                      uint32_t                      accelerationStructureCount,
+                                                                      const VkDeviceAddress*        pAccelerationStructures,
+                                                                      VkDescriptorSet               dstSet,
+                                                                      uint32_t                      dstBinding,
+                                                                      uint32_t                      dstArrayElement,
+                                                                      uint32_t                      descriptorCount,
+                                                                      VkDescriptorType              descriptorType,
+                                                                      const VkDescriptorImageInfo*  pImageInfo,
+                                                                      const VkDescriptorBufferInfo* pBufferInfo,
+                                                                      const VkBufferView*           pTexelBufferView)
+{
+    VkWriteDescriptorSetPartitionedAccelerationStructureNV write_descriptor_set_partitioned_acceleration_structure;
+
+    write_descriptor_set_partitioned_acceleration_structure.sType                      = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_PARTITIONED_ACCELERATION_STRUCTURE_NV;
+    write_descriptor_set_partitioned_acceleration_structure.pNext                      = pNext;
+    write_descriptor_set_partitioned_acceleration_structure.accelerationStructureCount = accelerationStructureCount;
+    write_descriptor_set_partitioned_acceleration_structure.pAccelerationStructures    = pAccelerationStructures;
+    cvkCmdWriteDescriptorSet(commandBuffer,
+                             pipelineBindPoint,
+                             layout,
+                             set,
+                             &write_descriptor_set_partitioned_acceleration_structure,
+                             dstSet,
+                             dstBinding,
+                             dstArrayElement,
+                             descriptorCount,
+                             descriptorType,
+                             pImageInfo,
+                             pBufferInfo,
+                             pTexelBufferView);
+}
+void cvkCmdWriteDescriptorSetWithTensorInfo(VkCommandBuffer               commandBuffer,
+                                            VkPipelineBindPoint           pipelineBindPoint,
+                                            VkPipelineLayout              layout,
+                                            uint32_t                      set,
+                                            const void*                   pNext,
+                                            uint32_t                      tensorViewCount,
+                                            const VkTensorViewARM*        pTensorViews,
+                                            VkDescriptorSet               dstSet,
+                                            uint32_t                      dstBinding,
+                                            uint32_t                      dstArrayElement,
+                                            uint32_t                      descriptorCount,
+                                            VkDescriptorType              descriptorType,
+                                            const VkDescriptorImageInfo*  pImageInfo,
+                                            const VkDescriptorBufferInfo* pBufferInfo,
+                                            const VkBufferView*           pTexelBufferView)
+{
+    VkWriteDescriptorSetTensorARM write_descriptor_set_tensor;
+
+    write_descriptor_set_tensor.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_TENSOR_ARM;
+    write_descriptor_set_tensor.pNext           = pNext;
+    write_descriptor_set_tensor.tensorViewCount = tensorViewCount;
+    write_descriptor_set_tensor.pTensorViews    = pTensorViews;
+    cvkCmdWriteDescriptorSet(commandBuffer,
+                             pipelineBindPoint,
+                             layout,
+                             set,
+                             &write_descriptor_set_tensor,
+                             dstSet,
+                             dstBinding,
+                             dstArrayElement,
+                             descriptorCount,
+                             descriptorType,
+                             pImageInfo,
+                             pBufferInfo,
+                             pTexelBufferView);
+}
+VkResult cvkCreateComputePipelineWithIndirectBufferInfo(VkDevice                        device,
+                                                        VkPipelineCache                 pipelineCache,
+                                                        const void*                     pNext,
+                                                        VkDeviceAddress                 deviceAddress,
+                                                        VkDeviceSize                    size,
+                                                        VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
+                                                        VkPipelineCreateFlags           flags,
+                                                        VkPipelineShaderStageCreateInfo stage,
+                                                        VkPipelineLayout                layout,
+                                                        VkPipeline                      basePipelineHandle,
+                                                        int32_t                         basePipelineIndex,
+                                                        const VkAllocationCallbacks*    pAllocator,
+                                                        VkPipeline*                     pPipeline)
+{
+    VkComputePipelineIndirectBufferInfoNV compute_pipeline_indirect_buffer_info;
+
+    compute_pipeline_indirect_buffer_info.sType                              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_INDIRECT_BUFFER_INFO_NV;
+    compute_pipeline_indirect_buffer_info.pNext                              = pNext;
+    compute_pipeline_indirect_buffer_info.deviceAddress                      = deviceAddress;
+    compute_pipeline_indirect_buffer_info.size                               = size;
+    compute_pipeline_indirect_buffer_info.pipelineDeviceAddressCaptureReplay = pipelineDeviceAddressCaptureReplay;
+    return cvkCreateComputePipeline(device, pipelineCache, &compute_pipeline_indirect_buffer_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithBinaryInfo(VkDevice                        device,
+                                                VkPipelineCache                 pipelineCache,
+                                                const void*                     pNext,
+                                                uint32_t                        binaryCount,
+                                                const VkPipelineBinaryKHR*      pPipelineBinaries,
+                                                VkPipelineCreateFlags           flags,
+                                                VkPipelineShaderStageCreateInfo stage,
+                                                VkPipelineLayout                layout,
+                                                VkPipeline                      basePipelineHandle,
+                                                int32_t                         basePipelineIndex,
+                                                const VkAllocationCallbacks*    pAllocator,
+                                                VkPipeline*                     pPipeline)
+{
+    VkPipelineBinaryInfoKHR pipeline_binary_info;
+
+    pipeline_binary_info.sType             = VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR;
+    pipeline_binary_info.pNext             = pNext;
+    pipeline_binary_info.binaryCount       = binaryCount;
+    pipeline_binary_info.pPipelineBinaries = pPipelineBinaries;
+    return cvkCreateComputePipeline(device, pipelineCache, &pipeline_binary_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithCompilerControlInfo(VkDevice                          device,
+                                                         VkPipelineCache                   pipelineCache,
+                                                         const void*                       pNext,
+                                                         VkPipelineCompilerControlFlagsAMD compilerControlFlags,
+                                                         VkPipelineCreateFlags             flags,
+                                                         VkPipelineShaderStageCreateInfo   stage,
+                                                         VkPipelineLayout                  layout,
+                                                         VkPipeline                        basePipelineHandle,
+                                                         int32_t                           basePipelineIndex,
+                                                         const VkAllocationCallbacks*      pAllocator,
+                                                         VkPipeline*                       pPipeline)
+{
+    VkPipelineCompilerControlCreateInfoAMD pipeline_compiler_control_create_info;
+
+    pipeline_compiler_control_create_info.sType                = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD;
+    pipeline_compiler_control_create_info.pNext                = pNext;
+    pipeline_compiler_control_create_info.compilerControlFlags = compilerControlFlags;
+    return cvkCreateComputePipeline(device, pipelineCache, &pipeline_compiler_control_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithFlags2Info(VkDevice                        device,
+                                                VkPipelineCache                 pipelineCache,
+                                                const void*                     pNext,
+                                                VkPipelineCreateFlags2          flags2,
+                                                VkPipelineCreateFlags           flags,
+                                                VkPipelineShaderStageCreateInfo stage,
+                                                VkPipelineLayout                layout,
+                                                VkPipeline                      basePipelineHandle,
+                                                int32_t                         basePipelineIndex,
+                                                const VkAllocationCallbacks*    pAllocator,
+                                                VkPipeline*                     pPipeline)
+{
+    VkPipelineCreateFlags2CreateInfo pipeline_create_flags2_create_info;
+
+    pipeline_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
+    pipeline_create_flags2_create_info.pNext = pNext;
+    pipeline_create_flags2_create_info.flags = flags2;
+    return cvkCreateComputePipeline(device, pipelineCache, &pipeline_create_flags2_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithCreationFeedbackInfo(VkDevice                        device,
+                                                          VkPipelineCache                 pipelineCache,
+                                                          const void*                     pNext,
+                                                          VkPipelineCreationFeedback*     pPipelineCreationFeedback,
+                                                          uint32_t                        pipelineStageCreationFeedbackCount,
+                                                          VkPipelineCreationFeedback*     pPipelineStageCreationFeedbacks,
+                                                          VkPipelineCreateFlags           flags,
+                                                          VkPipelineShaderStageCreateInfo stage,
+                                                          VkPipelineLayout                layout,
+                                                          VkPipeline                      basePipelineHandle,
+                                                          int32_t                         basePipelineIndex,
+                                                          const VkAllocationCallbacks*    pAllocator,
+                                                          VkPipeline*                     pPipeline)
+{
+    VkPipelineCreationFeedbackCreateInfo pipeline_creation_feedback_create_info;
+
+    pipeline_creation_feedback_create_info.sType                              = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
+    pipeline_creation_feedback_create_info.pNext                              = pNext;
+    pipeline_creation_feedback_create_info.pPipelineCreationFeedback          = pPipelineCreationFeedback;
+    pipeline_creation_feedback_create_info.pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount;
+    pipeline_creation_feedback_create_info.pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks;
+    return cvkCreateComputePipeline(device, pipelineCache, &pipeline_creation_feedback_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithRobustnessInfo(VkDevice                           device,
+                                                    VkPipelineCache                    pipelineCache,
+                                                    const void*                        pNext,
+                                                    VkPipelineRobustnessBufferBehavior storageBuffers,
+                                                    VkPipelineRobustnessBufferBehavior uniformBuffers,
+                                                    VkPipelineRobustnessBufferBehavior vertexInputs,
+                                                    VkPipelineRobustnessImageBehavior  images,
+                                                    VkPipelineCreateFlags              flags,
+                                                    VkPipelineShaderStageCreateInfo    stage,
+                                                    VkPipelineLayout                   layout,
+                                                    VkPipeline                         basePipelineHandle,
+                                                    int32_t                            basePipelineIndex,
+                                                    const VkAllocationCallbacks*       pAllocator,
+                                                    VkPipeline*                        pPipeline)
+{
+    VkPipelineRobustnessCreateInfo pipeline_robustness_create_info;
+
+    pipeline_robustness_create_info.sType          = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO;
+    pipeline_robustness_create_info.pNext          = pNext;
+    pipeline_robustness_create_info.storageBuffers = storageBuffers;
+    pipeline_robustness_create_info.uniformBuffers = uniformBuffers;
+    pipeline_robustness_create_info.vertexInputs   = vertexInputs;
+    pipeline_robustness_create_info.images         = images;
+    return cvkCreateComputePipeline(device, pipelineCache, &pipeline_robustness_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithSubpassShadingInfo(VkDevice                        device,
+                                                        VkPipelineCache                 pipelineCache,
+                                                        void*                           pNext,
+                                                        VkRenderPass                    renderPass,
+                                                        uint32_t                        subpass,
+                                                        VkPipelineCreateFlags           flags,
+                                                        VkPipelineShaderStageCreateInfo stage,
+                                                        VkPipelineLayout                layout,
+                                                        VkPipeline                      basePipelineHandle,
+                                                        int32_t                         basePipelineIndex,
+                                                        const VkAllocationCallbacks*    pAllocator,
+                                                        VkPipeline*                     pPipeline)
+{
+    VkSubpassShadingPipelineCreateInfoHUAWEI subpass_shading_pipeline_create_info;
+
+    subpass_shading_pipeline_create_info.sType      = VK_STRUCTURE_TYPE_SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI;
+    subpass_shading_pipeline_create_info.pNext      = pNext;
+    subpass_shading_pipeline_create_info.renderPass = renderPass;
+    subpass_shading_pipeline_create_info.subpass    = subpass;
+    return cvkCreateComputePipeline(device, pipelineCache, &subpass_shading_pipeline_create_info, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateComputePipelineWithValidationFeaturesInfo(VkDevice                             device,
+                                                            VkPipelineCache                      pipelineCache,
+                                                            const void*                          pNext,
+                                                            uint32_t                             enabledValidationFeatureCount,
+                                                            const VkValidationFeatureEnableEXT*  pEnabledValidationFeatures,
+                                                            uint32_t                             disabledValidationFeatureCount,
+                                                            const VkValidationFeatureDisableEXT* pDisabledValidationFeatures,
+                                                            VkPipelineCreateFlags                flags,
+                                                            VkPipelineShaderStageCreateInfo      stage,
+                                                            VkPipelineLayout                     layout,
+                                                            VkPipeline                           basePipelineHandle,
+                                                            int32_t                              basePipelineIndex,
+                                                            const VkAllocationCallbacks*         pAllocator,
+                                                            VkPipeline*                          pPipeline)
+{
+    VkValidationFeaturesEXT validation_features;
+
+    validation_features.sType                          = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+    validation_features.pNext                          = pNext;
+    validation_features.enabledValidationFeatureCount  = enabledValidationFeatureCount;
+    validation_features.pEnabledValidationFeatures     = pEnabledValidationFeatures;
+    validation_features.disabledValidationFeatureCount = disabledValidationFeatureCount;
+    validation_features.pDisabledValidationFeatures    = pDisabledValidationFeatures;
+    return cvkCreateComputePipeline(device, pipelineCache, &validation_features, flags, stage, layout, basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithBuiltinModelInfo(VkDevice                                            device,
+                                                        VkDeferredOperationKHR                              deferredOperation,
+                                                        VkPipelineCache                                     pipelineCache,
+                                                        const void*                                         pNext,
+                                                        const VkPhysicalDeviceDataGraphOperationSupportARM* pOperation,
+                                                        VkPipelineCreateFlags2                              flags,
+                                                        VkPipelineLayout                                    layout,
+                                                        uint32_t                                            resourceInfoCount,
+                                                        const VkDataGraphPipelineResourceInfoARM*           pResourceInfos,
+                                                        const VkAllocationCallbacks*                        pAllocator,
+                                                        VkPipeline*                                         pPipeline)
+{
+    VkDataGraphPipelineBuiltinModelCreateInfoQCOM data_graph_pipeline_builtin_model_create_info;
+
+    data_graph_pipeline_builtin_model_create_info.sType      = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_BUILTIN_MODEL_CREATE_INFO_QCOM;
+    data_graph_pipeline_builtin_model_create_info.pNext      = pNext;
+    data_graph_pipeline_builtin_model_create_info.pOperation = pOperation;
+    return cvkCreateDataGraphPipeline(device,
+                                      deferredOperation,
+                                      pipelineCache,
+                                      &data_graph_pipeline_builtin_model_create_info,
+                                      flags,
+                                      layout,
+                                      resourceInfoCount,
+                                      pResourceInfos,
+                                      pAllocator,
+                                      pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithCompilerControlInfo(VkDevice                                  device,
+                                                           VkDeferredOperationKHR                    deferredOperation,
+                                                           VkPipelineCache                           pipelineCache,
+                                                           const void*                               pNext,
+                                                           const char*                               pVendorOptions,
+                                                           VkPipelineCreateFlags2                    flags,
+                                                           VkPipelineLayout                          layout,
+                                                           uint32_t                                  resourceInfoCount,
+                                                           const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                           const VkAllocationCallbacks*              pAllocator,
+                                                           VkPipeline*                               pPipeline)
+{
+    VkDataGraphPipelineCompilerControlCreateInfoARM data_graph_pipeline_compiler_control_create_info;
+
+    data_graph_pipeline_compiler_control_create_info.sType          = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_COMPILER_CONTROL_CREATE_INFO_ARM;
+    data_graph_pipeline_compiler_control_create_info.pNext          = pNext;
+    data_graph_pipeline_compiler_control_create_info.pVendorOptions = pVendorOptions;
+    return cvkCreateDataGraphPipeline(device,
+                                      deferredOperation,
+                                      pipelineCache,
+                                      &data_graph_pipeline_compiler_control_create_info,
+                                      flags,
+                                      layout,
+                                      resourceInfoCount,
+                                      pResourceInfos,
+                                      pAllocator,
+                                      pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithIdentifierInfo(VkDevice                                  device,
+                                                      VkDeferredOperationKHR                    deferredOperation,
+                                                      VkPipelineCache                           pipelineCache,
+                                                      const void*                               pNext,
+                                                      uint32_t                                  identifierSize,
+                                                      const uint8_t*                            pIdentifier,
+                                                      VkPipelineCreateFlags2                    flags,
+                                                      VkPipelineLayout                          layout,
+                                                      uint32_t                                  resourceInfoCount,
+                                                      const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                      const VkAllocationCallbacks*              pAllocator,
+                                                      VkPipeline*                               pPipeline)
+{
+    VkDataGraphPipelineIdentifierCreateInfoARM data_graph_pipeline_identifier_create_info;
+
+    data_graph_pipeline_identifier_create_info.sType          = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_IDENTIFIER_CREATE_INFO_ARM;
+    data_graph_pipeline_identifier_create_info.pNext          = pNext;
+    data_graph_pipeline_identifier_create_info.identifierSize = identifierSize;
+    data_graph_pipeline_identifier_create_info.pIdentifier    = pIdentifier;
+    return cvkCreateDataGraphPipeline(device, deferredOperation, pipelineCache, &data_graph_pipeline_identifier_create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithNeuralStatisticsInfo(VkDevice                                  device,
+                                                            VkDeferredOperationKHR                    deferredOperation,
+                                                            VkPipelineCache                           pipelineCache,
+                                                            const void*                               pNext,
+                                                            VkBool32                                  allowNeuralStatistics,
+                                                            VkPipelineCreateFlags2                    flags,
+                                                            VkPipelineLayout                          layout,
+                                                            uint32_t                                  resourceInfoCount,
+                                                            const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                            const VkAllocationCallbacks*              pAllocator,
+                                                            VkPipeline*                               pPipeline)
+{
+    VkDataGraphPipelineNeuralStatisticsCreateInfoARM data_graph_pipeline_neural_statistics_create_info;
+
+    data_graph_pipeline_neural_statistics_create_info.sType                 = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_NEURAL_STATISTICS_CREATE_INFO_ARM;
+    data_graph_pipeline_neural_statistics_create_info.pNext                 = pNext;
+    data_graph_pipeline_neural_statistics_create_info.allowNeuralStatistics = allowNeuralStatistics;
+    return cvkCreateDataGraphPipeline(device,
+                                      deferredOperation,
+                                      pipelineCache,
+                                      &data_graph_pipeline_neural_statistics_create_info,
+                                      flags,
+                                      layout,
+                                      resourceInfoCount,
+                                      pResourceInfos,
+                                      pAllocator,
+                                      pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithOpticalFlowInfo(VkDevice                                  device,
+                                                       VkDeferredOperationKHR                    deferredOperation,
+                                                       VkPipelineCache                           pipelineCache,
+                                                       void*                                     pNext,
+                                                       uint32_t                                  width,
+                                                       uint32_t                                  height,
+                                                       VkFormat                                  imageFormat,
+                                                       VkFormat                                  flowVectorFormat,
+                                                       VkFormat                                  costFormat,
+                                                       VkDataGraphOpticalFlowGridSizeFlagsARM    outputGridSize,
+                                                       VkDataGraphOpticalFlowGridSizeFlagsARM    hintGridSize,
+                                                       VkDataGraphOpticalFlowPerformanceLevelARM performanceLevel,
+                                                       VkDataGraphOpticalFlowCreateFlagsARM      flagsDataGraphOpticalFlow,
+                                                       VkPipelineCreateFlags2                    flags,
+                                                       VkPipelineLayout                          layout,
+                                                       uint32_t                                  resourceInfoCount,
+                                                       const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                       const VkAllocationCallbacks*              pAllocator,
+                                                       VkPipeline*                               pPipeline)
+{
+    VkDataGraphPipelineOpticalFlowCreateInfoARM data_graph_pipeline_optical_flow_create_info;
+
+    data_graph_pipeline_optical_flow_create_info.sType            = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_CREATE_INFO_ARM;
+    data_graph_pipeline_optical_flow_create_info.pNext            = pNext;
+    data_graph_pipeline_optical_flow_create_info.width            = width;
+    data_graph_pipeline_optical_flow_create_info.height           = height;
+    data_graph_pipeline_optical_flow_create_info.imageFormat      = imageFormat;
+    data_graph_pipeline_optical_flow_create_info.flowVectorFormat = flowVectorFormat;
+    data_graph_pipeline_optical_flow_create_info.costFormat       = costFormat;
+    data_graph_pipeline_optical_flow_create_info.outputGridSize   = outputGridSize;
+    data_graph_pipeline_optical_flow_create_info.hintGridSize     = hintGridSize;
+    data_graph_pipeline_optical_flow_create_info.performanceLevel = performanceLevel;
+    data_graph_pipeline_optical_flow_create_info.flags            = flagsDataGraphOpticalFlow;
+    return cvkCreateDataGraphPipeline(device, deferredOperation, pipelineCache, &data_graph_pipeline_optical_flow_create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithDataGraphPipelineShaderModuleInfo(VkDevice                                  device,
+                                                                         VkDeferredOperationKHR                    deferredOperation,
+                                                                         VkPipelineCache                           pipelineCache,
+                                                                         const void*                               pNext,
+                                                                         VkShaderModule                            module,
+                                                                         const char*                               pName,
+                                                                         const VkSpecializationInfo*               pSpecializationInfo,
+                                                                         uint32_t                                  constantCount,
+                                                                         const VkDataGraphPipelineConstantARM*     pConstants,
+                                                                         VkPipelineCreateFlags2                    flags,
+                                                                         VkPipelineLayout                          layout,
+                                                                         uint32_t                                  resourceInfoCount,
+                                                                         const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                         const VkAllocationCallbacks*              pAllocator,
+                                                                         VkPipeline*                               pPipeline)
+{
+    VkDataGraphPipelineShaderModuleCreateInfoARM data_graph_pipeline_shader_module_create_info;
+
+    data_graph_pipeline_shader_module_create_info.sType               = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SHADER_MODULE_CREATE_INFO_ARM;
+    data_graph_pipeline_shader_module_create_info.pNext               = pNext;
+    data_graph_pipeline_shader_module_create_info.module              = module;
+    data_graph_pipeline_shader_module_create_info.pName               = pName;
+    data_graph_pipeline_shader_module_create_info.pSpecializationInfo = pSpecializationInfo;
+    data_graph_pipeline_shader_module_create_info.constantCount       = constantCount;
+    data_graph_pipeline_shader_module_create_info.pConstants          = pConstants;
+    return cvkCreateDataGraphPipeline(device,
+                                      deferredOperation,
+                                      pipelineCache,
+                                      &data_graph_pipeline_shader_module_create_info,
+                                      flags,
+                                      layout,
+                                      resourceInfoCount,
+                                      pResourceInfos,
+                                      pAllocator,
+                                      pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithSingleNodeInfo(VkDevice                                          device,
+                                                      VkDeferredOperationKHR                            deferredOperation,
+                                                      VkPipelineCache                                   pipelineCache,
+                                                      void*                                             pNext,
+                                                      VkDataGraphPipelineNodeTypeARM                    nodeType,
+                                                      uint32_t                                          connectionCount,
+                                                      const VkDataGraphPipelineSingleNodeConnectionARM* pConnections,
+                                                      VkPipelineCreateFlags2                            flags,
+                                                      VkPipelineLayout                                  layout,
+                                                      uint32_t                                          resourceInfoCount,
+                                                      const VkDataGraphPipelineResourceInfoARM*         pResourceInfos,
+                                                      const VkAllocationCallbacks*                      pAllocator,
+                                                      VkPipeline*                                       pPipeline)
+{
+    VkDataGraphPipelineSingleNodeCreateInfoARM data_graph_pipeline_single_node_create_info;
+
+    data_graph_pipeline_single_node_create_info.sType           = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CREATE_INFO_ARM;
+    data_graph_pipeline_single_node_create_info.pNext           = pNext;
+    data_graph_pipeline_single_node_create_info.nodeType        = nodeType;
+    data_graph_pipeline_single_node_create_info.connectionCount = connectionCount;
+    data_graph_pipeline_single_node_create_info.pConnections    = pConnections;
+    return cvkCreateDataGraphPipeline(device, deferredOperation, pipelineCache, &data_graph_pipeline_single_node_create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithProcessingEngineInfo(VkDevice                                      device,
+                                                            VkDeferredOperationKHR                        deferredOperation,
+                                                            VkPipelineCache                               pipelineCache,
+                                                            const void*                                   pNext,
+                                                            uint32_t                                      processingEngineCount,
+                                                            VkPhysicalDeviceDataGraphProcessingEngineARM* pProcessingEngines,
+                                                            VkPipelineCreateFlags2                        flags,
+                                                            VkPipelineLayout                              layout,
+                                                            uint32_t                                      resourceInfoCount,
+                                                            const VkDataGraphPipelineResourceInfoARM*     pResourceInfos,
+                                                            const VkAllocationCallbacks*                  pAllocator,
+                                                            VkPipeline*                                   pPipeline)
+{
+    VkDataGraphProcessingEngineCreateInfoARM data_graph_processing_engine_create_info;
+
+    data_graph_processing_engine_create_info.sType                 = VK_STRUCTURE_TYPE_DATA_GRAPH_PROCESSING_ENGINE_CREATE_INFO_ARM;
+    data_graph_processing_engine_create_info.pNext                 = pNext;
+    data_graph_processing_engine_create_info.processingEngineCount = processingEngineCount;
+    data_graph_processing_engine_create_info.pProcessingEngines    = pProcessingEngines;
+    return cvkCreateDataGraphPipeline(device, deferredOperation, pipelineCache, &data_graph_processing_engine_create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithCreationFeedbackInfo(VkDevice                                  device,
+                                                            VkDeferredOperationKHR                    deferredOperation,
+                                                            VkPipelineCache                           pipelineCache,
+                                                            const void*                               pNext,
+                                                            VkPipelineCreationFeedback*               pPipelineCreationFeedback,
+                                                            uint32_t                                  pipelineStageCreationFeedbackCount,
+                                                            VkPipelineCreationFeedback*               pPipelineStageCreationFeedbacks,
+                                                            VkPipelineCreateFlags2                    flags,
+                                                            VkPipelineLayout                          layout,
+                                                            uint32_t                                  resourceInfoCount,
+                                                            const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                            const VkAllocationCallbacks*              pAllocator,
+                                                            VkPipeline*                               pPipeline)
+{
+    VkPipelineCreationFeedbackCreateInfo pipeline_creation_feedback_create_info;
+
+    pipeline_creation_feedback_create_info.sType                              = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
+    pipeline_creation_feedback_create_info.pNext                              = pNext;
+    pipeline_creation_feedback_create_info.pPipelineCreationFeedback          = pPipelineCreationFeedback;
+    pipeline_creation_feedback_create_info.pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount;
+    pipeline_creation_feedback_create_info.pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks;
+    return cvkCreateDataGraphPipeline(device, deferredOperation, pipelineCache, &pipeline_creation_feedback_create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
+}
+VkResult cvkCreateDataGraphPipelineWithShaderModuleInfo(VkDevice                                  device,
+                                                        VkDeferredOperationKHR                    deferredOperation,
+                                                        VkPipelineCache                           pipelineCache,
+                                                        const void*                               pNext,
+                                                        VkShaderModuleCreateFlags                 flagsShaderModule,
+                                                        size_t                                    codeSize,
+                                                        const uint32_t*                           pCode,
+                                                        VkPipelineCreateFlags2                    flags,
+                                                        VkPipelineLayout                          layout,
+                                                        uint32_t                                  resourceInfoCount,
+                                                        const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                        const VkAllocationCallbacks*              pAllocator,
+                                                        VkPipeline*                               pPipeline)
+{
+    VkShaderModuleCreateInfo shader_module_create_info;
+
+    shader_module_create_info.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+    shader_module_create_info.pNext    = pNext;
+    shader_module_create_info.flags    = flagsShaderModule;
+    shader_module_create_info.codeSize = codeSize;
+    shader_module_create_info.pCode    = pCode;
+    return cvkCreateDataGraphPipeline(device, deferredOperation, pipelineCache, &shader_module_create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithAttachmentSampleCountInfo(VkDevice                                      device,
+                                                                VkPipelineCache                               pipelineCache,
+                                                                const void*                                   pNext,
+                                                                uint32_t                                      colorAttachmentCount,
+                                                                const VkSampleCountFlagBits*                  pColorAttachmentSamples,
+                                                                VkSampleCountFlagBits                         depthStencilAttachmentSamples,
+                                                                VkPipelineCreateFlags                         flags,
+                                                                uint32_t                                      stageCount,
+                                                                const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                VkPipelineLayout                              layout,
+                                                                VkRenderPass                                  renderPass,
+                                                                uint32_t                                      subpass,
+                                                                VkPipeline                                    basePipelineHandle,
+                                                                int32_t                                       basePipelineIndex,
+                                                                const VkAllocationCallbacks*                  pAllocator,
+                                                                VkPipeline*                                   pPipeline)
+{
+    VkAttachmentSampleCountInfoAMD attachment_sample_count_info;
+
+    attachment_sample_count_info.sType                         = VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD;
+    attachment_sample_count_info.pNext                         = pNext;
+    attachment_sample_count_info.colorAttachmentCount          = colorAttachmentCount;
+    attachment_sample_count_info.pColorAttachmentSamples       = pColorAttachmentSamples;
+    attachment_sample_count_info.depthStencilAttachmentSamples = depthStencilAttachmentSamples;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &attachment_sample_count_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithCustomResolveInfo(VkDevice                                      device,
+                                                        VkPipelineCache                               pipelineCache,
+                                                        const void*                                   pNext,
+                                                        VkBool32                                      customResolve,
+                                                        uint32_t                                      colorAttachmentCount,
+                                                        const VkFormat*                               pColorAttachmentFormats,
+                                                        VkFormat                                      depthAttachmentFormat,
+                                                        VkFormat                                      stencilAttachmentFormat,
+                                                        VkPipelineCreateFlags                         flags,
+                                                        uint32_t                                      stageCount,
+                                                        const VkPipelineShaderStageCreateInfo*        pStages,
+                                                        const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                        const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                        const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                        const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                        const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                        const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                        const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                        const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                        const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                        VkPipelineLayout                              layout,
+                                                        VkRenderPass                                  renderPass,
+                                                        uint32_t                                      subpass,
+                                                        VkPipeline                                    basePipelineHandle,
+                                                        int32_t                                       basePipelineIndex,
+                                                        const VkAllocationCallbacks*                  pAllocator,
+                                                        VkPipeline*                                   pPipeline)
+{
+    VkCustomResolveCreateInfoEXT custom_resolve_create_info;
+
+    custom_resolve_create_info.sType                   = VK_STRUCTURE_TYPE_CUSTOM_RESOLVE_CREATE_INFO_EXT;
+    custom_resolve_create_info.pNext                   = pNext;
+    custom_resolve_create_info.customResolve           = customResolve;
+    custom_resolve_create_info.colorAttachmentCount    = colorAttachmentCount;
+    custom_resolve_create_info.pColorAttachmentFormats = pColorAttachmentFormats;
+    custom_resolve_create_info.depthAttachmentFormat   = depthAttachmentFormat;
+    custom_resolve_create_info.stencilAttachmentFormat = stencilAttachmentFormat;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &custom_resolve_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo(VkDevice                                      device,
+                                                                  VkPipelineCache                               pipelineCache,
+                                                                  const void*                                   pNext,
+                                                                  VkGraphicsPipelineLibraryFlagsEXT             flagsGraphicsLibrary,
+                                                                  VkPipelineCreateFlags                         flags,
+                                                                  uint32_t                                      stageCount,
+                                                                  const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                  const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                  const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                  const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                  const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                  const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                  const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                  const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                  const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                  const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                  VkPipelineLayout                              layout,
+                                                                  VkRenderPass                                  renderPass,
+                                                                  uint32_t                                      subpass,
+                                                                  VkPipeline                                    basePipelineHandle,
+                                                                  int32_t                                       basePipelineIndex,
+                                                                  const VkAllocationCallbacks*                  pAllocator,
+                                                                  VkPipeline*                                   pPipeline)
+{
+    VkGraphicsPipelineLibraryCreateInfoEXT graphics_pipeline_library_create_info;
+
+    graphics_pipeline_library_create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT;
+    graphics_pipeline_library_create_info.pNext = pNext;
+    graphics_pipeline_library_create_info.flags = flagsGraphicsLibrary;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &graphics_pipeline_library_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithShaderGroupsInfo(VkDevice                                      device,
+                                                       VkPipelineCache                               pipelineCache,
+                                                       const void*                                   pNext,
+                                                       uint32_t                                      groupCount,
+                                                       const VkGraphicsShaderGroupCreateInfoNV*      pGroups,
+                                                       uint32_t                                      pipelineCount,
+                                                       const VkPipeline*                             pPipelines,
+                                                       VkPipelineCreateFlags                         flags,
+                                                       uint32_t                                      stageCount,
+                                                       const VkPipelineShaderStageCreateInfo*        pStages,
+                                                       const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                       const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                       const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                       const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                       const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                       const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                       const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                       const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                       const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                       VkPipelineLayout                              layout,
+                                                       VkRenderPass                                  renderPass,
+                                                       uint32_t                                      subpass,
+                                                       VkPipeline                                    basePipelineHandle,
+                                                       int32_t                                       basePipelineIndex,
+                                                       const VkAllocationCallbacks*                  pAllocator,
+                                                       VkPipeline*                                   pPipeline)
+{
+    VkGraphicsPipelineShaderGroupsCreateInfoNV graphics_pipeline_shader_groups_create_info;
+
+    graphics_pipeline_shader_groups_create_info.sType         = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV;
+    graphics_pipeline_shader_groups_create_info.pNext         = pNext;
+    graphics_pipeline_shader_groups_create_info.groupCount    = groupCount;
+    graphics_pipeline_shader_groups_create_info.pGroups       = pGroups;
+    graphics_pipeline_shader_groups_create_info.pipelineCount = pipelineCount;
+    graphics_pipeline_shader_groups_create_info.pPipelines    = pPipelines;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &graphics_pipeline_shader_groups_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithMultiviewPerViewAttributesInfo(VkDevice                                      device,
+                                                                     VkPipelineCache                               pipelineCache,
+                                                                     const void*                                   pNext,
+                                                                     VkBool32                                      perViewAttributes,
+                                                                     VkBool32                                      perViewAttributesPositionXOnly,
+                                                                     VkPipelineCreateFlags                         flags,
+                                                                     uint32_t                                      stageCount,
+                                                                     const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                     const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                     const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                     const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                     VkPipelineLayout                              layout,
+                                                                     VkRenderPass                                  renderPass,
+                                                                     uint32_t                                      subpass,
+                                                                     VkPipeline                                    basePipelineHandle,
+                                                                     int32_t                                       basePipelineIndex,
+                                                                     const VkAllocationCallbacks*                  pAllocator,
+                                                                     VkPipeline*                                   pPipeline)
+{
+    VkMultiviewPerViewAttributesInfoNVX multiview_per_view_attributes_info;
+
+    multiview_per_view_attributes_info.sType                          = VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX;
+    multiview_per_view_attributes_info.pNext                          = pNext;
+    multiview_per_view_attributes_info.perViewAttributes              = perViewAttributes;
+    multiview_per_view_attributes_info.perViewAttributesPositionXOnly = perViewAttributesPositionXOnly;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &multiview_per_view_attributes_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithBinaryInfo(VkDevice                                      device,
+                                                 VkPipelineCache                               pipelineCache,
+                                                 const void*                                   pNext,
+                                                 uint32_t                                      binaryCount,
+                                                 const VkPipelineBinaryKHR*                    pPipelineBinaries,
+                                                 VkPipelineCreateFlags                         flags,
+                                                 uint32_t                                      stageCount,
+                                                 const VkPipelineShaderStageCreateInfo*        pStages,
+                                                 const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                 const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                 const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                 const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                 const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                 const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                 const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                 const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                 const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                 VkPipelineLayout                              layout,
+                                                 VkRenderPass                                  renderPass,
+                                                 uint32_t                                      subpass,
+                                                 VkPipeline                                    basePipelineHandle,
+                                                 int32_t                                       basePipelineIndex,
+                                                 const VkAllocationCallbacks*                  pAllocator,
+                                                 VkPipeline*                                   pPipeline)
+{
+    VkPipelineBinaryInfoKHR pipeline_binary_info;
+
+    pipeline_binary_info.sType             = VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR;
+    pipeline_binary_info.pNext             = pNext;
+    pipeline_binary_info.binaryCount       = binaryCount;
+    pipeline_binary_info.pPipelineBinaries = pPipelineBinaries;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_binary_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithCompilerControlInfo(VkDevice                                      device,
+                                                          VkPipelineCache                               pipelineCache,
+                                                          const void*                                   pNext,
+                                                          VkPipelineCompilerControlFlagsAMD             compilerControlFlags,
+                                                          VkPipelineCreateFlags                         flags,
+                                                          uint32_t                                      stageCount,
+                                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                          VkPipelineLayout                              layout,
+                                                          VkRenderPass                                  renderPass,
+                                                          uint32_t                                      subpass,
+                                                          VkPipeline                                    basePipelineHandle,
+                                                          int32_t                                       basePipelineIndex,
+                                                          const VkAllocationCallbacks*                  pAllocator,
+                                                          VkPipeline*                                   pPipeline)
+{
+    VkPipelineCompilerControlCreateInfoAMD pipeline_compiler_control_create_info;
+
+    pipeline_compiler_control_create_info.sType                = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD;
+    pipeline_compiler_control_create_info.pNext                = pNext;
+    pipeline_compiler_control_create_info.compilerControlFlags = compilerControlFlags;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_compiler_control_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithFlags2Info(VkDevice                                      device,
+                                                 VkPipelineCache                               pipelineCache,
+                                                 const void*                                   pNext,
+                                                 VkPipelineCreateFlags2                        flags2,
+                                                 VkPipelineCreateFlags                         flags,
+                                                 uint32_t                                      stageCount,
+                                                 const VkPipelineShaderStageCreateInfo*        pStages,
+                                                 const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                 const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                 const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                 const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                 const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                 const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                 const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                 const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                 const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                 VkPipelineLayout                              layout,
+                                                 VkRenderPass                                  renderPass,
+                                                 uint32_t                                      subpass,
+                                                 VkPipeline                                    basePipelineHandle,
+                                                 int32_t                                       basePipelineIndex,
+                                                 const VkAllocationCallbacks*                  pAllocator,
+                                                 VkPipeline*                                   pPipeline)
+{
+    VkPipelineCreateFlags2CreateInfo pipeline_create_flags2_create_info;
+
+    pipeline_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
+    pipeline_create_flags2_create_info.pNext = pNext;
+    pipeline_create_flags2_create_info.flags = flags2;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_create_flags2_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithCreationFeedbackInfo(VkDevice                                      device,
+                                                           VkPipelineCache                               pipelineCache,
+                                                           const void*                                   pNext,
+                                                           VkPipelineCreationFeedback*                   pPipelineCreationFeedback,
+                                                           uint32_t                                      pipelineStageCreationFeedbackCount,
+                                                           VkPipelineCreationFeedback*                   pPipelineStageCreationFeedbacks,
+                                                           VkPipelineCreateFlags                         flags,
+                                                           uint32_t                                      stageCount,
+                                                           const VkPipelineShaderStageCreateInfo*        pStages,
+                                                           const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                           const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                           const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                           const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                           const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                           const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                           const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                           const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                           const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                           VkPipelineLayout                              layout,
+                                                           VkRenderPass                                  renderPass,
+                                                           uint32_t                                      subpass,
+                                                           VkPipeline                                    basePipelineHandle,
+                                                           int32_t                                       basePipelineIndex,
+                                                           const VkAllocationCallbacks*                  pAllocator,
+                                                           VkPipeline*                                   pPipeline)
+{
+    VkPipelineCreationFeedbackCreateInfo pipeline_creation_feedback_create_info;
+
+    pipeline_creation_feedback_create_info.sType                              = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
+    pipeline_creation_feedback_create_info.pNext                              = pNext;
+    pipeline_creation_feedback_create_info.pPipelineCreationFeedback          = pPipelineCreationFeedback;
+    pipeline_creation_feedback_create_info.pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount;
+    pipeline_creation_feedback_create_info.pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_creation_feedback_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithDiscardRectangleStateInfo(VkDevice                                      device,
+                                                                VkPipelineCache                               pipelineCache,
+                                                                const void*                                   pNext,
+                                                                VkPipelineDiscardRectangleStateCreateFlagsEXT flagsDiscardRectangleState,
+                                                                VkDiscardRectangleModeEXT                     discardRectangleMode,
+                                                                uint32_t                                      discardRectangleCount,
+                                                                const VkRect2D*                               pDiscardRectangles,
+                                                                VkPipelineCreateFlags                         flags,
+                                                                uint32_t                                      stageCount,
+                                                                const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                VkPipelineLayout                              layout,
+                                                                VkRenderPass                                  renderPass,
+                                                                uint32_t                                      subpass,
+                                                                VkPipeline                                    basePipelineHandle,
+                                                                int32_t                                       basePipelineIndex,
+                                                                const VkAllocationCallbacks*                  pAllocator,
+                                                                VkPipeline*                                   pPipeline)
+{
+    VkPipelineDiscardRectangleStateCreateInfoEXT pipeline_discard_rectangle_state_create_info;
+
+    pipeline_discard_rectangle_state_create_info.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT;
+    pipeline_discard_rectangle_state_create_info.pNext                 = pNext;
+    pipeline_discard_rectangle_state_create_info.flags                 = flagsDiscardRectangleState;
+    pipeline_discard_rectangle_state_create_info.discardRectangleMode  = discardRectangleMode;
+    pipeline_discard_rectangle_state_create_info.discardRectangleCount = discardRectangleCount;
+    pipeline_discard_rectangle_state_create_info.pDiscardRectangles    = pDiscardRectangles;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_discard_rectangle_state_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithFragmentDensityMapLayeredInfo(VkDevice                                      device,
+                                                                    VkPipelineCache                               pipelineCache,
+                                                                    const void*                                   pNext,
+                                                                    uint32_t                                      maxFragmentDensityMapLayers,
+                                                                    VkPipelineCreateFlags                         flags,
+                                                                    uint32_t                                      stageCount,
+                                                                    const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                    const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                    const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                    const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                    const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                    const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                    const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                    const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                    const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                    const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                    VkPipelineLayout                              layout,
+                                                                    VkRenderPass                                  renderPass,
+                                                                    uint32_t                                      subpass,
+                                                                    VkPipeline                                    basePipelineHandle,
+                                                                    int32_t                                       basePipelineIndex,
+                                                                    const VkAllocationCallbacks*                  pAllocator,
+                                                                    VkPipeline*                                   pPipeline)
+{
+    VkPipelineFragmentDensityMapLayeredCreateInfoVALVE pipeline_fragment_density_map_layered_create_info;
+
+    pipeline_fragment_density_map_layered_create_info.sType                       = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_DENSITY_MAP_LAYERED_CREATE_INFO_VALVE;
+    pipeline_fragment_density_map_layered_create_info.pNext                       = pNext;
+    pipeline_fragment_density_map_layered_create_info.maxFragmentDensityMapLayers = maxFragmentDensityMapLayers;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_fragment_density_map_layered_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithFragmentShadingRateEnumStateInfo(VkDevice                                      device,
+                                                                       VkPipelineCache                               pipelineCache,
+                                                                       const void*                                   pNext,
+                                                                       VkFragmentShadingRateTypeNV                   shadingRateType,
+                                                                       VkFragmentShadingRateNV                       shadingRate,
+                                                                       const VkFragmentShadingRateCombinerOpKHR      combinerOps[2],
+                                                                       VkPipelineCreateFlags                         flags,
+                                                                       uint32_t                                      stageCount,
+                                                                       const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                       const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                       const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                       const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                       const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                       const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                       const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                       const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                       const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                       const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                       VkPipelineLayout                              layout,
+                                                                       VkRenderPass                                  renderPass,
+                                                                       uint32_t                                      subpass,
+                                                                       VkPipeline                                    basePipelineHandle,
+                                                                       int32_t                                       basePipelineIndex,
+                                                                       const VkAllocationCallbacks*                  pAllocator,
+                                                                       VkPipeline*                                   pPipeline)
+{
+    VkPipelineFragmentShadingRateEnumStateCreateInfoNV pipeline_fragment_shading_rate_enum_state_create_info;
+
+    pipeline_fragment_shading_rate_enum_state_create_info.sType           = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_ENUM_STATE_CREATE_INFO_NV;
+    pipeline_fragment_shading_rate_enum_state_create_info.pNext           = pNext;
+    pipeline_fragment_shading_rate_enum_state_create_info.shadingRateType = shadingRateType;
+    pipeline_fragment_shading_rate_enum_state_create_info.shadingRate     = shadingRate;
+    memcpy(pipeline_fragment_shading_rate_enum_state_create_info.combinerOps, combinerOps, sizeof(pipeline_fragment_shading_rate_enum_state_create_info.combinerOps));
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_fragment_shading_rate_enum_state_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithFragmentShadingRateStateInfo(VkDevice                                      device,
+                                                                   VkPipelineCache                               pipelineCache,
+                                                                   const void*                                   pNext,
+                                                                   VkExtent2D                                    fragmentSize,
+                                                                   const VkFragmentShadingRateCombinerOpKHR      combinerOps[2],
+                                                                   VkPipelineCreateFlags                         flags,
+                                                                   uint32_t                                      stageCount,
+                                                                   const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                   VkPipelineLayout                              layout,
+                                                                   VkRenderPass                                  renderPass,
+                                                                   uint32_t                                      subpass,
+                                                                   VkPipeline                                    basePipelineHandle,
+                                                                   int32_t                                       basePipelineIndex,
+                                                                   const VkAllocationCallbacks*                  pAllocator,
+                                                                   VkPipeline*                                   pPipeline)
+{
+    VkPipelineFragmentShadingRateStateCreateInfoKHR pipeline_fragment_shading_rate_state_create_info;
+
+    pipeline_fragment_shading_rate_state_create_info.sType        = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR;
+    pipeline_fragment_shading_rate_state_create_info.pNext        = pNext;
+    pipeline_fragment_shading_rate_state_create_info.fragmentSize = fragmentSize;
+    memcpy(pipeline_fragment_shading_rate_state_create_info.combinerOps, combinerOps, sizeof(pipeline_fragment_shading_rate_state_create_info.combinerOps));
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_fragment_shading_rate_state_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithPipelineLibraryInfo(VkDevice                                      device,
+                                                          VkPipelineCache                               pipelineCache,
+                                                          const void*                                   pNext,
+                                                          uint32_t                                      libraryCount,
+                                                          const VkPipeline*                             pLibraries,
+                                                          VkPipelineCreateFlags                         flags,
+                                                          uint32_t                                      stageCount,
+                                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                          VkPipelineLayout                              layout,
+                                                          VkRenderPass                                  renderPass,
+                                                          uint32_t                                      subpass,
+                                                          VkPipeline                                    basePipelineHandle,
+                                                          int32_t                                       basePipelineIndex,
+                                                          const VkAllocationCallbacks*                  pAllocator,
+                                                          VkPipeline*                                   pPipeline)
+{
+    VkPipelineLibraryCreateInfoKHR pipeline_library_create_info;
+
+    pipeline_library_create_info.sType        = VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR;
+    pipeline_library_create_info.pNext        = pNext;
+    pipeline_library_create_info.libraryCount = libraryCount;
+    pipeline_library_create_info.pLibraries   = pLibraries;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_library_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithRenderingInfo(VkDevice                                      device,
+                                                    VkPipelineCache                               pipelineCache,
+                                                    const void*                                   pNext,
+                                                    uint32_t                                      viewMask,
+                                                    uint32_t                                      colorAttachmentCount,
+                                                    const VkFormat*                               pColorAttachmentFormats,
+                                                    VkFormat                                      depthAttachmentFormat,
+                                                    VkFormat                                      stencilAttachmentFormat,
+                                                    VkPipelineCreateFlags                         flags,
+                                                    uint32_t                                      stageCount,
+                                                    const VkPipelineShaderStageCreateInfo*        pStages,
+                                                    const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                    const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                    const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                    const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                    const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                    const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                    const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                    const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                    const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                    VkPipelineLayout                              layout,
+                                                    VkRenderPass                                  renderPass,
+                                                    uint32_t                                      subpass,
+                                                    VkPipeline                                    basePipelineHandle,
+                                                    int32_t                                       basePipelineIndex,
+                                                    const VkAllocationCallbacks*                  pAllocator,
+                                                    VkPipeline*                                   pPipeline)
+{
+    VkPipelineRenderingCreateInfo pipeline_rendering_create_info;
+
+    pipeline_rendering_create_info.sType                   = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+    pipeline_rendering_create_info.pNext                   = pNext;
+    pipeline_rendering_create_info.viewMask                = viewMask;
+    pipeline_rendering_create_info.colorAttachmentCount    = colorAttachmentCount;
+    pipeline_rendering_create_info.pColorAttachmentFormats = pColorAttachmentFormats;
+    pipeline_rendering_create_info.depthAttachmentFormat   = depthAttachmentFormat;
+    pipeline_rendering_create_info.stencilAttachmentFormat = stencilAttachmentFormat;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_rendering_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithRepresentativeFragmentTestStateInfo(VkDevice                                      device,
+                                                                          VkPipelineCache                               pipelineCache,
+                                                                          const void*                                   pNext,
+                                                                          VkBool32                                      representativeFragmentTestEnable,
+                                                                          VkPipelineCreateFlags                         flags,
+                                                                          uint32_t                                      stageCount,
+                                                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                          VkPipelineLayout                              layout,
+                                                                          VkRenderPass                                  renderPass,
+                                                                          uint32_t                                      subpass,
+                                                                          VkPipeline                                    basePipelineHandle,
+                                                                          int32_t                                       basePipelineIndex,
+                                                                          const VkAllocationCallbacks*                  pAllocator,
+                                                                          VkPipeline*                                   pPipeline)
+{
+    VkPipelineRepresentativeFragmentTestStateCreateInfoNV pipeline_representative_fragment_test_state_create_info;
+
+    pipeline_representative_fragment_test_state_create_info.sType                            = VK_STRUCTURE_TYPE_PIPELINE_REPRESENTATIVE_FRAGMENT_TEST_STATE_CREATE_INFO_NV;
+    pipeline_representative_fragment_test_state_create_info.pNext                            = pNext;
+    pipeline_representative_fragment_test_state_create_info.representativeFragmentTestEnable = representativeFragmentTestEnable;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_representative_fragment_test_state_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithRobustnessInfo(VkDevice                                      device,
+                                                     VkPipelineCache                               pipelineCache,
+                                                     const void*                                   pNext,
+                                                     VkPipelineRobustnessBufferBehavior            storageBuffers,
+                                                     VkPipelineRobustnessBufferBehavior            uniformBuffers,
+                                                     VkPipelineRobustnessBufferBehavior            vertexInputs,
+                                                     VkPipelineRobustnessImageBehavior             images,
+                                                     VkPipelineCreateFlags                         flags,
+                                                     uint32_t                                      stageCount,
+                                                     const VkPipelineShaderStageCreateInfo*        pStages,
+                                                     const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                     const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                     const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                     VkPipelineLayout                              layout,
+                                                     VkRenderPass                                  renderPass,
+                                                     uint32_t                                      subpass,
+                                                     VkPipeline                                    basePipelineHandle,
+                                                     int32_t                                       basePipelineIndex,
+                                                     const VkAllocationCallbacks*                  pAllocator,
+                                                     VkPipeline*                                   pPipeline)
+{
+    VkPipelineRobustnessCreateInfo pipeline_robustness_create_info;
+
+    pipeline_robustness_create_info.sType          = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO;
+    pipeline_robustness_create_info.pNext          = pNext;
+    pipeline_robustness_create_info.storageBuffers = storageBuffers;
+    pipeline_robustness_create_info.uniformBuffers = uniformBuffers;
+    pipeline_robustness_create_info.vertexInputs   = vertexInputs;
+    pipeline_robustness_create_info.images         = images;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &pipeline_robustness_create_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithRenderingAttachmentLocationInfo(VkDevice                                      device,
+                                                                      VkPipelineCache                               pipelineCache,
+                                                                      const void*                                   pNext,
+                                                                      uint32_t                                      colorAttachmentCount,
+                                                                      const uint32_t*                               pColorAttachmentLocations,
+                                                                      VkPipelineCreateFlags                         flags,
+                                                                      uint32_t                                      stageCount,
+                                                                      const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                      const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                      const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                      const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                      const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                      const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                      const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                      const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                      const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                      const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                      VkPipelineLayout                              layout,
+                                                                      VkRenderPass                                  renderPass,
+                                                                      uint32_t                                      subpass,
+                                                                      VkPipeline                                    basePipelineHandle,
+                                                                      int32_t                                       basePipelineIndex,
+                                                                      const VkAllocationCallbacks*                  pAllocator,
+                                                                      VkPipeline*                                   pPipeline)
+{
+    VkRenderingAttachmentLocationInfo rendering_attachment_location_info;
+
+    rendering_attachment_location_info.sType                     = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO;
+    rendering_attachment_location_info.pNext                     = pNext;
+    rendering_attachment_location_info.colorAttachmentCount      = colorAttachmentCount;
+    rendering_attachment_location_info.pColorAttachmentLocations = pColorAttachmentLocations;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &rendering_attachment_location_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithRenderingInputAttachmentIndexInfo(VkDevice                                      device,
+                                                                        VkPipelineCache                               pipelineCache,
+                                                                        const void*                                   pNext,
+                                                                        uint32_t                                      colorAttachmentCount,
+                                                                        const uint32_t*                               pColorAttachmentInputIndices,
+                                                                        const uint32_t*                               pDepthInputAttachmentIndex,
+                                                                        const uint32_t*                               pStencilInputAttachmentIndex,
+                                                                        VkPipelineCreateFlags                         flags,
+                                                                        uint32_t                                      stageCount,
+                                                                        const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                        const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                        const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                        const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                        const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                        const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                        const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                        const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                        const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                        const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                        VkPipelineLayout                              layout,
+                                                                        VkRenderPass                                  renderPass,
+                                                                        uint32_t                                      subpass,
+                                                                        VkPipeline                                    basePipelineHandle,
+                                                                        int32_t                                       basePipelineIndex,
+                                                                        const VkAllocationCallbacks*                  pAllocator,
+                                                                        VkPipeline*                                   pPipeline)
+{
+    VkRenderingInputAttachmentIndexInfo rendering_input_attachment_index_info;
+
+    rendering_input_attachment_index_info.sType                        = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO;
+    rendering_input_attachment_index_info.pNext                        = pNext;
+    rendering_input_attachment_index_info.colorAttachmentCount         = colorAttachmentCount;
+    rendering_input_attachment_index_info.pColorAttachmentInputIndices = pColorAttachmentInputIndices;
+    rendering_input_attachment_index_info.pDepthInputAttachmentIndex   = pDepthInputAttachmentIndex;
+    rendering_input_attachment_index_info.pStencilInputAttachmentIndex = pStencilInputAttachmentIndex;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &rendering_input_attachment_index_info,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateGraphicsPipelineWithValidationFeaturesInfo(VkDevice                                      device,
+                                                             VkPipelineCache                               pipelineCache,
+                                                             const void*                                   pNext,
+                                                             uint32_t                                      enabledValidationFeatureCount,
+                                                             const VkValidationFeatureEnableEXT*           pEnabledValidationFeatures,
+                                                             uint32_t                                      disabledValidationFeatureCount,
+                                                             const VkValidationFeatureDisableEXT*          pDisabledValidationFeatures,
+                                                             VkPipelineCreateFlags                         flags,
+                                                             uint32_t                                      stageCount,
+                                                             const VkPipelineShaderStageCreateInfo*        pStages,
+                                                             const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                             const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                             const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                             const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                             const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                             const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                             const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                             const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                             const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                             VkPipelineLayout                              layout,
+                                                             VkRenderPass                                  renderPass,
+                                                             uint32_t                                      subpass,
+                                                             VkPipeline                                    basePipelineHandle,
+                                                             int32_t                                       basePipelineIndex,
+                                                             const VkAllocationCallbacks*                  pAllocator,
+                                                             VkPipeline*                                   pPipeline)
+{
+    VkValidationFeaturesEXT validation_features;
+
+    validation_features.sType                          = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+    validation_features.pNext                          = pNext;
+    validation_features.enabledValidationFeatureCount  = enabledValidationFeatureCount;
+    validation_features.pEnabledValidationFeatures     = pEnabledValidationFeatures;
+    validation_features.disabledValidationFeatureCount = disabledValidationFeatureCount;
+    validation_features.pDisabledValidationFeatures    = pDisabledValidationFeatures;
+    return cvkCreateGraphicsPipeline(device,
+                                     pipelineCache,
+                                     &validation_features,
+                                     flags,
+                                     stageCount,
+                                     pStages,
+                                     pVertexInputState,
+                                     pInputAssemblyState,
+                                     pTessellationState,
+                                     pViewportState,
+                                     pRasterizationState,
+                                     pMultisampleState,
+                                     pDepthStencilState,
+                                     pColorBlendState,
+                                     pDynamicState,
+                                     layout,
+                                     renderPass,
+                                     subpass,
+                                     basePipelineHandle,
+                                     basePipelineIndex,
+                                     pAllocator,
+                                     pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineWithBinaryInfo(VkDevice                                          device,
+                                                   VkDeferredOperationKHR                            deferredOperation,
+                                                   VkPipelineCache                                   pipelineCache,
+                                                   const void*                                       pNext,
+                                                   uint32_t                                          binaryCount,
+                                                   const VkPipelineBinaryKHR*                        pPipelineBinaries,
+                                                   VkPipelineCreateFlags                             flags,
+                                                   uint32_t                                          stageCount,
+                                                   const VkPipelineShaderStageCreateInfo*            pStages,
+                                                   uint32_t                                          groupCount,
+                                                   const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                   uint32_t                                          maxPipelineRayRecursionDepth,
+                                                   const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                   const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                   const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                   VkPipelineLayout                                  layout,
+                                                   VkPipeline                                        basePipelineHandle,
+                                                   int32_t                                           basePipelineIndex,
+                                                   const VkAllocationCallbacks*                      pAllocator,
+                                                   VkPipeline*                                       pPipeline)
+{
+    VkPipelineBinaryInfoKHR pipeline_binary_info;
+
+    pipeline_binary_info.sType             = VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR;
+    pipeline_binary_info.pNext             = pNext;
+    pipeline_binary_info.binaryCount       = binaryCount;
+    pipeline_binary_info.pPipelineBinaries = pPipelineBinaries;
+    return cvkCreateRayTracingPipeline(device,
+                                       deferredOperation,
+                                       pipelineCache,
+                                       &pipeline_binary_info,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       groupCount,
+                                       pGroups,
+                                       maxPipelineRayRecursionDepth,
+                                       pLibraryInfo,
+                                       pLibraryInterface,
+                                       pDynamicState,
+                                       layout,
+                                       basePipelineHandle,
+                                       basePipelineIndex,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineWithFlags2Info(VkDevice                                          device,
+                                                   VkDeferredOperationKHR                            deferredOperation,
+                                                   VkPipelineCache                                   pipelineCache,
+                                                   const void*                                       pNext,
+                                                   VkPipelineCreateFlags2                            flags2,
+                                                   VkPipelineCreateFlags                             flags,
+                                                   uint32_t                                          stageCount,
+                                                   const VkPipelineShaderStageCreateInfo*            pStages,
+                                                   uint32_t                                          groupCount,
+                                                   const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                   uint32_t                                          maxPipelineRayRecursionDepth,
+                                                   const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                   const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                   const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                   VkPipelineLayout                                  layout,
+                                                   VkPipeline                                        basePipelineHandle,
+                                                   int32_t                                           basePipelineIndex,
+                                                   const VkAllocationCallbacks*                      pAllocator,
+                                                   VkPipeline*                                       pPipeline)
+{
+    VkPipelineCreateFlags2CreateInfo pipeline_create_flags2_create_info;
+
+    pipeline_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
+    pipeline_create_flags2_create_info.pNext = pNext;
+    pipeline_create_flags2_create_info.flags = flags2;
+    return cvkCreateRayTracingPipeline(device,
+                                       deferredOperation,
+                                       pipelineCache,
+                                       &pipeline_create_flags2_create_info,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       groupCount,
+                                       pGroups,
+                                       maxPipelineRayRecursionDepth,
+                                       pLibraryInfo,
+                                       pLibraryInterface,
+                                       pDynamicState,
+                                       layout,
+                                       basePipelineHandle,
+                                       basePipelineIndex,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineWithCreationFeedbackInfo(VkDevice                                          device,
+                                                             VkDeferredOperationKHR                            deferredOperation,
+                                                             VkPipelineCache                                   pipelineCache,
+                                                             const void*                                       pNext,
+                                                             VkPipelineCreationFeedback*                       pPipelineCreationFeedback,
+                                                             uint32_t                                          pipelineStageCreationFeedbackCount,
+                                                             VkPipelineCreationFeedback*                       pPipelineStageCreationFeedbacks,
+                                                             VkPipelineCreateFlags                             flags,
+                                                             uint32_t                                          stageCount,
+                                                             const VkPipelineShaderStageCreateInfo*            pStages,
+                                                             uint32_t                                          groupCount,
+                                                             const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                             uint32_t                                          maxPipelineRayRecursionDepth,
+                                                             const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                             const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                             const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                             VkPipelineLayout                                  layout,
+                                                             VkPipeline                                        basePipelineHandle,
+                                                             int32_t                                           basePipelineIndex,
+                                                             const VkAllocationCallbacks*                      pAllocator,
+                                                             VkPipeline*                                       pPipeline)
+{
+    VkPipelineCreationFeedbackCreateInfo pipeline_creation_feedback_create_info;
+
+    pipeline_creation_feedback_create_info.sType                              = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
+    pipeline_creation_feedback_create_info.pNext                              = pNext;
+    pipeline_creation_feedback_create_info.pPipelineCreationFeedback          = pPipelineCreationFeedback;
+    pipeline_creation_feedback_create_info.pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount;
+    pipeline_creation_feedback_create_info.pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks;
+    return cvkCreateRayTracingPipeline(device,
+                                       deferredOperation,
+                                       pipelineCache,
+                                       &pipeline_creation_feedback_create_info,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       groupCount,
+                                       pGroups,
+                                       maxPipelineRayRecursionDepth,
+                                       pLibraryInfo,
+                                       pLibraryInterface,
+                                       pDynamicState,
+                                       layout,
+                                       basePipelineHandle,
+                                       basePipelineIndex,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineWithRobustnessInfo(VkDevice                                          device,
+                                                       VkDeferredOperationKHR                            deferredOperation,
+                                                       VkPipelineCache                                   pipelineCache,
+                                                       const void*                                       pNext,
+                                                       VkPipelineRobustnessBufferBehavior                storageBuffers,
+                                                       VkPipelineRobustnessBufferBehavior                uniformBuffers,
+                                                       VkPipelineRobustnessBufferBehavior                vertexInputs,
+                                                       VkPipelineRobustnessImageBehavior                 images,
+                                                       VkPipelineCreateFlags                             flags,
+                                                       uint32_t                                          stageCount,
+                                                       const VkPipelineShaderStageCreateInfo*            pStages,
+                                                       uint32_t                                          groupCount,
+                                                       const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                       uint32_t                                          maxPipelineRayRecursionDepth,
+                                                       const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                       const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                       const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                       VkPipelineLayout                                  layout,
+                                                       VkPipeline                                        basePipelineHandle,
+                                                       int32_t                                           basePipelineIndex,
+                                                       const VkAllocationCallbacks*                      pAllocator,
+                                                       VkPipeline*                                       pPipeline)
+{
+    VkPipelineRobustnessCreateInfo pipeline_robustness_create_info;
+
+    pipeline_robustness_create_info.sType          = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO;
+    pipeline_robustness_create_info.pNext          = pNext;
+    pipeline_robustness_create_info.storageBuffers = storageBuffers;
+    pipeline_robustness_create_info.uniformBuffers = uniformBuffers;
+    pipeline_robustness_create_info.vertexInputs   = vertexInputs;
+    pipeline_robustness_create_info.images         = images;
+    return cvkCreateRayTracingPipeline(device,
+                                       deferredOperation,
+                                       pipelineCache,
+                                       &pipeline_robustness_create_info,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       groupCount,
+                                       pGroups,
+                                       maxPipelineRayRecursionDepth,
+                                       pLibraryInfo,
+                                       pLibraryInterface,
+                                       pDynamicState,
+                                       layout,
+                                       basePipelineHandle,
+                                       basePipelineIndex,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineWithClusterAccelerationStructureInfo(VkDevice                                          device,
+                                                                         VkDeferredOperationKHR                            deferredOperation,
+                                                                         VkPipelineCache                                   pipelineCache,
+                                                                         void*                                             pNext,
+                                                                         VkBool32                                          allowClusterAccelerationStructure,
+                                                                         VkPipelineCreateFlags                             flags,
+                                                                         uint32_t                                          stageCount,
+                                                                         const VkPipelineShaderStageCreateInfo*            pStages,
+                                                                         uint32_t                                          groupCount,
+                                                                         const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                                         uint32_t                                          maxPipelineRayRecursionDepth,
+                                                                         const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                                         const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                                         const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                                         VkPipelineLayout                                  layout,
+                                                                         VkPipeline                                        basePipelineHandle,
+                                                                         int32_t                                           basePipelineIndex,
+                                                                         const VkAllocationCallbacks*                      pAllocator,
+                                                                         VkPipeline*                                       pPipeline)
+{
+    VkRayTracingPipelineClusterAccelerationStructureCreateInfoNV ray_tracing_pipeline_cluster_acceleration_structure_create_info;
+
+    ray_tracing_pipeline_cluster_acceleration_structure_create_info.sType                             = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CLUSTER_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
+    ray_tracing_pipeline_cluster_acceleration_structure_create_info.pNext                             = pNext;
+    ray_tracing_pipeline_cluster_acceleration_structure_create_info.allowClusterAccelerationStructure = allowClusterAccelerationStructure;
+    return cvkCreateRayTracingPipeline(device,
+                                       deferredOperation,
+                                       pipelineCache,
+                                       &ray_tracing_pipeline_cluster_acceleration_structure_create_info,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       groupCount,
+                                       pGroups,
+                                       maxPipelineRayRecursionDepth,
+                                       pLibraryInfo,
+                                       pLibraryInterface,
+                                       pDynamicState,
+                                       layout,
+                                       basePipelineHandle,
+                                       basePipelineIndex,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineWithValidationFeaturesInfo(VkDevice                                          device,
+                                                               VkDeferredOperationKHR                            deferredOperation,
+                                                               VkPipelineCache                                   pipelineCache,
+                                                               const void*                                       pNext,
+                                                               uint32_t                                          enabledValidationFeatureCount,
+                                                               const VkValidationFeatureEnableEXT*               pEnabledValidationFeatures,
+                                                               uint32_t                                          disabledValidationFeatureCount,
+                                                               const VkValidationFeatureDisableEXT*              pDisabledValidationFeatures,
+                                                               VkPipelineCreateFlags                             flags,
+                                                               uint32_t                                          stageCount,
+                                                               const VkPipelineShaderStageCreateInfo*            pStages,
+                                                               uint32_t                                          groupCount,
+                                                               const VkRayTracingShaderGroupCreateInfoKHR*       pGroups,
+                                                               uint32_t                                          maxPipelineRayRecursionDepth,
+                                                               const VkPipelineLibraryCreateInfoKHR*             pLibraryInfo,
+                                                               const VkRayTracingPipelineInterfaceCreateInfoKHR* pLibraryInterface,
+                                                               const VkPipelineDynamicStateCreateInfo*           pDynamicState,
+                                                               VkPipelineLayout                                  layout,
+                                                               VkPipeline                                        basePipelineHandle,
+                                                               int32_t                                           basePipelineIndex,
+                                                               const VkAllocationCallbacks*                      pAllocator,
+                                                               VkPipeline*                                       pPipeline)
+{
+    VkValidationFeaturesEXT validation_features;
+
+    validation_features.sType                          = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+    validation_features.pNext                          = pNext;
+    validation_features.enabledValidationFeatureCount  = enabledValidationFeatureCount;
+    validation_features.pEnabledValidationFeatures     = pEnabledValidationFeatures;
+    validation_features.disabledValidationFeatureCount = disabledValidationFeatureCount;
+    validation_features.pDisabledValidationFeatures    = pDisabledValidationFeatures;
+    return cvkCreateRayTracingPipeline(device,
+                                       deferredOperation,
+                                       pipelineCache,
+                                       &validation_features,
+                                       flags,
+                                       stageCount,
+                                       pStages,
+                                       groupCount,
+                                       pGroups,
+                                       maxPipelineRayRecursionDepth,
+                                       pLibraryInfo,
+                                       pLibraryInterface,
+                                       pDynamicState,
+                                       layout,
+                                       basePipelineHandle,
+                                       basePipelineIndex,
+                                       pAllocator,
+                                       pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineInfoWithFlags2InfoNV(VkDevice                                   device,
+                                                         VkPipelineCache                            pipelineCache,
+                                                         const void*                                pNext,
+                                                         VkPipelineCreateFlags2                     flags2,
+                                                         VkPipelineCreateFlags                      flags,
+                                                         uint32_t                                   stageCount,
+                                                         const VkPipelineShaderStageCreateInfo*     pStages,
+                                                         uint32_t                                   groupCount,
+                                                         const VkRayTracingShaderGroupCreateInfoNV* pGroups,
+                                                         uint32_t                                   maxRecursionDepth,
+                                                         VkPipelineLayout                           layout,
+                                                         VkPipeline                                 basePipelineHandle,
+                                                         int32_t                                    basePipelineIndex,
+                                                         const VkAllocationCallbacks*               pAllocator,
+                                                         VkPipeline*                                pPipeline)
+{
+    VkPipelineCreateFlags2CreateInfo pipeline_create_flags2_create_info;
+
+    pipeline_create_flags2_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
+    pipeline_create_flags2_create_info.pNext = pNext;
+    pipeline_create_flags2_create_info.flags = flags2;
+    return cvkCreateRayTracingPipelineInfoNV(device,
+                                             pipelineCache,
+                                             &pipeline_create_flags2_create_info,
+                                             flags,
+                                             stageCount,
+                                             pStages,
+                                             groupCount,
+                                             pGroups,
+                                             maxRecursionDepth,
+                                             layout,
+                                             basePipelineHandle,
+                                             basePipelineIndex,
+                                             pAllocator,
+                                             pPipeline);
+}
+VkResult cvkCreateRayTracingPipelineInfoWithCreationFeedbackInfoNV(VkDevice                                   device,
+                                                                   VkPipelineCache                            pipelineCache,
+                                                                   const void*                                pNext,
+                                                                   VkPipelineCreationFeedback*                pPipelineCreationFeedback,
+                                                                   uint32_t                                   pipelineStageCreationFeedbackCount,
+                                                                   VkPipelineCreationFeedback*                pPipelineStageCreationFeedbacks,
+                                                                   VkPipelineCreateFlags                      flags,
+                                                                   uint32_t                                   stageCount,
+                                                                   const VkPipelineShaderStageCreateInfo*     pStages,
+                                                                   uint32_t                                   groupCount,
+                                                                   const VkRayTracingShaderGroupCreateInfoNV* pGroups,
+                                                                   uint32_t                                   maxRecursionDepth,
+                                                                   VkPipelineLayout                           layout,
+                                                                   VkPipeline                                 basePipelineHandle,
+                                                                   int32_t                                    basePipelineIndex,
+                                                                   const VkAllocationCallbacks*               pAllocator,
+                                                                   VkPipeline*                                pPipeline)
+{
+    VkPipelineCreationFeedbackCreateInfo pipeline_creation_feedback_create_info;
+
+    pipeline_creation_feedback_create_info.sType                              = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
+    pipeline_creation_feedback_create_info.pNext                              = pNext;
+    pipeline_creation_feedback_create_info.pPipelineCreationFeedback          = pPipelineCreationFeedback;
+    pipeline_creation_feedback_create_info.pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount;
+    pipeline_creation_feedback_create_info.pPipelineStageCreationFeedbacks    = pPipelineStageCreationFeedbacks;
+    return cvkCreateRayTracingPipelineInfoNV(device,
+                                             pipelineCache,
+                                             &pipeline_creation_feedback_create_info,
+                                             flags,
+                                             stageCount,
+                                             pStages,
+                                             groupCount,
+                                             pGroups,
+                                             maxRecursionDepth,
+                                             layout,
+                                             basePipelineHandle,
+                                             basePipelineIndex,
+                                             pAllocator,
+                                             pPipeline);
+}
+VkResult cvkCreateShaderWithCustomResolveInfo(VkDevice                     device,
+                                              const void*                  pNext,
+                                              VkBool32                     customResolve,
+                                              uint32_t                     colorAttachmentCount,
+                                              const VkFormat*              pColorAttachmentFormats,
+                                              VkFormat                     depthAttachmentFormat,
+                                              VkFormat                     stencilAttachmentFormat,
+                                              VkShaderCreateFlagsEXT       flags,
+                                              VkShaderStageFlagBits        stage,
+                                              VkShaderStageFlags           nextStage,
+                                              VkShaderCodeTypeEXT          codeType,
+                                              size_t                       codeSize,
+                                              const void*                  pCode,
+                                              const char*                  pName,
+                                              uint32_t                     setLayoutCount,
+                                              const VkDescriptorSetLayout* pSetLayouts,
+                                              uint32_t                     pushConstantRangeCount,
+                                              const VkPushConstantRange*   pPushConstantRanges,
+                                              const VkSpecializationInfo*  pSpecializationInfo,
+                                              const VkAllocationCallbacks* pAllocator,
+                                              VkShaderEXT*                 pShader)
+{
+    VkCustomResolveCreateInfoEXT custom_resolve_create_info;
+
+    custom_resolve_create_info.sType                   = VK_STRUCTURE_TYPE_CUSTOM_RESOLVE_CREATE_INFO_EXT;
+    custom_resolve_create_info.pNext                   = pNext;
+    custom_resolve_create_info.customResolve           = customResolve;
+    custom_resolve_create_info.colorAttachmentCount    = colorAttachmentCount;
+    custom_resolve_create_info.pColorAttachmentFormats = pColorAttachmentFormats;
+    custom_resolve_create_info.depthAttachmentFormat   = depthAttachmentFormat;
+    custom_resolve_create_info.stencilAttachmentFormat = stencilAttachmentFormat;
+    return cvkCreateShader(device,
+                           &custom_resolve_create_info,
+                           flags,
+                           stage,
+                           nextStage,
+                           codeType,
+                           codeSize,
+                           pCode,
+                           pName,
+                           setLayoutCount,
+                           pSetLayouts,
+                           pushConstantRangeCount,
+                           pPushConstantRanges,
+                           pSpecializationInfo,
+                           pAllocator,
+                           pShader);
+}
+VkResult cvkCreateShaderWithPipelineShaderStageRequiredSubgroupSizeInfo(VkDevice                     device,
+                                                                        const void*                  pNext,
+                                                                        uint32_t                     requiredSubgroupSize,
+                                                                        VkShaderCreateFlagsEXT       flags,
+                                                                        VkShaderStageFlagBits        stage,
+                                                                        VkShaderStageFlags           nextStage,
+                                                                        VkShaderCodeTypeEXT          codeType,
+                                                                        size_t                       codeSize,
+                                                                        const void*                  pCode,
+                                                                        const char*                  pName,
+                                                                        uint32_t                     setLayoutCount,
+                                                                        const VkDescriptorSetLayout* pSetLayouts,
+                                                                        uint32_t                     pushConstantRangeCount,
+                                                                        const VkPushConstantRange*   pPushConstantRanges,
+                                                                        const VkSpecializationInfo*  pSpecializationInfo,
+                                                                        const VkAllocationCallbacks* pAllocator,
+                                                                        VkShaderEXT*                 pShader)
+{
+    VkPipelineShaderStageRequiredSubgroupSizeCreateInfo pipeline_shader_stage_required_subgroup_size_create_info;
+
+    pipeline_shader_stage_required_subgroup_size_create_info.sType                = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO;
+    pipeline_shader_stage_required_subgroup_size_create_info.pNext                = pNext;
+    pipeline_shader_stage_required_subgroup_size_create_info.requiredSubgroupSize = requiredSubgroupSize;
+    return cvkCreateShader(device,
+                           &pipeline_shader_stage_required_subgroup_size_create_info,
+                           flags,
+                           stage,
+                           nextStage,
+                           codeType,
+                           codeSize,
+                           pCode,
+                           pName,
+                           setLayoutCount,
+                           pSetLayouts,
+                           pushConstantRangeCount,
+                           pPushConstantRanges,
+                           pSpecializationInfo,
+                           pAllocator,
+                           pShader);
+}
+VkResult cvkCreateShaderWithDescriptorSetAndBindingMappingInfo(VkDevice                                   device,
+                                                               const void*                                pNext,
+                                                               uint32_t                                   mappingCount,
+                                                               const VkDescriptorSetAndBindingMappingEXT* pMappings,
+                                                               VkShaderCreateFlagsEXT                     flags,
+                                                               VkShaderStageFlagBits                      stage,
+                                                               VkShaderStageFlags                         nextStage,
+                                                               VkShaderCodeTypeEXT                        codeType,
+                                                               size_t                                     codeSize,
+                                                               const void*                                pCode,
+                                                               const char*                                pName,
+                                                               uint32_t                                   setLayoutCount,
+                                                               const VkDescriptorSetLayout*               pSetLayouts,
+                                                               uint32_t                                   pushConstantRangeCount,
+                                                               const VkPushConstantRange*                 pPushConstantRanges,
+                                                               const VkSpecializationInfo*                pSpecializationInfo,
+                                                               const VkAllocationCallbacks*               pAllocator,
+                                                               VkShaderEXT*                               pShader)
+{
+    VkShaderDescriptorSetAndBindingMappingInfoEXT shader_descriptor_set_and_binding_mapping_info;
+
+    shader_descriptor_set_and_binding_mapping_info.sType        = VK_STRUCTURE_TYPE_SHADER_DESCRIPTOR_SET_AND_BINDING_MAPPING_INFO_EXT;
+    shader_descriptor_set_and_binding_mapping_info.pNext        = pNext;
+    shader_descriptor_set_and_binding_mapping_info.mappingCount = mappingCount;
+    shader_descriptor_set_and_binding_mapping_info.pMappings    = pMappings;
+    return cvkCreateShader(device,
+                           &shader_descriptor_set_and_binding_mapping_info,
+                           flags,
+                           stage,
+                           nextStage,
+                           codeType,
+                           codeSize,
+                           pCode,
+                           pName,
+                           setLayoutCount,
+                           pSetLayouts,
+                           pushConstantRangeCount,
+                           pPushConstantRanges,
+                           pSpecializationInfo,
+                           pAllocator,
+                           pShader);
+}
+VkResult cvkCreateShaderWithValidationFeaturesInfo(VkDevice                             device,
+                                                   const void*                          pNext,
+                                                   uint32_t                             enabledValidationFeatureCount,
+                                                   const VkValidationFeatureEnableEXT*  pEnabledValidationFeatures,
+                                                   uint32_t                             disabledValidationFeatureCount,
+                                                   const VkValidationFeatureDisableEXT* pDisabledValidationFeatures,
+                                                   VkShaderCreateFlagsEXT               flags,
+                                                   VkShaderStageFlagBits                stage,
+                                                   VkShaderStageFlags                   nextStage,
+                                                   VkShaderCodeTypeEXT                  codeType,
+                                                   size_t                               codeSize,
+                                                   const void*                          pCode,
+                                                   const char*                          pName,
+                                                   uint32_t                             setLayoutCount,
+                                                   const VkDescriptorSetLayout*         pSetLayouts,
+                                                   uint32_t                             pushConstantRangeCount,
+                                                   const VkPushConstantRange*           pPushConstantRanges,
+                                                   const VkSpecializationInfo*          pSpecializationInfo,
+                                                   const VkAllocationCallbacks*         pAllocator,
+                                                   VkShaderEXT*                         pShader)
+{
+    VkValidationFeaturesEXT validation_features;
+
+    validation_features.sType                          = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+    validation_features.pNext                          = pNext;
+    validation_features.enabledValidationFeatureCount  = enabledValidationFeatureCount;
+    validation_features.pEnabledValidationFeatures     = pEnabledValidationFeatures;
+    validation_features.disabledValidationFeatureCount = disabledValidationFeatureCount;
+    validation_features.pDisabledValidationFeatures    = pDisabledValidationFeatures;
+    return cvkCreateShader(device,
+                           &validation_features,
+                           flags,
+                           stage,
+                           nextStage,
+                           codeType,
+                           codeSize,
+                           pCode,
+                           pName,
+                           setLayoutCount,
+                           pSetLayouts,
+                           pushConstantRangeCount,
+                           pPushConstantRanges,
+                           pSpecializationInfo,
+                           pAllocator,
+                           pShader);
+}
+VkResult cvkCreateSharedSwapchainWithDeviceGroupInfo(VkDevice                         device,
+                                                     const void*                      pNext,
+                                                     VkDeviceGroupPresentModeFlagsKHR modes,
+                                                     VkSwapchainCreateFlagsKHR        flags,
+                                                     VkSurfaceKHR                     surface,
+                                                     uint32_t                         minImageCount,
+                                                     VkFormat                         imageFormat,
+                                                     VkColorSpaceKHR                  imageColorSpace,
+                                                     VkExtent2D                       imageExtent,
+                                                     uint32_t                         imageArrayLayers,
+                                                     VkImageUsageFlags                imageUsage,
+                                                     VkSharingMode                    imageSharingMode,
+                                                     uint32_t                         queueFamilyIndexCount,
+                                                     const uint32_t*                  pQueueFamilyIndices,
+                                                     VkSurfaceTransformFlagBitsKHR    preTransform,
+                                                     VkCompositeAlphaFlagBitsKHR      compositeAlpha,
+                                                     VkPresentModeKHR                 presentMode,
+                                                     VkBool32                         clipped,
+                                                     VkSwapchainKHR                   oldSwapchain,
+                                                     const VkAllocationCallbacks*     pAllocator,
+                                                     VkSwapchainKHR*                  pSwapchain)
+{
+    VkDeviceGroupSwapchainCreateInfoKHR device_group_swapchain_create_info;
+
+    device_group_swapchain_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
+    device_group_swapchain_create_info.pNext = pNext;
+    device_group_swapchain_create_info.modes = modes;
+    return cvkCreateSharedSwapchain(device,
+                                    &device_group_swapchain_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithImageCompressionControlInfo(VkDevice                             device,
+                                                                 const void*                          pNext,
+                                                                 VkImageCompressionFlagsEXT           flagsImageCompression,
+                                                                 uint32_t                             compressionControlPlaneCount,
+                                                                 VkImageCompressionFixedRateFlagsEXT* pFixedRateFlags,
+                                                                 VkSwapchainCreateFlagsKHR            flags,
+                                                                 VkSurfaceKHR                         surface,
+                                                                 uint32_t                             minImageCount,
+                                                                 VkFormat                             imageFormat,
+                                                                 VkColorSpaceKHR                      imageColorSpace,
+                                                                 VkExtent2D                           imageExtent,
+                                                                 uint32_t                             imageArrayLayers,
+                                                                 VkImageUsageFlags                    imageUsage,
+                                                                 VkSharingMode                        imageSharingMode,
+                                                                 uint32_t                             queueFamilyIndexCount,
+                                                                 const uint32_t*                      pQueueFamilyIndices,
+                                                                 VkSurfaceTransformFlagBitsKHR        preTransform,
+                                                                 VkCompositeAlphaFlagBitsKHR          compositeAlpha,
+                                                                 VkPresentModeKHR                     presentMode,
+                                                                 VkBool32                             clipped,
+                                                                 VkSwapchainKHR                       oldSwapchain,
+                                                                 const VkAllocationCallbacks*         pAllocator,
+                                                                 VkSwapchainKHR*                      pSwapchain)
+{
+    VkImageCompressionControlEXT image_compression_control;
+
+    image_compression_control.sType                        = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
+    image_compression_control.pNext                        = pNext;
+    image_compression_control.flags                        = flagsImageCompression;
+    image_compression_control.compressionControlPlaneCount = compressionControlPlaneCount;
+    image_compression_control.pFixedRateFlags              = pFixedRateFlags;
+    return cvkCreateSharedSwapchain(device,
+                                    &image_compression_control,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithImageFormatListInfo(VkDevice                      device,
+                                                         const void*                   pNext,
+                                                         uint32_t                      viewFormatCount,
+                                                         const VkFormat*               pViewFormats,
+                                                         VkSwapchainCreateFlagsKHR     flags,
+                                                         VkSurfaceKHR                  surface,
+                                                         uint32_t                      minImageCount,
+                                                         VkFormat                      imageFormat,
+                                                         VkColorSpaceKHR               imageColorSpace,
+                                                         VkExtent2D                    imageExtent,
+                                                         uint32_t                      imageArrayLayers,
+                                                         VkImageUsageFlags             imageUsage,
+                                                         VkSharingMode                 imageSharingMode,
+                                                         uint32_t                      queueFamilyIndexCount,
+                                                         const uint32_t*               pQueueFamilyIndices,
+                                                         VkSurfaceTransformFlagBitsKHR preTransform,
+                                                         VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                         VkPresentModeKHR              presentMode,
+                                                         VkBool32                      clipped,
+                                                         VkSwapchainKHR                oldSwapchain,
+                                                         const VkAllocationCallbacks*  pAllocator,
+                                                         VkSwapchainKHR*               pSwapchain)
+{
+    VkImageFormatListCreateInfo image_format_list_create_info;
+
+    image_format_list_create_info.sType           = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
+    image_format_list_create_info.pNext           = pNext;
+    image_format_list_create_info.viewFormatCount = viewFormatCount;
+    image_format_list_create_info.pViewFormats    = pViewFormats;
+    return cvkCreateSharedSwapchain(device,
+                                    &image_format_list_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithImageUsageFlags2InfoKHR(VkDevice                      device,
+                                                             void*                         pNext,
+                                                             VkImageUsageFlags2KHR         usage,
+                                                             VkSwapchainCreateFlagsKHR     flags,
+                                                             VkSurfaceKHR                  surface,
+                                                             uint32_t                      minImageCount,
+                                                             VkFormat                      imageFormat,
+                                                             VkColorSpaceKHR               imageColorSpace,
+                                                             VkExtent2D                    imageExtent,
+                                                             uint32_t                      imageArrayLayers,
+                                                             VkImageUsageFlags             imageUsage,
+                                                             VkSharingMode                 imageSharingMode,
+                                                             uint32_t                      queueFamilyIndexCount,
+                                                             const uint32_t*               pQueueFamilyIndices,
+                                                             VkSurfaceTransformFlagBitsKHR preTransform,
+                                                             VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                             VkPresentModeKHR              presentMode,
+                                                             VkBool32                      clipped,
+                                                             VkSwapchainKHR                oldSwapchain,
+                                                             const VkAllocationCallbacks*  pAllocator,
+                                                             VkSwapchainKHR*               pSwapchain)
+{
+    VkImageUsageFlags2CreateInfoKHR image_usage_flags2_create_info_khr;
+
+    image_usage_flags2_create_info_khr.sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
+    image_usage_flags2_create_info_khr.pNext = pNext;
+    image_usage_flags2_create_info_khr.usage = usage;
+    return cvkCreateSharedSwapchain(device,
+                                    &image_usage_flags2_create_info_khr,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithCounterInfo(VkDevice                      device,
+                                                 const void*                   pNext,
+                                                 VkSurfaceCounterFlagsEXT      surfaceCounters,
+                                                 VkSwapchainCreateFlagsKHR     flags,
+                                                 VkSurfaceKHR                  surface,
+                                                 uint32_t                      minImageCount,
+                                                 VkFormat                      imageFormat,
+                                                 VkColorSpaceKHR               imageColorSpace,
+                                                 VkExtent2D                    imageExtent,
+                                                 uint32_t                      imageArrayLayers,
+                                                 VkImageUsageFlags             imageUsage,
+                                                 VkSharingMode                 imageSharingMode,
+                                                 uint32_t                      queueFamilyIndexCount,
+                                                 const uint32_t*               pQueueFamilyIndices,
+                                                 VkSurfaceTransformFlagBitsKHR preTransform,
+                                                 VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                 VkPresentModeKHR              presentMode,
+                                                 VkBool32                      clipped,
+                                                 VkSwapchainKHR                oldSwapchain,
+                                                 const VkAllocationCallbacks*  pAllocator,
+                                                 VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainCounterCreateInfoEXT swapchain_counter_create_info;
+
+    swapchain_counter_create_info.sType           = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT;
+    swapchain_counter_create_info.pNext           = pNext;
+    swapchain_counter_create_info.surfaceCounters = surfaceCounters;
+    return cvkCreateSharedSwapchain(device,
+                                    &swapchain_counter_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithDisplayNativeHdrInfo(VkDevice                      device,
+                                                          const void*                   pNext,
+                                                          VkBool32                      localDimmingEnable,
+                                                          VkSwapchainCreateFlagsKHR     flags,
+                                                          VkSurfaceKHR                  surface,
+                                                          uint32_t                      minImageCount,
+                                                          VkFormat                      imageFormat,
+                                                          VkColorSpaceKHR               imageColorSpace,
+                                                          VkExtent2D                    imageExtent,
+                                                          uint32_t                      imageArrayLayers,
+                                                          VkImageUsageFlags             imageUsage,
+                                                          VkSharingMode                 imageSharingMode,
+                                                          uint32_t                      queueFamilyIndexCount,
+                                                          const uint32_t*               pQueueFamilyIndices,
+                                                          VkSurfaceTransformFlagBitsKHR preTransform,
+                                                          VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                          VkPresentModeKHR              presentMode,
+                                                          VkBool32                      clipped,
+                                                          VkSwapchainKHR                oldSwapchain,
+                                                          const VkAllocationCallbacks*  pAllocator,
+                                                          VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainDisplayNativeHdrCreateInfoAMD swapchain_display_native_hdr_create_info;
+
+    swapchain_display_native_hdr_create_info.sType              = VK_STRUCTURE_TYPE_SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD;
+    swapchain_display_native_hdr_create_info.pNext              = pNext;
+    swapchain_display_native_hdr_create_info.localDimmingEnable = localDimmingEnable;
+    return cvkCreateSharedSwapchain(device,
+                                    &swapchain_display_native_hdr_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithLatencyInfo(VkDevice                      device,
+                                                 const void*                   pNext,
+                                                 VkBool32                      latencyModeEnable,
+                                                 VkSwapchainCreateFlagsKHR     flags,
+                                                 VkSurfaceKHR                  surface,
+                                                 uint32_t                      minImageCount,
+                                                 VkFormat                      imageFormat,
+                                                 VkColorSpaceKHR               imageColorSpace,
+                                                 VkExtent2D                    imageExtent,
+                                                 uint32_t                      imageArrayLayers,
+                                                 VkImageUsageFlags             imageUsage,
+                                                 VkSharingMode                 imageSharingMode,
+                                                 uint32_t                      queueFamilyIndexCount,
+                                                 const uint32_t*               pQueueFamilyIndices,
+                                                 VkSurfaceTransformFlagBitsKHR preTransform,
+                                                 VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                 VkPresentModeKHR              presentMode,
+                                                 VkBool32                      clipped,
+                                                 VkSwapchainKHR                oldSwapchain,
+                                                 const VkAllocationCallbacks*  pAllocator,
+                                                 VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainLatencyCreateInfoNV swapchain_latency_create_info;
+
+    swapchain_latency_create_info.sType             = VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV;
+    swapchain_latency_create_info.pNext             = pNext;
+    swapchain_latency_create_info.latencyModeEnable = latencyModeEnable;
+    return cvkCreateSharedSwapchain(device,
+                                    &swapchain_latency_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithPresentBarrierInfo(VkDevice                      device,
+                                                        void*                         pNext,
+                                                        VkBool32                      presentBarrierEnable,
+                                                        VkSwapchainCreateFlagsKHR     flags,
+                                                        VkSurfaceKHR                  surface,
+                                                        uint32_t                      minImageCount,
+                                                        VkFormat                      imageFormat,
+                                                        VkColorSpaceKHR               imageColorSpace,
+                                                        VkExtent2D                    imageExtent,
+                                                        uint32_t                      imageArrayLayers,
+                                                        VkImageUsageFlags             imageUsage,
+                                                        VkSharingMode                 imageSharingMode,
+                                                        uint32_t                      queueFamilyIndexCount,
+                                                        const uint32_t*               pQueueFamilyIndices,
+                                                        VkSurfaceTransformFlagBitsKHR preTransform,
+                                                        VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                        VkPresentModeKHR              presentMode,
+                                                        VkBool32                      clipped,
+                                                        VkSwapchainKHR                oldSwapchain,
+                                                        const VkAllocationCallbacks*  pAllocator,
+                                                        VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainPresentBarrierCreateInfoNV swapchain_present_barrier_create_info;
+
+    swapchain_present_barrier_create_info.sType                = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_BARRIER_CREATE_INFO_NV;
+    swapchain_present_barrier_create_info.pNext                = pNext;
+    swapchain_present_barrier_create_info.presentBarrierEnable = presentBarrierEnable;
+    return cvkCreateSharedSwapchain(device,
+                                    &swapchain_present_barrier_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithPresentModesInfo(VkDevice                      device,
+                                                      const void*                   pNext,
+                                                      uint32_t                      presentModeCount,
+                                                      const VkPresentModeKHR*       pPresentModes,
+                                                      VkSwapchainCreateFlagsKHR     flags,
+                                                      VkSurfaceKHR                  surface,
+                                                      uint32_t                      minImageCount,
+                                                      VkFormat                      imageFormat,
+                                                      VkColorSpaceKHR               imageColorSpace,
+                                                      VkExtent2D                    imageExtent,
+                                                      uint32_t                      imageArrayLayers,
+                                                      VkImageUsageFlags             imageUsage,
+                                                      VkSharingMode                 imageSharingMode,
+                                                      uint32_t                      queueFamilyIndexCount,
+                                                      const uint32_t*               pQueueFamilyIndices,
+                                                      VkSurfaceTransformFlagBitsKHR preTransform,
+                                                      VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                      VkPresentModeKHR              presentMode,
+                                                      VkBool32                      clipped,
+                                                      VkSwapchainKHR                oldSwapchain,
+                                                      const VkAllocationCallbacks*  pAllocator,
+                                                      VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainPresentModesCreateInfoKHR swapchain_present_modes_create_info;
+
+    swapchain_present_modes_create_info.sType            = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_KHR;
+    swapchain_present_modes_create_info.pNext            = pNext;
+    swapchain_present_modes_create_info.presentModeCount = presentModeCount;
+    swapchain_present_modes_create_info.pPresentModes    = pPresentModes;
+    return cvkCreateSharedSwapchain(device,
+                                    &swapchain_present_modes_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithPresentScalingInfo(VkDevice                      device,
+                                                        const void*                   pNext,
+                                                        VkPresentScalingFlagsKHR      scalingBehavior,
+                                                        VkPresentGravityFlagsKHR      presentGravityX,
+                                                        VkPresentGravityFlagsKHR      presentGravityY,
+                                                        VkSwapchainCreateFlagsKHR     flags,
+                                                        VkSurfaceKHR                  surface,
+                                                        uint32_t                      minImageCount,
+                                                        VkFormat                      imageFormat,
+                                                        VkColorSpaceKHR               imageColorSpace,
+                                                        VkExtent2D                    imageExtent,
+                                                        uint32_t                      imageArrayLayers,
+                                                        VkImageUsageFlags             imageUsage,
+                                                        VkSharingMode                 imageSharingMode,
+                                                        uint32_t                      queueFamilyIndexCount,
+                                                        const uint32_t*               pQueueFamilyIndices,
+                                                        VkSurfaceTransformFlagBitsKHR preTransform,
+                                                        VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                        VkPresentModeKHR              presentMode,
+                                                        VkBool32                      clipped,
+                                                        VkSwapchainKHR                oldSwapchain,
+                                                        const VkAllocationCallbacks*  pAllocator,
+                                                        VkSwapchainKHR*               pSwapchain)
+{
+    VkSwapchainPresentScalingCreateInfoKHR swapchain_present_scaling_create_info;
+
+    swapchain_present_scaling_create_info.sType           = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_SCALING_CREATE_INFO_KHR;
+    swapchain_present_scaling_create_info.pNext           = pNext;
+    swapchain_present_scaling_create_info.scalingBehavior = scalingBehavior;
+    swapchain_present_scaling_create_info.presentGravityX = presentGravityX;
+    swapchain_present_scaling_create_info.presentGravityY = presentGravityY;
+    return cvkCreateSharedSwapchain(device,
+                                    &swapchain_present_scaling_create_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+void cvkGetCalibratedTimestampWithSwapchainInfo(VkDevice               device,
+                                                const void*            pNext,
+                                                VkSwapchainKHR         swapchain,
+                                                VkPresentStageFlagsEXT presentStage,
+                                                uint64_t               timeDomainId,
+                                                VkTimeDomainKHR        timeDomain,
+                                                uint64_t*              pTimestamps,
+                                                uint64_t*              pMaxDeviation)
+{
+    VkSwapchainCalibratedTimestampInfoEXT swapchain_calibrated_timestamp_info;
+
+    swapchain_calibrated_timestamp_info.sType        = VK_STRUCTURE_TYPE_SWAPCHAIN_CALIBRATED_TIMESTAMP_INFO_EXT;
+    swapchain_calibrated_timestamp_info.pNext        = pNext;
+    swapchain_calibrated_timestamp_info.swapchain    = swapchain;
+    swapchain_calibrated_timestamp_info.presentStage = presentStage;
+    swapchain_calibrated_timestamp_info.timeDomainId = timeDomainId;
+    cvkGetCalibratedTimestamp(device, &swapchain_calibrated_timestamp_info, timeDomain, pTimestamps, pMaxDeviation);
+}
+void cvkQueueBindSparseInfoWithDeviceGroupInfo(VkQueue                                  queue,
+                                               const void*                              pNext,
+                                               uint32_t                                 resourceDeviceIndex,
+                                               uint32_t                                 memoryDeviceIndex,
+                                               uint32_t                                 waitSemaphoreCount,
+                                               const VkSemaphore*                       pWaitSemaphores,
+                                               uint32_t                                 bufferBindCount,
+                                               const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                               uint32_t                                 imageOpaqueBindCount,
+                                               const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                               uint32_t                                 imageBindCount,
+                                               const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                               uint32_t                                 signalSemaphoreCount,
+                                               const VkSemaphore*                       pSignalSemaphores,
+                                               VkFence                                  fence)
+{
+    VkDeviceGroupBindSparseInfo device_group_bind_sparse_info;
+
+    device_group_bind_sparse_info.sType               = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO;
+    device_group_bind_sparse_info.pNext               = pNext;
+    device_group_bind_sparse_info.resourceDeviceIndex = resourceDeviceIndex;
+    device_group_bind_sparse_info.memoryDeviceIndex   = memoryDeviceIndex;
+    cvkQueueBindSparseInfo(queue,
+                           &device_group_bind_sparse_info,
+                           waitSemaphoreCount,
+                           pWaitSemaphores,
+                           bufferBindCount,
+                           pBufferBinds,
+                           imageOpaqueBindCount,
+                           pImageOpaqueBinds,
+                           imageBindCount,
+                           pImageBinds,
+                           signalSemaphoreCount,
+                           pSignalSemaphores,
+                           fence);
+}
+void cvkQueueBindSparseInfoWithFrameBoundaryInfo(VkQueue                                  queue,
+                                                 const void*                              pNext,
+                                                 VkFrameBoundaryFlagsEXT                  flags,
+                                                 uint64_t                                 frameID,
+                                                 uint32_t                                 imageCount,
+                                                 const VkImage*                           pImages,
+                                                 uint32_t                                 bufferCount,
+                                                 const VkBuffer*                          pBuffers,
+                                                 uint64_t                                 tagName,
+                                                 size_t                                   tagSize,
+                                                 const void*                              pTag,
+                                                 uint32_t                                 waitSemaphoreCount,
+                                                 const VkSemaphore*                       pWaitSemaphores,
+                                                 uint32_t                                 bufferBindCount,
+                                                 const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                                 uint32_t                                 imageOpaqueBindCount,
+                                                 const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                                 uint32_t                                 imageBindCount,
+                                                 const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                                 uint32_t                                 signalSemaphoreCount,
+                                                 const VkSemaphore*                       pSignalSemaphores,
+                                                 VkFence                                  fence)
+{
+    VkFrameBoundaryEXT frame_boundary;
+
+    frame_boundary.sType       = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT;
+    frame_boundary.pNext       = pNext;
+    frame_boundary.flags       = flags;
+    frame_boundary.frameID     = frameID;
+    frame_boundary.imageCount  = imageCount;
+    frame_boundary.pImages     = pImages;
+    frame_boundary.bufferCount = bufferCount;
+    frame_boundary.pBuffers    = pBuffers;
+    frame_boundary.tagName     = tagName;
+    frame_boundary.tagSize     = tagSize;
+    frame_boundary.pTag        = pTag;
+    cvkQueueBindSparseInfo(queue,
+                           &frame_boundary,
+                           waitSemaphoreCount,
+                           pWaitSemaphores,
+                           bufferBindCount,
+                           pBufferBinds,
+                           imageOpaqueBindCount,
+                           pImageOpaqueBinds,
+                           imageBindCount,
+                           pImageBinds,
+                           signalSemaphoreCount,
+                           pSignalSemaphores,
+                           fence);
+}
+void cvkQueueBindSparseInfoWithFrameBoundaryTensorsInfo(VkQueue                                  queue,
+                                                        const void*                              pNext,
+                                                        uint32_t                                 tensorCount,
+                                                        const VkTensorARM*                       pTensors,
+                                                        uint32_t                                 waitSemaphoreCount,
+                                                        const VkSemaphore*                       pWaitSemaphores,
+                                                        uint32_t                                 bufferBindCount,
+                                                        const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                                        uint32_t                                 imageOpaqueBindCount,
+                                                        const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                                        uint32_t                                 imageBindCount,
+                                                        const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                                        uint32_t                                 signalSemaphoreCount,
+                                                        const VkSemaphore*                       pSignalSemaphores,
+                                                        VkFence                                  fence)
+{
+    VkFrameBoundaryTensorsARM frame_boundary_tensors;
+
+    frame_boundary_tensors.sType       = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_TENSORS_ARM;
+    frame_boundary_tensors.pNext       = pNext;
+    frame_boundary_tensors.tensorCount = tensorCount;
+    frame_boundary_tensors.pTensors    = pTensors;
+    cvkQueueBindSparseInfo(queue,
+                           &frame_boundary_tensors,
+                           waitSemaphoreCount,
+                           pWaitSemaphores,
+                           bufferBindCount,
+                           pBufferBinds,
+                           imageOpaqueBindCount,
+                           pImageOpaqueBinds,
+                           imageBindCount,
+                           pImageBinds,
+                           signalSemaphoreCount,
+                           pSignalSemaphores,
+                           fence);
+}
+void cvkQueueBindSparseInfoWithTimelineSemaphoreInfo(VkQueue                                  queue,
+                                                     const void*                              pNext,
+                                                     uint32_t                                 waitSemaphoreValueCount,
+                                                     const uint64_t*                          pWaitSemaphoreValues,
+                                                     uint32_t                                 signalSemaphoreValueCount,
+                                                     const uint64_t*                          pSignalSemaphoreValues,
+                                                     uint32_t                                 waitSemaphoreCount,
+                                                     const VkSemaphore*                       pWaitSemaphores,
+                                                     uint32_t                                 bufferBindCount,
+                                                     const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                                                     uint32_t                                 imageOpaqueBindCount,
+                                                     const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                                                     uint32_t                                 imageBindCount,
+                                                     const VkSparseImageMemoryBindInfo*       pImageBinds,
+                                                     uint32_t                                 signalSemaphoreCount,
+                                                     const VkSemaphore*                       pSignalSemaphores,
+                                                     VkFence                                  fence)
+{
+    VkTimelineSemaphoreSubmitInfo timeline_semaphore_submit_info;
+
+    timeline_semaphore_submit_info.sType                     = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
+    timeline_semaphore_submit_info.pNext                     = pNext;
+    timeline_semaphore_submit_info.waitSemaphoreValueCount   = waitSemaphoreValueCount;
+    timeline_semaphore_submit_info.pWaitSemaphoreValues      = pWaitSemaphoreValues;
+    timeline_semaphore_submit_info.signalSemaphoreValueCount = signalSemaphoreValueCount;
+    timeline_semaphore_submit_info.pSignalSemaphoreValues    = pSignalSemaphoreValues;
+    cvkQueueBindSparseInfo(queue,
+                           &timeline_semaphore_submit_info,
+                           waitSemaphoreCount,
+                           pWaitSemaphores,
+                           bufferBindCount,
+                           pBufferBinds,
+                           imageOpaqueBindCount,
+                           pImageOpaqueBinds,
+                           imageBindCount,
+                           pImageBinds,
+                           signalSemaphoreCount,
+                           pSignalSemaphores,
+                           fence);
+}
+void cvkQueueSubmitInfoWithAmigoProfilingInfo(VkQueue                     queue,
+                                              const void*                 pNext,
+                                              uint64_t                    firstDrawTimestamp,
+                                              uint64_t                    swapBufferTimestamp,
+                                              uint32_t                    waitSemaphoreCount,
+                                              const VkSemaphore*          pWaitSemaphores,
+                                              const VkPipelineStageFlags* pWaitDstStageMask,
+                                              uint32_t                    commandBufferCount,
+                                              const VkCommandBuffer*      pCommandBuffers,
+                                              uint32_t                    signalSemaphoreCount,
+                                              const VkSemaphore*          pSignalSemaphores,
+                                              VkFence                     fence)
+{
+    VkAmigoProfilingSubmitInfoSEC amigo_profiling_submit_info;
+
+    amigo_profiling_submit_info.sType               = VK_STRUCTURE_TYPE_AMIGO_PROFILING_SUBMIT_INFO_SEC;
+    amigo_profiling_submit_info.pNext               = pNext;
+    amigo_profiling_submit_info.firstDrawTimestamp  = firstDrawTimestamp;
+    amigo_profiling_submit_info.swapBufferTimestamp = swapBufferTimestamp;
+    cvkQueueSubmitInfo(queue,
+                       &amigo_profiling_submit_info,
+                       waitSemaphoreCount,
+                       pWaitSemaphores,
+                       pWaitDstStageMask,
+                       commandBufferCount,
+                       pCommandBuffers,
+                       signalSemaphoreCount,
+                       pSignalSemaphores,
+                       fence);
+}
+void cvkQueueSubmitInfoWithDeviceGroupInfo(VkQueue                     queue,
+                                           const void*                 pNext,
+                                           uint32_t                    deviceGroupWaitSemaphoreCount,
+                                           const uint32_t*             pWaitSemaphoreDeviceIndices,
+                                           uint32_t                    deviceGroupCommandBufferCount,
+                                           const uint32_t*             pCommandBufferDeviceMasks,
+                                           uint32_t                    deviceGroupSignalSemaphoreCount,
+                                           const uint32_t*             pSignalSemaphoreDeviceIndices,
+                                           uint32_t                    waitSemaphoreCount,
+                                           const VkSemaphore*          pWaitSemaphores,
+                                           const VkPipelineStageFlags* pWaitDstStageMask,
+                                           uint32_t                    commandBufferCount,
+                                           const VkCommandBuffer*      pCommandBuffers,
+                                           uint32_t                    signalSemaphoreCount,
+                                           const VkSemaphore*          pSignalSemaphores,
+                                           VkFence                     fence)
+{
+    VkDeviceGroupSubmitInfo device_group_submit_info;
+
+    device_group_submit_info.sType                         = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO;
+    device_group_submit_info.pNext                         = pNext;
+    device_group_submit_info.waitSemaphoreCount            = deviceGroupWaitSemaphoreCount;
+    device_group_submit_info.pWaitSemaphoreDeviceIndices   = pWaitSemaphoreDeviceIndices;
+    device_group_submit_info.commandBufferCount            = deviceGroupCommandBufferCount;
+    device_group_submit_info.pCommandBufferDeviceMasks     = pCommandBufferDeviceMasks;
+    device_group_submit_info.signalSemaphoreCount          = deviceGroupSignalSemaphoreCount;
+    device_group_submit_info.pSignalSemaphoreDeviceIndices = pSignalSemaphoreDeviceIndices;
+    cvkQueueSubmitInfo(queue, &device_group_submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+void cvkQueueSubmitInfoWithFrameBoundaryInfo(VkQueue                     queue,
+                                             const void*                 pNext,
+                                             VkFrameBoundaryFlagsEXT     flags,
+                                             uint64_t                    frameID,
+                                             uint32_t                    imageCount,
+                                             const VkImage*              pImages,
+                                             uint32_t                    bufferCount,
+                                             const VkBuffer*             pBuffers,
+                                             uint64_t                    tagName,
+                                             size_t                      tagSize,
+                                             const void*                 pTag,
+                                             uint32_t                    waitSemaphoreCount,
+                                             const VkSemaphore*          pWaitSemaphores,
+                                             const VkPipelineStageFlags* pWaitDstStageMask,
+                                             uint32_t                    commandBufferCount,
+                                             const VkCommandBuffer*      pCommandBuffers,
+                                             uint32_t                    signalSemaphoreCount,
+                                             const VkSemaphore*          pSignalSemaphores,
+                                             VkFence                     fence)
+{
+    VkFrameBoundaryEXT frame_boundary;
+
+    frame_boundary.sType       = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT;
+    frame_boundary.pNext       = pNext;
+    frame_boundary.flags       = flags;
+    frame_boundary.frameID     = frameID;
+    frame_boundary.imageCount  = imageCount;
+    frame_boundary.pImages     = pImages;
+    frame_boundary.bufferCount = bufferCount;
+    frame_boundary.pBuffers    = pBuffers;
+    frame_boundary.tagName     = tagName;
+    frame_boundary.tagSize     = tagSize;
+    frame_boundary.pTag        = pTag;
+    cvkQueueSubmitInfo(queue, &frame_boundary, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+void cvkQueueSubmitInfoWithFrameBoundaryTensorsInfo(VkQueue                     queue,
+                                                    const void*                 pNext,
+                                                    uint32_t                    tensorCount,
+                                                    const VkTensorARM*          pTensors,
+                                                    uint32_t                    waitSemaphoreCount,
+                                                    const VkSemaphore*          pWaitSemaphores,
+                                                    const VkPipelineStageFlags* pWaitDstStageMask,
+                                                    uint32_t                    commandBufferCount,
+                                                    const VkCommandBuffer*      pCommandBuffers,
+                                                    uint32_t                    signalSemaphoreCount,
+                                                    const VkSemaphore*          pSignalSemaphores,
+                                                    VkFence                     fence)
+{
+    VkFrameBoundaryTensorsARM frame_boundary_tensors;
+
+    frame_boundary_tensors.sType       = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_TENSORS_ARM;
+    frame_boundary_tensors.pNext       = pNext;
+    frame_boundary_tensors.tensorCount = tensorCount;
+    frame_boundary_tensors.pTensors    = pTensors;
+    cvkQueueSubmitInfo(queue, &frame_boundary_tensors, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+void cvkQueueSubmitInfoWithLatencySubmissionPresentIdInfo(VkQueue                     queue,
+                                                          const void*                 pNext,
+                                                          uint64_t                    presentID,
+                                                          uint32_t                    waitSemaphoreCount,
+                                                          const VkSemaphore*          pWaitSemaphores,
+                                                          const VkPipelineStageFlags* pWaitDstStageMask,
+                                                          uint32_t                    commandBufferCount,
+                                                          const VkCommandBuffer*      pCommandBuffers,
+                                                          uint32_t                    signalSemaphoreCount,
+                                                          const VkSemaphore*          pSignalSemaphores,
+                                                          VkFence                     fence)
+{
+    VkLatencySubmissionPresentIdNV latency_submission_present_id;
+
+    latency_submission_present_id.sType     = VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV;
+    latency_submission_present_id.pNext     = pNext;
+    latency_submission_present_id.presentID = presentID;
+    cvkQueueSubmitInfo(queue,
+                       &latency_submission_present_id,
+                       waitSemaphoreCount,
+                       pWaitSemaphores,
+                       pWaitDstStageMask,
+                       commandBufferCount,
+                       pCommandBuffers,
+                       signalSemaphoreCount,
+                       pSignalSemaphores,
+                       fence);
+}
+void cvkQueueSubmitInfoWithPerformanceQueryInfo(VkQueue                     queue,
+                                                const void*                 pNext,
+                                                uint32_t                    counterPassIndex,
+                                                uint32_t                    waitSemaphoreCount,
+                                                const VkSemaphore*          pWaitSemaphores,
+                                                const VkPipelineStageFlags* pWaitDstStageMask,
+                                                uint32_t                    commandBufferCount,
+                                                const VkCommandBuffer*      pCommandBuffers,
+                                                uint32_t                    signalSemaphoreCount,
+                                                const VkSemaphore*          pSignalSemaphores,
+                                                VkFence                     fence)
+{
+    VkPerformanceQuerySubmitInfoKHR performance_query_submit_info;
+
+    performance_query_submit_info.sType            = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR;
+    performance_query_submit_info.pNext            = pNext;
+    performance_query_submit_info.counterPassIndex = counterPassIndex;
+    cvkQueueSubmitInfo(queue,
+                       &performance_query_submit_info,
+                       waitSemaphoreCount,
+                       pWaitSemaphores,
+                       pWaitDstStageMask,
+                       commandBufferCount,
+                       pCommandBuffers,
+                       signalSemaphoreCount,
+                       pSignalSemaphores,
+                       fence);
+}
+void cvkQueueSubmitInfoWithProtectedInfo(VkQueue                     queue,
+                                         const void*                 pNext,
+                                         VkBool32                    protectedSubmit,
+                                         uint32_t                    waitSemaphoreCount,
+                                         const VkSemaphore*          pWaitSemaphores,
+                                         const VkPipelineStageFlags* pWaitDstStageMask,
+                                         uint32_t                    commandBufferCount,
+                                         const VkCommandBuffer*      pCommandBuffers,
+                                         uint32_t                    signalSemaphoreCount,
+                                         const VkSemaphore*          pSignalSemaphores,
+                                         VkFence                     fence)
+{
+    VkProtectedSubmitInfo protected_submit_info;
+
+    protected_submit_info.sType           = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
+    protected_submit_info.pNext           = pNext;
+    protected_submit_info.protectedSubmit = protectedSubmit;
+    cvkQueueSubmitInfo(queue, &protected_submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+void cvkQueueSubmitInfoWithThrottleHintInfo(VkQueue                     queue,
+                                            const void*                 pNext,
+                                            VkThrottleHintTypeSEC       throttleHint,
+                                            uint32_t                    waitSemaphoreCount,
+                                            const VkSemaphore*          pWaitSemaphores,
+                                            const VkPipelineStageFlags* pWaitDstStageMask,
+                                            uint32_t                    commandBufferCount,
+                                            const VkCommandBuffer*      pCommandBuffers,
+                                            uint32_t                    signalSemaphoreCount,
+                                            const VkSemaphore*          pSignalSemaphores,
+                                            VkFence                     fence)
+{
+    VkThrottleHintSubmitInfoSEC throttle_hint_submit_info;
+
+    throttle_hint_submit_info.sType        = VK_STRUCTURE_TYPE_THROTTLE_HINT_SUBMIT_INFO_SEC;
+    throttle_hint_submit_info.pNext        = pNext;
+    throttle_hint_submit_info.throttleHint = throttleHint;
+    cvkQueueSubmitInfo(queue, &throttle_hint_submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+void cvkQueueSubmitInfoWithTimelineSemaphoreInfo(VkQueue                     queue,
+                                                 const void*                 pNext,
+                                                 uint32_t                    waitSemaphoreValueCount,
+                                                 const uint64_t*             pWaitSemaphoreValues,
+                                                 uint32_t                    signalSemaphoreValueCount,
+                                                 const uint64_t*             pSignalSemaphoreValues,
+                                                 uint32_t                    waitSemaphoreCount,
+                                                 const VkSemaphore*          pWaitSemaphores,
+                                                 const VkPipelineStageFlags* pWaitDstStageMask,
+                                                 uint32_t                    commandBufferCount,
+                                                 const VkCommandBuffer*      pCommandBuffers,
+                                                 uint32_t                    signalSemaphoreCount,
+                                                 const VkSemaphore*          pSignalSemaphores,
+                                                 VkFence                     fence)
+{
+    VkTimelineSemaphoreSubmitInfo timeline_semaphore_submit_info;
+
+    timeline_semaphore_submit_info.sType                     = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
+    timeline_semaphore_submit_info.pNext                     = pNext;
+    timeline_semaphore_submit_info.waitSemaphoreValueCount   = waitSemaphoreValueCount;
+    timeline_semaphore_submit_info.pWaitSemaphoreValues      = pWaitSemaphoreValues;
+    timeline_semaphore_submit_info.signalSemaphoreValueCount = signalSemaphoreValueCount;
+    timeline_semaphore_submit_info.pSignalSemaphoreValues    = pSignalSemaphoreValues;
+    cvkQueueSubmitInfo(queue,
+                       &timeline_semaphore_submit_info,
+                       waitSemaphoreCount,
+                       pWaitSemaphores,
+                       pWaitDstStageMask,
+                       commandBufferCount,
+                       pCommandBuffers,
+                       signalSemaphoreCount,
+                       pSignalSemaphores,
+                       fence);
+}
+void cvkQueueSubmitInfo2WithFrameBoundaryInfo(VkQueue                          queue,
+                                              const void*                      pNext,
+                                              VkFrameBoundaryFlagsEXT          flagsFrameBoundary,
+                                              uint64_t                         frameID,
+                                              uint32_t                         imageCount,
+                                              const VkImage*                   pImages,
+                                              uint32_t                         bufferCount,
+                                              const VkBuffer*                  pBuffers,
+                                              uint64_t                         tagName,
+                                              size_t                           tagSize,
+                                              const void*                      pTag,
+                                              VkSubmitFlags                    flags,
+                                              uint32_t                         waitSemaphoreInfoCount,
+                                              const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                              uint32_t                         commandBufferInfoCount,
+                                              const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                              uint32_t                         signalSemaphoreInfoCount,
+                                              const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                              VkFence                          fence)
+{
+    VkFrameBoundaryEXT frame_boundary;
+
+    frame_boundary.sType       = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT;
+    frame_boundary.pNext       = pNext;
+    frame_boundary.flags       = flagsFrameBoundary;
+    frame_boundary.frameID     = frameID;
+    frame_boundary.imageCount  = imageCount;
+    frame_boundary.pImages     = pImages;
+    frame_boundary.bufferCount = bufferCount;
+    frame_boundary.pBuffers    = pBuffers;
+    frame_boundary.tagName     = tagName;
+    frame_boundary.tagSize     = tagSize;
+    frame_boundary.pTag        = pTag;
+    cvkQueueSubmitInfo2(queue,
+                        &frame_boundary,
+                        flags,
+                        waitSemaphoreInfoCount,
+                        pWaitSemaphoreInfos,
+                        commandBufferInfoCount,
+                        pCommandBufferInfos,
+                        signalSemaphoreInfoCount,
+                        pSignalSemaphoreInfos,
+                        fence);
+}
+void cvkQueueSubmitInfo2WithFrameBoundaryTensorsInfo(VkQueue                          queue,
+                                                     const void*                      pNext,
+                                                     uint32_t                         tensorCount,
+                                                     const VkTensorARM*               pTensors,
+                                                     VkSubmitFlags                    flags,
+                                                     uint32_t                         waitSemaphoreInfoCount,
+                                                     const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                     uint32_t                         commandBufferInfoCount,
+                                                     const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                     uint32_t                         signalSemaphoreInfoCount,
+                                                     const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                     VkFence                          fence)
+{
+    VkFrameBoundaryTensorsARM frame_boundary_tensors;
+
+    frame_boundary_tensors.sType       = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_TENSORS_ARM;
+    frame_boundary_tensors.pNext       = pNext;
+    frame_boundary_tensors.tensorCount = tensorCount;
+    frame_boundary_tensors.pTensors    = pTensors;
+    cvkQueueSubmitInfo2(queue,
+                        &frame_boundary_tensors,
+                        flags,
+                        waitSemaphoreInfoCount,
+                        pWaitSemaphoreInfos,
+                        commandBufferInfoCount,
+                        pCommandBufferInfos,
+                        signalSemaphoreInfoCount,
+                        pSignalSemaphoreInfos,
+                        fence);
+}
+void cvkQueueSubmitInfo2WithLatencySubmissionPresentIdInfo(VkQueue                          queue,
+                                                           const void*                      pNext,
+                                                           uint64_t                         presentID,
+                                                           VkSubmitFlags                    flags,
+                                                           uint32_t                         waitSemaphoreInfoCount,
+                                                           const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                           uint32_t                         commandBufferInfoCount,
+                                                           const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                           uint32_t                         signalSemaphoreInfoCount,
+                                                           const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                           VkFence                          fence)
+{
+    VkLatencySubmissionPresentIdNV latency_submission_present_id;
+
+    latency_submission_present_id.sType     = VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV;
+    latency_submission_present_id.pNext     = pNext;
+    latency_submission_present_id.presentID = presentID;
+    cvkQueueSubmitInfo2(queue,
+                        &latency_submission_present_id,
+                        flags,
+                        waitSemaphoreInfoCount,
+                        pWaitSemaphoreInfos,
+                        commandBufferInfoCount,
+                        pCommandBufferInfos,
+                        signalSemaphoreInfoCount,
+                        pSignalSemaphoreInfos,
+                        fence);
+}
+void cvkQueueSubmitInfo2WithPerformanceQueryInfo(VkQueue                          queue,
+                                                 const void*                      pNext,
+                                                 uint32_t                         counterPassIndex,
+                                                 VkSubmitFlags                    flags,
+                                                 uint32_t                         waitSemaphoreInfoCount,
+                                                 const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                 uint32_t                         commandBufferInfoCount,
+                                                 const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                 uint32_t                         signalSemaphoreInfoCount,
+                                                 const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                 VkFence                          fence)
+{
+    VkPerformanceQuerySubmitInfoKHR performance_query_submit_info;
+
+    performance_query_submit_info.sType            = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR;
+    performance_query_submit_info.pNext            = pNext;
+    performance_query_submit_info.counterPassIndex = counterPassIndex;
+    cvkQueueSubmitInfo2(queue,
+                        &performance_query_submit_info,
+                        flags,
+                        waitSemaphoreInfoCount,
+                        pWaitSemaphoreInfos,
+                        commandBufferInfoCount,
+                        pCommandBufferInfos,
+                        signalSemaphoreInfoCount,
+                        pSignalSemaphoreInfos,
+                        fence);
 }
 void cvkBindSwapchainImageMemories(VkDevice              device,
                                    uint32_t              bindInfoCount,
@@ -35875,6 +39275,24 @@ uint32_t cvkGetVideoQueueFamilyIndex(uint32_t propertyCount, const VkQueueFamily
     }
     return VK_INVALID;
 }
+VkDeviceSize cvkAlignDeviceSize(VkDeviceSize value, VkDeviceSize alignment)
+{
+    CVK_ASSERT((0 != alignment) && (0 == (alignment & (alignment - 1))));
+    return (value + alignment - 1) & ~(alignment - 1);
+}
+int32_t cvkGetInactiveVideoReferenceSlotIndex(uint32_t slotCount, const VkBool32* pSlotActive)
+{
+    uint32_t slot_index;
+
+    for (slot_index = 0; slot_index < slotCount; ++slot_index)
+    {
+        if (!pSlotActive[slot_index])
+        {
+            return (int32_t)slot_index;
+        }
+    }
+    return -1;
+}
 uint32_t cvkGetPhysicalDeviceMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {
     VkPhysicalDeviceMemoryProperties memory_properties;
@@ -37837,10 +41255,6 @@ VkBool32 cvkGetPhysicalDeviceVideoProfileSupport(VkInstance instance, VkPhysical
     result = cvkGetPhysicalDeviceVideoCapabilities(instance, physicalDevice, pVideoProfile, NULL, &capabilities);
     return (VK_SUCCESS == result) ? VK_TRUE : VK_FALSE;
 }
-void cvkCmdControlResetVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
-{
-    cvkCmdControlVideoCoding(device, commandBuffer, pNext, VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR);
-}
 void cvkCreateResultStatusQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
 {
     cvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_RESULT_STATUS_ONLY_KHR, queryCount, 0, pAllocator, pQueryPool);
@@ -37935,6 +41349,775 @@ void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkInstance                
     video_format_property_count = cvkGetPhysicalDeviceVideoFormatInfo(instance, physicalDevice, pNext, imageUsage, video_format_properties);
     CVK_ASSERT(video_format_property_count > videoFormatPropertyIndex);
     (*pVideoFormatProperties) = video_format_properties[videoFormatPropertyIndex];
+}
+void cvkCmdResetVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
+{
+    cvkCmdControlVideoCoding(device, commandBuffer, pNext, VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR);
+}
+void cvkCmdSetVideoEncodeRateControl(VkDevice                                    device,
+                                     VkCommandBuffer                             commandBuffer,
+                                     const void*                                 pNext,
+                                     VkVideoEncodeRateControlFlagsKHR            flagsEncodeRate,
+                                     VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
+                                     uint32_t                                    layerCount,
+                                     const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
+                                     uint32_t                                    virtualBufferSizeInMs,
+                                     uint32_t                                    initialVirtualBufferSizeInMs)
+{
+    cvkCmdControlVideoCodingWithEncodeRateInfo(device,
+                                               commandBuffer,
+                                               pNext,
+                                               flagsEncodeRate,
+                                               rateControlMode,
+                                               layerCount,
+                                               pLayers,
+                                               virtualBufferSizeInMs,
+                                               initialVirtualBufferSizeInMs,
+                                               VK_VIDEO_CODING_CONTROL_ENCODE_RATE_CONTROL_BIT_KHR);
+}
+void cvkCmdSetVideoEncodeQualityLevel(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t qualityLevel)
+{
+    cvkCmdControlVideoCodingWithEncodeQualityLevelInfo(device, commandBuffer, pNext, qualityLevel, VK_VIDEO_CODING_CONTROL_ENCODE_QUALITY_LEVEL_BIT_KHR);
+}
+void cvkCreateLayerImageView2D(VkDevice                     device,
+                               VkImageAspectFlags           aspectMask,
+                               const void*                  pViewNext,
+                               VkImageViewCreateFlags       flags,
+                               VkImage                      image,
+                               VkFormat                     format,
+                               uint32_t                     arrayLayer,
+                               const VkAllocationCallbacks* pAllocator,
+                               VkImageView*                 pView)
+{
+    VkImageSubresourceRange subresource_range;
+
+    cvkInitImageSubresourceRange(&subresource_range, aspectMask, 0, 1, arrayLayer, 1);
+    cvkCreateImageView2D(device, pViewNext, flags, image, format, subresource_range, pAllocator, pView);
+}
+void cvkInitOriginVideoPictureResourceInfo(VkVideoPictureResourceInfoKHR* pInfo, const void* pNext, VkExtent2D codedExtent, uint32_t baseArrayLayer, VkImageView imageViewBinding)
+{
+    VkOffset2D coded_offset;
+
+    cvkInitOffset2D(&coded_offset, 0, 0);
+    cvkInitVideoPictureResourceInfo(pInfo, pNext, coded_offset, codedExtent, baseArrayLayer, imageViewBinding);
+}
+void cvkInitInactiveVideoReferenceSlotInfo(VkVideoReferenceSlotInfoKHR* pInfo, const void* pNext, const VkVideoPictureResourceInfoKHR* pPictureResource)
+{
+    cvkInitVideoReferenceSlotInfo(pInfo, pNext, -1, pPictureResource);
+}
+void cvkSetupVideoImage(VkPhysicalDevice             physicalDevice,
+                        VkDevice                     device,
+                        const void*                  pImageNext,
+                        uint32_t                     profileCount,
+                        const VkVideoProfileInfoKHR* pProfiles,
+                        VkImageCreateFlags           flags,
+                        VkFormat                     format,
+                        uint32_t                     arrayLayers,
+                        VkImageUsageFlags            usage,
+                        VkSharingMode                sharingMode,
+                        uint32_t                     queueFamilyIndexCount,
+                        const uint32_t*              pQueueFamilyIndices,
+                        VkMemoryPropertyFlags        requiredProperties,
+                        VkExtent2D                   codedExtent,
+                        const void*                  pMemoryNext,
+                        const VkAllocationCallbacks* pAllocator,
+                        VkImage*                     pImage,
+                        VkDeviceMemory*              pMemory)
+{
+    VkExtent3D extent;
+
+    cvkInitExtent3D(&extent, codedExtent.width, codedExtent.height, 1);
+    cvkSetupImageWithVideoProfileListInfo(physicalDevice,
+                                          device,
+                                          pImageNext,
+                                          profileCount,
+                                          pProfiles,
+                                          flags,
+                                          VK_IMAGE_TYPE_2D,
+                                          format,
+                                          extent,
+                                          1,
+                                          arrayLayers,
+                                          VK_SAMPLE_COUNT_1_BIT,
+                                          VK_IMAGE_TILING_OPTIMAL,
+                                          usage,
+                                          sharingMode,
+                                          queueFamilyIndexCount,
+                                          pQueueFamilyIndices,
+                                          VK_IMAGE_LAYOUT_UNDEFINED,
+                                          requiredProperties,
+                                          pMemoryNext,
+                                          pAllocator,
+                                          pImage,
+                                          pMemory);
+}
+void cvkSetupVideoDecodeDpbImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory)
+{
+    cvkSetupVideoImage(physicalDevice,
+                       device,
+                       pImageNext,
+                       profileCount,
+                       pProfiles,
+                       flags,
+                       format,
+                       arrayLayers,
+                       VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
+                       sharingMode,
+                       queueFamilyIndexCount,
+                       pQueueFamilyIndices,
+                       requiredProperties,
+                       codedExtent,
+                       pMemoryNext,
+                       pAllocator,
+                       pImage,
+                       pMemory);
+}
+void cvkSetupVideoDecodeDstImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory)
+{
+    cvkSetupVideoImage(physicalDevice,
+                       device,
+                       pImageNext,
+                       profileCount,
+                       pProfiles,
+                       flags,
+                       format,
+                       arrayLayers,
+                       VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR,
+                       sharingMode,
+                       queueFamilyIndexCount,
+                       pQueueFamilyIndices,
+                       requiredProperties,
+                       codedExtent,
+                       pMemoryNext,
+                       pAllocator,
+                       pImage,
+                       pMemory);
+}
+void cvkSetupVideoEncodeSrcImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory)
+{
+    cvkSetupVideoImage(physicalDevice,
+                       device,
+                       pImageNext,
+                       profileCount,
+                       pProfiles,
+                       flags,
+                       format,
+                       arrayLayers,
+                       VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR,
+                       sharingMode,
+                       queueFamilyIndexCount,
+                       pQueueFamilyIndices,
+                       requiredProperties,
+                       codedExtent,
+                       pMemoryNext,
+                       pAllocator,
+                       pImage,
+                       pMemory);
+}
+void cvkSetupVideoEncodeDpbImage(VkPhysicalDevice             physicalDevice,
+                                 VkDevice                     device,
+                                 const void*                  pImageNext,
+                                 uint32_t                     profileCount,
+                                 const VkVideoProfileInfoKHR* pProfiles,
+                                 VkImageCreateFlags           flags,
+                                 VkFormat                     format,
+                                 uint32_t                     arrayLayers,
+                                 VkSharingMode                sharingMode,
+                                 uint32_t                     queueFamilyIndexCount,
+                                 const uint32_t*              pQueueFamilyIndices,
+                                 VkMemoryPropertyFlags        requiredProperties,
+                                 VkExtent2D                   codedExtent,
+                                 const void*                  pMemoryNext,
+                                 const VkAllocationCallbacks* pAllocator,
+                                 VkImage*                     pImage,
+                                 VkDeviceMemory*              pMemory)
+{
+    cvkSetupVideoImage(physicalDevice,
+                       device,
+                       pImageNext,
+                       profileCount,
+                       pProfiles,
+                       flags,
+                       format,
+                       arrayLayers,
+                       VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
+                       sharingMode,
+                       queueFamilyIndexCount,
+                       pQueueFamilyIndices,
+                       requiredProperties,
+                       codedExtent,
+                       pMemoryNext,
+                       pAllocator,
+                       pImage,
+                       pMemory);
+}
+void cvkSetupVideoDecodeSrcBuffer(VkPhysicalDevice             physicalDevice,
+                                  VkDevice                     device,
+                                  const void*                  pBufferNext,
+                                  uint32_t                     profileCount,
+                                  const VkVideoProfileInfoKHR* pProfiles,
+                                  VkBufferCreateFlags          flags,
+                                  VkDeviceSize                 size,
+                                  VkSharingMode                sharingMode,
+                                  uint32_t                     queueFamilyIndexCount,
+                                  const uint32_t*              pQueueFamilyIndices,
+                                  VkMemoryPropertyFlags        requiredProperties,
+                                  const void*                  pMemoryNext,
+                                  const VkAllocationCallbacks* pAllocator,
+                                  VkBuffer*                    pBuffer,
+                                  VkDeviceMemory*              pMemory)
+{
+    cvkSetupBufferWithVideoProfileListInfo(physicalDevice,
+                                           device,
+                                           pBufferNext,
+                                           profileCount,
+                                           pProfiles,
+                                           flags,
+                                           size,
+                                           VK_BUFFER_USAGE_VIDEO_DECODE_SRC_BIT_KHR,
+                                           sharingMode,
+                                           queueFamilyIndexCount,
+                                           pQueueFamilyIndices,
+                                           requiredProperties,
+                                           pMemoryNext,
+                                           pAllocator,
+                                           pBuffer,
+                                           pMemory);
+}
+void cvkSetupVideoEncodeDstBuffer(VkPhysicalDevice             physicalDevice,
+                                  VkDevice                     device,
+                                  const void*                  pBufferNext,
+                                  uint32_t                     profileCount,
+                                  const VkVideoProfileInfoKHR* pProfiles,
+                                  VkBufferCreateFlags          flags,
+                                  VkDeviceSize                 size,
+                                  VkSharingMode                sharingMode,
+                                  uint32_t                     queueFamilyIndexCount,
+                                  const uint32_t*              pQueueFamilyIndices,
+                                  VkMemoryPropertyFlags        requiredProperties,
+                                  const void*                  pMemoryNext,
+                                  const VkAllocationCallbacks* pAllocator,
+                                  VkBuffer*                    pBuffer,
+                                  VkDeviceMemory*              pMemory)
+{
+    cvkSetupBufferWithVideoProfileListInfo(physicalDevice,
+                                           device,
+                                           pBufferNext,
+                                           profileCount,
+                                           pProfiles,
+                                           flags,
+                                           size,
+                                           VK_BUFFER_USAGE_VIDEO_ENCODE_DST_BIT_KHR,
+                                           sharingMode,
+                                           queueFamilyIndexCount,
+                                           pQueueFamilyIndices,
+                                           requiredProperties,
+                                           pMemoryNext,
+                                           pAllocator,
+                                           pBuffer,
+                                           pMemory);
+}
+void cvkCmdDecodeVideoPicture(VkDevice                           device,
+                              VkCommandBuffer                    commandBuffer,
+                              VkVideoSessionKHR                  videoSession,
+                              VkVideoSessionParametersKHR        videoSessionParameters,
+                              const void*                        pNext,
+                              VkVideoDecodeFlagsKHR              flags,
+                              VkBuffer                           srcBuffer,
+                              VkDeviceSize                       srcBufferOffset,
+                              VkDeviceSize                       srcBufferRange,
+                              VkVideoPictureResourceInfoKHR      dstPictureResource,
+                              const VkVideoReferenceSlotInfoKHR* pSetupReferenceSlot,
+                              uint32_t                           referenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
+                              const void*                        pBeginNext,
+                              uint32_t                           boundReferenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots)
+{
+    cvkCmdBeginVideoCoding(device, commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdDecodeVideo(device, commandBuffer, pNext, flags, srcBuffer, srcBufferOffset, srcBufferRange, dstPictureResource, pSetupReferenceSlot, referenceSlotCount, pReferenceSlots);
+    cvkCmdEndVideoCoding(device, commandBuffer, NULL, 0);
+}
+void cvkCmdDecodeInitialVideoPicture(VkDevice                           device,
+                                     VkCommandBuffer                    commandBuffer,
+                                     VkVideoSessionKHR                  videoSession,
+                                     VkVideoSessionParametersKHR        videoSessionParameters,
+                                     const void*                        pNext,
+                                     VkVideoDecodeFlagsKHR              flags,
+                                     VkBuffer                           srcBuffer,
+                                     VkDeviceSize                       srcBufferOffset,
+                                     VkDeviceSize                       srcBufferRange,
+                                     VkVideoPictureResourceInfoKHR      dstPictureResource,
+                                     const VkVideoReferenceSlotInfoKHR* pSetupReferenceSlot,
+                                     uint32_t                           referenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
+                                     const void*                        pBeginNext,
+                                     uint32_t                           boundReferenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots)
+{
+    cvkCmdBeginVideoCoding(device, commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdResetVideoCoding(device, commandBuffer, NULL);
+    cvkCmdDecodeVideo(device, commandBuffer, pNext, flags, srcBuffer, srcBufferOffset, srcBufferRange, dstPictureResource, pSetupReferenceSlot, referenceSlotCount, pReferenceSlots);
+    cvkCmdEndVideoCoding(device, commandBuffer, NULL, 0);
+}
+void cvkCmdEncodeVideoPicture(VkDevice                           device,
+                              VkCommandBuffer                    commandBuffer,
+                              VkVideoSessionKHR                  videoSession,
+                              VkVideoSessionParametersKHR        videoSessionParameters,
+                              const void*                        pNext,
+                              VkVideoEncodeFlagsKHR              flags,
+                              VkBuffer                           dstBuffer,
+                              VkDeviceSize                       dstBufferOffset,
+                              VkDeviceSize                       dstBufferRange,
+                              VkVideoPictureResourceInfoKHR      srcPictureResource,
+                              const VkVideoReferenceSlotInfoKHR* pSetupReferenceSlot,
+                              uint32_t                           referenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
+                              uint32_t                           precedingExternallyEncodedBytes,
+                              const void*                        pBeginNext,
+                              uint32_t                           boundReferenceSlotCount,
+                              const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots)
+{
+    cvkCmdBeginVideoCoding(device, commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdEncodeVideo(device,
+                      commandBuffer,
+                      pNext,
+                      flags,
+                      dstBuffer,
+                      dstBufferOffset,
+                      dstBufferRange,
+                      srcPictureResource,
+                      pSetupReferenceSlot,
+                      referenceSlotCount,
+                      pReferenceSlots,
+                      precedingExternallyEncodedBytes);
+    cvkCmdEndVideoCoding(device, commandBuffer, NULL, 0);
+}
+void cvkCmdEncodeInitialVideoPicture(VkDevice                                    device,
+                                     VkCommandBuffer                             commandBuffer,
+                                     VkVideoSessionKHR                           videoSession,
+                                     VkVideoSessionParametersKHR                 videoSessionParameters,
+                                     VkVideoEncodeRateControlFlagsKHR            flagsEncodeRate,
+                                     VkVideoEncodeRateControlModeFlagBitsKHR     rateControlMode,
+                                     uint32_t                                    layerCount,
+                                     const VkVideoEncodeRateControlLayerInfoKHR* pLayers,
+                                     uint32_t                                    virtualBufferSizeInMs,
+                                     uint32_t                                    initialVirtualBufferSizeInMs,
+                                     const void*                                 pNext,
+                                     VkVideoEncodeFlagsKHR                       flags,
+                                     VkBuffer                                    dstBuffer,
+                                     VkDeviceSize                                dstBufferOffset,
+                                     VkDeviceSize                                dstBufferRange,
+                                     VkVideoPictureResourceInfoKHR               srcPictureResource,
+                                     const VkVideoReferenceSlotInfoKHR*          pSetupReferenceSlot,
+                                     uint32_t                                    referenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR*          pReferenceSlots,
+                                     uint32_t                                    precedingExternallyEncodedBytes,
+                                     const void*                                 pBeginNext,
+                                     uint32_t                                    boundReferenceSlotCount,
+                                     const VkVideoReferenceSlotInfoKHR*          pBoundReferenceSlots,
+                                     const void*                                 pRateControlNext)
+{
+    cvkCmdBeginVideoCoding(device, commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdResetVideoCoding(device, commandBuffer, NULL);
+    cvkCmdSetVideoEncodeRateControl(device, commandBuffer, pRateControlNext, flagsEncodeRate, rateControlMode, layerCount, pLayers, virtualBufferSizeInMs, initialVirtualBufferSizeInMs);
+    cvkCmdEncodeVideo(device,
+                      commandBuffer,
+                      pNext,
+                      flags,
+                      dstBuffer,
+                      dstBufferOffset,
+                      dstBufferRange,
+                      srcPictureResource,
+                      pSetupReferenceSlot,
+                      referenceSlotCount,
+                      pReferenceSlots,
+                      precedingExternallyEncodedBytes);
+    cvkCmdEndVideoCoding(device, commandBuffer, NULL, 0);
+}
+VkQueryResultStatusKHR cvkGetQueryResultStatus(VkDevice device, VkQueryPool queryPool, uint32_t query)
+{
+    VkResult result;
+    int32_t  status;
+
+    result = cvkGetQueryPoolResults(device, queryPool, query, 1, sizeof(status), &status, sizeof(status), VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT);
+    CVK_ASSERT(VK_SUCCESS == result);
+    return (VkQueryResultStatusKHR)status;
+}
+void cvkCreateVideoEncodeBitstreamFeedbackQueryPool(VkDevice                     device,
+                                                    const void*                  pQueryPoolNext,
+                                                    VkQueryPoolCreateFlags       flags,
+                                                    uint32_t                     queryCount,
+                                                    const VkAllocationCallbacks* pAllocator,
+                                                    VkQueryPool*                 pQueryPool)
+{
+    cvkCreateVideoEncodeFeedbackQueryPool(device,
+                                          pQueryPoolNext,
+                                          VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR | VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR,
+                                          flags,
+                                          queryCount,
+                                          pAllocator,
+                                          pQueryPool);
+}
+VkQueryResultStatusKHR cvkGetVideoEncodeBitstreamFeedback(VkDevice device, VkQueryPool queryPool, uint32_t query, uint32_t* pBitstreamBufferOffset, uint32_t* pBitstreamBytesWritten)
+{
+    VkResult result;
+    uint32_t feedback[3];
+
+    result = cvkGetQueryPoolResults(device, queryPool, query, 1, sizeof(feedback), feedback, sizeof(feedback), VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT);
+    CVK_ASSERT(VK_SUCCESS == result);
+    (*pBitstreamBufferOffset) = feedback[0];
+    (*pBitstreamBytesWritten) = feedback[1];
+    return (VkQueryResultStatusKHR)feedback[2];
+}
+VkResult cvkCreateGraphicsPipelineLibrary(VkDevice                                      device,
+                                          VkPipelineCache                               pipelineCache,
+                                          const void*                                   pPipelineNext,
+                                          VkGraphicsPipelineLibraryFlagsEXT             flagsGraphicsLibrary,
+                                          uint32_t                                      stageCount,
+                                          const VkPipelineShaderStageCreateInfo*        pStages,
+                                          const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                          const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                          const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                          const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                          const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                          const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                          const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                          const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                          const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                          VkPipelineLayout                              layout,
+                                          VkRenderPass                                  renderPass,
+                                          uint32_t                                      subpass,
+                                          VkPipelineCreateFlags                         flags,
+                                          const VkAllocationCallbacks*                  pAllocator,
+                                          VkPipeline*                                   pPipeline)
+{
+    return cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo(device,
+                                                                    pipelineCache,
+                                                                    pPipelineNext,
+                                                                    flagsGraphicsLibrary,
+                                                                    flags | VK_PIPELINE_CREATE_LIBRARY_BIT_KHR,
+                                                                    stageCount,
+                                                                    pStages,
+                                                                    pVertexInputState,
+                                                                    pInputAssemblyState,
+                                                                    pTessellationState,
+                                                                    pViewportState,
+                                                                    pRasterizationState,
+                                                                    pMultisampleState,
+                                                                    pDepthStencilState,
+                                                                    pColorBlendState,
+                                                                    pDynamicState,
+                                                                    layout,
+                                                                    renderPass,
+                                                                    subpass,
+                                                                    VK_NULL_HANDLE,
+                                                                    -1,
+                                                                    pAllocator,
+                                                                    pPipeline);
+}
+VkResult cvkCreateVertexInputInterfaceGraphicsPipelineLibrary(VkDevice                                      device,
+                                                              VkPipelineCache                               pipelineCache,
+                                                              const void*                                   pPipelineNext,
+                                                              const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                              const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                              const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                              VkPipelineCreateFlags                         flags,
+                                                              const VkAllocationCallbacks*                  pAllocator,
+                                                              VkPipeline*                                   pPipeline)
+{
+    return cvkCreateGraphicsPipelineLibrary(device,
+                                            pipelineCache,
+                                            pPipelineNext,
+                                            VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT,
+                                            0,
+                                            NULL,
+                                            pVertexInputState,
+                                            pInputAssemblyState,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            pDynamicState,
+                                            VK_NULL_HANDLE,
+                                            VK_NULL_HANDLE,
+                                            0,
+                                            flags,
+                                            pAllocator,
+                                            pPipeline);
+}
+VkResult cvkCreatePreRasterizationShadersGraphicsPipelineLibrary(VkDevice                                      device,
+                                                                 VkPipelineCache                               pipelineCache,
+                                                                 const void*                                   pPipelineNext,
+                                                                 uint32_t                                      stageCount,
+                                                                 const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                 const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                 const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                 const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                 const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                 VkPipelineLayout                              layout,
+                                                                 VkRenderPass                                  renderPass,
+                                                                 uint32_t                                      subpass,
+                                                                 VkPipelineCreateFlags                         flags,
+                                                                 const VkAllocationCallbacks*                  pAllocator,
+                                                                 VkPipeline*                                   pPipeline)
+{
+    return cvkCreateGraphicsPipelineLibrary(device,
+                                            pipelineCache,
+                                            pPipelineNext,
+                                            VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT,
+                                            stageCount,
+                                            pStages,
+                                            NULL,
+                                            NULL,
+                                            pTessellationState,
+                                            pViewportState,
+                                            pRasterizationState,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            pDynamicState,
+                                            layout,
+                                            renderPass,
+                                            subpass,
+                                            flags,
+                                            pAllocator,
+                                            pPipeline);
+}
+VkResult cvkCreateFragmentShaderGraphicsPipelineLibrary(VkDevice                                     device,
+                                                        VkPipelineCache                              pipelineCache,
+                                                        const void*                                  pPipelineNext,
+                                                        uint32_t                                     stageCount,
+                                                        const VkPipelineShaderStageCreateInfo*       pStages,
+                                                        const VkPipelineMultisampleStateCreateInfo*  pMultisampleState,
+                                                        const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState,
+                                                        const VkPipelineDynamicStateCreateInfo*      pDynamicState,
+                                                        VkPipelineLayout                             layout,
+                                                        VkRenderPass                                 renderPass,
+                                                        uint32_t                                     subpass,
+                                                        VkPipelineCreateFlags                        flags,
+                                                        const VkAllocationCallbacks*                 pAllocator,
+                                                        VkPipeline*                                  pPipeline)
+{
+    return cvkCreateGraphicsPipelineLibrary(device,
+                                            pipelineCache,
+                                            pPipelineNext,
+                                            VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT,
+                                            stageCount,
+                                            pStages,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            pMultisampleState,
+                                            pDepthStencilState,
+                                            NULL,
+                                            pDynamicState,
+                                            layout,
+                                            renderPass,
+                                            subpass,
+                                            flags,
+                                            pAllocator,
+                                            pPipeline);
+}
+VkResult cvkCreateFragmentOutputInterfaceGraphicsPipelineLibrary(VkDevice                                    device,
+                                                                 VkPipelineCache                             pipelineCache,
+                                                                 const void*                                 pPipelineNext,
+                                                                 const VkPipelineMultisampleStateCreateInfo* pMultisampleState,
+                                                                 const VkPipelineColorBlendStateCreateInfo*  pColorBlendState,
+                                                                 const VkPipelineDynamicStateCreateInfo*     pDynamicState,
+                                                                 VkRenderPass                                renderPass,
+                                                                 uint32_t                                    subpass,
+                                                                 VkPipelineCreateFlags                       flags,
+                                                                 const VkAllocationCallbacks*                pAllocator,
+                                                                 VkPipeline*                                 pPipeline)
+{
+    return cvkCreateGraphicsPipelineLibrary(device,
+                                            pipelineCache,
+                                            pPipelineNext,
+                                            VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT,
+                                            0,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            NULL,
+                                            pMultisampleState,
+                                            NULL,
+                                            pColorBlendState,
+                                            pDynamicState,
+                                            VK_NULL_HANDLE,
+                                            renderPass,
+                                            subpass,
+                                            flags,
+                                            pAllocator,
+                                            pPipeline);
+}
+VkResult cvkCreateLinkedGraphicsPipeline(VkDevice                     device,
+                                         VkPipelineCache              pipelineCache,
+                                         const void*                  pPipelineNext,
+                                         uint32_t                     libraryCount,
+                                         const VkPipeline*            pLibraries,
+                                         VkPipelineCreateFlags        flags,
+                                         VkPipelineLayout             layout,
+                                         const VkAllocationCallbacks* pAllocator,
+                                         VkPipeline*                  pPipeline)
+{
+    return cvkCreateGraphicsPipelineWithPipelineLibraryInfo(device,
+                                                            pipelineCache,
+                                                            pPipelineNext,
+                                                            libraryCount,
+                                                            pLibraries,
+                                                            flags,
+                                                            0,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            NULL,
+                                                            layout,
+                                                            VK_NULL_HANDLE,
+                                                            0,
+                                                            VK_NULL_HANDLE,
+                                                            -1,
+                                                            pAllocator,
+                                                            pPipeline);
+}
+VkResult cvkSetupGraphicsPipelineWithRenderingInfo(VkDevice                                      device,
+                                                   const void*                                   pPipelineLayoutNext,
+                                                   uint32_t                                      setLayoutCount,
+                                                   const VkDescriptorSetLayout*                  pSetLayouts,
+                                                   uint32_t                                      pushConstantOffset,
+                                                   uint32_t                                      pushConstantSize,
+                                                   VkPipelineCache                               pipelineCache,
+                                                   const void*                                   pPipelineNext,
+                                                   uint32_t                                      viewMask,
+                                                   uint32_t                                      colorAttachmentCount,
+                                                   const VkFormat*                               pColorAttachmentFormats,
+                                                   VkFormat                                      depthAttachmentFormat,
+                                                   VkFormat                                      stencilAttachmentFormat,
+                                                   VkPipelineCreateFlags                         flags,
+                                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                   VkShaderModuleCreateFlags                     shaderModuleFlags,
+                                                   VkPipelineLayoutCreateFlags                   pipelineLayoutFlags,
+                                                   const void*                                   pVertexShaderModuleNext,
+                                                   size_t                                        vertexCodeSize,
+                                                   const uint32_t*                               pVertexCode,
+                                                   const void*                                   pFragmentShaderModuleNext,
+                                                   size_t                                        fragmentCodeSize,
+                                                   const uint32_t*                               pFragmentCode,
+                                                   const void*                                   pVertexStageNext,
+                                                   const void*                                   pFragmentStageNext,
+                                                   VkPipelineShaderStageCreateFlags              stageFlags,
+                                                   const char*                                   pVertexEntryPoint,
+                                                   const VkSpecializationInfo*                   pVertexSpecializationInfo,
+                                                   const char*                                   pFragmentEntryPoint,
+                                                   const VkSpecializationInfo*                   pFragmentSpecializationInfo,
+                                                   const VkAllocationCallbacks*                  pAllocator,
+                                                   VkShaderModule*                               pVertexShaderModule,
+                                                   VkShaderModule*                               pFragmentShaderModule,
+                                                   VkPipelineLayout*                             pPipelineLayout,
+                                                   VkPipeline*                                   pPipeline)
+{
+    VkPipelineShaderStageCreateInfo shader_stages[2];
+
+    cvkCreateShaderModule(device, pVertexShaderModuleNext, shaderModuleFlags, vertexCodeSize, pVertexCode, pAllocator, pVertexShaderModule);
+    cvkCreateShaderModule(device, pFragmentShaderModuleNext, shaderModuleFlags, fragmentCodeSize, pFragmentCode, pAllocator, pFragmentShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[0], pVertexStageNext, stageFlags, VK_SHADER_STAGE_VERTEX_BIT, (*pVertexShaderModule), pVertexEntryPoint, pVertexSpecializationInfo);
+    cvkInitPipelineShaderStageCreateInfo(&shader_stages[1], pFragmentStageNext, stageFlags, VK_SHADER_STAGE_FRAGMENT_BIT, (*pFragmentShaderModule), pFragmentEntryPoint, pFragmentSpecializationInfo);
+    cvkCreateGraphicsPipelineLayout(device, pPipelineLayoutNext, pipelineLayoutFlags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
+    return cvkCreateGraphicsPipelineWithRenderingInfo(device,
+                                                      pipelineCache,
+                                                      pPipelineNext,
+                                                      viewMask,
+                                                      colorAttachmentCount,
+                                                      pColorAttachmentFormats,
+                                                      depthAttachmentFormat,
+                                                      stencilAttachmentFormat,
+                                                      flags,
+                                                      2,
+                                                      shader_stages,
+                                                      pVertexInputState,
+                                                      pInputAssemblyState,
+                                                      pTessellationState,
+                                                      pViewportState,
+                                                      pRasterizationState,
+                                                      pMultisampleState,
+                                                      pDepthStencilState,
+                                                      pColorBlendState,
+                                                      pDynamicState,
+                                                      (*pPipelineLayout),
+                                                      VK_NULL_HANDLE,
+                                                      0,
+                                                      VK_NULL_HANDLE,
+                                                      -1,
+                                                      pAllocator,
+                                                      pPipeline);
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                          VkDebugUtilsMessageTypeFlagsEXT             messageTypes,

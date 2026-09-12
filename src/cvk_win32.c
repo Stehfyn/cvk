@@ -695,6 +695,287 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkInstance       ins
     surface_present_mode.presentMode = presentMode;
     return cvkGetPhysicalDeviceSurfacePresentModes2(instance, physicalDevice, &surface_present_mode, surface, pPresentModes);
 }
+VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
+                                                                    void*                         pNext,
+                                                                    VkFullScreenExclusiveEXT      fullScreenExclusive,
+                                                                    VkSwapchainCreateFlagsKHR     flags,
+                                                                    VkSurfaceKHR                  surface,
+                                                                    uint32_t                      minImageCount,
+                                                                    VkFormat                      imageFormat,
+                                                                    VkColorSpaceKHR               imageColorSpace,
+                                                                    VkExtent2D                    imageExtent,
+                                                                    uint32_t                      imageArrayLayers,
+                                                                    VkImageUsageFlags             imageUsage,
+                                                                    VkSharingMode                 imageSharingMode,
+                                                                    uint32_t                      queueFamilyIndexCount,
+                                                                    const uint32_t*               pQueueFamilyIndices,
+                                                                    VkSurfaceTransformFlagBitsKHR preTransform,
+                                                                    VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                                    VkPresentModeKHR              presentMode,
+                                                                    VkBool32                      clipped,
+                                                                    VkSwapchainKHR                oldSwapchain,
+                                                                    const VkAllocationCallbacks*  pAllocator,
+                                                                    VkSwapchainKHR*               pSwapchain)
+{
+    VkSurfaceFullScreenExclusiveInfoEXT surface_full_screen_exclusive_info;
+
+    surface_full_screen_exclusive_info.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+    surface_full_screen_exclusive_info.pNext               = pNext;
+    surface_full_screen_exclusive_info.fullScreenExclusive = fullScreenExclusive;
+    return cvkCreateSharedSwapchain(device,
+                                    &surface_full_screen_exclusive_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice                      device,
+                                                                         const void*                   pNext,
+                                                                         HMONITOR                      hmonitor,
+                                                                         VkSwapchainCreateFlagsKHR     flags,
+                                                                         VkSurfaceKHR                  surface,
+                                                                         uint32_t                      minImageCount,
+                                                                         VkFormat                      imageFormat,
+                                                                         VkColorSpaceKHR               imageColorSpace,
+                                                                         VkExtent2D                    imageExtent,
+                                                                         uint32_t                      imageArrayLayers,
+                                                                         VkImageUsageFlags             imageUsage,
+                                                                         VkSharingMode                 imageSharingMode,
+                                                                         uint32_t                      queueFamilyIndexCount,
+                                                                         const uint32_t*               pQueueFamilyIndices,
+                                                                         VkSurfaceTransformFlagBitsKHR preTransform,
+                                                                         VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                                         VkPresentModeKHR              presentMode,
+                                                                         VkBool32                      clipped,
+                                                                         VkSwapchainKHR                oldSwapchain,
+                                                                         const VkAllocationCallbacks*  pAllocator,
+                                                                         VkSwapchainKHR*               pSwapchain)
+{
+    VkSurfaceFullScreenExclusiveWin32InfoEXT surface_full_screen_exclusive_win32_info;
+
+    surface_full_screen_exclusive_win32_info.sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+    surface_full_screen_exclusive_win32_info.pNext    = pNext;
+    surface_full_screen_exclusive_win32_info.hmonitor = hmonitor;
+    return cvkCreateSharedSwapchain(device,
+                                    &surface_full_screen_exclusive_win32_info,
+                                    flags,
+                                    surface,
+                                    minImageCount,
+                                    imageFormat,
+                                    imageColorSpace,
+                                    imageExtent,
+                                    imageArrayLayers,
+                                    imageUsage,
+                                    imageSharingMode,
+                                    queueFamilyIndexCount,
+                                    pQueueFamilyIndices,
+                                    preTransform,
+                                    compositeAlpha,
+                                    presentMode,
+                                    clipped,
+                                    oldSwapchain,
+                                    pAllocator,
+                                    pSwapchain);
+}
+void cvkQueueSubmitInfoWithD3D12FenceInfo(VkQueue                     queue,
+                                          const void*                 pNext,
+                                          uint32_t                    waitSemaphoreValuesCount,
+                                          const uint64_t*             pWaitSemaphoreValues,
+                                          uint32_t                    signalSemaphoreValuesCount,
+                                          const uint64_t*             pSignalSemaphoreValues,
+                                          uint32_t                    waitSemaphoreCount,
+                                          const VkSemaphore*          pWaitSemaphores,
+                                          const VkPipelineStageFlags* pWaitDstStageMask,
+                                          uint32_t                    commandBufferCount,
+                                          const VkCommandBuffer*      pCommandBuffers,
+                                          uint32_t                    signalSemaphoreCount,
+                                          const VkSemaphore*          pSignalSemaphores,
+                                          VkFence                     fence)
+{
+    VkD3D12FenceSubmitInfoKHR d3_d12_fence_submit_info;
+
+    d3_d12_fence_submit_info.sType                      = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
+    d3_d12_fence_submit_info.pNext                      = pNext;
+    d3_d12_fence_submit_info.waitSemaphoreValuesCount   = waitSemaphoreValuesCount;
+    d3_d12_fence_submit_info.pWaitSemaphoreValues       = pWaitSemaphoreValues;
+    d3_d12_fence_submit_info.signalSemaphoreValuesCount = signalSemaphoreValuesCount;
+    d3_d12_fence_submit_info.pSignalSemaphoreValues     = pSignalSemaphoreValues;
+    cvkQueueSubmitInfo(queue, &d3_d12_fence_submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(VkQueue                     queue,
+                                                             const void*                 pNext,
+                                                             uint32_t                    acquireCount,
+                                                             const VkDeviceMemory*       pAcquireSyncs,
+                                                             const uint64_t*             pAcquireKeys,
+                                                             const uint32_t*             pAcquireTimeouts,
+                                                             uint32_t                    releaseCount,
+                                                             const VkDeviceMemory*       pReleaseSyncs,
+                                                             const uint64_t*             pReleaseKeys,
+                                                             uint32_t                    waitSemaphoreCount,
+                                                             const VkSemaphore*          pWaitSemaphores,
+                                                             const VkPipelineStageFlags* pWaitDstStageMask,
+                                                             uint32_t                    commandBufferCount,
+                                                             const VkCommandBuffer*      pCommandBuffers,
+                                                             uint32_t                    signalSemaphoreCount,
+                                                             const VkSemaphore*          pSignalSemaphores,
+                                                             VkFence                     fence)
+{
+    VkWin32KeyedMutexAcquireReleaseInfoKHR win32_keyed_mutex_acquire_release_info;
+
+    win32_keyed_mutex_acquire_release_info.sType            = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
+    win32_keyed_mutex_acquire_release_info.pNext            = pNext;
+    win32_keyed_mutex_acquire_release_info.acquireCount     = acquireCount;
+    win32_keyed_mutex_acquire_release_info.pAcquireSyncs    = pAcquireSyncs;
+    win32_keyed_mutex_acquire_release_info.pAcquireKeys     = pAcquireKeys;
+    win32_keyed_mutex_acquire_release_info.pAcquireTimeouts = pAcquireTimeouts;
+    win32_keyed_mutex_acquire_release_info.releaseCount     = releaseCount;
+    win32_keyed_mutex_acquire_release_info.pReleaseSyncs    = pReleaseSyncs;
+    win32_keyed_mutex_acquire_release_info.pReleaseKeys     = pReleaseKeys;
+    cvkQueueSubmitInfo(queue,
+                       &win32_keyed_mutex_acquire_release_info,
+                       waitSemaphoreCount,
+                       pWaitSemaphores,
+                       pWaitDstStageMask,
+                       commandBufferCount,
+                       pCommandBuffers,
+                       signalSemaphoreCount,
+                       pSignalSemaphores,
+                       fence);
+}
+void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue                     queue,
+                                                                   const void*                 pNext,
+                                                                   uint32_t                    acquireCount,
+                                                                   const VkDeviceMemory*       pAcquireSyncs,
+                                                                   const uint64_t*             pAcquireKeys,
+                                                                   const uint32_t*             pAcquireTimeoutMilliseconds,
+                                                                   uint32_t                    releaseCount,
+                                                                   const VkDeviceMemory*       pReleaseSyncs,
+                                                                   const uint64_t*             pReleaseKeys,
+                                                                   uint32_t                    waitSemaphoreCount,
+                                                                   const VkSemaphore*          pWaitSemaphores,
+                                                                   const VkPipelineStageFlags* pWaitDstStageMask,
+                                                                   uint32_t                    commandBufferCount,
+                                                                   const VkCommandBuffer*      pCommandBuffers,
+                                                                   uint32_t                    signalSemaphoreCount,
+                                                                   const VkSemaphore*          pSignalSemaphores,
+                                                                   VkFence                     fence)
+{
+    VkWin32KeyedMutexAcquireReleaseInfoNV win32_keyed_mutex_acquire_release_info_nv;
+
+    win32_keyed_mutex_acquire_release_info_nv.sType                       = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
+    win32_keyed_mutex_acquire_release_info_nv.pNext                       = pNext;
+    win32_keyed_mutex_acquire_release_info_nv.acquireCount                = acquireCount;
+    win32_keyed_mutex_acquire_release_info_nv.pAcquireSyncs               = pAcquireSyncs;
+    win32_keyed_mutex_acquire_release_info_nv.pAcquireKeys                = pAcquireKeys;
+    win32_keyed_mutex_acquire_release_info_nv.pAcquireTimeoutMilliseconds = pAcquireTimeoutMilliseconds;
+    win32_keyed_mutex_acquire_release_info_nv.releaseCount                = releaseCount;
+    win32_keyed_mutex_acquire_release_info_nv.pReleaseSyncs               = pReleaseSyncs;
+    win32_keyed_mutex_acquire_release_info_nv.pReleaseKeys                = pReleaseKeys;
+    cvkQueueSubmitInfo(queue,
+                       &win32_keyed_mutex_acquire_release_info_nv,
+                       waitSemaphoreCount,
+                       pWaitSemaphores,
+                       pWaitDstStageMask,
+                       commandBufferCount,
+                       pCommandBuffers,
+                       signalSemaphoreCount,
+                       pSignalSemaphores,
+                       fence);
+}
+void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfo(VkQueue                          queue,
+                                                              const void*                      pNext,
+                                                              uint32_t                         acquireCount,
+                                                              const VkDeviceMemory*            pAcquireSyncs,
+                                                              const uint64_t*                  pAcquireKeys,
+                                                              const uint32_t*                  pAcquireTimeouts,
+                                                              uint32_t                         releaseCount,
+                                                              const VkDeviceMemory*            pReleaseSyncs,
+                                                              const uint64_t*                  pReleaseKeys,
+                                                              VkSubmitFlags                    flags,
+                                                              uint32_t                         waitSemaphoreInfoCount,
+                                                              const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                              uint32_t                         commandBufferInfoCount,
+                                                              const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                              uint32_t                         signalSemaphoreInfoCount,
+                                                              const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                              VkFence                          fence)
+{
+    VkWin32KeyedMutexAcquireReleaseInfoKHR win32_keyed_mutex_acquire_release_info;
+
+    win32_keyed_mutex_acquire_release_info.sType            = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
+    win32_keyed_mutex_acquire_release_info.pNext            = pNext;
+    win32_keyed_mutex_acquire_release_info.acquireCount     = acquireCount;
+    win32_keyed_mutex_acquire_release_info.pAcquireSyncs    = pAcquireSyncs;
+    win32_keyed_mutex_acquire_release_info.pAcquireKeys     = pAcquireKeys;
+    win32_keyed_mutex_acquire_release_info.pAcquireTimeouts = pAcquireTimeouts;
+    win32_keyed_mutex_acquire_release_info.releaseCount     = releaseCount;
+    win32_keyed_mutex_acquire_release_info.pReleaseSyncs    = pReleaseSyncs;
+    win32_keyed_mutex_acquire_release_info.pReleaseKeys     = pReleaseKeys;
+    cvkQueueSubmitInfo2(queue,
+                        &win32_keyed_mutex_acquire_release_info,
+                        flags,
+                        waitSemaphoreInfoCount,
+                        pWaitSemaphoreInfos,
+                        commandBufferInfoCount,
+                        pCommandBufferInfos,
+                        signalSemaphoreInfoCount,
+                        pSignalSemaphoreInfos,
+                        fence);
+}
+void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue                          queue,
+                                                                    const void*                      pNext,
+                                                                    uint32_t                         acquireCount,
+                                                                    const VkDeviceMemory*            pAcquireSyncs,
+                                                                    const uint64_t*                  pAcquireKeys,
+                                                                    const uint32_t*                  pAcquireTimeoutMilliseconds,
+                                                                    uint32_t                         releaseCount,
+                                                                    const VkDeviceMemory*            pReleaseSyncs,
+                                                                    const uint64_t*                  pReleaseKeys,
+                                                                    VkSubmitFlags                    flags,
+                                                                    uint32_t                         waitSemaphoreInfoCount,
+                                                                    const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                                    uint32_t                         commandBufferInfoCount,
+                                                                    const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                                    uint32_t                         signalSemaphoreInfoCount,
+                                                                    const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                                    VkFence                          fence)
+{
+    VkWin32KeyedMutexAcquireReleaseInfoNV win32_keyed_mutex_acquire_release_info_nv;
+
+    win32_keyed_mutex_acquire_release_info_nv.sType                       = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
+    win32_keyed_mutex_acquire_release_info_nv.pNext                       = pNext;
+    win32_keyed_mutex_acquire_release_info_nv.acquireCount                = acquireCount;
+    win32_keyed_mutex_acquire_release_info_nv.pAcquireSyncs               = pAcquireSyncs;
+    win32_keyed_mutex_acquire_release_info_nv.pAcquireKeys                = pAcquireKeys;
+    win32_keyed_mutex_acquire_release_info_nv.pAcquireTimeoutMilliseconds = pAcquireTimeoutMilliseconds;
+    win32_keyed_mutex_acquire_release_info_nv.releaseCount                = releaseCount;
+    win32_keyed_mutex_acquire_release_info_nv.pReleaseSyncs               = pReleaseSyncs;
+    win32_keyed_mutex_acquire_release_info_nv.pReleaseKeys                = pReleaseKeys;
+    cvkQueueSubmitInfo2(queue,
+                        &win32_keyed_mutex_acquire_release_info_nv,
+                        flags,
+                        waitSemaphoreInfoCount,
+                        pWaitSemaphoreInfos,
+                        commandBufferInfoCount,
+                        pCommandBufferInfos,
+                        signalSemaphoreInfoCount,
+                        pSignalSemaphoreInfos,
+                        fence);
+}
 VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDevice                             physicalDevice,
                                                                     const void*                                  pSurfaceInfoNext,
                                                                     VkSurfaceKHR                                 surface,

@@ -889,6 +889,296 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkInstance       ins
                                                             VkSurfaceKHR     surface,
                                                             VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES]);
 /**
+ * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveInfoEXT chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[out] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] fullScreenExclusive    VkSurfaceFullScreenExclusiveInfoEXT::fullScreenExclusive
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
+                                                                    void*                         pNext,
+                                                                    VkFullScreenExclusiveEXT      fullScreenExclusive,
+                                                                    VkSwapchainCreateFlagsKHR     flags,
+                                                                    VkSurfaceKHR                  surface,
+                                                                    uint32_t                      minImageCount,
+                                                                    VkFormat                      imageFormat,
+                                                                    VkColorSpaceKHR               imageColorSpace,
+                                                                    VkExtent2D                    imageExtent,
+                                                                    uint32_t                      imageArrayLayers,
+                                                                    VkImageUsageFlags             imageUsage,
+                                                                    VkSharingMode                 imageSharingMode,
+                                                                    uint32_t                      queueFamilyIndexCount,
+                                                                    const uint32_t*               pQueueFamilyIndices,
+                                                                    VkSurfaceTransformFlagBitsKHR preTransform,
+                                                                    VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                                    VkPresentModeKHR              presentMode,
+                                                                    VkBool32                      clipped,
+                                                                    VkSwapchainKHR                oldSwapchain,
+                                                                    const VkAllocationCallbacks*  pAllocator,
+                                                                    VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Creates a shared swapchains with VkSurfaceFullScreenExclusiveWin32InfoEXT chained.
+ *
+ * \param[in] device                 See cvkCreateSharedSwapchain
+ * \param[in] pNext                  See cvkCreateSharedSwapchain
+ * \param[in] hmonitor               VkSurfaceFullScreenExclusiveWin32InfoEXT::hmonitor
+ * \param[in] flags                  See cvkCreateSharedSwapchain
+ * \param[in] surface                See cvkCreateSharedSwapchain
+ * \param[in] minImageCount          See cvkCreateSharedSwapchain
+ * \param[in] imageFormat            See cvkCreateSharedSwapchain
+ * \param[in] imageColorSpace        See cvkCreateSharedSwapchain
+ * \param[in] imageExtent            See cvkCreateSharedSwapchain
+ * \param[in] imageArrayLayers       See cvkCreateSharedSwapchain
+ * \param[in] imageUsage             See cvkCreateSharedSwapchain
+ * \param[in] imageSharingMode       See cvkCreateSharedSwapchain
+ * \param[in] queueFamilyIndexCount  See cvkCreateSharedSwapchain
+ * \param[in] pQueueFamilyIndices    See cvkCreateSharedSwapchain
+ * \param[in] preTransform           See cvkCreateSharedSwapchain
+ * \param[in] compositeAlpha         See cvkCreateSharedSwapchain
+ * \param[in] presentMode            See cvkCreateSharedSwapchain
+ * \param[in] clipped                See cvkCreateSharedSwapchain
+ * \param[in] oldSwapchain           See cvkCreateSharedSwapchain
+ * \param[in] pAllocator             See cvkCreateSharedSwapchain
+ * \param[out] pSwapchain             See cvkCreateSharedSwapchain
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice                      device,
+                                                                         const void*                   pNext,
+                                                                         HMONITOR                      hmonitor,
+                                                                         VkSwapchainCreateFlagsKHR     flags,
+                                                                         VkSurfaceKHR                  surface,
+                                                                         uint32_t                      minImageCount,
+                                                                         VkFormat                      imageFormat,
+                                                                         VkColorSpaceKHR               imageColorSpace,
+                                                                         VkExtent2D                    imageExtent,
+                                                                         uint32_t                      imageArrayLayers,
+                                                                         VkImageUsageFlags             imageUsage,
+                                                                         VkSharingMode                 imageSharingMode,
+                                                                         uint32_t                      queueFamilyIndexCount,
+                                                                         const uint32_t*               pQueueFamilyIndices,
+                                                                         VkSurfaceTransformFlagBitsKHR preTransform,
+                                                                         VkCompositeAlphaFlagBitsKHR   compositeAlpha,
+                                                                         VkPresentModeKHR              presentMode,
+                                                                         VkBool32                      clipped,
+                                                                         VkSwapchainKHR                oldSwapchain,
+                                                                         const VkAllocationCallbacks*  pAllocator,
+                                                                         VkSwapchainKHR*               pSwapchain);
+/**
+ * \brief Queues submit with VkD3D12FenceSubmitInfoKHR chained.
+ *
+ * \param[in] queue                       See cvkQueueSubmitInfo
+ * \param[in] pNext                       See cvkQueueSubmitInfo
+ * \param[in] waitSemaphoreValuesCount    VkD3D12FenceSubmitInfoKHR::waitSemaphoreValuesCount
+ * \param[in] pWaitSemaphoreValues        VkD3D12FenceSubmitInfoKHR::pWaitSemaphoreValues
+ * \param[in] signalSemaphoreValuesCount  VkD3D12FenceSubmitInfoKHR::signalSemaphoreValuesCount
+ * \param[in] pSignalSemaphoreValues      VkD3D12FenceSubmitInfoKHR::pSignalSemaphoreValues
+ * \param[in] waitSemaphoreCount          See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores             See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask           See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount          See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers             See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount        See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores           See cvkQueueSubmitInfo
+ * \param[in] fence                       See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithD3D12FenceInfo(VkQueue                     queue,
+                                          const void*                 pNext,
+                                          uint32_t                    waitSemaphoreValuesCount,
+                                          const uint64_t*             pWaitSemaphoreValues,
+                                          uint32_t                    signalSemaphoreValuesCount,
+                                          const uint64_t*             pSignalSemaphoreValues,
+                                          uint32_t                    waitSemaphoreCount,
+                                          const VkSemaphore*          pWaitSemaphores,
+                                          const VkPipelineStageFlags* pWaitDstStageMask,
+                                          uint32_t                    commandBufferCount,
+                                          const VkCommandBuffer*      pCommandBuffers,
+                                          uint32_t                    signalSemaphoreCount,
+                                          const VkSemaphore*          pSignalSemaphores,
+                                          VkFence                     fence);
+/**
+ * \brief Queues submit with VkWin32KeyedMutexAcquireReleaseInfoKHR chained.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] acquireCount          VkWin32KeyedMutexAcquireReleaseInfoKHR::acquireCount
+ * \param[in] pAcquireSyncs         VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireSyncs
+ * \param[in] pAcquireKeys          VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireKeys
+ * \param[in] pAcquireTimeouts      VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireTimeouts
+ * \param[in] releaseCount          VkWin32KeyedMutexAcquireReleaseInfoKHR::releaseCount
+ * \param[in] pReleaseSyncs         VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseSyncs
+ * \param[in] pReleaseKeys          VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseKeys
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount    See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers       See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(VkQueue                     queue,
+                                                             const void*                 pNext,
+                                                             uint32_t                    acquireCount,
+                                                             const VkDeviceMemory*       pAcquireSyncs,
+                                                             const uint64_t*             pAcquireKeys,
+                                                             const uint32_t*             pAcquireTimeouts,
+                                                             uint32_t                    releaseCount,
+                                                             const VkDeviceMemory*       pReleaseSyncs,
+                                                             const uint64_t*             pReleaseKeys,
+                                                             uint32_t                    waitSemaphoreCount,
+                                                             const VkSemaphore*          pWaitSemaphores,
+                                                             const VkPipelineStageFlags* pWaitDstStageMask,
+                                                             uint32_t                    commandBufferCount,
+                                                             const VkCommandBuffer*      pCommandBuffers,
+                                                             uint32_t                    signalSemaphoreCount,
+                                                             const VkSemaphore*          pSignalSemaphores,
+                                                             VkFence                     fence);
+/**
+ * \brief Queues submit with VkWin32KeyedMutexAcquireReleaseInfoNV chained.
+ *
+ * \param[in] queue                        See cvkQueueSubmitInfo
+ * \param[in] pNext                        See cvkQueueSubmitInfo
+ * \param[in] acquireCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::acquireCount
+ * \param[in] pAcquireSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireSyncs
+ * \param[in] pAcquireKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireKeys
+ * \param[in] pAcquireTimeoutMilliseconds  VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireTimeoutMilliseconds
+ * \param[in] releaseCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::releaseCount
+ * \param[in] pReleaseSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseSyncs
+ * \param[in] pReleaseKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseKeys
+ * \param[in] waitSemaphoreCount           See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores              See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask            See cvkQueueSubmitInfo
+ * \param[in] commandBufferCount           See cvkQueueSubmitInfo
+ * \param[in] pCommandBuffers              See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount         See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores            See cvkQueueSubmitInfo
+ * \param[in] fence                        See cvkQueueSubmitInfo
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue                     queue,
+                                                                   const void*                 pNext,
+                                                                   uint32_t                    acquireCount,
+                                                                   const VkDeviceMemory*       pAcquireSyncs,
+                                                                   const uint64_t*             pAcquireKeys,
+                                                                   const uint32_t*             pAcquireTimeoutMilliseconds,
+                                                                   uint32_t                    releaseCount,
+                                                                   const VkDeviceMemory*       pReleaseSyncs,
+                                                                   const uint64_t*             pReleaseKeys,
+                                                                   uint32_t                    waitSemaphoreCount,
+                                                                   const VkSemaphore*          pWaitSemaphores,
+                                                                   const VkPipelineStageFlags* pWaitDstStageMask,
+                                                                   uint32_t                    commandBufferCount,
+                                                                   const VkCommandBuffer*      pCommandBuffers,
+                                                                   uint32_t                    signalSemaphoreCount,
+                                                                   const VkSemaphore*          pSignalSemaphores,
+                                                                   VkFence                     fence);
+/**
+ * \brief Queues submit 2 with VkWin32KeyedMutexAcquireReleaseInfoKHR chained.
+ *
+ * \param[in] queue                     See cvkQueueSubmitInfo2
+ * \param[in] pNext                     See cvkQueueSubmitInfo2
+ * \param[in] acquireCount              VkWin32KeyedMutexAcquireReleaseInfoKHR::acquireCount
+ * \param[in] pAcquireSyncs             VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireSyncs
+ * \param[in] pAcquireKeys              VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireKeys
+ * \param[in] pAcquireTimeouts          VkWin32KeyedMutexAcquireReleaseInfoKHR::pAcquireTimeouts
+ * \param[in] releaseCount              VkWin32KeyedMutexAcquireReleaseInfoKHR::releaseCount
+ * \param[in] pReleaseSyncs             VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseSyncs
+ * \param[in] pReleaseKeys              VkWin32KeyedMutexAcquireReleaseInfoKHR::pReleaseKeys
+ * \param[in] flags                     See cvkQueueSubmitInfo2
+ * \param[in] waitSemaphoreInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pWaitSemaphoreInfos       See cvkQueueSubmitInfo2
+ * \param[in] commandBufferInfoCount    See cvkQueueSubmitInfo2
+ * \param[in] pCommandBufferInfos       See cvkQueueSubmitInfo2
+ * \param[in] signalSemaphoreInfoCount  See cvkQueueSubmitInfo2
+ * \param[in] pSignalSemaphoreInfos     See cvkQueueSubmitInfo2
+ * \param[in] fence                     See cvkQueueSubmitInfo2
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfo(VkQueue                          queue,
+                                                              const void*                      pNext,
+                                                              uint32_t                         acquireCount,
+                                                              const VkDeviceMemory*            pAcquireSyncs,
+                                                              const uint64_t*                  pAcquireKeys,
+                                                              const uint32_t*                  pAcquireTimeouts,
+                                                              uint32_t                         releaseCount,
+                                                              const VkDeviceMemory*            pReleaseSyncs,
+                                                              const uint64_t*                  pReleaseKeys,
+                                                              VkSubmitFlags                    flags,
+                                                              uint32_t                         waitSemaphoreInfoCount,
+                                                              const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                              uint32_t                         commandBufferInfoCount,
+                                                              const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                              uint32_t                         signalSemaphoreInfoCount,
+                                                              const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                              VkFence                          fence);
+/**
+ * \brief Queues submit 2 with VkWin32KeyedMutexAcquireReleaseInfoNV chained.
+ *
+ * \param[in] queue                        See cvkQueueSubmitInfo2
+ * \param[in] pNext                        See cvkQueueSubmitInfo2
+ * \param[in] acquireCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::acquireCount
+ * \param[in] pAcquireSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireSyncs
+ * \param[in] pAcquireKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireKeys
+ * \param[in] pAcquireTimeoutMilliseconds  VkWin32KeyedMutexAcquireReleaseInfoNV::pAcquireTimeoutMilliseconds
+ * \param[in] releaseCount                 VkWin32KeyedMutexAcquireReleaseInfoNV::releaseCount
+ * \param[in] pReleaseSyncs                VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseSyncs
+ * \param[in] pReleaseKeys                 VkWin32KeyedMutexAcquireReleaseInfoNV::pReleaseKeys
+ * \param[in] flags                        See cvkQueueSubmitInfo2
+ * \param[in] waitSemaphoreInfoCount       See cvkQueueSubmitInfo2
+ * \param[in] pWaitSemaphoreInfos          See cvkQueueSubmitInfo2
+ * \param[in] commandBufferInfoCount       See cvkQueueSubmitInfo2
+ * \param[in] pCommandBufferInfos          See cvkQueueSubmitInfo2
+ * \param[in] signalSemaphoreInfoCount     See cvkQueueSubmitInfo2
+ * \param[in] pSignalSemaphoreInfos        See cvkQueueSubmitInfo2
+ * \param[in] fence                        See cvkQueueSubmitInfo2
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue                          queue,
+                                                                    const void*                      pNext,
+                                                                    uint32_t                         acquireCount,
+                                                                    const VkDeviceMemory*            pAcquireSyncs,
+                                                                    const uint64_t*                  pAcquireKeys,
+                                                                    const uint32_t*                  pAcquireTimeoutMilliseconds,
+                                                                    uint32_t                         releaseCount,
+                                                                    const VkDeviceMemory*            pReleaseSyncs,
+                                                                    const uint64_t*                  pReleaseKeys,
+                                                                    VkSubmitFlags                    flags,
+                                                                    uint32_t                         waitSemaphoreInfoCount,
+                                                                    const VkSemaphoreSubmitInfo*     pWaitSemaphoreInfos,
+                                                                    uint32_t                         commandBufferInfoCount,
+                                                                    const VkCommandBufferSubmitInfo* pCommandBufferInfos,
+                                                                    uint32_t                         signalSemaphoreInfoCount,
+                                                                    const VkSemaphoreSubmitInfo*     pSignalSemaphoreInfos,
+                                                                    VkFence                          fence);
+/**
  * \brief Retrieves physical device surface capabilities 2 with VkSurfaceCapabilitiesFullScreenExclusiveEXT chained to the output.
  *
  * \param[in] physicalDevice                               VkPhysicalDevice value
