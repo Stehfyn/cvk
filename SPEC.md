@@ -1,0 +1,157 @@
+# cvk generation specification (working document)
+
+Status: draft under experiment. Every rule here is either **derived** from a registry relation
+(no choice involved) or **policy** (a choice, recorded with its reason). `scripts/generate.py`
+implements the rules; `study/*.md` holds the evidence. When a rule changes, change it here
+first, then the generator, then regenerate and re-run the studies.
+
+## 1. Inputs
+
+- `external/Vulkan-Headers/registry/vk.xml` (pinned by the submodule).
+- `cvk.policy.json`: profile (core version, extension list, platforms), capacity constants,
+  the tier-1' substitution table, and the tier-2 chain table.
+
+## 2. Outputs
+
+**Rule zero: the outputs are never edited by hand.** Any defect in `include/cvk.h` or
+`src/cvk.c` is a defect in a rule here or in `scripts/generate.py`. Fix the rule, regenerate,
+re-verify. A commit that changes the outputs without changing the generator or the policy is
+wrong by definition.
+
+- `generated/cvk.h`, `generated/cvk.c`: core profile. Platform-specific commands are inside
+  the same `#ifdef VK_USE_PLATFORM_*` guards `vulkan.h` uses, so the file set is one pair.
+- Every emitted function has a full Doxygen block with fixed phrasing (section 9).
+
+## 3. Names (derived)
+
+| Thing | Name |
+|---|---|
+| tier 0 for `vkXyz[Vendor]` | `cvkXyz`; vendor suffix dropped; alias commands are not emitted, only their promoted target |
+| builder for `VkAbcInfo` | `cvkInitAbcInfo` |
+| single-qualifier convenience | **named after the struct it builds, verb first**: `cvk<Verb><ExtenderStruct>` with the vendor suffix dropped. `VkPhysicalDeviceExternalImageFormatInfo` on `vkGetPhysicalDeviceImageFormatProperties2` → `cvkGetPhysicalDeviceExternalImageFormatInfo`; `VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`; `VkMemoryDedicatedAllocateInfo` → `cvkAllocateMemoryDedicatedAllocateInfo`. When one (verb, extender) pair serves more than one base command in the profile the name is `<tier-0>With<ExtenderStruct>` (`cvkCreateImageWithImageFormatListCreateInfo`, `cvkCreateSwapchainWithImageFormatListCreateInfo`) |
+| qualifier for extender `E` of base `B` (used only to disambiguate colliding parameter names) | CamelCase tokens of `E` minus the multiset of tokens of `B`, vendor suffix dropped, in `E`'s order |
+| capacity constant for enumeration array `pFooBars` | `CVK_MAX_FOO_BARS` |
+
+Collisions after suffix stripping are a generation error, never silently resolved.
+`Enumerate` is kept: it is Vulkan's marker for the two-call protocol.
+
+## 4. Tier 0: one function per profile command (derived)
+
+Parameters in registry order, transformed by role:
+
+| Role | Emitted |
+|---|---|
+| handle, scalar, enum, flags, POD by value | verbatim |
+| single sType input struct (`I`) | its members in order; `sType` dropped; `pNext` kept as `const void* pNext` |
+| pointer to sType struct inside an `I` struct | kept as pointer (builders exist for it) |
+| sType input array (`I[]`), POD array, handle array, scalar array | count + pointer verbatim |
+| `pAllocator` | verbatim |
+| output handle | out-pointer; asserted non-null before, `!= VK_NULL_HANDLE` after |
+| output sType struct (`P`) | `void* p<Stem>Next` immediately before the out-pointer; wrapper sets `sType`/`pNext` |
+| output POD struct / scalar | out-pointer verbatim |
+| two-call enumeration | count pointer removed; function returns `uint32_t`; array becomes `T p<Name>[CVK_MAX_<NAME>]` |
+| non-`VkResult` return | passed through |
+
+When more than one struct is filled (two `I`, or `I` and `P`), each `pNext` is `p<Stem>Next`
+with `<Stem>` = the Vulkan parameter name minus its leading `p`. With exactly one filled struct
+the parameter is plain `pNext`.
+
+Result policy (derived from `successcodes`): if the only success code is `VK_SUCCESS` the
+function returns `void` and `CVK_CHECK` aborts on any other value. Otherwise the function
+returns `VkResult`, aborts if the value is negative (all `VK_ERROR_*` are negative), and hands
+the informational code back. Enumerations abort on `VK_INCOMPLETE` because the capacity is
+asserted first.
+
+Dispatch (policy): commands in the profile's core version, and commands of extensions the
+loader exports as trampolines (surface, swapchain, display, platform surfaces, debug
+utilities; the list is `LOADER_LINKED` in the generator), are called directly. Every other
+extension command is resolved per call: `cvkGetDeviceProcAddr` for device-level dispatch,
+`cvkGetInstanceProcAddr` otherwise, both fatal if absent. The generated wrappers of
+`vkGet*ProcAddr` are that infrastructure (they assert a non-null result). A resolved command
+whose dispatch handle is a `VkQueue` or `VkCommandBuffer` gains `VkDevice device` as its first
+parameter; one dispatched on a `VkPhysicalDevice` gains `VkInstance instance`. Reason: no
+global table, no init order, and the parent is the only stateless way to resolve.
+
+## 5. Assertions (derived from `optional` and `len`)
+
+- Non-optional handle or pointer parameter/member: `!= VK_NULL_HANDLE` / `!= NULL`.
+- Array with `len=<count>`: `0 == <count> || NULL != <array>` when the array is optional,
+  `NULL != <array>` otherwise.
+- Non-optional enum-typed parameter with a `_MAX_ENUM` sentinel: no assertion (registry gives
+  no valid range); flags are not asserted non-zero unless the registry marks them non-optional
+  and the type has a `FlagBits` enum (policy: reference asserted usage flags; keep only when
+  derived).
+- Output pointers: `!= NULL` before the call.
+
+## 6. Tier 1: extenders (derived)
+
+For every sType struct in the profile (direct input, nested input, extender, output):
+
+- **builder** `void cvkInit<Struct>(<Struct>* p, const void* pNext, <members>...)` fills
+  `sType`, `pNext`, and every member. For output (returned-only) structs the builder takes
+  only `pNext`.
+
+For every (direct-input struct, in-profile extender) pair where the extender is not a
+`VkPhysicalDevice*Features*` struct and the base is a single `I` parameter:
+
+- **convenience** `cvk<Verb><Qualifier><Rest>(<tier-0 params with the extender's members
+  inserted right after pNext>)` builds the extender in front of the caller's `pNext` and calls
+  tier 0.
+
+An extender member whose name collides with a tier-0 parameter name (for example
+`descriptorSetCount` in `VkDescriptorSetVariableDescriptorCountAllocateInfo`) is emitted as
+`<qualifier><Member>` in lower camel case (`variableDescriptorCountDescriptorSetCount`).
+
+Stacking more than one extender is done by the caller with builders in one frame. No
+multi-qualifier function is generated (policy: 2^n explosion; see `study/MEMORY.md`).
+
+Per-element extenders on `I[]` inputs (for example `VkBindImagePlaneMemoryInfo` on
+`VkBindImageMemoryInfo`) are emitted as the parallel-array form: `cvk<Verb><Qualifier><Rest>2(
+handle, count, <extender member arrays>..., <base member arrays>...)`. (Not yet generated.)
+
+## 7. Tier 1': specializations (policy table)
+
+Each row of `substitutions` in the policy file names a target function, a suffix or word
+change, and the fixed arguments. Generated as a forwarding call. Examples that the memory
+study justified: `count = 1` forms, `VK_QUEUE_FAMILY_IGNORED` barriers, 2D from 3D.
+(Not yet generated.)
+
+## 8. Tier 2: chains (policy table over derived handle flow)
+
+Each row names the produced handles and the sequence. The generator emits a straight-line
+body; every produced handle is an out-parameter; the import-constraint mask is a parameter.
+Selection helpers (`cvkSelectMemoryType`) are hand-written and shipped as `cvk_policy.c`.
+(Not yet generated.)
+
+## 9. Documentation phrasing (derived)
+
+- `\brief` from the verb: Create → "Creates a <noun>.", Allocate → "Allocates …",
+  Get → "Retrieves …", Enumerate → "Enumerates … into a fixed-capacity array.",
+  Cmd → "Records …", Destroy/Free → "Destroys/Frees …", else "Calls vk<Name>."
+- `\param[in]`/`\param[out]` per parameter; `pNext` always "Optional extension chain attached
+  to <struct>, or NULL"; `pAllocator` always "Optional allocation callbacks, or NULL"; output
+  handles "Receives the created <type>"; enumeration arrays "Receives up to CVK_MAX_… entries".
+- `\retval None` for `void`; `\return` text for values.
+
+## 10. Exclusions
+
+- Alias commands, `vulkansc`-only entities, commands of extensions not in the profile.
+- Features structs as tier-1 qualifiers.
+- Nothing else is excluded: destructors, `Cmd*` graphics commands, and every query are emitted.
+
+## 11. Verification loop
+
+1. `python scripts/generate.py` → `generated/`.
+2. `clang -fsyntax-only -std=c17 -Wall -Wextra -Iexternal/Vulkan-Headers/include generated/cvk.c`
+   with and without each platform define.
+3. `python scripts/study_reference.py --ref generated --prefix cvk` must report tier 0 name
+   fidelity and mechanical parameter fidelity of 100%.
+4. Hand-written tier 3 (`study/MEMORY.md` §4.4) is compiled against the generated surface as
+   the acceptance test of the taxonomy.
+
+## 12. Open decisions
+
+- Whether enumerations with a `void` return should also assert a non-zero count (the
+  reference does for surface formats; the spec guarantees ≥ 1 there, not in general).
+- Whether `pAllocator` should be threaded at all given the policy always passes NULL.
+- Builder naming for aliased structs (`VkPhysicalDeviceProperties2KHR`): emit only the core name.

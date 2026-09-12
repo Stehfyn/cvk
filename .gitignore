@@ -21,3 +21,6 @@ CMakeUserPresets.json
 # Python
 __pycache__/
 *.pyc
+
+# Build trees
+build/

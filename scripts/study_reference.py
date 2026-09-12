@@ -130,18 +130,11 @@ PLATFORM_TOKENS = ("Win32", "Xlib", "Xcb", "Wayland", "Fd", "Android", "Metal", 
 
 
 def canonical_name(vkname: str) -> str:
-    """Candidate naming rule: strip 'vk' and vendor suffix; Enumerate -> Get;
-    move a platform/handle-kind token to the end (vkGetMemoryWin32HandleKHR -> GetMemoryHandleWin32)."""
+    """SPEC.md section 3: strip 'vk' and the vendor suffix; keep Vulkan's word order."""
     n = vkname[2:]
     for v in VENDOR:
         if n.endswith(v):
             n = n[: -len(v)]
-            break
-    if n.startswith("Enumerate"):
-        n = "Get" + n[len("Enumerate"):]
-    for tok in PLATFORM_TOKENS:
-        if tok in n and not n.endswith(tok):
-            n = n.replace(tok, "", 1) + tok
             break
     return n
 
@@ -196,15 +189,25 @@ def assign_tiers(fns: Dict[str, Fn]) -> None:
 
 
 def expected_flat_params(reg: Registry, cmd_name: str) -> Optional[List[str]]:
+    """SPEC.md section 4: the mechanical tier-0 parameter list."""
     cmd = reg.resolve_command(cmd_name)
     if not cmd:
         return None
+    roles = [role_of(reg, cmd, p, cmd.params) for p in cmd.params]
+    filled = sum(1 for r in roles if r in ("I", "P"))
+    enum_counts = {p.name for p, r in zip(cmd.params, roles) if r == "n*"
+                   and any(q.len and q.len.split(",")[0] == p.name and q.type != "void" for q in cmd.params)}
     out: List[str] = []
-    for p in cmd.params:
-        role = role_of(reg, cmd, p, cmd.params)
+    for p, role in zip(cmd.params, roles):
+        stem = p.name[1:] if p.name.startswith("p") else p.name
+        pn = "pNext" if filled == 1 else f"p{stem}Next"
         if role == "I":
             s = reg.struct_of(p.type)
-            out += [m.name for m in s.members if m.name != "sType"]
+            out += [pn if m.name == "pNext" else m.name for m in s.members if m.name != "sType"]
+        elif role == "P":
+            out += [pn, p.name]
+        elif p.name in enum_counts:
+            continue
         else:
             out.append(p.name)
     return out
@@ -221,7 +224,10 @@ def main() -> None:
     reg = Registry.load()
     fns: Dict[str, Fn] = {}
     docs: Dict[str, dict] = {}
-    for group, hdr, src in REF_FILES:
+    files = REF_FILES
+    if os.path.exists(os.path.join(args.ref, "src", "cvk.c")):
+        files = [("generated", "include/cvk.h", "src/cvk.c")]
+    for group, hdr, src in files:
         if src and os.path.exists(os.path.join(args.ref, src)):
             fns.update(parse_definitions(os.path.join(args.ref, src), args.prefix, group))
         if hdr and os.path.exists(os.path.join(args.ref, hdr)):
@@ -292,7 +298,11 @@ def main() -> None:
         exact_names += name_ok
         exp = expected_flat_params(reg, vkname)
         diff = ""
-        ok = exp is not None and exp == f.params
+        actual = f.params
+        # SPEC 4 dispatch: a non-linked extension command on a child handle gains its parent first.
+        if actual and exp and actual[0] in ("device", "instance") and actual[0] != exp[0] and actual[1:] == exp:
+            actual = actual[1:]
+        ok = exp is not None and exp == actual
         exact_params += ok
         if exp is not None and not ok:
             missing = [p for p in exp if p not in f.params]

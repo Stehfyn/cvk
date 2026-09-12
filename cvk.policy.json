@@ -1,0 +1,29 @@
+{
+  "core": "VK_VERSION_1_2",
+  "extensions": [
+    "VK_KHR_surface",
+    "VK_KHR_swapchain",
+    "VK_KHR_display",
+    "VK_KHR_win32_surface",
+    "VK_KHR_xlib_surface",
+    "VK_EXT_headless_surface",
+    "VK_EXT_debug_utils",
+    "VK_EXT_pci_bus_info",
+    "VK_KHR_external_memory_fd",
+    "VK_KHR_external_memory_win32",
+    "VK_KHR_external_semaphore_fd",
+    "VK_KHR_external_semaphore_win32",
+    "VK_EXT_external_memory_dma_buf",
+    "VK_EXT_image_drm_format_modifier"
+  ],
+  "capacities": {
+    "CVK_MAX_PHYSICAL_DEVICES": 32,
+    "CVK_MAX_QUEUE_FAMILY_PROPERTIES": 64,
+    "CVK_MAX_PROPERTIES": 512,
+    "CVK_MAX_SURFACE_FORMATS": 64,
+    "CVK_MAX_PRESENT_MODES": 16,
+    "CVK_MAX_SWAPCHAIN_IMAGES": 16,
+    "CVK_MAX_DISPLAYS": 32
+  },
+  "default_capacity": 64
+}
