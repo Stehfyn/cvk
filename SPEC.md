@@ -74,7 +74,9 @@ loader exports as trampolines (surface, swapchain, display, platform surfaces, d
 utilities; the list is `LOADER_LINKED` in the generator), are called directly. Every other
 extension command is resolved per call: `cvkGetDeviceProcAddr` for device-level dispatch,
 `cvkGetInstanceProcAddr` otherwise, both fatal if absent. The generated wrappers of
-`vkGet*ProcAddr` are that infrastructure (they assert a non-null result). A resolved command
+`vkGet*ProcAddr` are that infrastructure (they assert a non-null result). The function pointer
+is declared with the other locals and loaded immediately before the first call, never in its
+declaration. A resolved command
 whose dispatch handle is a `VkQueue` or `VkCommandBuffer` gains `VkDevice device` as its first
 parameter; one dispatched on a `VkPhysicalDevice` gains `VkInstance instance`. Reason: no
 global table, no init order, and the parent is the only stateless way to resolve.
@@ -84,7 +86,8 @@ flattened input struct is named after its parameter minus the `p` (`pCreateInfo`
 `create_info`, `pInfo` → `info`), the enumeration count after the removed count parameter
 (`pPhysicalDeviceCount` → `physical_device_count`), a chained extender after its struct
 (`VkMemoryDedicatedAllocateInfo` → `memory_dedicated_allocate_info`), and resolved commands
-and results are `function` and `result`.
+and results are `function` and `result`. Declarations are ordered by first access in the
+statements that follow.
 
 ## 5. Assertions (derived from `optional` and `len`)
 
@@ -104,6 +107,9 @@ the post-call checks, which are the wrapper's own contract: a created handle is
 - Output pointers: `!= NULL` before the call.
 
 ## 6. Tier 1: extenders (derived)
+
+Emission order in every file: builders first, then tier 0, flattened siblings, conveniences,
+policy functions, chains, protocols.
 
 For every sType struct in the profile (direct input, nested input, extender, output):
 

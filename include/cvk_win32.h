@@ -13,103 +13,6 @@ extern "C"
 #endif
 
 /**
- * \brief Creates a win 32 surface.
- *
- * \par Details:
- *  Wraps vkCreateWin32SurfaceKHR. Aborts on any error result.
- *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkWin32SurfaceCreateInfoKHR::flags
- * \param[in] hinstance   VkWin32SurfaceCreateInfoKHR::hinstance
- * \param[in] hwnd        VkWin32SurfaceCreateInfoKHR::hwnd
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None
- */
-void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-/**
- * \brief Retrieves memory win 32 handle.
- *
- * \par Details:
- *  Wraps vkGetMemoryWin32HandleKHR. Aborts on any error result.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
- * \param[in] memory      VkMemoryGetWin32HandleInfoKHR::memory
- * \param[in] handleType  VkMemoryGetWin32HandleInfoKHR::handleType
- * \param[out] pHandle     Receives the HANDLE
- *
- * \retval None
- */
-void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle);
-/**
- * \brief Retrieves memory win 32 handle properties.
- *
- * \par Details:
- *  Wraps vkGetMemoryWin32HandlePropertiesKHR. Aborts on any error result.
- *
- * \param[in] device                        VkDevice value
- * \param[in] handleType                    VkExternalMemoryHandleTypeFlagBits value
- * \param[in] handle                        HANDLE value
- * \param[in] pNext                         Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
- * \param[out] pMemoryWin32HandleProperties  Receives the VkMemoryWin32HandlePropertiesKHR
- *
- * \retval None
- */
-void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
-/**
- * \brief Retrieves physical device win 32 presentation support.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceWin32PresentationSupportKHR.
- *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
- *
- * \return The VkBool32 returned by the command.
- */
-VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
-/**
- * \brief Retrieves semaphore win 32 handle.
- *
- * \par Details:
- *  Wraps vkGetSemaphoreWin32HandleKHR. Aborts on any error result.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
- * \param[in] handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
- * \param[out] pHandle     Receives the HANDLE
- *
- * \retval None
- */
-void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, HANDLE* pHandle);
-/**
- * \brief Imports semaphore win 32 handle.
- *
- * \par Details:
- *  Wraps vkImportSemaphoreWin32HandleKHR. Aborts on any error result.
- *
- * \param[in] device      VkDevice value
- * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
- * \param[in] semaphore   VkImportSemaphoreWin32HandleInfoKHR::semaphore
- * \param[in] flags       VkImportSemaphoreWin32HandleInfoKHR::flags
- * \param[in] handleType  VkImportSemaphoreWin32HandleInfoKHR::handleType
- * \param[in] handle      VkImportSemaphoreWin32HandleInfoKHR::handle
- * \param[in] name        VkImportSemaphoreWin32HandleInfoKHR::name
- *
- * \retval None
- */
-void cvkImportSemaphoreWin32Handle(VkDevice                              device,
-                                   const void*                           pNext,
-                                   VkSemaphore                           semaphore,
-                                   VkSemaphoreImportFlags                flags,
-                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                   HANDLE                                handle,
-                                   LPCWSTR                               name);
-/**
  * \brief Initializes a VkD3D12FenceSubmitInfoKHR.
  *
  * \param[out] pInfo                       Receives the initialized VkD3D12FenceSubmitInfoKHR
@@ -226,6 +129,103 @@ void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo,
  * \retval None
  */
 void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd);
+/**
+ * \brief Creates a win 32 surface.
+ *
+ * \par Details:
+ *  Wraps vkCreateWin32SurfaceKHR. Aborts on any error result.
+ *
+ * \param[in] instance    VkInstance value
+ * \param[in] pNext       Optional extension chain attached to VkWin32SurfaceCreateInfoKHR, or NULL
+ * \param[in] flags       VkWin32SurfaceCreateInfoKHR::flags
+ * \param[in] hinstance   VkWin32SurfaceCreateInfoKHR::hinstance
+ * \param[in] hwnd        VkWin32SurfaceCreateInfoKHR::hwnd
+ * \param[in] pAllocator  Optional allocation callbacks, or NULL
+ * \param[out] pSurface    Receives the created VkSurfaceKHR
+ *
+ * \retval None
+ */
+void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+/**
+ * \brief Retrieves memory win 32 handle.
+ *
+ * \par Details:
+ *  Wraps vkGetMemoryWin32HandleKHR. Aborts on any error result.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkMemoryGetWin32HandleInfoKHR, or NULL
+ * \param[in] memory      VkMemoryGetWin32HandleInfoKHR::memory
+ * \param[in] handleType  VkMemoryGetWin32HandleInfoKHR::handleType
+ * \param[out] pHandle     Receives the HANDLE
+ *
+ * \retval None
+ */
+void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle);
+/**
+ * \brief Retrieves memory win 32 handle properties.
+ *
+ * \par Details:
+ *  Wraps vkGetMemoryWin32HandlePropertiesKHR. Aborts on any error result.
+ *
+ * \param[in] device                        VkDevice value
+ * \param[in] handleType                    VkExternalMemoryHandleTypeFlagBits value
+ * \param[in] handle                        HANDLE value
+ * \param[in] pNext                         Optional output extension chain attached to VkMemoryWin32HandlePropertiesKHR, or NULL
+ * \param[out] pMemoryWin32HandleProperties  Receives the VkMemoryWin32HandlePropertiesKHR
+ *
+ * \retval None
+ */
+void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, void* pNext, VkMemoryWin32HandlePropertiesKHR* pMemoryWin32HandleProperties);
+/**
+ * \brief Retrieves physical device win 32 presentation support.
+ *
+ * \par Details:
+ *  Wraps vkGetPhysicalDeviceWin32PresentationSupportKHR.
+ *
+ * \param[in] physicalDevice    VkPhysicalDevice value
+ * \param[in] queueFamilyIndex  uint32_t value
+ *
+ * \return The VkBool32 returned by the command.
+ */
+VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex);
+/**
+ * \brief Retrieves semaphore win 32 handle.
+ *
+ * \par Details:
+ *  Wraps vkGetSemaphoreWin32HandleKHR. Aborts on any error result.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkSemaphoreGetWin32HandleInfoKHR, or NULL
+ * \param[in] semaphore   VkSemaphoreGetWin32HandleInfoKHR::semaphore
+ * \param[in] handleType  VkSemaphoreGetWin32HandleInfoKHR::handleType
+ * \param[out] pHandle     Receives the HANDLE
+ *
+ * \retval None
+ */
+void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, HANDLE* pHandle);
+/**
+ * \brief Imports semaphore win 32 handle.
+ *
+ * \par Details:
+ *  Wraps vkImportSemaphoreWin32HandleKHR. Aborts on any error result.
+ *
+ * \param[in] device      VkDevice value
+ * \param[in] pNext       Optional extension chain attached to VkImportSemaphoreWin32HandleInfoKHR, or NULL
+ * \param[in] semaphore   VkImportSemaphoreWin32HandleInfoKHR::semaphore
+ * \param[in] flags       VkImportSemaphoreWin32HandleInfoKHR::flags
+ * \param[in] handleType  VkImportSemaphoreWin32HandleInfoKHR::handleType
+ * \param[in] handle      VkImportSemaphoreWin32HandleInfoKHR::handle
+ * \param[in] name        VkImportSemaphoreWin32HandleInfoKHR::name
+ *
+ * \retval None
+ */
+void cvkImportSemaphoreWin32Handle(VkDevice                              device,
+                                   const void*                           pNext,
+                                   VkSemaphore                           semaphore,
+                                   VkSemaphoreImportFlags                flags,
+                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
+                                   HANDLE                                handle,
+                                   LPCWSTR                               name);
 /**
  * \brief Allocates memory with VkExportMemoryWin32HandleInfoKHR chained.
  *

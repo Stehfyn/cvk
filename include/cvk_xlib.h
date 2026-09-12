@@ -13,6 +13,18 @@ extern "C"
 #endif
 
 /**
+ * \brief Initializes a VkXlibSurfaceCreateInfoKHR.
+ *
+ * \param[out] pInfo   Receives the initialized VkXlibSurfaceCreateInfoKHR
+ * \param[in] pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
+ * \param[in] flags   VkXlibSurfaceCreateInfoKHR::flags
+ * \param[in] dpy     VkXlibSurfaceCreateInfoKHR::dpy
+ * \param[in] window  VkXlibSurfaceCreateInfoKHR::window
+ *
+ * \retval None
+ */
+void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window);
+/**
  * \brief Creates a xlib surface.
  *
  * \par Details:
@@ -43,18 +55,6 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
  * \return The VkBool32 returned by the command.
  */
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
-/**
- * \brief Initializes a VkXlibSurfaceCreateInfoKHR.
- *
- * \param[out] pInfo   Receives the initialized VkXlibSurfaceCreateInfoKHR
- * \param[in] pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags   VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy     VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window  VkXlibSurfaceCreateInfoKHR::window
- *
- * \retval None
- */
-void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window);
 
 #ifdef __cplusplus
 }

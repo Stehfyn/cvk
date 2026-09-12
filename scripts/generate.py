@@ -407,14 +407,13 @@ class Generator:
 
         # Call expression and result policy.
         fn = cmd.name
+        resolve: Optional[str] = None
         if not self.linked(cmd):
             dh = cmd.dispatch_handle
-            if dh in DEVICE_LEVEL:
-                owner = "device"
-                locals_.insert(0, f"PFN_{cmd.name} function = (PFN_{cmd.name})cvkGetDeviceProcAddr({owner}, \"{cmd.name}\");")
-            else:
-                owner = "instance"
-                locals_.insert(0, f"PFN_{cmd.name} function = (PFN_{cmd.name})cvkGetInstanceProcAddr({owner}, \"{cmd.name}\");")
+            resolver = "cvkGetDeviceProcAddr(device" if dh in DEVICE_LEVEL else "cvkGetInstanceProcAddr(instance"
+            # Declaration only here; the load is emitted immediately before the first call.
+            locals_.insert(0, f"PFN_{cmd.name} function;")
+            resolve = f"function = (PFN_{cmd.name}){resolver}, \"{cmd.name}\");"
             fn = "function"
         call = f"{fn}({', '.join(call_args)})"
 
@@ -475,8 +474,17 @@ class Generator:
             body.append(f"return {call};")
 
         # Order: declarations first (C89-style block), then asserts, then statements.
+        if resolve:
+            first_call = next(i for i, l in enumerate(body) if "function(" in l)
+            body[first_call:first_call] = ["", resolve]
         decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+;)", l)]
         other = [l for l in body if l not in decl_lines]
+
+        # Declarations in order of first access in the statements that follow.
+        def first_use(decl: str) -> int:
+            var = re.match(r"^\S+\s+(\w+)", decl).group(1)
+            return next((i for i, l in enumerate(other) if re.search(rf"\b{var}\b", l)), len(other))
+        decl_lines.sort(key=first_use)
         # One blank line between struct fills; none leading, trailing, or doubled.
         collapsed: List[str] = []
         for l in other:
@@ -1051,15 +1059,16 @@ class Generator:
             ip = self.flip_param(cmd)
             if ip is not None:
                 self.flat_pairs[(cmd.verb, self.reg.struct_of(ip.type).name)] += 1
+        # Builders first: every struct initializer precedes the wrappers that use them.
+        structs = [s for s in self.reg.structs.values() if s.stype and not s.alias_of and s.category == "struct" and self.struct_in_profile(s)]
+        for s in sorted(structs, key=lambda s: s.name):
+            self.emit_builder(s)
         for cmd in self.cmds:
             self.emit_tier0(cmd)
         for cmd in self.cmds:
             ip = self.flip_param(cmd)
             if ip is not None:
                 self.emit_flat(cmd, ip)
-        structs = [s for s in self.reg.structs.values() if s.stype and not s.alias_of and s.category == "struct" and self.struct_in_profile(s)]
-        for s in sorted(structs, key=lambda s: s.name):
-            self.emit_builder(s)
         pairs: List[Tuple[Command, Param, Struct]] = []
         for cmd in self.cmds:
             roles = self.roles(cmd)

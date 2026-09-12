@@ -3,6 +3,14 @@
 #include "cvk_xlib.h"
 #include <string.h>
 
+void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
+{
+    pInfo->sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    pInfo->pNext  = pNext;
+    pInfo->flags  = flags;
+    pInfo->dpy    = dpy;
+    pInfo->window = window;
+}
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
     VkXlibSurfaceCreateInfoKHR create_info;
@@ -18,12 +26,4 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID)
 {
     return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
-}
-void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
-{
-    pInfo->sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    pInfo->pNext  = pNext;
-    pInfo->flags  = flags;
-    pInfo->dpy    = dpy;
-    pInfo->window = window;
 }
