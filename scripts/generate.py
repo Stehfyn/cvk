@@ -565,10 +565,12 @@ class Generator:
     # ------------------------------------------------------------ builders
     def emit_builder(self, s: Struct) -> None:
         name = self.register("cvkInit" + self.struct_short(s), s.name)
-        pnext_type = next((m.full_type for m in s.members if m.name == "pNext"), "const void*")
-        params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True),
-                  EmittedParam(f"{pnext_type} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False)]
-        body = (["CVK_ASSERT(NULL != pInfo);", ""] if self.input_asserts else []) + [f"pInfo->sType = {s.stype};", "pInfo->pNext = pNext;"]
+        params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
+        body = (["CVK_ASSERT(NULL != pInfo);", ""] if self.input_asserts else [])
+        if s.stype:
+            pnext_type = next((m.full_type for m in s.members if m.name == "pNext"), "const void*")
+            params.append(EmittedParam(f"{pnext_type} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
+            body += [f"pInfo->sType = {s.stype};", "pInfo->pNext = pNext;"]
         if not s.returnedonly:
             for m in s.members:
                 if m.name in ("sType", "pNext"):
@@ -583,6 +585,96 @@ class Generator:
         sig = self.signature("void", name, params)
         self.sigs[name] = ("void", params)
         self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
+                   sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
+
+    # ------------------------------------------------------------ singulars
+    def singular_name(self, cmd: Command, s: Optional[Struct]) -> str:
+        """SPEC.md section 7. A plural command name is depluralized (vkCreateComputePipelines ->
+        cvkCreateComputePipeline, vkWaitForFences -> cvkWaitForFence); otherwise the element
+        struct names the form, verb removed once (vkQueueSubmit -> cvkQueueSubmitInfo,
+        vkBindImageMemory2 -> cvkBindImageMemoryInfo)."""
+        base = self.with_base(cmd)
+        if base.endswith("s"):
+            return base[:-1]
+        if s is not None:
+            t = tokens(self.struct_short(s))
+            if cmd.verb in t:
+                t.remove(cmd.verb)
+            return "cvk" + cmd.verb + "".join(t)
+        return base + "Single"
+
+    def emit_singular(self, cmd: Command) -> None:
+        roles = self.roles(cmd)
+        arrays = [(p, r) for p, r in zip(cmd.params, roles) if r in ("I[]", "H[]", "H[]out") and p.len and "," not in p.len and "->" not in p.len]
+        others = [p for p, r in zip(cmd.params, roles) if r in ("S[]", "s[]", "P[]", "I", "n*")]
+        if not arrays or others:
+            return
+        ins = [(p, r) for p, r in arrays if r != "H[]out"]
+        outs = [(p, r) for p, r in arrays if r == "H[]out"]
+        if len(ins) != 1:
+            return
+        ap, ar = ins[0]
+        count = ap.len
+        if not any(q.name == count for q in cmd.params):
+            return
+        if outs and any(o.len != count for o, _ in outs):
+            return
+        s = self.reg.struct_of(ap.type) if ar == "I[]" else None
+        if s is None:
+            # A handle singular names its element after the array; skip when that name is taken
+            # by another parameter (vkCmdExecuteCommands: commandBuffer is the dispatch handle).
+            elem_name = snake(ap.name)
+            elem_name = elem_name[:-1] if elem_name.endswith("s") else elem_name
+            elem_name = elem_name.split("_")[0] + "".join(w.capitalize() for w in elem_name.split("_")[1:])
+            if any(q.name == elem_name for q in cmd.params):
+                return
+        name = self.register(self.singular_name(cmd, s), f"{cmd.name}:singular")
+        t0 = self.cmd_name(cmd)
+        ret, t0_params = self.sigs[t0]
+        params: List[EmittedParam] = []
+        args: List[str] = []
+        body: List[str] = []
+        var = snake(ap.name)[:-1] if snake(ap.name).endswith("s") else snake(ap.name)
+        for p in t0_params:
+            if p.name == count:
+                args.append("1")
+            elif p.name == ap.name and s is not None:
+                body += [f"{s.name} {var};", "", f"{var}.sType = {s.stype};"]
+                for m in s.members:
+                    if m.name == "sType":
+                        continue
+                    if m.name == "pNext":
+                        params.append(EmittedParam("const void* pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
+                        body.append(f"{var}.pNext = pNext;")
+                    elif m.array_len:
+                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                        body.append(f"memcpy({var}.{m.name}, {m.name}, sizeof({var}.{m.name}));")
+                    else:
+                        params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
+                        body.append(f"{var}.{m.name} = {m.name};")
+                args.append(f"&{var}")
+            elif p.name == ap.name:
+                elem = ap.type
+                single = snake(ap.name)
+                single = single[:-1] if single.endswith("s") else single
+                cname = single.split("_")
+                cname = cname[0] + "".join(w.capitalize() for w in cname[1:])
+                params.append(EmittedParam(f"{elem} {cname}", cname, f"The single {elem}", False))
+                args.append(f"&{cname}")
+            elif any(p.name == o.name for o, _ in outs):
+                o = next(o for o, _ in outs if o.name == p.name)
+                oname = o.name[:-1] if o.name.endswith("s") else o.name
+                params.append(EmittedParam(f"{o.type}* {oname}", oname, f"Receives the created {o.type}", True))
+                args.append(oname)
+            else:
+                params.append(p)
+                args.append(p.name)
+        call = f"{t0}({', '.join(args)})"
+        body.append(("return " if ret != "void" else "") + call + ";")
+        doc = self.doc_block(f"{self.brief(cmd)[:-1]} for one element.", params, ret, None, [])
+        sig = self.signature(ret, name, params)
+        self.sigs[name] = (ret, params)
+        self.place(self.platforms_for(cmd.extensions, cmd.core_version), doc + sig + ";",
                    sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     # -------------------------------------------------------- conveniences
@@ -1114,9 +1206,10 @@ class Generator:
         # Declared inputs (used only inside bind expressions) follow the step-derived ones.
         for d_ in declared:
             inputs.setdefault(d_.name, d_)
-        ordered = sorted(inputs.values(), key=lambda p: (self.LEVELS.index(p.name) if p.name in self.LEVELS else len(self.LEVELS), 0))
-        dispatch = [p for p in ordered if p.name in self.LEVELS]
         declared_names = {d_.name for d_ in declared}
+        ordered = sorted(inputs.values(), key=lambda p: (self.LEVELS.index(p.name) if p.name in self.LEVELS else len(self.LEVELS), 0))
+        # A declared input that happens to share a dispatch handle's name is data, not dispatch.
+        dispatch = [p for p in ordered if p.name in self.LEVELS and p.name not in declared_names]
         is_next = lambda p: bool(re.fullmatch(r"p\w*Next", p.name))
         derived = [p for p in inputs.values() if p.name not in self.LEVELS and p.name != "pAllocator" and p.name not in declared_names]
         # Derived inputs keep their order of appearance; declared inputs are inserted before the
@@ -1142,7 +1235,12 @@ class Generator:
             if ip is not None:
                 self.flat_pairs[(cmd.verb, self.reg.struct_of(ip.type).name)] += 1
         # Builders first: every struct initializer precedes the wrappers that use them.
-        structs = [s for s in self.reg.structs.values() if s.stype and not s.alias_of and s.category == "struct" and self.struct_in_profile(s)]
+        # A builder exists for every struct the caller fills: sType structs (at least sType/pNext)
+        # and plain input structs. Returned-only plain structs have nothing to initialize.
+        structs = [s for s in self.reg.structs.values() if not s.alias_of and s.category == "struct" and self.struct_in_profile(s)
+                   and (s.stype or not s.returnedonly)
+                   and s.name not in ("VkBaseInStructure", "VkBaseOutStructure", "VkAllocationCallbacks")
+                   and not any(":" in m.full_type for m in s.members)]
         for s in sorted(structs, key=lambda s: s.name):
             self.emit_builder(s)
         for cmd in self.cmds:
@@ -1151,6 +1249,8 @@ class Generator:
             ip = self.flip_param(cmd)
             if ip is not None:
                 self.emit_flat(cmd, ip)
+        for cmd in self.cmds:
+            self.emit_singular(cmd)
         pairs: List[Tuple[Command, Param, Struct]] = []
         for cmd in self.cmds:
             roles = self.roles(cmd)
@@ -1230,7 +1330,7 @@ class Generator:
         # Every policy capacity is emitted (protocols use some that no enumeration does), plus any derived.
         all_caps = dict(self.capacities)
         all_caps.update(self.used_capacities)
-        caps = "\n".join(f"#ifndef {k}\n#define {k} ({v}U)\n#endif" for k, v in sorted(all_caps.items()))
+        caps = "\n".join(f"#define {k} ({v}U)" for k, v in sorted(all_caps.items()))
         return f"""#ifndef CVK_H
 #define CVK_H
 
@@ -1256,7 +1356,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
 
-/* Fixed enumeration capacities; override any before including. */
+/* Fixed capacities, from cvk.policy.json. */
 {caps}
 
 {chr(10).join(self.decls[""])}

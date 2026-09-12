@@ -46,6 +46,27 @@ void cvkInitApplicationInfo(VkApplicationInfo* pInfo,
     pInfo->engineVersion      = engineVersion;
     pInfo->apiVersion         = apiVersion;
 }
+void cvkInitAttachmentDescription(VkAttachmentDescription*     pInfo,
+                                  VkAttachmentDescriptionFlags flags,
+                                  VkFormat                     format,
+                                  VkSampleCountFlagBits        samples,
+                                  VkAttachmentLoadOp           loadOp,
+                                  VkAttachmentStoreOp          storeOp,
+                                  VkAttachmentLoadOp           stencilLoadOp,
+                                  VkAttachmentStoreOp          stencilStoreOp,
+                                  VkImageLayout                initialLayout,
+                                  VkImageLayout                finalLayout)
+{
+    pInfo->flags          = flags;
+    pInfo->format         = format;
+    pInfo->samples        = samples;
+    pInfo->loadOp         = loadOp;
+    pInfo->storeOp        = storeOp;
+    pInfo->stencilLoadOp  = stencilLoadOp;
+    pInfo->stencilStoreOp = stencilStoreOp;
+    pInfo->initialLayout  = initialLayout;
+    pInfo->finalLayout    = finalLayout;
+}
 void cvkInitAttachmentDescription2(VkAttachmentDescription2*    pInfo,
                                    const void*                  pNext,
                                    VkAttachmentDescriptionFlags flags,
@@ -76,6 +97,11 @@ void cvkInitAttachmentDescriptionStencilLayout(VkAttachmentDescriptionStencilLay
     pInfo->pNext                = pNext;
     pInfo->stencilInitialLayout = stencilInitialLayout;
     pInfo->stencilFinalLayout   = stencilFinalLayout;
+}
+void cvkInitAttachmentReference(VkAttachmentReference* pInfo, uint32_t attachment, VkImageLayout layout)
+{
+    pInfo->attachment = attachment;
+    pInfo->layout     = layout;
 }
 void cvkInitAttachmentReference2(VkAttachmentReference2* pInfo, const void* pNext, uint32_t attachment, VkImageLayout layout, VkImageAspectFlags aspectMask)
 {
@@ -167,6 +193,12 @@ void cvkInitBindSparseInfo(VkBindSparseInfo*                        pInfo,
     pInfo->signalSemaphoreCount = signalSemaphoreCount;
     pInfo->pSignalSemaphores    = pSignalSemaphores;
 }
+void cvkInitBufferCopy(VkBufferCopy* pInfo, VkDeviceSize srcOffset, VkDeviceSize dstOffset, VkDeviceSize size)
+{
+    pInfo->srcOffset = srcOffset;
+    pInfo->dstOffset = dstOffset;
+    pInfo->size      = size;
+}
 void cvkInitBufferCreateInfo(VkBufferCreateInfo* pInfo,
                              const void*         pNext,
                              VkBufferCreateFlags flags,
@@ -190,6 +222,21 @@ void cvkInitBufferDeviceAddressInfo(VkBufferDeviceAddressInfo* pInfo, const void
     pInfo->sType  = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
     pInfo->pNext  = pNext;
     pInfo->buffer = buffer;
+}
+void cvkInitBufferImageCopy(VkBufferImageCopy*       pInfo,
+                            VkDeviceSize             bufferOffset,
+                            uint32_t                 bufferRowLength,
+                            uint32_t                 bufferImageHeight,
+                            VkImageSubresourceLayers imageSubresource,
+                            VkOffset3D               imageOffset,
+                            VkExtent3D               imageExtent)
+{
+    pInfo->bufferOffset      = bufferOffset;
+    pInfo->bufferRowLength   = bufferRowLength;
+    pInfo->bufferImageHeight = bufferImageHeight;
+    pInfo->imageSubresource  = imageSubresource;
+    pInfo->imageOffset       = imageOffset;
+    pInfo->imageExtent       = imageExtent;
 }
 void cvkInitBufferMemoryBarrier(VkBufferMemoryBarrier* pInfo,
                                 const void*            pNext,
@@ -233,6 +280,23 @@ void cvkInitBufferViewCreateInfo(VkBufferViewCreateInfo* pInfo, const void* pNex
     pInfo->offset = offset;
     pInfo->range  = range;
 }
+void cvkInitClearAttachment(VkClearAttachment* pInfo, VkImageAspectFlags aspectMask, uint32_t colorAttachment, VkClearValue clearValue)
+{
+    pInfo->aspectMask      = aspectMask;
+    pInfo->colorAttachment = colorAttachment;
+    pInfo->clearValue      = clearValue;
+}
+void cvkInitClearDepthStencilValue(VkClearDepthStencilValue* pInfo, float depth, uint32_t stencil)
+{
+    pInfo->depth   = depth;
+    pInfo->stencil = stencil;
+}
+void cvkInitClearRect(VkClearRect* pInfo, VkRect2D rect, uint32_t baseArrayLayer, uint32_t layerCount)
+{
+    pInfo->rect           = rect;
+    pInfo->baseArrayLayer = baseArrayLayer;
+    pInfo->layerCount     = layerCount;
+}
 void cvkInitCommandBufferAllocateInfo(VkCommandBufferAllocateInfo* pInfo, const void* pNext, VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount)
 {
     pInfo->sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -273,6 +337,13 @@ void cvkInitCommandPoolCreateInfo(VkCommandPoolCreateInfo* pInfo, const void* pN
     pInfo->flags            = flags;
     pInfo->queueFamilyIndex = queueFamilyIndex;
 }
+void cvkInitComponentMapping(VkComponentMapping* pInfo, VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
+{
+    pInfo->r = r;
+    pInfo->g = g;
+    pInfo->b = b;
+    pInfo->a = a;
+}
 void cvkInitComputePipelineCreateInfo(VkComputePipelineCreateInfo*    pInfo,
                                       const void*                     pNext,
                                       VkPipelineCreateFlags           flags,
@@ -288,6 +359,13 @@ void cvkInitComputePipelineCreateInfo(VkComputePipelineCreateInfo*    pInfo,
     pInfo->layout             = layout;
     pInfo->basePipelineHandle = basePipelineHandle;
     pInfo->basePipelineIndex  = basePipelineIndex;
+}
+void cvkInitConformanceVersion(VkConformanceVersion* pInfo, uint8_t major, uint8_t minor, uint8_t subminor, uint8_t patch)
+{
+    pInfo->major    = major;
+    pInfo->minor    = minor;
+    pInfo->subminor = subminor;
+    pInfo->patch    = patch;
 }
 void cvkInitCopyDescriptorSet(VkCopyDescriptorSet* pInfo,
                               const void*          pNext,
@@ -376,6 +454,18 @@ void cvkInitDebugUtilsObjectTagInfo(VkDebugUtilsObjectTagInfoEXT* pInfo, const v
     pInfo->tagSize      = tagSize;
     pInfo->pTag         = pTag;
 }
+void cvkInitDescriptorBufferInfo(VkDescriptorBufferInfo* pInfo, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range)
+{
+    pInfo->buffer = buffer;
+    pInfo->offset = offset;
+    pInfo->range  = range;
+}
+void cvkInitDescriptorImageInfo(VkDescriptorImageInfo* pInfo, VkSampler sampler, VkImageView imageView, VkImageLayout imageLayout)
+{
+    pInfo->sampler     = sampler;
+    pInfo->imageView   = imageView;
+    pInfo->imageLayout = imageLayout;
+}
 void cvkInitDescriptorPoolCreateInfo(VkDescriptorPoolCreateInfo* pInfo,
                                      const void*                 pNext,
                                      VkDescriptorPoolCreateFlags flags,
@@ -390,6 +480,11 @@ void cvkInitDescriptorPoolCreateInfo(VkDescriptorPoolCreateInfo* pInfo,
     pInfo->poolSizeCount = poolSizeCount;
     pInfo->pPoolSizes    = pPoolSizes;
 }
+void cvkInitDescriptorPoolSize(VkDescriptorPoolSize* pInfo, VkDescriptorType type, uint32_t descriptorCount)
+{
+    pInfo->type            = type;
+    pInfo->descriptorCount = descriptorCount;
+}
 void cvkInitDescriptorSetAllocateInfo(VkDescriptorSetAllocateInfo* pInfo, const void* pNext, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts)
 {
     pInfo->sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -397,6 +492,19 @@ void cvkInitDescriptorSetAllocateInfo(VkDescriptorSetAllocateInfo* pInfo, const 
     pInfo->descriptorPool     = descriptorPool;
     pInfo->descriptorSetCount = descriptorSetCount;
     pInfo->pSetLayouts        = pSetLayouts;
+}
+void cvkInitDescriptorSetLayoutBinding(VkDescriptorSetLayoutBinding* pInfo,
+                                       uint32_t                      binding,
+                                       VkDescriptorType              descriptorType,
+                                       uint32_t                      descriptorCount,
+                                       VkShaderStageFlags            stageFlags,
+                                       const VkSampler*              pImmutableSamplers)
+{
+    pInfo->binding            = binding;
+    pInfo->descriptorType     = descriptorType;
+    pInfo->descriptorCount    = descriptorCount;
+    pInfo->stageFlags         = stageFlags;
+    pInfo->pImmutableSamplers = pImmutableSamplers;
 }
 void cvkInitDescriptorSetLayoutBindingFlagsCreateInfo(VkDescriptorSetLayoutBindingFlagsCreateInfo* pInfo, const void* pNext, uint32_t bindingCount, const VkDescriptorBindingFlags* pBindingFlags)
 {
@@ -458,6 +566,21 @@ void cvkInitDescriptorUpdateTemplateCreateInfo(VkDescriptorUpdateTemplateCreateI
     pInfo->pipelineBindPoint          = pipelineBindPoint;
     pInfo->pipelineLayout             = pipelineLayout;
     pInfo->set                        = set;
+}
+void cvkInitDescriptorUpdateTemplateEntry(VkDescriptorUpdateTemplateEntry* pInfo,
+                                          uint32_t                         dstBinding,
+                                          uint32_t                         dstArrayElement,
+                                          uint32_t                         descriptorCount,
+                                          VkDescriptorType                 descriptorType,
+                                          size_t                           offset,
+                                          size_t                           stride)
+{
+    pInfo->dstBinding      = dstBinding;
+    pInfo->dstArrayElement = dstArrayElement;
+    pInfo->descriptorCount = descriptorCount;
+    pInfo->descriptorType  = descriptorType;
+    pInfo->offset          = offset;
+    pInfo->stride          = stride;
 }
 void cvkInitDeviceCreateInfo(VkDeviceCreateInfo*             pInfo,
                              const void*                     pNext,
@@ -569,12 +692,23 @@ void cvkInitDeviceQueueInfo2(VkDeviceQueueInfo2* pInfo, const void* pNext, VkDev
     pInfo->queueFamilyIndex = queueFamilyIndex;
     pInfo->queueIndex       = queueIndex;
 }
+void cvkInitDispatchIndirectCommand(VkDispatchIndirectCommand* pInfo, uint32_t x, uint32_t y, uint32_t z)
+{
+    pInfo->x = x;
+    pInfo->y = y;
+    pInfo->z = z;
+}
 void cvkInitDisplayModeCreateInfo(VkDisplayModeCreateInfoKHR* pInfo, const void* pNext, VkDisplayModeCreateFlagsKHR flags, VkDisplayModeParametersKHR parameters)
 {
     pInfo->sType      = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
     pInfo->pNext      = pNext;
     pInfo->flags      = flags;
     pInfo->parameters = parameters;
+}
+void cvkInitDisplayModeParameters(VkDisplayModeParametersKHR* pInfo, VkExtent2D visibleRegion, uint32_t refreshRate)
+{
+    pInfo->visibleRegion = visibleRegion;
+    pInfo->refreshRate   = refreshRate;
 }
 void cvkInitDisplaySurfaceCreateInfo(VkDisplaySurfaceCreateInfoKHR* pInfo,
                                      const void*                    pNext,
@@ -597,6 +731,21 @@ void cvkInitDisplaySurfaceCreateInfo(VkDisplaySurfaceCreateInfoKHR* pInfo,
     pInfo->globalAlpha     = globalAlpha;
     pInfo->alphaMode       = alphaMode;
     pInfo->imageExtent     = imageExtent;
+}
+void cvkInitDrawIndexedIndirectCommand(VkDrawIndexedIndirectCommand* pInfo, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
+{
+    pInfo->indexCount    = indexCount;
+    pInfo->instanceCount = instanceCount;
+    pInfo->firstIndex    = firstIndex;
+    pInfo->vertexOffset  = vertexOffset;
+    pInfo->firstInstance = firstInstance;
+}
+void cvkInitDrawIndirectCommand(VkDrawIndirectCommand* pInfo, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
+{
+    pInfo->vertexCount   = vertexCount;
+    pInfo->instanceCount = instanceCount;
+    pInfo->firstVertex   = firstVertex;
+    pInfo->firstInstance = firstInstance;
 }
 void cvkInitDrmFormatModifierPropertiesList2(VkDrmFormatModifierPropertiesList2EXT* pInfo, void* pNext)
 {
@@ -631,6 +780,17 @@ void cvkInitExportSemaphoreCreateInfo(VkExportSemaphoreCreateInfo* pInfo, const 
     pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
     pInfo->pNext       = pNext;
     pInfo->handleTypes = handleTypes;
+}
+void cvkInitExtent2D(VkExtent2D* pInfo, uint32_t width, uint32_t height)
+{
+    pInfo->width  = width;
+    pInfo->height = height;
+}
+void cvkInitExtent3D(VkExtent3D* pInfo, uint32_t width, uint32_t height, uint32_t depth)
+{
+    pInfo->width  = width;
+    pInfo->height = height;
+    pInfo->depth  = depth;
 }
 void cvkInitExternalBufferProperties(VkExternalBufferProperties* pInfo, void* pNext)
 {
@@ -771,6 +931,21 @@ void cvkInitHeadlessSurfaceCreateInfo(VkHeadlessSurfaceCreateInfoEXT* pInfo, con
     pInfo->pNext = pNext;
     pInfo->flags = flags;
 }
+void cvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresource, const VkOffset3D srcOffsets[2], VkImageSubresourceLayers dstSubresource, const VkOffset3D dstOffsets[2])
+{
+    pInfo->srcSubresource = srcSubresource;
+    memcpy(pInfo->srcOffsets, srcOffsets, sizeof(pInfo->srcOffsets));
+    pInfo->dstSubresource = dstSubresource;
+    memcpy(pInfo->dstOffsets, dstOffsets, sizeof(pInfo->dstOffsets));
+}
+void cvkInitImageCopy(VkImageCopy* pInfo, VkImageSubresourceLayers srcSubresource, VkOffset3D srcOffset, VkImageSubresourceLayers dstSubresource, VkOffset3D dstOffset, VkExtent3D extent)
+{
+    pInfo->srcSubresource = srcSubresource;
+    pInfo->srcOffset      = srcOffset;
+    pInfo->dstSubresource = dstSubresource;
+    pInfo->dstOffset      = dstOffset;
+    pInfo->extent         = extent;
+}
 void cvkInitImageCreateInfo(VkImageCreateInfo*    pInfo,
                             const void*           pNext,
                             VkImageCreateFlags    flags,
@@ -873,6 +1048,14 @@ void cvkInitImagePlaneMemoryRequirementsInfo(VkImagePlaneMemoryRequirementsInfo*
     pInfo->pNext       = pNext;
     pInfo->planeAspect = planeAspect;
 }
+void cvkInitImageResolve(VkImageResolve* pInfo, VkImageSubresourceLayers srcSubresource, VkOffset3D srcOffset, VkImageSubresourceLayers dstSubresource, VkOffset3D dstOffset, VkExtent3D extent)
+{
+    pInfo->srcSubresource = srcSubresource;
+    pInfo->srcOffset      = srcOffset;
+    pInfo->dstSubresource = dstSubresource;
+    pInfo->dstOffset      = dstOffset;
+    pInfo->extent         = extent;
+}
 void cvkInitImageSparseMemoryRequirementsInfo2(VkImageSparseMemoryRequirementsInfo2* pInfo, const void* pNext, VkImage image)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
@@ -884,6 +1067,27 @@ void cvkInitImageStencilUsageCreateInfo(VkImageStencilUsageCreateInfo* pInfo, co
     pInfo->sType        = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
     pInfo->pNext        = pNext;
     pInfo->stencilUsage = stencilUsage;
+}
+void cvkInitImageSubresource(VkImageSubresource* pInfo, VkImageAspectFlags aspectMask, uint32_t mipLevel, uint32_t arrayLayer)
+{
+    pInfo->aspectMask = aspectMask;
+    pInfo->mipLevel   = mipLevel;
+    pInfo->arrayLayer = arrayLayer;
+}
+void cvkInitImageSubresourceLayers(VkImageSubresourceLayers* pInfo, VkImageAspectFlags aspectMask, uint32_t mipLevel, uint32_t baseArrayLayer, uint32_t layerCount)
+{
+    pInfo->aspectMask     = aspectMask;
+    pInfo->mipLevel       = mipLevel;
+    pInfo->baseArrayLayer = baseArrayLayer;
+    pInfo->layerCount     = layerCount;
+}
+void cvkInitImageSubresourceRange(VkImageSubresourceRange* pInfo, VkImageAspectFlags aspectMask, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
+{
+    pInfo->aspectMask     = aspectMask;
+    pInfo->baseMipLevel   = baseMipLevel;
+    pInfo->levelCount     = levelCount;
+    pInfo->baseArrayLayer = baseArrayLayer;
+    pInfo->layerCount     = layerCount;
 }
 void cvkInitImageSwapchainCreateInfo(VkImageSwapchainCreateInfoKHR* pInfo, const void* pNext, VkSwapchainKHR swapchain)
 {
@@ -930,6 +1134,12 @@ void cvkInitImportSemaphoreFdInfo(VkImportSemaphoreFdInfoKHR* pInfo, const void*
     pInfo->flags      = flags;
     pInfo->handleType = handleType;
     pInfo->fd         = fd;
+}
+void cvkInitInputAttachmentAspectReference(VkInputAttachmentAspectReference* pInfo, uint32_t subpass, uint32_t inputAttachmentIndex, VkImageAspectFlags aspectMask)
+{
+    pInfo->subpass              = subpass;
+    pInfo->inputAttachmentIndex = inputAttachmentIndex;
+    pInfo->aspectMask           = aspectMask;
 }
 void cvkInitInstanceCreateInfo(VkInstanceCreateInfo*    pInfo,
                                const void*              pNext,
@@ -1012,6 +1222,17 @@ void cvkInitMemoryRequirements2(VkMemoryRequirements2* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     pInfo->pNext = pNext;
+}
+void cvkInitOffset2D(VkOffset2D* pInfo, int32_t x, int32_t y)
+{
+    pInfo->x = x;
+    pInfo->y = y;
+}
+void cvkInitOffset3D(VkOffset3D* pInfo, int32_t x, int32_t y, int32_t z)
+{
+    pInfo->x = x;
+    pInfo->y = y;
+    pInfo->z = z;
 }
 void cvkInitPhysicalDevice16BitStorageFeatures(VkPhysicalDevice16BitStorageFeatures* pInfo,
                                                void*                                 pNext,
@@ -1141,6 +1362,119 @@ void cvkInitPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDeviceExternalSemaphor
     pInfo->sType      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
     pInfo->pNext      = pNext;
     pInfo->handleType = handleType;
+}
+void cvkInitPhysicalDeviceFeatures(VkPhysicalDeviceFeatures* pInfo,
+                                   VkBool32                  robustBufferAccess,
+                                   VkBool32                  fullDrawIndexUint32,
+                                   VkBool32                  imageCubeArray,
+                                   VkBool32                  independentBlend,
+                                   VkBool32                  geometryShader,
+                                   VkBool32                  tessellationShader,
+                                   VkBool32                  sampleRateShading,
+                                   VkBool32                  dualSrcBlend,
+                                   VkBool32                  logicOp,
+                                   VkBool32                  multiDrawIndirect,
+                                   VkBool32                  drawIndirectFirstInstance,
+                                   VkBool32                  depthClamp,
+                                   VkBool32                  depthBiasClamp,
+                                   VkBool32                  fillModeNonSolid,
+                                   VkBool32                  depthBounds,
+                                   VkBool32                  wideLines,
+                                   VkBool32                  largePoints,
+                                   VkBool32                  alphaToOne,
+                                   VkBool32                  multiViewport,
+                                   VkBool32                  samplerAnisotropy,
+                                   VkBool32                  textureCompressionETC2,
+                                   VkBool32                  textureCompressionASTC_LDR,
+                                   VkBool32                  textureCompressionBC,
+                                   VkBool32                  occlusionQueryPrecise,
+                                   VkBool32                  pipelineStatisticsQuery,
+                                   VkBool32                  vertexPipelineStoresAndAtomics,
+                                   VkBool32                  fragmentStoresAndAtomics,
+                                   VkBool32                  shaderTessellationAndGeometryPointSize,
+                                   VkBool32                  shaderImageGatherExtended,
+                                   VkBool32                  shaderStorageImageExtendedFormats,
+                                   VkBool32                  shaderStorageImageMultisample,
+                                   VkBool32                  shaderStorageImageReadWithoutFormat,
+                                   VkBool32                  shaderStorageImageWriteWithoutFormat,
+                                   VkBool32                  shaderUniformBufferArrayDynamicIndexing,
+                                   VkBool32                  shaderSampledImageArrayDynamicIndexing,
+                                   VkBool32                  shaderStorageBufferArrayDynamicIndexing,
+                                   VkBool32                  shaderStorageImageArrayDynamicIndexing,
+                                   VkBool32                  shaderClipDistance,
+                                   VkBool32                  shaderCullDistance,
+                                   VkBool32                  shaderFloat64,
+                                   VkBool32                  shaderInt64,
+                                   VkBool32                  shaderInt16,
+                                   VkBool32                  shaderResourceResidency,
+                                   VkBool32                  shaderResourceMinLod,
+                                   VkBool32                  sparseBinding,
+                                   VkBool32                  sparseResidencyBuffer,
+                                   VkBool32                  sparseResidencyImage2D,
+                                   VkBool32                  sparseResidencyImage3D,
+                                   VkBool32                  sparseResidency2Samples,
+                                   VkBool32                  sparseResidency4Samples,
+                                   VkBool32                  sparseResidency8Samples,
+                                   VkBool32                  sparseResidency16Samples,
+                                   VkBool32                  sparseResidencyAliased,
+                                   VkBool32                  variableMultisampleRate,
+                                   VkBool32                  inheritedQueries)
+{
+    pInfo->robustBufferAccess                      = robustBufferAccess;
+    pInfo->fullDrawIndexUint32                     = fullDrawIndexUint32;
+    pInfo->imageCubeArray                          = imageCubeArray;
+    pInfo->independentBlend                        = independentBlend;
+    pInfo->geometryShader                          = geometryShader;
+    pInfo->tessellationShader                      = tessellationShader;
+    pInfo->sampleRateShading                       = sampleRateShading;
+    pInfo->dualSrcBlend                            = dualSrcBlend;
+    pInfo->logicOp                                 = logicOp;
+    pInfo->multiDrawIndirect                       = multiDrawIndirect;
+    pInfo->drawIndirectFirstInstance               = drawIndirectFirstInstance;
+    pInfo->depthClamp                              = depthClamp;
+    pInfo->depthBiasClamp                          = depthBiasClamp;
+    pInfo->fillModeNonSolid                        = fillModeNonSolid;
+    pInfo->depthBounds                             = depthBounds;
+    pInfo->wideLines                               = wideLines;
+    pInfo->largePoints                             = largePoints;
+    pInfo->alphaToOne                              = alphaToOne;
+    pInfo->multiViewport                           = multiViewport;
+    pInfo->samplerAnisotropy                       = samplerAnisotropy;
+    pInfo->textureCompressionETC2                  = textureCompressionETC2;
+    pInfo->textureCompressionASTC_LDR              = textureCompressionASTC_LDR;
+    pInfo->textureCompressionBC                    = textureCompressionBC;
+    pInfo->occlusionQueryPrecise                   = occlusionQueryPrecise;
+    pInfo->pipelineStatisticsQuery                 = pipelineStatisticsQuery;
+    pInfo->vertexPipelineStoresAndAtomics          = vertexPipelineStoresAndAtomics;
+    pInfo->fragmentStoresAndAtomics                = fragmentStoresAndAtomics;
+    pInfo->shaderTessellationAndGeometryPointSize  = shaderTessellationAndGeometryPointSize;
+    pInfo->shaderImageGatherExtended               = shaderImageGatherExtended;
+    pInfo->shaderStorageImageExtendedFormats       = shaderStorageImageExtendedFormats;
+    pInfo->shaderStorageImageMultisample           = shaderStorageImageMultisample;
+    pInfo->shaderStorageImageReadWithoutFormat     = shaderStorageImageReadWithoutFormat;
+    pInfo->shaderStorageImageWriteWithoutFormat    = shaderStorageImageWriteWithoutFormat;
+    pInfo->shaderUniformBufferArrayDynamicIndexing = shaderUniformBufferArrayDynamicIndexing;
+    pInfo->shaderSampledImageArrayDynamicIndexing  = shaderSampledImageArrayDynamicIndexing;
+    pInfo->shaderStorageBufferArrayDynamicIndexing = shaderStorageBufferArrayDynamicIndexing;
+    pInfo->shaderStorageImageArrayDynamicIndexing  = shaderStorageImageArrayDynamicIndexing;
+    pInfo->shaderClipDistance                      = shaderClipDistance;
+    pInfo->shaderCullDistance                      = shaderCullDistance;
+    pInfo->shaderFloat64                           = shaderFloat64;
+    pInfo->shaderInt64                             = shaderInt64;
+    pInfo->shaderInt16                             = shaderInt16;
+    pInfo->shaderResourceResidency                 = shaderResourceResidency;
+    pInfo->shaderResourceMinLod                    = shaderResourceMinLod;
+    pInfo->sparseBinding                           = sparseBinding;
+    pInfo->sparseResidencyBuffer                   = sparseResidencyBuffer;
+    pInfo->sparseResidencyImage2D                  = sparseResidencyImage2D;
+    pInfo->sparseResidencyImage3D                  = sparseResidencyImage3D;
+    pInfo->sparseResidency2Samples                 = sparseResidency2Samples;
+    pInfo->sparseResidency4Samples                 = sparseResidency4Samples;
+    pInfo->sparseResidency8Samples                 = sparseResidency8Samples;
+    pInfo->sparseResidency16Samples                = sparseResidency16Samples;
+    pInfo->sparseResidencyAliased                  = sparseResidencyAliased;
+    pInfo->variableMultisampleRate                 = variableMultisampleRate;
+    pInfo->inheritedQueries                        = inheritedQueries;
 }
 void cvkInitPhysicalDeviceFeatures2(VkPhysicalDeviceFeatures2* pInfo, void* pNext, VkPhysicalDeviceFeatures features)
 {
@@ -1508,6 +1842,38 @@ void cvkInitPipelineCacheCreateInfo(VkPipelineCacheCreateInfo* pInfo, const void
     pInfo->initialDataSize = initialDataSize;
     pInfo->pInitialData    = pInitialData;
 }
+void cvkInitPipelineCacheHeaderVersionOne(VkPipelineCacheHeaderVersionOne* pInfo,
+                                          uint32_t                         headerSize,
+                                          VkPipelineCacheHeaderVersion     headerVersion,
+                                          uint32_t                         vendorID,
+                                          uint32_t                         deviceID,
+                                          const uint8_t                    pipelineCacheUUID[VK_UUID_SIZE])
+{
+    pInfo->headerSize    = headerSize;
+    pInfo->headerVersion = headerVersion;
+    pInfo->vendorID      = vendorID;
+    pInfo->deviceID      = deviceID;
+    memcpy(pInfo->pipelineCacheUUID, pipelineCacheUUID, sizeof(pInfo->pipelineCacheUUID));
+}
+void cvkInitPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo,
+                                              VkBool32                             blendEnable,
+                                              VkBlendFactor                        srcColorBlendFactor,
+                                              VkBlendFactor                        dstColorBlendFactor,
+                                              VkBlendOp                            colorBlendOp,
+                                              VkBlendFactor                        srcAlphaBlendFactor,
+                                              VkBlendFactor                        dstAlphaBlendFactor,
+                                              VkBlendOp                            alphaBlendOp,
+                                              VkColorComponentFlags                colorWriteMask)
+{
+    pInfo->blendEnable         = blendEnable;
+    pInfo->srcColorBlendFactor = srcColorBlendFactor;
+    pInfo->dstColorBlendFactor = dstColorBlendFactor;
+    pInfo->colorBlendOp        = colorBlendOp;
+    pInfo->srcAlphaBlendFactor = srcAlphaBlendFactor;
+    pInfo->dstAlphaBlendFactor = dstAlphaBlendFactor;
+    pInfo->alphaBlendOp        = alphaBlendOp;
+    pInfo->colorWriteMask      = colorWriteMask;
+}
 void cvkInitPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo*       pInfo,
                                               const void*                                pNext,
                                               VkPipelineColorBlendStateCreateFlags       flags,
@@ -1725,6 +2091,12 @@ void cvkInitProtectedSubmitInfo(VkProtectedSubmitInfo* pInfo, const void* pNext,
     pInfo->pNext           = pNext;
     pInfo->protectedSubmit = protectedSubmit;
 }
+void cvkInitPushConstantRange(VkPushConstantRange* pInfo, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size)
+{
+    pInfo->stageFlags = stageFlags;
+    pInfo->offset     = offset;
+    pInfo->size       = size;
+}
 void cvkInitQueryPoolCreateInfo(VkQueryPoolCreateInfo*        pInfo,
                                 const void*                   pNext,
                                 VkQueryPoolCreateFlags        flags,
@@ -1743,6 +2115,11 @@ void cvkInitQueueFamilyProperties2(VkQueueFamilyProperties2* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
     pInfo->pNext = pNext;
+}
+void cvkInitRect2D(VkRect2D* pInfo, VkOffset2D offset, VkExtent2D extent)
+{
+    pInfo->offset = offset;
+    pInfo->extent = extent;
 }
 void cvkInitRenderPassAttachmentBeginInfo(VkRenderPassAttachmentBeginInfo* pInfo, const void* pNext, uint32_t attachmentCount, const VkImageView* pAttachments)
 {
@@ -1960,15 +2337,86 @@ void cvkInitShaderModuleCreateInfo(VkShaderModuleCreateInfo* pInfo, const void* 
     pInfo->codeSize = codeSize;
     pInfo->pCode    = pCode;
 }
+void cvkInitSparseBufferMemoryBindInfo(VkSparseBufferMemoryBindInfo* pInfo, VkBuffer buffer, uint32_t bindCount, const VkSparseMemoryBind* pBinds)
+{
+    pInfo->buffer    = buffer;
+    pInfo->bindCount = bindCount;
+    pInfo->pBinds    = pBinds;
+}
 void cvkInitSparseImageFormatProperties2(VkSparseImageFormatProperties2* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
     pInfo->pNext = pNext;
 }
+void cvkInitSparseImageMemoryBind(VkSparseImageMemoryBind* pInfo,
+                                  VkImageSubresource       subresource,
+                                  VkOffset3D               offset,
+                                  VkExtent3D               extent,
+                                  VkDeviceMemory           memory,
+                                  VkDeviceSize             memoryOffset,
+                                  VkSparseMemoryBindFlags  flags)
+{
+    pInfo->subresource  = subresource;
+    pInfo->offset       = offset;
+    pInfo->extent       = extent;
+    pInfo->memory       = memory;
+    pInfo->memoryOffset = memoryOffset;
+    pInfo->flags        = flags;
+}
+void cvkInitSparseImageMemoryBindInfo(VkSparseImageMemoryBindInfo* pInfo, VkImage image, uint32_t bindCount, const VkSparseImageMemoryBind* pBinds)
+{
+    pInfo->image     = image;
+    pInfo->bindCount = bindCount;
+    pInfo->pBinds    = pBinds;
+}
 void cvkInitSparseImageMemoryRequirements2(VkSparseImageMemoryRequirements2* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
     pInfo->pNext = pNext;
+}
+void cvkInitSparseImageOpaqueMemoryBindInfo(VkSparseImageOpaqueMemoryBindInfo* pInfo, VkImage image, uint32_t bindCount, const VkSparseMemoryBind* pBinds)
+{
+    pInfo->image     = image;
+    pInfo->bindCount = bindCount;
+    pInfo->pBinds    = pBinds;
+}
+void cvkInitSparseMemoryBind(VkSparseMemoryBind* pInfo, VkDeviceSize resourceOffset, VkDeviceSize size, VkDeviceMemory memory, VkDeviceSize memoryOffset, VkSparseMemoryBindFlags flags)
+{
+    pInfo->resourceOffset = resourceOffset;
+    pInfo->size           = size;
+    pInfo->memory         = memory;
+    pInfo->memoryOffset   = memoryOffset;
+    pInfo->flags          = flags;
+}
+void cvkInitSpecializationInfo(VkSpecializationInfo* pInfo, uint32_t mapEntryCount, const VkSpecializationMapEntry* pMapEntries, size_t dataSize, const void* pData)
+{
+    pInfo->mapEntryCount = mapEntryCount;
+    pInfo->pMapEntries   = pMapEntries;
+    pInfo->dataSize      = dataSize;
+    pInfo->pData         = pData;
+}
+void cvkInitSpecializationMapEntry(VkSpecializationMapEntry* pInfo, uint32_t constantID, uint32_t offset, size_t size)
+{
+    pInfo->constantID = constantID;
+    pInfo->offset     = offset;
+    pInfo->size       = size;
+}
+void cvkInitStencilOpState(VkStencilOpState* pInfo,
+                           VkStencilOp       failOp,
+                           VkStencilOp       passOp,
+                           VkStencilOp       depthFailOp,
+                           VkCompareOp       compareOp,
+                           uint32_t          compareMask,
+                           uint32_t          writeMask,
+                           uint32_t          reference)
+{
+    pInfo->failOp      = failOp;
+    pInfo->passOp      = passOp;
+    pInfo->depthFailOp = depthFailOp;
+    pInfo->compareOp   = compareOp;
+    pInfo->compareMask = compareMask;
+    pInfo->writeMask   = writeMask;
+    pInfo->reference   = reference;
 }
 void cvkInitSubmitInfo(VkSubmitInfo*               pInfo,
                        const void*                 pNext,
@@ -1996,6 +2444,23 @@ void cvkInitSubpassBeginInfo(VkSubpassBeginInfo* pInfo, const void* pNext, VkSub
     pInfo->pNext    = pNext;
     pInfo->contents = contents;
 }
+void cvkInitSubpassDependency(VkSubpassDependency* pInfo,
+                              uint32_t             srcSubpass,
+                              uint32_t             dstSubpass,
+                              VkPipelineStageFlags srcStageMask,
+                              VkPipelineStageFlags dstStageMask,
+                              VkAccessFlags        srcAccessMask,
+                              VkAccessFlags        dstAccessMask,
+                              VkDependencyFlags    dependencyFlags)
+{
+    pInfo->srcSubpass      = srcSubpass;
+    pInfo->dstSubpass      = dstSubpass;
+    pInfo->srcStageMask    = srcStageMask;
+    pInfo->dstStageMask    = dstStageMask;
+    pInfo->srcAccessMask   = srcAccessMask;
+    pInfo->dstAccessMask   = dstAccessMask;
+    pInfo->dependencyFlags = dependencyFlags;
+}
 void cvkInitSubpassDependency2(VkSubpassDependency2* pInfo,
                                const void*           pNext,
                                uint32_t              srcSubpass,
@@ -2017,6 +2482,29 @@ void cvkInitSubpassDependency2(VkSubpassDependency2* pInfo,
     pInfo->dstAccessMask   = dstAccessMask;
     pInfo->dependencyFlags = dependencyFlags;
     pInfo->viewOffset      = viewOffset;
+}
+void cvkInitSubpassDescription(VkSubpassDescription*        pInfo,
+                               VkSubpassDescriptionFlags    flags,
+                               VkPipelineBindPoint          pipelineBindPoint,
+                               uint32_t                     inputAttachmentCount,
+                               const VkAttachmentReference* pInputAttachments,
+                               uint32_t                     colorAttachmentCount,
+                               const VkAttachmentReference* pColorAttachments,
+                               const VkAttachmentReference* pResolveAttachments,
+                               const VkAttachmentReference* pDepthStencilAttachment,
+                               uint32_t                     preserveAttachmentCount,
+                               const uint32_t*              pPreserveAttachments)
+{
+    pInfo->flags                   = flags;
+    pInfo->pipelineBindPoint       = pipelineBindPoint;
+    pInfo->inputAttachmentCount    = inputAttachmentCount;
+    pInfo->pInputAttachments       = pInputAttachments;
+    pInfo->colorAttachmentCount    = colorAttachmentCount;
+    pInfo->pColorAttachments       = pColorAttachments;
+    pInfo->pResolveAttachments     = pResolveAttachments;
+    pInfo->pDepthStencilAttachment = pDepthStencilAttachment;
+    pInfo->preserveAttachmentCount = preserveAttachmentCount;
+    pInfo->pPreserveAttachments    = pPreserveAttachments;
 }
 void cvkInitSubpassDescription2(VkSubpassDescription2*        pInfo,
                                 const void*                   pNext,
@@ -2062,6 +2550,14 @@ void cvkInitSubpassEndInfo(VkSubpassEndInfo* pInfo, const void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
     pInfo->pNext = pNext;
+}
+void cvkInitSubresourceLayout(VkSubresourceLayout* pInfo, VkDeviceSize offset, VkDeviceSize size, VkDeviceSize rowPitch, VkDeviceSize arrayPitch, VkDeviceSize depthPitch)
+{
+    pInfo->offset     = offset;
+    pInfo->size       = size;
+    pInfo->rowPitch   = rowPitch;
+    pInfo->arrayPitch = arrayPitch;
+    pInfo->depthPitch = depthPitch;
 }
 void cvkInitSwapchainCreateInfo(VkSwapchainCreateInfoKHR*     pInfo,
                                 const void*                   pNext,
@@ -2114,6 +2610,28 @@ void cvkInitTimelineSemaphoreSubmitInfo(VkTimelineSemaphoreSubmitInfo* pInfo,
     pInfo->pWaitSemaphoreValues      = pWaitSemaphoreValues;
     pInfo->signalSemaphoreValueCount = signalSemaphoreValueCount;
     pInfo->pSignalSemaphoreValues    = pSignalSemaphoreValues;
+}
+void cvkInitVertexInputAttributeDescription(VkVertexInputAttributeDescription* pInfo, uint32_t location, uint32_t binding, VkFormat format, uint32_t offset)
+{
+    pInfo->location = location;
+    pInfo->binding  = binding;
+    pInfo->format   = format;
+    pInfo->offset   = offset;
+}
+void cvkInitVertexInputBindingDescription(VkVertexInputBindingDescription* pInfo, uint32_t binding, uint32_t stride, VkVertexInputRate inputRate)
+{
+    pInfo->binding   = binding;
+    pInfo->stride    = stride;
+    pInfo->inputRate = inputRate;
+}
+void cvkInitViewport(VkViewport* pInfo, float x, float y, float width, float height, float minDepth, float maxDepth)
+{
+    pInfo->x        = x;
+    pInfo->y        = y;
+    pInfo->width    = width;
+    pInfo->height   = height;
+    pInfo->minDepth = minDepth;
+    pInfo->maxDepth = maxDepth;
 }
 void cvkInitWriteDescriptorSet(VkWriteDescriptorSet*         pInfo,
                                const void*                   pNext,
@@ -4244,6 +4762,192 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
     format_info.tiling  = tiling;
     return cvkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, pProperties);
 }
+void cvkBindBufferMemoryInfo(VkDevice device, const void* pNext, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    VkBindBufferMemoryInfo bind_info;
+
+    bind_info.sType        = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
+    bind_info.pNext        = pNext;
+    bind_info.buffer       = buffer;
+    bind_info.memory       = memory;
+    bind_info.memoryOffset = memoryOffset;
+    cvkBindBufferMemory2(device, 1, &bind_info);
+}
+void cvkBindImageMemoryInfo(VkDevice device, const void* pNext, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
+{
+    VkBindImageMemoryInfo bind_info;
+
+    bind_info.sType        = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
+    bind_info.pNext        = pNext;
+    bind_info.image        = image;
+    bind_info.memory       = memory;
+    bind_info.memoryOffset = memoryOffset;
+    cvkBindImageMemory2(device, 1, &bind_info);
+}
+VkResult cvkCreateComputePipeline(VkDevice                        device,
+                                  VkPipelineCache                 pipelineCache,
+                                  const void*                     pNext,
+                                  VkPipelineCreateFlags           flags,
+                                  VkPipelineShaderStageCreateInfo stage,
+                                  VkPipelineLayout                layout,
+                                  VkPipeline                      basePipelineHandle,
+                                  int32_t                         basePipelineIndex,
+                                  const VkAllocationCallbacks*    pAllocator,
+                                  VkPipeline*                     pPipeline)
+{
+    VkComputePipelineCreateInfo create_info;
+
+    create_info.sType              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+    create_info.pNext              = pNext;
+    create_info.flags              = flags;
+    create_info.stage              = stage;
+    create_info.layout             = layout;
+    create_info.basePipelineHandle = basePipelineHandle;
+    create_info.basePipelineIndex  = basePipelineIndex;
+    return cvkCreateComputePipelines(device, pipelineCache, 1, &create_info, pAllocator, pPipeline);
+}
+VkResult cvkCreateGraphicsPipeline(VkDevice                                      device,
+                                   VkPipelineCache                               pipelineCache,
+                                   const void*                                   pNext,
+                                   VkPipelineCreateFlags                         flags,
+                                   uint32_t                                      stageCount,
+                                   const VkPipelineShaderStageCreateInfo*        pStages,
+                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                   VkPipelineLayout                              layout,
+                                   VkRenderPass                                  renderPass,
+                                   uint32_t                                      subpass,
+                                   VkPipeline                                    basePipelineHandle,
+                                   int32_t                                       basePipelineIndex,
+                                   const VkAllocationCallbacks*                  pAllocator,
+                                   VkPipeline*                                   pPipeline)
+{
+    VkGraphicsPipelineCreateInfo create_info;
+
+    create_info.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    create_info.pNext               = pNext;
+    create_info.flags               = flags;
+    create_info.stageCount          = stageCount;
+    create_info.pStages             = pStages;
+    create_info.pVertexInputState   = pVertexInputState;
+    create_info.pInputAssemblyState = pInputAssemblyState;
+    create_info.pTessellationState  = pTessellationState;
+    create_info.pViewportState      = pViewportState;
+    create_info.pRasterizationState = pRasterizationState;
+    create_info.pMultisampleState   = pMultisampleState;
+    create_info.pDepthStencilState  = pDepthStencilState;
+    create_info.pColorBlendState    = pColorBlendState;
+    create_info.pDynamicState       = pDynamicState;
+    create_info.layout              = layout;
+    create_info.renderPass          = renderPass;
+    create_info.subpass             = subpass;
+    create_info.basePipelineHandle  = basePipelineHandle;
+    create_info.basePipelineIndex   = basePipelineIndex;
+    return cvkCreateGraphicsPipelines(device, pipelineCache, 1, &create_info, pAllocator, pPipeline);
+}
+void cvkFlushMappedMemoryRange(VkDevice device, const void* pNext, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size)
+{
+    VkMappedMemoryRange memory_range;
+
+    memory_range.sType  = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+    memory_range.pNext  = pNext;
+    memory_range.memory = memory;
+    memory_range.offset = offset;
+    memory_range.size   = size;
+    cvkFlushMappedMemoryRanges(device, 1, &memory_range);
+}
+void cvkFreeCommandBuffer(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer)
+{
+    cvkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}
+void cvkFreeDescriptorSet(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorSet descriptorSet)
+{
+    cvkFreeDescriptorSets(device, descriptorPool, 1, &descriptorSet);
+}
+void cvkInvalidateMappedMemoryRange(VkDevice device, const void* pNext, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size)
+{
+    VkMappedMemoryRange memory_range;
+
+    memory_range.sType  = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+    memory_range.pNext  = pNext;
+    memory_range.memory = memory;
+    memory_range.offset = offset;
+    memory_range.size   = size;
+    cvkInvalidateMappedMemoryRanges(device, 1, &memory_range);
+}
+void cvkMergePipelineCache(VkDevice device, VkPipelineCache dstCache, VkPipelineCache srcCache)
+{
+    cvkMergePipelineCaches(device, dstCache, 1, &srcCache);
+}
+void cvkQueueBindSparseInfo(VkQueue                                  queue,
+                            const void*                              pNext,
+                            uint32_t                                 waitSemaphoreCount,
+                            const VkSemaphore*                       pWaitSemaphores,
+                            uint32_t                                 bufferBindCount,
+                            const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                            uint32_t                                 imageOpaqueBindCount,
+                            const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                            uint32_t                                 imageBindCount,
+                            const VkSparseImageMemoryBindInfo*       pImageBinds,
+                            uint32_t                                 signalSemaphoreCount,
+                            const VkSemaphore*                       pSignalSemaphores,
+                            VkFence                                  fence)
+{
+    VkBindSparseInfo bind_info;
+
+    bind_info.sType                = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
+    bind_info.pNext                = pNext;
+    bind_info.waitSemaphoreCount   = waitSemaphoreCount;
+    bind_info.pWaitSemaphores      = pWaitSemaphores;
+    bind_info.bufferBindCount      = bufferBindCount;
+    bind_info.pBufferBinds         = pBufferBinds;
+    bind_info.imageOpaqueBindCount = imageOpaqueBindCount;
+    bind_info.pImageOpaqueBinds    = pImageOpaqueBinds;
+    bind_info.imageBindCount       = imageBindCount;
+    bind_info.pImageBinds          = pImageBinds;
+    bind_info.signalSemaphoreCount = signalSemaphoreCount;
+    bind_info.pSignalSemaphores    = pSignalSemaphores;
+    cvkQueueBindSparse(queue, 1, &bind_info, fence);
+}
+void cvkQueueSubmitInfo(VkQueue                     queue,
+                        const void*                 pNext,
+                        uint32_t                    waitSemaphoreCount,
+                        const VkSemaphore*          pWaitSemaphores,
+                        const VkPipelineStageFlags* pWaitDstStageMask,
+                        uint32_t                    commandBufferCount,
+                        const VkCommandBuffer*      pCommandBuffers,
+                        uint32_t                    signalSemaphoreCount,
+                        const VkSemaphore*          pSignalSemaphores,
+                        VkFence                     fence)
+{
+    VkSubmitInfo submit;
+
+    submit.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submit.pNext                = pNext;
+    submit.waitSemaphoreCount   = waitSemaphoreCount;
+    submit.pWaitSemaphores      = pWaitSemaphores;
+    submit.pWaitDstStageMask    = pWaitDstStageMask;
+    submit.commandBufferCount   = commandBufferCount;
+    submit.pCommandBuffers      = pCommandBuffers;
+    submit.signalSemaphoreCount = signalSemaphoreCount;
+    submit.pSignalSemaphores    = pSignalSemaphores;
+    cvkQueueSubmit(queue, 1, &submit, fence);
+}
+void cvkResetFence(VkDevice device, VkFence fence)
+{
+    cvkResetFences(device, 1, &fence);
+}
+VkResult cvkWaitForFence(VkDevice device, VkFence fence, VkBool32 waitAll, uint64_t timeout)
+{
+    return cvkWaitForFences(device, 1, &fence, waitAll, timeout);
+}
 void cvkAllocateDescriptorSetsWithVariableDescriptorCountInfo(VkDevice                     device,
                                                               const void*                  pNext,
                                                               uint32_t                     variableDescriptorCountDescriptorSetCount,
@@ -6170,6 +6874,363 @@ void cvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
                     pAllocator,
                     pDevice);
     cvkGetDeviceQueue((*pDevice), queueFamilyIndex, 0, pQueue);
+}
+void cvkCmdBindComputePipeline(VkCommandBuffer commandBuffer, VkPipeline pipeline)
+{
+    cvkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline);
+}
+void cvkCmdBindComputeDescriptorSets(VkCommandBuffer        commandBuffer,
+                                     VkPipelineLayout       layout,
+                                     uint32_t               firstSet,
+                                     uint32_t               descriptorSetCount,
+                                     const VkDescriptorSet* pDescriptorSets,
+                                     uint32_t               dynamicOffsetCount,
+                                     const uint32_t*        pDynamicOffsets)
+{
+    cvkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+}
+void cvkCmdPushComputeConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues)
+{
+    cvkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_COMPUTE_BIT, offset, size, pValues);
+}
+void cvkCmdImageQueueOwnershipBarrier(VkCommandBuffer         commandBuffer,
+                                      const void*             pNext,
+                                      VkAccessFlags           srcAccessMask,
+                                      VkAccessFlags           dstAccessMask,
+                                      VkImageLayout           oldLayout,
+                                      VkImageLayout           newLayout,
+                                      uint32_t                srcQueueFamilyIndex,
+                                      uint32_t                dstQueueFamilyIndex,
+                                      VkImage                 image,
+                                      VkImageSubresourceRange subresourceRange,
+                                      VkPipelineStageFlags    srcStageMask,
+                                      VkPipelineStageFlags    dstStageMask,
+                                      VkDependencyFlags       dependencyFlags)
+{
+    VkImageMemoryBarrier image_memory_barrier;
+
+    cvkInitImageMemoryBarrier(&image_memory_barrier, pNext, srcAccessMask, dstAccessMask, oldLayout, newLayout, srcQueueFamilyIndex, dstQueueFamilyIndex, image, subresourceRange);
+    cvkCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+}
+void cvkCmdImageBarrier(VkCommandBuffer         commandBuffer,
+                        const void*             pNext,
+                        VkAccessFlags           srcAccessMask,
+                        VkAccessFlags           dstAccessMask,
+                        VkImageLayout           oldLayout,
+                        VkImageLayout           newLayout,
+                        VkImage                 image,
+                        VkImageSubresourceRange subresourceRange,
+                        VkPipelineStageFlags    srcStageMask,
+                        VkPipelineStageFlags    dstStageMask,
+                        VkDependencyFlags       dependencyFlags)
+{
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pNext,
+                                     srcAccessMask,
+                                     dstAccessMask,
+                                     oldLayout,
+                                     newLayout,
+                                     VK_QUEUE_FAMILY_IGNORED,
+                                     VK_QUEUE_FAMILY_IGNORED,
+                                     image,
+                                     subresourceRange,
+                                     srcStageMask,
+                                     dstStageMask,
+                                     dependencyFlags);
+}
+void cvkCmdAcquireImageFromExternal(VkCommandBuffer         commandBuffer,
+                                    const void*             pNext,
+                                    VkAccessFlags           dstAccessMask,
+                                    VkImageLayout           oldLayout,
+                                    VkImageLayout           newLayout,
+                                    uint32_t                dstQueueFamilyIndex,
+                                    VkImage                 image,
+                                    VkImageSubresourceRange subresourceRange,
+                                    VkPipelineStageFlags    dstStageMask,
+                                    VkDependencyFlags       dependencyFlags)
+{
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pNext,
+                                     0,
+                                     dstAccessMask,
+                                     oldLayout,
+                                     newLayout,
+                                     VK_QUEUE_FAMILY_EXTERNAL,
+                                     dstQueueFamilyIndex,
+                                     image,
+                                     subresourceRange,
+                                     VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                     dstStageMask,
+                                     dependencyFlags);
+}
+void cvkCmdReleaseImageToExternal(VkCommandBuffer         commandBuffer,
+                                  const void*             pNext,
+                                  VkAccessFlags           srcAccessMask,
+                                  VkImageLayout           oldLayout,
+                                  VkImageLayout           newLayout,
+                                  uint32_t                srcQueueFamilyIndex,
+                                  VkImage                 image,
+                                  VkImageSubresourceRange subresourceRange,
+                                  VkPipelineStageFlags    srcStageMask,
+                                  VkDependencyFlags       dependencyFlags)
+{
+    cvkCmdImageQueueOwnershipBarrier(commandBuffer,
+                                     pNext,
+                                     srcAccessMask,
+                                     0,
+                                     oldLayout,
+                                     newLayout,
+                                     srcQueueFamilyIndex,
+                                     VK_QUEUE_FAMILY_EXTERNAL,
+                                     image,
+                                     subresourceRange,
+                                     srcStageMask,
+                                     VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                     dependencyFlags);
+}
+void cvkCmdBufferQueueOwnershipBarrier(VkCommandBuffer      commandBuffer,
+                                       const void*          pNext,
+                                       VkAccessFlags        srcAccessMask,
+                                       VkAccessFlags        dstAccessMask,
+                                       uint32_t             srcQueueFamilyIndex,
+                                       uint32_t             dstQueueFamilyIndex,
+                                       VkBuffer             buffer,
+                                       VkDeviceSize         offset,
+                                       VkDeviceSize         size,
+                                       VkPipelineStageFlags srcStageMask,
+                                       VkPipelineStageFlags dstStageMask,
+                                       VkDependencyFlags    dependencyFlags)
+{
+    VkBufferMemoryBarrier buffer_memory_barrier;
+
+    cvkInitBufferMemoryBarrier(&buffer_memory_barrier, pNext, srcAccessMask, dstAccessMask, srcQueueFamilyIndex, dstQueueFamilyIndex, buffer, offset, size);
+    cvkCmdPipelineBarrier(commandBuffer, srcStageMask, dstStageMask, dependencyFlags, 0, NULL, 1, &buffer_memory_barrier, 0, NULL);
+}
+void cvkCmdBufferBarrier(VkCommandBuffer      commandBuffer,
+                         const void*          pNext,
+                         VkAccessFlags        srcAccessMask,
+                         VkAccessFlags        dstAccessMask,
+                         VkBuffer             buffer,
+                         VkDeviceSize         offset,
+                         VkDeviceSize         size,
+                         VkPipelineStageFlags srcStageMask,
+                         VkPipelineStageFlags dstStageMask,
+                         VkDependencyFlags    dependencyFlags)
+{
+    cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
+                                      pNext,
+                                      srcAccessMask,
+                                      dstAccessMask,
+                                      VK_QUEUE_FAMILY_IGNORED,
+                                      VK_QUEUE_FAMILY_IGNORED,
+                                      buffer,
+                                      offset,
+                                      size,
+                                      srcStageMask,
+                                      dstStageMask,
+                                      dependencyFlags);
+}
+void cvkCmdAcquireBufferFromExternal(VkCommandBuffer      commandBuffer,
+                                     const void*          pNext,
+                                     VkAccessFlags        dstAccessMask,
+                                     uint32_t             dstQueueFamilyIndex,
+                                     VkBuffer             buffer,
+                                     VkDeviceSize         offset,
+                                     VkDeviceSize         size,
+                                     VkPipelineStageFlags dstStageMask,
+                                     VkDependencyFlags    dependencyFlags)
+{
+    cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
+                                      pNext,
+                                      0,
+                                      dstAccessMask,
+                                      VK_QUEUE_FAMILY_EXTERNAL,
+                                      dstQueueFamilyIndex,
+                                      buffer,
+                                      offset,
+                                      size,
+                                      VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                      dstStageMask,
+                                      dependencyFlags);
+}
+void cvkCmdReleaseBufferToExternal(VkCommandBuffer      commandBuffer,
+                                   const void*          pNext,
+                                   VkAccessFlags        srcAccessMask,
+                                   uint32_t             srcQueueFamilyIndex,
+                                   VkBuffer             buffer,
+                                   VkDeviceSize         offset,
+                                   VkDeviceSize         size,
+                                   VkPipelineStageFlags srcStageMask,
+                                   VkDependencyFlags    dependencyFlags)
+{
+    cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
+                                      pNext,
+                                      srcAccessMask,
+                                      0,
+                                      srcQueueFamilyIndex,
+                                      VK_QUEUE_FAMILY_EXTERNAL,
+                                      buffer,
+                                      offset,
+                                      size,
+                                      srcStageMask,
+                                      VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                      dependencyFlags);
+}
+void cvkQueueSubmitCommandBuffer(VkQueue                     queue,
+                                 const void*                 pNext,
+                                 uint32_t                    waitSemaphoreCount,
+                                 const VkSemaphore*          pWaitSemaphores,
+                                 const VkPipelineStageFlags* pWaitDstStageMask,
+                                 uint32_t                    signalSemaphoreCount,
+                                 const VkSemaphore*          pSignalSemaphores,
+                                 VkFence                     fence,
+                                 VkCommandBuffer             commandBuffer)
+{
+    cvkQueueSubmitInfo(queue, pNext, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, 1, &commandBuffer, signalSemaphoreCount, pSignalSemaphores, fence);
+}
+VkResult cvkQueuePresentImage(VkQueue queue, const void* pNext, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, VkSwapchainKHR swapchain, uint32_t imageIndex)
+{
+    return cvkQueuePresent(queue, pNext, waitSemaphoreCount, pWaitSemaphores, 1, &swapchain, &imageIndex, NULL);
+}
+void cvkSetupCommandPool(VkDevice                     device,
+                         const void*                  pCommandPoolNext,
+                         VkCommandPoolCreateFlags     flags,
+                         uint32_t                     queueFamilyIndex,
+                         const void*                  pCommandBuffersNext,
+                         VkCommandBufferLevel         level,
+                         uint32_t                     commandBufferCount,
+                         const VkAllocationCallbacks* pAllocator,
+                         VkCommandPool*               pCommandPool,
+                         VkCommandBuffer*             pCommandBuffers)
+{
+    cvkCreateCommandPool(device, pCommandPoolNext, flags, queueFamilyIndex, pAllocator, pCommandPool);
+    cvkAllocateCommandBuffers(device, pCommandBuffersNext, (*pCommandPool), level, commandBufferCount, pCommandBuffers);
+}
+void cvkCreateComputePipelineLayout(VkDevice                     device,
+                                    const void*                  pPipelineLayoutNext,
+                                    VkPipelineLayoutCreateFlags  flags,
+                                    uint32_t                     setLayoutCount,
+                                    const VkDescriptorSetLayout* pSetLayouts,
+                                    uint32_t                     pushConstantOffset,
+                                    uint32_t                     pushConstantSize,
+                                    const VkAllocationCallbacks* pAllocator,
+                                    VkPipelineLayout*            pPipelineLayout)
+{
+    VkPushConstantRange push_constant_range;
+
+    cvkInitPushConstantRange(&push_constant_range, VK_SHADER_STAGE_COMPUTE_BIT, pushConstantOffset, pushConstantSize);
+    cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
+}
+void cvkSetupComputePipeline(VkDevice                         device,
+                             const void*                      pShaderModuleNext,
+                             VkShaderModuleCreateFlags        flags,
+                             size_t                           codeSize,
+                             const uint32_t*                  pCode,
+                             const VkSpecializationInfo*      pSpecializationInfo,
+                             const void*                      pPipelineLayoutNext,
+                             uint32_t                         setLayoutCount,
+                             const VkDescriptorSetLayout*     pSetLayouts,
+                             uint32_t                         pushConstantOffset,
+                             uint32_t                         pushConstantSize,
+                             VkPipelineCache                  pipelineCache,
+                             const void*                      pPipelineNext,
+                             VkPipeline                       basePipelineHandle,
+                             int32_t                          basePipelineIndex,
+                             const void*                      pStageNext,
+                             VkPipelineShaderStageCreateFlags stageFlags,
+                             const char*                      pEntryPoint,
+                             const VkAllocationCallbacks*     pAllocator,
+                             VkShaderModule*                  pShaderModule,
+                             VkPipelineLayout*                pPipelineLayout,
+                             VkPipeline*                      pPipeline)
+{
+    VkPipelineShaderStageCreateInfo pipeline_shader_stage_create_info;
+
+    cvkCreateShaderModule(device, pShaderModuleNext, flags, codeSize, pCode, pAllocator, pShaderModule);
+    cvkInitPipelineShaderStageCreateInfo(&pipeline_shader_stage_create_info, pStageNext, stageFlags, VK_SHADER_STAGE_COMPUTE_BIT, (*pShaderModule), pEntryPoint, pSpecializationInfo);
+    cvkCreateComputePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, pushConstantOffset, pushConstantSize, pAllocator, pPipelineLayout);
+    cvkCreateComputePipeline(device, pipelineCache, pPipelineNext, flags, pipeline_shader_stage_create_info, (*pPipelineLayout), basePipelineHandle, basePipelineIndex, pAllocator, pPipeline);
+}
+void cvkUpdateDescriptorSet(VkDevice                      device,
+                            const void*                   pNext,
+                            VkDescriptorSet               dstSet,
+                            uint32_t                      dstBinding,
+                            uint32_t                      dstArrayElement,
+                            uint32_t                      descriptorCount,
+                            VkDescriptorType              descriptorType,
+                            const VkDescriptorImageInfo*  pImageInfo,
+                            const VkDescriptorBufferInfo* pBufferInfo,
+                            const VkBufferView*           pTexelBufferView)
+{
+    VkWriteDescriptorSet write_descriptor_set;
+
+    cvkInitWriteDescriptorSet(&write_descriptor_set, pNext, dstSet, dstBinding, dstArrayElement, descriptorCount, descriptorType, pImageInfo, pBufferInfo, pTexelBufferView);
+    cvkUpdateDescriptorSets(device, 1, &write_descriptor_set, 0, NULL);
+}
+void cvkUpdateImageDescriptorSet(VkDevice         device,
+                                 VkSampler        sampler,
+                                 VkImageView      imageView,
+                                 VkImageLayout    imageLayout,
+                                 const void*      pNext,
+                                 VkDescriptorSet  dstSet,
+                                 uint32_t         dstBinding,
+                                 uint32_t         dstArrayElement,
+                                 VkDescriptorType descriptorType)
+{
+    VkDescriptorImageInfo descriptor_image_info;
+
+    cvkInitDescriptorImageInfo(&descriptor_image_info, sampler, imageView, imageLayout);
+    cvkUpdateDescriptorSet(device, pNext, dstSet, dstBinding, dstArrayElement, 1, descriptorType, &descriptor_image_info, NULL, NULL);
+}
+void cvkUpdateBufferDescriptorSet(VkDevice         device,
+                                  VkBuffer         buffer,
+                                  VkDeviceSize     offset,
+                                  VkDeviceSize     range,
+                                  const void*      pNext,
+                                  VkDescriptorSet  dstSet,
+                                  uint32_t         dstBinding,
+                                  uint32_t         dstArrayElement,
+                                  VkDescriptorType descriptorType)
+{
+    VkDescriptorBufferInfo descriptor_buffer_info;
+
+    cvkInitDescriptorBufferInfo(&descriptor_buffer_info, buffer, offset, range);
+    cvkUpdateDescriptorSet(device, pNext, dstSet, dstBinding, dstArrayElement, 1, descriptorType, NULL, &descriptor_buffer_info, NULL);
+}
+void cvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
+{
+    cvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_TIMESTAMP, queryCount, 0, pAllocator, pQueryPool);
+}
+VkResult cvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults)
+{
+    return cvkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, (size_t)queryCount * sizeof(uint64_t), pResults, sizeof(uint64_t), flags | VK_QUERY_RESULT_64_BIT);
+}
+void cvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
+{
+    cvkCmdDispatch(commandBuffer,
+                   (itemCount.width + itemsPerInvocation.width * localSize.width - 1u) / (itemsPerInvocation.width * localSize.width),
+                   (itemCount.height + itemsPerInvocation.height * localSize.height - 1u) / (itemsPerInvocation.height * localSize.height),
+                   (itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1u) / (itemsPerInvocation.depth * localSize.depth));
+}
+void cvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                VkExtent3D             itemCount,
+                                VkExtent3D             itemsPerInvocation,
+                                VkExtent3D             localSize,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants)
+{
+    cvkCmdBindComputePipeline(commandBuffer, pipeline);
+    cvkCmdBindComputeDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    cvkCmdPushComputeConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
+    cvkCmdDispatchItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                          VkDebugUtilsMessageTypeFlagsEXT             messageTypes,

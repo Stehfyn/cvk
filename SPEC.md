@@ -162,12 +162,27 @@ members carries caller-provided storage (`VkDrmFormatModifierPropertiesListEXT`:
 array), so that parameter is in/out and seeds the local before the call (`pExternalImageFormatProperties`,
 `pMemoryDedicatedRequirements`). A caller who also wants the base struct calls the base query.
 
-## 7. Tier 1': specializations (policy table)
+## 7. Tier 1': specializations
 
-Each row of `substitutions` in the policy file names a target function, a suffix or word
-change, and the fixed arguments. Generated as a forwarding call. Examples that the memory
-study justified: `count = 1` forms, `VK_QUEUE_FAMILY_IGNORED` barriers, 2D from 3D.
-(Not yet generated.)
+Two derived forms and one policy form.
+
+- **Singulars** (derived): a command with exactly one array of sType structs or handles
+  (and no other array) gets a count-of-one form. A plural command name is depluralized
+  (`cvkCreateComputePipeline`, `cvkFlushMappedMemoryRange`, `cvkWaitForFence`, `cvkResetFence`,
+  `cvkFreeCommandBuffer`); otherwise the element struct names it with the verb removed once
+  (`cvkQueueSubmitInfo`, `cvkBindImageMemoryInfo`, `cvkQueueBindSparseInfo`). An sType element is
+  flattened; a handle element is passed by value and its out-array counterpart, when present,
+  becomes a single out-pointer. A handle singular whose element name is taken by another
+  parameter is not generated (`vkCmdExecuteCommands`).
+- **Per-element extender singulars** (derived): section 6.
+- **Constant substitutions** (policy): a one-step chain (section 8) whose `bind` fixes
+  arguments: `cvkCmdBindComputePipeline`, `cvkCmdImageBarrier` (queue families ignored),
+  `cvkCmdAcquireImageFromExternal` and `cvkCmdReleaseImageToExternal` (top or bottom of pipe,
+  no access, `VK_QUEUE_FAMILY_EXTERNAL`), `cvkCreateTimestampQueryPool`, `cvkQueuePresentImage`.
+
+Builders (`cvkInit…`) exist for every struct the caller fills, plain structs included
+(`cvkInitImageSubresourceRange`, `cvkInitPushConstantRange`, `cvkInitDescriptorImageInfo`), so
+chains can build the plain structs the sequences need.
 
 ## 8. Tier 2: chains (policy table over derived handle flow)
 
@@ -197,6 +212,10 @@ exact or the covering selector), `cvkGetPhysicalDeviceExternalImage{Import,Expor
 `cvkGet{Instance,PhysicalDevice}ExtensionSupport` and `cvkGetPhysicalDeviceQueueFamilyIndex`
 (enumeration into a fixed-capacity local, then the fixed selector), `cvkSetupDeviceQueue`
 (extension support asserted, one queue create info built, device created, queue retrieved),
+`cvkCmd{Image,Buffer}QueueOwnershipBarrier` (builder, then `cvkCmdPipelineBarrier` with one
+barrier), `cvkQueueSubmitCommandBuffer`, `cvkSetupCommandPool`, `cvkCreateComputePipelineLayout`,
+`cvkSetupComputePipeline`, `cvkUpdate{,Image,Buffer}DescriptorSet`, `cvkGetQueryPoolResults64`,
+`cvkCmdDispatchItems` (workgroup arithmetic in `bind` expressions), `cvkCmdDispatchComputeItems`,
 `cvkAllocate{Image,Buffer}Memory`
 (requirements → type index → assert → allocate, all in one body; no import mask, that
 constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the

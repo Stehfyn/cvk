@@ -24,49 +24,22 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
 
-/* Fixed enumeration capacities; override any before including. */
-#ifndef CVK_MAX_BIND_INFOS
-#define CVK_MAX_BIND_INFOS (64U)
-#endif
-#ifndef CVK_MAX_DISPLAYS
-#define CVK_MAX_DISPLAYS (32U)
-#endif
-#ifndef CVK_MAX_DRM_FORMAT_MODIFIERS
-#define CVK_MAX_DRM_FORMAT_MODIFIERS (64U)
-#endif
-#ifndef CVK_MAX_DRM_FORMAT_MODIFIER_PLANES
-#define CVK_MAX_DRM_FORMAT_MODIFIER_PLANES (4U)
-#endif
-#ifndef CVK_MAX_INSTANCE_EXTENSIONS
-#define CVK_MAX_INSTANCE_EXTENSIONS (64U)
-#endif
-#ifndef CVK_MAX_PHYSICAL_DEVICES
-#define CVK_MAX_PHYSICAL_DEVICES (32U)
-#endif
-#ifndef CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES
+/* Fixed capacities, from cvk.policy.json. */
+#define CVK_MAX_BIND_INFOS                       (64U)
+#define CVK_MAX_DESCRIPTOR_SET_BINDINGS          (64U)
+#define CVK_MAX_DISPLAYS                         (32U)
+#define CVK_MAX_DRM_FORMAT_MODIFIERS             (64U)
+#define CVK_MAX_DRM_FORMAT_MODIFIER_PLANES       (4U)
+#define CVK_MAX_INSTANCE_EXTENSIONS              (64U)
+#define CVK_MAX_PHYSICAL_DEVICES                 (32U)
 #define CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES (64U)
-#endif
-#ifndef CVK_MAX_PRESENT_MODES
-#define CVK_MAX_PRESENT_MODES (16U)
-#endif
-#ifndef CVK_MAX_PROPERTIES
-#define CVK_MAX_PROPERTIES (512U)
-#endif
-#ifndef CVK_MAX_QUEUE_FAMILY_PROPERTIES
-#define CVK_MAX_QUEUE_FAMILY_PROPERTIES (64U)
-#endif
-#ifndef CVK_MAX_RECTS
-#define CVK_MAX_RECTS (64U)
-#endif
-#ifndef CVK_MAX_SPARSE_MEMORY_REQUIREMENTS
-#define CVK_MAX_SPARSE_MEMORY_REQUIREMENTS (64U)
-#endif
-#ifndef CVK_MAX_SURFACE_FORMATS
-#define CVK_MAX_SURFACE_FORMATS (64U)
-#endif
-#ifndef CVK_MAX_SWAPCHAIN_IMAGES
-#define CVK_MAX_SWAPCHAIN_IMAGES (16U)
-#endif
+#define CVK_MAX_PRESENT_MODES                    (16U)
+#define CVK_MAX_PROPERTIES                       (512U)
+#define CVK_MAX_QUEUE_FAMILY_PROPERTIES          (64U)
+#define CVK_MAX_RECTS                            (64U)
+#define CVK_MAX_SPARSE_MEMORY_REQUIREMENTS       (64U)
+#define CVK_MAX_SURFACE_FORMATS                  (64U)
+#define CVK_MAX_SWAPCHAIN_IMAGES                 (16U)
 
 /**
  * \brief Initializes a VkAcquireNextImageInfoKHR.
@@ -102,6 +75,32 @@ void cvkInitApplicationInfo(VkApplicationInfo* pInfo,
                             const char*        pEngineName,
                             uint32_t           engineVersion,
                             uint32_t           apiVersion);
+/**
+ * \brief Initializes a VkAttachmentDescription.
+ *
+ * \param[out] pInfo           Receives the initialized VkAttachmentDescription
+ * \param[in] flags           VkAttachmentDescription::flags
+ * \param[in] format          VkAttachmentDescription::format
+ * \param[in] samples         VkAttachmentDescription::samples
+ * \param[in] loadOp          VkAttachmentDescription::loadOp
+ * \param[in] storeOp         VkAttachmentDescription::storeOp
+ * \param[in] stencilLoadOp   VkAttachmentDescription::stencilLoadOp
+ * \param[in] stencilStoreOp  VkAttachmentDescription::stencilStoreOp
+ * \param[in] initialLayout   VkAttachmentDescription::initialLayout
+ * \param[in] finalLayout     VkAttachmentDescription::finalLayout
+ *
+ * \retval None
+ */
+void cvkInitAttachmentDescription(VkAttachmentDescription*     pInfo,
+                                  VkAttachmentDescriptionFlags flags,
+                                  VkFormat                     format,
+                                  VkSampleCountFlagBits        samples,
+                                  VkAttachmentLoadOp           loadOp,
+                                  VkAttachmentStoreOp          storeOp,
+                                  VkAttachmentLoadOp           stencilLoadOp,
+                                  VkAttachmentStoreOp          stencilStoreOp,
+                                  VkImageLayout                initialLayout,
+                                  VkImageLayout                finalLayout);
 /**
  * \brief Initializes a VkAttachmentDescription2.
  *
@@ -141,6 +140,16 @@ void cvkInitAttachmentDescription2(VkAttachmentDescription2*    pInfo,
  * \retval None
  */
 void cvkInitAttachmentDescriptionStencilLayout(VkAttachmentDescriptionStencilLayout* pInfo, void* pNext, VkImageLayout stencilInitialLayout, VkImageLayout stencilFinalLayout);
+/**
+ * \brief Initializes a VkAttachmentReference.
+ *
+ * \param[out] pInfo       Receives the initialized VkAttachmentReference
+ * \param[in] attachment  VkAttachmentReference::attachment
+ * \param[in] layout      VkAttachmentReference::layout
+ *
+ * \retval None
+ */
+void cvkInitAttachmentReference(VkAttachmentReference* pInfo, uint32_t attachment, VkImageLayout layout);
 /**
  * \brief Initializes a VkAttachmentReference2.
  *
@@ -268,6 +277,17 @@ void cvkInitBindSparseInfo(VkBindSparseInfo*                        pInfo,
                            uint32_t                                 signalSemaphoreCount,
                            const VkSemaphore*                       pSignalSemaphores);
 /**
+ * \brief Initializes a VkBufferCopy.
+ *
+ * \param[out] pInfo      Receives the initialized VkBufferCopy
+ * \param[in] srcOffset  VkBufferCopy::srcOffset
+ * \param[in] dstOffset  VkBufferCopy::dstOffset
+ * \param[in] size       VkBufferCopy::size
+ *
+ * \retval None
+ */
+void cvkInitBufferCopy(VkBufferCopy* pInfo, VkDeviceSize srcOffset, VkDeviceSize dstOffset, VkDeviceSize size);
+/**
  * \brief Initializes a VkBufferCreateInfo.
  *
  * \param[out] pInfo                  Receives the initialized VkBufferCreateInfo
@@ -299,6 +319,26 @@ void cvkInitBufferCreateInfo(VkBufferCreateInfo* pInfo,
  * \retval None
  */
 void cvkInitBufferDeviceAddressInfo(VkBufferDeviceAddressInfo* pInfo, const void* pNext, VkBuffer buffer);
+/**
+ * \brief Initializes a VkBufferImageCopy.
+ *
+ * \param[out] pInfo              Receives the initialized VkBufferImageCopy
+ * \param[in] bufferOffset       VkBufferImageCopy::bufferOffset
+ * \param[in] bufferRowLength    VkBufferImageCopy::bufferRowLength
+ * \param[in] bufferImageHeight  VkBufferImageCopy::bufferImageHeight
+ * \param[in] imageSubresource   VkBufferImageCopy::imageSubresource
+ * \param[in] imageOffset        VkBufferImageCopy::imageOffset
+ * \param[in] imageExtent        VkBufferImageCopy::imageExtent
+ *
+ * \retval None
+ */
+void cvkInitBufferImageCopy(VkBufferImageCopy*       pInfo,
+                            VkDeviceSize             bufferOffset,
+                            uint32_t                 bufferRowLength,
+                            uint32_t                 bufferImageHeight,
+                            VkImageSubresourceLayers imageSubresource,
+                            VkOffset3D               imageOffset,
+                            VkExtent3D               imageExtent);
 /**
  * \brief Initializes a VkBufferMemoryBarrier.
  *
@@ -358,6 +398,38 @@ void cvkInitBufferOpaqueCaptureAddressCreateInfo(VkBufferOpaqueCaptureAddressCre
  */
 void cvkInitBufferViewCreateInfo(VkBufferViewCreateInfo* pInfo, const void* pNext, VkBufferViewCreateFlags flags, VkBuffer buffer, VkFormat format, VkDeviceSize offset, VkDeviceSize range);
 /**
+ * \brief Initializes a VkClearAttachment.
+ *
+ * \param[out] pInfo            Receives the initialized VkClearAttachment
+ * \param[in] aspectMask       VkClearAttachment::aspectMask
+ * \param[in] colorAttachment  VkClearAttachment::colorAttachment
+ * \param[in] clearValue       VkClearAttachment::clearValue
+ *
+ * \retval None
+ */
+void cvkInitClearAttachment(VkClearAttachment* pInfo, VkImageAspectFlags aspectMask, uint32_t colorAttachment, VkClearValue clearValue);
+/**
+ * \brief Initializes a VkClearDepthStencilValue.
+ *
+ * \param[out] pInfo    Receives the initialized VkClearDepthStencilValue
+ * \param[in] depth    VkClearDepthStencilValue::depth
+ * \param[in] stencil  VkClearDepthStencilValue::stencil
+ *
+ * \retval None
+ */
+void cvkInitClearDepthStencilValue(VkClearDepthStencilValue* pInfo, float depth, uint32_t stencil);
+/**
+ * \brief Initializes a VkClearRect.
+ *
+ * \param[out] pInfo           Receives the initialized VkClearRect
+ * \param[in] rect            VkClearRect::rect
+ * \param[in] baseArrayLayer  VkClearRect::baseArrayLayer
+ * \param[in] layerCount      VkClearRect::layerCount
+ *
+ * \retval None
+ */
+void cvkInitClearRect(VkClearRect* pInfo, VkRect2D rect, uint32_t baseArrayLayer, uint32_t layerCount);
+/**
  * \brief Initializes a VkCommandBufferAllocateInfo.
  *
  * \param[out] pInfo               Receives the initialized VkCommandBufferAllocateInfo
@@ -414,6 +486,18 @@ void cvkInitCommandBufferInheritanceInfo(VkCommandBufferInheritanceInfo* pInfo,
  */
 void cvkInitCommandPoolCreateInfo(VkCommandPoolCreateInfo* pInfo, const void* pNext, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex);
 /**
+ * \brief Initializes a VkComponentMapping.
+ *
+ * \param[out] pInfo  Receives the initialized VkComponentMapping
+ * \param[in] r      VkComponentMapping::r
+ * \param[in] g      VkComponentMapping::g
+ * \param[in] b      VkComponentMapping::b
+ * \param[in] a      VkComponentMapping::a
+ *
+ * \retval None
+ */
+void cvkInitComponentMapping(VkComponentMapping* pInfo, VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a);
+/**
  * \brief Initializes a VkComputePipelineCreateInfo.
  *
  * \param[out] pInfo               Receives the initialized VkComputePipelineCreateInfo
@@ -433,6 +517,18 @@ void cvkInitComputePipelineCreateInfo(VkComputePipelineCreateInfo*    pInfo,
                                       VkPipelineLayout                layout,
                                       VkPipeline                      basePipelineHandle,
                                       int32_t                         basePipelineIndex);
+/**
+ * \brief Initializes a VkConformanceVersion.
+ *
+ * \param[out] pInfo     Receives the initialized VkConformanceVersion
+ * \param[in] major     VkConformanceVersion::major
+ * \param[in] minor     VkConformanceVersion::minor
+ * \param[in] subminor  VkConformanceVersion::subminor
+ * \param[in] patch     VkConformanceVersion::patch
+ *
+ * \retval None
+ */
+void cvkInitConformanceVersion(VkConformanceVersion* pInfo, uint8_t major, uint8_t minor, uint8_t subminor, uint8_t patch);
 /**
  * \brief Initializes a VkCopyDescriptorSet.
  *
@@ -545,6 +641,28 @@ void cvkInitDebugUtilsObjectNameInfo(VkDebugUtilsObjectNameInfoEXT* pInfo, const
  */
 void cvkInitDebugUtilsObjectTagInfo(VkDebugUtilsObjectTagInfoEXT* pInfo, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag);
 /**
+ * \brief Initializes a VkDescriptorBufferInfo.
+ *
+ * \param[out] pInfo   Receives the initialized VkDescriptorBufferInfo
+ * \param[in] buffer  VkDescriptorBufferInfo::buffer
+ * \param[in] offset  VkDescriptorBufferInfo::offset
+ * \param[in] range   VkDescriptorBufferInfo::range
+ *
+ * \retval None
+ */
+void cvkInitDescriptorBufferInfo(VkDescriptorBufferInfo* pInfo, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range);
+/**
+ * \brief Initializes a VkDescriptorImageInfo.
+ *
+ * \param[out] pInfo        Receives the initialized VkDescriptorImageInfo
+ * \param[in] sampler      VkDescriptorImageInfo::sampler
+ * \param[in] imageView    VkDescriptorImageInfo::imageView
+ * \param[in] imageLayout  VkDescriptorImageInfo::imageLayout
+ *
+ * \retval None
+ */
+void cvkInitDescriptorImageInfo(VkDescriptorImageInfo* pInfo, VkSampler sampler, VkImageView imageView, VkImageLayout imageLayout);
+/**
  * \brief Initializes a VkDescriptorPoolCreateInfo.
  *
  * \param[out] pInfo          Receives the initialized VkDescriptorPoolCreateInfo
@@ -563,6 +681,16 @@ void cvkInitDescriptorPoolCreateInfo(VkDescriptorPoolCreateInfo* pInfo,
                                      uint32_t                    poolSizeCount,
                                      const VkDescriptorPoolSize* pPoolSizes);
 /**
+ * \brief Initializes a VkDescriptorPoolSize.
+ *
+ * \param[out] pInfo            Receives the initialized VkDescriptorPoolSize
+ * \param[in] type             VkDescriptorPoolSize::type
+ * \param[in] descriptorCount  VkDescriptorPoolSize::descriptorCount
+ *
+ * \retval None
+ */
+void cvkInitDescriptorPoolSize(VkDescriptorPoolSize* pInfo, VkDescriptorType type, uint32_t descriptorCount);
+/**
  * \brief Initializes a VkDescriptorSetAllocateInfo.
  *
  * \param[out] pInfo               Receives the initialized VkDescriptorSetAllocateInfo
@@ -574,6 +702,24 @@ void cvkInitDescriptorPoolCreateInfo(VkDescriptorPoolCreateInfo* pInfo,
  * \retval None
  */
 void cvkInitDescriptorSetAllocateInfo(VkDescriptorSetAllocateInfo* pInfo, const void* pNext, VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts);
+/**
+ * \brief Initializes a VkDescriptorSetLayoutBinding.
+ *
+ * \param[out] pInfo               Receives the initialized VkDescriptorSetLayoutBinding
+ * \param[in] binding             VkDescriptorSetLayoutBinding::binding
+ * \param[in] descriptorType      VkDescriptorSetLayoutBinding::descriptorType
+ * \param[in] descriptorCount     VkDescriptorSetLayoutBinding::descriptorCount
+ * \param[in] stageFlags          VkDescriptorSetLayoutBinding::stageFlags
+ * \param[in] pImmutableSamplers  VkDescriptorSetLayoutBinding::pImmutableSamplers
+ *
+ * \retval None
+ */
+void cvkInitDescriptorSetLayoutBinding(VkDescriptorSetLayoutBinding* pInfo,
+                                       uint32_t                      binding,
+                                       VkDescriptorType              descriptorType,
+                                       uint32_t                      descriptorCount,
+                                       VkShaderStageFlags            stageFlags,
+                                       const VkSampler*              pImmutableSamplers);
 /**
  * \brief Initializes a VkDescriptorSetLayoutBindingFlagsCreateInfo.
  *
@@ -659,6 +805,26 @@ void cvkInitDescriptorUpdateTemplateCreateInfo(VkDescriptorUpdateTemplateCreateI
                                                VkPipelineBindPoint                    pipelineBindPoint,
                                                VkPipelineLayout                       pipelineLayout,
                                                uint32_t                               set);
+/**
+ * \brief Initializes a VkDescriptorUpdateTemplateEntry.
+ *
+ * \param[out] pInfo            Receives the initialized VkDescriptorUpdateTemplateEntry
+ * \param[in] dstBinding       VkDescriptorUpdateTemplateEntry::dstBinding
+ * \param[in] dstArrayElement  VkDescriptorUpdateTemplateEntry::dstArrayElement
+ * \param[in] descriptorCount  VkDescriptorUpdateTemplateEntry::descriptorCount
+ * \param[in] descriptorType   VkDescriptorUpdateTemplateEntry::descriptorType
+ * \param[in] offset           VkDescriptorUpdateTemplateEntry::offset
+ * \param[in] stride           VkDescriptorUpdateTemplateEntry::stride
+ *
+ * \retval None
+ */
+void cvkInitDescriptorUpdateTemplateEntry(VkDescriptorUpdateTemplateEntry* pInfo,
+                                          uint32_t                         dstBinding,
+                                          uint32_t                         dstArrayElement,
+                                          uint32_t                         descriptorCount,
+                                          VkDescriptorType                 descriptorType,
+                                          size_t                           offset,
+                                          size_t                           stride);
 /**
  * \brief Initializes a VkDeviceCreateInfo.
  *
@@ -818,6 +984,17 @@ void cvkInitDeviceQueueCreateInfo(VkDeviceQueueCreateInfo* pInfo, const void* pN
  */
 void cvkInitDeviceQueueInfo2(VkDeviceQueueInfo2* pInfo, const void* pNext, VkDeviceQueueCreateFlags flags, uint32_t queueFamilyIndex, uint32_t queueIndex);
 /**
+ * \brief Initializes a VkDispatchIndirectCommand.
+ *
+ * \param[out] pInfo  Receives the initialized VkDispatchIndirectCommand
+ * \param[in] x      VkDispatchIndirectCommand::x
+ * \param[in] y      VkDispatchIndirectCommand::y
+ * \param[in] z      VkDispatchIndirectCommand::z
+ *
+ * \retval None
+ */
+void cvkInitDispatchIndirectCommand(VkDispatchIndirectCommand* pInfo, uint32_t x, uint32_t y, uint32_t z);
+/**
  * \brief Initializes a VkDisplayModeCreateInfoKHR.
  *
  * \param[out] pInfo       Receives the initialized VkDisplayModeCreateInfoKHR
@@ -828,6 +1005,16 @@ void cvkInitDeviceQueueInfo2(VkDeviceQueueInfo2* pInfo, const void* pNext, VkDev
  * \retval None
  */
 void cvkInitDisplayModeCreateInfo(VkDisplayModeCreateInfoKHR* pInfo, const void* pNext, VkDisplayModeCreateFlagsKHR flags, VkDisplayModeParametersKHR parameters);
+/**
+ * \brief Initializes a VkDisplayModeParametersKHR.
+ *
+ * \param[out] pInfo          Receives the initialized VkDisplayModeParametersKHR
+ * \param[in] visibleRegion  VkDisplayModeParametersKHR::visibleRegion
+ * \param[in] refreshRate    VkDisplayModeParametersKHR::refreshRate
+ *
+ * \retval None
+ */
+void cvkInitDisplayModeParameters(VkDisplayModeParametersKHR* pInfo, VkExtent2D visibleRegion, uint32_t refreshRate);
 /**
  * \brief Initializes a VkDisplaySurfaceCreateInfoKHR.
  *
@@ -854,6 +1041,31 @@ void cvkInitDisplaySurfaceCreateInfo(VkDisplaySurfaceCreateInfoKHR* pInfo,
                                      float                          globalAlpha,
                                      VkDisplayPlaneAlphaFlagBitsKHR alphaMode,
                                      VkExtent2D                     imageExtent);
+/**
+ * \brief Initializes a VkDrawIndexedIndirectCommand.
+ *
+ * \param[out] pInfo          Receives the initialized VkDrawIndexedIndirectCommand
+ * \param[in] indexCount     VkDrawIndexedIndirectCommand::indexCount
+ * \param[in] instanceCount  VkDrawIndexedIndirectCommand::instanceCount
+ * \param[in] firstIndex     VkDrawIndexedIndirectCommand::firstIndex
+ * \param[in] vertexOffset   VkDrawIndexedIndirectCommand::vertexOffset
+ * \param[in] firstInstance  VkDrawIndexedIndirectCommand::firstInstance
+ *
+ * \retval None
+ */
+void cvkInitDrawIndexedIndirectCommand(VkDrawIndexedIndirectCommand* pInfo, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance);
+/**
+ * \brief Initializes a VkDrawIndirectCommand.
+ *
+ * \param[out] pInfo          Receives the initialized VkDrawIndirectCommand
+ * \param[in] vertexCount    VkDrawIndirectCommand::vertexCount
+ * \param[in] instanceCount  VkDrawIndirectCommand::instanceCount
+ * \param[in] firstVertex    VkDrawIndirectCommand::firstVertex
+ * \param[in] firstInstance  VkDrawIndirectCommand::firstInstance
+ *
+ * \retval None
+ */
+void cvkInitDrawIndirectCommand(VkDrawIndirectCommand* pInfo, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
 /**
  * \brief Initializes a VkDrmFormatModifierPropertiesList2EXT.
  *
@@ -912,6 +1124,27 @@ void cvkInitExportMemoryAllocateInfo(VkExportMemoryAllocateInfo* pInfo, const vo
  * \retval None
  */
 void cvkInitExportSemaphoreCreateInfo(VkExportSemaphoreCreateInfo* pInfo, const void* pNext, VkExternalSemaphoreHandleTypeFlags handleTypes);
+/**
+ * \brief Initializes a VkExtent2D.
+ *
+ * \param[out] pInfo   Receives the initialized VkExtent2D
+ * \param[in] width   VkExtent2D::width
+ * \param[in] height  VkExtent2D::height
+ *
+ * \retval None
+ */
+void cvkInitExtent2D(VkExtent2D* pInfo, uint32_t width, uint32_t height);
+/**
+ * \brief Initializes a VkExtent3D.
+ *
+ * \param[out] pInfo   Receives the initialized VkExtent3D
+ * \param[in] width   VkExtent3D::width
+ * \param[in] height  VkExtent3D::height
+ * \param[in] depth   VkExtent3D::depth
+ *
+ * \retval None
+ */
+void cvkInitExtent3D(VkExtent3D* pInfo, uint32_t width, uint32_t height, uint32_t depth);
 /**
  * \brief Initializes a VkExternalBufferProperties.
  *
@@ -1104,6 +1337,31 @@ void cvkInitGraphicsPipelineCreateInfo(VkGraphicsPipelineCreateInfo*            
  */
 void cvkInitHeadlessSurfaceCreateInfo(VkHeadlessSurfaceCreateInfoEXT* pInfo, const void* pNext, VkHeadlessSurfaceCreateFlagsEXT flags);
 /**
+ * \brief Initializes a VkImageBlit.
+ *
+ * \param[out] pInfo           Receives the initialized VkImageBlit
+ * \param[in] srcSubresource  VkImageBlit::srcSubresource
+ * \param[in] srcOffsets      VkImageBlit::srcOffsets
+ * \param[in] dstSubresource  VkImageBlit::dstSubresource
+ * \param[in] dstOffsets      VkImageBlit::dstOffsets
+ *
+ * \retval None
+ */
+void cvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresource, const VkOffset3D srcOffsets[2], VkImageSubresourceLayers dstSubresource, const VkOffset3D dstOffsets[2]);
+/**
+ * \brief Initializes a VkImageCopy.
+ *
+ * \param[out] pInfo           Receives the initialized VkImageCopy
+ * \param[in] srcSubresource  VkImageCopy::srcSubresource
+ * \param[in] srcOffset       VkImageCopy::srcOffset
+ * \param[in] dstSubresource  VkImageCopy::dstSubresource
+ * \param[in] dstOffset       VkImageCopy::dstOffset
+ * \param[in] extent          VkImageCopy::extent
+ *
+ * \retval None
+ */
+void cvkInitImageCopy(VkImageCopy* pInfo, VkImageSubresourceLayers srcSubresource, VkOffset3D srcOffset, VkImageSubresourceLayers dstSubresource, VkOffset3D dstOffset, VkExtent3D extent);
+/**
  * \brief Initializes a VkImageCreateInfo.
  *
  * \param[out] pInfo                  Receives the initialized VkImageCreateInfo
@@ -1242,6 +1500,19 @@ void cvkInitImageMemoryRequirementsInfo2(VkImageMemoryRequirementsInfo2* pInfo, 
  */
 void cvkInitImagePlaneMemoryRequirementsInfo(VkImagePlaneMemoryRequirementsInfo* pInfo, const void* pNext, VkImageAspectFlagBits planeAspect);
 /**
+ * \brief Initializes a VkImageResolve.
+ *
+ * \param[out] pInfo           Receives the initialized VkImageResolve
+ * \param[in] srcSubresource  VkImageResolve::srcSubresource
+ * \param[in] srcOffset       VkImageResolve::srcOffset
+ * \param[in] dstSubresource  VkImageResolve::dstSubresource
+ * \param[in] dstOffset       VkImageResolve::dstOffset
+ * \param[in] extent          VkImageResolve::extent
+ *
+ * \retval None
+ */
+void cvkInitImageResolve(VkImageResolve* pInfo, VkImageSubresourceLayers srcSubresource, VkOffset3D srcOffset, VkImageSubresourceLayers dstSubresource, VkOffset3D dstOffset, VkExtent3D extent);
+/**
  * \brief Initializes a VkImageSparseMemoryRequirementsInfo2.
  *
  * \param[out] pInfo  Receives the initialized VkImageSparseMemoryRequirementsInfo2
@@ -1261,6 +1532,42 @@ void cvkInitImageSparseMemoryRequirementsInfo2(VkImageSparseMemoryRequirementsIn
  * \retval None
  */
 void cvkInitImageStencilUsageCreateInfo(VkImageStencilUsageCreateInfo* pInfo, const void* pNext, VkImageUsageFlags stencilUsage);
+/**
+ * \brief Initializes a VkImageSubresource.
+ *
+ * \param[out] pInfo       Receives the initialized VkImageSubresource
+ * \param[in] aspectMask  VkImageSubresource::aspectMask
+ * \param[in] mipLevel    VkImageSubresource::mipLevel
+ * \param[in] arrayLayer  VkImageSubresource::arrayLayer
+ *
+ * \retval None
+ */
+void cvkInitImageSubresource(VkImageSubresource* pInfo, VkImageAspectFlags aspectMask, uint32_t mipLevel, uint32_t arrayLayer);
+/**
+ * \brief Initializes a VkImageSubresourceLayers.
+ *
+ * \param[out] pInfo           Receives the initialized VkImageSubresourceLayers
+ * \param[in] aspectMask      VkImageSubresourceLayers::aspectMask
+ * \param[in] mipLevel        VkImageSubresourceLayers::mipLevel
+ * \param[in] baseArrayLayer  VkImageSubresourceLayers::baseArrayLayer
+ * \param[in] layerCount      VkImageSubresourceLayers::layerCount
+ *
+ * \retval None
+ */
+void cvkInitImageSubresourceLayers(VkImageSubresourceLayers* pInfo, VkImageAspectFlags aspectMask, uint32_t mipLevel, uint32_t baseArrayLayer, uint32_t layerCount);
+/**
+ * \brief Initializes a VkImageSubresourceRange.
+ *
+ * \param[out] pInfo           Receives the initialized VkImageSubresourceRange
+ * \param[in] aspectMask      VkImageSubresourceRange::aspectMask
+ * \param[in] baseMipLevel    VkImageSubresourceRange::baseMipLevel
+ * \param[in] levelCount      VkImageSubresourceRange::levelCount
+ * \param[in] baseArrayLayer  VkImageSubresourceRange::baseArrayLayer
+ * \param[in] layerCount      VkImageSubresourceRange::layerCount
+ *
+ * \retval None
+ */
+void cvkInitImageSubresourceRange(VkImageSubresourceRange* pInfo, VkImageAspectFlags aspectMask, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
 /**
  * \brief Initializes a VkImageSwapchainCreateInfoKHR.
  *
@@ -1327,6 +1634,17 @@ void cvkInitImportMemoryFdInfo(VkImportMemoryFdInfoKHR* pInfo, const void* pNext
  * \retval None
  */
 void cvkInitImportSemaphoreFdInfo(VkImportSemaphoreFdInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
+/**
+ * \brief Initializes a VkInputAttachmentAspectReference.
+ *
+ * \param[out] pInfo                 Receives the initialized VkInputAttachmentAspectReference
+ * \param[in] subpass               VkInputAttachmentAspectReference::subpass
+ * \param[in] inputAttachmentIndex  VkInputAttachmentAspectReference::inputAttachmentIndex
+ * \param[in] aspectMask            VkInputAttachmentAspectReference::aspectMask
+ *
+ * \retval None
+ */
+void cvkInitInputAttachmentAspectReference(VkInputAttachmentAspectReference* pInfo, uint32_t subpass, uint32_t inputAttachmentIndex, VkImageAspectFlags aspectMask);
 /**
  * \brief Initializes a VkInstanceCreateInfo.
  *
@@ -1453,6 +1771,27 @@ void cvkInitMemoryOpaqueCaptureAddressAllocateInfo(VkMemoryOpaqueCaptureAddressA
  * \retval None
  */
 void cvkInitMemoryRequirements2(VkMemoryRequirements2* pInfo, void* pNext);
+/**
+ * \brief Initializes a VkOffset2D.
+ *
+ * \param[out] pInfo  Receives the initialized VkOffset2D
+ * \param[in] x      VkOffset2D::x
+ * \param[in] y      VkOffset2D::y
+ *
+ * \retval None
+ */
+void cvkInitOffset2D(VkOffset2D* pInfo, int32_t x, int32_t y);
+/**
+ * \brief Initializes a VkOffset3D.
+ *
+ * \param[out] pInfo  Receives the initialized VkOffset3D
+ * \param[in] x      VkOffset3D::x
+ * \param[in] y      VkOffset3D::y
+ * \param[in] z      VkOffset3D::z
+ *
+ * \retval None
+ */
+void cvkInitOffset3D(VkOffset3D* pInfo, int32_t x, int32_t y, int32_t z);
 /**
  * \brief Initializes a VkPhysicalDevice16BitStorageFeatures.
  *
@@ -1626,6 +1965,124 @@ void cvkInitPhysicalDeviceExternalImageFormatInfo(VkPhysicalDeviceExternalImageF
  * \retval None
  */
 void cvkInitPhysicalDeviceExternalSemaphoreInfo(VkPhysicalDeviceExternalSemaphoreInfo* pInfo, const void* pNext, VkExternalSemaphoreHandleTypeFlagBits handleType);
+/**
+ * \brief Initializes a VkPhysicalDeviceFeatures.
+ *
+ * \param[out] pInfo                                    Receives the initialized VkPhysicalDeviceFeatures
+ * \param[in] robustBufferAccess                       VkPhysicalDeviceFeatures::robustBufferAccess
+ * \param[in] fullDrawIndexUint32                      VkPhysicalDeviceFeatures::fullDrawIndexUint32
+ * \param[in] imageCubeArray                           VkPhysicalDeviceFeatures::imageCubeArray
+ * \param[in] independentBlend                         VkPhysicalDeviceFeatures::independentBlend
+ * \param[in] geometryShader                           VkPhysicalDeviceFeatures::geometryShader
+ * \param[in] tessellationShader                       VkPhysicalDeviceFeatures::tessellationShader
+ * \param[in] sampleRateShading                        VkPhysicalDeviceFeatures::sampleRateShading
+ * \param[in] dualSrcBlend                             VkPhysicalDeviceFeatures::dualSrcBlend
+ * \param[in] logicOp                                  VkPhysicalDeviceFeatures::logicOp
+ * \param[in] multiDrawIndirect                        VkPhysicalDeviceFeatures::multiDrawIndirect
+ * \param[in] drawIndirectFirstInstance                VkPhysicalDeviceFeatures::drawIndirectFirstInstance
+ * \param[in] depthClamp                               VkPhysicalDeviceFeatures::depthClamp
+ * \param[in] depthBiasClamp                           VkPhysicalDeviceFeatures::depthBiasClamp
+ * \param[in] fillModeNonSolid                         VkPhysicalDeviceFeatures::fillModeNonSolid
+ * \param[in] depthBounds                              VkPhysicalDeviceFeatures::depthBounds
+ * \param[in] wideLines                                VkPhysicalDeviceFeatures::wideLines
+ * \param[in] largePoints                              VkPhysicalDeviceFeatures::largePoints
+ * \param[in] alphaToOne                               VkPhysicalDeviceFeatures::alphaToOne
+ * \param[in] multiViewport                            VkPhysicalDeviceFeatures::multiViewport
+ * \param[in] samplerAnisotropy                        VkPhysicalDeviceFeatures::samplerAnisotropy
+ * \param[in] textureCompressionETC2                   VkPhysicalDeviceFeatures::textureCompressionETC2
+ * \param[in] textureCompressionASTC_LDR               VkPhysicalDeviceFeatures::textureCompressionASTC_LDR
+ * \param[in] textureCompressionBC                     VkPhysicalDeviceFeatures::textureCompressionBC
+ * \param[in] occlusionQueryPrecise                    VkPhysicalDeviceFeatures::occlusionQueryPrecise
+ * \param[in] pipelineStatisticsQuery                  VkPhysicalDeviceFeatures::pipelineStatisticsQuery
+ * \param[in] vertexPipelineStoresAndAtomics           VkPhysicalDeviceFeatures::vertexPipelineStoresAndAtomics
+ * \param[in] fragmentStoresAndAtomics                 VkPhysicalDeviceFeatures::fragmentStoresAndAtomics
+ * \param[in] shaderTessellationAndGeometryPointSize   VkPhysicalDeviceFeatures::shaderTessellationAndGeometryPointSize
+ * \param[in] shaderImageGatherExtended                VkPhysicalDeviceFeatures::shaderImageGatherExtended
+ * \param[in] shaderStorageImageExtendedFormats        VkPhysicalDeviceFeatures::shaderStorageImageExtendedFormats
+ * \param[in] shaderStorageImageMultisample            VkPhysicalDeviceFeatures::shaderStorageImageMultisample
+ * \param[in] shaderStorageImageReadWithoutFormat      VkPhysicalDeviceFeatures::shaderStorageImageReadWithoutFormat
+ * \param[in] shaderStorageImageWriteWithoutFormat     VkPhysicalDeviceFeatures::shaderStorageImageWriteWithoutFormat
+ * \param[in] shaderUniformBufferArrayDynamicIndexing  VkPhysicalDeviceFeatures::shaderUniformBufferArrayDynamicIndexing
+ * \param[in] shaderSampledImageArrayDynamicIndexing   VkPhysicalDeviceFeatures::shaderSampledImageArrayDynamicIndexing
+ * \param[in] shaderStorageBufferArrayDynamicIndexing  VkPhysicalDeviceFeatures::shaderStorageBufferArrayDynamicIndexing
+ * \param[in] shaderStorageImageArrayDynamicIndexing   VkPhysicalDeviceFeatures::shaderStorageImageArrayDynamicIndexing
+ * \param[in] shaderClipDistance                       VkPhysicalDeviceFeatures::shaderClipDistance
+ * \param[in] shaderCullDistance                       VkPhysicalDeviceFeatures::shaderCullDistance
+ * \param[in] shaderFloat64                            VkPhysicalDeviceFeatures::shaderFloat64
+ * \param[in] shaderInt64                              VkPhysicalDeviceFeatures::shaderInt64
+ * \param[in] shaderInt16                              VkPhysicalDeviceFeatures::shaderInt16
+ * \param[in] shaderResourceResidency                  VkPhysicalDeviceFeatures::shaderResourceResidency
+ * \param[in] shaderResourceMinLod                     VkPhysicalDeviceFeatures::shaderResourceMinLod
+ * \param[in] sparseBinding                            VkPhysicalDeviceFeatures::sparseBinding
+ * \param[in] sparseResidencyBuffer                    VkPhysicalDeviceFeatures::sparseResidencyBuffer
+ * \param[in] sparseResidencyImage2D                   VkPhysicalDeviceFeatures::sparseResidencyImage2D
+ * \param[in] sparseResidencyImage3D                   VkPhysicalDeviceFeatures::sparseResidencyImage3D
+ * \param[in] sparseResidency2Samples                  VkPhysicalDeviceFeatures::sparseResidency2Samples
+ * \param[in] sparseResidency4Samples                  VkPhysicalDeviceFeatures::sparseResidency4Samples
+ * \param[in] sparseResidency8Samples                  VkPhysicalDeviceFeatures::sparseResidency8Samples
+ * \param[in] sparseResidency16Samples                 VkPhysicalDeviceFeatures::sparseResidency16Samples
+ * \param[in] sparseResidencyAliased                   VkPhysicalDeviceFeatures::sparseResidencyAliased
+ * \param[in] variableMultisampleRate                  VkPhysicalDeviceFeatures::variableMultisampleRate
+ * \param[in] inheritedQueries                         VkPhysicalDeviceFeatures::inheritedQueries
+ *
+ * \retval None
+ */
+void cvkInitPhysicalDeviceFeatures(VkPhysicalDeviceFeatures* pInfo,
+                                   VkBool32                  robustBufferAccess,
+                                   VkBool32                  fullDrawIndexUint32,
+                                   VkBool32                  imageCubeArray,
+                                   VkBool32                  independentBlend,
+                                   VkBool32                  geometryShader,
+                                   VkBool32                  tessellationShader,
+                                   VkBool32                  sampleRateShading,
+                                   VkBool32                  dualSrcBlend,
+                                   VkBool32                  logicOp,
+                                   VkBool32                  multiDrawIndirect,
+                                   VkBool32                  drawIndirectFirstInstance,
+                                   VkBool32                  depthClamp,
+                                   VkBool32                  depthBiasClamp,
+                                   VkBool32                  fillModeNonSolid,
+                                   VkBool32                  depthBounds,
+                                   VkBool32                  wideLines,
+                                   VkBool32                  largePoints,
+                                   VkBool32                  alphaToOne,
+                                   VkBool32                  multiViewport,
+                                   VkBool32                  samplerAnisotropy,
+                                   VkBool32                  textureCompressionETC2,
+                                   VkBool32                  textureCompressionASTC_LDR,
+                                   VkBool32                  textureCompressionBC,
+                                   VkBool32                  occlusionQueryPrecise,
+                                   VkBool32                  pipelineStatisticsQuery,
+                                   VkBool32                  vertexPipelineStoresAndAtomics,
+                                   VkBool32                  fragmentStoresAndAtomics,
+                                   VkBool32                  shaderTessellationAndGeometryPointSize,
+                                   VkBool32                  shaderImageGatherExtended,
+                                   VkBool32                  shaderStorageImageExtendedFormats,
+                                   VkBool32                  shaderStorageImageMultisample,
+                                   VkBool32                  shaderStorageImageReadWithoutFormat,
+                                   VkBool32                  shaderStorageImageWriteWithoutFormat,
+                                   VkBool32                  shaderUniformBufferArrayDynamicIndexing,
+                                   VkBool32                  shaderSampledImageArrayDynamicIndexing,
+                                   VkBool32                  shaderStorageBufferArrayDynamicIndexing,
+                                   VkBool32                  shaderStorageImageArrayDynamicIndexing,
+                                   VkBool32                  shaderClipDistance,
+                                   VkBool32                  shaderCullDistance,
+                                   VkBool32                  shaderFloat64,
+                                   VkBool32                  shaderInt64,
+                                   VkBool32                  shaderInt16,
+                                   VkBool32                  shaderResourceResidency,
+                                   VkBool32                  shaderResourceMinLod,
+                                   VkBool32                  sparseBinding,
+                                   VkBool32                  sparseResidencyBuffer,
+                                   VkBool32                  sparseResidencyImage2D,
+                                   VkBool32                  sparseResidencyImage3D,
+                                   VkBool32                  sparseResidency2Samples,
+                                   VkBool32                  sparseResidency4Samples,
+                                   VkBool32                  sparseResidency8Samples,
+                                   VkBool32                  sparseResidency16Samples,
+                                   VkBool32                  sparseResidencyAliased,
+                                   VkBool32                  variableMultisampleRate,
+                                   VkBool32                  inheritedQueries);
 /**
  * \brief Initializes a VkPhysicalDeviceFeatures2.
  *
@@ -2141,6 +2598,48 @@ void cvkInitPhysicalDeviceVulkanMemoryModelFeatures(VkPhysicalDeviceVulkanMemory
  */
 void cvkInitPipelineCacheCreateInfo(VkPipelineCacheCreateInfo* pInfo, const void* pNext, VkPipelineCacheCreateFlags flags, size_t initialDataSize, const void* pInitialData);
 /**
+ * \brief Initializes a VkPipelineCacheHeaderVersionOne.
+ *
+ * \param[out] pInfo              Receives the initialized VkPipelineCacheHeaderVersionOne
+ * \param[in] headerSize         VkPipelineCacheHeaderVersionOne::headerSize
+ * \param[in] headerVersion      VkPipelineCacheHeaderVersionOne::headerVersion
+ * \param[in] vendorID           VkPipelineCacheHeaderVersionOne::vendorID
+ * \param[in] deviceID           VkPipelineCacheHeaderVersionOne::deviceID
+ * \param[in] pipelineCacheUUID  VkPipelineCacheHeaderVersionOne::pipelineCacheUUID
+ *
+ * \retval None
+ */
+void cvkInitPipelineCacheHeaderVersionOne(VkPipelineCacheHeaderVersionOne* pInfo,
+                                          uint32_t                         headerSize,
+                                          VkPipelineCacheHeaderVersion     headerVersion,
+                                          uint32_t                         vendorID,
+                                          uint32_t                         deviceID,
+                                          const uint8_t                    pipelineCacheUUID[VK_UUID_SIZE]);
+/**
+ * \brief Initializes a VkPipelineColorBlendAttachmentState.
+ *
+ * \param[out] pInfo                Receives the initialized VkPipelineColorBlendAttachmentState
+ * \param[in] blendEnable          VkPipelineColorBlendAttachmentState::blendEnable
+ * \param[in] srcColorBlendFactor  VkPipelineColorBlendAttachmentState::srcColorBlendFactor
+ * \param[in] dstColorBlendFactor  VkPipelineColorBlendAttachmentState::dstColorBlendFactor
+ * \param[in] colorBlendOp         VkPipelineColorBlendAttachmentState::colorBlendOp
+ * \param[in] srcAlphaBlendFactor  VkPipelineColorBlendAttachmentState::srcAlphaBlendFactor
+ * \param[in] dstAlphaBlendFactor  VkPipelineColorBlendAttachmentState::dstAlphaBlendFactor
+ * \param[in] alphaBlendOp         VkPipelineColorBlendAttachmentState::alphaBlendOp
+ * \param[in] colorWriteMask       VkPipelineColorBlendAttachmentState::colorWriteMask
+ *
+ * \retval None
+ */
+void cvkInitPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo,
+                                              VkBool32                             blendEnable,
+                                              VkBlendFactor                        srcColorBlendFactor,
+                                              VkBlendFactor                        dstColorBlendFactor,
+                                              VkBlendOp                            colorBlendOp,
+                                              VkBlendFactor                        srcAlphaBlendFactor,
+                                              VkBlendFactor                        dstAlphaBlendFactor,
+                                              VkBlendOp                            alphaBlendOp,
+                                              VkColorComponentFlags                colorWriteMask);
+/**
  * \brief Initializes a VkPipelineColorBlendStateCreateInfo.
  *
  * \param[out] pInfo            Receives the initialized VkPipelineColorBlendStateCreateInfo
@@ -2414,6 +2913,17 @@ void cvkInitPresentInfo(VkPresentInfoKHR*     pInfo,
  */
 void cvkInitProtectedSubmitInfo(VkProtectedSubmitInfo* pInfo, const void* pNext, VkBool32 protectedSubmit);
 /**
+ * \brief Initializes a VkPushConstantRange.
+ *
+ * \param[out] pInfo       Receives the initialized VkPushConstantRange
+ * \param[in] stageFlags  VkPushConstantRange::stageFlags
+ * \param[in] offset      VkPushConstantRange::offset
+ * \param[in] size        VkPushConstantRange::size
+ *
+ * \retval None
+ */
+void cvkInitPushConstantRange(VkPushConstantRange* pInfo, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size);
+/**
  * \brief Initializes a VkQueryPoolCreateInfo.
  *
  * \param[out] pInfo               Receives the initialized VkQueryPoolCreateInfo
@@ -2440,6 +2950,16 @@ void cvkInitQueryPoolCreateInfo(VkQueryPoolCreateInfo*        pInfo,
  * \retval None
  */
 void cvkInitQueueFamilyProperties2(VkQueueFamilyProperties2* pInfo, void* pNext);
+/**
+ * \brief Initializes a VkRect2D.
+ *
+ * \param[out] pInfo   Receives the initialized VkRect2D
+ * \param[in] offset  VkRect2D::offset
+ * \param[in] extent  VkRect2D::extent
+ *
+ * \retval None
+ */
+void cvkInitRect2D(VkRect2D* pInfo, VkOffset2D offset, VkExtent2D extent);
 /**
  * \brief Initializes a VkRenderPassAttachmentBeginInfo.
  *
@@ -2725,6 +3245,17 @@ void cvkInitSemaphoreWaitInfo(VkSemaphoreWaitInfo* pInfo, const void* pNext, VkS
  */
 void cvkInitShaderModuleCreateInfo(VkShaderModuleCreateInfo* pInfo, const void* pNext, VkShaderModuleCreateFlags flags, size_t codeSize, const uint32_t* pCode);
 /**
+ * \brief Initializes a VkSparseBufferMemoryBindInfo.
+ *
+ * \param[out] pInfo      Receives the initialized VkSparseBufferMemoryBindInfo
+ * \param[in] buffer     VkSparseBufferMemoryBindInfo::buffer
+ * \param[in] bindCount  VkSparseBufferMemoryBindInfo::bindCount
+ * \param[in] pBinds     VkSparseBufferMemoryBindInfo::pBinds
+ *
+ * \retval None
+ */
+void cvkInitSparseBufferMemoryBindInfo(VkSparseBufferMemoryBindInfo* pInfo, VkBuffer buffer, uint32_t bindCount, const VkSparseMemoryBind* pBinds);
+/**
  * \brief Initializes a VkSparseImageFormatProperties2.
  *
  * \param[out] pInfo  Receives the initialized VkSparseImageFormatProperties2
@@ -2734,6 +3265,37 @@ void cvkInitShaderModuleCreateInfo(VkShaderModuleCreateInfo* pInfo, const void* 
  */
 void cvkInitSparseImageFormatProperties2(VkSparseImageFormatProperties2* pInfo, void* pNext);
 /**
+ * \brief Initializes a VkSparseImageMemoryBind.
+ *
+ * \param[out] pInfo         Receives the initialized VkSparseImageMemoryBind
+ * \param[in] subresource   VkSparseImageMemoryBind::subresource
+ * \param[in] offset        VkSparseImageMemoryBind::offset
+ * \param[in] extent        VkSparseImageMemoryBind::extent
+ * \param[in] memory        VkSparseImageMemoryBind::memory
+ * \param[in] memoryOffset  VkSparseImageMemoryBind::memoryOffset
+ * \param[in] flags         VkSparseImageMemoryBind::flags
+ *
+ * \retval None
+ */
+void cvkInitSparseImageMemoryBind(VkSparseImageMemoryBind* pInfo,
+                                  VkImageSubresource       subresource,
+                                  VkOffset3D               offset,
+                                  VkExtent3D               extent,
+                                  VkDeviceMemory           memory,
+                                  VkDeviceSize             memoryOffset,
+                                  VkSparseMemoryBindFlags  flags);
+/**
+ * \brief Initializes a VkSparseImageMemoryBindInfo.
+ *
+ * \param[out] pInfo      Receives the initialized VkSparseImageMemoryBindInfo
+ * \param[in] image      VkSparseImageMemoryBindInfo::image
+ * \param[in] bindCount  VkSparseImageMemoryBindInfo::bindCount
+ * \param[in] pBinds     VkSparseImageMemoryBindInfo::pBinds
+ *
+ * \retval None
+ */
+void cvkInitSparseImageMemoryBindInfo(VkSparseImageMemoryBindInfo* pInfo, VkImage image, uint32_t bindCount, const VkSparseImageMemoryBind* pBinds);
+/**
  * \brief Initializes a VkSparseImageMemoryRequirements2.
  *
  * \param[out] pInfo  Receives the initialized VkSparseImageMemoryRequirements2
@@ -2742,6 +3304,75 @@ void cvkInitSparseImageFormatProperties2(VkSparseImageFormatProperties2* pInfo, 
  * \retval None
  */
 void cvkInitSparseImageMemoryRequirements2(VkSparseImageMemoryRequirements2* pInfo, void* pNext);
+/**
+ * \brief Initializes a VkSparseImageOpaqueMemoryBindInfo.
+ *
+ * \param[out] pInfo      Receives the initialized VkSparseImageOpaqueMemoryBindInfo
+ * \param[in] image      VkSparseImageOpaqueMemoryBindInfo::image
+ * \param[in] bindCount  VkSparseImageOpaqueMemoryBindInfo::bindCount
+ * \param[in] pBinds     VkSparseImageOpaqueMemoryBindInfo::pBinds
+ *
+ * \retval None
+ */
+void cvkInitSparseImageOpaqueMemoryBindInfo(VkSparseImageOpaqueMemoryBindInfo* pInfo, VkImage image, uint32_t bindCount, const VkSparseMemoryBind* pBinds);
+/**
+ * \brief Initializes a VkSparseMemoryBind.
+ *
+ * \param[out] pInfo           Receives the initialized VkSparseMemoryBind
+ * \param[in] resourceOffset  VkSparseMemoryBind::resourceOffset
+ * \param[in] size            VkSparseMemoryBind::size
+ * \param[in] memory          VkSparseMemoryBind::memory
+ * \param[in] memoryOffset    VkSparseMemoryBind::memoryOffset
+ * \param[in] flags           VkSparseMemoryBind::flags
+ *
+ * \retval None
+ */
+void cvkInitSparseMemoryBind(VkSparseMemoryBind* pInfo, VkDeviceSize resourceOffset, VkDeviceSize size, VkDeviceMemory memory, VkDeviceSize memoryOffset, VkSparseMemoryBindFlags flags);
+/**
+ * \brief Initializes a VkSpecializationInfo.
+ *
+ * \param[out] pInfo          Receives the initialized VkSpecializationInfo
+ * \param[in] mapEntryCount  VkSpecializationInfo::mapEntryCount
+ * \param[in] pMapEntries    VkSpecializationInfo::pMapEntries
+ * \param[in] dataSize       VkSpecializationInfo::dataSize
+ * \param[in] pData          VkSpecializationInfo::pData
+ *
+ * \retval None
+ */
+void cvkInitSpecializationInfo(VkSpecializationInfo* pInfo, uint32_t mapEntryCount, const VkSpecializationMapEntry* pMapEntries, size_t dataSize, const void* pData);
+/**
+ * \brief Initializes a VkSpecializationMapEntry.
+ *
+ * \param[out] pInfo       Receives the initialized VkSpecializationMapEntry
+ * \param[in] constantID  VkSpecializationMapEntry::constantID
+ * \param[in] offset      VkSpecializationMapEntry::offset
+ * \param[in] size        VkSpecializationMapEntry::size
+ *
+ * \retval None
+ */
+void cvkInitSpecializationMapEntry(VkSpecializationMapEntry* pInfo, uint32_t constantID, uint32_t offset, size_t size);
+/**
+ * \brief Initializes a VkStencilOpState.
+ *
+ * \param[out] pInfo        Receives the initialized VkStencilOpState
+ * \param[in] failOp       VkStencilOpState::failOp
+ * \param[in] passOp       VkStencilOpState::passOp
+ * \param[in] depthFailOp  VkStencilOpState::depthFailOp
+ * \param[in] compareOp    VkStencilOpState::compareOp
+ * \param[in] compareMask  VkStencilOpState::compareMask
+ * \param[in] writeMask    VkStencilOpState::writeMask
+ * \param[in] reference    VkStencilOpState::reference
+ *
+ * \retval None
+ */
+void cvkInitStencilOpState(VkStencilOpState* pInfo,
+                           VkStencilOp       failOp,
+                           VkStencilOp       passOp,
+                           VkStencilOp       depthFailOp,
+                           VkCompareOp       compareOp,
+                           uint32_t          compareMask,
+                           uint32_t          writeMask,
+                           uint32_t          reference);
 /**
  * \brief Initializes a VkSubmitInfo.
  *
@@ -2777,6 +3408,28 @@ void cvkInitSubmitInfo(VkSubmitInfo*               pInfo,
  */
 void cvkInitSubpassBeginInfo(VkSubpassBeginInfo* pInfo, const void* pNext, VkSubpassContents contents);
 /**
+ * \brief Initializes a VkSubpassDependency.
+ *
+ * \param[out] pInfo            Receives the initialized VkSubpassDependency
+ * \param[in] srcSubpass       VkSubpassDependency::srcSubpass
+ * \param[in] dstSubpass       VkSubpassDependency::dstSubpass
+ * \param[in] srcStageMask     VkSubpassDependency::srcStageMask
+ * \param[in] dstStageMask     VkSubpassDependency::dstStageMask
+ * \param[in] srcAccessMask    VkSubpassDependency::srcAccessMask
+ * \param[in] dstAccessMask    VkSubpassDependency::dstAccessMask
+ * \param[in] dependencyFlags  VkSubpassDependency::dependencyFlags
+ *
+ * \retval None
+ */
+void cvkInitSubpassDependency(VkSubpassDependency* pInfo,
+                              uint32_t             srcSubpass,
+                              uint32_t             dstSubpass,
+                              VkPipelineStageFlags srcStageMask,
+                              VkPipelineStageFlags dstStageMask,
+                              VkAccessFlags        srcAccessMask,
+                              VkAccessFlags        dstAccessMask,
+                              VkDependencyFlags    dependencyFlags);
+/**
  * \brief Initializes a VkSubpassDependency2.
  *
  * \param[out] pInfo            Receives the initialized VkSubpassDependency2
@@ -2802,6 +3455,34 @@ void cvkInitSubpassDependency2(VkSubpassDependency2* pInfo,
                                VkAccessFlags         dstAccessMask,
                                VkDependencyFlags     dependencyFlags,
                                int32_t               viewOffset);
+/**
+ * \brief Initializes a VkSubpassDescription.
+ *
+ * \param[out] pInfo                    Receives the initialized VkSubpassDescription
+ * \param[in] flags                    VkSubpassDescription::flags
+ * \param[in] pipelineBindPoint        VkSubpassDescription::pipelineBindPoint
+ * \param[in] inputAttachmentCount     VkSubpassDescription::inputAttachmentCount
+ * \param[in] pInputAttachments        VkSubpassDescription::pInputAttachments
+ * \param[in] colorAttachmentCount     VkSubpassDescription::colorAttachmentCount
+ * \param[in] pColorAttachments        VkSubpassDescription::pColorAttachments
+ * \param[in] pResolveAttachments      VkSubpassDescription::pResolveAttachments
+ * \param[in] pDepthStencilAttachment  VkSubpassDescription::pDepthStencilAttachment
+ * \param[in] preserveAttachmentCount  VkSubpassDescription::preserveAttachmentCount
+ * \param[in] pPreserveAttachments     VkSubpassDescription::pPreserveAttachments
+ *
+ * \retval None
+ */
+void cvkInitSubpassDescription(VkSubpassDescription*        pInfo,
+                               VkSubpassDescriptionFlags    flags,
+                               VkPipelineBindPoint          pipelineBindPoint,
+                               uint32_t                     inputAttachmentCount,
+                               const VkAttachmentReference* pInputAttachments,
+                               uint32_t                     colorAttachmentCount,
+                               const VkAttachmentReference* pColorAttachments,
+                               const VkAttachmentReference* pResolveAttachments,
+                               const VkAttachmentReference* pDepthStencilAttachment,
+                               uint32_t                     preserveAttachmentCount,
+                               const uint32_t*              pPreserveAttachments);
 /**
  * \brief Initializes a VkSubpassDescription2.
  *
@@ -2859,6 +3540,19 @@ void cvkInitSubpassDescriptionDepthStencilResolve(VkSubpassDescriptionDepthStenc
  * \retval None
  */
 void cvkInitSubpassEndInfo(VkSubpassEndInfo* pInfo, const void* pNext);
+/**
+ * \brief Initializes a VkSubresourceLayout.
+ *
+ * \param[out] pInfo       Receives the initialized VkSubresourceLayout
+ * \param[in] offset      VkSubresourceLayout::offset
+ * \param[in] size        VkSubresourceLayout::size
+ * \param[in] rowPitch    VkSubresourceLayout::rowPitch
+ * \param[in] arrayPitch  VkSubresourceLayout::arrayPitch
+ * \param[in] depthPitch  VkSubresourceLayout::depthPitch
+ *
+ * \retval None
+ */
+void cvkInitSubresourceLayout(VkSubresourceLayout* pInfo, VkDeviceSize offset, VkDeviceSize size, VkDeviceSize rowPitch, VkDeviceSize arrayPitch, VkDeviceSize depthPitch);
 /**
  * \brief Initializes a VkSwapchainCreateInfoKHR.
  *
@@ -2919,6 +3613,43 @@ void cvkInitTimelineSemaphoreSubmitInfo(VkTimelineSemaphoreSubmitInfo* pInfo,
                                         const uint64_t*                pWaitSemaphoreValues,
                                         uint32_t                       signalSemaphoreValueCount,
                                         const uint64_t*                pSignalSemaphoreValues);
+/**
+ * \brief Initializes a VkVertexInputAttributeDescription.
+ *
+ * \param[out] pInfo     Receives the initialized VkVertexInputAttributeDescription
+ * \param[in] location  VkVertexInputAttributeDescription::location
+ * \param[in] binding   VkVertexInputAttributeDescription::binding
+ * \param[in] format    VkVertexInputAttributeDescription::format
+ * \param[in] offset    VkVertexInputAttributeDescription::offset
+ *
+ * \retval None
+ */
+void cvkInitVertexInputAttributeDescription(VkVertexInputAttributeDescription* pInfo, uint32_t location, uint32_t binding, VkFormat format, uint32_t offset);
+/**
+ * \brief Initializes a VkVertexInputBindingDescription.
+ *
+ * \param[out] pInfo      Receives the initialized VkVertexInputBindingDescription
+ * \param[in] binding    VkVertexInputBindingDescription::binding
+ * \param[in] stride     VkVertexInputBindingDescription::stride
+ * \param[in] inputRate  VkVertexInputBindingDescription::inputRate
+ *
+ * \retval None
+ */
+void cvkInitVertexInputBindingDescription(VkVertexInputBindingDescription* pInfo, uint32_t binding, uint32_t stride, VkVertexInputRate inputRate);
+/**
+ * \brief Initializes a VkViewport.
+ *
+ * \param[out] pInfo     Receives the initialized VkViewport
+ * \param[in] x         VkViewport::x
+ * \param[in] y         VkViewport::y
+ * \param[in] width     VkViewport::width
+ * \param[in] height    VkViewport::height
+ * \param[in] minDepth  VkViewport::minDepth
+ * \param[in] maxDepth  VkViewport::maxDepth
+ *
+ * \retval None
+ */
+void cvkInitViewport(VkViewport* pInfo, float x, float y, float width, float height, float minDepth, float maxDepth);
 /**
  * \brief Initializes a VkWriteDescriptorSet.
  *
@@ -6602,6 +7333,238 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
                                                     VkImageTiling                  tiling,
                                                     VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES]);
 /**
+ * \brief Binds buffer memory 2 for one element.
+ *
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkBindBufferMemoryInfo, or NULL
+ * \param[in] buffer        VkBindBufferMemoryInfo::buffer
+ * \param[in] memory        VkBindBufferMemoryInfo::memory
+ * \param[in] memoryOffset  VkBindBufferMemoryInfo::memoryOffset
+ *
+ * \retval None
+ */
+void cvkBindBufferMemoryInfo(VkDevice device, const void* pNext, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+/**
+ * \brief Binds image memory 2 for one element.
+ *
+ * \param[in] device        VkDevice value
+ * \param[in] pNext         Optional extension chain attached to VkBindImageMemoryInfo, or NULL
+ * \param[in] image         VkBindImageMemoryInfo::image
+ * \param[in] memory        VkBindImageMemoryInfo::memory
+ * \param[in] memoryOffset  VkBindImageMemoryInfo::memoryOffset
+ *
+ * \retval None
+ */
+void cvkBindImageMemoryInfo(VkDevice device, const void* pNext, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
+/**
+ * \brief Creates a compute pipelines for one element.
+ *
+ * \param[in] device              VkDevice value
+ * \param[in] pipelineCache       VkPipelineCache value
+ * \param[in] pNext               Optional extension chain attached to VkComputePipelineCreateInfo, or NULL
+ * \param[in] flags               VkComputePipelineCreateInfo::flags
+ * \param[in] stage               VkComputePipelineCreateInfo::stage
+ * \param[in] layout              VkComputePipelineCreateInfo::layout
+ * \param[in] basePipelineHandle  VkComputePipelineCreateInfo::basePipelineHandle
+ * \param[in] basePipelineIndex   VkComputePipelineCreateInfo::basePipelineIndex
+ * \param[in] pAllocator          Optional allocation callbacks, or NULL
+ * \param[out] pPipeline           Receives the created VkPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateComputePipeline(VkDevice                        device,
+                                  VkPipelineCache                 pipelineCache,
+                                  const void*                     pNext,
+                                  VkPipelineCreateFlags           flags,
+                                  VkPipelineShaderStageCreateInfo stage,
+                                  VkPipelineLayout                layout,
+                                  VkPipeline                      basePipelineHandle,
+                                  int32_t                         basePipelineIndex,
+                                  const VkAllocationCallbacks*    pAllocator,
+                                  VkPipeline*                     pPipeline);
+/**
+ * \brief Creates a graphics pipelines for one element.
+ *
+ * \param[in] device               VkDevice value
+ * \param[in] pipelineCache        VkPipelineCache value
+ * \param[in] pNext                Optional extension chain attached to VkGraphicsPipelineCreateInfo, or NULL
+ * \param[in] flags                VkGraphicsPipelineCreateInfo::flags
+ * \param[in] stageCount           VkGraphicsPipelineCreateInfo::stageCount
+ * \param[in] pStages              VkGraphicsPipelineCreateInfo::pStages
+ * \param[in] pVertexInputState    VkGraphicsPipelineCreateInfo::pVertexInputState
+ * \param[in] pInputAssemblyState  VkGraphicsPipelineCreateInfo::pInputAssemblyState
+ * \param[in] pTessellationState   VkGraphicsPipelineCreateInfo::pTessellationState
+ * \param[in] pViewportState       VkGraphicsPipelineCreateInfo::pViewportState
+ * \param[in] pRasterizationState  VkGraphicsPipelineCreateInfo::pRasterizationState
+ * \param[in] pMultisampleState    VkGraphicsPipelineCreateInfo::pMultisampleState
+ * \param[in] pDepthStencilState   VkGraphicsPipelineCreateInfo::pDepthStencilState
+ * \param[in] pColorBlendState     VkGraphicsPipelineCreateInfo::pColorBlendState
+ * \param[in] pDynamicState        VkGraphicsPipelineCreateInfo::pDynamicState
+ * \param[in] layout               VkGraphicsPipelineCreateInfo::layout
+ * \param[in] renderPass           VkGraphicsPipelineCreateInfo::renderPass
+ * \param[in] subpass              VkGraphicsPipelineCreateInfo::subpass
+ * \param[in] basePipelineHandle   VkGraphicsPipelineCreateInfo::basePipelineHandle
+ * \param[in] basePipelineIndex    VkGraphicsPipelineCreateInfo::basePipelineIndex
+ * \param[in] pAllocator           Optional allocation callbacks, or NULL
+ * \param[out] pPipeline            Receives the created VkPipeline
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkCreateGraphicsPipeline(VkDevice                                      device,
+                                   VkPipelineCache                               pipelineCache,
+                                   const void*                                   pNext,
+                                   VkPipelineCreateFlags                         flags,
+                                   uint32_t                                      stageCount,
+                                   const VkPipelineShaderStageCreateInfo*        pStages,
+                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                   VkPipelineLayout                              layout,
+                                   VkRenderPass                                  renderPass,
+                                   uint32_t                                      subpass,
+                                   VkPipeline                                    basePipelineHandle,
+                                   int32_t                                       basePipelineIndex,
+                                   const VkAllocationCallbacks*                  pAllocator,
+                                   VkPipeline*                                   pPipeline);
+/**
+ * \brief Calls vkFlushMappedMemoryRanges for one element.
+ *
+ * \param[in] device  VkDevice value
+ * \param[in] pNext   Optional extension chain attached to VkMappedMemoryRange, or NULL
+ * \param[in] memory  VkMappedMemoryRange::memory
+ * \param[in] offset  VkMappedMemoryRange::offset
+ * \param[in] size    VkMappedMemoryRange::size
+ *
+ * \retval None
+ */
+void cvkFlushMappedMemoryRange(VkDevice device, const void* pNext, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size);
+/**
+ * \brief Frees command buffers for one element.
+ *
+ * \param[in] device         VkDevice value
+ * \param[in] commandPool    VkCommandPool value
+ * \param[in] commandBuffer  The single VkCommandBuffer
+ *
+ * \retval None
+ */
+void cvkFreeCommandBuffer(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer);
+/**
+ * \brief Frees descriptor sets for one element.
+ *
+ * \param[in] device          VkDevice value
+ * \param[in] descriptorPool  VkDescriptorPool value
+ * \param[in] descriptorSet   The single VkDescriptorSet
+ *
+ * \retval None
+ */
+void cvkFreeDescriptorSet(VkDevice device, VkDescriptorPool descriptorPool, VkDescriptorSet descriptorSet);
+/**
+ * \brief Calls vkInvalidateMappedMemoryRanges for one element.
+ *
+ * \param[in] device  VkDevice value
+ * \param[in] pNext   Optional extension chain attached to VkMappedMemoryRange, or NULL
+ * \param[in] memory  VkMappedMemoryRange::memory
+ * \param[in] offset  VkMappedMemoryRange::offset
+ * \param[in] size    VkMappedMemoryRange::size
+ *
+ * \retval None
+ */
+void cvkInvalidateMappedMemoryRange(VkDevice device, const void* pNext, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size);
+/**
+ * \brief Calls vkMergePipelineCaches for one element.
+ *
+ * \param[in] device    VkDevice value
+ * \param[in] dstCache  VkPipelineCache value
+ * \param[in] srcCache  The single VkPipelineCache
+ *
+ * \retval None
+ */
+void cvkMergePipelineCache(VkDevice device, VkPipelineCache dstCache, VkPipelineCache srcCache);
+/**
+ * \brief Queues bind sparse for one element.
+ *
+ * \param[in] queue                 VkQueue value
+ * \param[in] pNext                 Optional extension chain attached to VkBindSparseInfo, or NULL
+ * \param[in] waitSemaphoreCount    VkBindSparseInfo::waitSemaphoreCount
+ * \param[in] pWaitSemaphores       VkBindSparseInfo::pWaitSemaphores
+ * \param[in] bufferBindCount       VkBindSparseInfo::bufferBindCount
+ * \param[in] pBufferBinds          VkBindSparseInfo::pBufferBinds
+ * \param[in] imageOpaqueBindCount  VkBindSparseInfo::imageOpaqueBindCount
+ * \param[in] pImageOpaqueBinds     VkBindSparseInfo::pImageOpaqueBinds
+ * \param[in] imageBindCount        VkBindSparseInfo::imageBindCount
+ * \param[in] pImageBinds           VkBindSparseInfo::pImageBinds
+ * \param[in] signalSemaphoreCount  VkBindSparseInfo::signalSemaphoreCount
+ * \param[in] pSignalSemaphores     VkBindSparseInfo::pSignalSemaphores
+ * \param[in] fence                 VkFence value
+ *
+ * \retval None
+ */
+void cvkQueueBindSparseInfo(VkQueue                                  queue,
+                            const void*                              pNext,
+                            uint32_t                                 waitSemaphoreCount,
+                            const VkSemaphore*                       pWaitSemaphores,
+                            uint32_t                                 bufferBindCount,
+                            const VkSparseBufferMemoryBindInfo*      pBufferBinds,
+                            uint32_t                                 imageOpaqueBindCount,
+                            const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
+                            uint32_t                                 imageBindCount,
+                            const VkSparseImageMemoryBindInfo*       pImageBinds,
+                            uint32_t                                 signalSemaphoreCount,
+                            const VkSemaphore*                       pSignalSemaphores,
+                            VkFence                                  fence);
+/**
+ * \brief Queues submit for one element.
+ *
+ * \param[in] queue                 VkQueue value
+ * \param[in] pNext                 Optional extension chain attached to VkSubmitInfo, or NULL
+ * \param[in] waitSemaphoreCount    VkSubmitInfo::waitSemaphoreCount
+ * \param[in] pWaitSemaphores       VkSubmitInfo::pWaitSemaphores
+ * \param[in] pWaitDstStageMask     VkSubmitInfo::pWaitDstStageMask
+ * \param[in] commandBufferCount    VkSubmitInfo::commandBufferCount
+ * \param[in] pCommandBuffers       VkSubmitInfo::pCommandBuffers
+ * \param[in] signalSemaphoreCount  VkSubmitInfo::signalSemaphoreCount
+ * \param[in] pSignalSemaphores     VkSubmitInfo::pSignalSemaphores
+ * \param[in] fence                 VkFence value
+ *
+ * \retval None
+ */
+void cvkQueueSubmitInfo(VkQueue                     queue,
+                        const void*                 pNext,
+                        uint32_t                    waitSemaphoreCount,
+                        const VkSemaphore*          pWaitSemaphores,
+                        const VkPipelineStageFlags* pWaitDstStageMask,
+                        uint32_t                    commandBufferCount,
+                        const VkCommandBuffer*      pCommandBuffers,
+                        uint32_t                    signalSemaphoreCount,
+                        const VkSemaphore*          pSignalSemaphores,
+                        VkFence                     fence);
+/**
+ * \brief Resets fences for one element.
+ *
+ * \param[in] device  VkDevice value
+ * \param[in] fence   The single VkFence
+ *
+ * \retval None
+ */
+void cvkResetFence(VkDevice device, VkFence fence);
+/**
+ * \brief Waits for for fences for one element.
+ *
+ * \param[in] device   VkDevice value
+ * \param[in] fence    The single VkFence
+ * \param[in] waitAll  VkBool32 value
+ * \param[in] timeout  uint64_t value
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkWaitForFence(VkDevice device, VkFence fence, VkBool32 waitAll, uint64_t timeout);
+/**
  * \brief Allocates descriptor sets with VkDescriptorSetVariableDescriptorCountAllocateInfo chained.
  *
  * \param[in] device                                     See cvkAllocateDescriptorSets
@@ -8780,6 +9743,545 @@ void cvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
                          const VkAllocationCallbacks*    pAllocator,
                          VkDevice*                       pDevice,
                          VkQueue*                        pQueue);
+/**
+ * \brief Binds a compute pipeline.
+ *
+ * \param[in] commandBuffer  See cvkCmdBindPipeline
+ * \param[in] pipeline       See cvkCmdBindPipeline
+ *
+ * \retval None
+ */
+void cvkCmdBindComputePipeline(VkCommandBuffer commandBuffer, VkPipeline pipeline);
+/**
+ * \brief Binds descriptor sets to the compute bind point.
+ *
+ * \param[in] commandBuffer       See cvkCmdBindDescriptorSets
+ * \param[in] layout              See cvkCmdBindDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindDescriptorSets
+ *
+ * \retval None
+ */
+void cvkCmdBindComputeDescriptorSets(VkCommandBuffer        commandBuffer,
+                                     VkPipelineLayout       layout,
+                                     uint32_t               firstSet,
+                                     uint32_t               descriptorSetCount,
+                                     const VkDescriptorSet* pDescriptorSets,
+                                     uint32_t               dynamicOffsetCount,
+                                     const uint32_t*        pDynamicOffsets);
+/**
+ * \brief Pushes constants for the compute stage.
+ *
+ * \param[in] commandBuffer  See cvkCmdPushConstants
+ * \param[in] layout         See cvkCmdPushConstants
+ * \param[in] offset         See cvkCmdPushConstants
+ * \param[in] size           See cvkCmdPushConstants
+ * \param[in] pValues        See cvkCmdPushConstants
+ *
+ * \retval None
+ */
+void cvkCmdPushComputeConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues);
+/**
+ * \brief Records one image memory barrier, with queue family ownership transfer when the families differ.
+ *
+ * \param[in] commandBuffer        See cvkCmdPipelineBarrier
+ * \param[in] pNext                See cvkInitImageMemoryBarrier
+ * \param[in] srcAccessMask        See cvkInitImageMemoryBarrier
+ * \param[in] dstAccessMask        See cvkInitImageMemoryBarrier
+ * \param[in] oldLayout            See cvkInitImageMemoryBarrier
+ * \param[in] newLayout            See cvkInitImageMemoryBarrier
+ * \param[in] srcQueueFamilyIndex  See cvkInitImageMemoryBarrier
+ * \param[in] dstQueueFamilyIndex  See cvkInitImageMemoryBarrier
+ * \param[in] image                See cvkInitImageMemoryBarrier
+ * \param[in] subresourceRange     See cvkInitImageMemoryBarrier
+ * \param[in] srcStageMask         See cvkCmdPipelineBarrier
+ * \param[in] dstStageMask         See cvkCmdPipelineBarrier
+ * \param[in] dependencyFlags      See cvkCmdPipelineBarrier
+ *
+ * \retval None
+ */
+void cvkCmdImageQueueOwnershipBarrier(VkCommandBuffer         commandBuffer,
+                                      const void*             pNext,
+                                      VkAccessFlags           srcAccessMask,
+                                      VkAccessFlags           dstAccessMask,
+                                      VkImageLayout           oldLayout,
+                                      VkImageLayout           newLayout,
+                                      uint32_t                srcQueueFamilyIndex,
+                                      uint32_t                dstQueueFamilyIndex,
+                                      VkImage                 image,
+                                      VkImageSubresourceRange subresourceRange,
+                                      VkPipelineStageFlags    srcStageMask,
+                                      VkPipelineStageFlags    dstStageMask,
+                                      VkDependencyFlags       dependencyFlags);
+/**
+ * \brief Records one image memory barrier without ownership transfer.
+ *
+ * \param[in] commandBuffer     See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] pNext             See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] srcAccessMask     See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dstAccessMask     See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] oldLayout         See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] newLayout         See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] image             See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] subresourceRange  See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] srcStageMask      See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dstStageMask      See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dependencyFlags   See cvkCmdImageQueueOwnershipBarrier
+ *
+ * \retval None
+ */
+void cvkCmdImageBarrier(VkCommandBuffer         commandBuffer,
+                        const void*             pNext,
+                        VkAccessFlags           srcAccessMask,
+                        VkAccessFlags           dstAccessMask,
+                        VkImageLayout           oldLayout,
+                        VkImageLayout           newLayout,
+                        VkImage                 image,
+                        VkImageSubresourceRange subresourceRange,
+                        VkPipelineStageFlags    srcStageMask,
+                        VkPipelineStageFlags    dstStageMask,
+                        VkDependencyFlags       dependencyFlags);
+/**
+ * \brief Records the acquire half of an image ownership transfer from an external owner.
+ *
+ * \param[in] commandBuffer        See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] pNext                See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dstAccessMask        See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] oldLayout            See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] newLayout            See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dstQueueFamilyIndex  See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] image                See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] subresourceRange     See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dstStageMask         See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dependencyFlags      See cvkCmdImageQueueOwnershipBarrier
+ *
+ * \retval None
+ */
+void cvkCmdAcquireImageFromExternal(VkCommandBuffer         commandBuffer,
+                                    const void*             pNext,
+                                    VkAccessFlags           dstAccessMask,
+                                    VkImageLayout           oldLayout,
+                                    VkImageLayout           newLayout,
+                                    uint32_t                dstQueueFamilyIndex,
+                                    VkImage                 image,
+                                    VkImageSubresourceRange subresourceRange,
+                                    VkPipelineStageFlags    dstStageMask,
+                                    VkDependencyFlags       dependencyFlags);
+/**
+ * \brief Records the release half of an image ownership transfer to an external owner.
+ *
+ * \param[in] commandBuffer        See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] pNext                See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] srcAccessMask        See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] oldLayout            See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] newLayout            See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] srcQueueFamilyIndex  See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] image                See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] subresourceRange     See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] srcStageMask         See cvkCmdImageQueueOwnershipBarrier
+ * \param[in] dependencyFlags      See cvkCmdImageQueueOwnershipBarrier
+ *
+ * \retval None
+ */
+void cvkCmdReleaseImageToExternal(VkCommandBuffer         commandBuffer,
+                                  const void*             pNext,
+                                  VkAccessFlags           srcAccessMask,
+                                  VkImageLayout           oldLayout,
+                                  VkImageLayout           newLayout,
+                                  uint32_t                srcQueueFamilyIndex,
+                                  VkImage                 image,
+                                  VkImageSubresourceRange subresourceRange,
+                                  VkPipelineStageFlags    srcStageMask,
+                                  VkDependencyFlags       dependencyFlags);
+/**
+ * \brief Records one buffer memory barrier, with queue family ownership transfer when the families differ.
+ *
+ * \param[in] commandBuffer        See cvkCmdPipelineBarrier
+ * \param[in] pNext                See cvkInitBufferMemoryBarrier
+ * \param[in] srcAccessMask        See cvkInitBufferMemoryBarrier
+ * \param[in] dstAccessMask        See cvkInitBufferMemoryBarrier
+ * \param[in] srcQueueFamilyIndex  See cvkInitBufferMemoryBarrier
+ * \param[in] dstQueueFamilyIndex  See cvkInitBufferMemoryBarrier
+ * \param[in] buffer               See cvkInitBufferMemoryBarrier
+ * \param[in] offset               See cvkInitBufferMemoryBarrier
+ * \param[in] size                 See cvkInitBufferMemoryBarrier
+ * \param[in] srcStageMask         See cvkCmdPipelineBarrier
+ * \param[in] dstStageMask         See cvkCmdPipelineBarrier
+ * \param[in] dependencyFlags      See cvkCmdPipelineBarrier
+ *
+ * \retval None
+ */
+void cvkCmdBufferQueueOwnershipBarrier(VkCommandBuffer      commandBuffer,
+                                       const void*          pNext,
+                                       VkAccessFlags        srcAccessMask,
+                                       VkAccessFlags        dstAccessMask,
+                                       uint32_t             srcQueueFamilyIndex,
+                                       uint32_t             dstQueueFamilyIndex,
+                                       VkBuffer             buffer,
+                                       VkDeviceSize         offset,
+                                       VkDeviceSize         size,
+                                       VkPipelineStageFlags srcStageMask,
+                                       VkPipelineStageFlags dstStageMask,
+                                       VkDependencyFlags    dependencyFlags);
+/**
+ * \brief Records one buffer memory barrier without ownership transfer.
+ *
+ * \param[in] commandBuffer    See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] pNext            See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] srcAccessMask    See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dstAccessMask    See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] buffer           See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] offset           See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] size             See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] srcStageMask     See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dstStageMask     See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dependencyFlags  See cvkCmdBufferQueueOwnershipBarrier
+ *
+ * \retval None
+ */
+void cvkCmdBufferBarrier(VkCommandBuffer      commandBuffer,
+                         const void*          pNext,
+                         VkAccessFlags        srcAccessMask,
+                         VkAccessFlags        dstAccessMask,
+                         VkBuffer             buffer,
+                         VkDeviceSize         offset,
+                         VkDeviceSize         size,
+                         VkPipelineStageFlags srcStageMask,
+                         VkPipelineStageFlags dstStageMask,
+                         VkDependencyFlags    dependencyFlags);
+/**
+ * \brief Records the acquire half of a buffer ownership transfer from an external owner.
+ *
+ * \param[in] commandBuffer        See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] pNext                See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dstAccessMask        See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dstQueueFamilyIndex  See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] buffer               See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] offset               See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] size                 See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dstStageMask         See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dependencyFlags      See cvkCmdBufferQueueOwnershipBarrier
+ *
+ * \retval None
+ */
+void cvkCmdAcquireBufferFromExternal(VkCommandBuffer      commandBuffer,
+                                     const void*          pNext,
+                                     VkAccessFlags        dstAccessMask,
+                                     uint32_t             dstQueueFamilyIndex,
+                                     VkBuffer             buffer,
+                                     VkDeviceSize         offset,
+                                     VkDeviceSize         size,
+                                     VkPipelineStageFlags dstStageMask,
+                                     VkDependencyFlags    dependencyFlags);
+/**
+ * \brief Records the release half of a buffer ownership transfer to an external owner.
+ *
+ * \param[in] commandBuffer        See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] pNext                See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] srcAccessMask        See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] srcQueueFamilyIndex  See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] buffer               See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] offset               See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] size                 See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] srcStageMask         See cvkCmdBufferQueueOwnershipBarrier
+ * \param[in] dependencyFlags      See cvkCmdBufferQueueOwnershipBarrier
+ *
+ * \retval None
+ */
+void cvkCmdReleaseBufferToExternal(VkCommandBuffer      commandBuffer,
+                                   const void*          pNext,
+                                   VkAccessFlags        srcAccessMask,
+                                   uint32_t             srcQueueFamilyIndex,
+                                   VkBuffer             buffer,
+                                   VkDeviceSize         offset,
+                                   VkDeviceSize         size,
+                                   VkPipelineStageFlags srcStageMask,
+                                   VkDependencyFlags    dependencyFlags);
+/**
+ * \brief Submits one command buffer.
+ *
+ * \param[in] queue                 See cvkQueueSubmitInfo
+ * \param[in] pNext                 See cvkQueueSubmitInfo
+ * \param[in] waitSemaphoreCount    See cvkQueueSubmitInfo
+ * \param[in] pWaitSemaphores       See cvkQueueSubmitInfo
+ * \param[in] pWaitDstStageMask     See cvkQueueSubmitInfo
+ * \param[in] signalSemaphoreCount  See cvkQueueSubmitInfo
+ * \param[in] pSignalSemaphores     See cvkQueueSubmitInfo
+ * \param[in] fence                 See cvkQueueSubmitInfo
+ * \param[in] commandBuffer         The command buffer to submit
+ *
+ * \retval None
+ */
+void cvkQueueSubmitCommandBuffer(VkQueue                     queue,
+                                 const void*                 pNext,
+                                 uint32_t                    waitSemaphoreCount,
+                                 const VkSemaphore*          pWaitSemaphores,
+                                 const VkPipelineStageFlags* pWaitDstStageMask,
+                                 uint32_t                    signalSemaphoreCount,
+                                 const VkSemaphore*          pSignalSemaphores,
+                                 VkFence                     fence,
+                                 VkCommandBuffer             commandBuffer);
+/**
+ * \brief Presents one swapchain image.
+ *
+ * \param[in] queue               See cvkQueuePresent
+ * \param[in] pNext               See cvkQueuePresent
+ * \param[in] waitSemaphoreCount  See cvkQueuePresent
+ * \param[in] pWaitSemaphores     See cvkQueuePresent
+ * \param[in] swapchain           Swapchain presenting the image
+ * \param[in] imageIndex          Index of the swapchain image to present
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkQueuePresentImage(VkQueue queue, const void* pNext, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, VkSwapchainKHR swapchain, uint32_t imageIndex);
+/**
+ * \brief Creates a command pool and allocates command buffers from it.
+ *
+ * \param[in] device               See cvkCreateCommandPool
+ * \param[in] pCommandPoolNext     See cvkCreateCommandPool
+ * \param[in] flags                See cvkCreateCommandPool
+ * \param[in] queueFamilyIndex     See cvkCreateCommandPool
+ * \param[in] pCommandBuffersNext  See cvkAllocateCommandBuffers
+ * \param[in] level                See cvkAllocateCommandBuffers
+ * \param[in] commandBufferCount   See cvkAllocateCommandBuffers
+ * \param[in] pAllocator           See cvkCreateCommandPool
+ * \param[out] pCommandPool         Receives the created VkCommandPool
+ * \param[out] pCommandBuffers      Receives the VkCommandBuffer
+ *
+ * \retval None
+ */
+void cvkSetupCommandPool(VkDevice                     device,
+                         const void*                  pCommandPoolNext,
+                         VkCommandPoolCreateFlags     flags,
+                         uint32_t                     queueFamilyIndex,
+                         const void*                  pCommandBuffersNext,
+                         VkCommandBufferLevel         level,
+                         uint32_t                     commandBufferCount,
+                         const VkAllocationCallbacks* pAllocator,
+                         VkCommandPool*               pCommandPool,
+                         VkCommandBuffer*             pCommandBuffers);
+/**
+ * \brief Creates a pipeline layout for the compute stage with at most one push constant range.
+ *
+ * \param[in] device               See cvkCreatePipelineLayout
+ * \param[in] pPipelineLayoutNext  See cvkCreatePipelineLayout
+ * \param[in] flags                See cvkCreatePipelineLayout
+ * \param[in] setLayoutCount       See cvkCreatePipelineLayout
+ * \param[in] pSetLayouts          See cvkCreatePipelineLayout
+ * \param[in] pushConstantOffset   Offset of the push constant range
+ * \param[in] pushConstantSize     Size of the push constant range, zero for none
+ * \param[in] pAllocator           See cvkCreatePipelineLayout
+ * \param[out] pPipelineLayout      Receives the created VkPipelineLayout
+ *
+ * \retval None
+ */
+void cvkCreateComputePipelineLayout(VkDevice                     device,
+                                    const void*                  pPipelineLayoutNext,
+                                    VkPipelineLayoutCreateFlags  flags,
+                                    uint32_t                     setLayoutCount,
+                                    const VkDescriptorSetLayout* pSetLayouts,
+                                    uint32_t                     pushConstantOffset,
+                                    uint32_t                     pushConstantSize,
+                                    const VkAllocationCallbacks* pAllocator,
+                                    VkPipelineLayout*            pPipelineLayout);
+/**
+ * \brief Creates a shader module, a compute pipeline layout, and a compute pipeline.
+ *
+ * \param[in] device               See cvkCreateShaderModule
+ * \param[in] pShaderModuleNext    See cvkCreateShaderModule
+ * \param[in] flags                See cvkCreateShaderModule
+ * \param[in] codeSize             See cvkCreateShaderModule
+ * \param[in] pCode                See cvkCreateShaderModule
+ * \param[in] pSpecializationInfo  See cvkInitPipelineShaderStageCreateInfo
+ * \param[in] pPipelineLayoutNext  See cvkCreateComputePipelineLayout
+ * \param[in] setLayoutCount       See cvkCreateComputePipelineLayout
+ * \param[in] pSetLayouts          See cvkCreateComputePipelineLayout
+ * \param[in] pushConstantOffset   See cvkCreateComputePipelineLayout
+ * \param[in] pushConstantSize     See cvkCreateComputePipelineLayout
+ * \param[in] pipelineCache        See cvkCreateComputePipeline
+ * \param[in] pPipelineNext        See cvkCreateComputePipeline
+ * \param[in] basePipelineHandle   See cvkCreateComputePipeline
+ * \param[in] basePipelineIndex    See cvkCreateComputePipeline
+ * \param[in] pStageNext           Optional extension chain for VkPipelineShaderStageCreateInfo, or NULL
+ * \param[in] stageFlags           VkPipelineShaderStageCreateInfo::flags
+ * \param[in] pEntryPoint          Entry point name of the compute shader
+ * \param[in] pAllocator           See cvkCreateShaderModule
+ * \param[out] pShaderModule        Receives the created VkShaderModule
+ * \param[out] pPipelineLayout      Receives the created VkPipelineLayout
+ * \param[out] pPipeline            Receives the created VkPipeline
+ *
+ * \retval None
+ */
+void cvkSetupComputePipeline(VkDevice                         device,
+                             const void*                      pShaderModuleNext,
+                             VkShaderModuleCreateFlags        flags,
+                             size_t                           codeSize,
+                             const uint32_t*                  pCode,
+                             const VkSpecializationInfo*      pSpecializationInfo,
+                             const void*                      pPipelineLayoutNext,
+                             uint32_t                         setLayoutCount,
+                             const VkDescriptorSetLayout*     pSetLayouts,
+                             uint32_t                         pushConstantOffset,
+                             uint32_t                         pushConstantSize,
+                             VkPipelineCache                  pipelineCache,
+                             const void*                      pPipelineNext,
+                             VkPipeline                       basePipelineHandle,
+                             int32_t                          basePipelineIndex,
+                             const void*                      pStageNext,
+                             VkPipelineShaderStageCreateFlags stageFlags,
+                             const char*                      pEntryPoint,
+                             const VkAllocationCallbacks*     pAllocator,
+                             VkShaderModule*                  pShaderModule,
+                             VkPipelineLayout*                pPipelineLayout,
+                             VkPipeline*                      pPipeline);
+/**
+ * \brief Writes one descriptor binding.
+ *
+ * \param[in] device            See cvkUpdateDescriptorSets
+ * \param[in] pNext             See cvkInitWriteDescriptorSet
+ * \param[in] dstSet            See cvkInitWriteDescriptorSet
+ * \param[in] dstBinding        See cvkInitWriteDescriptorSet
+ * \param[in] dstArrayElement   See cvkInitWriteDescriptorSet
+ * \param[in] descriptorCount   See cvkInitWriteDescriptorSet
+ * \param[in] descriptorType    See cvkInitWriteDescriptorSet
+ * \param[in] pImageInfo        See cvkInitWriteDescriptorSet
+ * \param[in] pBufferInfo       See cvkInitWriteDescriptorSet
+ * \param[in] pTexelBufferView  See cvkInitWriteDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateDescriptorSet(VkDevice                      device,
+                            const void*                   pNext,
+                            VkDescriptorSet               dstSet,
+                            uint32_t                      dstBinding,
+                            uint32_t                      dstArrayElement,
+                            uint32_t                      descriptorCount,
+                            VkDescriptorType              descriptorType,
+                            const VkDescriptorImageInfo*  pImageInfo,
+                            const VkDescriptorBufferInfo* pBufferInfo,
+                            const VkBufferView*           pTexelBufferView);
+/**
+ * \brief Writes one image descriptor.
+ *
+ * \param[in] device           See cvkUpdateDescriptorSet
+ * \param[in] sampler          See cvkInitDescriptorImageInfo
+ * \param[in] imageView        See cvkInitDescriptorImageInfo
+ * \param[in] imageLayout      See cvkInitDescriptorImageInfo
+ * \param[in] pNext            See cvkUpdateDescriptorSet
+ * \param[in] dstSet           See cvkUpdateDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateDescriptorSet
+ * \param[in] descriptorType   See cvkUpdateDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateImageDescriptorSet(VkDevice         device,
+                                 VkSampler        sampler,
+                                 VkImageView      imageView,
+                                 VkImageLayout    imageLayout,
+                                 const void*      pNext,
+                                 VkDescriptorSet  dstSet,
+                                 uint32_t         dstBinding,
+                                 uint32_t         dstArrayElement,
+                                 VkDescriptorType descriptorType);
+/**
+ * \brief Writes one buffer descriptor.
+ *
+ * \param[in] device           See cvkUpdateDescriptorSet
+ * \param[in] buffer           See cvkInitDescriptorBufferInfo
+ * \param[in] offset           See cvkInitDescriptorBufferInfo
+ * \param[in] range            See cvkInitDescriptorBufferInfo
+ * \param[in] pNext            See cvkUpdateDescriptorSet
+ * \param[in] dstSet           See cvkUpdateDescriptorSet
+ * \param[in] dstBinding       See cvkUpdateDescriptorSet
+ * \param[in] dstArrayElement  See cvkUpdateDescriptorSet
+ * \param[in] descriptorType   See cvkUpdateDescriptorSet
+ *
+ * \retval None
+ */
+void cvkUpdateBufferDescriptorSet(VkDevice         device,
+                                  VkBuffer         buffer,
+                                  VkDeviceSize     offset,
+                                  VkDeviceSize     range,
+                                  const void*      pNext,
+                                  VkDescriptorSet  dstSet,
+                                  uint32_t         dstBinding,
+                                  uint32_t         dstArrayElement,
+                                  VkDescriptorType descriptorType);
+/**
+ * \brief Creates a timestamp query pool.
+ *
+ * \param[in] device          See cvkCreateQueryPool
+ * \param[in] pQueryPoolNext  See cvkCreateQueryPool
+ * \param[in] flags           See cvkCreateQueryPool
+ * \param[in] queryCount      See cvkCreateQueryPool
+ * \param[in] pAllocator      See cvkCreateQueryPool
+ * \param[out] pQueryPool      Receives the created VkQueryPool
+ *
+ * \retval None
+ */
+void cvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
+/**
+ * \brief Reads 64-bit query results into a tightly packed array.
+ *
+ * \param[in] device      See cvkGetQueryPoolResults
+ * \param[in] queryPool   See cvkGetQueryPoolResults
+ * \param[in] firstQuery  See cvkGetQueryPoolResults
+ * \param[in] queryCount  See cvkGetQueryPoolResults
+ * \param[in] flags       Query result flags; VK_QUERY_RESULT_64_BIT is added
+ * \param[in] pResults    Receives queryCount 64-bit results
+ *
+ * \return VK_SUCCESS or one of: . Error results abort.
+ */
+VkResult cvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults);
+/**
+ * \brief Dispatches enough workgroups to cover an item count, given items per invocation and the local size.
+ *
+ * \param[in] commandBuffer       See cvkCmdDispatch
+ * \param[in] itemCount           Items to cover
+ * \param[in] itemsPerInvocation  Items each invocation handles
+ * \param[in] localSize           Workgroup local size
+ *
+ * \retval None
+ */
+void cvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize);
+/**
+ * \brief Binds a compute pipeline, its descriptor sets, and push constants, then dispatches by items.
+ *
+ * \param[in] commandBuffer       See cvkCmdBindComputePipeline
+ * \param[in] pipeline            See cvkCmdBindComputePipeline
+ * \param[in] layout              See cvkCmdBindComputeDescriptorSets
+ * \param[in] firstSet            See cvkCmdBindComputeDescriptorSets
+ * \param[in] descriptorSetCount  See cvkCmdBindComputeDescriptorSets
+ * \param[in] pDescriptorSets     See cvkCmdBindComputeDescriptorSets
+ * \param[in] dynamicOffsetCount  See cvkCmdBindComputeDescriptorSets
+ * \param[in] pDynamicOffsets     See cvkCmdBindComputeDescriptorSets
+ * \param[in] itemCount           See cvkCmdDispatchItems
+ * \param[in] itemsPerInvocation  See cvkCmdDispatchItems
+ * \param[in] localSize           See cvkCmdDispatchItems
+ * \param[in] pushConstantOffset  Offset of the push constants
+ * \param[in] pushConstantSize    Size of the push constants
+ * \param[in] pPushConstants      Push constant bytes
+ *
+ * \retval None
+ */
+void cvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                VkExtent3D             itemCount,
+                                VkExtent3D             itemsPerInvocation,
+                                VkExtent3D             localSize,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants);
 /**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
  *

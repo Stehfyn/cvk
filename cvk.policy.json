@@ -26,7 +26,8 @@
     "CVK_MAX_DISPLAYS": 32,
     "CVK_MAX_DRM_FORMAT_MODIFIERS": 64,
     "CVK_MAX_DRM_FORMAT_MODIFIER_PLANES": 4,
-    "CVK_MAX_INSTANCE_EXTENSIONS": 64
+    "CVK_MAX_INSTANCE_EXTENSIONS": 64,
+    "CVK_MAX_DESCRIPTOR_SET_BINDINGS": 64
   },
   "default_capacity": 64,
   "input_asserts": false,
@@ -368,6 +369,467 @@
           "bind": {
             "queueIndex": "0"
           }
+        }
+      ]
+    },
+    "cvkCmdBindComputePipeline": {
+      "brief": "Binds a compute pipeline.",
+      "steps": [
+        {
+          "call": "cvkCmdBindPipeline",
+          "bind": {
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_COMPUTE"
+          }
+        }
+      ]
+    },
+    "cvkCmdBindComputeDescriptorSets": {
+      "brief": "Binds descriptor sets to the compute bind point.",
+      "steps": [
+        {
+          "call": "cvkCmdBindDescriptorSets",
+          "bind": {
+            "pipelineBindPoint": "VK_PIPELINE_BIND_POINT_COMPUTE"
+          }
+        }
+      ]
+    },
+    "cvkCmdPushComputeConstants": {
+      "brief": "Pushes constants for the compute stage.",
+      "steps": [
+        {
+          "call": "cvkCmdPushConstants",
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_COMPUTE_BIT"
+          }
+        }
+      ]
+    },
+    "cvkCmdImageQueueOwnershipBarrier": {
+      "brief": "Records one image memory barrier, with queue family ownership transfer when the families differ.",
+      "steps": [
+        {
+          "call": "cvkInitImageMemoryBarrier",
+          "local": {
+            "pInfo": "image_memory_barrier"
+          }
+        },
+        {
+          "call": "cvkCmdPipelineBarrier",
+          "bind": {
+            "memoryBarrierCount": "0",
+            "pMemoryBarriers": "NULL",
+            "bufferMemoryBarrierCount": "0",
+            "pBufferMemoryBarriers": "NULL",
+            "imageMemoryBarrierCount": "1",
+            "pImageMemoryBarriers": "&image_memory_barrier"
+          }
+        }
+      ]
+    },
+    "cvkCmdImageBarrier": {
+      "brief": "Records one image memory barrier without ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdImageQueueOwnershipBarrier",
+          "bind": {
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdAcquireImageFromExternal": {
+      "brief": "Records the acquire half of an image ownership transfer from an external owner.",
+      "steps": [
+        {
+          "call": "cvkCmdImageQueueOwnershipBarrier",
+          "bind": {
+            "srcStageMask": "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT",
+            "srcAccessMask": "0",
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdReleaseImageToExternal": {
+      "brief": "Records the release half of an image ownership transfer to an external owner.",
+      "steps": [
+        {
+          "call": "cvkCmdImageQueueOwnershipBarrier",
+          "bind": {
+            "dstStageMask": "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT",
+            "dstAccessMask": "0",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdBufferQueueOwnershipBarrier": {
+      "brief": "Records one buffer memory barrier, with queue family ownership transfer when the families differ.",
+      "steps": [
+        {
+          "call": "cvkInitBufferMemoryBarrier",
+          "local": {
+            "pInfo": "buffer_memory_barrier"
+          }
+        },
+        {
+          "call": "cvkCmdPipelineBarrier",
+          "bind": {
+            "memoryBarrierCount": "0",
+            "pMemoryBarriers": "NULL",
+            "bufferMemoryBarrierCount": "1",
+            "pBufferMemoryBarriers": "&buffer_memory_barrier",
+            "imageMemoryBarrierCount": "0",
+            "pImageMemoryBarriers": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkCmdBufferBarrier": {
+      "brief": "Records one buffer memory barrier without ownership transfer.",
+      "steps": [
+        {
+          "call": "cvkCmdBufferQueueOwnershipBarrier",
+          "bind": {
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_IGNORED"
+          }
+        }
+      ]
+    },
+    "cvkCmdAcquireBufferFromExternal": {
+      "brief": "Records the acquire half of a buffer ownership transfer from an external owner.",
+      "steps": [
+        {
+          "call": "cvkCmdBufferQueueOwnershipBarrier",
+          "bind": {
+            "srcStageMask": "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT",
+            "srcAccessMask": "0",
+            "srcQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkCmdReleaseBufferToExternal": {
+      "brief": "Records the release half of a buffer ownership transfer to an external owner.",
+      "steps": [
+        {
+          "call": "cvkCmdBufferQueueOwnershipBarrier",
+          "bind": {
+            "dstStageMask": "VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT",
+            "dstAccessMask": "0",
+            "dstQueueFamilyIndex": "VK_QUEUE_FAMILY_EXTERNAL"
+          }
+        }
+      ]
+    },
+    "cvkQueueSubmitCommandBuffer": {
+      "brief": "Submits one command buffer.",
+      "inputs": [
+        {
+          "type": "VkCommandBuffer",
+          "name": "commandBuffer",
+          "doc": "The command buffer to submit"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkQueueSubmitInfo",
+          "bind": {
+            "commandBufferCount": "1",
+            "pCommandBuffers": "&commandBuffer"
+          }
+        }
+      ]
+    },
+    "cvkQueuePresentImage": {
+      "brief": "Presents one swapchain image.",
+      "inputs": [
+        {
+          "type": "VkSwapchainKHR",
+          "name": "swapchain",
+          "doc": "Swapchain presenting the image"
+        },
+        {
+          "type": "uint32_t",
+          "name": "imageIndex",
+          "doc": "Index of the swapchain image to present"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkQueuePresent",
+          "bind": {
+            "swapchainCount": "1",
+            "pSwapchains": "&swapchain",
+            "pImageIndices": "&imageIndex",
+            "pResults": "NULL"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkSetupCommandPool": {
+      "brief": "Creates a command pool and allocates command buffers from it.",
+      "steps": [
+        {
+          "call": "cvkCreateCommandPool"
+        },
+        {
+          "call": "cvkAllocateCommandBuffers"
+        }
+      ]
+    },
+    "cvkCreateComputePipelineLayout": {
+      "brief": "Creates a pipeline layout for the compute stage with at most one push constant range.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constant range"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constant range, zero for none"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkInitPushConstantRange",
+          "local": {
+            "pInfo": "push_constant_range"
+          },
+          "bind": {
+            "stageFlags": "VK_SHADER_STAGE_COMPUTE_BIT",
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize"
+          }
+        },
+        {
+          "call": "cvkCreatePipelineLayout",
+          "bind": {
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pPushConstantRanges": "&push_constant_range"
+          }
+        }
+      ]
+    },
+    "cvkSetupComputePipeline": {
+      "brief": "Creates a shader module, a compute pipeline layout, and a compute pipeline.",
+      "inputs": [
+        {
+          "type": "const void*",
+          "name": "pStageNext",
+          "doc": "Optional extension chain for VkPipelineShaderStageCreateInfo, or NULL"
+        },
+        {
+          "type": "VkPipelineShaderStageCreateFlags",
+          "name": "stageFlags",
+          "doc": "VkPipelineShaderStageCreateInfo::flags"
+        },
+        {
+          "type": "const char*",
+          "name": "pEntryPoint",
+          "doc": "Entry point name of the compute shader"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCreateShaderModule"
+        },
+        {
+          "call": "cvkInitPipelineShaderStageCreateInfo",
+          "local": {
+            "pInfo": "pipeline_shader_stage_create_info"
+          },
+          "bind": {
+            "pNext": "pStageNext",
+            "flags": "stageFlags",
+            "stage": "VK_SHADER_STAGE_COMPUTE_BIT",
+            "module": "(*pShaderModule)",
+            "pName": "pEntryPoint"
+          }
+        },
+        {
+          "call": "cvkCreateComputePipelineLayout"
+        },
+        {
+          "call": "cvkCreateComputePipeline",
+          "bind": {
+            "stage": "pipeline_shader_stage_create_info",
+            "layout": "(*pPipelineLayout)"
+          }
+        }
+      ]
+    },
+    "cvkUpdateDescriptorSet": {
+      "brief": "Writes one descriptor binding.",
+      "steps": [
+        {
+          "call": "cvkInitWriteDescriptorSet",
+          "local": {
+            "pInfo": "write_descriptor_set"
+          }
+        },
+        {
+          "call": "cvkUpdateDescriptorSets",
+          "bind": {
+            "descriptorWriteCount": "1",
+            "pDescriptorWrites": "&write_descriptor_set",
+            "descriptorCopyCount": "0",
+            "pDescriptorCopies": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkUpdateImageDescriptorSet": {
+      "brief": "Writes one image descriptor.",
+      "steps": [
+        {
+          "call": "cvkInitDescriptorImageInfo",
+          "local": {
+            "pInfo": "descriptor_image_info"
+          }
+        },
+        {
+          "call": "cvkUpdateDescriptorSet",
+          "bind": {
+            "descriptorCount": "1",
+            "pImageInfo": "&descriptor_image_info",
+            "pBufferInfo": "NULL",
+            "pTexelBufferView": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkUpdateBufferDescriptorSet": {
+      "brief": "Writes one buffer descriptor.",
+      "steps": [
+        {
+          "call": "cvkInitDescriptorBufferInfo",
+          "local": {
+            "pInfo": "descriptor_buffer_info"
+          }
+        },
+        {
+          "call": "cvkUpdateDescriptorSet",
+          "bind": {
+            "descriptorCount": "1",
+            "pImageInfo": "NULL",
+            "pBufferInfo": "&descriptor_buffer_info",
+            "pTexelBufferView": "NULL"
+          }
+        }
+      ]
+    },
+    "cvkCreateTimestampQueryPool": {
+      "brief": "Creates a timestamp query pool.",
+      "steps": [
+        {
+          "call": "cvkCreateQueryPool",
+          "bind": {
+            "queryType": "VK_QUERY_TYPE_TIMESTAMP",
+            "pipelineStatistics": "0"
+          }
+        }
+      ]
+    },
+    "cvkGetQueryPoolResults64": {
+      "brief": "Reads 64-bit query results into a tightly packed array.",
+      "inputs": [
+        {
+          "type": "VkQueryResultFlags",
+          "name": "flags",
+          "doc": "Query result flags; VK_QUERY_RESULT_64_BIT is added"
+        },
+        {
+          "type": "uint64_t*",
+          "name": "pResults",
+          "doc": "Receives queryCount 64-bit results"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkGetQueryPoolResults",
+          "bind": {
+            "dataSize": "(size_t)queryCount * sizeof(uint64_t)",
+            "pData": "pResults",
+            "stride": "sizeof(uint64_t)",
+            "flags": "flags | VK_QUERY_RESULT_64_BIT"
+          },
+          "return": true
+        }
+      ]
+    },
+    "cvkCmdDispatchItems": {
+      "brief": "Dispatches enough workgroups to cover an item count, given items per invocation and the local size.",
+      "inputs": [
+        {
+          "type": "VkExtent3D",
+          "name": "itemCount",
+          "doc": "Items to cover"
+        },
+        {
+          "type": "VkExtent3D",
+          "name": "itemsPerInvocation",
+          "doc": "Items each invocation handles"
+        },
+        {
+          "type": "VkExtent3D",
+          "name": "localSize",
+          "doc": "Workgroup local size"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdDispatch",
+          "bind": {
+            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1u) / (itemsPerInvocation.width * localSize.width)",
+            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1u) / (itemsPerInvocation.height * localSize.height)",
+            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1u) / (itemsPerInvocation.depth * localSize.depth)"
+          }
+        }
+      ]
+    },
+    "cvkCmdDispatchComputeItems": {
+      "brief": "Binds a compute pipeline, its descriptor sets, and push constants, then dispatches by items.",
+      "inputs": [
+        {
+          "type": "uint32_t",
+          "name": "pushConstantOffset",
+          "doc": "Offset of the push constants"
+        },
+        {
+          "type": "uint32_t",
+          "name": "pushConstantSize",
+          "doc": "Size of the push constants"
+        },
+        {
+          "type": "const void*",
+          "name": "pPushConstants",
+          "doc": "Push constant bytes"
+        }
+      ],
+      "steps": [
+        {
+          "call": "cvkCmdBindComputePipeline"
+        },
+        {
+          "call": "cvkCmdBindComputeDescriptorSets"
+        },
+        {
+          "call": "cvkCmdPushComputeConstants",
+          "bind": {
+            "offset": "pushConstantOffset",
+            "size": "pushConstantSize",
+            "pValues": "pPushConstants"
+          }
+        },
+        {
+          "call": "cvkCmdDispatchItems"
         }
       ]
     }
