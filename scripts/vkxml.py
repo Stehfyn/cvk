@@ -26,8 +26,13 @@ DISPATCHABLE = ("VkInstance", "VkPhysicalDevice", "VkDevice", "VkQueue", "VkComm
 
 
 def _text(elem: ET.Element) -> str:
-    """Whole text of an element including nested <type>/<name>/<enum> tags."""
-    return "".join(elem.itertext())
+    """Whole text of an element including nested <type>/<name>/<enum> tags, minus <comment>."""
+    parts = [elem.text or ""]
+    for child in elem:
+        if child.tag != "comment":
+            parts.append("".join(child.itertext()))
+        parts.append(child.tail or "")
+    return "".join(parts)
 
 
 @dataclass
