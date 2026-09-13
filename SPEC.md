@@ -86,16 +86,22 @@ asserted first.
 Dispatch (policy): commands in the profile's core version, and commands of extensions the
 loader exports as trampolines (surface, swapchain, display, platform surfaces, debug
 utilities; the list is `LOADER_LINKED` in the generator), are called directly. Every other
-extension command is resolved per call: `cvkGetDeviceProcAddr` for device-level dispatch,
-`cvkGetInstanceProcAddr` otherwise, both fatal if absent. The generated wrappers of
-`vkGet*ProcAddr` are that infrastructure (they assert a non-null result). The function pointer
-is declared with the other locals and loaded immediately before the first call, never in its
-declaration. The level of a command is read from its first handle's parent chain in the
+extension command uses `CVK_CALL(&call_cache, Device|Instance, handle, vkCommand)` to
+obtain a typed function pointer. Each wrapper owns a zero-initialized, thread-local cache
+for its command and scope, retaining the most recently used handle. A hit skips resolution;
+a miss uses `cvkGetDeviceProcAddr` or `cvkGetInstanceProcAddr`, both fatal if absent.
+The generated wrappers of `vkGet*ProcAddr` remain uncached resolution infrastructure.
+`cvkDestroyDevice` and `cvkDestroyInstance` invalidate caches across all threads through
+an atomic generation, so reusing a numeric handle reloads its pointer. Applications destroying
+handles outside cvk must call `cvkInvalidateCallCache` before using replacement handles.
+Cache invalidation does not replace Vulkan's external synchronization requirements.
+The function pointer is declared with the other locals and loaded immediately before the
+first call, never in its declaration. The level of a command is read from its first handle's parent chain in the
 registry: device level when the chain reaches `VkDevice` (`VkQueue`, `VkCommandBuffer` via
 `VkCommandPool`, `VkExternalComputeQueueNV`), instance level when it reaches only `VkInstance`
 (`VkPhysicalDevice`). A resolved command whose first handle is not the level handle gains that
-handle as its first parameter (`VkDevice device`, `VkInstance instance`). Reason: no global
-table, no init order, and the parent is the only stateless way to resolve. The pointer local
+handle as its first parameter (`VkDevice device`, `VkInstance instance`). The parent selects
+the correct dispatch cache entry without a separate initialization API. The pointer local
 is `function`, or `function_pointer` when a parameter is named `function`
 (`vkDestroyCuFunctionNVX`).
 

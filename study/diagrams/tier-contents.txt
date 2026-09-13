@@ -1,0 +1,155 @@
+WHAT IS IN EACH TIER?
+
+Tier 0 / command wrappers
+The registry-facing layer calls Vulkan, handles results and preserves the wrapper's output contracts.
+cvk: 713 functions / scvk: 248
+  Object and memory lifecycle: Creation/destruction, allocation/freeing, binding and host memory operations.
+    cvkCreateBuffer
+    cvkAllocateMemory
+    cvkBindBufferMemory
+  Command recording: Draw, dispatch, copy, rendering, acceleration-structure, video and other vkCmd operations.
+    cvkCmdDraw
+    cvkCmdDispatch
+    cvkCmdCopyBuffer
+  Queries and flattened siblings: Retrieve properties and requirements; flatten input Info structs where a sibling is required.
+    cvkGetPhysicalDeviceProperties
+    cvkGetBufferMemoryRequirements
+    cvkGetBufferMemoryRequirementsInfo2
+  Fixed-capacity enumeration: Perform Vulkan's count/fill protocol using caller arrays bounded by CVK_MAX_* capacities.
+    cvkEnumeratePhysicalDevices
+    cvkEnumerateDeviceExtensionProperties
+    cvkGetPhysicalDeviceSurfaceFormats
+  Submission and synchronization: Submit queues, acquire/present images, wait/reset fences and signal/wait semaphores.
+    cvkQueueSubmit
+    cvkQueuePresent
+    cvkWaitForFences
+  Dispatch and platform commands: Resolve extension commands or wrap platform-specific Vulkan calls in their platform files.
+    cvkGetDeviceProcAddr
+    cvkCreateWin32Surface
+    cvkCreateXlibSurface
+
+Tier 1 / conveniences
+Build Vulkan data, extend existing calls, or specialize an operation with fixed arguments.
+cvk: 2,482 functions / scvk: 567
+  Builders and extension chains
+  Struct and union builders: Fill sType, pNext and members of input structures, plain structures and union alternatives.
+    cvkInitBufferCreateInfo
+    cvkInitImageSubresourceRange
+    cvkInitClearValueColor
+  Input extension chains: Build one extender and prepend it to the caller's pNext chain before the base operation.
+    cvkCreateBufferWithExternalMemoryInfo
+    cvkAllocateExportMemory
+    cvkCreateImageViewWithUsageInfo
+  Output extension queries: Attach an output property/requirement structure and return that extension's result.
+    cvkGetBufferMemoryDedicatedRequirements
+    cvkGetPhysicalDeviceIDProperties
+    cvkGetPhysicalDevicePCIBusInfoProperties
+  Per-element input extensions: Build and attach an extension for each input array element, then call the array operation.
+    cvkBindPlaneImageMemories
+    cvkBindSwapchainImageMemories
+    cvkCmdBindUsageFlags2DescriptorBuffers
+  Per-element output extensions: Extend every output-array element in a query or fixed-capacity enumeration.
+    cvkGetPhysicalDeviceQueueFamilyCheckpointPropertiesNV
+    cvkGetDisplayModeStereoPropertiesNV
+  Specializations / within Tier 1
+  Count-of-one operations: Turn an array operation into one element, including per-element extension variants.
+    cvkCreateComputePipeline
+    cvkWaitForFence
+    cvkBindPlaneImageMemory
+  Resource and memory presets: Choose fixed flags or properties, such as device-local memory or a signaled fence.
+    cvkSetupDeviceLocalBuffer
+    cvkAllocateHostVisibleBufferMemory
+    cvkCreateSignaledFence
+  Pipeline-state presets: Bind standard rasterization, blending, input-assembly and other fixed-function choices.
+    cvkInitFillPipelineRasterizationStateCreateInfo
+    cvkInitAlphaBlendPipelineColorBlendAttachmentState
+    cvkInitTriangleListPipelineInputAssemblyStateCreateInfo
+  Synchronization presets: Fix queue families, stage/access choices, timeout values or a timestamp stage.
+    cvkCmdAcquireImageFromExternal
+    cvkCmdReleaseBufferToExternal2
+    cvkAcquireNextImageIndefinitely
+  Operation and stage variants: Choose a pipeline bind point, shader stage, video control flag or acceleration-structure kind.
+    cvkCmdBindComputePipeline
+    cvkCmdResetVideoCoding
+    cvkCreateBottomLevelAccelerationStructure
+  Shape and dispatch shortcuts: Bind a dimension, item-count expression or transfer-policy argument in one forwarding call.
+    cvkCmdTraceRays2D
+    cvkCmdDispatchItems
+    cvkCmdTransferBufferToImage
+
+Tier 2 / compositions
+Policy chains combine multiple calls, scratch structures, queries and selected results.
+cvk: 102 functions / scvk: 52
+  Resource setup and allocation: Create resources, inspect requirements, select memory, allocate it and bind it.
+    cvkSetupBuffer
+    cvkSetupImage
+    cvkAllocateBufferMemory
+  Devices, queues and capabilities: Query/select a device capability or memory type; build a device and retrieve its queue.
+    cvkSetupDeviceQueue
+    cvkGetPhysicalDeviceVideoProfileSupport
+    cvkGetPhysicalDeviceCompatibleMemoryTypeIndex
+  Pipelines and descriptors: Build graphics/compute/mesh/ray-tracing pipelines, layouts and descriptor updates.
+    cvkSetupGraphicsPipeline
+    cvkSetupRayTracingPipeline
+    cvkUpdateImageDescriptorSet
+  Recording sequences: Bind required state and issue graphics, compute, mesh, video or ray-tracing work.
+    cvkCmdDispatchComputeItems
+    cvkCmdDecodeVideoPicture
+    cvkCmdTraceRayTracingRays
+  Barriers and ownership: Build barrier structures and submit them, including queue-family ownership transfers.
+    cvkCmdMemoryBarrier2
+    cvkCmdImageQueueOwnershipBarrier2
+    cvkCmdBufferQueueOwnershipBarrier
+  Compound builders and adapters: Build nested structures, union members or 2D geometry before forwarding to another helper.
+    cvkCreateImage2D
+    cvkInitTrianglesAccelerationStructureGeometry
+    cvkCmdSetFirstViewportAndScissor2D
+
+Tier 3 / domain protocols
+Authored C algorithms and workflows folded into the generated libraries.
+cvk: 56 functions / scvk: 35
+  External resource interchange: Import/export images and buffers; handle ownership and platform capability checks.
+    cvkImportWin32HandleImage
+    cvkImportDmaBufImage
+    cvkExportFdBuffer
+  Memory, video and ray tracing: Mapped-memory I/O, video-session allocation, acceleration structures and shader binding tables.
+    cvkWriteMemory
+    cvkAllocateVideoSessionMemory
+    cvkSetupRayTracingShaderBindingTable
+  Transfers and format arithmetic: Copy/blit with ownership transitions; compute plane layouts and copy regions.
+    cvkCmdTransferBufferToImageQueueOwnership
+    cvkCalculateFormatPlaneLayouts
+    cvkGetBufferImageCopyRegions
+  JSON document machinery: Token/value parsing, string and member access, arenas and runtime handle resolution.
+    cvkParseJsonDocument
+    cvkAllocateArena
+    cvkResolveJsonHandle
+  Pipeline JSON workflows: Parse object graphs, resolve their handles and create the described Vulkan pipeline.
+    cvkParsePipelineJson
+    cvkCreatePipelineJsonObjects
+    cvkCreatePipelineFromJson
+  Debugging and device identity: Create a debug-enabled instance, report messages and find devices by LUID or PCI address.
+    cvkCreateDebugInstance
+    cvkWriteDebugUtilsMessage
+    cvkGetPhysicalDeviceByPciBusInfo
+
+SHARED SUPPORT / AVAILABLE ACROSS TIERS
+JSON parsers: 2,500 / helpers: 19
+  Generated JSON scalar parsers: Parse enum names, flag sets and scalar values into their Vulkan representations.
+    cvkParseJsonImageLayout
+    cvkParseJsonBufferUsageFlags
+  Generated JSON structure parsers: Populate profile-supported Vulkan structs and arrays from the parsed JSON document.
+    cvkParseJsonBufferCreateInfo
+    cvkParseJsonGraphicsPipelineCreateInfo
+  Generated JSON pNext dispatch: Choose and populate the correct extension structure while traversing a JSON chain.
+    cvkParseJsonStructureChain
+  Pure selection algorithms: Choose memory types, queue families and supported extensions from already queried data.
+    cvkGetCompatibleMemoryTypeIndex
+    cvkGetQueueFamilyIndex
+    cvkGetExtensionsSupport
+  Arithmetic and local state: Align sizes and choose an unused video-reference slot without calling Vulkan.
+    cvkAlignDeviceSize
+    cvkGetInactiveVideoReferenceSlotIndex
+  Fatal diagnostics: Report failed checks and abort. CHECK and ASSERT macros reach this infrastructure.
+    cvkCheckResult
+    cvkFatal

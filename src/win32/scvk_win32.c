@@ -5,16 +5,18 @@
 
 void scvkAcquireWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
-    PFN_vkAcquireWinrtDisplayNV function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkAcquireWinrtDisplayNV            function;
 
-    function = (PFN_vkAcquireWinrtDisplayNV)scvkGetInstanceProcAddr(instance, "vkAcquireWinrtDisplayNV");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkAcquireWinrtDisplayNV);
     SCVK_CHECK(function(physicalDevice, display));
 }
 void scvkGetWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
 {
-    PFN_vkGetWinrtDisplayNV function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetWinrtDisplayNV                function;
 
-    function = (PFN_vkGetWinrtDisplayNV)scvkGetInstanceProcAddr(instance, "vkGetWinrtDisplayNV");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetWinrtDisplayNV);
     SCVK_CHECK(function(physicalDevice, deviceRelativeId, pDisplay));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));
 }

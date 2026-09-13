@@ -6,6 +6,52 @@
 #include <string.h>
 #include <vulkan/utility/vk_format_utils.h>
 
+/* Cache records are thread-local; only the invalidation generation is shared.
+ * Vulkan's external synchronization governs handle destruction and reuse.
+ * Relaxed atomics suffice: the generation publishes no other shared data. */
+#include <stdatomic.h>
+
+static _Atomic(uint64_t) cvk_call_generation = 1;
+
+void cvkInvalidateCallCache(void)
+{
+    (void)atomic_fetch_add_explicit(&cvk_call_generation, 1, memory_order_relaxed);
+}
+
+PFN_vkVoidFunction cvkGetCachedDeviceProcAddr(cvkCallCache* pCache, VkDevice device, const char* pName)
+{
+    uint64_t           generation;
+    PFN_vkVoidFunction function;
+
+    generation = atomic_load_explicit(&cvk_call_generation, memory_order_relaxed);
+    if (pCache->function != NULL && pCache->handle == (uintptr_t)device && pCache->generation == generation)
+    {
+        return pCache->function;
+    }
+    function           = cvkGetDeviceProcAddr(device, pName);
+    pCache->handle     = (uintptr_t)device;
+    pCache->generation = generation;
+    pCache->function   = function;
+    return function;
+}
+
+PFN_vkVoidFunction cvkGetCachedInstanceProcAddr(cvkCallCache* pCache, VkInstance instance, const char* pName)
+{
+    uint64_t           generation;
+    PFN_vkVoidFunction function;
+
+    generation = atomic_load_explicit(&cvk_call_generation, memory_order_relaxed);
+    if (pCache->function != NULL && pCache->handle == (uintptr_t)instance && pCache->generation == generation)
+    {
+        return pCache->function;
+    }
+    function           = cvkGetInstanceProcAddr(instance, pName);
+    pCache->handle     = (uintptr_t)instance;
+    pCache->generation = generation;
+    pCache->function   = function;
+    return function;
+}
+
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {
     (void)fprintf(stderr, "%s:%d: cvk fatal: %s\n", pFile, line, pExpression);
@@ -69515,9 +69561,10 @@ void* cvkParseJsonStructureChain(const cvkJsonContext* pContext, const cvkJsonVa
 }
 void cvkAcquireDrmDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, int32_t drmFd, VkDisplayKHR display)
 {
-    PFN_vkAcquireDrmDisplayEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkAcquireDrmDisplayEXT           function;
 
-    function = (PFN_vkAcquireDrmDisplayEXT)cvkGetInstanceProcAddr(instance, "vkAcquireDrmDisplayEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkAcquireDrmDisplayEXT);
     CVK_CHECK(function(physicalDevice, drmFd, display));
 }
 VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask, uint32_t* pImageIndex)
@@ -69547,27 +69594,29 @@ VkResult cvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_t
 void cvkAcquirePerformanceConfigurationINTEL(VkDevice device, const void* pNext, VkPerformanceConfigurationTypeINTEL type, VkPerformanceConfigurationINTEL* pConfiguration)
 {
     VkPerformanceConfigurationAcquireInfoINTEL acquire_info;
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkAcquirePerformanceConfigurationINTEL function;
 
     acquire_info.sType = VK_STRUCTURE_TYPE_PERFORMANCE_CONFIGURATION_ACQUIRE_INFO_INTEL;
     acquire_info.pNext = pNext;
     acquire_info.type  = type;
 
-    function = (PFN_vkAcquirePerformanceConfigurationINTEL)cvkGetDeviceProcAddr(device, "vkAcquirePerformanceConfigurationINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkAcquirePerformanceConfigurationINTEL);
     CVK_CHECK(function(device, &acquire_info, pConfiguration));
     CVK_ASSERT(VK_NULL_HANDLE != (*pConfiguration));
 }
 void cvkAcquireProfilingLock(VkDevice device, const void* pNext, VkAcquireProfilingLockFlagsKHR flags, uint64_t timeout)
 {
-    VkAcquireProfilingLockInfoKHR info;
-    PFN_vkAcquireProfilingLockKHR function;
+    VkAcquireProfilingLockInfoKHR        info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkAcquireProfilingLockKHR        function;
 
     info.sType   = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
     info.pNext   = pNext;
     info.flags   = flags;
     info.timeout = timeout;
 
-    function = (PFN_vkAcquireProfilingLockKHR)cvkGetDeviceProcAddr(device, "vkAcquireProfilingLockKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkAcquireProfilingLockKHR);
     CVK_CHECK(function(device, &info));
 }
 void cvkAllocateCommandBuffers(VkDevice device, const void* pNext, VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers)
@@ -69610,8 +69659,9 @@ void cvkAllocateMemory(VkDevice device, const void* pNext, VkDeviceSize allocati
 }
 void cvkAntiLagUpdateAMD(VkDevice device, const void* pNext, VkAntiLagModeAMD mode, uint32_t maxFPS, const VkAntiLagPresentationInfoAMD* pPresentationInfo)
 {
-    VkAntiLagDataAMD       data;
-    PFN_vkAntiLagUpdateAMD function;
+    VkAntiLagDataAMD                     data;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkAntiLagUpdateAMD               function;
 
     data.sType             = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
     data.pNext             = pNext;
@@ -69619,7 +69669,7 @@ void cvkAntiLagUpdateAMD(VkDevice device, const void* pNext, VkAntiLagModeAMD mo
     data.maxFPS            = maxFPS;
     data.pPresentationInfo = pPresentationInfo;
 
-    function = (PFN_vkAntiLagUpdateAMD)cvkGetDeviceProcAddr(device, "vkAntiLagUpdateAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkAntiLagUpdateAMD);
     function(device, &data);
 }
 void cvkBeginCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext, VkCommandBufferUsageFlags flags, const VkCommandBufferInheritanceInfo* pInheritanceInfo)
@@ -69634,9 +69684,10 @@ void cvkBeginCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext, VkC
 }
 void cvkBindAccelerationStructureMemoryNV(VkDevice device, uint32_t bindInfoCount, const VkBindAccelerationStructureMemoryInfoNV* pBindInfos)
 {
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkBindAccelerationStructureMemoryNV function;
 
-    function = (PFN_vkBindAccelerationStructureMemoryNV)cvkGetDeviceProcAddr(device, "vkBindAccelerationStructureMemoryNV");
+    function = CVK_CALL(&call_cache, Device, device, vkBindAccelerationStructureMemoryNV);
     CVK_CHECK(function(device, bindInfoCount, pBindInfos));
 }
 void cvkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memory, VkDeviceSize memoryOffset)
@@ -69649,9 +69700,10 @@ void cvkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindB
 }
 void cvkBindDataGraphPipelineSessionMemoryARM(VkDevice device, uint32_t bindInfoCount, const VkBindDataGraphPipelineSessionMemoryInfoARM* pBindInfos)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkBindDataGraphPipelineSessionMemoryARM function;
 
-    function = (PFN_vkBindDataGraphPipelineSessionMemoryARM)cvkGetDeviceProcAddr(device, "vkBindDataGraphPipelineSessionMemoryARM");
+    function = CVK_CALL(&call_cache, Device, device, vkBindDataGraphPipelineSessionMemoryARM);
     CVK_CHECK(function(device, bindInfoCount, pBindInfos));
 }
 void cvkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset)
@@ -69664,23 +69716,26 @@ void cvkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindIm
 }
 void cvkBindOpticalFlowSessionImageNV(VkDevice device, VkOpticalFlowSessionNV session, VkOpticalFlowSessionBindingPointNV bindingPoint, VkImageView view, VkImageLayout layout)
 {
-    PFN_vkBindOpticalFlowSessionImageNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkBindOpticalFlowSessionImageNV  function;
 
-    function = (PFN_vkBindOpticalFlowSessionImageNV)cvkGetDeviceProcAddr(device, "vkBindOpticalFlowSessionImageNV");
+    function = CVK_CALL(&call_cache, Device, device, vkBindOpticalFlowSessionImageNV);
     CVK_CHECK(function(device, session, bindingPoint, view, layout));
 }
 void cvkBindTensorMemoryARM(VkDevice device, uint32_t bindInfoCount, const VkBindTensorMemoryInfoARM* pBindInfos)
 {
-    PFN_vkBindTensorMemoryARM function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkBindTensorMemoryARM            function;
 
-    function = (PFN_vkBindTensorMemoryARM)cvkGetDeviceProcAddr(device, "vkBindTensorMemoryARM");
+    function = CVK_CALL(&call_cache, Device, device, vkBindTensorMemoryARM);
     CVK_CHECK(function(device, bindInfoCount, pBindInfos));
 }
 void cvkBindVideoSessionMemory(VkDevice device, VkVideoSessionKHR videoSession, uint32_t bindSessionMemoryInfoCount, const VkBindVideoSessionMemoryInfoKHR* pBindSessionMemoryInfos)
 {
-    PFN_vkBindVideoSessionMemoryKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkBindVideoSessionMemoryKHR      function;
 
-    function = (PFN_vkBindVideoSessionMemoryKHR)cvkGetDeviceProcAddr(device, "vkBindVideoSessionMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkBindVideoSessionMemoryKHR);
     CVK_CHECK(function(device, videoSession, bindSessionMemoryInfoCount, pBindSessionMemoryInfos));
 }
 VkResult cvkBuildAccelerationStructures(VkDevice                                               device,
@@ -69689,29 +69744,32 @@ VkResult cvkBuildAccelerationStructures(VkDevice                                
                                         const VkAccelerationStructureBuildGeometryInfoKHR*     pInfos,
                                         const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkBuildAccelerationStructuresKHR function;
     VkResult                             result;
 
-    function = (PFN_vkBuildAccelerationStructuresKHR)cvkGetDeviceProcAddr(device, "vkBuildAccelerationStructuresKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkBuildAccelerationStructuresKHR);
     result   = function(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
     CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkBuildMicromaps(VkDevice device, VkDeferredOperationKHR deferredOperation, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos)
 {
-    PFN_vkBuildMicromapsEXT function;
-    VkResult                result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkBuildMicromapsEXT              function;
+    VkResult                             result;
 
-    function = (PFN_vkBuildMicromapsEXT)cvkGetDeviceProcAddr(device, "vkBuildMicromapsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkBuildMicromapsEXT);
     result   = function(device, deferredOperation, infoCount, pInfos);
     CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkClearShaderInstrumentationMetricsARM(VkDevice device, VkShaderInstrumentationARM instrumentation)
 {
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkClearShaderInstrumentationMetricsARM function;
 
-    function = (PFN_vkClearShaderInstrumentationMetricsARM)cvkGetDeviceProcAddr(device, "vkClearShaderInstrumentationMetricsARM");
+    function = CVK_CALL(&call_cache, Device, device, vkClearShaderInstrumentationMetricsARM);
     function(device, instrumentation);
 }
 void cvkCmdBeginConditionalRendering2(VkDevice                       device,
@@ -69722,6 +69780,7 @@ void cvkCmdBeginConditionalRendering2(VkDevice                       device,
                                       VkConditionalRenderingFlagsEXT flags)
 {
     VkConditionalRenderingBeginInfo2EXT    conditional_rendering_begin;
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkCmdBeginConditionalRendering2EXT function;
 
     conditional_rendering_begin.sType        = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_2_EXT;
@@ -69730,12 +69789,13 @@ void cvkCmdBeginConditionalRendering2(VkDevice                       device,
     conditional_rendering_begin.addressFlags = addressFlags;
     conditional_rendering_begin.flags        = flags;
 
-    function = (PFN_vkCmdBeginConditionalRendering2EXT)cvkGetDeviceProcAddr(device, "vkCmdBeginConditionalRendering2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginConditionalRendering2EXT);
     function(commandBuffer, &conditional_rendering_begin);
 }
 void cvkCmdBeginConditionalRendering(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkBuffer buffer, VkDeviceSize offset, VkConditionalRenderingFlagsEXT flags)
 {
     VkConditionalRenderingBeginInfoEXT    conditional_rendering_begin;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdBeginConditionalRenderingEXT function;
 
     conditional_rendering_begin.sType  = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_EXT;
@@ -69744,31 +69804,33 @@ void cvkCmdBeginConditionalRendering(VkDevice device, VkCommandBuffer commandBuf
     conditional_rendering_begin.offset = offset;
     conditional_rendering_begin.flags  = flags;
 
-    function = (PFN_vkCmdBeginConditionalRenderingEXT)cvkGetDeviceProcAddr(device, "vkCmdBeginConditionalRenderingEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginConditionalRenderingEXT);
     function(commandBuffer, &conditional_rendering_begin);
 }
 void cvkCmdBeginCustomResolve(VkDevice device, VkCommandBuffer commandBuffer, void* pNext)
 {
-    VkBeginCustomResolveInfoEXT    begin_custom_resolve_info;
-    PFN_vkCmdBeginCustomResolveEXT function;
+    VkBeginCustomResolveInfoEXT          begin_custom_resolve_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginCustomResolveEXT       function;
 
     begin_custom_resolve_info.sType = VK_STRUCTURE_TYPE_BEGIN_CUSTOM_RESOLVE_INFO_EXT;
     begin_custom_resolve_info.pNext = pNext;
 
-    function = (PFN_vkCmdBeginCustomResolveEXT)cvkGetDeviceProcAddr(device, "vkCmdBeginCustomResolveEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginCustomResolveEXT);
     function(commandBuffer, &begin_custom_resolve_info);
 }
 void cvkCmdBeginDebugUtilsLabel(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT             label_info;
-    PFN_vkCmdBeginDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                 label_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginDebugUtilsLabelEXT     function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkCmdBeginDebugUtilsLabelEXT)cvkGetDeviceProcAddr(device, "vkCmdBeginDebugUtilsLabelEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginDebugUtilsLabelEXT);
     function(commandBuffer, &label_info);
 }
 void cvkCmdBeginGpaSampleAMD(VkDevice                   device,
@@ -69791,8 +69853,9 @@ void cvkCmdBeginGpaSampleAMD(VkDevice                   device,
                              VkPipelineStageFlags       timingPostSample,
                              uint32_t*                  pSampleID)
 {
-    VkGpaSampleBeginInfoAMD    gpa_sample_begin_info;
-    PFN_vkCmdBeginGpaSampleAMD function;
+    VkGpaSampleBeginInfoAMD              gpa_sample_begin_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginGpaSampleAMD           function;
 
     gpa_sample_begin_info.sType                                  = VK_STRUCTURE_TYPE_GPA_SAMPLE_BEGIN_INFO_AMD;
     gpa_sample_begin_info.pNext                                  = pNext;
@@ -69811,25 +69874,27 @@ void cvkCmdBeginGpaSampleAMD(VkDevice                   device,
     gpa_sample_begin_info.timingPreSample                        = timingPreSample;
     gpa_sample_begin_info.timingPostSample                       = timingPostSample;
 
-    function = (PFN_vkCmdBeginGpaSampleAMD)cvkGetDeviceProcAddr(device, "vkCmdBeginGpaSampleAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginGpaSampleAMD);
     CVK_CHECK(function(commandBuffer, gpaSession, &gpa_sample_begin_info, pSampleID));
 }
 void cvkCmdBeginGpaSessionAMD(VkDevice device, VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession)
 {
-    PFN_vkCmdBeginGpaSessionAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginGpaSessionAMD          function;
 
-    function = (PFN_vkCmdBeginGpaSessionAMD)cvkGetDeviceProcAddr(device, "vkCmdBeginGpaSessionAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginGpaSessionAMD);
     CVK_CHECK(function(commandBuffer, gpaSession));
 }
 void cvkCmdBeginPerTileExecutionQCOM(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
 {
-    VkPerTileBeginInfoQCOM             per_tile_begin_info;
-    PFN_vkCmdBeginPerTileExecutionQCOM function;
+    VkPerTileBeginInfoQCOM               per_tile_begin_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginPerTileExecutionQCOM   function;
 
     per_tile_begin_info.sType = VK_STRUCTURE_TYPE_PER_TILE_BEGIN_INFO_QCOM;
     per_tile_begin_info.pNext = pNext;
 
-    function = (PFN_vkCmdBeginPerTileExecutionQCOM)cvkGetDeviceProcAddr(device, "vkCmdBeginPerTileExecutionQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginPerTileExecutionQCOM);
     function(commandBuffer, &per_tile_begin_info);
 }
 void cvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
@@ -69838,9 +69903,10 @@ void cvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint
 }
 void cvkCmdBeginQueryIndexed(VkDevice device, VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags, uint32_t index)
 {
-    PFN_vkCmdBeginQueryIndexedEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginQueryIndexedEXT        function;
 
-    function = (PFN_vkCmdBeginQueryIndexedEXT)cvkGetDeviceProcAddr(device, "vkCmdBeginQueryIndexedEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginQueryIndexedEXT);
     function(commandBuffer, queryPool, query, flags, index);
 }
 void cvkCmdBeginRenderPass(VkCommandBuffer     commandBuffer,
@@ -69916,16 +69982,18 @@ void cvkCmdBeginRendering(VkCommandBuffer                  commandBuffer,
 }
 void cvkCmdBeginShaderInstrumentationARM(VkDevice device, VkCommandBuffer commandBuffer, VkShaderInstrumentationARM instrumentation)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkCmdBeginShaderInstrumentationARM function;
 
-    function = (PFN_vkCmdBeginShaderInstrumentationARM)cvkGetDeviceProcAddr(device, "vkCmdBeginShaderInstrumentationARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginShaderInstrumentationARM);
     function(commandBuffer, instrumentation);
 }
 void cvkCmdBeginTransformFeedback2(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstCounterRange, uint32_t counterRangeCount, const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos)
 {
-    PFN_vkCmdBeginTransformFeedback2EXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginTransformFeedback2EXT  function;
 
-    function = (PFN_vkCmdBeginTransformFeedback2EXT)cvkGetDeviceProcAddr(device, "vkCmdBeginTransformFeedback2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginTransformFeedback2EXT);
     function(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
 }
 void cvkCmdBeginTransformFeedback(VkDevice            device,
@@ -69935,9 +70003,10 @@ void cvkCmdBeginTransformFeedback(VkDevice            device,
                                   const VkBuffer*     pCounterBuffers,
                                   const VkDeviceSize* pCounterBufferOffsets)
 {
-    PFN_vkCmdBeginTransformFeedbackEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginTransformFeedbackEXT   function;
 
-    function = (PFN_vkCmdBeginTransformFeedbackEXT)cvkGetDeviceProcAddr(device, "vkCmdBeginTransformFeedbackEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginTransformFeedbackEXT);
     function(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 void cvkCmdBeginVideoCoding(VkDevice                           device,
@@ -69949,8 +70018,9 @@ void cvkCmdBeginVideoCoding(VkDevice                           device,
                             uint32_t                           referenceSlotCount,
                             const VkVideoReferenceSlotInfoKHR* pReferenceSlots)
 {
-    VkVideoBeginCodingInfoKHR    begin_info;
-    PFN_vkCmdBeginVideoCodingKHR function;
+    VkVideoBeginCodingInfoKHR            begin_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBeginVideoCodingKHR         function;
 
     begin_info.sType                  = VK_STRUCTURE_TYPE_VIDEO_BEGIN_CODING_INFO_KHR;
     begin_info.pNext                  = pNext;
@@ -69960,12 +70030,13 @@ void cvkCmdBeginVideoCoding(VkDevice                           device,
     begin_info.referenceSlotCount     = referenceSlotCount;
     begin_info.pReferenceSlots        = pReferenceSlots;
 
-    function = (PFN_vkCmdBeginVideoCodingKHR)cvkGetDeviceProcAddr(device, "vkCmdBeginVideoCodingKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBeginVideoCodingKHR);
     function(commandBuffer, &begin_info);
 }
 void cvkCmdBindDescriptorBufferEmbeddedSamplers2(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkShaderStageFlags stageFlags, VkPipelineLayout layout, uint32_t set)
 {
     VkBindDescriptorBufferEmbeddedSamplersInfoEXT     bind_descriptor_buffer_embedded_samplers_info;
+    static CVK_THREAD_LOCAL cvkCallCache              call_cache;
     PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT function;
 
     bind_descriptor_buffer_embedded_samplers_info.sType      = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT;
@@ -69974,21 +70045,23 @@ void cvkCmdBindDescriptorBufferEmbeddedSamplers2(VkDevice device, VkCommandBuffe
     bind_descriptor_buffer_embedded_samplers_info.layout     = layout;
     bind_descriptor_buffer_embedded_samplers_info.set        = set;
 
-    function = (PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT)cvkGetDeviceProcAddr(device, "vkCmdBindDescriptorBufferEmbeddedSamplers2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindDescriptorBufferEmbeddedSamplers2EXT);
     function(commandBuffer, &bind_descriptor_buffer_embedded_samplers_info);
 }
 void cvkCmdBindDescriptorBufferEmbeddedSamplers(VkDevice device, VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipelineLayout layout, uint32_t set)
 {
+    static CVK_THREAD_LOCAL cvkCallCache             call_cache;
     PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT function;
 
-    function = (PFN_vkCmdBindDescriptorBufferEmbeddedSamplersEXT)cvkGetDeviceProcAddr(device, "vkCmdBindDescriptorBufferEmbeddedSamplersEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindDescriptorBufferEmbeddedSamplersEXT);
     function(commandBuffer, pipelineBindPoint, layout, set);
 }
 void cvkCmdBindDescriptorBuffers(VkDevice device, VkCommandBuffer commandBuffer, uint32_t bufferCount, const VkDescriptorBufferBindingInfoEXT* pBindingInfos)
 {
-    PFN_vkCmdBindDescriptorBuffersEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindDescriptorBuffersEXT    function;
 
-    function = (PFN_vkCmdBindDescriptorBuffersEXT)cvkGetDeviceProcAddr(device, "vkCmdBindDescriptorBuffersEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindDescriptorBuffersEXT);
     function(commandBuffer, bufferCount, pBindingInfos);
 }
 void cvkCmdBindDescriptorSets(VkCommandBuffer        commandBuffer,
@@ -70035,8 +70108,9 @@ void cvkCmdBindIndexBuffer2(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDe
 }
 void cvkCmdBindIndexBuffer3(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkDeviceAddressRangeKHR addressRange, VkAddressCommandFlagsKHR addressFlags, VkIndexType indexType)
 {
-    VkBindIndexBuffer3InfoKHR    info;
-    PFN_vkCmdBindIndexBuffer3KHR function;
+    VkBindIndexBuffer3InfoKHR            info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindIndexBuffer3KHR         function;
 
     info.sType        = VK_STRUCTURE_TYPE_BIND_INDEX_BUFFER_3_INFO_KHR;
     info.pNext        = pNext;
@@ -70044,14 +70118,15 @@ void cvkCmdBindIndexBuffer3(VkDevice device, VkCommandBuffer commandBuffer, cons
     info.addressFlags = addressFlags;
     info.indexType    = indexType;
 
-    function = (PFN_vkCmdBindIndexBuffer3KHR)cvkGetDeviceProcAddr(device, "vkCmdBindIndexBuffer3KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindIndexBuffer3KHR);
     function(commandBuffer, &info);
 }
 void cvkCmdBindInvocationMaskHUAWEI(VkDevice device, VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout)
 {
-    PFN_vkCmdBindInvocationMaskHUAWEI function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindInvocationMaskHUAWEI    function;
 
-    function = (PFN_vkCmdBindInvocationMaskHUAWEI)cvkGetDeviceProcAddr(device, "vkCmdBindInvocationMaskHUAWEI");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindInvocationMaskHUAWEI);
     function(commandBuffer, imageView, imageLayout);
 }
 void cvkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
@@ -70060,15 +70135,17 @@ void cvkCmdBindPipeline(VkCommandBuffer commandBuffer, VkPipelineBindPoint pipel
 }
 void cvkCmdBindPipelineShaderGroupNV(VkDevice device, VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline, uint32_t groupIndex)
 {
-    PFN_vkCmdBindPipelineShaderGroupNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindPipelineShaderGroupNV   function;
 
-    function = (PFN_vkCmdBindPipelineShaderGroupNV)cvkGetDeviceProcAddr(device, "vkCmdBindPipelineShaderGroupNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindPipelineShaderGroupNV);
     function(commandBuffer, pipelineBindPoint, pipeline, groupIndex);
 }
 void cvkCmdBindResourceHeap(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkDeviceAddressRangeEXT heapRange, VkDeviceSize reservedRangeOffset, VkDeviceSize reservedRangeSize)
 {
-    VkBindHeapInfoEXT            bind_info;
-    PFN_vkCmdBindResourceHeapEXT function;
+    VkBindHeapInfoEXT                    bind_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindResourceHeapEXT         function;
 
     bind_info.sType               = VK_STRUCTURE_TYPE_BIND_HEAP_INFO_EXT;
     bind_info.pNext               = pNext;
@@ -70076,13 +70153,14 @@ void cvkCmdBindResourceHeap(VkDevice device, VkCommandBuffer commandBuffer, cons
     bind_info.reservedRangeOffset = reservedRangeOffset;
     bind_info.reservedRangeSize   = reservedRangeSize;
 
-    function = (PFN_vkCmdBindResourceHeapEXT)cvkGetDeviceProcAddr(device, "vkCmdBindResourceHeapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindResourceHeapEXT);
     function(commandBuffer, &bind_info);
 }
 void cvkCmdBindSamplerHeap(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkDeviceAddressRangeEXT heapRange, VkDeviceSize reservedRangeOffset, VkDeviceSize reservedRangeSize)
 {
-    VkBindHeapInfoEXT           bind_info;
-    PFN_vkCmdBindSamplerHeapEXT function;
+    VkBindHeapInfoEXT                    bind_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindSamplerHeapEXT          function;
 
     bind_info.sType               = VK_STRUCTURE_TYPE_BIND_HEAP_INFO_EXT;
     bind_info.pNext               = pNext;
@@ -70090,40 +70168,44 @@ void cvkCmdBindSamplerHeap(VkDevice device, VkCommandBuffer commandBuffer, const
     bind_info.reservedRangeOffset = reservedRangeOffset;
     bind_info.reservedRangeSize   = reservedRangeSize;
 
-    function = (PFN_vkCmdBindSamplerHeapEXT)cvkGetDeviceProcAddr(device, "vkCmdBindSamplerHeapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindSamplerHeapEXT);
     function(commandBuffer, &bind_info);
 }
 void cvkCmdBindShaders(VkDevice device, VkCommandBuffer commandBuffer, uint32_t stageCount, const VkShaderStageFlagBits* pStages, const VkShaderEXT* pShaders)
 {
-    PFN_vkCmdBindShadersEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindShadersEXT              function;
 
-    function = (PFN_vkCmdBindShadersEXT)cvkGetDeviceProcAddr(device, "vkCmdBindShadersEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindShadersEXT);
     function(commandBuffer, stageCount, pStages, pShaders);
 }
 void cvkCmdBindShadingRateImageNV(VkDevice device, VkCommandBuffer commandBuffer, VkImageView imageView, VkImageLayout imageLayout)
 {
-    PFN_vkCmdBindShadingRateImageNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindShadingRateImageNV      function;
 
-    function = (PFN_vkCmdBindShadingRateImageNV)cvkGetDeviceProcAddr(device, "vkCmdBindShadingRateImageNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindShadingRateImageNV);
     function(commandBuffer, imageView, imageLayout);
 }
 void cvkCmdBindTileMemoryQCOM(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkDeviceMemory memory)
 {
-    VkTileMemoryBindInfoQCOM    tile_memory_bind_info;
-    PFN_vkCmdBindTileMemoryQCOM function;
+    VkTileMemoryBindInfoQCOM             tile_memory_bind_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindTileMemoryQCOM          function;
 
     tile_memory_bind_info.sType  = VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM;
     tile_memory_bind_info.pNext  = pNext;
     tile_memory_bind_info.memory = memory;
 
-    function = (PFN_vkCmdBindTileMemoryQCOM)cvkGetDeviceProcAddr(device, "vkCmdBindTileMemoryQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindTileMemoryQCOM);
     function(commandBuffer, &tile_memory_bind_info);
 }
 void cvkCmdBindTransformFeedbackBuffers2(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBindTransformFeedbackBuffer2InfoEXT* pBindingInfos)
 {
+    static CVK_THREAD_LOCAL cvkCallCache      call_cache;
     PFN_vkCmdBindTransformFeedbackBuffers2EXT function;
 
-    function = (PFN_vkCmdBindTransformFeedbackBuffers2EXT)cvkGetDeviceProcAddr(device, "vkCmdBindTransformFeedbackBuffers2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindTransformFeedbackBuffers2EXT);
     function(commandBuffer, firstBinding, bindingCount, pBindingInfos);
 }
 void cvkCmdBindTransformFeedbackBuffers(VkDevice            device,
@@ -70134,9 +70216,10 @@ void cvkCmdBindTransformFeedbackBuffers(VkDevice            device,
                                         const VkDeviceSize* pOffsets,
                                         const VkDeviceSize* pSizes)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkCmdBindTransformFeedbackBuffersEXT function;
 
-    function = (PFN_vkCmdBindTransformFeedbackBuffersEXT)cvkGetDeviceProcAddr(device, "vkCmdBindTransformFeedbackBuffersEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindTransformFeedbackBuffersEXT);
     function(commandBuffer, firstBinding, bindingCount, pBuffers, pOffsets, pSizes);
 }
 void cvkCmdBindVertexBuffers(VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* pBuffers, const VkDeviceSize* pOffsets)
@@ -70155,9 +70238,10 @@ void cvkCmdBindVertexBuffers2(VkCommandBuffer     commandBuffer,
 }
 void cvkCmdBindVertexBuffers3(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstBinding, uint32_t bindingCount, const VkBindVertexBuffer3InfoKHR* pBindingInfos)
 {
-    PFN_vkCmdBindVertexBuffers3KHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBindVertexBuffers3KHR       function;
 
-    function = (PFN_vkCmdBindVertexBuffers3KHR)cvkGetDeviceProcAddr(device, "vkCmdBindVertexBuffers3KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBindVertexBuffers3KHR);
     function(commandBuffer, firstBinding, bindingCount, pBindingInfos);
 }
 void cvkCmdBlitImage(VkCommandBuffer    commandBuffer,
@@ -70211,6 +70295,7 @@ void cvkCmdBuildAccelerationStructureNV(VkDevice                             dev
                                         VkDeviceSize                         scratchOffset)
 {
     VkAccelerationStructureInfoNV         info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdBuildAccelerationStructureNV function;
 
     info.sType         = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
@@ -70221,7 +70306,7 @@ void cvkCmdBuildAccelerationStructureNV(VkDevice                             dev
     info.geometryCount = geometryCount;
     info.pGeometries   = pGeometries;
 
-    function = (PFN_vkCmdBuildAccelerationStructureNV)cvkGetDeviceProcAddr(device, "vkCmdBuildAccelerationStructureNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBuildAccelerationStructureNV);
     function(commandBuffer, &info, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
 void cvkCmdBuildAccelerationStructuresIndirect(VkDevice                                           device,
@@ -70232,9 +70317,10 @@ void cvkCmdBuildAccelerationStructuresIndirect(VkDevice                         
                                                const uint32_t*                                    pIndirectStrides,
                                                const uint32_t* const*                             ppMaxPrimitiveCounts)
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkCmdBuildAccelerationStructuresIndirectKHR function;
 
-    function = (PFN_vkCmdBuildAccelerationStructuresIndirectKHR)cvkGetDeviceProcAddr(device, "vkCmdBuildAccelerationStructuresIndirectKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBuildAccelerationStructuresIndirectKHR);
     function(commandBuffer, infoCount, pInfos, pIndirectDeviceAddresses, pIndirectStrides, ppMaxPrimitiveCounts);
 }
 void cvkCmdBuildAccelerationStructures(VkDevice                                               device,
@@ -70243,9 +70329,10 @@ void cvkCmdBuildAccelerationStructures(VkDevice                                 
                                        const VkAccelerationStructureBuildGeometryInfoKHR*     pInfos,
                                        const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos)
 {
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCmdBuildAccelerationStructuresKHR function;
 
-    function = (PFN_vkCmdBuildAccelerationStructuresKHR)cvkGetDeviceProcAddr(device, "vkCmdBuildAccelerationStructuresKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBuildAccelerationStructuresKHR);
     function(commandBuffer, infoCount, pInfos, ppBuildRangeInfos);
 }
 void cvkCmdBuildClusterAccelerationStructureIndirectNV(VkDevice                                               device,
@@ -70261,6 +70348,7 @@ void cvkCmdBuildClusterAccelerationStructureIndirectNV(VkDevice                 
                                                        VkClusterAccelerationStructureAddressResolutionFlagsNV addressResolutionFlags)
 {
     VkClusterAccelerationStructureCommandsInfoNV         command_infos;
+    static CVK_THREAD_LOCAL cvkCallCache                 call_cache;
     PFN_vkCmdBuildClusterAccelerationStructureIndirectNV function;
 
     command_infos.sType                  = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_COMMANDS_INFO_NV;
@@ -70274,14 +70362,15 @@ void cvkCmdBuildClusterAccelerationStructureIndirectNV(VkDevice                 
     command_infos.srcInfosCount          = srcInfosCount;
     command_infos.addressResolutionFlags = addressResolutionFlags;
 
-    function = (PFN_vkCmdBuildClusterAccelerationStructureIndirectNV)cvkGetDeviceProcAddr(device, "vkCmdBuildClusterAccelerationStructureIndirectNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBuildClusterAccelerationStructureIndirectNV);
     function(commandBuffer, &command_infos);
 }
 void cvkCmdBuildMicromaps(VkDevice device, VkCommandBuffer commandBuffer, uint32_t infoCount, const VkMicromapBuildInfoEXT* pInfos)
 {
-    PFN_vkCmdBuildMicromapsEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdBuildMicromapsEXT           function;
 
-    function = (PFN_vkCmdBuildMicromapsEXT)cvkGetDeviceProcAddr(device, "vkCmdBuildMicromapsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBuildMicromapsEXT);
     function(commandBuffer, infoCount, pInfos);
 }
 void cvkCmdBuildPartitionedAccelerationStructuresNV(VkDevice                                           device,
@@ -70295,6 +70384,7 @@ void cvkCmdBuildPartitionedAccelerationStructuresNV(VkDevice                    
                                                     VkDeviceAddress                                    srcInfosCount)
 {
     VkBuildPartitionedAccelerationStructureInfoNV     build_info;
+    static CVK_THREAD_LOCAL cvkCallCache              call_cache;
     PFN_vkCmdBuildPartitionedAccelerationStructuresNV function;
 
     build_info.sType                        = VK_STRUCTURE_TYPE_BUILD_PARTITIONED_ACCELERATION_STRUCTURE_INFO_NV;
@@ -70306,7 +70396,7 @@ void cvkCmdBuildPartitionedAccelerationStructuresNV(VkDevice                    
     build_info.srcInfos                     = srcInfos;
     build_info.srcInfosCount                = srcInfosCount;
 
-    function = (PFN_vkCmdBuildPartitionedAccelerationStructuresNV)cvkGetDeviceProcAddr(device, "vkCmdBuildPartitionedAccelerationStructuresNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdBuildPartitionedAccelerationStructuresNV);
     function(commandBuffer, &build_info);
 }
 void cvkCmdClearAttachments(VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkClearAttachment* pAttachments, uint32_t rectCount, const VkClearRect* pRects)
@@ -70328,21 +70418,23 @@ void cvkCmdClearDepthStencilImage(VkCommandBuffer                 commandBuffer,
 }
 void cvkCmdControlVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkVideoCodingControlFlagsKHR flags)
 {
-    VkVideoCodingControlInfoKHR    coding_control_info;
-    PFN_vkCmdControlVideoCodingKHR function;
+    VkVideoCodingControlInfoKHR          coding_control_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdControlVideoCodingKHR       function;
 
     coding_control_info.sType = VK_STRUCTURE_TYPE_VIDEO_CODING_CONTROL_INFO_KHR;
     coding_control_info.pNext = pNext;
     coding_control_info.flags = flags;
 
-    function = (PFN_vkCmdControlVideoCodingKHR)cvkGetDeviceProcAddr(device, "vkCmdControlVideoCodingKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdControlVideoCodingKHR);
     function(commandBuffer, &coding_control_info);
 }
 void cvkCmdConvertCooperativeVectorMatrixNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t infoCount, const VkConvertCooperativeVectorMatrixInfoNV* pInfos)
 {
+    static CVK_THREAD_LOCAL cvkCallCache      call_cache;
     PFN_vkCmdConvertCooperativeVectorMatrixNV function;
 
-    function = (PFN_vkCmdConvertCooperativeVectorMatrixNV)cvkGetDeviceProcAddr(device, "vkCmdConvertCooperativeVectorMatrixNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdConvertCooperativeVectorMatrixNV);
     function(commandBuffer, infoCount, pInfos);
 }
 void cvkCmdCopyAccelerationStructure(VkDevice                           device,
@@ -70353,6 +70445,7 @@ void cvkCmdCopyAccelerationStructure(VkDevice                           device,
                                      VkCopyAccelerationStructureModeKHR mode)
 {
     VkCopyAccelerationStructureInfoKHR    info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdCopyAccelerationStructureKHR function;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
@@ -70361,14 +70454,15 @@ void cvkCmdCopyAccelerationStructure(VkDevice                           device,
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCmdCopyAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyAccelerationStructureKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyAccelerationStructureKHR);
     function(commandBuffer, &info);
 }
 void cvkCmdCopyAccelerationStructureNV(VkDevice device, VkCommandBuffer commandBuffer, VkAccelerationStructureNV dst, VkAccelerationStructureNV src, VkCopyAccelerationStructureModeKHR mode)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdCopyAccelerationStructureNV function;
 
-    function = (PFN_vkCmdCopyAccelerationStructureNV)cvkGetDeviceProcAddr(device, "vkCmdCopyAccelerationStructureNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyAccelerationStructureNV);
     function(commandBuffer, dst, src, mode);
 }
 void cvkCmdCopyAccelerationStructureToMemory(VkDevice                           device,
@@ -70379,6 +70473,7 @@ void cvkCmdCopyAccelerationStructureToMemory(VkDevice                           
                                              VkCopyAccelerationStructureModeKHR mode)
 {
     VkCopyAccelerationStructureToMemoryInfoKHR    info;
+    static CVK_THREAD_LOCAL cvkCallCache          call_cache;
     PFN_vkCmdCopyAccelerationStructureToMemoryKHR function;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_TO_MEMORY_INFO_KHR;
@@ -70387,7 +70482,7 @@ void cvkCmdCopyAccelerationStructureToMemory(VkDevice                           
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCmdCopyAccelerationStructureToMemoryKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyAccelerationStructureToMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyAccelerationStructureToMemoryKHR);
     function(commandBuffer, &info);
 }
 void cvkCmdCopyBuffer(VkCommandBuffer commandBuffer, VkBuffer srcBuffer, VkBuffer dstBuffer, uint32_t regionCount, const VkBufferCopy* pRegions)
@@ -70431,9 +70526,10 @@ void cvkCmdCopyBufferToImage2(VkCommandBuffer           commandBuffer,
 }
 void cvkCmdCopyGpaSessionResultsAMD(VkDevice device, VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession)
 {
-    PFN_vkCmdCopyGpaSessionResultsAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyGpaSessionResultsAMD    function;
 
-    function = (PFN_vkCmdCopyGpaSessionResultsAMD)cvkGetDeviceProcAddr(device, "vkCmdCopyGpaSessionResultsAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyGpaSessionResultsAMD);
     function(commandBuffer, gpaSession);
 }
 void cvkCmdCopyImage(VkCommandBuffer commandBuffer, VkImage srcImage, VkImageLayout srcImageLayout, VkImage dstImage, VkImageLayout dstImageLayout, uint32_t regionCount, const VkImageCopy* pRegions)
@@ -70486,8 +70582,9 @@ void cvkCmdCopyImageToBuffer2(VkCommandBuffer           commandBuffer,
 }
 void cvkCmdCopyImageToMemory(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkImage image, uint32_t regionCount, const VkDeviceMemoryImageCopyKHR* pRegions)
 {
-    VkCopyDeviceMemoryImageInfoKHR copy_memory_info;
-    PFN_vkCmdCopyImageToMemoryKHR  function;
+    VkCopyDeviceMemoryImageInfoKHR       copy_memory_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyImageToMemoryKHR        function;
 
     copy_memory_info.sType       = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_IMAGE_INFO_KHR;
     copy_memory_info.pNext       = pNext;
@@ -70495,7 +70592,7 @@ void cvkCmdCopyImageToMemory(VkDevice device, VkCommandBuffer commandBuffer, con
     copy_memory_info.regionCount = regionCount;
     copy_memory_info.pRegions    = pRegions;
 
-    function = (PFN_vkCmdCopyImageToMemoryKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyImageToMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyImageToMemoryKHR);
     function(commandBuffer, &copy_memory_info);
 }
 void cvkCmdCopyMemoryIndirect(VkDevice                       device,
@@ -70506,8 +70603,9 @@ void cvkCmdCopyMemoryIndirect(VkDevice                       device,
                               uint32_t                       copyCount,
                               VkStridedDeviceAddressRangeKHR copyAddressRange)
 {
-    VkCopyMemoryIndirectInfoKHR    copy_memory_indirect_info;
-    PFN_vkCmdCopyMemoryIndirectKHR function;
+    VkCopyMemoryIndirectInfoKHR          copy_memory_indirect_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMemoryIndirectKHR       function;
 
     copy_memory_indirect_info.sType            = VK_STRUCTURE_TYPE_COPY_MEMORY_INDIRECT_INFO_KHR;
     copy_memory_indirect_info.pNext            = pNext;
@@ -70516,27 +70614,29 @@ void cvkCmdCopyMemoryIndirect(VkDevice                       device,
     copy_memory_indirect_info.copyCount        = copyCount;
     copy_memory_indirect_info.copyAddressRange = copyAddressRange;
 
-    function = (PFN_vkCmdCopyMemoryIndirectKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryIndirectKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryIndirectKHR);
     function(commandBuffer, &copy_memory_indirect_info);
 }
 void cvkCmdCopyMemoryIndirectNV(VkDevice device, VkCommandBuffer commandBuffer, VkDeviceAddress copyBufferAddress, uint32_t copyCount, uint32_t stride)
 {
-    PFN_vkCmdCopyMemoryIndirectNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMemoryIndirectNV        function;
 
-    function = (PFN_vkCmdCopyMemoryIndirectNV)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryIndirectNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryIndirectNV);
     function(commandBuffer, copyBufferAddress, copyCount, stride);
 }
 void cvkCmdCopyMemory(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t regionCount, const VkDeviceMemoryCopyKHR* pRegions)
 {
-    VkCopyDeviceMemoryInfoKHR copy_memory_info;
-    PFN_vkCmdCopyMemoryKHR    function;
+    VkCopyDeviceMemoryInfoKHR            copy_memory_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMemoryKHR               function;
 
     copy_memory_info.sType       = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_INFO_KHR;
     copy_memory_info.pNext       = pNext;
     copy_memory_info.regionCount = regionCount;
     copy_memory_info.pRegions    = pRegions;
 
-    function = (PFN_vkCmdCopyMemoryKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryKHR);
     function(commandBuffer, &copy_memory_info);
 }
 void cvkCmdCopyMemoryToAccelerationStructure(VkDevice                           device,
@@ -70547,6 +70647,7 @@ void cvkCmdCopyMemoryToAccelerationStructure(VkDevice                           
                                              VkCopyAccelerationStructureModeKHR mode)
 {
     VkCopyMemoryToAccelerationStructureInfoKHR    info;
+    static CVK_THREAD_LOCAL cvkCallCache          call_cache;
     PFN_vkCmdCopyMemoryToAccelerationStructureKHR function;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR;
@@ -70555,7 +70656,7 @@ void cvkCmdCopyMemoryToAccelerationStructure(VkDevice                           
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCmdCopyMemoryToAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryToAccelerationStructureKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryToAccelerationStructureKHR);
     function(commandBuffer, &info);
 }
 void cvkCmdCopyMemoryToImageIndirect(VkDevice                        device,
@@ -70569,6 +70670,7 @@ void cvkCmdCopyMemoryToImageIndirect(VkDevice                        device,
                                      const VkImageSubresourceLayers* pImageSubresources)
 {
     VkCopyMemoryToImageIndirectInfoKHR    copy_memory_to_image_indirect_info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdCopyMemoryToImageIndirectKHR function;
 
     copy_memory_to_image_indirect_info.sType              = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INDIRECT_INFO_KHR;
@@ -70580,7 +70682,7 @@ void cvkCmdCopyMemoryToImageIndirect(VkDevice                        device,
     copy_memory_to_image_indirect_info.dstImageLayout     = dstImageLayout;
     copy_memory_to_image_indirect_info.pImageSubresources = pImageSubresources;
 
-    function = (PFN_vkCmdCopyMemoryToImageIndirectKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryToImageIndirectKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryToImageIndirectKHR);
     function(commandBuffer, &copy_memory_to_image_indirect_info);
 }
 void cvkCmdCopyMemoryToImageIndirectNV(VkDevice                        device,
@@ -70592,15 +70694,17 @@ void cvkCmdCopyMemoryToImageIndirectNV(VkDevice                        device,
                                        VkImageLayout                   dstImageLayout,
                                        const VkImageSubresourceLayers* pImageSubresources)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdCopyMemoryToImageIndirectNV function;
 
-    function = (PFN_vkCmdCopyMemoryToImageIndirectNV)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryToImageIndirectNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryToImageIndirectNV);
     function(commandBuffer, copyBufferAddress, copyCount, stride, dstImage, dstImageLayout, pImageSubresources);
 }
 void cvkCmdCopyMemoryToImage(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkImage image, uint32_t regionCount, const VkDeviceMemoryImageCopyKHR* pRegions)
 {
-    VkCopyDeviceMemoryImageInfoKHR copy_memory_info;
-    PFN_vkCmdCopyMemoryToImageKHR  function;
+    VkCopyDeviceMemoryImageInfoKHR       copy_memory_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMemoryToImageKHR        function;
 
     copy_memory_info.sType       = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_IMAGE_INFO_KHR;
     copy_memory_info.pNext       = pNext;
@@ -70608,13 +70712,14 @@ void cvkCmdCopyMemoryToImage(VkDevice device, VkCommandBuffer commandBuffer, con
     copy_memory_info.regionCount = regionCount;
     copy_memory_info.pRegions    = pRegions;
 
-    function = (PFN_vkCmdCopyMemoryToImageKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryToImageKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryToImageKHR);
     function(commandBuffer, &copy_memory_info);
 }
 void cvkCmdCopyMemoryToMicromap(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkDeviceOrHostAddressConstKHR src, VkMicromapEXT dst, VkCopyMicromapModeEXT mode)
 {
-    VkCopyMemoryToMicromapInfoEXT    info;
-    PFN_vkCmdCopyMemoryToMicromapEXT function;
+    VkCopyMemoryToMicromapInfoEXT        info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMemoryToMicromapEXT     function;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_MICROMAP_INFO_EXT;
     info.pNext = pNext;
@@ -70622,13 +70727,14 @@ void cvkCmdCopyMemoryToMicromap(VkDevice device, VkCommandBuffer commandBuffer, 
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCmdCopyMemoryToMicromapEXT)cvkGetDeviceProcAddr(device, "vkCmdCopyMemoryToMicromapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMemoryToMicromapEXT);
     function(commandBuffer, &info);
 }
 void cvkCmdCopyMicromap(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkMicromapEXT src, VkMicromapEXT dst, VkCopyMicromapModeEXT mode)
 {
-    VkCopyMicromapInfoEXT    info;
-    PFN_vkCmdCopyMicromapEXT function;
+    VkCopyMicromapInfoEXT                info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMicromapEXT             function;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MICROMAP_INFO_EXT;
     info.pNext = pNext;
@@ -70636,13 +70742,14 @@ void cvkCmdCopyMicromap(VkDevice device, VkCommandBuffer commandBuffer, const vo
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCmdCopyMicromapEXT)cvkGetDeviceProcAddr(device, "vkCmdCopyMicromapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMicromapEXT);
     function(commandBuffer, &info);
 }
 void cvkCmdCopyMicromapToMemory(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkMicromapEXT src, VkDeviceOrHostAddressKHR dst, VkCopyMicromapModeEXT mode)
 {
-    VkCopyMicromapToMemoryInfoEXT    info;
-    PFN_vkCmdCopyMicromapToMemoryEXT function;
+    VkCopyMicromapToMemoryInfoEXT        info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyMicromapToMemoryEXT     function;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MICROMAP_TO_MEMORY_INFO_EXT;
     info.pNext = pNext;
@@ -70650,7 +70757,7 @@ void cvkCmdCopyMicromapToMemory(VkDevice device, VkCommandBuffer commandBuffer, 
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCmdCopyMicromapToMemoryEXT)cvkGetDeviceProcAddr(device, "vkCmdCopyMicromapToMemoryEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyMicromapToMemoryEXT);
     function(commandBuffer, &info);
 }
 void cvkCmdCopyQueryPoolResults(VkCommandBuffer    commandBuffer,
@@ -70673,15 +70780,17 @@ void cvkCmdCopyQueryPoolResultsToMemory(VkDevice                              de
                                         VkAddressCommandFlagsKHR              dstFlags,
                                         VkQueryResultFlags                    queryResultFlags)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkCmdCopyQueryPoolResultsToMemoryKHR function;
 
-    function = (PFN_vkCmdCopyQueryPoolResultsToMemoryKHR)cvkGetDeviceProcAddr(device, "vkCmdCopyQueryPoolResultsToMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyQueryPoolResultsToMemoryKHR);
     function(commandBuffer, queryPool, firstQuery, queryCount, pDstRange, dstFlags, queryResultFlags);
 }
 void cvkCmdCopyTensorARM(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkTensorARM srcTensor, VkTensorARM dstTensor, uint32_t regionCount, const VkTensorCopyARM* pRegions)
 {
-    VkCopyTensorInfoARM    copy_tensor_info;
-    PFN_vkCmdCopyTensorARM function;
+    VkCopyTensorInfoARM                  copy_tensor_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCopyTensorARM               function;
 
     copy_tensor_info.sType       = VK_STRUCTURE_TYPE_COPY_TENSOR_INFO_ARM;
     copy_tensor_info.pNext       = pNext;
@@ -70690,7 +70799,7 @@ void cvkCmdCopyTensorARM(VkDevice device, VkCommandBuffer commandBuffer, const v
     copy_tensor_info.regionCount = regionCount;
     copy_tensor_info.pRegions    = pRegions;
 
-    function = (PFN_vkCmdCopyTensorARM)cvkGetDeviceProcAddr(device, "vkCmdCopyTensorARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdCopyTensorARM);
     function(commandBuffer, &copy_tensor_info);
 }
 void cvkCmdCuLaunchKernelNVX(VkDevice           device,
@@ -70709,8 +70818,9 @@ void cvkCmdCuLaunchKernelNVX(VkDevice           device,
                              size_t             extraCount,
                              const void* const* pExtras)
 {
-    VkCuLaunchInfoNVX          launch_info;
-    PFN_vkCmdCuLaunchKernelNVX function_pointer;
+    VkCuLaunchInfoNVX                    launch_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdCuLaunchKernelNVX           function_pointer;
 
     launch_info.sType          = VK_STRUCTURE_TYPE_CU_LAUNCH_INFO_NVX;
     launch_info.pNext          = pNext;
@@ -70727,40 +70837,43 @@ void cvkCmdCuLaunchKernelNVX(VkDevice           device,
     launch_info.extraCount     = extraCount;
     launch_info.pExtras        = pExtras;
 
-    function_pointer = (PFN_vkCmdCuLaunchKernelNVX)cvkGetDeviceProcAddr(device, "vkCmdCuLaunchKernelNVX");
+    function_pointer = CVK_CALL(&call_cache, Device, device, vkCmdCuLaunchKernelNVX);
     function_pointer(commandBuffer, &launch_info);
 }
 void cvkCmdDebugMarkerBegin(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[4])
 {
-    VkDebugMarkerMarkerInfoEXT   marker_info;
-    PFN_vkCmdDebugMarkerBeginEXT function;
+    VkDebugMarkerMarkerInfoEXT           marker_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDebugMarkerBeginEXT         function;
 
     marker_info.sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
     marker_info.pNext       = pNext;
     marker_info.pMarkerName = pMarkerName;
     memcpy(marker_info.color, color, sizeof(marker_info.color));
 
-    function = (PFN_vkCmdDebugMarkerBeginEXT)cvkGetDeviceProcAddr(device, "vkCmdDebugMarkerBeginEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDebugMarkerBeginEXT);
     function(commandBuffer, &marker_info);
 }
 void cvkCmdDebugMarkerEnd(VkDevice device, VkCommandBuffer commandBuffer)
 {
-    PFN_vkCmdDebugMarkerEndEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDebugMarkerEndEXT           function;
 
-    function = (PFN_vkCmdDebugMarkerEndEXT)cvkGetDeviceProcAddr(device, "vkCmdDebugMarkerEndEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDebugMarkerEndEXT);
     function(commandBuffer);
 }
 void cvkCmdDebugMarkerInsert(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[4])
 {
-    VkDebugMarkerMarkerInfoEXT    marker_info;
-    PFN_vkCmdDebugMarkerInsertEXT function;
+    VkDebugMarkerMarkerInfoEXT           marker_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDebugMarkerInsertEXT        function;
 
     marker_info.sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
     marker_info.pNext       = pNext;
     marker_info.pMarkerName = pMarkerName;
     memcpy(marker_info.color, color, sizeof(marker_info.color));
 
-    function = (PFN_vkCmdDebugMarkerInsertEXT)cvkGetDeviceProcAddr(device, "vkCmdDebugMarkerInsertEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDebugMarkerInsertEXT);
     function(commandBuffer, &marker_info);
 }
 void cvkCmdDecodeVideo(VkDevice                           device,
@@ -70775,8 +70888,9 @@ void cvkCmdDecodeVideo(VkDevice                           device,
                        uint32_t                           referenceSlotCount,
                        const VkVideoReferenceSlotInfoKHR* pReferenceSlots)
 {
-    VkVideoDecodeInfoKHR    decode_info;
-    PFN_vkCmdDecodeVideoKHR function;
+    VkVideoDecodeInfoKHR                 decode_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDecodeVideoKHR              function;
 
     decode_info.sType               = VK_STRUCTURE_TYPE_VIDEO_DECODE_INFO_KHR;
     decode_info.pNext               = pNext;
@@ -70789,7 +70903,7 @@ void cvkCmdDecodeVideo(VkDevice                           device,
     decode_info.referenceSlotCount  = referenceSlotCount;
     decode_info.pReferenceSlots     = pReferenceSlots;
 
-    function = (PFN_vkCmdDecodeVideoKHR)cvkGetDeviceProcAddr(device, "vkCmdDecodeVideoKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDecodeVideoKHR);
     function(commandBuffer, &decode_info);
 }
 void cvkCmdDecompressMemory(VkDevice                            device,
@@ -70799,8 +70913,9 @@ void cvkCmdDecompressMemory(VkDevice                            device,
                             uint32_t                            regionCount,
                             const VkDecompressMemoryRegionEXT*  pRegions)
 {
-    VkDecompressMemoryInfoEXT    decompress_memory_info_ext;
-    PFN_vkCmdDecompressMemoryEXT function;
+    VkDecompressMemoryInfoEXT            decompress_memory_info_ext;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDecompressMemoryEXT         function;
 
     decompress_memory_info_ext.sType               = VK_STRUCTURE_TYPE_DECOMPRESS_MEMORY_INFO_EXT;
     decompress_memory_info_ext.pNext               = pNext;
@@ -70808,7 +70923,7 @@ void cvkCmdDecompressMemory(VkDevice                            device,
     decompress_memory_info_ext.regionCount         = regionCount;
     decompress_memory_info_ext.pRegions            = pRegions;
 
-    function = (PFN_vkCmdDecompressMemoryEXT)cvkGetDeviceProcAddr(device, "vkCmdDecompressMemoryEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDecompressMemoryEXT);
     function(commandBuffer, &decompress_memory_info_ext);
 }
 void cvkCmdDecompressMemoryIndirectCount(VkDevice                            device,
@@ -70819,23 +70934,26 @@ void cvkCmdDecompressMemoryIndirectCount(VkDevice                            dev
                                          uint32_t                            maxDecompressionCount,
                                          uint32_t                            stride)
 {
+    static CVK_THREAD_LOCAL cvkCallCache      call_cache;
     PFN_vkCmdDecompressMemoryIndirectCountEXT function;
 
-    function = (PFN_vkCmdDecompressMemoryIndirectCountEXT)cvkGetDeviceProcAddr(device, "vkCmdDecompressMemoryIndirectCountEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDecompressMemoryIndirectCountEXT);
     function(commandBuffer, decompressionMethod, indirectCommandsAddress, indirectCommandsCountAddress, maxDecompressionCount, stride);
 }
 void cvkCmdDecompressMemoryIndirectCountNV(VkDevice device, VkCommandBuffer commandBuffer, VkDeviceAddress indirectCommandsAddress, VkDeviceAddress indirectCommandsCountAddress, uint32_t stride)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkCmdDecompressMemoryIndirectCountNV function;
 
-    function = (PFN_vkCmdDecompressMemoryIndirectCountNV)cvkGetDeviceProcAddr(device, "vkCmdDecompressMemoryIndirectCountNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDecompressMemoryIndirectCountNV);
     function(commandBuffer, indirectCommandsAddress, indirectCommandsCountAddress, stride);
 }
 void cvkCmdDecompressMemoryNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t decompressRegionCount, const VkDecompressMemoryRegionNV* pDecompressMemoryRegions)
 {
-    PFN_vkCmdDecompressMemoryNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDecompressMemoryNV          function;
 
-    function = (PFN_vkCmdDecompressMemoryNV)cvkGetDeviceProcAddr(device, "vkCmdDecompressMemoryNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDecompressMemoryNV);
     function(commandBuffer, decompressRegionCount, pDecompressMemoryRegions);
 }
 void cvkCmdDispatch(VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
@@ -70848,14 +70966,15 @@ void cvkCmdDispatchBase(VkCommandBuffer commandBuffer, uint32_t baseGroupX, uint
 }
 void cvkCmdDispatchDataGraphARM(VkDevice device, VkCommandBuffer commandBuffer, VkDataGraphPipelineSessionARM session, void* pNext, VkDataGraphPipelineDispatchFlagsARM flags)
 {
-    VkDataGraphPipelineDispatchInfoARM info;
-    PFN_vkCmdDispatchDataGraphARM      function;
+    VkDataGraphPipelineDispatchInfoARM   info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDispatchDataGraphARM        function;
 
     info.sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_DISPATCH_INFO_ARM;
     info.pNext = pNext;
     info.flags = flags;
 
-    function = (PFN_vkCmdDispatchDataGraphARM)cvkGetDeviceProcAddr(device, "vkCmdDispatchDataGraphARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDispatchDataGraphARM);
     function(commandBuffer, session, &info);
 }
 void cvkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset)
@@ -70864,26 +70983,28 @@ void cvkCmdDispatchIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDe
 }
 void cvkCmdDispatchIndirect2(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkDeviceAddressRangeKHR addressRange, VkAddressCommandFlagsKHR addressFlags)
 {
-    VkDispatchIndirect2InfoKHR    info;
-    PFN_vkCmdDispatchIndirect2KHR function;
+    VkDispatchIndirect2InfoKHR           info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDispatchIndirect2KHR        function;
 
     info.sType        = VK_STRUCTURE_TYPE_DISPATCH_INDIRECT_2_INFO_KHR;
     info.pNext        = pNext;
     info.addressRange = addressRange;
     info.addressFlags = addressFlags;
 
-    function = (PFN_vkCmdDispatchIndirect2KHR)cvkGetDeviceProcAddr(device, "vkCmdDispatchIndirect2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDispatchIndirect2KHR);
     function(commandBuffer, &info);
 }
 void cvkCmdDispatchTileQCOM(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
 {
-    VkDispatchTileInfoQCOM    dispatch_tile_info;
-    PFN_vkCmdDispatchTileQCOM function;
+    VkDispatchTileInfoQCOM               dispatch_tile_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDispatchTileQCOM            function;
 
     dispatch_tile_info.sType = VK_STRUCTURE_TYPE_DISPATCH_TILE_INFO_QCOM;
     dispatch_tile_info.pNext = pNext;
 
-    function = (PFN_vkCmdDispatchTileQCOM)cvkGetDeviceProcAddr(device, "vkCmdDispatchTileQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDispatchTileQCOM);
     function(commandBuffer, &dispatch_tile_info);
 }
 void cvkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
@@ -70892,16 +71013,18 @@ void cvkCmdDraw(VkCommandBuffer commandBuffer, uint32_t vertexCount, uint32_t in
 }
 void cvkCmdDrawClusterHUAWEI(VkDevice device, VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 {
-    PFN_vkCmdDrawClusterHUAWEI function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawClusterHUAWEI           function;
 
-    function = (PFN_vkCmdDrawClusterHUAWEI)cvkGetDeviceProcAddr(device, "vkCmdDrawClusterHUAWEI");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawClusterHUAWEI);
     function(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 void cvkCmdDrawClusterIndirectHUAWEI(VkDevice device, VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset)
 {
-    PFN_vkCmdDrawClusterIndirectHUAWEI function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawClusterIndirectHUAWEI   function;
 
-    function = (PFN_vkCmdDrawClusterIndirectHUAWEI)cvkGetDeviceProcAddr(device, "vkCmdDrawClusterIndirectHUAWEI");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawClusterIndirectHUAWEI);
     function(commandBuffer, buffer, offset);
 }
 void cvkCmdDrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
@@ -70919,8 +71042,9 @@ void cvkCmdDrawIndexedIndirect2(VkDevice                       device,
                                 VkAddressCommandFlagsKHR       addressFlags,
                                 uint32_t                       drawCount)
 {
-    VkDrawIndirect2InfoKHR           info;
-    PFN_vkCmdDrawIndexedIndirect2KHR function;
+    VkDrawIndirect2InfoKHR               info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawIndexedIndirect2KHR     function;
 
     info.sType        = VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR;
     info.pNext        = pNext;
@@ -70928,7 +71052,7 @@ void cvkCmdDrawIndexedIndirect2(VkDevice                       device,
     info.addressFlags = addressFlags;
     info.drawCount    = drawCount;
 
-    function = (PFN_vkCmdDrawIndexedIndirect2KHR)cvkGetDeviceProcAddr(device, "vkCmdDrawIndexedIndirect2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawIndexedIndirect2KHR);
     function(commandBuffer, &info);
 }
 void cvkCmdDrawIndexedIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride)
@@ -70945,6 +71069,7 @@ void cvkCmdDrawIndexedIndirectCount2(VkDevice                       device,
                                      uint32_t                       maxDrawCount)
 {
     VkDrawIndirectCount2InfoKHR           info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdDrawIndexedIndirectCount2KHR function;
 
     info.sType             = VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR;
@@ -70955,7 +71080,7 @@ void cvkCmdDrawIndexedIndirectCount2(VkDevice                       device,
     info.countAddressFlags = countAddressFlags;
     info.maxDrawCount      = maxDrawCount;
 
-    function = (PFN_vkCmdDrawIndexedIndirectCount2KHR)cvkGetDeviceProcAddr(device, "vkCmdDrawIndexedIndirectCount2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawIndexedIndirectCount2KHR);
     function(commandBuffer, &info);
 }
 void cvkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
@@ -70964,8 +71089,9 @@ void cvkCmdDrawIndirect(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDevice
 }
 void cvkCmdDrawIndirect2(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkStridedDeviceAddressRangeKHR addressRange, VkAddressCommandFlagsKHR addressFlags, uint32_t drawCount)
 {
-    VkDrawIndirect2InfoKHR    info;
-    PFN_vkCmdDrawIndirect2KHR function;
+    VkDrawIndirect2InfoKHR               info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawIndirect2KHR            function;
 
     info.sType        = VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR;
     info.pNext        = pNext;
@@ -70973,7 +71099,7 @@ void cvkCmdDrawIndirect2(VkDevice device, VkCommandBuffer commandBuffer, const v
     info.addressFlags = addressFlags;
     info.drawCount    = drawCount;
 
-    function = (PFN_vkCmdDrawIndirect2KHR)cvkGetDeviceProcAddr(device, "vkCmdDrawIndirect2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawIndirect2KHR);
     function(commandBuffer, &info);
 }
 void cvkCmdDrawIndirectByteCount2(VkDevice                 device,
@@ -70987,6 +71113,7 @@ void cvkCmdDrawIndirectByteCount2(VkDevice                 device,
                                   uint32_t                 vertexStride)
 {
     VkBindTransformFeedbackBuffer2InfoEXT counter_info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdDrawIndirectByteCount2EXT    function;
 
     counter_info.sType        = VK_STRUCTURE_TYPE_BIND_TRANSFORM_FEEDBACK_BUFFER_2_INFO_EXT;
@@ -70994,7 +71121,7 @@ void cvkCmdDrawIndirectByteCount2(VkDevice                 device,
     counter_info.addressRange = addressRange;
     counter_info.addressFlags = addressFlags;
 
-    function = (PFN_vkCmdDrawIndirectByteCount2EXT)cvkGetDeviceProcAddr(device, "vkCmdDrawIndirectByteCount2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawIndirectByteCount2EXT);
     function(commandBuffer, instanceCount, firstInstance, &counter_info, counterOffset, vertexStride);
 }
 void cvkCmdDrawIndirectByteCount(VkDevice        device,
@@ -71006,9 +71133,10 @@ void cvkCmdDrawIndirectByteCount(VkDevice        device,
                                  uint32_t        counterOffset,
                                  uint32_t        vertexStride)
 {
-    PFN_vkCmdDrawIndirectByteCountEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawIndirectByteCountEXT    function;
 
-    function = (PFN_vkCmdDrawIndirectByteCountEXT)cvkGetDeviceProcAddr(device, "vkCmdDrawIndirectByteCountEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawIndirectByteCountEXT);
     function(commandBuffer, instanceCount, firstInstance, counterBuffer, counterBufferOffset, counterOffset, vertexStride);
 }
 void cvkCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, VkBuffer countBuffer, VkDeviceSize countBufferOffset, uint32_t maxDrawCount, uint32_t stride)
@@ -71024,8 +71152,9 @@ void cvkCmdDrawIndirectCount2(VkDevice                       device,
                               VkAddressCommandFlagsKHR       countAddressFlags,
                               uint32_t                       maxDrawCount)
 {
-    VkDrawIndirectCount2InfoKHR    info;
-    PFN_vkCmdDrawIndirectCount2KHR function;
+    VkDrawIndirectCount2InfoKHR          info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawIndirectCount2KHR       function;
 
     info.sType             = VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR;
     info.pNext             = pNext;
@@ -71035,14 +71164,15 @@ void cvkCmdDrawIndirectCount2(VkDevice                       device,
     info.countAddressFlags = countAddressFlags;
     info.maxDrawCount      = maxDrawCount;
 
-    function = (PFN_vkCmdDrawIndirectCount2KHR)cvkGetDeviceProcAddr(device, "vkCmdDrawIndirectCount2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawIndirectCount2KHR);
     function(commandBuffer, &info);
 }
 void cvkCmdDrawMeshTasks(VkDevice device, VkCommandBuffer commandBuffer, uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
 {
-    PFN_vkCmdDrawMeshTasksEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMeshTasksEXT            function;
 
-    function = (PFN_vkCmdDrawMeshTasksEXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksEXT);
     function(commandBuffer, groupCountX, groupCountY, groupCountZ);
 }
 void cvkCmdDrawMeshTasksIndirect2(VkDevice                       device,
@@ -71052,8 +71182,9 @@ void cvkCmdDrawMeshTasksIndirect2(VkDevice                       device,
                                   VkAddressCommandFlagsKHR       addressFlags,
                                   uint32_t                       drawCount)
 {
-    VkDrawIndirect2InfoKHR             info;
-    PFN_vkCmdDrawMeshTasksIndirect2EXT function;
+    VkDrawIndirect2InfoKHR               info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMeshTasksIndirect2EXT   function;
 
     info.sType        = VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR;
     info.pNext        = pNext;
@@ -71061,7 +71192,7 @@ void cvkCmdDrawMeshTasksIndirect2(VkDevice                       device,
     info.addressFlags = addressFlags;
     info.drawCount    = drawCount;
 
-    function = (PFN_vkCmdDrawMeshTasksIndirect2EXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirect2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksIndirect2EXT);
     function(commandBuffer, &info);
 }
 void cvkCmdDrawMeshTasksIndirectCount2(VkDevice                       device,
@@ -71074,6 +71205,7 @@ void cvkCmdDrawMeshTasksIndirectCount2(VkDevice                       device,
                                        uint32_t                       maxDrawCount)
 {
     VkDrawIndirectCount2InfoKHR             info;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCmdDrawMeshTasksIndirectCount2EXT function;
 
     info.sType             = VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR;
@@ -71084,7 +71216,7 @@ void cvkCmdDrawMeshTasksIndirectCount2(VkDevice                       device,
     info.countAddressFlags = countAddressFlags;
     info.maxDrawCount      = maxDrawCount;
 
-    function = (PFN_vkCmdDrawMeshTasksIndirectCount2EXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectCount2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksIndirectCount2EXT);
     function(commandBuffer, &info);
 }
 void cvkCmdDrawMeshTasksIndirectCount(VkDevice        device,
@@ -71096,9 +71228,10 @@ void cvkCmdDrawMeshTasksIndirectCount(VkDevice        device,
                                       uint32_t        maxDrawCount,
                                       uint32_t        stride)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkCmdDrawMeshTasksIndirectCountEXT function;
 
-    function = (PFN_vkCmdDrawMeshTasksIndirectCountEXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectCountEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksIndirectCountEXT);
     function(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 void cvkCmdDrawMeshTasksIndirectCountNV(VkDevice        device,
@@ -71110,37 +71243,42 @@ void cvkCmdDrawMeshTasksIndirectCountNV(VkDevice        device,
                                         uint32_t        maxDrawCount,
                                         uint32_t        stride)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdDrawMeshTasksIndirectCountNV function;
 
-    function = (PFN_vkCmdDrawMeshTasksIndirectCountNV)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectCountNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksIndirectCountNV);
     function(commandBuffer, buffer, offset, countBuffer, countBufferOffset, maxDrawCount, stride);
 }
 void cvkCmdDrawMeshTasksIndirect(VkDevice device, VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
-    PFN_vkCmdDrawMeshTasksIndirectEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMeshTasksIndirectEXT    function;
 
-    function = (PFN_vkCmdDrawMeshTasksIndirectEXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksIndirectEXT);
     function(commandBuffer, buffer, offset, drawCount, stride);
 }
 void cvkCmdDrawMeshTasksIndirectNV(VkDevice device, VkCommandBuffer commandBuffer, VkBuffer buffer, VkDeviceSize offset, uint32_t drawCount, uint32_t stride)
 {
-    PFN_vkCmdDrawMeshTasksIndirectNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMeshTasksIndirectNV     function;
 
-    function = (PFN_vkCmdDrawMeshTasksIndirectNV)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksIndirectNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksIndirectNV);
     function(commandBuffer, buffer, offset, drawCount, stride);
 }
 void cvkCmdDrawMeshTasksNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t taskCount, uint32_t firstTask)
 {
-    PFN_vkCmdDrawMeshTasksNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMeshTasksNV             function;
 
-    function = (PFN_vkCmdDrawMeshTasksNV)cvkGetDeviceProcAddr(device, "vkCmdDrawMeshTasksNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMeshTasksNV);
     function(commandBuffer, taskCount, firstTask);
 }
 void cvkCmdDrawMulti(VkDevice device, VkCommandBuffer commandBuffer, uint32_t drawCount, const VkMultiDrawInfoEXT* pVertexInfo, uint32_t instanceCount, uint32_t firstInstance, uint32_t stride)
 {
-    PFN_vkCmdDrawMultiEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMultiEXT                function;
 
-    function = (PFN_vkCmdDrawMultiEXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMultiEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMultiEXT);
     function(commandBuffer, drawCount, pVertexInfo, instanceCount, firstInstance, stride);
 }
 void cvkCmdDrawMultiIndexed(VkDevice                         device,
@@ -71152,9 +71290,10 @@ void cvkCmdDrawMultiIndexed(VkDevice                         device,
                             uint32_t                         stride,
                             const int32_t*                   pVertexOffset)
 {
-    PFN_vkCmdDrawMultiIndexedEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdDrawMultiIndexedEXT         function;
 
-    function = (PFN_vkCmdDrawMultiIndexedEXT)cvkGetDeviceProcAddr(device, "vkCmdDrawMultiIndexedEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdDrawMultiIndexedEXT);
     function(commandBuffer, drawCount, pIndexInfo, instanceCount, firstInstance, stride, pVertexOffset);
 }
 void cvkCmdEncodeVideo(VkDevice                           device,
@@ -71170,8 +71309,9 @@ void cvkCmdEncodeVideo(VkDevice                           device,
                        const VkVideoReferenceSlotInfoKHR* pReferenceSlots,
                        uint32_t                           precedingExternallyEncodedBytes)
 {
-    VkVideoEncodeInfoKHR    encode_info;
-    PFN_vkCmdEncodeVideoKHR function;
+    VkVideoEncodeInfoKHR                 encode_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEncodeVideoKHR              function;
 
     encode_info.sType                           = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INFO_KHR;
     encode_info.pNext                           = pNext;
@@ -71185,46 +71325,51 @@ void cvkCmdEncodeVideo(VkDevice                           device,
     encode_info.pReferenceSlots                 = pReferenceSlots;
     encode_info.precedingExternallyEncodedBytes = precedingExternallyEncodedBytes;
 
-    function = (PFN_vkCmdEncodeVideoKHR)cvkGetDeviceProcAddr(device, "vkCmdEncodeVideoKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEncodeVideoKHR);
     function(commandBuffer, &encode_info);
 }
 void cvkCmdEndConditionalRendering(VkDevice device, VkCommandBuffer commandBuffer)
 {
-    PFN_vkCmdEndConditionalRenderingEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndConditionalRenderingEXT  function;
 
-    function = (PFN_vkCmdEndConditionalRenderingEXT)cvkGetDeviceProcAddr(device, "vkCmdEndConditionalRenderingEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndConditionalRenderingEXT);
     function(commandBuffer);
 }
 void cvkCmdEndDebugUtilsLabel(VkDevice device, VkCommandBuffer commandBuffer)
 {
-    PFN_vkCmdEndDebugUtilsLabelEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndDebugUtilsLabelEXT       function;
 
-    function = (PFN_vkCmdEndDebugUtilsLabelEXT)cvkGetDeviceProcAddr(device, "vkCmdEndDebugUtilsLabelEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndDebugUtilsLabelEXT);
     function(commandBuffer);
 }
 void cvkCmdEndGpaSampleAMD(VkDevice device, VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession, uint32_t sampleID)
 {
-    PFN_vkCmdEndGpaSampleAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndGpaSampleAMD             function;
 
-    function = (PFN_vkCmdEndGpaSampleAMD)cvkGetDeviceProcAddr(device, "vkCmdEndGpaSampleAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndGpaSampleAMD);
     function(commandBuffer, gpaSession, sampleID);
 }
 void cvkCmdEndGpaSessionAMD(VkDevice device, VkCommandBuffer commandBuffer, VkGpaSessionAMD gpaSession)
 {
-    PFN_vkCmdEndGpaSessionAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndGpaSessionAMD            function;
 
-    function = (PFN_vkCmdEndGpaSessionAMD)cvkGetDeviceProcAddr(device, "vkCmdEndGpaSessionAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndGpaSessionAMD);
     CVK_CHECK(function(commandBuffer, gpaSession));
 }
 void cvkCmdEndPerTileExecutionQCOM(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
 {
-    VkPerTileEndInfoQCOM             per_tile_end_info;
-    PFN_vkCmdEndPerTileExecutionQCOM function;
+    VkPerTileEndInfoQCOM                 per_tile_end_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndPerTileExecutionQCOM     function;
 
     per_tile_end_info.sType = VK_STRUCTURE_TYPE_PER_TILE_END_INFO_QCOM;
     per_tile_end_info.pNext = pNext;
 
-    function = (PFN_vkCmdEndPerTileExecutionQCOM)cvkGetDeviceProcAddr(device, "vkCmdEndPerTileExecutionQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndPerTileExecutionQCOM);
     function(commandBuffer, &per_tile_end_info);
 }
 void cvkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
@@ -71233,9 +71378,10 @@ void cvkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32
 }
 void cvkCmdEndQueryIndexed(VkDevice device, VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, uint32_t index)
 {
-    PFN_vkCmdEndQueryIndexedEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndQueryIndexedEXT          function;
 
-    function = (PFN_vkCmdEndQueryIndexedEXT)cvkGetDeviceProcAddr(device, "vkCmdEndQueryIndexedEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndQueryIndexedEXT);
     function(commandBuffer, queryPool, query, index);
 }
 void cvkCmdEndRenderPass(VkCommandBuffer commandBuffer)
@@ -71256,27 +71402,30 @@ void cvkCmdEndRendering(VkCommandBuffer commandBuffer)
 }
 void cvkCmdEndRendering2(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext)
 {
-    VkRenderingEndInfoKHR     rendering_end_info;
-    PFN_vkCmdEndRendering2KHR function;
+    VkRenderingEndInfoKHR                rendering_end_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndRendering2KHR            function;
 
     rendering_end_info.sType = VK_STRUCTURE_TYPE_RENDERING_END_INFO_KHR;
     rendering_end_info.pNext = pNext;
 
-    function = (PFN_vkCmdEndRendering2KHR)cvkGetDeviceProcAddr(device, "vkCmdEndRendering2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndRendering2KHR);
     function(commandBuffer, &rendering_end_info);
 }
 void cvkCmdEndShaderInstrumentationARM(VkDevice device, VkCommandBuffer commandBuffer)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdEndShaderInstrumentationARM function;
 
-    function = (PFN_vkCmdEndShaderInstrumentationARM)cvkGetDeviceProcAddr(device, "vkCmdEndShaderInstrumentationARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndShaderInstrumentationARM);
     function(commandBuffer);
 }
 void cvkCmdEndTransformFeedback2(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstCounterRange, uint32_t counterRangeCount, const VkBindTransformFeedbackBuffer2InfoEXT* pCounterInfos)
 {
-    PFN_vkCmdEndTransformFeedback2EXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndTransformFeedback2EXT    function;
 
-    function = (PFN_vkCmdEndTransformFeedback2EXT)cvkGetDeviceProcAddr(device, "vkCmdEndTransformFeedback2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndTransformFeedback2EXT);
     function(commandBuffer, firstCounterRange, counterRangeCount, pCounterInfos);
 }
 void cvkCmdEndTransformFeedback(VkDevice            device,
@@ -71286,21 +71435,23 @@ void cvkCmdEndTransformFeedback(VkDevice            device,
                                 const VkBuffer*     pCounterBuffers,
                                 const VkDeviceSize* pCounterBufferOffsets)
 {
-    PFN_vkCmdEndTransformFeedbackEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndTransformFeedbackEXT     function;
 
-    function = (PFN_vkCmdEndTransformFeedbackEXT)cvkGetDeviceProcAddr(device, "vkCmdEndTransformFeedbackEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndTransformFeedbackEXT);
     function(commandBuffer, firstCounterBuffer, counterBufferCount, pCounterBuffers, pCounterBufferOffsets);
 }
 void cvkCmdEndVideoCoding(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkVideoEndCodingFlagsKHR flags)
 {
-    VkVideoEndCodingInfoKHR    end_coding_info;
-    PFN_vkCmdEndVideoCodingKHR function;
+    VkVideoEndCodingInfoKHR              end_coding_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdEndVideoCodingKHR           function;
 
     end_coding_info.sType = VK_STRUCTURE_TYPE_VIDEO_END_CODING_INFO_KHR;
     end_coding_info.pNext = pNext;
     end_coding_info.flags = flags;
 
-    function = (PFN_vkCmdEndVideoCodingKHR)cvkGetDeviceProcAddr(device, "vkCmdEndVideoCodingKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdEndVideoCodingKHR);
     function(commandBuffer, &end_coding_info);
 }
 void cvkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers)
@@ -71323,6 +71474,7 @@ void cvkCmdExecuteGeneratedCommands(VkDevice                    device,
                                     uint32_t                    maxDrawCount)
 {
     VkGeneratedCommandsInfoEXT           generated_commands_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdExecuteGeneratedCommandsEXT function;
 
     generated_commands_info.sType                  = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT;
@@ -71338,7 +71490,7 @@ void cvkCmdExecuteGeneratedCommands(VkDevice                    device,
     generated_commands_info.sequenceCountAddress   = sequenceCountAddress;
     generated_commands_info.maxDrawCount           = maxDrawCount;
 
-    function = (PFN_vkCmdExecuteGeneratedCommandsEXT)cvkGetDeviceProcAddr(device, "vkCmdExecuteGeneratedCommandsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdExecuteGeneratedCommandsEXT);
     function(commandBuffer, isPreprocessed, &generated_commands_info);
 }
 void cvkCmdExecuteGeneratedCommandsNV(VkDevice                          device,
@@ -71359,8 +71511,9 @@ void cvkCmdExecuteGeneratedCommandsNV(VkDevice                          device,
                                       VkBuffer                          sequencesIndexBuffer,
                                       VkDeviceSize                      sequencesIndexOffset)
 {
-    VkGeneratedCommandsInfoNV           generated_commands_info;
-    PFN_vkCmdExecuteGeneratedCommandsNV function;
+    VkGeneratedCommandsInfoNV            generated_commands_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdExecuteGeneratedCommandsNV  function;
 
     generated_commands_info.sType                  = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
     generated_commands_info.pNext                  = pNext;
@@ -71378,7 +71531,7 @@ void cvkCmdExecuteGeneratedCommandsNV(VkDevice                          device,
     generated_commands_info.sequencesIndexBuffer   = sequencesIndexBuffer;
     generated_commands_info.sequencesIndexOffset   = sequencesIndexOffset;
 
-    function = (PFN_vkCmdExecuteGeneratedCommandsNV)cvkGetDeviceProcAddr(device, "vkCmdExecuteGeneratedCommandsNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdExecuteGeneratedCommandsNV);
     function(commandBuffer, isPreprocessed, &generated_commands_info);
 }
 void cvkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data)
@@ -71387,22 +71540,24 @@ void cvkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDevic
 }
 void cvkCmdFillMemory(VkDevice device, VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange, VkAddressCommandFlagsKHR dstFlags, uint32_t data)
 {
-    PFN_vkCmdFillMemoryKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdFillMemoryKHR               function;
 
-    function = (PFN_vkCmdFillMemoryKHR)cvkGetDeviceProcAddr(device, "vkCmdFillMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdFillMemoryKHR);
     function(commandBuffer, pDstRange, dstFlags, data);
 }
 void cvkCmdInsertDebugUtilsLabel(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT              label_info;
-    PFN_vkCmdInsertDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                 label_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdInsertDebugUtilsLabelEXT    function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkCmdInsertDebugUtilsLabelEXT)cvkGetDeviceProcAddr(device, "vkCmdInsertDebugUtilsLabelEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdInsertDebugUtilsLabelEXT);
     function(commandBuffer, &label_info);
 }
 void cvkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents)
@@ -71430,8 +71585,9 @@ void cvkCmdOpticalFlowExecuteNV(VkDevice                    device,
                                 uint32_t                    regionCount,
                                 const VkRect2D*             pRegions)
 {
-    VkOpticalFlowExecuteInfoNV    execute_info;
-    PFN_vkCmdOpticalFlowExecuteNV function;
+    VkOpticalFlowExecuteInfoNV           execute_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdOpticalFlowExecuteNV        function;
 
     execute_info.sType       = VK_STRUCTURE_TYPE_OPTICAL_FLOW_EXECUTE_INFO_NV;
     execute_info.pNext       = pNext;
@@ -71439,7 +71595,7 @@ void cvkCmdOpticalFlowExecuteNV(VkDevice                    device,
     execute_info.regionCount = regionCount;
     execute_info.pRegions    = pRegions;
 
-    function = (PFN_vkCmdOpticalFlowExecuteNV)cvkGetDeviceProcAddr(device, "vkCmdOpticalFlowExecuteNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdOpticalFlowExecuteNV);
     function(commandBuffer, session, &execute_info);
 }
 void cvkCmdPipelineBarrier(VkCommandBuffer              commandBuffer,
@@ -71503,6 +71659,7 @@ void cvkCmdPreprocessGeneratedCommands(VkDevice                    device,
                                        VkCommandBuffer             stateCommandBuffer)
 {
     VkGeneratedCommandsInfoEXT              generated_commands_info;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCmdPreprocessGeneratedCommandsEXT function;
 
     generated_commands_info.sType                  = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT;
@@ -71518,7 +71675,7 @@ void cvkCmdPreprocessGeneratedCommands(VkDevice                    device,
     generated_commands_info.sequenceCountAddress   = sequenceCountAddress;
     generated_commands_info.maxDrawCount           = maxDrawCount;
 
-    function = (PFN_vkCmdPreprocessGeneratedCommandsEXT)cvkGetDeviceProcAddr(device, "vkCmdPreprocessGeneratedCommandsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdPreprocessGeneratedCommandsEXT);
     function(commandBuffer, &generated_commands_info, stateCommandBuffer);
 }
 void cvkCmdPreprocessGeneratedCommandsNV(VkDevice                          device,
@@ -71539,6 +71696,7 @@ void cvkCmdPreprocessGeneratedCommandsNV(VkDevice                          devic
                                          VkDeviceSize                      sequencesIndexOffset)
 {
     VkGeneratedCommandsInfoNV              generated_commands_info;
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkCmdPreprocessGeneratedCommandsNV function;
 
     generated_commands_info.sType                  = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
@@ -71557,7 +71715,7 @@ void cvkCmdPreprocessGeneratedCommandsNV(VkDevice                          devic
     generated_commands_info.sequencesIndexBuffer   = sequencesIndexBuffer;
     generated_commands_info.sequencesIndexOffset   = sequencesIndexOffset;
 
-    function = (PFN_vkCmdPreprocessGeneratedCommandsNV)cvkGetDeviceProcAddr(device, "vkCmdPreprocessGeneratedCommandsNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdPreprocessGeneratedCommandsNV);
     function(commandBuffer, &generated_commands_info);
 }
 void cvkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size, const void* pValues)
@@ -71579,15 +71737,16 @@ void cvkCmdPushConstants2(VkCommandBuffer commandBuffer, const void* pNext, VkPi
 }
 void cvkCmdPushData(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t offset, VkHostAddressRangeConstEXT data)
 {
-    VkPushDataInfoEXT    push_data_info;
-    PFN_vkCmdPushDataEXT function;
+    VkPushDataInfoEXT                    push_data_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdPushDataEXT                 function;
 
     push_data_info.sType  = VK_STRUCTURE_TYPE_PUSH_DATA_INFO_EXT;
     push_data_info.pNext  = pNext;
     push_data_info.offset = offset;
     push_data_info.data   = data;
 
-    function = (PFN_vkCmdPushDataEXT)cvkGetDeviceProcAddr(device, "vkCmdPushDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdPushDataEXT);
     function(commandBuffer, &push_data_info);
 }
 void cvkCmdPushDescriptorSet(VkCommandBuffer             commandBuffer,
@@ -71684,23 +71843,26 @@ void cvkCmdResolveImage2(VkCommandBuffer        commandBuffer,
 }
 void cvkCmdSetAlphaToCoverageEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 alphaToCoverageEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetAlphaToCoverageEnableEXT function;
 
-    function = (PFN_vkCmdSetAlphaToCoverageEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetAlphaToCoverageEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetAlphaToCoverageEnableEXT);
     function(commandBuffer, alphaToCoverageEnable);
 }
 void cvkCmdSetAlphaToOneEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 alphaToOneEnable)
 {
-    PFN_vkCmdSetAlphaToOneEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetAlphaToOneEnableEXT      function;
 
-    function = (PFN_vkCmdSetAlphaToOneEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetAlphaToOneEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetAlphaToOneEnableEXT);
     function(commandBuffer, alphaToOneEnable);
 }
 void cvkCmdSetAttachmentFeedbackLoopEnable(VkDevice device, VkCommandBuffer commandBuffer, VkImageAspectFlags aspectMask)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT function;
 
-    function = (PFN_vkCmdSetAttachmentFeedbackLoopEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetAttachmentFeedbackLoopEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetAttachmentFeedbackLoopEnableEXT);
     function(commandBuffer, aspectMask);
 }
 void cvkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendConstants[4])
@@ -71709,9 +71871,10 @@ void cvkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendCon
 }
 void cvkCmdSetCheckpointNV(VkDevice device, VkCommandBuffer commandBuffer, const void* pCheckpointMarker)
 {
-    PFN_vkCmdSetCheckpointNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetCheckpointNV             function;
 
-    function = (PFN_vkCmdSetCheckpointNV)cvkGetDeviceProcAddr(device, "vkCmdSetCheckpointNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCheckpointNV);
     function(commandBuffer, pCheckpointMarker);
 }
 void cvkCmdSetCoarseSampleOrderNV(VkDevice                           device,
@@ -71720,49 +71883,56 @@ void cvkCmdSetCoarseSampleOrderNV(VkDevice                           device,
                                   uint32_t                           customSampleOrderCount,
                                   const VkCoarseSampleOrderCustomNV* pCustomSampleOrders)
 {
-    PFN_vkCmdSetCoarseSampleOrderNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetCoarseSampleOrderNV      function;
 
-    function = (PFN_vkCmdSetCoarseSampleOrderNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoarseSampleOrderNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoarseSampleOrderNV);
     function(commandBuffer, sampleOrderType, customSampleOrderCount, pCustomSampleOrders);
 }
 void cvkCmdSetColorBlendAdvanced(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendAdvancedEXT* pColorBlendAdvanced)
 {
-    PFN_vkCmdSetColorBlendAdvancedEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetColorBlendAdvancedEXT    function;
 
-    function = (PFN_vkCmdSetColorBlendAdvancedEXT)cvkGetDeviceProcAddr(device, "vkCmdSetColorBlendAdvancedEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetColorBlendAdvancedEXT);
     function(commandBuffer, firstAttachment, attachmentCount, pColorBlendAdvanced);
 }
 void cvkCmdSetColorBlendEnable(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkBool32* pColorBlendEnables)
 {
-    PFN_vkCmdSetColorBlendEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetColorBlendEnableEXT      function;
 
-    function = (PFN_vkCmdSetColorBlendEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetColorBlendEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetColorBlendEnableEXT);
     function(commandBuffer, firstAttachment, attachmentCount, pColorBlendEnables);
 }
 void cvkCmdSetColorBlendEquation(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorBlendEquationEXT* pColorBlendEquations)
 {
-    PFN_vkCmdSetColorBlendEquationEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetColorBlendEquationEXT    function;
 
-    function = (PFN_vkCmdSetColorBlendEquationEXT)cvkGetDeviceProcAddr(device, "vkCmdSetColorBlendEquationEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetColorBlendEquationEXT);
     function(commandBuffer, firstAttachment, attachmentCount, pColorBlendEquations);
 }
 void cvkCmdSetColorWriteEnable(VkDevice device, VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkBool32* pColorWriteEnables)
 {
-    PFN_vkCmdSetColorWriteEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetColorWriteEnableEXT      function;
 
-    function = (PFN_vkCmdSetColorWriteEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetColorWriteEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetColorWriteEnableEXT);
     function(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 void cvkCmdSetColorWriteMask(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstAttachment, uint32_t attachmentCount, const VkColorComponentFlags* pColorWriteMasks)
 {
-    PFN_vkCmdSetColorWriteMaskEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetColorWriteMaskEXT        function;
 
-    function = (PFN_vkCmdSetColorWriteMaskEXT)cvkGetDeviceProcAddr(device, "vkCmdSetColorWriteMaskEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetColorWriteMaskEXT);
     function(commandBuffer, firstAttachment, attachmentCount, pColorWriteMasks);
 }
 void cvkCmdSetComputeOccupancyPriorityNV(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, float occupancyPriority, float occupancyThrottling)
 {
     VkComputeOccupancyPriorityParametersNV parameters;
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkCmdSetComputeOccupancyPriorityNV function;
 
     parameters.sType               = VK_STRUCTURE_TYPE_COMPUTE_OCCUPANCY_PRIORITY_PARAMETERS_NV;
@@ -71770,56 +71940,63 @@ void cvkCmdSetComputeOccupancyPriorityNV(VkDevice device, VkCommandBuffer comman
     parameters.occupancyPriority   = occupancyPriority;
     parameters.occupancyThrottling = occupancyThrottling;
 
-    function = (PFN_vkCmdSetComputeOccupancyPriorityNV)cvkGetDeviceProcAddr(device, "vkCmdSetComputeOccupancyPriorityNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetComputeOccupancyPriorityNV);
     function(commandBuffer, &parameters);
 }
 void cvkCmdSetConservativeRasterizationMode(VkDevice device, VkCommandBuffer commandBuffer, VkConservativeRasterizationModeEXT conservativeRasterizationMode)
 {
+    static CVK_THREAD_LOCAL cvkCallCache         call_cache;
     PFN_vkCmdSetConservativeRasterizationModeEXT function;
 
-    function = (PFN_vkCmdSetConservativeRasterizationModeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetConservativeRasterizationModeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetConservativeRasterizationModeEXT);
     function(commandBuffer, conservativeRasterizationMode);
 }
 void cvkCmdSetCoverageModulationModeNV(VkDevice device, VkCommandBuffer commandBuffer, VkCoverageModulationModeNV coverageModulationMode)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetCoverageModulationModeNV function;
 
-    function = (PFN_vkCmdSetCoverageModulationModeNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoverageModulationModeNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoverageModulationModeNV);
     function(commandBuffer, coverageModulationMode);
 }
 void cvkCmdSetCoverageModulationTableEnableNV(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 coverageModulationTableEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkCmdSetCoverageModulationTableEnableNV function;
 
-    function = (PFN_vkCmdSetCoverageModulationTableEnableNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoverageModulationTableEnableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoverageModulationTableEnableNV);
     function(commandBuffer, coverageModulationTableEnable);
 }
 void cvkCmdSetCoverageModulationTableNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t coverageModulationTableCount, const float* pCoverageModulationTable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdSetCoverageModulationTableNV function;
 
-    function = (PFN_vkCmdSetCoverageModulationTableNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoverageModulationTableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoverageModulationTableNV);
     function(commandBuffer, coverageModulationTableCount, pCoverageModulationTable);
 }
 void cvkCmdSetCoverageReductionModeNV(VkDevice device, VkCommandBuffer commandBuffer, VkCoverageReductionModeNV coverageReductionMode)
 {
-    PFN_vkCmdSetCoverageReductionModeNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetCoverageReductionModeNV  function;
 
-    function = (PFN_vkCmdSetCoverageReductionModeNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoverageReductionModeNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoverageReductionModeNV);
     function(commandBuffer, coverageReductionMode);
 }
 void cvkCmdSetCoverageToColorEnableNV(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 coverageToColorEnable)
 {
-    PFN_vkCmdSetCoverageToColorEnableNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetCoverageToColorEnableNV  function;
 
-    function = (PFN_vkCmdSetCoverageToColorEnableNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoverageToColorEnableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoverageToColorEnableNV);
     function(commandBuffer, coverageToColorEnable);
 }
 void cvkCmdSetCoverageToColorLocationNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t coverageToColorLocation)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdSetCoverageToColorLocationNV function;
 
-    function = (PFN_vkCmdSetCoverageToColorLocationNV)cvkGetDeviceProcAddr(device, "vkCmdSetCoverageToColorLocationNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetCoverageToColorLocationNV);
     function(commandBuffer, coverageToColorLocation);
 }
 void cvkCmdSetCullMode(VkCommandBuffer commandBuffer, VkCullModeFlags cullMode)
@@ -71832,8 +72009,9 @@ void cvkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFa
 }
 void cvkCmdSetDepthBias2(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
 {
-    VkDepthBiasInfoEXT        depth_bias_info;
-    PFN_vkCmdSetDepthBias2EXT function;
+    VkDepthBiasInfoEXT                   depth_bias_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDepthBias2EXT            function;
 
     depth_bias_info.sType                   = VK_STRUCTURE_TYPE_DEPTH_BIAS_INFO_EXT;
     depth_bias_info.pNext                   = pNext;
@@ -71841,7 +72019,7 @@ void cvkCmdSetDepthBias2(VkDevice device, VkCommandBuffer commandBuffer, const v
     depth_bias_info.depthBiasClamp          = depthBiasClamp;
     depth_bias_info.depthBiasSlopeFactor    = depthBiasSlopeFactor;
 
-    function = (PFN_vkCmdSetDepthBias2EXT)cvkGetDeviceProcAddr(device, "vkCmdSetDepthBias2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDepthBias2EXT);
     function(commandBuffer, &depth_bias_info);
 }
 void cvkCmdSetDepthBiasEnable(VkCommandBuffer commandBuffer, VkBool32 depthBiasEnable)
@@ -71858,30 +72036,34 @@ void cvkCmdSetDepthBoundsTestEnable(VkCommandBuffer commandBuffer, VkBool32 dept
 }
 void cvkCmdSetDepthClampEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 depthClampEnable)
 {
-    PFN_vkCmdSetDepthClampEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDepthClampEnableEXT      function;
 
-    function = (PFN_vkCmdSetDepthClampEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDepthClampEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDepthClampEnableEXT);
     function(commandBuffer, depthClampEnable);
 }
 void cvkCmdSetDepthClampRange(VkDevice device, VkCommandBuffer commandBuffer, VkDepthClampModeEXT depthClampMode, const VkDepthClampRangeEXT* pDepthClampRange)
 {
-    PFN_vkCmdSetDepthClampRangeEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDepthClampRangeEXT       function;
 
-    function = (PFN_vkCmdSetDepthClampRangeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDepthClampRangeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDepthClampRangeEXT);
     function(commandBuffer, depthClampMode, pDepthClampRange);
 }
 void cvkCmdSetDepthClipEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 depthClipEnable)
 {
-    PFN_vkCmdSetDepthClipEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDepthClipEnableEXT       function;
 
-    function = (PFN_vkCmdSetDepthClipEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDepthClipEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDepthClipEnableEXT);
     function(commandBuffer, depthClipEnable);
 }
 void cvkCmdSetDepthClipNegativeOneToOne(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 negativeOneToOne)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkCmdSetDepthClipNegativeOneToOneEXT function;
 
-    function = (PFN_vkCmdSetDepthClipNegativeOneToOneEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDepthClipNegativeOneToOneEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDepthClipNegativeOneToOneEXT);
     function(commandBuffer, negativeOneToOne);
 }
 void cvkCmdSetDepthCompareOp(VkCommandBuffer commandBuffer, VkCompareOp depthCompareOp)
@@ -71907,6 +72089,7 @@ void cvkCmdSetDescriptorBufferOffsets2(VkDevice            device,
                                        const VkDeviceSize* pOffsets)
 {
     VkSetDescriptorBufferOffsetsInfoEXT     set_descriptor_buffer_offsets_info;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCmdSetDescriptorBufferOffsets2EXT function;
 
     set_descriptor_buffer_offsets_info.sType          = VK_STRUCTURE_TYPE_SET_DESCRIPTOR_BUFFER_OFFSETS_INFO_EXT;
@@ -71918,7 +72101,7 @@ void cvkCmdSetDescriptorBufferOffsets2(VkDevice            device,
     set_descriptor_buffer_offsets_info.pBufferIndices = pBufferIndices;
     set_descriptor_buffer_offsets_info.pOffsets       = pOffsets;
 
-    function = (PFN_vkCmdSetDescriptorBufferOffsets2EXT)cvkGetDeviceProcAddr(device, "vkCmdSetDescriptorBufferOffsets2EXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDescriptorBufferOffsets2EXT);
     function(commandBuffer, &set_descriptor_buffer_offsets_info);
 }
 void cvkCmdSetDescriptorBufferOffsets(VkDevice            device,
@@ -71930,9 +72113,10 @@ void cvkCmdSetDescriptorBufferOffsets(VkDevice            device,
                                       const uint32_t*     pBufferIndices,
                                       const VkDeviceSize* pOffsets)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkCmdSetDescriptorBufferOffsetsEXT function;
 
-    function = (PFN_vkCmdSetDescriptorBufferOffsetsEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDescriptorBufferOffsetsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDescriptorBufferOffsetsEXT);
     function(commandBuffer, pipelineBindPoint, layout, firstSet, setCount, pBufferIndices, pOffsets);
 }
 void cvkCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask)
@@ -71941,29 +72125,33 @@ void cvkCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask)
 }
 void cvkCmdSetDiscardRectangle(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles)
 {
-    PFN_vkCmdSetDiscardRectangleEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDiscardRectangleEXT      function;
 
-    function = (PFN_vkCmdSetDiscardRectangleEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDiscardRectangleEXT);
     function(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
 void cvkCmdSetDiscardRectangleEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 discardRectangleEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdSetDiscardRectangleEnableEXT function;
 
-    function = (PFN_vkCmdSetDiscardRectangleEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDiscardRectangleEnableEXT);
     function(commandBuffer, discardRectangleEnable);
 }
 void cvkCmdSetDiscardRectangleMode(VkDevice device, VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode)
 {
-    PFN_vkCmdSetDiscardRectangleModeEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDiscardRectangleModeEXT  function;
 
-    function = (PFN_vkCmdSetDiscardRectangleModeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleModeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDiscardRectangleModeEXT);
     function(commandBuffer, discardRectangleMode);
 }
 void cvkCmdSetDispatchParametersARM(VkDevice device, VkCommandBuffer commandBuffer, void* pNext, uint32_t workGroupBatchSize, uint32_t maxQueuedWorkGroupBatches, uint32_t maxWarpsPerShaderCore)
 {
-    VkDispatchParametersARM           dispatch_parameters;
-    PFN_vkCmdSetDispatchParametersARM function;
+    VkDispatchParametersARM              dispatch_parameters;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetDispatchParametersARM    function;
 
     dispatch_parameters.sType                     = VK_STRUCTURE_TYPE_DISPATCH_PARAMETERS_ARM;
     dispatch_parameters.pNext                     = pNext;
@@ -71971,7 +72159,7 @@ void cvkCmdSetDispatchParametersARM(VkDevice device, VkCommandBuffer commandBuff
     dispatch_parameters.maxQueuedWorkGroupBatches = maxQueuedWorkGroupBatches;
     dispatch_parameters.maxWarpsPerShaderCore     = maxWarpsPerShaderCore;
 
-    function = (PFN_vkCmdSetDispatchParametersARM)cvkGetDeviceProcAddr(device, "vkCmdSetDispatchParametersARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetDispatchParametersARM);
     function(commandBuffer, &dispatch_parameters);
 }
 void cvkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
@@ -72004,37 +72192,42 @@ void cvkCmdSetEvent2(VkCommandBuffer               commandBuffer,
 }
 void cvkCmdSetExclusiveScissorEnableNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkBool32* pExclusiveScissorEnables)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetExclusiveScissorEnableNV function;
 
-    function = (PFN_vkCmdSetExclusiveScissorEnableNV)cvkGetDeviceProcAddr(device, "vkCmdSetExclusiveScissorEnableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetExclusiveScissorEnableNV);
     function(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissorEnables);
 }
 void cvkCmdSetExclusiveScissorNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstExclusiveScissor, uint32_t exclusiveScissorCount, const VkRect2D* pExclusiveScissors)
 {
-    PFN_vkCmdSetExclusiveScissorNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetExclusiveScissorNV       function;
 
-    function = (PFN_vkCmdSetExclusiveScissorNV)cvkGetDeviceProcAddr(device, "vkCmdSetExclusiveScissorNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetExclusiveScissorNV);
     function(commandBuffer, firstExclusiveScissor, exclusiveScissorCount, pExclusiveScissors);
 }
 void cvkCmdSetExtraPrimitiveOverestimationSize(VkDevice device, VkCommandBuffer commandBuffer, float extraPrimitiveOverestimationSize)
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT function;
 
-    function = (PFN_vkCmdSetExtraPrimitiveOverestimationSizeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetExtraPrimitiveOverestimationSizeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetExtraPrimitiveOverestimationSizeEXT);
     function(commandBuffer, extraPrimitiveOverestimationSize);
 }
 void cvkCmdSetFragmentShadingRateEnumNV(VkDevice device, VkCommandBuffer commandBuffer, VkFragmentShadingRateNV shadingRate, const VkFragmentShadingRateCombinerOpKHR combinerOps[2])
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCmdSetFragmentShadingRateEnumNV function;
 
-    function = (PFN_vkCmdSetFragmentShadingRateEnumNV)cvkGetDeviceProcAddr(device, "vkCmdSetFragmentShadingRateEnumNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetFragmentShadingRateEnumNV);
     function(commandBuffer, shadingRate, combinerOps);
 }
 void cvkCmdSetFragmentShadingRate(VkDevice device, VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2])
 {
-    PFN_vkCmdSetFragmentShadingRateKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetFragmentShadingRateKHR   function;
 
-    function = (PFN_vkCmdSetFragmentShadingRateKHR)cvkGetDeviceProcAddr(device, "vkCmdSetFragmentShadingRateKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetFragmentShadingRateKHR);
     function(commandBuffer, pFragmentSize, combinerOps);
 }
 void cvkCmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace)
@@ -72043,9 +72236,10 @@ void cvkCmdSetFrontFace(VkCommandBuffer commandBuffer, VkFrontFace frontFace)
 }
 void cvkCmdSetLineRasterizationMode(VkDevice device, VkCommandBuffer commandBuffer, VkLineRasterizationModeEXT lineRasterizationMode)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetLineRasterizationModeEXT function;
 
-    function = (PFN_vkCmdSetLineRasterizationModeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetLineRasterizationModeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetLineRasterizationModeEXT);
     function(commandBuffer, lineRasterizationMode);
 }
 void cvkCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFactor, uint16_t lineStipplePattern)
@@ -72054,9 +72248,10 @@ void cvkCmdSetLineStipple(VkCommandBuffer commandBuffer, uint32_t lineStippleFac
 }
 void cvkCmdSetLineStippleEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 stippledLineEnable)
 {
-    PFN_vkCmdSetLineStippleEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetLineStippleEnableEXT     function;
 
-    function = (PFN_vkCmdSetLineStippleEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetLineStippleEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetLineStippleEnableEXT);
     function(commandBuffer, stippledLineEnable);
 }
 void cvkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
@@ -72065,40 +72260,45 @@ void cvkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
 }
 void cvkCmdSetLogicOp(VkDevice device, VkCommandBuffer commandBuffer, VkLogicOp logicOp)
 {
-    PFN_vkCmdSetLogicOpEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetLogicOpEXT               function;
 
-    function = (PFN_vkCmdSetLogicOpEXT)cvkGetDeviceProcAddr(device, "vkCmdSetLogicOpEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetLogicOpEXT);
     function(commandBuffer, logicOp);
 }
 void cvkCmdSetLogicOpEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 logicOpEnable)
 {
-    PFN_vkCmdSetLogicOpEnableEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetLogicOpEnableEXT         function;
 
-    function = (PFN_vkCmdSetLogicOpEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetLogicOpEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetLogicOpEnableEXT);
     function(commandBuffer, logicOpEnable);
 }
 void cvkCmdSetPatchControlPoints(VkDevice device, VkCommandBuffer commandBuffer, uint32_t patchControlPoints)
 {
-    PFN_vkCmdSetPatchControlPointsEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetPatchControlPointsEXT    function;
 
-    function = (PFN_vkCmdSetPatchControlPointsEXT)cvkGetDeviceProcAddr(device, "vkCmdSetPatchControlPointsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetPatchControlPointsEXT);
     function(commandBuffer, patchControlPoints);
 }
 void cvkCmdSetPerformanceMarkerINTEL(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint64_t marker)
 {
-    VkPerformanceMarkerInfoINTEL       marker_info;
-    PFN_vkCmdSetPerformanceMarkerINTEL function;
+    VkPerformanceMarkerInfoINTEL         marker_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetPerformanceMarkerINTEL   function;
 
     marker_info.sType  = VK_STRUCTURE_TYPE_PERFORMANCE_MARKER_INFO_INTEL;
     marker_info.pNext  = pNext;
     marker_info.marker = marker;
 
-    function = (PFN_vkCmdSetPerformanceMarkerINTEL)cvkGetDeviceProcAddr(device, "vkCmdSetPerformanceMarkerINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetPerformanceMarkerINTEL);
     CVK_CHECK(function(commandBuffer, &marker_info));
 }
 void cvkCmdSetPerformanceOverrideINTEL(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, VkPerformanceOverrideTypeINTEL type, VkBool32 enable, uint64_t parameter)
 {
     VkPerformanceOverrideInfoINTEL       override_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetPerformanceOverrideINTEL function;
 
     override_info.sType     = VK_STRUCTURE_TYPE_PERFORMANCE_OVERRIDE_INFO_INTEL;
@@ -72107,26 +72307,28 @@ void cvkCmdSetPerformanceOverrideINTEL(VkDevice device, VkCommandBuffer commandB
     override_info.enable    = enable;
     override_info.parameter = parameter;
 
-    function = (PFN_vkCmdSetPerformanceOverrideINTEL)cvkGetDeviceProcAddr(device, "vkCmdSetPerformanceOverrideINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetPerformanceOverrideINTEL);
     CVK_CHECK(function(commandBuffer, &override_info));
 }
 void cvkCmdSetPerformanceStreamMarkerINTEL(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t marker)
 {
     VkPerformanceStreamMarkerInfoINTEL       marker_info;
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkCmdSetPerformanceStreamMarkerINTEL function;
 
     marker_info.sType  = VK_STRUCTURE_TYPE_PERFORMANCE_STREAM_MARKER_INFO_INTEL;
     marker_info.pNext  = pNext;
     marker_info.marker = marker;
 
-    function = (PFN_vkCmdSetPerformanceStreamMarkerINTEL)cvkGetDeviceProcAddr(device, "vkCmdSetPerformanceStreamMarkerINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetPerformanceStreamMarkerINTEL);
     CVK_CHECK(function(commandBuffer, &marker_info));
 }
 void cvkCmdSetPolygonMode(VkDevice device, VkCommandBuffer commandBuffer, VkPolygonMode polygonMode)
 {
-    PFN_vkCmdSetPolygonModeEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetPolygonModeEXT           function;
 
-    function = (PFN_vkCmdSetPolygonModeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetPolygonModeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetPolygonModeEXT);
     function(commandBuffer, polygonMode);
 }
 void cvkCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 primitiveRestartEnable)
@@ -72135,9 +72337,10 @@ void cvkCmdSetPrimitiveRestartEnable(VkCommandBuffer commandBuffer, VkBool32 pri
 }
 void cvkCmdSetPrimitiveRestartIndex(VkDevice device, VkCommandBuffer commandBuffer, uint32_t primitiveRestartIndex)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetPrimitiveRestartIndexEXT function;
 
-    function = (PFN_vkCmdSetPrimitiveRestartIndexEXT)cvkGetDeviceProcAddr(device, "vkCmdSetPrimitiveRestartIndexEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetPrimitiveRestartIndexEXT);
     function(commandBuffer, primitiveRestartIndex);
 }
 void cvkCmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPrimitiveTopology primitiveTopology)
@@ -72146,23 +72349,26 @@ void cvkCmdSetPrimitiveTopology(VkCommandBuffer commandBuffer, VkPrimitiveTopolo
 }
 void cvkCmdSetProvokingVertexMode(VkDevice device, VkCommandBuffer commandBuffer, VkProvokingVertexModeEXT provokingVertexMode)
 {
-    PFN_vkCmdSetProvokingVertexModeEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetProvokingVertexModeEXT   function;
 
-    function = (PFN_vkCmdSetProvokingVertexModeEXT)cvkGetDeviceProcAddr(device, "vkCmdSetProvokingVertexModeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetProvokingVertexModeEXT);
     function(commandBuffer, provokingVertexMode);
 }
 void cvkCmdSetRasterizationSamples(VkDevice device, VkCommandBuffer commandBuffer, VkSampleCountFlagBits rasterizationSamples)
 {
-    PFN_vkCmdSetRasterizationSamplesEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetRasterizationSamplesEXT  function;
 
-    function = (PFN_vkCmdSetRasterizationSamplesEXT)cvkGetDeviceProcAddr(device, "vkCmdSetRasterizationSamplesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetRasterizationSamplesEXT);
     function(commandBuffer, rasterizationSamples);
 }
 void cvkCmdSetRasterizationStream(VkDevice device, VkCommandBuffer commandBuffer, uint32_t rasterizationStream)
 {
-    PFN_vkCmdSetRasterizationStreamEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetRasterizationStreamEXT   function;
 
-    function = (PFN_vkCmdSetRasterizationStreamEXT)cvkGetDeviceProcAddr(device, "vkCmdSetRasterizationStreamEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetRasterizationStreamEXT);
     function(commandBuffer, rasterizationStream);
 }
 void cvkCmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer, VkBool32 rasterizerDiscardEnable)
@@ -72171,9 +72377,10 @@ void cvkCmdSetRasterizerDiscardEnable(VkCommandBuffer commandBuffer, VkBool32 ra
 }
 void cvkCmdSetRayTracingPipelineStackSize(VkDevice device, VkCommandBuffer commandBuffer, uint32_t pipelineStackSize)
 {
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkCmdSetRayTracingPipelineStackSizeKHR function;
 
-    function = (PFN_vkCmdSetRayTracingPipelineStackSizeKHR)cvkGetDeviceProcAddr(device, "vkCmdSetRayTracingPipelineStackSizeKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetRayTracingPipelineStackSizeKHR);
     function(commandBuffer, pipelineStackSize);
 }
 void cvkCmdSetRenderingAttachmentLocations(VkCommandBuffer commandBuffer, const void* pNext, uint32_t colorAttachmentCount, const uint32_t* pColorAttachmentLocations)
@@ -72205,9 +72412,10 @@ void cvkCmdSetRenderingInputAttachmentIndices(VkCommandBuffer commandBuffer,
 }
 void cvkCmdSetRepresentativeFragmentTestEnableNV(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 representativeFragmentTestEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkCmdSetRepresentativeFragmentTestEnableNV function;
 
-    function = (PFN_vkCmdSetRepresentativeFragmentTestEnableNV)cvkGetDeviceProcAddr(device, "vkCmdSetRepresentativeFragmentTestEnableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetRepresentativeFragmentTestEnableNV);
     function(commandBuffer, representativeFragmentTestEnable);
 }
 void cvkCmdSetSampleLocations(VkDevice                   device,
@@ -72218,8 +72426,9 @@ void cvkCmdSetSampleLocations(VkDevice                   device,
                               uint32_t                   sampleLocationsCount,
                               const VkSampleLocationEXT* pSampleLocations)
 {
-    VkSampleLocationsInfoEXT       sample_locations_info;
-    PFN_vkCmdSetSampleLocationsEXT function;
+    VkSampleLocationsInfoEXT             sample_locations_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetSampleLocationsEXT       function;
 
     sample_locations_info.sType                   = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
     sample_locations_info.pNext                   = pNext;
@@ -72228,21 +72437,23 @@ void cvkCmdSetSampleLocations(VkDevice                   device,
     sample_locations_info.sampleLocationsCount    = sampleLocationsCount;
     sample_locations_info.pSampleLocations        = pSampleLocations;
 
-    function = (PFN_vkCmdSetSampleLocationsEXT)cvkGetDeviceProcAddr(device, "vkCmdSetSampleLocationsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetSampleLocationsEXT);
     function(commandBuffer, &sample_locations_info);
 }
 void cvkCmdSetSampleLocationsEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 sampleLocationsEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetSampleLocationsEnableEXT function;
 
-    function = (PFN_vkCmdSetSampleLocationsEnableEXT)cvkGetDeviceProcAddr(device, "vkCmdSetSampleLocationsEnableEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetSampleLocationsEnableEXT);
     function(commandBuffer, sampleLocationsEnable);
 }
 void cvkCmdSetSampleMask(VkDevice device, VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples, const VkSampleMask* pSampleMask)
 {
-    PFN_vkCmdSetSampleMaskEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetSampleMaskEXT            function;
 
-    function = (PFN_vkCmdSetSampleMaskEXT)cvkGetDeviceProcAddr(device, "vkCmdSetSampleMaskEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetSampleMaskEXT);
     function(commandBuffer, samples, pSampleMask);
 }
 void cvkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors)
@@ -72255,9 +72466,10 @@ void cvkCmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCo
 }
 void cvkCmdSetShadingRateImageEnableNV(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 shadingRateImageEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetShadingRateImageEnableNV function;
 
-    function = (PFN_vkCmdSetShadingRateImageEnableNV)cvkGetDeviceProcAddr(device, "vkCmdSetShadingRateImageEnableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetShadingRateImageEnableNV);
     function(commandBuffer, shadingRateImageEnable);
 }
 void cvkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask)
@@ -72282,9 +72494,10 @@ void cvkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags
 }
 void cvkCmdSetTessellationDomainOrigin(VkDevice device, VkCommandBuffer commandBuffer, VkTessellationDomainOrigin domainOrigin)
 {
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCmdSetTessellationDomainOriginEXT function;
 
-    function = (PFN_vkCmdSetTessellationDomainOriginEXT)cvkGetDeviceProcAddr(device, "vkCmdSetTessellationDomainOriginEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetTessellationDomainOriginEXT);
     function(commandBuffer, domainOrigin);
 }
 void cvkCmdSetVertexInput(VkDevice                                     device,
@@ -72294,9 +72507,10 @@ void cvkCmdSetVertexInput(VkDevice                                     device,
                           uint32_t                                     vertexAttributeDescriptionCount,
                           const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions)
 {
-    PFN_vkCmdSetVertexInputEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetVertexInputEXT           function;
 
-    function = (PFN_vkCmdSetVertexInputEXT)cvkGetDeviceProcAddr(device, "vkCmdSetVertexInputEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetVertexInputEXT);
     function(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
 void cvkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports)
@@ -72305,30 +72519,34 @@ void cvkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, ui
 }
 void cvkCmdSetViewportShadingRatePaletteNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkShadingRatePaletteNV* pShadingRatePalettes)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkCmdSetViewportShadingRatePaletteNV function;
 
-    function = (PFN_vkCmdSetViewportShadingRatePaletteNV)cvkGetDeviceProcAddr(device, "vkCmdSetViewportShadingRatePaletteNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetViewportShadingRatePaletteNV);
     function(commandBuffer, firstViewport, viewportCount, pShadingRatePalettes);
 }
 void cvkCmdSetViewportSwizzleNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportSwizzleNV* pViewportSwizzles)
 {
-    PFN_vkCmdSetViewportSwizzleNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetViewportSwizzleNV        function;
 
-    function = (PFN_vkCmdSetViewportSwizzleNV)cvkGetDeviceProcAddr(device, "vkCmdSetViewportSwizzleNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetViewportSwizzleNV);
     function(commandBuffer, firstViewport, viewportCount, pViewportSwizzles);
 }
 void cvkCmdSetViewportWScalingEnableNV(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 viewportWScalingEnable)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdSetViewportWScalingEnableNV function;
 
-    function = (PFN_vkCmdSetViewportWScalingEnableNV)cvkGetDeviceProcAddr(device, "vkCmdSetViewportWScalingEnableNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetViewportWScalingEnableNV);
     function(commandBuffer, viewportWScalingEnable);
 }
 void cvkCmdSetViewportWScalingNV(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportWScalingNV* pViewportWScalings)
 {
-    PFN_vkCmdSetViewportWScalingNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSetViewportWScalingNV       function;
 
-    function = (PFN_vkCmdSetViewportWScalingNV)cvkGetDeviceProcAddr(device, "vkCmdSetViewportWScalingNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSetViewportWScalingNV);
     function(commandBuffer, firstViewport, viewportCount, pViewportWScalings);
 }
 void cvkCmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewportCount, const VkViewport* pViewports)
@@ -72337,16 +72555,18 @@ void cvkCmdSetViewportWithCount(VkCommandBuffer commandBuffer, uint32_t viewport
 }
 void cvkCmdSubpassShadingHUAWEI(VkDevice device, VkCommandBuffer commandBuffer)
 {
-    PFN_vkCmdSubpassShadingHUAWEI function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdSubpassShadingHUAWEI        function;
 
-    function = (PFN_vkCmdSubpassShadingHUAWEI)cvkGetDeviceProcAddr(device, "vkCmdSubpassShadingHUAWEI");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdSubpassShadingHUAWEI);
     function(commandBuffer);
 }
 void cvkCmdTraceRaysIndirect2(VkDevice device, VkCommandBuffer commandBuffer, VkDeviceAddress indirectDeviceAddress)
 {
-    PFN_vkCmdTraceRaysIndirect2KHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdTraceRaysIndirect2KHR       function;
 
-    function = (PFN_vkCmdTraceRaysIndirect2KHR)cvkGetDeviceProcAddr(device, "vkCmdTraceRaysIndirect2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdTraceRaysIndirect2KHR);
     function(commandBuffer, indirectDeviceAddress);
 }
 void cvkCmdTraceRaysIndirect(VkDevice                               device,
@@ -72357,9 +72577,10 @@ void cvkCmdTraceRaysIndirect(VkDevice                               device,
                              const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
                              VkDeviceAddress                        indirectDeviceAddress)
 {
-    PFN_vkCmdTraceRaysIndirectKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdTraceRaysIndirectKHR        function;
 
-    function = (PFN_vkCmdTraceRaysIndirectKHR)cvkGetDeviceProcAddr(device, "vkCmdTraceRaysIndirectKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdTraceRaysIndirectKHR);
     function(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, indirectDeviceAddress);
 }
 void cvkCmdTraceRays(VkDevice                               device,
@@ -72372,9 +72593,10 @@ void cvkCmdTraceRays(VkDevice                               device,
                      uint32_t                               height,
                      uint32_t                               depth)
 {
-    PFN_vkCmdTraceRaysKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdTraceRaysKHR                function;
 
-    function = (PFN_vkCmdTraceRaysKHR)cvkGetDeviceProcAddr(device, "vkCmdTraceRaysKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdTraceRaysKHR);
     function(commandBuffer, pRaygenShaderBindingTable, pMissShaderBindingTable, pHitShaderBindingTable, pCallableShaderBindingTable, width, height, depth);
 }
 void cvkCmdTraceRaysNV(VkDevice        device,
@@ -72394,9 +72616,10 @@ void cvkCmdTraceRaysNV(VkDevice        device,
                        uint32_t        height,
                        uint32_t        depth)
 {
-    PFN_vkCmdTraceRaysNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdTraceRaysNV                 function;
 
-    function = (PFN_vkCmdTraceRaysNV)cvkGetDeviceProcAddr(device, "vkCmdTraceRaysNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdTraceRaysNV);
     function(commandBuffer,
              raygenShaderBindingTableBuffer,
              raygenShaderBindingOffset,
@@ -72419,16 +72642,18 @@ void cvkCmdUpdateBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDev
 }
 void cvkCmdUpdateMemory(VkDevice device, VkCommandBuffer commandBuffer, const VkDeviceAddressRangeKHR* pDstRange, VkAddressCommandFlagsKHR dstFlags, VkDeviceSize dataSize, const void* pData)
 {
-    PFN_vkCmdUpdateMemoryKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdUpdateMemoryKHR             function;
 
-    function = (PFN_vkCmdUpdateMemoryKHR)cvkGetDeviceProcAddr(device, "vkCmdUpdateMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdUpdateMemoryKHR);
     function(commandBuffer, pDstRange, dstFlags, dataSize, pData);
 }
 void cvkCmdUpdatePipelineIndirectBufferNV(VkDevice device, VkCommandBuffer commandBuffer, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 {
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCmdUpdatePipelineIndirectBufferNV function;
 
-    function = (PFN_vkCmdUpdatePipelineIndirectBufferNV)cvkGetDeviceProcAddr(device, "vkCmdUpdatePipelineIndirectBufferNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdUpdatePipelineIndirectBufferNV);
     function(commandBuffer, pipelineBindPoint, pipeline);
 }
 void cvkCmdWaitEvents(VkCommandBuffer              commandBuffer,
@@ -72467,9 +72692,10 @@ void cvkCmdWriteAccelerationStructuresProperties(VkDevice                       
                                                  VkQueryPool                       queryPool,
                                                  uint32_t                          firstQuery)
 {
+    static CVK_THREAD_LOCAL cvkCallCache              call_cache;
     PFN_vkCmdWriteAccelerationStructuresPropertiesKHR function;
 
-    function = (PFN_vkCmdWriteAccelerationStructuresPropertiesKHR)cvkGetDeviceProcAddr(device, "vkCmdWriteAccelerationStructuresPropertiesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdWriteAccelerationStructuresPropertiesKHR);
     function(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 void cvkCmdWriteAccelerationStructuresPropertiesNV(VkDevice                         device,
@@ -72480,23 +72706,26 @@ void cvkCmdWriteAccelerationStructuresPropertiesNV(VkDevice                     
                                                    VkQueryPool                      queryPool,
                                                    uint32_t                         firstQuery)
 {
+    static CVK_THREAD_LOCAL cvkCallCache             call_cache;
     PFN_vkCmdWriteAccelerationStructuresPropertiesNV function;
 
-    function = (PFN_vkCmdWriteAccelerationStructuresPropertiesNV)cvkGetDeviceProcAddr(device, "vkCmdWriteAccelerationStructuresPropertiesNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdWriteAccelerationStructuresPropertiesNV);
     function(commandBuffer, accelerationStructureCount, pAccelerationStructures, queryType, queryPool, firstQuery);
 }
 void cvkCmdWriteBufferMarker2AMD(VkDevice device, VkCommandBuffer commandBuffer, VkPipelineStageFlags2 stage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker)
 {
-    PFN_vkCmdWriteBufferMarker2AMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdWriteBufferMarker2AMD       function;
 
-    function = (PFN_vkCmdWriteBufferMarker2AMD)cvkGetDeviceProcAddr(device, "vkCmdWriteBufferMarker2AMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdWriteBufferMarker2AMD);
     function(commandBuffer, stage, dstBuffer, dstOffset, marker);
 }
 void cvkCmdWriteBufferMarkerAMD(VkDevice device, VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkBuffer dstBuffer, VkDeviceSize dstOffset, uint32_t marker)
 {
-    PFN_vkCmdWriteBufferMarkerAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdWriteBufferMarkerAMD        function;
 
-    function = (PFN_vkCmdWriteBufferMarkerAMD)cvkGetDeviceProcAddr(device, "vkCmdWriteBufferMarkerAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdWriteBufferMarkerAMD);
     function(commandBuffer, pipelineStage, dstBuffer, dstOffset, marker);
 }
 void cvkCmdWriteMarkerToMemoryAMD(VkDevice                 device,
@@ -72507,8 +72736,9 @@ void cvkCmdWriteMarkerToMemoryAMD(VkDevice                 device,
                                   VkAddressCommandFlagsKHR dstFlags,
                                   uint32_t                 marker)
 {
-    VkMemoryMarkerInfoAMD           info;
-    PFN_vkCmdWriteMarkerToMemoryAMD function;
+    VkMemoryMarkerInfoAMD                info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCmdWriteMarkerToMemoryAMD      function;
 
     info.sType    = VK_STRUCTURE_TYPE_MEMORY_MARKER_INFO_AMD;
     info.pNext    = pNext;
@@ -72517,7 +72747,7 @@ void cvkCmdWriteMarkerToMemoryAMD(VkDevice                 device,
     info.dstFlags = dstFlags;
     info.marker   = marker;
 
-    function = (PFN_vkCmdWriteMarkerToMemoryAMD)cvkGetDeviceProcAddr(device, "vkCmdWriteMarkerToMemoryAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdWriteMarkerToMemoryAMD);
     function(commandBuffer, &info);
 }
 void cvkCmdWriteMicromapsProperties(VkDevice             device,
@@ -72528,9 +72758,10 @@ void cvkCmdWriteMicromapsProperties(VkDevice             device,
                                     VkQueryPool          queryPool,
                                     uint32_t             firstQuery)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCmdWriteMicromapsPropertiesEXT function;
 
-    function = (PFN_vkCmdWriteMicromapsPropertiesEXT)cvkGetDeviceProcAddr(device, "vkCmdWriteMicromapsPropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCmdWriteMicromapsPropertiesEXT);
     function(commandBuffer, micromapCount, pMicromaps, queryType, queryPool, firstQuery);
 }
 void cvkCmdWriteTimestamp(VkCommandBuffer commandBuffer, VkPipelineStageFlagBits pipelineStage, VkQueryPool queryPool, uint32_t query)
@@ -72543,9 +72774,10 @@ void cvkCmdWriteTimestamp2(VkCommandBuffer commandBuffer, VkPipelineStageFlags2 
 }
 void cvkCompileDeferredNV(VkDevice device, VkPipeline pipeline, uint32_t shader)
 {
-    PFN_vkCompileDeferredNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCompileDeferredNV              function;
 
-    function = (PFN_vkCompileDeferredNV)cvkGetDeviceProcAddr(device, "vkCompileDeferredNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCompileDeferredNV);
     CVK_CHECK(function(device, pipeline, shader));
 }
 VkResult cvkConvertCooperativeVectorMatrixNV(VkDevice                          device,
@@ -72564,6 +72796,7 @@ VkResult cvkConvertCooperativeVectorMatrixNV(VkDevice                          d
                                              size_t                            dstStride)
 {
     VkConvertCooperativeVectorMatrixInfoNV info;
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkConvertCooperativeVectorMatrixNV function;
     VkResult                               result;
 
@@ -72582,7 +72815,7 @@ VkResult cvkConvertCooperativeVectorMatrixNV(VkDevice                          d
     info.dstLayout        = dstLayout;
     info.dstStride        = dstStride;
 
-    function = (PFN_vkConvertCooperativeVectorMatrixNV)cvkGetDeviceProcAddr(device, "vkConvertCooperativeVectorMatrixNV");
+    function = CVK_CALL(&call_cache, Device, device, vkConvertCooperativeVectorMatrixNV);
     result   = function(device, &info);
     CVK_ASSERT((0 <= result));
     return result;
@@ -72594,9 +72827,10 @@ VkResult cvkCopyAccelerationStructure(VkDevice                           device,
                                       VkAccelerationStructureKHR         dst,
                                       VkCopyAccelerationStructureModeKHR mode)
 {
-    VkCopyAccelerationStructureInfoKHR info;
-    PFN_vkCopyAccelerationStructureKHR function;
-    VkResult                           result;
+    VkCopyAccelerationStructureInfoKHR   info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCopyAccelerationStructureKHR   function;
+    VkResult                             result;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
     info.pNext = pNext;
@@ -72604,7 +72838,7 @@ VkResult cvkCopyAccelerationStructure(VkDevice                           device,
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCopyAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCopyAccelerationStructureKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCopyAccelerationStructureKHR);
     result   = function(device, deferredOperation, &info);
     CVK_ASSERT((0 <= result));
     return result;
@@ -72617,6 +72851,7 @@ VkResult cvkCopyAccelerationStructureToMemory(VkDevice                          
                                               VkCopyAccelerationStructureModeKHR mode)
 {
     VkCopyAccelerationStructureToMemoryInfoKHR info;
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkCopyAccelerationStructureToMemoryKHR function;
     VkResult                                   result;
 
@@ -72626,7 +72861,7 @@ VkResult cvkCopyAccelerationStructureToMemory(VkDevice                          
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCopyAccelerationStructureToMemoryKHR)cvkGetDeviceProcAddr(device, "vkCopyAccelerationStructureToMemoryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCopyAccelerationStructureToMemoryKHR);
     result   = function(device, deferredOperation, &info);
     CVK_ASSERT((0 <= result));
     return result;
@@ -72675,6 +72910,7 @@ VkResult cvkCopyMemoryToAccelerationStructure(VkDevice                          
                                               VkCopyAccelerationStructureModeKHR mode)
 {
     VkCopyMemoryToAccelerationStructureInfoKHR info;
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkCopyMemoryToAccelerationStructureKHR function;
     VkResult                                   result;
 
@@ -72684,7 +72920,7 @@ VkResult cvkCopyMemoryToAccelerationStructure(VkDevice                          
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCopyMemoryToAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCopyMemoryToAccelerationStructureKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCopyMemoryToAccelerationStructureKHR);
     result   = function(device, deferredOperation, &info);
     CVK_ASSERT((0 <= result));
     return result;
@@ -72704,9 +72940,10 @@ void cvkCopyMemoryToImage(VkDevice device, const void* pNext, VkHostImageCopyFla
 }
 VkResult cvkCopyMemoryToMicromap(VkDevice device, VkDeferredOperationKHR deferredOperation, const void* pNext, VkDeviceOrHostAddressConstKHR src, VkMicromapEXT dst, VkCopyMicromapModeEXT mode)
 {
-    VkCopyMemoryToMicromapInfoEXT info;
-    PFN_vkCopyMemoryToMicromapEXT function;
-    VkResult                      result;
+    VkCopyMemoryToMicromapInfoEXT        info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCopyMemoryToMicromapEXT        function;
+    VkResult                             result;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_MICROMAP_INFO_EXT;
     info.pNext = pNext;
@@ -72714,16 +72951,17 @@ VkResult cvkCopyMemoryToMicromap(VkDevice device, VkDeferredOperationKHR deferre
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCopyMemoryToMicromapEXT)cvkGetDeviceProcAddr(device, "vkCopyMemoryToMicromapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCopyMemoryToMicromapEXT);
     result   = function(device, deferredOperation, &info);
     CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCopyMicromap(VkDevice device, VkDeferredOperationKHR deferredOperation, const void* pNext, VkMicromapEXT src, VkMicromapEXT dst, VkCopyMicromapModeEXT mode)
 {
-    VkCopyMicromapInfoEXT info;
-    PFN_vkCopyMicromapEXT function;
-    VkResult              result;
+    VkCopyMicromapInfoEXT                info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCopyMicromapEXT                function;
+    VkResult                             result;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MICROMAP_INFO_EXT;
     info.pNext = pNext;
@@ -72731,16 +72969,17 @@ VkResult cvkCopyMicromap(VkDevice device, VkDeferredOperationKHR deferredOperati
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCopyMicromapEXT)cvkGetDeviceProcAddr(device, "vkCopyMicromapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCopyMicromapEXT);
     result   = function(device, deferredOperation, &info);
     CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkCopyMicromapToMemory(VkDevice device, VkDeferredOperationKHR deferredOperation, const void* pNext, VkMicromapEXT src, VkDeviceOrHostAddressKHR dst, VkCopyMicromapModeEXT mode)
 {
-    VkCopyMicromapToMemoryInfoEXT info;
-    PFN_vkCopyMicromapToMemoryEXT function;
-    VkResult                      result;
+    VkCopyMicromapToMemoryInfoEXT        info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCopyMicromapToMemoryEXT        function;
+    VkResult                             result;
 
     info.sType = VK_STRUCTURE_TYPE_COPY_MICROMAP_TO_MEMORY_INFO_EXT;
     info.pNext = pNext;
@@ -72748,7 +72987,7 @@ VkResult cvkCopyMicromapToMemory(VkDevice device, VkDeferredOperationKHR deferre
     info.dst   = dst;
     info.mode  = mode;
 
-    function = (PFN_vkCopyMicromapToMemoryEXT)cvkGetDeviceProcAddr(device, "vkCopyMicromapToMemoryEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCopyMicromapToMemoryEXT);
     result   = function(device, deferredOperation, &info);
     CVK_ASSERT((0 <= result));
     return result;
@@ -72763,6 +73002,7 @@ void cvkCreateAccelerationStructure2(VkDevice                              devic
                                      VkAccelerationStructureKHR*           pAccelerationStructure)
 {
     VkAccelerationStructureCreateInfo2KHR create_info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCreateAccelerationStructure2KHR function;
 
     create_info.sType        = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_2_KHR;
@@ -72772,7 +73012,7 @@ void cvkCreateAccelerationStructure2(VkDevice                              devic
     create_info.addressFlags = addressFlags;
     create_info.type         = type;
 
-    function = (PFN_vkCreateAccelerationStructure2KHR)cvkGetDeviceProcAddr(device, "vkCreateAccelerationStructure2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateAccelerationStructure2KHR);
     CVK_CHECK(function(device, &create_info, pAllocator, pAccelerationStructure));
     CVK_ASSERT(VK_NULL_HANDLE != (*pAccelerationStructure));
 }
@@ -72788,6 +73028,7 @@ void cvkCreateAccelerationStructure(VkDevice                              device
                                     VkAccelerationStructureKHR*           pAccelerationStructure)
 {
     VkAccelerationStructureCreateInfoKHR create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCreateAccelerationStructureKHR function;
 
     create_info.sType         = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
@@ -72799,7 +73040,7 @@ void cvkCreateAccelerationStructure(VkDevice                              device
     create_info.type          = type;
     create_info.deviceAddress = deviceAddress;
 
-    function = (PFN_vkCreateAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkCreateAccelerationStructureKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateAccelerationStructureKHR);
     CVK_CHECK(function(device, &create_info, pAllocator, pAccelerationStructure));
     CVK_ASSERT(VK_NULL_HANDLE != (*pAccelerationStructure));
 }
@@ -72810,15 +73051,16 @@ void cvkCreateAccelerationStructureNV(VkDevice                      device,
                                       const VkAllocationCallbacks*  pAllocator,
                                       VkAccelerationStructureNV*    pAccelerationStructure)
 {
-    VkAccelerationStructureCreateInfoNV create_info;
-    PFN_vkCreateAccelerationStructureNV function;
+    VkAccelerationStructureCreateInfoNV  create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateAccelerationStructureNV  function;
 
     create_info.sType         = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
     create_info.pNext         = pNext;
     create_info.compactedSize = compactedSize;
     create_info.info          = info;
 
-    function = (PFN_vkCreateAccelerationStructureNV)cvkGetDeviceProcAddr(device, "vkCreateAccelerationStructureNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateAccelerationStructureNV);
     CVK_CHECK(function(device, &create_info, pAllocator, pAccelerationStructure));
     CVK_ASSERT(VK_NULL_HANDLE != (*pAccelerationStructure));
 }
@@ -72894,29 +73136,31 @@ VkResult cvkCreateComputePipelines(VkDevice                           device,
 }
 void cvkCreateCuFunctionNVX(VkDevice device, const void* pNext, VkCuModuleNVX module, const char* pName, const VkAllocationCallbacks* pAllocator, VkCuFunctionNVX* pFunction)
 {
-    VkCuFunctionCreateInfoNVX create_info;
-    PFN_vkCreateCuFunctionNVX function;
+    VkCuFunctionCreateInfoNVX            create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateCuFunctionNVX            function;
 
     create_info.sType  = VK_STRUCTURE_TYPE_CU_FUNCTION_CREATE_INFO_NVX;
     create_info.pNext  = pNext;
     create_info.module = module;
     create_info.pName  = pName;
 
-    function = (PFN_vkCreateCuFunctionNVX)cvkGetDeviceProcAddr(device, "vkCreateCuFunctionNVX");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateCuFunctionNVX);
     CVK_CHECK(function(device, &create_info, pAllocator, pFunction));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFunction));
 }
 void cvkCreateCuModuleNVX(VkDevice device, const void* pNext, size_t dataSize, const void* pData, const VkAllocationCallbacks* pAllocator, VkCuModuleNVX* pModule)
 {
-    VkCuModuleCreateInfoNVX create_info;
-    PFN_vkCreateCuModuleNVX function;
+    VkCuModuleCreateInfoNVX              create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateCuModuleNVX              function;
 
     create_info.sType    = VK_STRUCTURE_TYPE_CU_MODULE_CREATE_INFO_NVX;
     create_info.pNext    = pNext;
     create_info.dataSize = dataSize;
     create_info.pData    = pData;
 
-    function = (PFN_vkCreateCuModuleNVX)cvkGetDeviceProcAddr(device, "vkCreateCuModuleNVX");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateCuModuleNVX);
     CVK_CHECK(function(device, &create_info, pAllocator, pModule));
     CVK_ASSERT(VK_NULL_HANDLE != (*pModule));
 }
@@ -72928,6 +73172,7 @@ void cvkCreateDataGraphPipelineSessionARM(VkDevice                              
                                           VkDataGraphPipelineSessionARM*           pSession)
 {
     VkDataGraphPipelineSessionCreateInfoARM create_info;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkCreateDataGraphPipelineSessionARM function;
 
     create_info.sType             = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_CREATE_INFO_ARM;
@@ -72935,7 +73180,7 @@ void cvkCreateDataGraphPipelineSessionARM(VkDevice                              
     create_info.flags             = flags;
     create_info.dataGraphPipeline = dataGraphPipeline;
 
-    function = (PFN_vkCreateDataGraphPipelineSessionARM)cvkGetDeviceProcAddr(device, "vkCreateDataGraphPipelineSessionARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateDataGraphPipelineSessionARM);
     CVK_CHECK(function(device, &create_info, pAllocator, pSession));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSession));
 }
@@ -72947,10 +73192,11 @@ VkResult cvkCreateDataGraphPipelinesARM(VkDevice                                
                                         const VkAllocationCallbacks*            pAllocator,
                                         VkPipeline*                             pPipelines)
 {
-    PFN_vkCreateDataGraphPipelinesARM function;
-    VkResult                          result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateDataGraphPipelinesARM    function;
+    VkResult                             result;
 
-    function = (PFN_vkCreateDataGraphPipelinesARM)cvkGetDeviceProcAddr(device, "vkCreateDataGraphPipelinesARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateDataGraphPipelinesARM);
     result   = function(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     CVK_ASSERT((0 <= result));
     return result;
@@ -72963,8 +73209,9 @@ void cvkCreateDebugReportCallback(VkInstance                   instance,
                                   const VkAllocationCallbacks* pAllocator,
                                   VkDebugReportCallbackEXT*    pCallback)
 {
-    VkDebugReportCallbackCreateInfoEXT create_info;
-    PFN_vkCreateDebugReportCallbackEXT function;
+    VkDebugReportCallbackCreateInfoEXT   create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateDebugReportCallbackEXT   function;
 
     create_info.sType       = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
     create_info.pNext       = pNext;
@@ -72972,7 +73219,7 @@ void cvkCreateDebugReportCallback(VkInstance                   instance,
     create_info.pfnCallback = pfnCallback;
     create_info.pUserData   = pUserData;
 
-    function = (PFN_vkCreateDebugReportCallbackEXT)cvkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkCreateDebugReportCallbackEXT);
     CVK_CHECK(function(instance, &create_info, pAllocator, pCallback));
     CVK_ASSERT(VK_NULL_HANDLE != (*pCallback));
 }
@@ -72986,8 +73233,9 @@ void cvkCreateDebugUtilsMessenger(VkInstance                           instance,
                                   const VkAllocationCallbacks*         pAllocator,
                                   VkDebugUtilsMessengerEXT*            pMessenger)
 {
-    VkDebugUtilsMessengerCreateInfoEXT create_info;
-    PFN_vkCreateDebugUtilsMessengerEXT function;
+    VkDebugUtilsMessengerCreateInfoEXT   create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateDebugUtilsMessengerEXT   function;
 
     create_info.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     create_info.pNext           = pNext;
@@ -72997,15 +73245,16 @@ void cvkCreateDebugUtilsMessenger(VkInstance                           instance,
     create_info.pfnUserCallback = pfnUserCallback;
     create_info.pUserData       = pUserData;
 
-    function = (PFN_vkCreateDebugUtilsMessengerEXT)cvkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkCreateDebugUtilsMessengerEXT);
     CVK_CHECK(function(instance, &create_info, pAllocator, pMessenger));
     CVK_ASSERT(VK_NULL_HANDLE != (*pMessenger));
 }
 void cvkCreateDeferredOperation(VkDevice device, const VkAllocationCallbacks* pAllocator, VkDeferredOperationKHR* pDeferredOperation)
 {
-    PFN_vkCreateDeferredOperationKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateDeferredOperationKHR     function;
 
-    function = (PFN_vkCreateDeferredOperationKHR)cvkGetDeviceProcAddr(device, "vkCreateDeferredOperationKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateDeferredOperationKHR);
     CVK_CHECK(function(device, pAllocator, pDeferredOperation));
     CVK_ASSERT(VK_NULL_HANDLE != (*pDeferredOperation));
 }
@@ -73160,14 +73409,15 @@ void cvkCreateEvent(VkDevice device, const void* pNext, VkEventCreateFlags flags
 }
 void cvkCreateExternalComputeQueueNV(VkDevice device, const void* pNext, VkQueue preferredQueue, const VkAllocationCallbacks* pAllocator, VkExternalComputeQueueNV* pExternalQueue)
 {
-    VkExternalComputeQueueCreateInfoNV create_info;
-    PFN_vkCreateExternalComputeQueueNV function;
+    VkExternalComputeQueueCreateInfoNV   create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateExternalComputeQueueNV   function;
 
     create_info.sType          = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_CREATE_INFO_NV;
     create_info.pNext          = pNext;
     create_info.preferredQueue = preferredQueue;
 
-    function = (PFN_vkCreateExternalComputeQueueNV)cvkGetDeviceProcAddr(device, "vkCreateExternalComputeQueueNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateExternalComputeQueueNV);
     CVK_CHECK(function(device, &create_info, pAllocator, pExternalQueue));
     CVK_ASSERT(VK_NULL_HANDLE != (*pExternalQueue));
 }
@@ -73209,14 +73459,15 @@ void cvkCreateFramebuffer(VkDevice                     device,
 }
 void cvkCreateGpaSessionAMD(VkDevice device, const void* pNext, VkGpaSessionAMD secondaryCopySource, const VkAllocationCallbacks* pAllocator, VkGpaSessionAMD* pGpaSession)
 {
-    VkGpaSessionCreateInfoAMD create_info;
-    PFN_vkCreateGpaSessionAMD function;
+    VkGpaSessionCreateInfoAMD            create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateGpaSessionAMD            function;
 
     create_info.sType               = VK_STRUCTURE_TYPE_GPA_SESSION_CREATE_INFO_AMD;
     create_info.pNext               = pNext;
     create_info.secondaryCopySource = secondaryCopySource;
 
-    function = (PFN_vkCreateGpaSessionAMD)cvkGetDeviceProcAddr(device, "vkCreateGpaSessionAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateGpaSessionAMD);
     CVK_CHECK(function(device, &create_info, pAllocator, pGpaSession));
     CVK_ASSERT(VK_NULL_HANDLE != (*pGpaSession));
 }
@@ -73317,6 +73568,7 @@ void cvkCreateIndirectCommandsLayout(VkDevice                                dev
                                      VkIndirectCommandsLayoutEXT*            pIndirectCommandsLayout)
 {
     VkIndirectCommandsLayoutCreateInfoEXT create_info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCreateIndirectCommandsLayoutEXT function;
 
     create_info.sType          = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT;
@@ -73328,7 +73580,7 @@ void cvkCreateIndirectCommandsLayout(VkDevice                                dev
     create_info.tokenCount     = tokenCount;
     create_info.pTokens        = pTokens;
 
-    function = (PFN_vkCreateIndirectCommandsLayoutEXT)cvkGetDeviceProcAddr(device, "vkCreateIndirectCommandsLayoutEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateIndirectCommandsLayoutEXT);
     CVK_CHECK(function(device, &create_info, pAllocator, pIndirectCommandsLayout));
     CVK_ASSERT(VK_NULL_HANDLE != (*pIndirectCommandsLayout));
 }
@@ -73344,6 +73596,7 @@ void cvkCreateIndirectCommandsLayoutNV(VkDevice                               de
                                        VkIndirectCommandsLayoutNV*            pIndirectCommandsLayout)
 {
     VkIndirectCommandsLayoutCreateInfoNV create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCreateIndirectCommandsLayoutNV function;
 
     create_info.sType             = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV;
@@ -73355,7 +73608,7 @@ void cvkCreateIndirectCommandsLayoutNV(VkDevice                               de
     create_info.streamCount       = streamCount;
     create_info.pStreamStrides    = pStreamStrides;
 
-    function = (PFN_vkCreateIndirectCommandsLayoutNV)cvkGetDeviceProcAddr(device, "vkCreateIndirectCommandsLayoutNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateIndirectCommandsLayoutNV);
     CVK_CHECK(function(device, &create_info, pAllocator, pIndirectCommandsLayout));
     CVK_ASSERT(VK_NULL_HANDLE != (*pIndirectCommandsLayout));
 }
@@ -73366,15 +73619,16 @@ void cvkCreateIndirectExecutionSet(VkDevice                          device,
                                    const VkAllocationCallbacks*      pAllocator,
                                    VkIndirectExecutionSetEXT*        pIndirectExecutionSet)
 {
-    VkIndirectExecutionSetCreateInfoEXT create_info;
-    PFN_vkCreateIndirectExecutionSetEXT function;
+    VkIndirectExecutionSetCreateInfoEXT  create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateIndirectExecutionSetEXT  function;
 
     create_info.sType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT;
     create_info.pNext = pNext;
     create_info.type  = type;
     create_info.info  = info;
 
-    function = (PFN_vkCreateIndirectExecutionSetEXT)cvkGetDeviceProcAddr(device, "vkCreateIndirectExecutionSetEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateIndirectExecutionSetEXT);
     CVK_CHECK(function(device, &create_info, pAllocator, pIndirectExecutionSet));
     CVK_ASSERT(VK_NULL_HANDLE != (*pIndirectExecutionSet));
 }
@@ -73412,8 +73666,9 @@ void cvkCreateMicromap(VkDevice                     device,
                        const VkAllocationCallbacks* pAllocator,
                        VkMicromapEXT*               pMicromap)
 {
-    VkMicromapCreateInfoEXT create_info;
-    PFN_vkCreateMicromapEXT function;
+    VkMicromapCreateInfoEXT              create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateMicromapEXT              function;
 
     create_info.sType         = VK_STRUCTURE_TYPE_MICROMAP_CREATE_INFO_EXT;
     create_info.pNext         = pNext;
@@ -73424,7 +73679,7 @@ void cvkCreateMicromap(VkDevice                     device,
     create_info.type          = type;
     create_info.deviceAddress = deviceAddress;
 
-    function = (PFN_vkCreateMicromapEXT)cvkGetDeviceProcAddr(device, "vkCreateMicromapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateMicromapEXT);
     CVK_CHECK(function(device, &create_info, pAllocator, pMicromap));
     CVK_ASSERT(VK_NULL_HANDLE != (*pMicromap));
 }
@@ -73442,8 +73697,9 @@ void cvkCreateOpticalFlowSessionNV(VkDevice                          device,
                                    const VkAllocationCallbacks*      pAllocator,
                                    VkOpticalFlowSessionNV*           pSession)
 {
-    VkOpticalFlowSessionCreateInfoNV create_info;
-    PFN_vkCreateOpticalFlowSessionNV function;
+    VkOpticalFlowSessionCreateInfoNV     create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateOpticalFlowSessionNV     function;
 
     create_info.sType            = VK_STRUCTURE_TYPE_OPTICAL_FLOW_SESSION_CREATE_INFO_NV;
     create_info.pNext            = pNext;
@@ -73457,7 +73713,7 @@ void cvkCreateOpticalFlowSessionNV(VkDevice                          device,
     create_info.performanceLevel = performanceLevel;
     create_info.flags            = flags;
 
-    function = (PFN_vkCreateOpticalFlowSessionNV)cvkGetDeviceProcAddr(device, "vkCreateOpticalFlowSessionNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateOpticalFlowSessionNV);
     CVK_CHECK(function(device, &create_info, pAllocator, pSession));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSession));
 }
@@ -73470,10 +73726,11 @@ VkResult cvkCreatePipelineBinaries(VkDevice                              device,
                                    void*                                 pBinariesNext,
                                    VkPipelineBinaryHandlesInfoKHR*       pBinaries)
 {
-    VkPipelineBinaryCreateInfoKHR   create_info;
-    VkPipelineBinaryHandlesInfoKHR  binaries;
-    PFN_vkCreatePipelineBinariesKHR function;
-    VkResult                        result;
+    VkPipelineBinaryCreateInfoKHR        create_info;
+    VkPipelineBinaryHandlesInfoKHR       binaries;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreatePipelineBinariesKHR      function;
+    VkResult                             result;
 
     create_info.sType               = VK_STRUCTURE_TYPE_PIPELINE_BINARY_CREATE_INFO_KHR;
     create_info.pNext               = pCreateInfoNext;
@@ -73484,7 +73741,7 @@ VkResult cvkCreatePipelineBinaries(VkDevice                              device,
     binaries.sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_HANDLES_INFO_KHR;
     binaries.pNext = pBinariesNext;
 
-    function = (PFN_vkCreatePipelineBinariesKHR)cvkGetDeviceProcAddr(device, "vkCreatePipelineBinariesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreatePipelineBinariesKHR);
     result   = function(device, &create_info, pAllocator, &binaries);
     CVK_ASSERT((0 <= result));
     (*pBinaries) = binaries;
@@ -73568,10 +73825,11 @@ VkResult cvkCreateRayTracingPipelines(VkDevice                                 d
                                       const VkAllocationCallbacks*             pAllocator,
                                       VkPipeline*                              pPipelines)
 {
-    PFN_vkCreateRayTracingPipelinesKHR function;
-    VkResult                           result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateRayTracingPipelinesKHR   function;
+    VkResult                             result;
 
-    function = (PFN_vkCreateRayTracingPipelinesKHR)cvkGetDeviceProcAddr(device, "vkCreateRayTracingPipelinesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateRayTracingPipelinesKHR);
     result   = function(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     CVK_ASSERT((0 <= result));
     return result;
@@ -73583,10 +73841,11 @@ VkResult cvkCreateRayTracingPipelinesNV(VkDevice                                
                                         const VkAllocationCallbacks*            pAllocator,
                                         VkPipeline*                             pPipelines)
 {
-    PFN_vkCreateRayTracingPipelinesNV function;
-    VkResult                          result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateRayTracingPipelinesNV    function;
+    VkResult                             result;
 
-    function = (PFN_vkCreateRayTracingPipelinesNV)cvkGetDeviceProcAddr(device, "vkCreateRayTracingPipelinesNV");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateRayTracingPipelinesNV);
     result   = function(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
     CVK_ASSERT((0 <= result));
     return result;
@@ -73732,12 +73991,13 @@ void cvkCreateSemaphore(VkDevice device, const void* pNext, VkSemaphoreCreateFla
 void cvkCreateShaderInstrumentationARM(VkDevice device, void* pNext, const VkAllocationCallbacks* pAllocator, VkShaderInstrumentationARM* pInstrumentation)
 {
     VkShaderInstrumentationCreateInfoARM create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkCreateShaderInstrumentationARM function;
 
     create_info.sType = VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_CREATE_INFO_ARM;
     create_info.pNext = pNext;
 
-    function = (PFN_vkCreateShaderInstrumentationARM)cvkGetDeviceProcAddr(device, "vkCreateShaderInstrumentationARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateShaderInstrumentationARM);
     CVK_CHECK(function(device, &create_info, pAllocator, pInstrumentation));
     CVK_ASSERT(VK_NULL_HANDLE != (*pInstrumentation));
 }
@@ -73761,10 +74021,11 @@ void cvkCreateShaderModule(VkDevice                     device,
 }
 VkResult cvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkShaderCreateInfoEXT* pCreateInfos, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShaders)
 {
-    PFN_vkCreateShadersEXT function;
-    VkResult               result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateShadersEXT               function;
+    VkResult                             result;
 
-    function = (PFN_vkCreateShadersEXT)cvkGetDeviceProcAddr(device, "vkCreateShadersEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateShadersEXT);
     result   = function(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
     CVK_ASSERT((0 <= result));
     return result;
@@ -73837,8 +74098,9 @@ void cvkCreateTensorARM(VkDevice                      device,
                         const VkAllocationCallbacks*  pAllocator,
                         VkTensorARM*                  pTensor)
 {
-    VkTensorCreateInfoARM create_info;
-    PFN_vkCreateTensorARM function;
+    VkTensorCreateInfoARM                create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateTensorARM                function;
 
     create_info.sType                 = VK_STRUCTURE_TYPE_TENSOR_CREATE_INFO_ARM;
     create_info.pNext                 = pNext;
@@ -73848,14 +74110,15 @@ void cvkCreateTensorARM(VkDevice                      device,
     create_info.queueFamilyIndexCount = queueFamilyIndexCount;
     create_info.pQueueFamilyIndices   = pQueueFamilyIndices;
 
-    function = (PFN_vkCreateTensorARM)cvkGetDeviceProcAddr(device, "vkCreateTensorARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateTensorARM);
     CVK_CHECK(function(device, &create_info, pAllocator, pTensor));
     CVK_ASSERT(VK_NULL_HANDLE != (*pTensor));
 }
 void cvkCreateTensorViewARM(VkDevice device, const void* pNext, VkTensorViewCreateFlagsARM flags, VkTensorARM tensor, VkFormat format, const VkAllocationCallbacks* pAllocator, VkTensorViewARM* pView)
 {
-    VkTensorViewCreateInfoARM create_info;
-    PFN_vkCreateTensorViewARM function;
+    VkTensorViewCreateInfoARM            create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateTensorViewARM            function;
 
     create_info.sType  = VK_STRUCTURE_TYPE_TENSOR_VIEW_CREATE_INFO_ARM;
     create_info.pNext  = pNext;
@@ -73863,7 +74126,7 @@ void cvkCreateTensorViewARM(VkDevice device, const void* pNext, VkTensorViewCrea
     create_info.tensor = tensor;
     create_info.format = format;
 
-    function = (PFN_vkCreateTensorViewARM)cvkGetDeviceProcAddr(device, "vkCreateTensorViewARM");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateTensorViewARM);
     CVK_CHECK(function(device, &create_info, pAllocator, pView));
     CVK_ASSERT(VK_NULL_HANDLE != (*pView));
 }
@@ -73875,8 +74138,9 @@ void cvkCreateValidationCache(VkDevice                        device,
                               const VkAllocationCallbacks*    pAllocator,
                               VkValidationCacheEXT*           pValidationCache)
 {
-    VkValidationCacheCreateInfoEXT create_info;
-    PFN_vkCreateValidationCacheEXT function;
+    VkValidationCacheCreateInfoEXT       create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateValidationCacheEXT       function;
 
     create_info.sType           = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT;
     create_info.pNext           = pNext;
@@ -73884,7 +74148,7 @@ void cvkCreateValidationCache(VkDevice                        device,
     create_info.initialDataSize = initialDataSize;
     create_info.pInitialData    = pInitialData;
 
-    function = (PFN_vkCreateValidationCacheEXT)cvkGetDeviceProcAddr(device, "vkCreateValidationCacheEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateValidationCacheEXT);
     CVK_CHECK(function(device, &create_info, pAllocator, pValidationCache));
     CVK_ASSERT(VK_NULL_HANDLE != (*pValidationCache));
 }
@@ -73902,8 +74166,9 @@ void cvkCreateVideoSession(VkDevice                     device,
                            const VkAllocationCallbacks* pAllocator,
                            VkVideoSessionKHR*           pVideoSession)
 {
-    VkVideoSessionCreateInfoKHR create_info;
-    PFN_vkCreateVideoSessionKHR function;
+    VkVideoSessionCreateInfoKHR          create_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkCreateVideoSessionKHR          function;
 
     create_info.sType                      = VK_STRUCTURE_TYPE_VIDEO_SESSION_CREATE_INFO_KHR;
     create_info.pNext                      = pNext;
@@ -73917,7 +74182,7 @@ void cvkCreateVideoSession(VkDevice                     device,
     create_info.maxActiveReferencePictures = maxActiveReferencePictures;
     create_info.pStdHeaderVersion          = pStdHeaderVersion;
 
-    function = (PFN_vkCreateVideoSessionKHR)cvkGetDeviceProcAddr(device, "vkCreateVideoSessionKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateVideoSessionKHR);
     CVK_CHECK(function(device, &create_info, pAllocator, pVideoSession));
     CVK_ASSERT(VK_NULL_HANDLE != (*pVideoSession));
 }
@@ -73930,6 +74195,7 @@ void cvkCreateVideoSessionParameters(VkDevice                               devi
                                      VkVideoSessionParametersKHR*           pVideoSessionParameters)
 {
     VkVideoSessionParametersCreateInfoKHR create_info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkCreateVideoSessionParametersKHR function;
 
     create_info.sType                          = VK_STRUCTURE_TYPE_VIDEO_SESSION_PARAMETERS_CREATE_INFO_KHR;
@@ -73938,14 +74204,15 @@ void cvkCreateVideoSessionParameters(VkDevice                               devi
     create_info.videoSessionParametersTemplate = videoSessionParametersTemplate;
     create_info.videoSession                   = videoSession;
 
-    function = (PFN_vkCreateVideoSessionParametersKHR)cvkGetDeviceProcAddr(device, "vkCreateVideoSessionParametersKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkCreateVideoSessionParametersKHR);
     CVK_CHECK(function(device, &create_info, pAllocator, pVideoSessionParameters));
     CVK_ASSERT(VK_NULL_HANDLE != (*pVideoSessionParameters));
 }
 void cvkDebugMarkerSetObjectName(VkDevice device, const void* pNext, VkDebugReportObjectTypeEXT objectType, uint64_t object, const char* pObjectName)
 {
-    VkDebugMarkerObjectNameInfoEXT    name_info;
-    PFN_vkDebugMarkerSetObjectNameEXT function;
+    VkDebugMarkerObjectNameInfoEXT       name_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDebugMarkerSetObjectNameEXT    function;
 
     name_info.sType       = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
     name_info.pNext       = pNext;
@@ -73953,13 +74220,14 @@ void cvkDebugMarkerSetObjectName(VkDevice device, const void* pNext, VkDebugRepo
     name_info.object      = object;
     name_info.pObjectName = pObjectName;
 
-    function = (PFN_vkDebugMarkerSetObjectNameEXT)cvkGetDeviceProcAddr(device, "vkDebugMarkerSetObjectNameEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDebugMarkerSetObjectNameEXT);
     CVK_CHECK(function(device, &name_info));
 }
 void cvkDebugMarkerSetObjectTag(VkDevice device, const void* pNext, VkDebugReportObjectTypeEXT objectType, uint64_t object, uint64_t tagName, size_t tagSize, const void* pTag)
 {
-    VkDebugMarkerObjectTagInfoEXT    tag_info;
-    PFN_vkDebugMarkerSetObjectTagEXT function;
+    VkDebugMarkerObjectTagInfoEXT        tag_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDebugMarkerSetObjectTagEXT     function;
 
     tag_info.sType      = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT;
     tag_info.pNext      = pNext;
@@ -73969,7 +74237,7 @@ void cvkDebugMarkerSetObjectTag(VkDevice device, const void* pNext, VkDebugRepor
     tag_info.tagSize    = tagSize;
     tag_info.pTag       = pTag;
 
-    function = (PFN_vkDebugMarkerSetObjectTagEXT)cvkGetDeviceProcAddr(device, "vkDebugMarkerSetObjectTagEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDebugMarkerSetObjectTagEXT);
     CVK_CHECK(function(device, &tag_info));
 }
 void cvkDebugReportMessage(VkInstance                 instance,
@@ -73981,33 +74249,37 @@ void cvkDebugReportMessage(VkInstance                 instance,
                            const char*                pLayerPrefix,
                            const char*                pMessage)
 {
-    PFN_vkDebugReportMessageEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDebugReportMessageEXT          function;
 
-    function = (PFN_vkDebugReportMessageEXT)cvkGetInstanceProcAddr(instance, "vkDebugReportMessageEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkDebugReportMessageEXT);
     function(instance, flags, objectType, object, location, messageCode, pLayerPrefix, pMessage);
 }
 VkResult cvkDeferredOperationJoin(VkDevice device, VkDeferredOperationKHR operation)
 {
-    PFN_vkDeferredOperationJoinKHR function;
-    VkResult                       result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDeferredOperationJoinKHR       function;
+    VkResult                             result;
 
-    function = (PFN_vkDeferredOperationJoinKHR)cvkGetDeviceProcAddr(device, "vkDeferredOperationJoinKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkDeferredOperationJoinKHR);
     result   = function(device, operation);
     CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkDestroyAccelerationStructure(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkDestroyAccelerationStructureKHR function;
 
-    function = (PFN_vkDestroyAccelerationStructureKHR)cvkGetDeviceProcAddr(device, "vkDestroyAccelerationStructureKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyAccelerationStructureKHR);
     function(device, accelerationStructure, pAllocator);
 }
 void cvkDestroyAccelerationStructureNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkDestroyAccelerationStructureNV function;
 
-    function = (PFN_vkDestroyAccelerationStructureNV)cvkGetDeviceProcAddr(device, "vkDestroyAccelerationStructureNV");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyAccelerationStructureNV);
     function(device, accelerationStructure, pAllocator);
 }
 void cvkDestroyBuffer(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
@@ -74024,44 +74296,50 @@ void cvkDestroyCommandPool(VkDevice device, VkCommandPool commandPool, const VkA
 }
 void cvkDestroyCuFunctionNVX(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyCuFunctionNVX function_pointer;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyCuFunctionNVX           function_pointer;
 
-    function_pointer = (PFN_vkDestroyCuFunctionNVX)cvkGetDeviceProcAddr(device, "vkDestroyCuFunctionNVX");
+    function_pointer = CVK_CALL(&call_cache, Device, device, vkDestroyCuFunctionNVX);
     function_pointer(device, function, pAllocator);
 }
 void cvkDestroyCuModuleNVX(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyCuModuleNVX function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyCuModuleNVX             function;
 
-    function = (PFN_vkDestroyCuModuleNVX)cvkGetDeviceProcAddr(device, "vkDestroyCuModuleNVX");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyCuModuleNVX);
     function(device, module, pAllocator);
 }
 void cvkDestroyDataGraphPipelineSessionARM(VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkDestroyDataGraphPipelineSessionARM function;
 
-    function = (PFN_vkDestroyDataGraphPipelineSessionARM)cvkGetDeviceProcAddr(device, "vkDestroyDataGraphPipelineSessionARM");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyDataGraphPipelineSessionARM);
     function(device, session, pAllocator);
 }
 void cvkDestroyDebugReportCallback(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyDebugReportCallbackEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyDebugReportCallbackEXT  function;
 
-    function = (PFN_vkDestroyDebugReportCallbackEXT)cvkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkDestroyDebugReportCallbackEXT);
     function(instance, callback, pAllocator);
 }
 void cvkDestroyDebugUtilsMessenger(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyDebugUtilsMessengerEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyDebugUtilsMessengerEXT  function;
 
-    function = (PFN_vkDestroyDebugUtilsMessengerEXT)cvkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkDestroyDebugUtilsMessengerEXT);
     function(instance, messenger, pAllocator);
 }
 void cvkDestroyDeferredOperation(VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyDeferredOperationKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyDeferredOperationKHR    function;
 
-    function = (PFN_vkDestroyDeferredOperationKHR)cvkGetDeviceProcAddr(device, "vkDestroyDeferredOperationKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyDeferredOperationKHR);
     function(device, operation, pAllocator);
 }
 void cvkDestroyDescriptorPool(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator)
@@ -74078,6 +74356,7 @@ void cvkDestroyDescriptorUpdateTemplate(VkDevice device, VkDescriptorUpdateTempl
 }
 void cvkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator)
 {
+    cvkInvalidateCallCache();
     vkDestroyDevice(device, pAllocator);
 }
 void cvkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
@@ -74086,9 +74365,10 @@ void cvkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks
 }
 void cvkDestroyExternalComputeQueueNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyExternalComputeQueueNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyExternalComputeQueueNV  function;
 
-    function = (PFN_vkDestroyExternalComputeQueueNV)cvkGetDeviceProcAddr(device, "vkDestroyExternalComputeQueueNV");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyExternalComputeQueueNV);
     function(device, externalQueue, pAllocator);
 }
 void cvkDestroyFence(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)
@@ -74101,9 +74381,10 @@ void cvkDestroyFramebuffer(VkDevice device, VkFramebuffer framebuffer, const VkA
 }
 void cvkDestroyGpaSessionAMD(VkDevice device, VkGpaSessionAMD gpaSession, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyGpaSessionAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyGpaSessionAMD           function;
 
-    function = (PFN_vkDestroyGpaSessionAMD)cvkGetDeviceProcAddr(device, "vkDestroyGpaSessionAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyGpaSessionAMD);
     function(device, gpaSession, pAllocator);
 }
 void cvkDestroyImage(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator)
@@ -74116,41 +74397,47 @@ void cvkDestroyImageView(VkDevice device, VkImageView imageView, const VkAllocat
 }
 void cvkDestroyIndirectCommandsLayout(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkDestroyIndirectCommandsLayoutEXT function;
 
-    function = (PFN_vkDestroyIndirectCommandsLayoutEXT)cvkGetDeviceProcAddr(device, "vkDestroyIndirectCommandsLayoutEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyIndirectCommandsLayoutEXT);
     function(device, indirectCommandsLayout, pAllocator);
 }
 void cvkDestroyIndirectCommandsLayoutNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkDestroyIndirectCommandsLayoutNV function;
 
-    function = (PFN_vkDestroyIndirectCommandsLayoutNV)cvkGetDeviceProcAddr(device, "vkDestroyIndirectCommandsLayoutNV");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyIndirectCommandsLayoutNV);
     function(device, indirectCommandsLayout, pAllocator);
 }
 void cvkDestroyIndirectExecutionSet(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkDestroyIndirectExecutionSetEXT function;
 
-    function = (PFN_vkDestroyIndirectExecutionSetEXT)cvkGetDeviceProcAddr(device, "vkDestroyIndirectExecutionSetEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyIndirectExecutionSetEXT);
     function(device, indirectExecutionSet, pAllocator);
 }
 void cvkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator)
 {
+    cvkInvalidateCallCache();
     vkDestroyInstance(instance, pAllocator);
 }
 void cvkDestroyMicromap(VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyMicromapEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyMicromapEXT             function;
 
-    function = (PFN_vkDestroyMicromapEXT)cvkGetDeviceProcAddr(device, "vkDestroyMicromapEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyMicromapEXT);
     function(device, micromap, pAllocator);
 }
 void cvkDestroyOpticalFlowSessionNV(VkDevice device, VkOpticalFlowSessionNV session, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyOpticalFlowSessionNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyOpticalFlowSessionNV    function;
 
-    function = (PFN_vkDestroyOpticalFlowSessionNV)cvkGetDeviceProcAddr(device, "vkDestroyOpticalFlowSessionNV");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyOpticalFlowSessionNV);
     function(device, session, pAllocator);
 }
 void cvkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
@@ -74159,9 +74446,10 @@ void cvkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocation
 }
 void cvkDestroyPipelineBinary(VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyPipelineBinaryKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyPipelineBinaryKHR       function;
 
-    function = (PFN_vkDestroyPipelineBinaryKHR)cvkGetDeviceProcAddr(device, "vkDestroyPipelineBinaryKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyPipelineBinaryKHR);
     function(device, pipelineBinary, pAllocator);
 }
 void cvkDestroyPipelineCache(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator)
@@ -74198,16 +74486,18 @@ void cvkDestroySemaphore(VkDevice device, VkSemaphore semaphore, const VkAllocat
 }
 void cvkDestroyShader(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyShaderEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyShaderEXT               function;
 
-    function = (PFN_vkDestroyShaderEXT)cvkGetDeviceProcAddr(device, "vkDestroyShaderEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyShaderEXT);
     function(device, shader, pAllocator);
 }
 void cvkDestroyShaderInstrumentationARM(VkDevice device, VkShaderInstrumentationARM instrumentation, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkDestroyShaderInstrumentationARM function;
 
-    function = (PFN_vkDestroyShaderInstrumentationARM)cvkGetDeviceProcAddr(device, "vkDestroyShaderInstrumentationARM");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyShaderInstrumentationARM);
     function(device, instrumentation, pAllocator);
 }
 void cvkDestroyShaderModule(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator)
@@ -74224,37 +74514,42 @@ void cvkDestroySwapchain(VkDevice device, VkSwapchainKHR swapchain, const VkAllo
 }
 void cvkDestroyTensorARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyTensorARM function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyTensorARM               function;
 
-    function = (PFN_vkDestroyTensorARM)cvkGetDeviceProcAddr(device, "vkDestroyTensorARM");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyTensorARM);
     function(device, tensor, pAllocator);
 }
 void cvkDestroyTensorViewARM(VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyTensorViewARM function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyTensorViewARM           function;
 
-    function = (PFN_vkDestroyTensorViewARM)cvkGetDeviceProcAddr(device, "vkDestroyTensorViewARM");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyTensorViewARM);
     function(device, tensorView, pAllocator);
 }
 void cvkDestroyValidationCache(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyValidationCacheEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyValidationCacheEXT      function;
 
-    function = (PFN_vkDestroyValidationCacheEXT)cvkGetDeviceProcAddr(device, "vkDestroyValidationCacheEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyValidationCacheEXT);
     function(device, validationCache, pAllocator);
 }
 void cvkDestroyVideoSession(VkDevice device, VkVideoSessionKHR videoSession, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyVideoSessionKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDestroyVideoSessionKHR         function;
 
-    function = (PFN_vkDestroyVideoSessionKHR)cvkGetDeviceProcAddr(device, "vkDestroyVideoSessionKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyVideoSessionKHR);
     function(device, videoSession, pAllocator);
 }
 void cvkDestroyVideoSessionParameters(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkAllocationCallbacks* pAllocator)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkDestroyVideoSessionParametersKHR function;
 
-    function = (PFN_vkDestroyVideoSessionParametersKHR)cvkGetDeviceProcAddr(device, "vkDestroyVideoSessionParametersKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkDestroyVideoSessionParametersKHR);
     function(device, videoSessionParameters, pAllocator);
 }
 void cvkDeviceWaitIdle(VkDevice device)
@@ -74263,14 +74558,15 @@ void cvkDeviceWaitIdle(VkDevice device)
 }
 void cvkDisplayPowerControl(VkDevice device, VkDisplayKHR display, const void* pNext, VkDisplayPowerStateEXT powerState)
 {
-    VkDisplayPowerInfoEXT        display_power_info;
-    PFN_vkDisplayPowerControlEXT function;
+    VkDisplayPowerInfoEXT                display_power_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkDisplayPowerControlEXT         function;
 
     display_power_info.sType      = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT;
     display_power_info.pNext      = pNext;
     display_power_info.powerState = powerState;
 
-    function = (PFN_vkDisplayPowerControlEXT)cvkGetDeviceProcAddr(device, "vkDisplayPowerControlEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkDisplayPowerControlEXT);
     CVK_CHECK(function(device, display, &display_power_info));
 }
 void cvkEndCommandBuffer(VkCommandBuffer commandBuffer)
@@ -74340,10 +74636,11 @@ uint32_t cvkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(VkI
                                                                              VkPerformanceCounterARM            pCounters[CVK_MAX_COUNTERS],
                                                                              VkPerformanceCounterDescriptionARM pCounterDescriptions[CVK_MAX_COUNTER_DESCRIPTIONS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                                   call_cache;
     PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM function;
     uint32_t                                                               counter_count = 0;
 
-    function = (PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM)cvkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM);
     CVK_CHECK(function(physicalDevice, queueFamilyIndex, &counter_count, NULL, NULL));
     CVK_ASSERT(CVK_MAX_COUNTERS >= counter_count);
     {
@@ -74372,10 +74669,11 @@ uint32_t cvkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCounters(VkInstanc
                                                                        VkPerformanceCounterKHR            pCounters[CVK_MAX_COUNTERS],
                                                                        VkPerformanceCounterDescriptionKHR pCounterDescriptions[CVK_MAX_COUNTER_DESCRIPTIONS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                                call_cache;
     PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR function;
     uint32_t                                                            counter_count = 0;
 
-    function = (PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR)cvkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR);
     CVK_CHECK(function(physicalDevice, queueFamilyIndex, &counter_count, NULL, NULL));
     CVK_ASSERT(CVK_MAX_COUNTERS >= counter_count);
     {
@@ -74402,10 +74700,11 @@ uint32_t cvkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(VkInstance   
                                                                    VkPhysicalDevice                            physicalDevice,
                                                                    VkShaderInstrumentationMetricDescriptionARM pDescriptions[CVK_MAX_DESCRIPTIONS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                         call_cache;
     PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM function;
     uint32_t                                                     description_count = 0;
 
-    function = (PFN_vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM)cvkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM);
     CVK_CHECK(function(physicalDevice, &description_count, NULL));
     CVK_ASSERT(CVK_MAX_DESCRIPTIONS >= description_count);
     {
@@ -74452,32 +74751,35 @@ void cvkGetAccelerationStructureBuildSizes(VkDevice                             
                                            VkAccelerationStructureBuildSizesInfoKHR*          pSizeInfo)
 {
     VkAccelerationStructureBuildSizesInfoKHR    size_info;
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkGetAccelerationStructureBuildSizesKHR function;
 
     size_info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
     size_info.pNext = pNext;
 
-    function = (PFN_vkGetAccelerationStructureBuildSizesKHR)cvkGetDeviceProcAddr(device, "vkGetAccelerationStructureBuildSizesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetAccelerationStructureBuildSizesKHR);
     function(device, buildType, pBuildInfo, pMaxPrimitiveCounts, &size_info);
     (*pSizeInfo) = size_info;
 }
 VkDeviceAddress cvkGetAccelerationStructureDeviceAddress(VkDevice device, const void* pNext, VkAccelerationStructureKHR accelerationStructure)
 {
     VkAccelerationStructureDeviceAddressInfoKHR    info;
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkGetAccelerationStructureDeviceAddressKHR function;
 
     info.sType                 = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
     info.pNext                 = pNext;
     info.accelerationStructure = accelerationStructure;
 
-    function = (PFN_vkGetAccelerationStructureDeviceAddressKHR)cvkGetDeviceProcAddr(device, "vkGetAccelerationStructureDeviceAddressKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetAccelerationStructureDeviceAddressKHR);
     return function(device, &info);
 }
 void cvkGetAccelerationStructureHandleNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, size_t dataSize, void* pData)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkGetAccelerationStructureHandleNV function;
 
-    function = (PFN_vkGetAccelerationStructureHandleNV)cvkGetDeviceProcAddr(device, "vkGetAccelerationStructureHandleNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetAccelerationStructureHandleNV);
     CVK_CHECK(function(device, accelerationStructure, dataSize, pData));
 }
 void cvkGetAccelerationStructureMemoryRequirementsNV(VkDevice                                        device,
@@ -74489,6 +74791,7 @@ void cvkGetAccelerationStructureMemoryRequirementsNV(VkDevice                   
 {
     VkAccelerationStructureMemoryRequirementsInfoNV    info;
     VkMemoryRequirements2                              memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache               call_cache;
     PFN_vkGetAccelerationStructureMemoryRequirementsNV function;
 
     info.sType                 = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
@@ -74499,7 +74802,7 @@ void cvkGetAccelerationStructureMemoryRequirementsNV(VkDevice                   
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pMemoryRequirementsNext;
 
-    function = (PFN_vkGetAccelerationStructureMemoryRequirementsNV)cvkGetDeviceProcAddr(device, "vkGetAccelerationStructureMemoryRequirementsNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetAccelerationStructureMemoryRequirementsNV);
     function(device, &info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
@@ -74510,6 +74813,7 @@ void cvkGetAccelerationStructureOpaqueCaptureDescriptorData(VkDevice            
                                                             void*                      pData)
 {
     VkAccelerationStructureCaptureDescriptorDataInfoEXT          info;
+    static CVK_THREAD_LOCAL cvkCallCache                         call_cache;
     PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT function;
 
     info.sType                   = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
@@ -74517,7 +74821,7 @@ void cvkGetAccelerationStructureOpaqueCaptureDescriptorData(VkDevice            
     info.accelerationStructure   = accelerationStructure;
     info.accelerationStructureNV = accelerationStructureNV;
 
-    function = (PFN_vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT)cvkGetDeviceProcAddr(device, "vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetAccelerationStructureOpaqueCaptureDescriptorDataEXT);
     CVK_CHECK(function(device, &info, pData));
 }
 VkDeviceAddress cvkGetBufferDeviceAddress(VkDevice device, const void* pNext, VkBuffer buffer)
@@ -74554,20 +74858,22 @@ uint64_t cvkGetBufferOpaqueCaptureAddress(VkDevice device, const void* pNext, Vk
 void cvkGetBufferOpaqueCaptureDescriptorData(VkDevice device, const void* pNext, VkBuffer buffer, void* pData)
 {
     VkBufferCaptureDescriptorDataInfoEXT          info;
+    static CVK_THREAD_LOCAL cvkCallCache          call_cache;
     PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT function;
 
     info.sType  = VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     info.pNext  = pNext;
     info.buffer = buffer;
 
-    function = (PFN_vkGetBufferOpaqueCaptureDescriptorDataEXT)cvkGetDeviceProcAddr(device, "vkGetBufferOpaqueCaptureDescriptorDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetBufferOpaqueCaptureDescriptorDataEXT);
     CVK_CHECK(function(device, &info, pData));
 }
 void cvkGetCalibratedTimestamps(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation)
 {
-    PFN_vkGetCalibratedTimestampsKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetCalibratedTimestampsKHR     function;
 
-    function = (PFN_vkGetCalibratedTimestampsKHR)cvkGetDeviceProcAddr(device, "vkGetCalibratedTimestampsKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetCalibratedTimestampsKHR);
     CVK_CHECK(function(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation));
 }
 void cvkGetClusterAccelerationStructureBuildSizesNV(VkDevice                                  device,
@@ -74582,6 +74888,7 @@ void cvkGetClusterAccelerationStructureBuildSizesNV(VkDevice                    
 {
     VkClusterAccelerationStructureInputInfoNV         info;
     VkAccelerationStructureBuildSizesInfoKHR          size_info;
+    static CVK_THREAD_LOCAL cvkCallCache              call_cache;
     PFN_vkGetClusterAccelerationStructureBuildSizesNV function;
 
     info.sType                         = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_INPUT_INFO_NV;
@@ -74595,13 +74902,14 @@ void cvkGetClusterAccelerationStructureBuildSizesNV(VkDevice                    
     size_info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
     size_info.pNext = pSizeInfoNext;
 
-    function = (PFN_vkGetClusterAccelerationStructureBuildSizesNV)cvkGetDeviceProcAddr(device, "vkGetClusterAccelerationStructureBuildSizesNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetClusterAccelerationStructureBuildSizesNV);
     function(device, &info, &size_info);
     (*pSizeInfo) = size_info;
 }
 uint32_t cvkGetDataGraphPipelineAvailablePropertiesARM(VkDevice device, const void* pNext, VkPipeline dataGraphPipeline, VkDataGraphPipelinePropertyARM pProperties[CVK_MAX_PROPERTIES])
 {
     VkDataGraphPipelineInfoARM                       pipeline_info;
+    static CVK_THREAD_LOCAL cvkCallCache             call_cache;
     PFN_vkGetDataGraphPipelineAvailablePropertiesARM function;
     uint32_t                                         properties_count = 0;
 
@@ -74609,7 +74917,7 @@ uint32_t cvkGetDataGraphPipelineAvailablePropertiesARM(VkDevice device, const vo
     pipeline_info.pNext             = pNext;
     pipeline_info.dataGraphPipeline = dataGraphPipeline;
 
-    function = (PFN_vkGetDataGraphPipelineAvailablePropertiesARM)cvkGetDeviceProcAddr(device, "vkGetDataGraphPipelineAvailablePropertiesARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDataGraphPipelineAvailablePropertiesARM);
     CVK_CHECK(function(device, &pipeline_info, &properties_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= properties_count);
     CVK_CHECK(function(device, &pipeline_info, &properties_count, pProperties));
@@ -74618,6 +74926,7 @@ uint32_t cvkGetDataGraphPipelineAvailablePropertiesARM(VkDevice device, const vo
 VkResult cvkGetDataGraphPipelinePropertiesARM(VkDevice device, const void* pNext, VkPipeline dataGraphPipeline, uint32_t propertiesCount, VkDataGraphPipelinePropertyQueryResultARM* pProperties)
 {
     VkDataGraphPipelineInfoARM              pipeline_info;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkGetDataGraphPipelinePropertiesARM function;
     VkResult                                result;
 
@@ -74625,7 +74934,7 @@ VkResult cvkGetDataGraphPipelinePropertiesARM(VkDevice device, const void* pNext
     pipeline_info.pNext             = pNext;
     pipeline_info.dataGraphPipeline = dataGraphPipeline;
 
-    function = (PFN_vkGetDataGraphPipelinePropertiesARM)cvkGetDeviceProcAddr(device, "vkGetDataGraphPipelinePropertiesARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDataGraphPipelinePropertiesARM);
     result   = function(device, &pipeline_info, propertiesCount, pProperties);
     CVK_ASSERT((0 <= result));
     return result;
@@ -74636,6 +74945,7 @@ uint32_t cvkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice        
                                                                 VkDataGraphPipelineSessionBindPointRequirementARM pBindPointRequirements[CVK_MAX_BIND_POINT_REQUIREMENTS])
 {
     VkDataGraphPipelineSessionBindPointRequirementsInfoARM    info;
+    static CVK_THREAD_LOCAL cvkCallCache                      call_cache;
     PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM function;
     uint32_t                                                  bind_point_requirement_count = 0;
 
@@ -74643,7 +74953,7 @@ uint32_t cvkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice        
     info.pNext   = pNext;
     info.session = session;
 
-    function = (PFN_vkGetDataGraphPipelineSessionBindPointRequirementsARM)cvkGetDeviceProcAddr(device, "vkGetDataGraphPipelineSessionBindPointRequirementsARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDataGraphPipelineSessionBindPointRequirementsARM);
     CVK_CHECK(function(device, &info, &bind_point_requirement_count, NULL));
     CVK_ASSERT(CVK_MAX_BIND_POINT_REQUIREMENTS >= bind_point_requirement_count);
     {
@@ -74667,6 +74977,7 @@ void cvkGetDataGraphPipelineSessionMemoryRequirementsARM(VkDevice               
 {
     VkDataGraphPipelineSessionMemoryRequirementsInfoARM    info;
     VkMemoryRequirements2                                  memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache                   call_cache;
     PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM function;
 
     info.sType       = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_MEMORY_REQUIREMENTS_INFO_ARM;
@@ -74678,52 +74989,57 @@ void cvkGetDataGraphPipelineSessionMemoryRequirementsARM(VkDevice               
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pMemoryRequirementsNext;
 
-    function = (PFN_vkGetDataGraphPipelineSessionMemoryRequirementsARM)cvkGetDeviceProcAddr(device, "vkGetDataGraphPipelineSessionMemoryRequirementsARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDataGraphPipelineSessionMemoryRequirementsARM);
     function(device, &info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
 uint32_t cvkGetDeferredOperationMaxConcurrency(VkDevice device, VkDeferredOperationKHR operation)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkGetDeferredOperationMaxConcurrencyKHR function;
 
-    function = (PFN_vkGetDeferredOperationMaxConcurrencyKHR)cvkGetDeviceProcAddr(device, "vkGetDeferredOperationMaxConcurrencyKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeferredOperationMaxConcurrencyKHR);
     return function(device, operation);
 }
 VkResult cvkGetDeferredOperationResult(VkDevice device, VkDeferredOperationKHR operation)
 {
-    PFN_vkGetDeferredOperationResultKHR function;
-    VkResult                            result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDeferredOperationResultKHR  function;
+    VkResult                             result;
 
-    function = (PFN_vkGetDeferredOperationResultKHR)cvkGetDeviceProcAddr(device, "vkGetDeferredOperationResultKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeferredOperationResultKHR);
     result   = function(device, operation);
     CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkGetDescriptor(VkDevice device, const void* pNext, VkDescriptorType type, VkDescriptorDataEXT data, size_t dataSize, void* pDescriptor)
 {
-    VkDescriptorGetInfoEXT descriptor_info;
-    PFN_vkGetDescriptorEXT function;
+    VkDescriptorGetInfoEXT               descriptor_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDescriptorEXT               function;
 
     descriptor_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT;
     descriptor_info.pNext = pNext;
     descriptor_info.type  = type;
     descriptor_info.data  = data;
 
-    function = (PFN_vkGetDescriptorEXT)cvkGetDeviceProcAddr(device, "vkGetDescriptorEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDescriptorEXT);
     function(device, &descriptor_info, dataSize, pDescriptor);
 }
 void cvkGetDescriptorSetHostMappingVALVE(VkDevice device, VkDescriptorSet descriptorSet, void** ppData)
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkGetDescriptorSetHostMappingVALVE function;
 
-    function = (PFN_vkGetDescriptorSetHostMappingVALVE)cvkGetDeviceProcAddr(device, "vkGetDescriptorSetHostMappingVALVE");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDescriptorSetHostMappingVALVE);
     function(device, descriptorSet, ppData);
 }
 void cvkGetDescriptorSetLayoutBindingOffset(VkDevice device, VkDescriptorSetLayout layout, uint32_t binding, VkDeviceSize* pOffset)
 {
+    static CVK_THREAD_LOCAL cvkCallCache         call_cache;
     PFN_vkGetDescriptorSetLayoutBindingOffsetEXT function;
 
-    function = (PFN_vkGetDescriptorSetLayoutBindingOffsetEXT)cvkGetDeviceProcAddr(device, "vkGetDescriptorSetLayoutBindingOffsetEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDescriptorSetLayoutBindingOffsetEXT);
     function(device, layout, binding, pOffset);
 }
 void cvkGetDescriptorSetLayoutHostMappingInfoVALVE(VkDevice                                   device,
@@ -74735,6 +75051,7 @@ void cvkGetDescriptorSetLayoutHostMappingInfoVALVE(VkDevice                     
 {
     VkDescriptorSetBindingReferenceVALVE             binding_reference;
     VkDescriptorSetLayoutHostMappingInfoVALVE        host_mapping;
+    static CVK_THREAD_LOCAL cvkCallCache             call_cache;
     PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE function;
 
     binding_reference.sType               = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_BINDING_REFERENCE_VALVE;
@@ -74745,15 +75062,16 @@ void cvkGetDescriptorSetLayoutHostMappingInfoVALVE(VkDevice                     
     host_mapping.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE;
     host_mapping.pNext = pHostMappingNext;
 
-    function = (PFN_vkGetDescriptorSetLayoutHostMappingInfoVALVE)cvkGetDeviceProcAddr(device, "vkGetDescriptorSetLayoutHostMappingInfoVALVE");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDescriptorSetLayoutHostMappingInfoVALVE);
     function(device, &binding_reference, &host_mapping);
     (*pHostMapping) = host_mapping;
 }
 void cvkGetDescriptorSetLayoutSize(VkDevice device, VkDescriptorSetLayout layout, VkDeviceSize* pLayoutSizeInBytes)
 {
-    PFN_vkGetDescriptorSetLayoutSizeEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDescriptorSetLayoutSizeEXT  function;
 
-    function = (PFN_vkGetDescriptorSetLayoutSizeEXT)cvkGetDeviceProcAddr(device, "vkGetDescriptorSetLayoutSizeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDescriptorSetLayoutSizeEXT);
     function(device, layout, pLayoutSizeInBytes);
 }
 void cvkGetDescriptorSetLayoutSupport(VkDevice                            device,
@@ -74781,13 +75099,14 @@ void cvkGetDescriptorSetLayoutSupport(VkDevice                            device
 void cvkGetDeviceAccelerationStructureCompatibility(VkDevice device, const void* pNext, const uint8_t* pVersionData, VkAccelerationStructureCompatibilityKHR* pCompatibility)
 {
     VkAccelerationStructureVersionInfoKHR                version_info;
+    static CVK_THREAD_LOCAL cvkCallCache                 call_cache;
     PFN_vkGetDeviceAccelerationStructureCompatibilityKHR function;
 
     version_info.sType        = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_VERSION_INFO_KHR;
     version_info.pNext        = pNext;
     version_info.pVersionData = pVersionData;
 
-    function = (PFN_vkGetDeviceAccelerationStructureCompatibilityKHR)cvkGetDeviceProcAddr(device, "vkGetDeviceAccelerationStructureCompatibilityKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceAccelerationStructureCompatibilityKHR);
     function(device, &version_info, pCompatibility);
 }
 void cvkGetDeviceBufferMemoryRequirements(VkDevice device, const void* pInfoNext, const VkBufferCreateInfo* pCreateInfo, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
@@ -74806,21 +75125,23 @@ void cvkGetDeviceBufferMemoryRequirements(VkDevice device, const void* pInfoNext
 }
 uint64_t cvkGetDeviceCombinedImageSamplerIndexNVX(VkDevice device, uint64_t imageViewIndex, uint64_t samplerIndex)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkGetDeviceCombinedImageSamplerIndexNVX function;
 
-    function = (PFN_vkGetDeviceCombinedImageSamplerIndexNVX)cvkGetDeviceProcAddr(device, "vkGetDeviceCombinedImageSamplerIndexNVX");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceCombinedImageSamplerIndexNVX);
     return function(device, imageViewIndex, samplerIndex);
 }
 VkResult cvkGetDeviceFaultDebugInfo(VkDevice device, void* pNext, VkDeviceFaultDebugInfoKHR* pDebugInfo)
 {
-    VkDeviceFaultDebugInfoKHR        debug_info;
-    PFN_vkGetDeviceFaultDebugInfoKHR function;
-    VkResult                         result;
+    VkDeviceFaultDebugInfoKHR            debug_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDeviceFaultDebugInfoKHR     function;
+    VkResult                             result;
 
     debug_info.sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_DEBUG_INFO_KHR;
     debug_info.pNext = pNext;
 
-    function = (PFN_vkGetDeviceFaultDebugInfoKHR)cvkGetDeviceProcAddr(device, "vkGetDeviceFaultDebugInfoKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceFaultDebugInfoKHR);
     result   = function(device, &debug_info);
     CVK_ASSERT((0 <= result));
     (*pDebugInfo) = debug_info;
@@ -74828,10 +75149,11 @@ VkResult cvkGetDeviceFaultDebugInfo(VkDevice device, void* pNext, VkDeviceFaultD
 }
 VkResult cvkGetDeviceFaultInfo(VkDevice device, void* pFaultCountsNext, VkDeviceFaultCountsEXT* pFaultCounts, void* pFaultInfoNext, VkDeviceFaultInfoEXT* pFaultInfo)
 {
-    VkDeviceFaultCountsEXT      fault_counts;
-    VkDeviceFaultInfoEXT        fault_info;
-    PFN_vkGetDeviceFaultInfoEXT function;
-    VkResult                    result;
+    VkDeviceFaultCountsEXT               fault_counts;
+    VkDeviceFaultInfoEXT                 fault_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDeviceFaultInfoEXT          function;
+    VkResult                             result;
 
     fault_counts.sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT;
     fault_counts.pNext = pFaultCountsNext;
@@ -74839,7 +75161,7 @@ VkResult cvkGetDeviceFaultInfo(VkDevice device, void* pFaultCountsNext, VkDevice
     fault_info.sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT;
     fault_info.pNext = pFaultInfoNext;
 
-    function = (PFN_vkGetDeviceFaultInfoEXT)cvkGetDeviceProcAddr(device, "vkGetDeviceFaultInfoEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceFaultInfoEXT);
     result   = function(device, &fault_counts, &fault_info);
     CVK_ASSERT((0 <= result));
     (*pFaultCounts) = fault_counts;
@@ -74848,10 +75170,11 @@ VkResult cvkGetDeviceFaultInfo(VkDevice device, void* pFaultCountsNext, VkDevice
 }
 uint32_t cvkGetDeviceFaultReports(VkDevice device, uint64_t timeout, VkDeviceFaultInfoKHR pFaultInfo[CVK_MAX_FAULT_INFO])
 {
-    PFN_vkGetDeviceFaultReportsKHR function;
-    uint32_t                       fault_counts = 0;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDeviceFaultReportsKHR       function;
+    uint32_t                             fault_counts = 0;
 
-    function = (PFN_vkGetDeviceFaultReportsKHR)cvkGetDeviceProcAddr(device, "vkGetDeviceFaultReportsKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceFaultReportsKHR);
     CVK_CHECK(function(device, timeout, &fault_counts, NULL));
     CVK_ASSERT(CVK_MAX_FAULT_INFO >= fault_counts);
     {
@@ -74957,13 +75280,14 @@ uint64_t cvkGetDeviceMemoryOpaqueCaptureAddress(VkDevice device, const void* pNe
 void cvkGetDeviceMicromapCompatibility(VkDevice device, const void* pNext, const uint8_t* pVersionData, VkAccelerationStructureCompatibilityKHR* pCompatibility)
 {
     VkMicromapVersionInfoEXT                version_info;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkGetDeviceMicromapCompatibilityEXT function;
 
     version_info.sType        = VK_STRUCTURE_TYPE_MICROMAP_VERSION_INFO_EXT;
     version_info.pNext        = pNext;
     version_info.pVersionData = pVersionData;
 
-    function = (PFN_vkGetDeviceMicromapCompatibilityEXT)cvkGetDeviceProcAddr(device, "vkGetDeviceMicromapCompatibilityEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceMicromapCompatibilityEXT);
     function(device, &version_info, pCompatibility);
 }
 PFN_vkVoidFunction cvkGetDeviceProcAddr(VkDevice device, const char* pName)
@@ -74993,10 +75317,11 @@ void cvkGetDeviceQueue2(VkDevice device, const void* pNext, VkDeviceQueueCreateF
 }
 VkResult cvkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRenderPass renderpass, VkExtent2D* pMaxWorkgroupSize)
 {
+    static CVK_THREAD_LOCAL cvkCallCache                call_cache;
     PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI function;
     VkResult                                            result;
 
-    function = (PFN_vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI)cvkGetDeviceProcAddr(device, "vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI);
     result   = function(device, renderpass, pMaxWorkgroupSize);
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     return result;
@@ -75009,6 +75334,7 @@ void cvkGetDeviceTensorMemoryRequirementsARM(VkDevice                     device
 {
     VkDeviceTensorMemoryRequirementsARM        info;
     VkMemoryRequirements2                      memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkGetDeviceTensorMemoryRequirementsARM function;
 
     info.sType       = VK_STRUCTURE_TYPE_DEVICE_TENSOR_MEMORY_REQUIREMENTS_ARM;
@@ -75018,7 +75344,7 @@ void cvkGetDeviceTensorMemoryRequirementsARM(VkDevice                     device
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pMemoryRequirementsNext;
 
-    function = (PFN_vkGetDeviceTensorMemoryRequirementsARM)cvkGetDeviceProcAddr(device, "vkGetDeviceTensorMemoryRequirementsARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDeviceTensorMemoryRequirementsARM);
     function(device, &info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
@@ -75072,21 +75398,23 @@ uint32_t cvkGetDisplayPlaneSupportedDisplays(VkPhysicalDevice physicalDevice, ui
 }
 void cvkGetDrmDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId, VkDisplayKHR* display)
 {
-    PFN_vkGetDrmDisplayEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetDrmDisplayEXT               function;
 
-    function = (PFN_vkGetDrmDisplayEXT)cvkGetInstanceProcAddr(instance, "vkGetDrmDisplayEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetDrmDisplayEXT);
     CVK_CHECK(function(physicalDevice, drmFd, connectorId, display));
     CVK_ASSERT(VK_NULL_HANDLE != (*display));
 }
 void cvkGetDynamicRenderingTilePropertiesQCOM(VkDevice device, const VkRenderingInfo* pRenderingInfo, void* pNext, VkTilePropertiesQCOM* pProperties)
 {
     VkTilePropertiesQCOM                        properties;
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkGetDynamicRenderingTilePropertiesQCOM function;
 
     properties.sType = VK_STRUCTURE_TYPE_TILE_PROPERTIES_QCOM;
     properties.pNext = pNext;
 
-    function = (PFN_vkGetDynamicRenderingTilePropertiesQCOM)cvkGetDeviceProcAddr(device, "vkGetDynamicRenderingTilePropertiesQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetDynamicRenderingTilePropertiesQCOM);
     CVK_CHECK(function(device, pRenderingInfo, &properties));
     (*pProperties) = properties;
 }
@@ -75098,13 +75426,14 @@ VkResult cvkGetEncodedVideoSessionParameters(VkDevice                           
                                              void*                                           pData)
 {
     VkVideoEncodeSessionParametersFeedbackInfoKHR feedback_info;
+    static CVK_THREAD_LOCAL cvkCallCache          call_cache;
     PFN_vkGetEncodedVideoSessionParametersKHR     function;
     VkResult                                      result;
 
     feedback_info.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_PARAMETERS_FEEDBACK_INFO_KHR;
     feedback_info.pNext = pNext;
 
-    function = (PFN_vkGetEncodedVideoSessionParametersKHR)cvkGetDeviceProcAddr(device, "vkGetEncodedVideoSessionParametersKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetEncodedVideoSessionParametersKHR);
     result   = function(device, pVideoSessionParametersInfo, &feedback_info, pDataSize, pData);
     CVK_ASSERT((0 <= result));
     (*pFeedbackInfo) = feedback_info;
@@ -75120,27 +75449,29 @@ VkResult cvkGetEventStatus(VkDevice device, VkEvent event)
 }
 void cvkGetExternalComputeQueueDataNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const void* pNext, uint32_t deviceIndex, void* pData)
 {
-    VkExternalComputeQueueDataParamsNV  params;
-    PFN_vkGetExternalComputeQueueDataNV function;
+    VkExternalComputeQueueDataParamsNV   params;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetExternalComputeQueueDataNV  function;
 
     params.sType       = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV;
     params.pNext       = pNext;
     params.deviceIndex = deviceIndex;
 
-    function = (PFN_vkGetExternalComputeQueueDataNV)cvkGetDeviceProcAddr(device, "vkGetExternalComputeQueueDataNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetExternalComputeQueueDataNV);
     function(externalQueue, &params, pData);
 }
 void cvkGetFenceFd(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, int* pFd)
 {
-    VkFenceGetFdInfoKHR get_fd_info;
-    PFN_vkGetFenceFdKHR function;
+    VkFenceGetFdInfoKHR                  get_fd_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetFenceFdKHR                  function;
 
     get_fd_info.sType      = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
     get_fd_info.pNext      = pNext;
     get_fd_info.fence      = fence;
     get_fd_info.handleType = handleType;
 
-    function = (PFN_vkGetFenceFdKHR)cvkGetDeviceProcAddr(device, "vkGetFenceFdKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetFenceFdKHR);
     CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 VkResult cvkGetFenceStatus(VkDevice device, VkFence fence)
@@ -75153,10 +75484,11 @@ VkResult cvkGetFenceStatus(VkDevice device, VkFence fence)
 }
 uint32_t cvkGetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer, VkTilePropertiesQCOM pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache   call_cache;
     PFN_vkGetFramebufferTilePropertiesQCOM function;
     uint32_t                               properties_count = 0;
 
-    function = (PFN_vkGetFramebufferTilePropertiesQCOM)cvkGetDeviceProcAddr(device, "vkGetFramebufferTilePropertiesQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetFramebufferTilePropertiesQCOM);
     CVK_CHECK(function(device, framebuffer, &properties_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= properties_count);
     {
@@ -75173,12 +75505,13 @@ uint32_t cvkGetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer fram
 void cvkGetGeneratedCommandsMemoryRequirements(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements)
 {
     VkMemoryRequirements2                           memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetGeneratedCommandsMemoryRequirementsEXT function;
 
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pNext;
 
-    function = (PFN_vkGetGeneratedCommandsMemoryRequirementsEXT)cvkGetDeviceProcAddr(device, "vkGetGeneratedCommandsMemoryRequirementsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetGeneratedCommandsMemoryRequirementsEXT);
     function(device, pInfo, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
@@ -75193,6 +75526,7 @@ void cvkGetGeneratedCommandsMemoryRequirementsNV(VkDevice                   devi
 {
     VkGeneratedCommandsMemoryRequirementsInfoNV    info;
     VkMemoryRequirements2                          memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkGetGeneratedCommandsMemoryRequirementsNV function;
 
     info.sType                  = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
@@ -75205,45 +75539,49 @@ void cvkGetGeneratedCommandsMemoryRequirementsNV(VkDevice                   devi
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pMemoryRequirementsNext;
 
-    function = (PFN_vkGetGeneratedCommandsMemoryRequirementsNV)cvkGetDeviceProcAddr(device, "vkGetGeneratedCommandsMemoryRequirementsNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetGeneratedCommandsMemoryRequirementsNV);
     function(device, &info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
 void cvkGetGpaDeviceClockInfoAMD(VkDevice device, void* pNext, VkGpaDeviceGetClockInfoAMD* pInfo)
 {
-    VkGpaDeviceGetClockInfoAMD     info;
-    PFN_vkGetGpaDeviceClockInfoAMD function;
+    VkGpaDeviceGetClockInfoAMD           info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetGpaDeviceClockInfoAMD       function;
 
     info.sType = VK_STRUCTURE_TYPE_GPA_DEVICE_GET_CLOCK_INFO_AMD;
     info.pNext = pNext;
 
-    function = (PFN_vkGetGpaDeviceClockInfoAMD)cvkGetDeviceProcAddr(device, "vkGetGpaDeviceClockInfoAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkGetGpaDeviceClockInfoAMD);
     CVK_CHECK(function(device, &info));
     (*pInfo) = info;
 }
 void cvkGetGpaSessionResultsAMD(VkDevice device, VkGpaSessionAMD gpaSession, uint32_t sampleID, size_t* pSizeInBytes, void* pData)
 {
-    PFN_vkGetGpaSessionResultsAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetGpaSessionResultsAMD        function;
 
-    function = (PFN_vkGetGpaSessionResultsAMD)cvkGetDeviceProcAddr(device, "vkGetGpaSessionResultsAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkGetGpaSessionResultsAMD);
     CVK_CHECK(function(device, gpaSession, sampleID, pSizeInBytes, pData));
 }
 void cvkGetGpaSessionStatusAMD(VkDevice device, VkGpaSessionAMD gpaSession)
 {
-    PFN_vkGetGpaSessionStatusAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetGpaSessionStatusAMD         function;
 
-    function = (PFN_vkGetGpaSessionStatusAMD)cvkGetDeviceProcAddr(device, "vkGetGpaSessionStatusAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkGetGpaSessionStatusAMD);
     CVK_CHECK(function(device, gpaSession));
 }
 void cvkGetImageDrmFormatModifierProperties(VkDevice device, VkImage image, void* pNext, VkImageDrmFormatModifierPropertiesEXT* pProperties)
 {
     VkImageDrmFormatModifierPropertiesEXT        properties;
+    static CVK_THREAD_LOCAL cvkCallCache         call_cache;
     PFN_vkGetImageDrmFormatModifierPropertiesEXT function;
 
     properties.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
     properties.pNext = pNext;
 
-    function = (PFN_vkGetImageDrmFormatModifierPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetImageDrmFormatModifierPropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageDrmFormatModifierPropertiesEXT);
     CVK_CHECK(function(device, image, &properties));
     (*pProperties) = properties;
 }
@@ -75262,21 +75600,23 @@ void cvkGetImageMemoryRequirements2(VkDevice device, const VkImageMemoryRequirem
 }
 void cvkGetImageOpaqueCaptureData(VkDevice device, uint32_t imageCount, const VkImage* pImages, VkHostAddressRangeEXT* pDatas)
 {
-    PFN_vkGetImageOpaqueCaptureDataEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetImageOpaqueCaptureDataEXT   function;
 
-    function = (PFN_vkGetImageOpaqueCaptureDataEXT)cvkGetDeviceProcAddr(device, "vkGetImageOpaqueCaptureDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageOpaqueCaptureDataEXT);
     CVK_CHECK(function(device, imageCount, pImages, pDatas));
 }
 void cvkGetImageOpaqueCaptureDescriptorData(VkDevice device, const void* pNext, VkImage image, void* pData)
 {
     VkImageCaptureDescriptorDataInfoEXT          info;
+    static CVK_THREAD_LOCAL cvkCallCache         call_cache;
     PFN_vkGetImageOpaqueCaptureDescriptorDataEXT function;
 
     info.sType = VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     info.pNext = pNext;
     info.image = image;
 
-    function = (PFN_vkGetImageOpaqueCaptureDescriptorDataEXT)cvkGetDeviceProcAddr(device, "vkGetImageOpaqueCaptureDescriptorDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageOpaqueCaptureDescriptorDataEXT);
     CVK_CHECK(function(device, &info, pData));
 }
 uint32_t cvkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, VkSparseImageMemoryRequirements pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
@@ -75327,20 +75667,22 @@ void cvkGetImageSubresourceLayout2(VkDevice device, VkImage image, void* pSubres
 }
 void cvkGetImageViewAddressNVX(VkDevice device, VkImageView imageView, void* pNext, VkImageViewAddressPropertiesNVX* pProperties)
 {
-    VkImageViewAddressPropertiesNVX properties;
-    PFN_vkGetImageViewAddressNVX    function;
+    VkImageViewAddressPropertiesNVX      properties;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetImageViewAddressNVX         function;
 
     properties.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ADDRESS_PROPERTIES_NVX;
     properties.pNext = pNext;
 
-    function = (PFN_vkGetImageViewAddressNVX)cvkGetDeviceProcAddr(device, "vkGetImageViewAddressNVX");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageViewAddressNVX);
     CVK_CHECK(function(device, imageView, &properties));
     (*pProperties) = properties;
 }
 uint64_t cvkGetImageViewHandle64NVX(VkDevice device, const void* pNext, VkImageView imageView, VkDescriptorType descriptorType, VkSampler sampler)
 {
-    VkImageViewHandleInfoNVX      info;
-    PFN_vkGetImageViewHandle64NVX function;
+    VkImageViewHandleInfoNVX             info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetImageViewHandle64NVX        function;
 
     info.sType          = VK_STRUCTURE_TYPE_IMAGE_VIEW_HANDLE_INFO_NVX;
     info.pNext          = pNext;
@@ -75348,13 +75690,14 @@ uint64_t cvkGetImageViewHandle64NVX(VkDevice device, const void* pNext, VkImageV
     info.descriptorType = descriptorType;
     info.sampler        = sampler;
 
-    function = (PFN_vkGetImageViewHandle64NVX)cvkGetDeviceProcAddr(device, "vkGetImageViewHandle64NVX");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageViewHandle64NVX);
     return function(device, &info);
 }
 uint32_t cvkGetImageViewHandleNVX(VkDevice device, const void* pNext, VkImageView imageView, VkDescriptorType descriptorType, VkSampler sampler)
 {
-    VkImageViewHandleInfoNVX    info;
-    PFN_vkGetImageViewHandleNVX function;
+    VkImageViewHandleInfoNVX             info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetImageViewHandleNVX          function;
 
     info.sType          = VK_STRUCTURE_TYPE_IMAGE_VIEW_HANDLE_INFO_NVX;
     info.pNext          = pNext;
@@ -75362,19 +75705,20 @@ uint32_t cvkGetImageViewHandleNVX(VkDevice device, const void* pNext, VkImageVie
     info.descriptorType = descriptorType;
     info.sampler        = sampler;
 
-    function = (PFN_vkGetImageViewHandleNVX)cvkGetDeviceProcAddr(device, "vkGetImageViewHandleNVX");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageViewHandleNVX);
     return function(device, &info);
 }
 void cvkGetImageViewOpaqueCaptureDescriptorData(VkDevice device, const void* pNext, VkImageView imageView, void* pData)
 {
     VkImageViewCaptureDescriptorDataInfoEXT          info;
+    static CVK_THREAD_LOCAL cvkCallCache             call_cache;
     PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT function;
 
     info.sType     = VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     info.pNext     = pNext;
     info.imageView = imageView;
 
-    function = (PFN_vkGetImageViewOpaqueCaptureDescriptorDataEXT)cvkGetDeviceProcAddr(device, "vkGetImageViewOpaqueCaptureDescriptorDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetImageViewOpaqueCaptureDescriptorDataEXT);
     CVK_CHECK(function(device, &info, pData));
 }
 PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName)
@@ -75387,45 +75731,49 @@ PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName
 }
 void cvkGetLatencyTimingsLegacyNV(VkDevice device, void* pTimings)
 {
-    PFN_vkGetLatencyTimingsLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetLatencyTimingsLegacyNV      function;
 
-    function = (PFN_vkGetLatencyTimingsLegacyNV)cvkGetDeviceProcAddr(device, "vkGetLatencyTimingsLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetLatencyTimingsLegacyNV);
     function(device, pTimings);
 }
 void cvkGetLatencyTimingsNV(VkDevice device, VkSwapchainKHR swapchain, void* pNext, VkGetLatencyMarkerInfoNV* pLatencyMarkerInfo)
 {
-    VkGetLatencyMarkerInfoNV  latency_marker_info;
-    PFN_vkGetLatencyTimingsNV function;
+    VkGetLatencyMarkerInfoNV             latency_marker_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetLatencyTimingsNV            function;
 
     latency_marker_info.sType = VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV;
     latency_marker_info.pNext = pNext;
 
-    function = (PFN_vkGetLatencyTimingsNV)cvkGetDeviceProcAddr(device, "vkGetLatencyTimingsNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetLatencyTimingsNV);
     function(device, swapchain, &latency_marker_info);
     (*pLatencyMarkerInfo) = latency_marker_info;
 }
 void cvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd)
 {
-    VkMemoryGetFdInfoKHR get_fd_info;
-    PFN_vkGetMemoryFdKHR function;
+    VkMemoryGetFdInfoKHR                 get_fd_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetMemoryFdKHR                 function;
 
     get_fd_info.sType      = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
     get_fd_info.pNext      = pNext;
     get_fd_info.memory     = memory;
     get_fd_info.handleType = handleType;
 
-    function = (PFN_vkGetMemoryFdKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryFdKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetMemoryFdKHR);
     CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 void cvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties)
 {
-    VkMemoryFdPropertiesKHR        memory_fd_properties;
-    PFN_vkGetMemoryFdPropertiesKHR function;
+    VkMemoryFdPropertiesKHR              memory_fd_properties;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetMemoryFdPropertiesKHR       function;
 
     memory_fd_properties.sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
     memory_fd_properties.pNext = pNext;
 
-    function = (PFN_vkGetMemoryFdPropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetMemoryFdPropertiesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetMemoryFdPropertiesKHR);
     CVK_CHECK(function(device, handleType, fd, &memory_fd_properties));
     (*pMemoryFdProperties) = memory_fd_properties;
 }
@@ -75436,37 +75784,40 @@ void cvkGetMemoryHostPointerProperties(VkDevice                           device
                                        VkMemoryHostPointerPropertiesEXT*  pMemoryHostPointerProperties)
 {
     VkMemoryHostPointerPropertiesEXT        memory_host_pointer_properties;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkGetMemoryHostPointerPropertiesEXT function;
 
     memory_host_pointer_properties.sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
     memory_host_pointer_properties.pNext = pNext;
 
-    function = (PFN_vkGetMemoryHostPointerPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetMemoryHostPointerPropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetMemoryHostPointerPropertiesEXT);
     CVK_CHECK(function(device, handleType, pHostPointer, &memory_host_pointer_properties));
     (*pMemoryHostPointerProperties) = memory_host_pointer_properties;
 }
 void cvkGetMemoryRemoteAddressNV(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, VkRemoteAddressNV* pAddress)
 {
-    VkMemoryGetRemoteAddressInfoNV memory_get_remote_address_info;
-    PFN_vkGetMemoryRemoteAddressNV function;
+    VkMemoryGetRemoteAddressInfoNV       memory_get_remote_address_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetMemoryRemoteAddressNV       function;
 
     memory_get_remote_address_info.sType      = VK_STRUCTURE_TYPE_MEMORY_GET_REMOTE_ADDRESS_INFO_NV;
     memory_get_remote_address_info.pNext      = pNext;
     memory_get_remote_address_info.memory     = memory;
     memory_get_remote_address_info.handleType = handleType;
 
-    function = (PFN_vkGetMemoryRemoteAddressNV)cvkGetDeviceProcAddr(device, "vkGetMemoryRemoteAddressNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetMemoryRemoteAddressNV);
     CVK_CHECK(function(device, &memory_get_remote_address_info, pAddress));
 }
 void cvkGetMicromapBuildSizes(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const VkMicromapBuildInfoEXT* pBuildInfo, void* pNext, VkMicromapBuildSizesInfoEXT* pSizeInfo)
 {
-    VkMicromapBuildSizesInfoEXT    size_info;
-    PFN_vkGetMicromapBuildSizesEXT function;
+    VkMicromapBuildSizesInfoEXT          size_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetMicromapBuildSizesEXT       function;
 
     size_info.sType = VK_STRUCTURE_TYPE_MICROMAP_BUILD_SIZES_INFO_EXT;
     size_info.pNext = pNext;
 
-    function = (PFN_vkGetMicromapBuildSizesEXT)cvkGetDeviceProcAddr(device, "vkGetMicromapBuildSizesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetMicromapBuildSizesEXT);
     function(device, buildType, pBuildInfo, &size_info);
     (*pSizeInfo) = size_info;
 }
@@ -75482,6 +75833,7 @@ void cvkGetPartitionedAccelerationStructuresBuildSizesNV(VkDevice               
 {
     VkPartitionedAccelerationStructureInstancesInputNV     info;
     VkAccelerationStructureBuildSizesInfoKHR               size_info;
+    static CVK_THREAD_LOCAL cvkCallCache                   call_cache;
     PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV function;
 
     info.sType                             = VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCES_INPUT_NV;
@@ -75495,7 +75847,7 @@ void cvkGetPartitionedAccelerationStructuresBuildSizesNV(VkDevice               
     size_info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
     size_info.pNext = pSizeInfoNext;
 
-    function = (PFN_vkGetPartitionedAccelerationStructuresBuildSizesNV)cvkGetDeviceProcAddr(device, "vkGetPartitionedAccelerationStructuresBuildSizesNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPartitionedAccelerationStructuresBuildSizesNV);
     function(device, &info, &size_info);
     (*pSizeInfo) = size_info;
 }
@@ -75505,13 +75857,14 @@ VkResult cvkGetPastPresentationTiming(VkDevice                               dev
                                       VkPastPresentationTimingPropertiesEXT* pPastPresentationTimingProperties)
 {
     VkPastPresentationTimingPropertiesEXT past_presentation_timing_properties;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkGetPastPresentationTimingEXT    function;
     VkResult                              result;
 
     past_presentation_timing_properties.sType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_PROPERTIES_EXT;
     past_presentation_timing_properties.pNext = pNext;
 
-    function = (PFN_vkGetPastPresentationTimingEXT)cvkGetDeviceProcAddr(device, "vkGetPastPresentationTimingEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPastPresentationTimingEXT);
     result   = function(device, pPastPresentationTimingInfo, &past_presentation_timing_properties);
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     if (0 <= result)
@@ -75522,10 +75875,11 @@ VkResult cvkGetPastPresentationTiming(VkDevice                               dev
 }
 uint32_t cvkGetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkPastPresentationTimingGOOGLE pPresentationTimings[CVK_MAX_PRESENTATION_TIMINGS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkGetPastPresentationTimingGOOGLE function;
     uint32_t                              presentation_timing_count = 0;
 
-    function = (PFN_vkGetPastPresentationTimingGOOGLE)cvkGetDeviceProcAddr(device, "vkGetPastPresentationTimingGOOGLE");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPastPresentationTimingGOOGLE);
     CVK_CHECK(function(device, swapchain, &presentation_timing_count, NULL));
     CVK_ASSERT(CVK_MAX_PRESENTATION_TIMINGS >= presentation_timing_count);
     CVK_CHECK(function(device, swapchain, &presentation_timing_count, pPresentationTimings));
@@ -75533,17 +75887,19 @@ uint32_t cvkGetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swap
 }
 void cvkGetPerformanceParameterINTEL(VkDevice device, VkPerformanceParameterTypeINTEL parameter, VkPerformanceValueINTEL* pValue)
 {
-    PFN_vkGetPerformanceParameterINTEL function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetPerformanceParameterINTEL   function;
 
-    function = (PFN_vkGetPerformanceParameterINTEL)cvkGetDeviceProcAddr(device, "vkGetPerformanceParameterINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPerformanceParameterINTEL);
     CVK_CHECK(function(device, parameter, pValue));
 }
 uint32_t cvkGetPhysicalDeviceCalibrateableTimeDomains(VkInstance instance, VkPhysicalDevice physicalDevice, VkTimeDomainKHR pTimeDomains[CVK_MAX_TIME_DOMAINS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache               call_cache;
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR function;
     uint32_t                                           time_domain_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCalibrateableTimeDomainsKHR);
     CVK_CHECK(function(physicalDevice, &time_domain_count, NULL));
     CVK_ASSERT(CVK_MAX_TIME_DOMAINS >= time_domain_count);
     CVK_CHECK(function(physicalDevice, &time_domain_count, pTimeDomains));
@@ -75553,10 +75909,11 @@ uint32_t cvkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(VkI
                                                                              VkPhysicalDevice                                  physicalDevice,
                                                                              VkCooperativeMatrixFlexibleDimensionsPropertiesNV pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                                   call_cache;
     PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV function;
     uint32_t                                                               property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV);
     CVK_CHECK(function(physicalDevice, &property_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
     {
@@ -75575,10 +75932,11 @@ uint32_t cvkGetPhysicalDeviceCooperativeMatrixProperties2(VkInstance            
                                                           const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
                                                           VkCooperativeMatrixProperties2EXT                pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                   call_cache;
     PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT function;
     uint32_t                                               property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCooperativeMatrixProperties2EXT)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixProperties2EXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCooperativeMatrixProperties2EXT);
     CVK_CHECK(function(physicalDevice, pCooperativeMatrixInfo, &property_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
     {
@@ -75594,10 +75952,11 @@ uint32_t cvkGetPhysicalDeviceCooperativeMatrixProperties2(VkInstance            
 }
 uint32_t cvkGetPhysicalDeviceCooperativeMatrixProperties(VkInstance instance, VkPhysicalDevice physicalDevice, VkCooperativeMatrixPropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                  call_cache;
     PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR function;
     uint32_t                                              property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR);
     CVK_CHECK(function(physicalDevice, &property_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
     {
@@ -75613,10 +75972,11 @@ uint32_t cvkGetPhysicalDeviceCooperativeMatrixProperties(VkInstance instance, Vk
 }
 uint32_t cvkGetPhysicalDeviceCooperativeMatrixPropertiesNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkCooperativeMatrixPropertiesNV pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                 call_cache;
     PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV function;
     uint32_t                                             property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCooperativeMatrixPropertiesNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeMatrixPropertiesNV");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCooperativeMatrixPropertiesNV);
     CVK_CHECK(function(physicalDevice, &property_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
     {
@@ -75632,10 +75992,11 @@ uint32_t cvkGetPhysicalDeviceCooperativeMatrixPropertiesNV(VkInstance instance, 
 }
 uint32_t cvkGetPhysicalDeviceCooperativeVectorPropertiesNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkCooperativeVectorPropertiesNV pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                 call_cache;
     PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV function;
     uint32_t                                             property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCooperativeVectorPropertiesNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCooperativeVectorPropertiesNV");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCooperativeVectorPropertiesNV);
     CVK_CHECK(function(physicalDevice, &property_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
     {
@@ -75651,9 +76012,10 @@ uint32_t cvkGetPhysicalDeviceCooperativeVectorPropertiesNV(VkInstance instance, 
 }
 VkDeviceSize cvkGetPhysicalDeviceDescriptorSize(VkInstance instance, VkPhysicalDevice physicalDevice, VkDescriptorType descriptorType)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkGetPhysicalDeviceDescriptorSizeEXT function;
 
-    function = (PFN_vkGetPhysicalDeviceDescriptorSizeEXT)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceDescriptorSizeEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceDescriptorSizeEXT);
     return function(physicalDevice, descriptorType);
 }
 uint32_t cvkGetPhysicalDeviceDisplayPlaneProperties2(VkPhysicalDevice physicalDevice, VkDisplayPlaneProperties2KHR pProperties[CVK_MAX_PROPERTIES])
@@ -75742,10 +76104,11 @@ VkResult cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkInstance         
                                                              VkExternalMemoryHandleTypeFlagsNV  externalHandleType,
                                                              VkExternalImageFormatPropertiesNV* pExternalImageFormatProperties)
 {
+    static CVK_THREAD_LOCAL cvkCallCache                   call_cache;
     PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV function;
     VkResult                                               result;
 
-    function = (PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalImageFormatPropertiesNV");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceExternalImageFormatPropertiesNV);
     result   = function(physicalDevice, format, type, tiling, usage, flags, externalHandleType, pExternalImageFormatProperties);
     CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
     return result;
@@ -75773,6 +76136,7 @@ void cvkGetPhysicalDeviceExternalTensorPropertiesARM(VkInstance                 
 {
     VkPhysicalDeviceExternalTensorInfoARM              external_tensor_info;
     VkExternalTensorPropertiesARM                      external_tensor_properties;
+    static CVK_THREAD_LOCAL cvkCallCache               call_cache;
     PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM function;
 
     external_tensor_info.sType        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_TENSOR_INFO_ARM;
@@ -75784,7 +76148,7 @@ void cvkGetPhysicalDeviceExternalTensorPropertiesARM(VkInstance                 
     external_tensor_properties.sType = VK_STRUCTURE_TYPE_EXTERNAL_TENSOR_PROPERTIES_ARM;
     external_tensor_properties.pNext = pExternalTensorPropertiesNext;
 
-    function = (PFN_vkGetPhysicalDeviceExternalTensorPropertiesARM)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceExternalTensorPropertiesARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceExternalTensorPropertiesARM);
     function(physicalDevice, &external_tensor_info, &external_tensor_properties);
     (*pExternalTensorProperties) = external_tensor_properties;
 }
@@ -75816,10 +76180,11 @@ void cvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFo
 }
 uint32_t cvkGetPhysicalDeviceFragmentShadingRates(VkInstance instance, VkPhysicalDevice physicalDevice, VkPhysicalDeviceFragmentShadingRateKHR pFragmentShadingRates[CVK_MAX_FRAGMENT_SHADING_RATES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR function;
     uint32_t                                       fragment_shading_rate_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceFragmentShadingRatesKHR);
     CVK_CHECK(function(physicalDevice, &fragment_shading_rate_count, NULL));
     CVK_ASSERT(CVK_MAX_FRAGMENT_SHADING_RATES >= fragment_shading_rate_count);
     {
@@ -75883,12 +76248,13 @@ void cvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, void
 void cvkGetPhysicalDeviceMultisampleProperties(VkInstance instance, VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, void* pNext, VkMultisamplePropertiesEXT* pMultisampleProperties)
 {
     VkMultisamplePropertiesEXT                      multisample_properties;
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT function;
 
     multisample_properties.sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT;
     multisample_properties.pNext = pNext;
 
-    function = (PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceMultisamplePropertiesEXT);
     function(physicalDevice, samples, &multisample_properties);
     (*pMultisampleProperties) = multisample_properties;
 }
@@ -75899,6 +76265,7 @@ uint32_t cvkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkInstance               
                                                        VkOpticalFlowImageFormatPropertiesNV pImageFormatProperties[CVK_MAX_IMAGE_FORMAT_PROPERTIES])
 {
     VkOpticalFlowImageFormatInfoNV                   optical_flow_image_format_info;
+    static CVK_THREAD_LOCAL cvkCallCache             call_cache;
     PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV function;
     uint32_t                                         format_count = 0;
 
@@ -75906,7 +76273,7 @@ uint32_t cvkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkInstance               
     optical_flow_image_format_info.pNext = pNext;
     optical_flow_image_format_info.usage = usage;
 
-    function = (PFN_vkGetPhysicalDeviceOpticalFlowImageFormatsNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceOpticalFlowImageFormatsNV");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceOpticalFlowImageFormatsNV);
     CVK_CHECK(function(physicalDevice, &optical_flow_image_format_info, &format_count, NULL));
     CVK_ASSERT(CVK_MAX_IMAGE_FORMAT_PROPERTIES >= format_count);
     {
@@ -75951,6 +76318,7 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(VkInst
                                                                           VkBaseOutStructure*                          pProperties)
 {
     VkQueueFamilyDataGraphPropertiesARM                                     queue_family_data_graph_properties;
+    static CVK_THREAD_LOCAL cvkCallCache                                    call_cache;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM function;
 
     queue_family_data_graph_properties.sType     = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES_ARM;
@@ -75958,7 +76326,7 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(VkInst
     queue_family_data_graph_properties.engine    = engine;
     queue_family_data_graph_properties.operation = operation;
 
-    function = (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM);
     CVK_CHECK(function(physicalDevice, queueFamilyIndex, &queue_family_data_graph_properties, pProperties));
 }
 uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkInstance                                     instance,
@@ -75973,6 +76341,7 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkIn
 {
     VkQueueFamilyDataGraphPropertiesARM                                   queue_family_data_graph_properties;
     VkDataGraphOpticalFlowImageFormatInfoARM                              optical_flow_image_format_info;
+    static CVK_THREAD_LOCAL cvkCallCache                                  call_cache;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM function;
     uint32_t                                                              format_count = 0;
 
@@ -75985,7 +76354,7 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkIn
     optical_flow_image_format_info.pNext = pOpticalFlowImageFormatInfoNext;
     optical_flow_image_format_info.usage = usage;
 
-    function = (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM);
     CVK_CHECK(function(physicalDevice, queueFamilyIndex, &queue_family_data_graph_properties, &optical_flow_image_format_info, &format_count, NULL));
     CVK_ASSERT(CVK_MAX_IMAGE_FORMAT_PROPERTIES >= format_count);
     {
@@ -76009,6 +76378,7 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(VkIns
 {
     VkPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM              queue_family_data_graph_processing_engine_info;
     VkQueueFamilyDataGraphProcessingEnginePropertiesARM                      queue_family_data_graph_processing_engine_properties;
+    static CVK_THREAD_LOCAL cvkCallCache                                     call_cache;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM function;
 
     queue_family_data_graph_processing_engine_info.sType            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_INFO_ARM;
@@ -76019,7 +76389,7 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(VkIns
     queue_family_data_graph_processing_engine_properties.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_PROPERTIES_ARM;
     queue_family_data_graph_processing_engine_properties.pNext = pQueueFamilyDataGraphProcessingEnginePropertiesNext;
 
-    function = (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM);
     function(physicalDevice, &queue_family_data_graph_processing_engine_info, &queue_family_data_graph_processing_engine_properties);
     (*pQueueFamilyDataGraphProcessingEngineProperties) = queue_family_data_graph_processing_engine_properties;
 }
@@ -76028,10 +76398,11 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(VkInstance       
                                                                uint32_t                            queueFamilyIndex,
                                                                VkQueueFamilyDataGraphPropertiesARM pQueueFamilyDataGraphProperties[CVK_MAX_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                     call_cache;
     PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM function;
     uint32_t                                                 queue_family_data_graph_property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM);
     CVK_CHECK(function(physicalDevice, queueFamilyIndex, &queue_family_data_graph_property_count, NULL));
     CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES >= queue_family_data_graph_property_count);
     {
@@ -76054,6 +76425,7 @@ void cvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkInstance       inst
                                                            uint32_t*        pNumPasses)
 {
     VkQueryPoolPerformanceCreateInfoKHR                         performance_query_create_info;
+    static CVK_THREAD_LOCAL cvkCallCache                        call_cache;
     PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR function;
 
     performance_query_create_info.sType             = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR;
@@ -76062,7 +76434,7 @@ void cvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkInstance       inst
     performance_query_create_info.counterIndexCount = counterIndexCount;
     performance_query_create_info.pCounterIndices   = pCounterIndices;
 
-    function = (PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR);
     function(physicalDevice, &performance_query_create_info, pNumPasses);
 }
 uint32_t cvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyProperties pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
@@ -76129,10 +76501,11 @@ uint32_t cvkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkIn
                                                                             VkPhysicalDevice                       physicalDevice,
                                                                             VkFramebufferMixedSamplesCombinationNV pCombinations[CVK_MAX_COMBINATIONS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                                  call_cache;
     PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV function;
     uint32_t                                                              combination_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV);
     CVK_CHECK(function(physicalDevice, &combination_count, NULL));
     CVK_ASSERT(CVK_MAX_COMBINATIONS >= combination_count);
     {
@@ -76149,13 +76522,14 @@ uint32_t cvkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkIn
 VkResult cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkInstance instance, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities)
 {
     VkSurfaceCapabilities2EXT                      surface_capabilities;
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT function;
     VkResult                                       result;
 
     surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
     surface_capabilities.pNext = pNext;
 
-    function = (PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceSurfaceCapabilities2EXT);
     result   = function(physicalDevice, surface, &surface_capabilities);
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     if (0 <= result)
@@ -76250,13 +76624,14 @@ uint32_t cvkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, VkP
 VkResult cvkGetPhysicalDeviceVideoCapabilities(VkInstance instance, VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities)
 {
     VkVideoCapabilitiesKHR                      capabilities;
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR function;
     VkResult                                    result;
 
     capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
     capabilities.pNext = pNext;
 
-    function = (PFN_vkGetPhysicalDeviceVideoCapabilitiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoCapabilitiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoCapabilitiesKHR);
     result   = function(physicalDevice, pVideoProfile, &capabilities);
     CVK_ASSERT((0 <= result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) ||
                (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
@@ -76273,13 +76648,14 @@ VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkInstance       
                                                                VkVideoEncodeQualityLevelPropertiesKHR*               pQualityLevelProperties)
 {
     VkVideoEncodeQualityLevelPropertiesKHR                      quality_level_properties;
+    static CVK_THREAD_LOCAL cvkCallCache                        call_cache;
     PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR function;
     VkResult                                                    result;
 
     quality_level_properties.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUALITY_LEVEL_PROPERTIES_KHR;
     quality_level_properties.pNext = pNext;
 
-    function = (PFN_vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR);
     result   = function(physicalDevice, pQualityLevelInfo, &quality_level_properties);
     CVK_ASSERT((0 <= result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) ||
                (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
@@ -76294,10 +76670,11 @@ uint32_t cvkGetPhysicalDeviceVideoFormatProperties(VkInstance                   
                                                    const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
                                                    VkVideoFormatPropertiesKHR                pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR function;
     uint32_t                                        video_format_property_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoFormatPropertiesKHR);
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
     CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
     {
@@ -76318,13 +76695,14 @@ void cvkGetPipelineBinaryData(VkDevice                           device,
                               size_t*                            pPipelineBinaryDataSize,
                               void*                              pPipelineBinaryData)
 {
-    VkPipelineBinaryKeyKHR         pipeline_binary_key;
-    PFN_vkGetPipelineBinaryDataKHR function;
+    VkPipelineBinaryKeyKHR               pipeline_binary_key;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetPipelineBinaryDataKHR       function;
 
     pipeline_binary_key.sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR;
     pipeline_binary_key.pNext = pNext;
 
-    function = (PFN_vkGetPipelineBinaryDataKHR)cvkGetDeviceProcAddr(device, "vkGetPipelineBinaryDataKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineBinaryDataKHR);
     CVK_CHECK(function(device, pInfo, &pipeline_binary_key, pPipelineBinaryDataSize, pPipelineBinaryData));
     (*pPipelineBinaryKey) = pipeline_binary_key;
 }
@@ -76340,10 +76718,11 @@ uint32_t cvkGetPipelineExecutableInternalRepresentations(VkDevice               
                                                          const VkPipelineExecutableInfoKHR*            pExecutableInfo,
                                                          VkPipelineExecutableInternalRepresentationKHR pInternalRepresentations[CVK_MAX_INTERNAL_REPRESENTATIONS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache                  call_cache;
     PFN_vkGetPipelineExecutableInternalRepresentationsKHR function;
     uint32_t                                              internal_representation_count = 0;
 
-    function = (PFN_vkGetPipelineExecutableInternalRepresentationsKHR)cvkGetDeviceProcAddr(device, "vkGetPipelineExecutableInternalRepresentationsKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineExecutableInternalRepresentationsKHR);
     CVK_CHECK(function(device, pExecutableInfo, &internal_representation_count, NULL));
     CVK_ASSERT(CVK_MAX_INTERNAL_REPRESENTATIONS >= internal_representation_count);
     {
@@ -76359,10 +76738,11 @@ uint32_t cvkGetPipelineExecutableInternalRepresentations(VkDevice               
 }
 uint32_t cvkGetPipelineExecutableProperties(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, VkPipelineExecutablePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkGetPipelineExecutablePropertiesKHR function;
     uint32_t                                 executable_count = 0;
 
-    function = (PFN_vkGetPipelineExecutablePropertiesKHR)cvkGetDeviceProcAddr(device, "vkGetPipelineExecutablePropertiesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineExecutablePropertiesKHR);
     CVK_CHECK(function(device, pPipelineInfo, &executable_count, NULL));
     CVK_ASSERT(CVK_MAX_PROPERTIES >= executable_count);
     {
@@ -76378,10 +76758,11 @@ uint32_t cvkGetPipelineExecutableProperties(VkDevice device, const VkPipelineInf
 }
 uint32_t cvkGetPipelineExecutableStatistics(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, VkPipelineExecutableStatisticKHR pStatistics[CVK_MAX_STATISTICS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkGetPipelineExecutableStatisticsKHR function;
     uint32_t                                 statistic_count = 0;
 
-    function = (PFN_vkGetPipelineExecutableStatisticsKHR)cvkGetDeviceProcAddr(device, "vkGetPipelineExecutableStatisticsKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineExecutableStatisticsKHR);
     CVK_CHECK(function(device, pExecutableInfo, &statistic_count, NULL));
     CVK_ASSERT(CVK_MAX_STATISTICS >= statistic_count);
     {
@@ -76398,6 +76779,7 @@ uint32_t cvkGetPipelineExecutableStatistics(VkDevice device, const VkPipelineExe
 VkDeviceAddress cvkGetPipelineIndirectDeviceAddressNV(VkDevice device, const void* pNext, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 {
     VkPipelineIndirectDeviceAddressInfoNV    info;
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkGetPipelineIndirectDeviceAddressNV function;
 
     info.sType             = VK_STRUCTURE_TYPE_PIPELINE_INDIRECT_DEVICE_ADDRESS_INFO_NV;
@@ -76405,7 +76787,7 @@ VkDeviceAddress cvkGetPipelineIndirectDeviceAddressNV(VkDevice device, const voi
     info.pipelineBindPoint = pipelineBindPoint;
     info.pipeline          = pipeline;
 
-    function = (PFN_vkGetPipelineIndirectDeviceAddressNV)cvkGetDeviceProcAddr(device, "vkGetPipelineIndirectDeviceAddressNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineIndirectDeviceAddressNV);
     return function(device, &info);
 }
 void cvkGetPipelineIndirectMemoryRequirementsNV(VkDevice                        device,
@@ -76420,6 +76802,7 @@ void cvkGetPipelineIndirectMemoryRequirementsNV(VkDevice                        
 {
     VkComputePipelineCreateInfo                   create_info;
     VkMemoryRequirements2                         memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache          call_cache;
     PFN_vkGetPipelineIndirectMemoryRequirementsNV function;
 
     create_info.sType              = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
@@ -76433,15 +76816,16 @@ void cvkGetPipelineIndirectMemoryRequirementsNV(VkDevice                        
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pMemoryRequirementsNext;
 
-    function = (PFN_vkGetPipelineIndirectMemoryRequirementsNV)cvkGetDeviceProcAddr(device, "vkGetPipelineIndirectMemoryRequirementsNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineIndirectMemoryRequirementsNV);
     function(device, &create_info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
 void cvkGetPipelineKey(VkDevice device, void* pPipelineCreateInfoNext, void* pPipelineKeyNext, VkPipelineBinaryKeyKHR* pPipelineKey)
 {
-    VkPipelineCreateInfoKHR pipeline_create_info;
-    VkPipelineBinaryKeyKHR  pipeline_key;
-    PFN_vkGetPipelineKeyKHR function;
+    VkPipelineCreateInfoKHR              pipeline_create_info;
+    VkPipelineBinaryKeyKHR               pipeline_key;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetPipelineKeyKHR              function;
 
     pipeline_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_INFO_KHR;
     pipeline_create_info.pNext = pPipelineCreateInfoNext;
@@ -76449,20 +76833,21 @@ void cvkGetPipelineKey(VkDevice device, void* pPipelineCreateInfoNext, void* pPi
     pipeline_key.sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR;
     pipeline_key.pNext = pPipelineKeyNext;
 
-    function = (PFN_vkGetPipelineKeyKHR)cvkGetDeviceProcAddr(device, "vkGetPipelineKeyKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelineKeyKHR);
     CVK_CHECK(function(device, &pipeline_create_info, &pipeline_key));
     (*pPipelineKey) = pipeline_key;
 }
 void cvkGetPipelineProperties(VkDevice device, const void* pNext, VkPipeline pipeline, VkBaseOutStructure* pPipelineProperties)
 {
-    VkPipelineInfoKHR              pipeline_info;
-    PFN_vkGetPipelinePropertiesEXT function;
+    VkPipelineInfoKHR                    pipeline_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetPipelinePropertiesEXT       function;
 
     pipeline_info.sType    = VK_STRUCTURE_TYPE_PIPELINE_INFO_KHR;
     pipeline_info.pNext    = pNext;
     pipeline_info.pipeline = pipeline;
 
-    function = (PFN_vkGetPipelinePropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetPipelinePropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetPipelinePropertiesEXT);
     CVK_CHECK(function(device, &pipeline_info, pPipelineProperties));
 }
 void cvkGetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t* pData)
@@ -76479,10 +76864,11 @@ VkResult cvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t
 }
 uint32_t cvkGetQueueCheckpointData2NV(VkDevice device, VkQueue queue, VkCheckpointData2NV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
 {
-    PFN_vkGetQueueCheckpointData2NV function;
-    uint32_t                        checkpoint_data_count = 0;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetQueueCheckpointData2NV      function;
+    uint32_t                             checkpoint_data_count = 0;
 
-    function = (PFN_vkGetQueueCheckpointData2NV)cvkGetDeviceProcAddr(device, "vkGetQueueCheckpointData2NV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetQueueCheckpointData2NV);
     function(queue, &checkpoint_data_count, NULL);
     CVK_ASSERT(CVK_MAX_CHECKPOINT_DATA >= checkpoint_data_count);
     {
@@ -76498,10 +76884,11 @@ uint32_t cvkGetQueueCheckpointData2NV(VkDevice device, VkQueue queue, VkCheckpoi
 }
 uint32_t cvkGetQueueCheckpointDataNV(VkDevice device, VkQueue queue, VkCheckpointDataNV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
 {
-    PFN_vkGetQueueCheckpointDataNV function;
-    uint32_t                       checkpoint_data_count = 0;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetQueueCheckpointDataNV       function;
+    uint32_t                             checkpoint_data_count = 0;
 
-    function = (PFN_vkGetQueueCheckpointDataNV)cvkGetDeviceProcAddr(device, "vkGetQueueCheckpointDataNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetQueueCheckpointDataNV);
     function(queue, &checkpoint_data_count, NULL);
     CVK_ASSERT(CVK_MAX_CHECKPOINT_DATA >= checkpoint_data_count);
     {
@@ -76517,31 +76904,35 @@ uint32_t cvkGetQueueCheckpointDataNV(VkDevice device, VkQueue queue, VkCheckpoin
 }
 void cvkGetRayTracingCaptureReplayShaderGroupHandles(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData)
 {
+    static CVK_THREAD_LOCAL cvkCallCache                  call_cache;
     PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR function;
 
-    function = (PFN_vkGetRayTracingCaptureReplayShaderGroupHandlesKHR)cvkGetDeviceProcAddr(device, "vkGetRayTracingCaptureReplayShaderGroupHandlesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetRayTracingCaptureReplayShaderGroupHandlesKHR);
     CVK_CHECK(function(device, pipeline, firstGroup, groupCount, dataSize, pData));
 }
 void cvkGetRayTracingShaderGroupHandles(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData)
 {
+    static CVK_THREAD_LOCAL cvkCallCache     call_cache;
     PFN_vkGetRayTracingShaderGroupHandlesKHR function;
 
-    function = (PFN_vkGetRayTracingShaderGroupHandlesKHR)cvkGetDeviceProcAddr(device, "vkGetRayTracingShaderGroupHandlesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetRayTracingShaderGroupHandlesKHR);
     CVK_CHECK(function(device, pipeline, firstGroup, groupCount, dataSize, pData));
 }
 VkDeviceSize cvkGetRayTracingShaderGroupStackSize(VkDevice device, VkPipeline pipeline, uint32_t group, VkShaderGroupShaderKHR groupShader)
 {
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkGetRayTracingShaderGroupStackSizeKHR function;
 
-    function = (PFN_vkGetRayTracingShaderGroupStackSizeKHR)cvkGetDeviceProcAddr(device, "vkGetRayTracingShaderGroupStackSizeKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetRayTracingShaderGroupStackSizeKHR);
     return function(device, pipeline, group, groupShader);
 }
 VkResult cvkGetRefreshCycleDurationGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkRefreshCycleDurationGOOGLE* pDisplayTimingProperties)
 {
-    PFN_vkGetRefreshCycleDurationGOOGLE function;
-    VkResult                            result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetRefreshCycleDurationGOOGLE  function;
+    VkResult                             result;
 
-    function = (PFN_vkGetRefreshCycleDurationGOOGLE)cvkGetDeviceProcAddr(device, "vkGetRefreshCycleDurationGOOGLE");
+    function = CVK_CALL(&call_cache, Device, device, vkGetRefreshCycleDurationGOOGLE);
     result   = function(device, swapchain, pDisplayTimingProperties);
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     return result;
@@ -76573,13 +76964,14 @@ void cvkGetRenderingAreaGranularity(VkDevice        device,
 void cvkGetSamplerOpaqueCaptureDescriptorData(VkDevice device, const void* pNext, VkSampler sampler, void* pData)
 {
     VkSamplerCaptureDescriptorDataInfoEXT          info;
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT function;
 
     info.sType   = VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     info.pNext   = pNext;
     info.sampler = sampler;
 
-    function = (PFN_vkGetSamplerOpaqueCaptureDescriptorDataEXT)cvkGetDeviceProcAddr(device, "vkGetSamplerOpaqueCaptureDescriptorDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSamplerOpaqueCaptureDescriptorDataEXT);
     CVK_CHECK(function(device, &info, pData));
 }
 void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_t* pValue)
@@ -76588,33 +76980,36 @@ void cvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64_
 }
 void cvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd)
 {
-    VkSemaphoreGetFdInfoKHR get_fd_info;
-    PFN_vkGetSemaphoreFdKHR function;
+    VkSemaphoreGetFdInfoKHR              get_fd_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetSemaphoreFdKHR              function;
 
     get_fd_info.sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
     get_fd_info.pNext      = pNext;
     get_fd_info.semaphore  = semaphore;
     get_fd_info.handleType = handleType;
 
-    function = (PFN_vkGetSemaphoreFdKHR)cvkGetDeviceProcAddr(device, "vkGetSemaphoreFdKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSemaphoreFdKHR);
     CVK_CHECK(function(device, &get_fd_info, pFd));
 }
 VkResult cvkGetShaderBinaryData(VkDevice device, VkShaderEXT shader, size_t* pDataSize, void* pData)
 {
-    PFN_vkGetShaderBinaryDataEXT function;
-    VkResult                     result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetShaderBinaryDataEXT         function;
+    VkResult                             result;
 
-    function = (PFN_vkGetShaderBinaryDataEXT)cvkGetDeviceProcAddr(device, "vkGetShaderBinaryDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetShaderBinaryDataEXT);
     result   = function(device, shader, pDataSize, pData);
     CVK_ASSERT((0 <= result));
     return result;
 }
 VkResult cvkGetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkShaderStageFlagBits shaderStage, VkShaderInfoTypeAMD infoType, size_t* pInfoSize, void* pInfo)
 {
-    PFN_vkGetShaderInfoAMD function;
-    VkResult               result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetShaderInfoAMD               function;
+    VkResult                             result;
 
-    function = (PFN_vkGetShaderInfoAMD)cvkGetDeviceProcAddr(device, "vkGetShaderInfoAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkGetShaderInfoAMD);
     result   = function(device, pipeline, shaderStage, infoType, pInfoSize, pInfo);
     CVK_ASSERT((0 <= result));
     return result;
@@ -76625,10 +77020,11 @@ VkResult cvkGetShaderInstrumentationValuesARM(VkDevice                          
                                               void*                                 pMetricValues,
                                               VkShaderInstrumentationValuesFlagsARM flags)
 {
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkGetShaderInstrumentationValuesARM function;
     VkResult                                result;
 
-    function = (PFN_vkGetShaderInstrumentationValuesARM)cvkGetDeviceProcAddr(device, "vkGetShaderInstrumentationValuesARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetShaderInstrumentationValuesARM);
     result   = function(device, instrumentation, pMetricBlockCount, pMetricValues, flags);
     CVK_ASSERT((0 <= result));
     return result;
@@ -76643,6 +77039,7 @@ void cvkGetShaderModuleCreateInfoIdentifier(VkDevice                     device,
 {
     VkShaderModuleCreateInfo                     create_info;
     VkShaderModuleIdentifierEXT                  identifier;
+    static CVK_THREAD_LOCAL cvkCallCache         call_cache;
     PFN_vkGetShaderModuleCreateInfoIdentifierEXT function;
 
     create_info.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -76654,35 +77051,38 @@ void cvkGetShaderModuleCreateInfoIdentifier(VkDevice                     device,
     identifier.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_IDENTIFIER_EXT;
     identifier.pNext = pIdentifierNext;
 
-    function = (PFN_vkGetShaderModuleCreateInfoIdentifierEXT)cvkGetDeviceProcAddr(device, "vkGetShaderModuleCreateInfoIdentifierEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetShaderModuleCreateInfoIdentifierEXT);
     function(device, &create_info, &identifier);
     (*pIdentifier) = identifier;
 }
 void cvkGetShaderModuleIdentifier(VkDevice device, VkShaderModule shaderModule, void* pNext, VkShaderModuleIdentifierEXT* pIdentifier)
 {
-    VkShaderModuleIdentifierEXT        identifier;
-    PFN_vkGetShaderModuleIdentifierEXT function;
+    VkShaderModuleIdentifierEXT          identifier;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetShaderModuleIdentifierEXT   function;
 
     identifier.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_IDENTIFIER_EXT;
     identifier.pNext = pNext;
 
-    function = (PFN_vkGetShaderModuleIdentifierEXT)cvkGetDeviceProcAddr(device, "vkGetShaderModuleIdentifierEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetShaderModuleIdentifierEXT);
     function(device, shaderModule, &identifier);
     (*pIdentifier) = identifier;
 }
 void cvkGetSleepStatusLegacyNV(VkDevice device, VkBool32* pLowLatencyMode)
 {
-    PFN_vkGetSleepStatusLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetSleepStatusLegacyNV         function;
 
-    function = (PFN_vkGetSleepStatusLegacyNV)cvkGetDeviceProcAddr(device, "vkGetSleepStatusLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSleepStatusLegacyNV);
     function(device, pLowLatencyMode);
 }
 VkResult cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue)
 {
-    PFN_vkGetSwapchainCounterEXT function;
-    VkResult                     result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetSwapchainCounterEXT         function;
+    VkResult                             result;
 
-    function = (PFN_vkGetSwapchainCounterEXT)cvkGetDeviceProcAddr(device, "vkGetSwapchainCounterEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSwapchainCounterEXT);
     result   = function(device, swapchain, counter, pCounterValue);
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result));
     return result;
@@ -76698,10 +77098,11 @@ uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImag
 }
 VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
 {
-    PFN_vkGetSwapchainStatusKHR function;
-    VkResult                    result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetSwapchainStatusKHR          function;
+    VkResult                             result;
 
-    function = (PFN_vkGetSwapchainStatusKHR)cvkGetDeviceProcAddr(device, "vkGetSwapchainStatusKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSwapchainStatusKHR);
     result   = function(device, swapchain);
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
@@ -76709,13 +77110,14 @@ VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
 VkResult cvkGetSwapchainTimeDomainProperties(VkDevice device, VkSwapchainKHR swapchain, void* pNext, VkSwapchainTimeDomainPropertiesEXT* pSwapchainTimeDomainProperties, uint64_t* pTimeDomainsCounter)
 {
     VkSwapchainTimeDomainPropertiesEXT        swapchain_time_domain_properties;
+    static CVK_THREAD_LOCAL cvkCallCache      call_cache;
     PFN_vkGetSwapchainTimeDomainPropertiesEXT function;
     VkResult                                  result;
 
     swapchain_time_domain_properties.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_TIME_DOMAIN_PROPERTIES_EXT;
     swapchain_time_domain_properties.pNext = pNext;
 
-    function = (PFN_vkGetSwapchainTimeDomainPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetSwapchainTimeDomainPropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSwapchainTimeDomainPropertiesEXT);
     result   = function(device, swapchain, &swapchain_time_domain_properties, pTimeDomainsCounter);
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     if (0 <= result)
@@ -76731,13 +77133,14 @@ VkResult cvkGetSwapchainTimingProperties(VkDevice                        device,
                                          uint64_t*                       pSwapchainTimingPropertiesCounter)
 {
     VkSwapchainTimingPropertiesEXT        swapchain_timing_properties;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkGetSwapchainTimingPropertiesEXT function;
     VkResult                              result;
 
     swapchain_timing_properties.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_TIMING_PROPERTIES_EXT;
     swapchain_timing_properties.pNext = pNext;
 
-    function = (PFN_vkGetSwapchainTimingPropertiesEXT)cvkGetDeviceProcAddr(device, "vkGetSwapchainTimingPropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetSwapchainTimingPropertiesEXT);
     result   = function(device, swapchain, &swapchain_timing_properties, pSwapchainTimingPropertiesCounter);
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     if (0 <= result)
@@ -76750,6 +77153,7 @@ void cvkGetTensorMemoryRequirementsARM(VkDevice device, const void* pInfoNext, V
 {
     VkTensorMemoryRequirementsInfoARM    info;
     VkMemoryRequirements2                memory_requirements;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkGetTensorMemoryRequirementsARM function;
 
     info.sType  = VK_STRUCTURE_TYPE_TENSOR_MEMORY_REQUIREMENTS_INFO_ARM;
@@ -76759,57 +77163,62 @@ void cvkGetTensorMemoryRequirementsARM(VkDevice device, const void* pInfoNext, V
     memory_requirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     memory_requirements.pNext = pMemoryRequirementsNext;
 
-    function = (PFN_vkGetTensorMemoryRequirementsARM)cvkGetDeviceProcAddr(device, "vkGetTensorMemoryRequirementsARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetTensorMemoryRequirementsARM);
     function(device, &info, &memory_requirements);
     (*pMemoryRequirements) = memory_requirements;
 }
 void cvkGetTensorOpaqueCaptureDataARM(VkDevice device, uint32_t tensorCount, const VkTensorARM* pTensors, VkHostAddressRangeEXT* pDatas)
 {
-    PFN_vkGetTensorOpaqueCaptureDataARM function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetTensorOpaqueCaptureDataARM  function;
 
-    function = (PFN_vkGetTensorOpaqueCaptureDataARM)cvkGetDeviceProcAddr(device, "vkGetTensorOpaqueCaptureDataARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetTensorOpaqueCaptureDataARM);
     CVK_CHECK(function(device, tensorCount, pTensors, pDatas));
 }
 void cvkGetTensorOpaqueCaptureDescriptorDataARM(VkDevice device, const void* pNext, VkTensorARM tensor, void* pData)
 {
     VkTensorCaptureDescriptorDataInfoARM          info;
+    static CVK_THREAD_LOCAL cvkCallCache          call_cache;
     PFN_vkGetTensorOpaqueCaptureDescriptorDataARM function;
 
     info.sType  = VK_STRUCTURE_TYPE_TENSOR_CAPTURE_DESCRIPTOR_DATA_INFO_ARM;
     info.pNext  = pNext;
     info.tensor = tensor;
 
-    function = (PFN_vkGetTensorOpaqueCaptureDescriptorDataARM)cvkGetDeviceProcAddr(device, "vkGetTensorOpaqueCaptureDescriptorDataARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetTensorOpaqueCaptureDescriptorDataARM);
     CVK_CHECK(function(device, &info, pData));
 }
 void cvkGetTensorViewOpaqueCaptureDescriptorDataARM(VkDevice device, const void* pNext, VkTensorViewARM tensorView, void* pData)
 {
     VkTensorViewCaptureDescriptorDataInfoARM          info;
+    static CVK_THREAD_LOCAL cvkCallCache              call_cache;
     PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM function;
 
     info.sType      = VK_STRUCTURE_TYPE_TENSOR_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_ARM;
     info.pNext      = pNext;
     info.tensorView = tensorView;
 
-    function = (PFN_vkGetTensorViewOpaqueCaptureDescriptorDataARM)cvkGetDeviceProcAddr(device, "vkGetTensorViewOpaqueCaptureDescriptorDataARM");
+    function = CVK_CALL(&call_cache, Device, device, vkGetTensorViewOpaqueCaptureDescriptorDataARM);
     CVK_CHECK(function(device, &info, pData));
 }
 VkResult cvkGetValidationCacheData(VkDevice device, VkValidationCacheEXT validationCache, size_t* pDataSize, void* pData)
 {
-    PFN_vkGetValidationCacheDataEXT function;
-    VkResult                        result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkGetValidationCacheDataEXT      function;
+    VkResult                             result;
 
-    function = (PFN_vkGetValidationCacheDataEXT)cvkGetDeviceProcAddr(device, "vkGetValidationCacheDataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkGetValidationCacheDataEXT);
     result   = function(device, validationCache, pDataSize, pData);
     CVK_ASSERT((0 <= result));
     return result;
 }
 uint32_t cvkGetVideoSessionMemoryRequirements(VkDevice device, VkVideoSessionKHR videoSession, VkVideoSessionMemoryRequirementsKHR pMemoryRequirements[CVK_MAX_MEMORY_REQUIREMENTS])
 {
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkGetVideoSessionMemoryRequirementsKHR function;
     uint32_t                                   memory_requirements_count = 0;
 
-    function = (PFN_vkGetVideoSessionMemoryRequirementsKHR)cvkGetDeviceProcAddr(device, "vkGetVideoSessionMemoryRequirementsKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkGetVideoSessionMemoryRequirementsKHR);
     CVK_CHECK(function(device, videoSession, &memory_requirements_count, NULL));
     CVK_ASSERT(CVK_MAX_MEMORY_REQUIREMENTS >= memory_requirements_count);
     {
@@ -76825,8 +77234,9 @@ uint32_t cvkGetVideoSessionMemoryRequirements(VkDevice device, VkVideoSessionKHR
 }
 void cvkImportFenceFd(VkDevice device, const void* pNext, VkFence fence, VkFenceImportFlags flags, VkExternalFenceHandleTypeFlagBits handleType, int fd)
 {
-    VkImportFenceFdInfoKHR import_fence_fd_info;
-    PFN_vkImportFenceFdKHR function;
+    VkImportFenceFdInfoKHR               import_fence_fd_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkImportFenceFdKHR               function;
 
     import_fence_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
     import_fence_fd_info.pNext      = pNext;
@@ -76835,13 +77245,14 @@ void cvkImportFenceFd(VkDevice device, const void* pNext, VkFence fence, VkFence
     import_fence_fd_info.handleType = handleType;
     import_fence_fd_info.fd         = fd;
 
-    function = (PFN_vkImportFenceFdKHR)cvkGetDeviceProcAddr(device, "vkImportFenceFdKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkImportFenceFdKHR);
     CVK_CHECK(function(device, &import_fence_fd_info));
 }
 void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
 {
-    VkImportSemaphoreFdInfoKHR import_semaphore_fd_info;
-    PFN_vkImportSemaphoreFdKHR function;
+    VkImportSemaphoreFdInfoKHR           import_semaphore_fd_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkImportSemaphoreFdKHR           function;
 
     import_semaphore_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
     import_semaphore_fd_info.pNext      = pNext;
@@ -76850,19 +77261,20 @@ void cvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaph
     import_semaphore_fd_info.handleType = handleType;
     import_semaphore_fd_info.fd         = fd;
 
-    function = (PFN_vkImportSemaphoreFdKHR)cvkGetDeviceProcAddr(device, "vkImportSemaphoreFdKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkImportSemaphoreFdKHR);
     CVK_CHECK(function(device, &import_semaphore_fd_info));
 }
 void cvkInitializePerformanceApiINTEL(VkDevice device, const void* pNext, void* pUserData)
 {
-    VkInitializePerformanceApiInfoINTEL initialize_info;
-    PFN_vkInitializePerformanceApiINTEL function;
+    VkInitializePerformanceApiInfoINTEL  initialize_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkInitializePerformanceApiINTEL  function;
 
     initialize_info.sType     = VK_STRUCTURE_TYPE_INITIALIZE_PERFORMANCE_API_INFO_INTEL;
     initialize_info.pNext     = pNext;
     initialize_info.pUserData = pUserData;
 
-    function = (PFN_vkInitializePerformanceApiINTEL)cvkGetDeviceProcAddr(device, "vkInitializePerformanceApiINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkInitializePerformanceApiINTEL);
     CVK_CHECK(function(device, &initialize_info));
 }
 void cvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
@@ -76871,22 +77283,24 @@ void cvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount,
 }
 void cvkLatencySleepLegacyNV(VkDevice device, VkSemaphore signalSemaphore, uint64_t value)
 {
-    PFN_vkLatencySleepLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkLatencySleepLegacyNV           function;
 
-    function = (PFN_vkLatencySleepLegacyNV)cvkGetDeviceProcAddr(device, "vkLatencySleepLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkLatencySleepLegacyNV);
     function(device, signalSemaphore, value);
 }
 void cvkLatencySleepNV(VkDevice device, VkSwapchainKHR swapchain, const void* pNext, VkSemaphore signalSemaphore, uint64_t value)
 {
-    VkLatencySleepInfoNV sleep_info;
-    PFN_vkLatencySleepNV function;
+    VkLatencySleepInfoNV                 sleep_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkLatencySleepNV                 function;
 
     sleep_info.sType           = VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV;
     sleep_info.pNext           = pNext;
     sleep_info.signalSemaphore = signalSemaphore;
     sleep_info.value           = value;
 
-    function = (PFN_vkLatencySleepNV)cvkGetDeviceProcAddr(device, "vkLatencySleepNV");
+    function = CVK_CALL(&call_cache, Device, device, vkLatencySleepNV);
     CVK_CHECK(function(device, swapchain, &sleep_info));
 }
 void cvkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData)
@@ -76911,22 +77325,24 @@ void cvkMergePipelineCaches(VkDevice device, VkPipelineCache dstCache, uint32_t 
 }
 void cvkMergeValidationCaches(VkDevice device, VkValidationCacheEXT dstCache, uint32_t srcCacheCount, const VkValidationCacheEXT* pSrcCaches)
 {
-    PFN_vkMergeValidationCachesEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkMergeValidationCachesEXT       function;
 
-    function = (PFN_vkMergeValidationCachesEXT)cvkGetDeviceProcAddr(device, "vkMergeValidationCachesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkMergeValidationCachesEXT);
     CVK_CHECK(function(device, dstCache, srcCacheCount, pSrcCaches));
 }
 void cvkQueueBeginDebugUtilsLabel(VkDevice device, VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT               label_info;
-    PFN_vkQueueBeginDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                 label_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkQueueBeginDebugUtilsLabelEXT   function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkQueueBeginDebugUtilsLabelEXT)cvkGetDeviceProcAddr(device, "vkQueueBeginDebugUtilsLabelEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueBeginDebugUtilsLabelEXT);
     function(queue, &label_info);
 }
 void cvkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSparseInfo* pBindInfo, VkFence fence)
@@ -76935,41 +77351,45 @@ void cvkQueueBindSparse(VkQueue queue, uint32_t bindInfoCount, const VkBindSpars
 }
 void cvkQueueEndDebugUtilsLabel(VkDevice device, VkQueue queue)
 {
-    PFN_vkQueueEndDebugUtilsLabelEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkQueueEndDebugUtilsLabelEXT     function;
 
-    function = (PFN_vkQueueEndDebugUtilsLabelEXT)cvkGetDeviceProcAddr(device, "vkQueueEndDebugUtilsLabelEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueEndDebugUtilsLabelEXT);
     function(queue);
 }
 void cvkQueueInsertDebugUtilsLabel(VkDevice device, VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT                label_info;
-    PFN_vkQueueInsertDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                 label_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkQueueInsertDebugUtilsLabelEXT  function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkQueueInsertDebugUtilsLabelEXT)cvkGetDeviceProcAddr(device, "vkQueueInsertDebugUtilsLabelEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueInsertDebugUtilsLabelEXT);
     function(queue, &label_info);
 }
 void cvkQueueNotifyOutOfBandLegacyNV(VkDevice device, VkQueue queue, uint32_t queueType)
 {
-    PFN_vkQueueNotifyOutOfBandLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkQueueNotifyOutOfBandLegacyNV   function;
 
-    function = (PFN_vkQueueNotifyOutOfBandLegacyNV)cvkGetDeviceProcAddr(device, "vkQueueNotifyOutOfBandLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueNotifyOutOfBandLegacyNV);
     function(queue, queueType);
 }
 void cvkQueueNotifyOutOfBandNV(VkDevice device, VkQueue queue, const void* pNext, VkOutOfBandQueueTypeNV queueType)
 {
-    VkOutOfBandQueueTypeInfoNV   queue_type_info;
-    PFN_vkQueueNotifyOutOfBandNV function;
+    VkOutOfBandQueueTypeInfoNV           queue_type_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkQueueNotifyOutOfBandNV         function;
 
     queue_type_info.sType     = VK_STRUCTURE_TYPE_OUT_OF_BAND_QUEUE_TYPE_INFO_NV;
     queue_type_info.pNext     = pNext;
     queue_type_info.queueType = queueType;
 
-    function = (PFN_vkQueueNotifyOutOfBandNV)cvkGetDeviceProcAddr(device, "vkQueueNotifyOutOfBandNV");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueNotifyOutOfBandNV);
     function(queue, &queue_type_info);
 }
 VkResult cvkQueuePresent(VkQueue               queue,
@@ -76998,22 +77418,24 @@ VkResult cvkQueuePresent(VkQueue               queue,
 }
 void cvkQueueSetPerfHintQCOM(VkDevice device, VkQueue queue, void* pNext, VkPerfHintTypeQCOM type, uint32_t scale)
 {
-    VkPerfHintInfoQCOM         perf_hint_info;
-    PFN_vkQueueSetPerfHintQCOM function;
+    VkPerfHintInfoQCOM                   perf_hint_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkQueueSetPerfHintQCOM           function;
 
     perf_hint_info.sType = VK_STRUCTURE_TYPE_PERF_HINT_INFO_QCOM;
     perf_hint_info.pNext = pNext;
     perf_hint_info.type  = type;
     perf_hint_info.scale = scale;
 
-    function = (PFN_vkQueueSetPerfHintQCOM)cvkGetDeviceProcAddr(device, "vkQueueSetPerfHintQCOM");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueSetPerfHintQCOM);
     CVK_CHECK(function(queue, &perf_hint_info));
 }
 void cvkQueueSetPerformanceConfigurationINTEL(VkDevice device, VkQueue queue, VkPerformanceConfigurationINTEL configuration)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkQueueSetPerformanceConfigurationINTEL function;
 
-    function = (PFN_vkQueueSetPerformanceConfigurationINTEL)cvkGetDeviceProcAddr(device, "vkQueueSetPerformanceConfigurationINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkQueueSetPerformanceConfigurationINTEL);
     CVK_CHECK(function(queue, configuration));
 }
 void cvkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence)
@@ -77031,6 +77453,7 @@ void cvkQueueWaitIdle(VkQueue queue)
 void cvkRegisterCustomBorderColor(VkDevice device, const void* pNext, VkClearColorValue customBorderColor, VkFormat format, VkBool32 requestIndex, uint32_t* pIndex)
 {
     VkSamplerCustomBorderColorCreateInfoEXT border_color;
+    static CVK_THREAD_LOCAL cvkCallCache    call_cache;
     PFN_vkRegisterCustomBorderColorEXT      function;
 
     border_color.sType             = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
@@ -77038,73 +77461,80 @@ void cvkRegisterCustomBorderColor(VkDevice device, const void* pNext, VkClearCol
     border_color.customBorderColor = customBorderColor;
     border_color.format            = format;
 
-    function = (PFN_vkRegisterCustomBorderColorEXT)cvkGetDeviceProcAddr(device, "vkRegisterCustomBorderColorEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkRegisterCustomBorderColorEXT);
     CVK_CHECK(function(device, &border_color, requestIndex, pIndex));
 }
 void cvkRegisterDeviceEvent(VkDevice device, const void* pNext, VkDeviceEventTypeEXT deviceEvent, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    VkDeviceEventInfoEXT         device_event_info;
-    PFN_vkRegisterDeviceEventEXT function;
+    VkDeviceEventInfoEXT                 device_event_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkRegisterDeviceEventEXT         function;
 
     device_event_info.sType       = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT;
     device_event_info.pNext       = pNext;
     device_event_info.deviceEvent = deviceEvent;
 
-    function = (PFN_vkRegisterDeviceEventEXT)cvkGetDeviceProcAddr(device, "vkRegisterDeviceEventEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkRegisterDeviceEventEXT);
     CVK_CHECK(function(device, &device_event_info, pAllocator, pFence));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFence));
 }
 void cvkRegisterDisplayEvent(VkDevice device, VkDisplayKHR display, const void* pNext, VkDisplayEventTypeEXT displayEvent, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    VkDisplayEventInfoEXT         display_event_info;
-    PFN_vkRegisterDisplayEventEXT function;
+    VkDisplayEventInfoEXT                display_event_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkRegisterDisplayEventEXT        function;
 
     display_event_info.sType        = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT;
     display_event_info.pNext        = pNext;
     display_event_info.displayEvent = displayEvent;
 
-    function = (PFN_vkRegisterDisplayEventEXT)cvkGetDeviceProcAddr(device, "vkRegisterDisplayEventEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkRegisterDisplayEventEXT);
     CVK_CHECK(function(device, display, &display_event_info, pAllocator, pFence));
     CVK_ASSERT(VK_NULL_HANDLE != (*pFence));
 }
 void cvkReleaseCapturedPipelineData(VkDevice device, void* pNext, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
 {
     VkReleaseCapturedPipelineDataInfoKHR info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkReleaseCapturedPipelineDataKHR function;
 
     info.sType    = VK_STRUCTURE_TYPE_RELEASE_CAPTURED_PIPELINE_DATA_INFO_KHR;
     info.pNext    = pNext;
     info.pipeline = pipeline;
 
-    function = (PFN_vkReleaseCapturedPipelineDataKHR)cvkGetDeviceProcAddr(device, "vkReleaseCapturedPipelineDataKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkReleaseCapturedPipelineDataKHR);
     CVK_CHECK(function(device, &info, pAllocator));
 }
 void cvkReleaseDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
-    PFN_vkReleaseDisplayEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkReleaseDisplayEXT              function;
 
-    function = (PFN_vkReleaseDisplayEXT)cvkGetInstanceProcAddr(instance, "vkReleaseDisplayEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkReleaseDisplayEXT);
     CVK_CHECK(function(physicalDevice, display));
 }
 void cvkReleasePerformanceConfigurationINTEL(VkDevice device, VkPerformanceConfigurationINTEL configuration)
 {
+    static CVK_THREAD_LOCAL cvkCallCache       call_cache;
     PFN_vkReleasePerformanceConfigurationINTEL function;
 
-    function = (PFN_vkReleasePerformanceConfigurationINTEL)cvkGetDeviceProcAddr(device, "vkReleasePerformanceConfigurationINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkReleasePerformanceConfigurationINTEL);
     CVK_CHECK(function(device, configuration));
 }
 void cvkReleaseProfilingLock(VkDevice device)
 {
-    PFN_vkReleaseProfilingLockKHR function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkReleaseProfilingLockKHR        function;
 
-    function = (PFN_vkReleaseProfilingLockKHR)cvkGetDeviceProcAddr(device, "vkReleaseProfilingLockKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkReleaseProfilingLockKHR);
     function(device);
 }
 VkResult cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapchainKHR swapchain, uint32_t imageIndexCount, const uint32_t* pImageIndices)
 {
-    VkReleaseSwapchainImagesInfoKHR release_info;
-    PFN_vkReleaseSwapchainImagesKHR function;
-    VkResult                        result;
+    VkReleaseSwapchainImagesInfoKHR      release_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkReleaseSwapchainImagesKHR      function;
+    VkResult                             result;
 
     release_info.sType           = VK_STRUCTURE_TYPE_RELEASE_SWAPCHAIN_IMAGES_INFO_KHR;
     release_info.pNext           = pNext;
@@ -77112,7 +77542,7 @@ VkResult cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapcha
     release_info.imageIndexCount = imageIndexCount;
     release_info.pImageIndices   = pImageIndices;
 
-    function = (PFN_vkReleaseSwapchainImagesKHR)cvkGetDeviceProcAddr(device, "vkReleaseSwapchainImagesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkReleaseSwapchainImagesKHR);
     result   = function(device, &release_info);
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     return result;
@@ -77139,9 +77569,10 @@ void cvkResetFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences
 }
 void cvkResetGpaSessionAMD(VkDevice device, VkGpaSessionAMD gpaSession)
 {
-    PFN_vkResetGpaSessionAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkResetGpaSessionAMD             function;
 
-    function = (PFN_vkResetGpaSessionAMD)cvkGetDeviceProcAddr(device, "vkResetGpaSessionAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkResetGpaSessionAMD);
     CVK_CHECK(function(device, gpaSession));
 }
 void cvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount)
@@ -77150,8 +77581,9 @@ void cvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQue
 }
 void cvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
 {
-    VkDebugUtilsObjectNameInfoEXT    name_info;
-    PFN_vkSetDebugUtilsObjectNameEXT function;
+    VkDebugUtilsObjectNameInfoEXT        name_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetDebugUtilsObjectNameEXT     function;
 
     name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
     name_info.pNext        = pNext;
@@ -77159,13 +77591,14 @@ void cvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType
     name_info.objectHandle = objectHandle;
     name_info.pObjectName  = pObjectName;
 
-    function = (PFN_vkSetDebugUtilsObjectNameEXT)cvkGetDeviceProcAddr(device, "vkSetDebugUtilsObjectNameEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkSetDebugUtilsObjectNameEXT);
     CVK_CHECK(function(device, &name_info));
 }
 void cvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag)
 {
-    VkDebugUtilsObjectTagInfoEXT    tag_info;
-    PFN_vkSetDebugUtilsObjectTagEXT function;
+    VkDebugUtilsObjectTagInfoEXT         tag_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetDebugUtilsObjectTagEXT      function;
 
     tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
     tag_info.pNext        = pNext;
@@ -77175,14 +77608,15 @@ void cvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType 
     tag_info.tagSize      = tagSize;
     tag_info.pTag         = pTag;
 
-    function = (PFN_vkSetDebugUtilsObjectTagEXT)cvkGetDeviceProcAddr(device, "vkSetDebugUtilsObjectTagEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkSetDebugUtilsObjectTagEXT);
     CVK_CHECK(function(device, &tag_info));
 }
 void cvkSetDeviceMemoryPriority(VkDevice device, VkDeviceMemory memory, float priority)
 {
-    PFN_vkSetDeviceMemoryPriorityEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetDeviceMemoryPriorityEXT     function;
 
-    function = (PFN_vkSetDeviceMemoryPriorityEXT)cvkGetDeviceProcAddr(device, "vkSetDeviceMemoryPriorityEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkSetDeviceMemoryPriorityEXT);
     function(device, memory, priority);
 }
 void cvkSetEvent(VkDevice device, VkEvent event)
@@ -77191,8 +77625,9 @@ void cvkSetEvent(VkDevice device, VkEvent event)
 }
 void cvkSetGpaDeviceClockModeAMD(VkDevice device, const void* pNext, VkGpaDeviceClockModeAMD clockMode, float memoryClockRatioToPeak, float engineClockRatioToPeak)
 {
-    VkGpaDeviceClockModeInfoAMD    info;
-    PFN_vkSetGpaDeviceClockModeAMD function;
+    VkGpaDeviceClockModeInfoAMD          info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetGpaDeviceClockModeAMD       function;
 
     info.sType                  = VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD;
     info.pNext                  = pNext;
@@ -77200,47 +77635,52 @@ void cvkSetGpaDeviceClockModeAMD(VkDevice device, const void* pNext, VkGpaDevice
     info.memoryClockRatioToPeak = memoryClockRatioToPeak;
     info.engineClockRatioToPeak = engineClockRatioToPeak;
 
-    function = (PFN_vkSetGpaDeviceClockModeAMD)cvkGetDeviceProcAddr(device, "vkSetGpaDeviceClockModeAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkSetGpaDeviceClockModeAMD);
     CVK_CHECK(function(device, &info));
 }
 void cvkSetHdrMetadata(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata)
 {
-    PFN_vkSetHdrMetadataEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetHdrMetadataEXT              function;
 
-    function = (PFN_vkSetHdrMetadataEXT)cvkGetDeviceProcAddr(device, "vkSetHdrMetadataEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkSetHdrMetadataEXT);
     function(device, swapchainCount, pSwapchains, pMetadata);
 }
 void cvkSetLatencyMarkerLegacyNV(VkDevice device, uint64_t frameID, uint32_t marker)
 {
-    PFN_vkSetLatencyMarkerLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetLatencyMarkerLegacyNV       function;
 
-    function = (PFN_vkSetLatencyMarkerLegacyNV)cvkGetDeviceProcAddr(device, "vkSetLatencyMarkerLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkSetLatencyMarkerLegacyNV);
     function(device, frameID, marker);
 }
 void cvkSetLatencyMarkerNV(VkDevice device, VkSwapchainKHR swapchain, const void* pNext, uint64_t presentID, VkLatencyMarkerNV marker)
 {
-    VkSetLatencyMarkerInfoNV latency_marker_info;
-    PFN_vkSetLatencyMarkerNV function;
+    VkSetLatencyMarkerInfoNV             latency_marker_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetLatencyMarkerNV             function;
 
     latency_marker_info.sType     = VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV;
     latency_marker_info.pNext     = pNext;
     latency_marker_info.presentID = presentID;
     latency_marker_info.marker    = marker;
 
-    function = (PFN_vkSetLatencyMarkerNV)cvkGetDeviceProcAddr(device, "vkSetLatencyMarkerNV");
+    function = CVK_CALL(&call_cache, Device, device, vkSetLatencyMarkerNV);
     function(device, swapchain, &latency_marker_info);
 }
 void cvkSetLatencySleepModeLegacyNV(VkDevice device, VkBool32 lowLatencyMode, VkBool32 lowLatencyBoost, uint32_t minimumIntervalUs)
 {
-    PFN_vkSetLatencySleepModeLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetLatencySleepModeLegacyNV    function;
 
-    function = (PFN_vkSetLatencySleepModeLegacyNV)cvkGetDeviceProcAddr(device, "vkSetLatencySleepModeLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkSetLatencySleepModeLegacyNV);
     function(device, lowLatencyMode, lowLatencyBoost, minimumIntervalUs);
 }
 void cvkSetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain, const void* pNext, VkBool32 lowLatencyMode, VkBool32 lowLatencyBoost, uint32_t minimumIntervalUs)
 {
-    VkLatencySleepModeInfoNV    sleep_mode_info;
-    PFN_vkSetLatencySleepModeNV function;
+    VkLatencySleepModeInfoNV             sleep_mode_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetLatencySleepModeNV          function;
 
     sleep_mode_info.sType             = VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV;
     sleep_mode_info.pNext             = pNext;
@@ -77248,14 +77688,15 @@ void cvkSetLatencySleepModeNV(VkDevice device, VkSwapchainKHR swapchain, const v
     sleep_mode_info.lowLatencyBoost   = lowLatencyBoost;
     sleep_mode_info.minimumIntervalUs = minimumIntervalUs;
 
-    function = (PFN_vkSetLatencySleepModeNV)cvkGetDeviceProcAddr(device, "vkSetLatencySleepModeNV");
+    function = CVK_CALL(&call_cache, Device, device, vkSetLatencySleepModeNV);
     CVK_CHECK(function(device, swapchain, &sleep_mode_info));
 }
 void cvkSetLocalDimmingAMD(VkDevice device, VkSwapchainKHR swapChain, VkBool32 localDimmingEnable)
 {
-    PFN_vkSetLocalDimmingAMD function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkSetLocalDimmingAMD             function;
 
-    function = (PFN_vkSetLocalDimmingAMD)cvkGetDeviceProcAddr(device, "vkSetLocalDimmingAMD");
+    function = CVK_CALL(&call_cache, Device, device, vkSetLocalDimmingAMD);
     function(device, swapChain, localDimmingEnable);
 }
 void cvkSetPrivateData(VkDevice device, VkObjectType objectType, uint64_t objectHandle, VkPrivateDataSlot privateDataSlot, uint64_t data)
@@ -77264,19 +77705,21 @@ void cvkSetPrivateData(VkDevice device, VkObjectType objectType, uint64_t object
 }
 VkResult cvkSetSwapchainPresentTimingQueueSize(VkDevice device, VkSwapchainKHR swapchain, uint32_t size)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkSetSwapchainPresentTimingQueueSizeEXT function;
     VkResult                                    result;
 
-    function = (PFN_vkSetSwapchainPresentTimingQueueSizeEXT)cvkGetDeviceProcAddr(device, "vkSetSwapchainPresentTimingQueueSizeEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkSetSwapchainPresentTimingQueueSizeEXT);
     result   = function(device, swapchain, size);
     CVK_ASSERT((0 <= result));
     return result;
 }
 void cvkShutdownLatencyDeviceLegacyNV(VkDevice device)
 {
-    PFN_vkShutdownLatencyDeviceLegacyNV function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkShutdownLatencyDeviceLegacyNV  function;
 
-    function = (PFN_vkShutdownLatencyDeviceLegacyNV)cvkGetDeviceProcAddr(device, "vkShutdownLatencyDeviceLegacyNV");
+    function = CVK_CALL(&call_cache, Device, device, vkShutdownLatencyDeviceLegacyNV);
     function(device);
 }
 void cvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value)
@@ -77305,6 +77748,7 @@ void cvkSubmitDebugUtilsMessage(VkInstance                                instan
                                 const VkDebugUtilsObjectNameInfoEXT*      pObjects)
 {
     VkDebugUtilsMessengerCallbackDataEXT callback_data;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkSubmitDebugUtilsMessageEXT     function;
 
     callback_data.sType            = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
@@ -77320,7 +77764,7 @@ void cvkSubmitDebugUtilsMessage(VkInstance                                instan
     callback_data.objectCount      = objectCount;
     callback_data.pObjects         = pObjects;
 
-    function = (PFN_vkSubmitDebugUtilsMessageEXT)cvkGetInstanceProcAddr(instance, "vkSubmitDebugUtilsMessageEXT");
+    function = CVK_CALL(&call_cache, Instance, instance, vkSubmitDebugUtilsMessageEXT);
     function(instance, messageSeverity, messageTypes, &callback_data);
 }
 void cvkTransitionImageLayout(VkDevice device, uint32_t transitionCount, const VkHostImageLayoutTransitionInfo* pTransitions)
@@ -77333,9 +77777,10 @@ void cvkTrimCommandPool(VkDevice device, VkCommandPool commandPool, VkCommandPoo
 }
 void cvkUninitializePerformanceApiINTEL(VkDevice device)
 {
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkUninitializePerformanceApiINTEL function;
 
-    function = (PFN_vkUninitializePerformanceApiINTEL)cvkGetDeviceProcAddr(device, "vkUninitializePerformanceApiINTEL");
+    function = CVK_CALL(&call_cache, Device, device, vkUninitializePerformanceApiINTEL);
     function(device);
 }
 void cvkUnmapMemory(VkDevice device, VkDeviceMemory memory)
@@ -77354,9 +77799,10 @@ void cvkUnmapMemory2(VkDevice device, const void* pNext, VkMemoryUnmapFlags flag
 }
 void cvkUnregisterCustomBorderColor(VkDevice device, uint32_t index)
 {
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
     PFN_vkUnregisterCustomBorderColorEXT function;
 
-    function = (PFN_vkUnregisterCustomBorderColorEXT)cvkGetDeviceProcAddr(device, "vkUnregisterCustomBorderColorEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkUnregisterCustomBorderColorEXT);
     function(device, index);
 }
 void cvkUpdateDescriptorSetWithTemplate(VkDevice device, VkDescriptorSet descriptorSet, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const void* pData)
@@ -77372,9 +77818,10 @@ void cvkUpdateIndirectExecutionSetPipeline(VkDevice                             
                                            uint32_t                                      executionSetWriteCount,
                                            const VkWriteIndirectExecutionSetPipelineEXT* pExecutionSetWrites)
 {
+    static CVK_THREAD_LOCAL cvkCallCache        call_cache;
     PFN_vkUpdateIndirectExecutionSetPipelineEXT function;
 
-    function = (PFN_vkUpdateIndirectExecutionSetPipelineEXT)cvkGetDeviceProcAddr(device, "vkUpdateIndirectExecutionSetPipelineEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkUpdateIndirectExecutionSetPipelineEXT);
     function(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 }
 void cvkUpdateIndirectExecutionSetShader(VkDevice                                    device,
@@ -77382,21 +77829,23 @@ void cvkUpdateIndirectExecutionSetShader(VkDevice                               
                                          uint32_t                                    executionSetWriteCount,
                                          const VkWriteIndirectExecutionSetShaderEXT* pExecutionSetWrites)
 {
+    static CVK_THREAD_LOCAL cvkCallCache      call_cache;
     PFN_vkUpdateIndirectExecutionSetShaderEXT function;
 
-    function = (PFN_vkUpdateIndirectExecutionSetShaderEXT)cvkGetDeviceProcAddr(device, "vkUpdateIndirectExecutionSetShaderEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkUpdateIndirectExecutionSetShaderEXT);
     function(device, indirectExecutionSet, executionSetWriteCount, pExecutionSetWrites);
 }
 void cvkUpdateVideoSessionParameters(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const void* pNext, uint32_t updateSequenceCount)
 {
     VkVideoSessionParametersUpdateInfoKHR update_info;
+    static CVK_THREAD_LOCAL cvkCallCache  call_cache;
     PFN_vkUpdateVideoSessionParametersKHR function;
 
     update_info.sType               = VK_STRUCTURE_TYPE_VIDEO_SESSION_PARAMETERS_UPDATE_INFO_KHR;
     update_info.pNext               = pNext;
     update_info.updateSequenceCount = updateSequenceCount;
 
-    function = (PFN_vkUpdateVideoSessionParametersKHR)cvkGetDeviceProcAddr(device, "vkUpdateVideoSessionParametersKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkUpdateVideoSessionParametersKHR);
     CVK_CHECK(function(device, videoSessionParameters, &update_info));
 }
 VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences, VkBool32 waitAll, uint64_t timeout)
@@ -77409,26 +77858,28 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
 }
 VkResult cvkWaitForPresent2(VkDevice device, VkSwapchainKHR swapchain, const void* pNext, uint64_t presentId, uint64_t timeout)
 {
-    VkPresentWait2InfoKHR    present_wait2_info;
-    PFN_vkWaitForPresent2KHR function;
-    VkResult                 result;
+    VkPresentWait2InfoKHR                present_wait2_info;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkWaitForPresent2KHR             function;
+    VkResult                             result;
 
     present_wait2_info.sType     = VK_STRUCTURE_TYPE_PRESENT_WAIT_2_INFO_KHR;
     present_wait2_info.pNext     = pNext;
     present_wait2_info.presentId = presentId;
     present_wait2_info.timeout   = timeout;
 
-    function = (PFN_vkWaitForPresent2KHR)cvkGetDeviceProcAddr(device, "vkWaitForPresent2KHR");
+    function = CVK_CALL(&call_cache, Device, device, vkWaitForPresent2KHR);
     result   = function(device, swapchain, &present_wait2_info);
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
 }
 VkResult cvkWaitForPresent(VkDevice device, VkSwapchainKHR swapchain, uint64_t presentId, uint64_t timeout)
 {
-    PFN_vkWaitForPresentKHR function;
-    VkResult                result;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkWaitForPresentKHR              function;
+    VkResult                             result;
 
-    function = (PFN_vkWaitForPresentKHR)cvkGetDeviceProcAddr(device, "vkWaitForPresentKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkWaitForPresentKHR);
     result   = function(device, swapchain, presentId, timeout);
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
     return result;
@@ -77456,30 +77907,34 @@ void cvkWriteAccelerationStructuresProperties(VkDevice                          
                                               void*                             pData,
                                               size_t                            stride)
 {
+    static CVK_THREAD_LOCAL cvkCallCache           call_cache;
     PFN_vkWriteAccelerationStructuresPropertiesKHR function;
 
-    function = (PFN_vkWriteAccelerationStructuresPropertiesKHR)cvkGetDeviceProcAddr(device, "vkWriteAccelerationStructuresPropertiesKHR");
+    function = CVK_CALL(&call_cache, Device, device, vkWriteAccelerationStructuresPropertiesKHR);
     CVK_CHECK(function(device, accelerationStructureCount, pAccelerationStructures, queryType, dataSize, pData, stride));
 }
 void cvkWriteMicromapsProperties(VkDevice device, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, size_t dataSize, void* pData, size_t stride)
 {
-    PFN_vkWriteMicromapsPropertiesEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkWriteMicromapsPropertiesEXT    function;
 
-    function = (PFN_vkWriteMicromapsPropertiesEXT)cvkGetDeviceProcAddr(device, "vkWriteMicromapsPropertiesEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkWriteMicromapsPropertiesEXT);
     CVK_CHECK(function(device, micromapCount, pMicromaps, queryType, dataSize, pData, stride));
 }
 void cvkWriteResourceDescriptors(VkDevice device, uint32_t resourceCount, const VkResourceDescriptorInfoEXT* pResources, const VkHostAddressRangeEXT* pDescriptors)
 {
-    PFN_vkWriteResourceDescriptorsEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkWriteResourceDescriptorsEXT    function;
 
-    function = (PFN_vkWriteResourceDescriptorsEXT)cvkGetDeviceProcAddr(device, "vkWriteResourceDescriptorsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkWriteResourceDescriptorsEXT);
     CVK_CHECK(function(device, resourceCount, pResources, pDescriptors));
 }
 void cvkWriteSamplerDescriptors(VkDevice device, uint32_t samplerCount, const VkSamplerCreateInfo* pSamplers, const VkHostAddressRangeEXT* pDescriptors)
 {
-    PFN_vkWriteSamplerDescriptorsEXT function;
+    static CVK_THREAD_LOCAL cvkCallCache call_cache;
+    PFN_vkWriteSamplerDescriptorsEXT     function;
 
-    function = (PFN_vkWriteSamplerDescriptorsEXT)cvkGetDeviceProcAddr(device, "vkWriteSamplerDescriptorsEXT");
+    function = CVK_CALL(&call_cache, Device, device, vkWriteSamplerDescriptorsEXT);
     CVK_CHECK(function(device, samplerCount, pSamplers, pDescriptors));
 }
 void cvkGetAccelerationStructureBuildGeometryInfo(VkDevice                                         device,
@@ -97151,11 +97606,12 @@ uint32_t cvkGetPhysicalDeviceImageCreateFlags2CreateInfo(VkInstance             
                                                          const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
                                                          VkImageCreateFlags2CreateInfoKHR          pImageCreateFlags2CreateInfo[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR function;
     uint32_t                                        video_format_property_count = 0;
     VkVideoFormatPropertiesKHR                      video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    function = (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoFormatPropertiesKHR);
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
     CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
     {
@@ -97176,11 +97632,12 @@ uint32_t cvkGetPhysicalDeviceImageUsageFlags2CreateInfoKHR(VkInstance           
                                                            const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
                                                            VkImageUsageFlags2CreateInfoKHR           pImageUsageFlags2CreateInfoKHR[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR function;
     uint32_t                                        video_format_property_count = 0;
     VkVideoFormatPropertiesKHR                      video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    function = (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoFormatPropertiesKHR);
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
     CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
     {
@@ -97201,11 +97658,12 @@ uint32_t cvkGetPhysicalDeviceVideoFormatAV1QuantizationMapProperties(VkInstance 
                                                                      const VkPhysicalDeviceVideoFormatInfoKHR*    pVideoFormatInfo,
                                                                      VkVideoFormatAV1QuantizationMapPropertiesKHR pVideoFormatAV1QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR function;
     uint32_t                                        video_format_property_count = 0;
     VkVideoFormatPropertiesKHR                      video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    function = (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoFormatPropertiesKHR);
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
     CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
     {
@@ -97226,11 +97684,12 @@ uint32_t cvkGetPhysicalDeviceVideoFormatH265QuantizationMapProperties(VkInstance
                                                                       const VkPhysicalDeviceVideoFormatInfoKHR*     pVideoFormatInfo,
                                                                       VkVideoFormatH265QuantizationMapPropertiesKHR pVideoFormatH265QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR function;
     uint32_t                                        video_format_property_count = 0;
     VkVideoFormatPropertiesKHR                      video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    function = (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoFormatPropertiesKHR);
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
     CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
     {
@@ -97251,11 +97710,12 @@ uint32_t cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkInstance    
                                                                   const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
                                                                   VkVideoFormatQuantizationMapPropertiesKHR pVideoFormatQuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
+    static CVK_THREAD_LOCAL cvkCallCache            call_cache;
     PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR function;
     uint32_t                                        video_format_property_count = 0;
     VkVideoFormatPropertiesKHR                      video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    function = (PFN_vkGetPhysicalDeviceVideoFormatPropertiesKHR)cvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceVideoFormatPropertiesKHR");
+    function = CVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceVideoFormatPropertiesKHR);
     CVK_CHECK(function(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
     CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
     {

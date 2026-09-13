@@ -21,6 +21,31 @@ void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile
 #endif
 #define SCVK_CHECK(expression) scvkCheckResult((expression), #expression, __FILE__, __LINE__)
 
+/* One zero-initialized cache per command and dispatch scope, private to each thread.
+ * A cache retains the most recently used handle. SCVK_CALL returns a typed pointer.
+ * Destroy wrappers invalidate all threads' caches. If destroying handles outside
+ * cvk, call scvkInvalidateCallCache before using a replacement handle. */
+#if defined(__cplusplus)
+#define SCVK_THREAD_LOCAL thread_local
+#elif defined(_MSC_VER)
+#define SCVK_THREAD_LOCAL __declspec(thread)
+#else
+#define SCVK_THREAD_LOCAL _Thread_local
+#endif
+
+typedef struct scvkCallCache
+{
+    uintptr_t          handle;
+    uint64_t           generation;
+    PFN_vkVoidFunction function;
+} scvkCallCache;
+
+void scvkInvalidateCallCache(void);
+PFN_vkVoidFunction scvkGetCachedDeviceProcAddr(scvkCallCache* pCache, VkDevice device, const char* pName);
+PFN_vkVoidFunction scvkGetCachedInstanceProcAddr(scvkCallCache* pCache, VkInstance instance, const char* pName);
+
+#define SCVK_CALL(cache, scope, handle, command) ((PFN_##command)scvkGetCached##scope##ProcAddr((cache), (handle), #command))
+
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
 

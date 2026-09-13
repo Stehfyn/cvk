@@ -629,12 +629,13 @@ class Generator:
         fn = cmd.name
         resolve: Optional[str] = None
         if not self.linked(cmd):
-            resolver = "cvkGetDeviceProcAddr(device" if level == "VkDevice" else "cvkGetInstanceProcAddr(instance"
+            scope, handle = ("Device", "device") if level == "VkDevice" else ("Instance", "instance")
             # Declaration only here; the load is emitted immediately before the first call.
             # The local is `function` unless a parameter takes that name (vkDestroyCuFunctionNVX).
             fn = "function_pointer" if any(q.name == "function" for q in params) else "function"
             locals_.insert(0, f"PFN_{cmd.name} {fn};")
-            resolve = f"{fn} = (PFN_{cmd.name}){resolver}, \"{cmd.name}\");"
+            locals_.insert(0, "static CVK_THREAD_LOCAL cvkCallCache call_cache;")
+            resolve = f"{fn} = CVK_CALL(&call_cache, {scope}, {handle}, {cmd.name});"
         call = f"{fn}({', '.join(call_args)})"
         enum_args = {ext_arrays.get(q.name) and snake(q.name) or q.name for q, _ in enum_arrays}
 
@@ -694,6 +695,9 @@ class Generator:
             body.append(f"CVK_CHECK({call});")
             body += post
         elif cmd.return_type == "void":
+            if cmd.name in ("vkDestroyDevice", "vkDestroyInstance"):
+                # Invalidate before the driver can recycle the handle on another thread.
+                body.append("cvkInvalidateCallCache();")
             body.append(f"{call};")
             body += post
         elif cmd.return_type == "PFN_vkVoidFunction":
@@ -711,11 +715,13 @@ class Generator:
         if resolve:
             first_call = next(i for i, l in enumerate(body) if f"{fn}(" in l)
             body[first_call:first_call] = ["", resolve]
-        decl_lines = [l for l in body if re.match(r"^(PFN_\w+ function(_pointer)?;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+(\[\w+\])?;)", l)]
+        decl_lines = [l for l in body if re.match(r"^(static CVK_THREAD_LOCAL cvkCallCache call_cache;|PFN_\w+ function(_pointer)?;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+(\[\w+\])?;)", l)]
         other = [l for l in body if l not in decl_lines]
 
         # Declarations in order of first access in the statements that follow.
         def first_use(decl: str) -> int:
+            if decl.startswith("static CVK_THREAD_LOCAL"):
+                return next((i for i, l in enumerate(other) if "call_cache" in l), len(other))
             var = re.match(r"^\S+\s+(\w+)", decl).group(1)
             return next((i for i, l in enumerate(other) if re.search(rf"\b{var}\b", l)), len(other))
         decl_lines.sort(key=first_use)
@@ -2105,6 +2111,8 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #endif
 #define CVK_CHECK(expression) cvkCheckResult((expression), #expression, __FILE__, __LINE__)
 
+{self.dispatch_template("h")}
+
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
 
@@ -2130,6 +2138,8 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #include <stdlib.h>
 #include <string.h>
 {"".join(f"#include {i}{chr(10)}" for i in self.PLATFORM_SOURCE_INCLUDES.get("", []) if i not in ("<stdio.h>", "<stdlib.h>", "<string.h>"))}
+{self.dispatch_template("c")}
+
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {{
     (void)fprintf(stderr, "%s:%d: cvk fatal: %s\\n", pFile, line, pExpression);
@@ -2147,6 +2157,11 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
 {chr(10).join(self.defs[""])}
 """
+
+    @staticmethod
+    def dispatch_template(suffix: str) -> str:
+        with open(os.path.join(REPO_ROOT, "scripts", "templates", f"cvk_dispatch.{suffix}"), encoding="utf-8") as source:
+            return source.read()
 
 
 def load_policy(path: str) -> dict:

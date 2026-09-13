@@ -11,6 +11,26 @@ add_subdirectory(external/Vulkan-Utility-Libraries EXCLUDE_FROM_ALL)
 
 find_package(Python3 COMPONENTS Interpreter)
 
+# Apply IPO to our libraries and executables in Release, including the final link.
+# Set this after adding third-party projects so their build settings are untouched.
+include(CheckIPOSupported)
+check_ipo_supported(LANGUAGES C)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+
+# MSVC's C17 atomics are still enabled through this compiler option.
+add_compile_options($<$<COMPILE_LANG_AND_ID:C,MSVC>:/experimental:c11atomics>)
+# Give the compositional wrappers MSVC's more aggressive Release inlining budget.
+if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    # Remove the default /Ob2 to avoid an override warning on every compilation.
+    string(REGEX REPLACE "[/-]Ob[0-3]" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+endif()
+add_compile_options($<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:C,MSVC>>:/Ob3>)
+# Prefer full LTO for this generated, monolithic source: it can discard unreachable
+# wrapper families before optimizing them, and exposes every live tier for inlining.
+# Override CMake's Clang ThinLTO default at both compilation and the final link.
+add_compile_options($<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>>:-flto=full>)
+add_link_options($<$<AND:$<CONFIG:Release>,$<LINK_LANG_AND_ID:C,Clang,AppleClang>>:-flto=full>)
+
 # Regenerate include/cvk.h and src/cvk.c from the registry and cvk.policy.json.
 # Generated files are committed; run this target after changing the policy or generator.
 if(Python3_Interpreter_FOUND)
@@ -60,6 +80,11 @@ if(Vulkan_FOUND AND Vulkan_VERSION VERSION_GREATER_EQUAL 1.4)
     add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
     target_link_libraries(cvk-pipeline-json-test PRIVATE cvk Vulkan::Vulkan)
     add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json)
+
+    find_package(Threads REQUIRED)
+    add_executable(cvk-call-cache-test tests/call_cache_test.c)
+    target_link_libraries(cvk-call-cache-test PRIVATE cvk Vulkan::Vulkan Threads::Threads)
+    add_test(NAME cvk-call-cache COMMAND cvk-call-cache-test)
 else()
     message(STATUS "Vulkan 1.4 loader not found (the library links its core commands): the pipeline JSON test is not built")
 endif()

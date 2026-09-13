@@ -31,7 +31,26 @@ lower-tier calls plus local scratch, so any function can be read top-down to the
 | 1' | tier 0 name with specialization suffix or dropped args | forward to the general form with constants filled in | `cvkCmdImageBarrier` (queue families = `IGNORED`), `cvkCmdAcquireImageFromExternal` (src = `EXTERNAL`, top-of-pipe), `*2D` variants, `cvkWaitForFence` (count = 1) |
 | 2 | `cvkSetup<Noun>` | create + allocate + bind, or create + query + select, in one call; returns every handle produced | `cvkSetupImage`, `cvkSetupBuffer`, `cvkSetupDevice`, `cvkSetupDeviceQueue`, `cvkSetupComputePipeline`, `cvkSetupSwapchain` |
 | 3 | domain verbs: `Transfer…`, `Acquire/Release…`, `Dispatch…Items` | sequences of tier 0–2 calls that encode a *policy* (barrier before, copy, barrier after) | `cvkCmdTransferBufferToImageQueueOwnership`, `cvkCmdReleaseComputeBufferToExternal`, `cvkCmdDispatchComputeItems2D` |
-| P | `cvkPlatform<Verb>` | one fixed signature per platform, implemented separately per OS from that platform's tier 1–3 helpers | `cvkPlatformSetupDeviceQueue`, `cvkPlatformExportImage`, `cvkPlatformImportImage`, `cvkPlatformGetInstanceExtensions` |
+| P (intended) | `cvkPlatform<Verb>` | proposed common signatures backed by each OS's tier 1–3 helpers; not currently emitted | `cvkPlatformSetupDeviceQueue`, `cvkPlatformExportImage`, `cvkPlatformImportImage`, `cvkPlatformGetInstanceExtensions` |
+
+The tree groups functions by responsibility. Applications can call any tier; a composition
+can call several lower-level helpers directly.
+
+```mermaid
+flowchart LR
+    CVK["cvk surface"]
+    CVK --> T0["Tier 0: Vulkan command wrappers<br/>cvkCreateBuffer"]
+    CVK --> T1["Tier 1: builders and pNext conveniences<br/>cvkCreateBufferWithExternalMemoryInfo"]
+    CVK --> T1P["Tier 1': fixed-argument specializations<br/>cvkSetupDeviceLocalBuffer"]
+    CVK --> T2["Tier 2: multi-call compositions<br/>cvkSetupBuffer"]
+    CVK --> T3["Tier 3: domain protocols<br/>cvkImportWin32HandleImage"]
+    CVK --> P["P: intended common platform interface<br/>cvkPlatform* (not currently emitted)"]
+```
+
+Platform folders contain functions from the applicable tiers. For example,
+`win32/cvk_win32.h` exposes the tier-3 import protocol as well as Win32 command wrappers;
+the folder does not define another call depth. A tier-1' specialization can also wrap a
+tier-2 composition, as the buffer example below shows.
 
 Two naming sub-rules matter for generation:
 
@@ -122,6 +141,56 @@ void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
 }
 ```
 
+The reference call graph below follows the generated buffer family in [src/cvk.c](src/cvk.c).
+Each arrow means "calls"; numbered arrows give the call order within that caller.
+The external-memory creator is a separate entry point that shares the same tier-0 creator.
+Assertions, error handling, and struct assignments are omitted from the graph.
+
+```mermaid
+flowchart TD
+    DeviceLocal["Tier 1': cvkSetupDeviceLocalBuffer"]
+    Setup["Tier 2: cvkSetupBuffer"]
+    External["Tier 1: cvkCreateBufferWithExternalMemoryInfo"]
+    Create["Tier 0: cvkCreateBuffer"]
+    BufferMemory["Tier 2: cvkAllocateBufferMemory"]
+    Bind["Tier 0: cvkBindBufferMemory"]
+    Requirements["Tier 0: cvkGetBufferMemoryRequirements"]
+    Select["cvkGetPhysicalDeviceCompatibleMemoryTypeIndex"]
+    Allocate["Tier 0: cvkAllocateMemory"]
+    Properties["Tier 0: cvkGetPhysicalDeviceMemoryProperties"]
+    Match["cvkGetCompatibleMemoryTypeIndex<br/>local selection; no Vulkan call"]
+
+    DeviceLocal -->|"VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT"| Setup
+    Setup -->|"1. create"| Create
+    Setup -->|"2. allocate compatible memory"| BufferMemory
+    Setup -->|"3. bind at offset 0"| Bind
+    External -->|"prepend VkExternalMemoryBufferCreateInfo"| Create
+    BufferMemory -->|"1. query requirements"| Requirements
+    BufferMemory -->|"2. select memory type"| Select
+    BufferMemory -->|"3. allocate"| Allocate
+    Select -->|"1. query properties"| Properties
+    Select -->|"2. find compatible type"| Match
+
+    subgraph Vulkan["Raw Vulkan entry points"]
+        VkCreate["vkCreateBuffer"]
+        VkRequirements["vkGetBufferMemoryRequirements"]
+        VkProperties["vkGetPhysicalDeviceMemoryProperties"]
+        VkAllocate["vkAllocateMemory"]
+        VkBind["vkBindBufferMemory"]
+    end
+
+    Create --> VkCreate
+    Requirements --> VkRequirements
+    Properties --> VkProperties
+    Allocate --> VkAllocate
+    Bind --> VkBind
+```
+
+`cvkSetupDeviceLocalBuffer` supplies `VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT` to
+`cvkSetupBuffer`. The setup returns the buffer and its memory through output parameters;
+the caller owns both handles. The memory-type selector examines the reported type mask
+and property flags locally, while tier-0 wrappers make the Vulkan calls.
+
 ## 3. Invariants every function keeps
 
 - **Fatal, not fallible.** `CVK_CHECK` aborts on any non-success `VkResult`. Functions return
@@ -195,3 +264,30 @@ Read one family top to bottom in the core header:
 Then read `cvkCmdPipelineBarrier` → `cvkCmdImageQueueOwnershipBarrier` → `cvkCmdImageBarrier` →
 `cvkCmdAcquireImageFromExternal` → `cvkCmdTransferBufferToImageQueueOwnership` →
 `cvkCmdTransferBufferToImage2D`. Those two chains exhibit every tier and every naming rule here.
+
+## 7. Release builds and dispatch caching
+
+Release builds enable link-time optimization (LTO) for both `cvk` and `scvk`, and for
+the test executables, plus aggressive `/Ob3` inlining with MSVC. Clang uses full LTO
+for optimization across the generated wrapper tiers. CMake checks LTO support
+during configuration. The Windows
+build preset still defaults to Debug; select Release explicitly:
+
+```sh
+cmake --preset windows-msvc-2026
+cmake --build --preset windows-msvc-2026 --config Release
+ctest --test-dir build/windows-msvc-2026 -C Release --output-on-failure
+```
+
+The `ninja-clang` and `linux` presets already select Release. Applications linking these
+static libraries should also enable `INTERPROCEDURAL_OPTIMIZATION_RELEASE` on their
+executable target so optimization can cross the application/library boundary. When
+building the generated C sources directly with MSVC, add `/experimental:c11atomics`.
+
+Extension wrappers use `CVK_CALL` to cache resolved function pointers per wrapper and
+thread, retaining the most recently used device or instance. Core and loader-exported
+commands keep their direct calls. Destroying a device or instance through cvk invalidates
+caches across all threads. If handles are destroyed outside cvk, call
+`cvkInvalidateCallCache()` before using replacement handles; use the corresponding
+`scvkInvalidateCallCache()` for the SC profile. Vulkan's synchronization requirements
+still apply.

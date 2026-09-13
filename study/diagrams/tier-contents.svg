@@ -1,0 +1,464 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4100" height="2107" viewBox="0 0 4100 2107" role="img">
+<title>What is in each cvk tier?</title>
+<desc>Whole-repository semantic tier guide with verified examples from both Vulkan profiles, all platforms, JSON and helper support.</desc>
+<rect width="4100" height="2107" fill="#f8fafc"/>
+<style>text{font-family:Segoe UI,Arial,sans-serif;fill:#172033}.example{font-family:Consolas,monospace;fill:#334155}.muted{fill:#64748b}</style>
+<defs><marker id="down" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#94a3b8"/></marker></defs>
+<text x="44" y="65" font-size="42" font-weight="700" class="">What is in each tier?</text>
+<text x="44" y="104" font-size="23" font-weight="400" class="">A semantic map of the whole repository: Vulkan + Vulkan SC, core + platform code, generated + authored functions.</text>
+<text x="44" y="139" font-size="20" font-weight="400" class="muted">Each card names a kind of work, describes its role, and gives actual functions. The SC tag means the corresponding scvk function is also emitted.</text>
+<rect x="44" y="180" width="3272" height="68" rx="8" fill="white" stroke="#ea580c" stroke-width="2"/>
+<text x="62" y="209" font-size="26" font-weight="700" class="">Tier 0 / command wrappers</text>
+<text x="62" y="234" font-size="19" font-weight="400" class="">The registry-facing layer calls Vulkan, handles results and preserves the wrapper&#x27;s output contracts.</text>
+<text x="2720" y="209" font-size="20" font-weight="400" class="muted">cvk: 713 functions / scvk: 248</text>
+<path d="M309.1666666666667 248V277" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="44.0" y="283" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="44.0" y="283" width="6" height="225" rx="3" fill="#ea580c"/>
+<text x="62.0" y="314" font-size="23" font-weight="600" class="">Object and memory lifecycle</text>
+<text x="62.0" y="348" font-size="19" font-weight="400" class="">Creation/destruction, allocation/freeing, binding</text>
+<text x="62.0" y="372" font-size="19" font-weight="400" class="">and host memory operations.</text>
+<text x="62.0" y="427" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:72825</title>
+<text x="62.0" y="450" font-size="17" font-weight="400" class="example">cvkCreateBuffer [SC]</text>
+<title>src/cvk.c:69600</title>
+<text x="62.0" y="473" font-size="17" font-weight="400" class="example">cvkAllocateMemory [SC]</text>
+<title>src/cvk.c:69642</title>
+<text x="62.0" y="496" font-size="17" font-weight="400" class="example">cvkBindBufferMemory [SC]</text>
+</g>
+<path d="M857.5 248V277" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="592.3333333333334" y="283" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="592.3333333333334" y="283" width="6" height="225" rx="3" fill="#ea580c"/>
+<text x="610.3333333333334" y="314" font-size="23" font-weight="600" class="">Command recording</text>
+<text x="610.3333333333334" y="348" font-size="19" font-weight="400" class="">Draw, dispatch, copy, rendering, acceleration-</text>
+<text x="610.3333333333334" y="372" font-size="19" font-weight="400" class="">structure, video and other vkCmd operations.</text>
+<text x="610.3333333333334" y="427" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:70889</title>
+<text x="610.3333333333334" y="450" font-size="17" font-weight="400" class="example">cvkCmdDraw [SC]</text>
+<title>src/cvk.c:70841</title>
+<text x="610.3333333333334" y="473" font-size="17" font-weight="400" class="example">cvkCmdDispatch [SC]</text>
+<title>src/cvk.c:70393</title>
+<text x="610.3333333333334" y="496" font-size="17" font-weight="400" class="example">cvkCmdCopyBuffer [SC]</text>
+</g>
+<path d="M1405.8333333333335 248V277" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="1140.6666666666667" y="283" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1140.6666666666667" y="283" width="6" height="225" rx="3" fill="#ea580c"/>
+<text x="1158.6666666666667" y="314" font-size="23" font-weight="600" class="">Queries and flattened siblings</text>
+<text x="1158.6666666666667" y="348" font-size="19" font-weight="400" class="">Retrieve properties and requirements; flatten input</text>
+<text x="1158.6666666666667" y="372" font-size="19" font-weight="400" class="">Info structs where a sibling is required.</text>
+<text x="1158.6666666666667" y="427" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:75932</title>
+<text x="1158.6666666666667" y="450" font-size="17" font-weight="400" class="example">cvkGetPhysicalDeviceProperties [SC]</text>
+<title>src/cvk.c:74532</title>
+<text x="1158.6666666666667" y="473" font-size="17" font-weight="400" class="example">cvkGetBufferMemoryRequirements [SC]</text>
+<title>src/cvk.c:77516</title>
+<text x="1158.6666666666667" y="496" font-size="17" font-weight="400" class="example">cvkGetBufferMemoryRequirementsInfo2 [SC]</text>
+</g>
+<path d="M1954.1666666666667 248V277" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="1689.0" y="283" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1689.0" y="283" width="6" height="225" rx="3" fill="#ea580c"/>
+<text x="1707.0" y="314" font-size="23" font-weight="600" class="">Fixed-capacity enumeration</text>
+<text x="1707.0" y="348" font-size="19" font-weight="400" class="">Perform Vulkan&#x27;s count/fill protocol using caller</text>
+<text x="1707.0" y="372" font-size="19" font-weight="400" class="">arrays bounded by CVK_MAX_* capacities.</text>
+<text x="1707.0" y="427" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:74422</title>
+<text x="1707.0" y="450" font-size="17" font-weight="400" class="example">cvkEnumeratePhysicalDevices [SC]</text>
+<title>src/cvk.c:74280</title>
+<text x="1707.0" y="473" font-size="17" font-weight="400" class="example">cvkEnumerateDeviceExtensionProperties [SC]</text>
+<title>src/cvk.c:76207</title>
+<text x="1707.0" y="496" font-size="17" font-weight="400" class="example">cvkGetPhysicalDeviceSurfaceFormats [SC]</text>
+</g>
+<path d="M2502.5 248V277" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="2237.3333333333335" y="283" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2237.3333333333335" y="283" width="6" height="225" rx="3" fill="#ea580c"/>
+<text x="2255.3333333333335" y="314" font-size="23" font-weight="600" class="">Submission and synchronization</text>
+<text x="2255.3333333333335" y="348" font-size="19" font-weight="400" class="">Submit queues, acquire/present images, wait/reset</text>
+<text x="2255.3333333333335" y="372" font-size="19" font-weight="400" class="">fences and signal/wait semaphores.</text>
+<text x="2255.3333333333335" y="427" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:77019</title>
+<text x="2255.3333333333335" y="450" font-size="17" font-weight="400" class="example">cvkQueueSubmit [SC]</text>
+<title>src/cvk.c:76975</title>
+<text x="2255.3333333333335" y="473" font-size="17" font-weight="400" class="example">cvkQueuePresent [SC]</text>
+<title>src/cvk.c:77402</title>
+<text x="2255.3333333333335" y="496" font-size="17" font-weight="400" class="example">cvkWaitForFences [SC]</text>
+</g>
+<path d="M3050.8333333333335 248V277" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="2785.666666666667" y="283" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2785.666666666667" y="283" width="6" height="225" rx="3" fill="#ea580c"/>
+<text x="2803.666666666667" y="314" font-size="23" font-weight="600" class="">Dispatch and platform commands</text>
+<text x="2803.666666666667" y="348" font-size="19" font-weight="400" class="">Resolve extension commands or wrap platform-</text>
+<text x="2803.666666666667" y="372" font-size="19" font-weight="400" class="">specific Vulkan calls in their platform files.</text>
+<text x="2803.666666666667" y="427" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:74969</title>
+<text x="2803.666666666667" y="450" font-size="17" font-weight="400" class="example">cvkGetDeviceProcAddr [SC]</text>
+<title>src/win32/cvk_win32.c:731</title>
+<text x="2803.666666666667" y="473" font-size="17" font-weight="400" class="example">cvkCreateWin32Surface</text>
+<title>src/xlib/cvk_xlib.c:35</title>
+<text x="2803.666666666667" y="496" font-size="17" font-weight="400" class="example">cvkCreateXlibSurface</text>
+</g>
+<g id="tier-1"><rect x="32" y="528" width="3296" height="668" rx="12" fill="#f0fdf4" stroke="#059669" stroke-width="2"/>
+<rect x="44" y="538" width="3272" height="68" rx="8" fill="white" stroke="#059669" stroke-width="2"/>
+<text x="62" y="567" font-size="26" font-weight="700" class="">Tier 1 / conveniences</text>
+<text x="62" y="592" font-size="19" font-weight="400" class="">Build Vulkan data, extend existing calls, or specialize an operation with fixed arguments.</text>
+<text x="2720" y="567" font-size="20" font-weight="400" class="muted">cvk: 2,482 functions / scvk: 567</text>
+<text x="62" y="638" font-size="23" font-weight="600" class="">Builders and extension chains</text>
+<g class="content-card"><rect x="44.0" y="653" width="640.0" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="44.0" y="653" width="6" height="225" rx="3" fill="#059669"/>
+<text x="62.0" y="684" font-size="23" font-weight="600" class="">Struct and union builders</text>
+<text x="62.0" y="718" font-size="19" font-weight="400" class="">Fill sType, pNext and members of input structures, plain</text>
+<text x="62.0" y="742" font-size="19" font-weight="400" class="">structures and union alternatives.</text>
+<text x="62.0" y="797" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:803</title>
+<text x="62.0" y="820" font-size="17" font-weight="400" class="example">cvkInitBufferCreateInfo [SC]</text>
+<title>src/cvk.c:3975</title>
+<text x="62.0" y="843" font-size="17" font-weight="400" class="example">cvkInitImageSubresourceRange [SC]</text>
+<title>src/cvk.c:11838</title>
+<text x="62.0" y="866" font-size="17" font-weight="400" class="example">cvkInitClearValueColor [SC]</text>
+</g>
+<g class="content-card"><rect x="702.0" y="653" width="640.0" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="702.0" y="653" width="6" height="225" rx="3" fill="#059669"/>
+<text x="720.0" y="684" font-size="23" font-weight="600" class="">Input extension chains</text>
+<text x="720.0" y="718" font-size="19" font-weight="400" class="">Build one extender and prepend it to the caller&#x27;s pNext chain</text>
+<text x="720.0" y="742" font-size="19" font-weight="400" class="">before the base operation.</text>
+<text x="720.0" y="797" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:80969</title>
+<text x="720.0" y="820" font-size="17" font-weight="400" class="example">cvkCreateBufferWithExternalMemoryInfo [SC]</text>
+<title>src/cvk.c:78678</title>
+<text x="720.0" y="843" font-size="17" font-weight="400" class="example">cvkAllocateExportMemory [SC]</text>
+<title>src/cvk.c:82422</title>
+<text x="720.0" y="866" font-size="17" font-weight="400" class="example">cvkCreateImageViewWithUsageInfo [SC]</text>
+</g>
+<g class="content-card"><rect x="1360.0" y="653" width="640.0" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1360.0" y="653" width="6" height="225" rx="3" fill="#059669"/>
+<text x="1378.0" y="684" font-size="23" font-weight="600" class="">Output extension queries</text>
+<text x="1378.0" y="718" font-size="19" font-weight="400" class="">Attach an output property/requirement structure and return</text>
+<text x="1378.0" y="742" font-size="19" font-weight="400" class="">that extension&#x27;s result.</text>
+<text x="1378.0" y="797" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:91026</title>
+<text x="1378.0" y="820" font-size="17" font-weight="400" class="example">cvkGetBufferMemoryDedicatedRequirements [SC]</text>
+<title>src/cvk.c:95313</title>
+<text x="1378.0" y="843" font-size="17" font-weight="400" class="example">cvkGetPhysicalDeviceIDProperties [SC]</text>
+<title>src/cvk.c:95632</title>
+<text x="1378.0" y="866" font-size="17" font-weight="400" class="example">cvkGetPhysicalDevicePCIBusInfoProperties [SC]</text>
+</g>
+<g class="content-card"><rect x="2018.0" y="653" width="640.0" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2018.0" y="653" width="6" height="225" rx="3" fill="#059669"/>
+<text x="2036.0" y="684" font-size="23" font-weight="600" class="">Per-element input extensions</text>
+<text x="2036.0" y="718" font-size="19" font-weight="400" class="">Build and attach an extension for each input array element,</text>
+<text x="2036.0" y="742" font-size="19" font-weight="400" class="">then call the array operation.</text>
+<text x="2036.0" y="797" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:89882</title>
+<text x="2036.0" y="820" font-size="17" font-weight="400" class="example">cvkBindPlaneImageMemories [SC]</text>
+<title>src/cvk.c:89850</title>
+<text x="2036.0" y="843" font-size="17" font-weight="400" class="example">cvkBindSwapchainImageMemories [SC]</text>
+<title>src/cvk.c:89912</title>
+<text x="2036.0" y="866" font-size="17" font-weight="400" class="example">cvkCmdBindUsageFlags2DescriptorBuffers</text>
+</g>
+<g class="content-card"><rect x="2676.0" y="653" width="640.0" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2676.0" y="653" width="6" height="225" rx="3" fill="#059669"/>
+<text x="2694.0" y="684" font-size="23" font-weight="600" class="">Per-element output extensions</text>
+<text x="2694.0" y="718" font-size="19" font-weight="400" class="">Extend every output-array element in a query or fixed-capacity</text>
+<text x="2694.0" y="742" font-size="19" font-weight="400" class="">enumeration.</text>
+<text x="2694.0" y="797" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97002</title>
+<text x="2694.0" y="820" font-size="17" font-weight="400" class="example">cvkGetPhysicalDeviceQueueFamilyCheckpointPropertiesNV</text>
+<title>src/cvk.c:96961</title>
+<text x="2694.0" y="843" font-size="17" font-weight="400" class="example">cvkGetDisplayModeStereoPropertiesNV</text>
+</g>
+<text x="62" y="920" font-size="23" font-weight="600" class="">Specializations</text>
+<text x="268" y="920" font-size="19" font-weight="400" class="muted">Count-of-one forms and argument presets within Tier 1</text>
+<g class="content-card"><rect x="44.0" y="948" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="44.0" y="948" width="6" height="225" rx="3" fill="#059669"/>
+<text x="62.0" y="979" font-size="23" font-weight="600" class="">Count-of-one operations</text>
+<text x="62.0" y="1013" font-size="19" font-weight="400" class="">Turn an array operation into one element, including</text>
+<text x="62.0" y="1037" font-size="19" font-weight="400" class="">per-element extension variants.</text>
+<text x="62.0" y="1092" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:78214</title>
+<text x="62.0" y="1115" font-size="17" font-weight="400" class="example">cvkCreateComputePipeline [SC]</text>
+<title>src/cvk.c:78617</title>
+<text x="62.0" y="1138" font-size="17" font-weight="400" class="example">cvkWaitForFence [SC]</text>
+<title>src/cvk.c:89908</title>
+<text x="62.0" y="1161" font-size="17" font-weight="400" class="example">cvkBindPlaneImageMemory [SC]</text>
+</g>
+<g class="content-card"><rect x="592.3333333333334" y="948" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="592.3333333333334" y="948" width="6" height="225" rx="3" fill="#059669"/>
+<text x="610.3333333333334" y="979" font-size="23" font-weight="600" class="">Resource and memory presets</text>
+<text x="610.3333333333334" y="1013" font-size="19" font-weight="400" class="">Choose fixed flags or properties, such as device-</text>
+<text x="610.3333333333334" y="1037" font-size="19" font-weight="400" class="">local memory or a signaled fence.</text>
+<text x="610.3333333333334" y="1092" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:98136</title>
+<text x="610.3333333333334" y="1115" font-size="17" font-weight="400" class="example">cvkSetupDeviceLocalBuffer [SC]</text>
+<title>src/cvk.c:98089</title>
+<text x="610.3333333333334" y="1138" font-size="17" font-weight="400" class="example">cvkAllocateHostVisibleBufferMemory [SC]</text>
+<title>src/cvk.c:97984</title>
+<text x="610.3333333333334" y="1161" font-size="17" font-weight="400" class="example">cvkCreateSignaledFence [SC]</text>
+</g>
+<g class="content-card"><rect x="1140.6666666666667" y="948" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1140.6666666666667" y="948" width="6" height="225" rx="3" fill="#059669"/>
+<text x="1158.6666666666667" y="979" font-size="23" font-weight="600" class="">Pipeline-state presets</text>
+<text x="1158.6666666666667" y="1013" font-size="19" font-weight="400" class="">Bind standard rasterization, blending, input-</text>
+<text x="1158.6666666666667" y="1037" font-size="19" font-weight="400" class="">assembly and other fixed-function choices.</text>
+<text x="1158.6666666666667" y="1092" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:98963</title>
+<text x="1158.6666666666667" y="1115" font-size="15.584279108869275" font-weight="400" class="example">cvkInitFillPipelineRasterizationStateCreateInfo [SC]</text>
+<title>src/cvk.c:99008</title>
+<text x="1158.6666666666667" y="1138" font-size="14.73422752111277" font-weight="400" class="example">cvkInitAlphaBlendPipelineColorBlendAttachmentState [SC]</text>
+<title>src/cvk.c:98939</title>
+<text x="1158.6666666666667" y="1161" font-size="13.506375227686704" font-weight="400" class="example">cvkInitTriangleListPipelineInputAssemblyStateCreateInfo [SC]</text>
+</g>
+<g class="content-card"><rect x="1689.0" y="948" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1689.0" y="948" width="6" height="225" rx="3" fill="#059669"/>
+<text x="1707.0" y="979" font-size="23" font-weight="600" class="">Synchronization presets</text>
+<text x="1707.0" y="1013" font-size="19" font-weight="400" class="">Fix queue families, stage/access choices, timeout</text>
+<text x="1707.0" y="1037" font-size="19" font-weight="400" class="">values or a timestamp stage.</text>
+<text x="1707.0" y="1092" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97640</title>
+<text x="1707.0" y="1115" font-size="17" font-weight="400" class="example">cvkCmdAcquireImageFromExternal [SC]</text>
+<title>src/cvk.c:98795</title>
+<text x="1707.0" y="1138" font-size="17" font-weight="400" class="example">cvkCmdReleaseBufferToExternal2</text>
+<title>src/cvk.c:98872</title>
+<text x="1707.0" y="1161" font-size="17" font-weight="400" class="example">cvkAcquireNextImageIndefinitely [SC]</text>
+</g>
+<g class="content-card"><rect x="2237.3333333333335" y="948" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2237.3333333333335" y="948" width="6" height="225" rx="3" fill="#059669"/>
+<text x="2255.3333333333335" y="979" font-size="23" font-weight="600" class="">Operation and stage variants</text>
+<text x="2255.3333333333335" y="1013" font-size="19" font-weight="400" class="">Choose a pipeline bind point, shader stage, video</text>
+<text x="2255.3333333333335" y="1037" font-size="19" font-weight="400" class="">control flag or acceleration-structure kind.</text>
+<text x="2255.3333333333335" y="1092" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97577</title>
+<text x="2255.3333333333335" y="1115" font-size="17" font-weight="400" class="example">cvkCmdBindComputePipeline [SC]</text>
+<title>src/cvk.c:99427</title>
+<text x="2255.3333333333335" y="1138" font-size="17" font-weight="400" class="example">cvkCmdResetVideoCoding</text>
+<title>src/cvk.c:100375</title>
+<text x="2255.3333333333335" y="1161" font-size="17" font-weight="400" class="example">cvkCreateBottomLevelAccelerationStructure</text>
+</g>
+<g class="content-card"><rect x="2785.666666666667" y="948" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2785.666666666667" y="948" width="6" height="225" rx="3" fill="#059669"/>
+<text x="2803.666666666667" y="979" font-size="23" font-weight="600" class="">Shape and dispatch shortcuts</text>
+<text x="2803.666666666667" y="1013" font-size="19" font-weight="400" class="">Bind a dimension, item-count expression or</text>
+<text x="2803.666666666667" y="1037" font-size="19" font-weight="400" class="">transfer-policy argument in one forwarding call.</text>
+<text x="2803.666666666667" y="1092" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:100710</title>
+<text x="2803.666666666667" y="1115" font-size="17" font-weight="400" class="example">cvkCmdTraceRays2D</text>
+<title>src/cvk.c:97909</title>
+<text x="2803.666666666667" y="1138" font-size="17" font-weight="400" class="example">cvkCmdDispatchItems [SC]</text>
+<title>src/cvk.c:102744</title>
+<text x="2803.666666666667" y="1161" font-size="17" font-weight="400" class="example">cvkCmdTransferBufferToImage</text>
+</g>
+</g>
+<rect x="44" y="1226" width="3272" height="68" rx="8" fill="white" stroke="#2563eb" stroke-width="2"/>
+<text x="62" y="1255" font-size="26" font-weight="700" class="">Tier 2 / compositions</text>
+<text x="62" y="1280" font-size="19" font-weight="400" class="">Policy chains combine multiple calls, scratch structures, queries and selected results.</text>
+<text x="2720" y="1255" font-size="20" font-weight="400" class="muted">cvk: 102 functions / scvk: 52</text>
+<path d="M309.1666666666667 1294V1323" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="44.0" y="1329" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="44.0" y="1329" width="6" height="225" rx="3" fill="#2563eb"/>
+<text x="62.0" y="1360" font-size="23" font-weight="600" class="">Resource setup and allocation</text>
+<text x="62.0" y="1394" font-size="19" font-weight="400" class="">Create resources, inspect requirements, select</text>
+<text x="62.0" y="1418" font-size="19" font-weight="400" class="">memory, allocate it and bind it.</text>
+<text x="62.0" y="1473" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97522</title>
+<text x="62.0" y="1496" font-size="17" font-weight="400" class="example">cvkSetupBuffer [SC]</text>
+<title>src/cvk.c:97480</title>
+<text x="62.0" y="1519" font-size="17" font-weight="400" class="example">cvkSetupImage [SC]</text>
+<title>src/cvk.c:97464</title>
+<text x="62.0" y="1542" font-size="17" font-weight="400" class="example">cvkAllocateBufferMemory [SC]</text>
+</g>
+<path d="M857.5 1294V1323" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="592.3333333333334" y="1329" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="592.3333333333334" y="1329" width="6" height="225" rx="3" fill="#2563eb"/>
+<text x="610.3333333333334" y="1360" font-size="23" font-weight="600" class="">Devices, queues and capabilities</text>
+<text x="610.3333333333334" y="1394" font-size="19" font-weight="400" class="">Query/select a device capability or memory type;</text>
+<text x="610.3333333333334" y="1418" font-size="19" font-weight="400" class="">build a device and retrieve its queue.</text>
+<text x="610.3333333333334" y="1473" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97541</title>
+<text x="610.3333333333334" y="1496" font-size="17" font-weight="400" class="example">cvkSetupDeviceQueue [SC]</text>
+<title>src/cvk.c:99324</title>
+<text x="610.3333333333334" y="1519" font-size="17" font-weight="400" class="example">cvkGetPhysicalDeviceVideoProfileSupport</text>
+<title>src/cvk.c:97377</title>
+<text x="610.3333333333334" y="1542" font-size="16.207650273224044" font-weight="400" class="example">cvkGetPhysicalDeviceCompatibleMemoryTypeIndex [SC]</text>
+</g>
+<path d="M1405.8333333333335 1294V1323" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="1140.6666666666667" y="1329" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1140.6666666666667" y="1329" width="6" height="225" rx="3" fill="#2563eb"/>
+<text x="1158.6666666666667" y="1360" font-size="23" font-weight="600" class="">Pipelines and descriptors</text>
+<text x="1158.6666666666667" y="1394" font-size="19" font-weight="400" class="">Build graphics/compute/mesh/ray-tracing pipelines,</text>
+<text x="1158.6666666666667" y="1418" font-size="19" font-weight="400" class="">layouts and descriptor updates.</text>
+<text x="1158.6666666666667" y="1473" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:99058</title>
+<text x="1158.6666666666667" y="1496" font-size="17" font-weight="400" class="example">cvkSetupGraphicsPipeline</text>
+<title>src/cvk.c:100627</title>
+<text x="1158.6666666666667" y="1519" font-size="17" font-weight="400" class="example">cvkSetupRayTracingPipeline</text>
+<title>src/cvk.c:97871</title>
+<text x="1158.6666666666667" y="1542" font-size="17" font-weight="400" class="example">cvkUpdateImageDescriptorSet [SC]</text>
+</g>
+<path d="M1954.1666666666667 1294V1323" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="1689.0" y="1329" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1689.0" y="1329" width="6" height="225" rx="3" fill="#2563eb"/>
+<text x="1707.0" y="1360" font-size="23" font-weight="600" class="">Recording sequences</text>
+<text x="1707.0" y="1394" font-size="19" font-weight="400" class="">Bind required state and issue graphics, compute,</text>
+<text x="1707.0" y="1418" font-size="19" font-weight="400" class="">mesh, video or ray-tracing work.</text>
+<text x="1707.0" y="1473" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97916</title>
+<text x="1707.0" y="1496" font-size="17" font-weight="400" class="example">cvkCmdDispatchComputeItems [SC]</text>
+<title>src/cvk.c:99742</title>
+<text x="1707.0" y="1519" font-size="17" font-weight="400" class="example">cvkCmdDecodeVideoPicture</text>
+<title>src/cvk.c:100720</title>
+<text x="1707.0" y="1542" font-size="17" font-weight="400" class="example">cvkCmdTraceRayTracingRays</text>
+</g>
+<path d="M2502.5 1294V1323" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="2237.3333333333335" y="1329" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2237.3333333333335" y="1329" width="6" height="225" rx="3" fill="#2563eb"/>
+<text x="2255.3333333333335" y="1360" font-size="23" font-weight="600" class="">Barriers and ownership</text>
+<text x="2255.3333333333335" y="1394" font-size="19" font-weight="400" class="">Build barrier structures and submit them, including</text>
+<text x="2255.3333333333335" y="1418" font-size="19" font-weight="400" class="">queue-family ownership transfers.</text>
+<text x="2255.3333333333335" y="1473" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:98598</title>
+<text x="2255.3333333333335" y="1496" font-size="17" font-weight="400" class="example">cvkCmdMemoryBarrier2</text>
+<title>src/cvk.c:98612</title>
+<text x="2255.3333333333335" y="1519" font-size="17" font-weight="400" class="example">cvkCmdImageQueueOwnershipBarrier2</text>
+<title>src/cvk.c:97690</title>
+<text x="2255.3333333333335" y="1542" font-size="17" font-weight="400" class="example">cvkCmdBufferQueueOwnershipBarrier [SC]</text>
+</g>
+<path d="M3050.8333333333335 1294V1323" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="2785.666666666667" y="1329" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2785.666666666667" y="1329" width="6" height="225" rx="3" fill="#2563eb"/>
+<text x="2803.666666666667" y="1360" font-size="23" font-weight="600" class="">Compound builders and adapters</text>
+<text x="2803.666666666667" y="1394" font-size="19" font-weight="400" class="">Build nested structures, union members or 2D</text>
+<text x="2803.666666666667" y="1418" font-size="19" font-weight="400" class="">geometry before forwarding to another helper.</text>
+<text x="2803.666666666667" y="1473" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:98194</title>
+<text x="2803.666666666667" y="1496" font-size="17" font-weight="400" class="example">cvkCreateImage2D [SC]</text>
+<title>src/cvk.c:100397</title>
+<text x="2803.666666666667" y="1519" font-size="17" font-weight="400" class="example">cvkInitTrianglesAccelerationStructureGeometry</text>
+<title>src/cvk.c:99053</title>
+<text x="2803.666666666667" y="1542" font-size="17" font-weight="400" class="example">cvkCmdSetFirstViewportAndScissor2D [SC]</text>
+</g>
+<rect x="44" y="1584" width="3272" height="68" rx="8" fill="white" stroke="#a855f7" stroke-width="2"/>
+<text x="62" y="1613" font-size="26" font-weight="700" class="">Tier 3 / domain protocols</text>
+<text x="62" y="1638" font-size="19" font-weight="400" class="">Authored C algorithms and workflows folded into the generated libraries.</text>
+<text x="2720" y="1613" font-size="20" font-weight="400" class="muted">cvk: 56 functions / scvk: 35</text>
+<path d="M309.1666666666667 1652V1681" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="44.0" y="1687" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="44.0" y="1687" width="6" height="225" rx="3" fill="#a855f7"/>
+<text x="62.0" y="1718" font-size="23" font-weight="600" class="">External resource interchange</text>
+<text x="62.0" y="1752" font-size="19" font-weight="400" class="">Import/export images and buffers; handle ownership</text>
+<text x="62.0" y="1776" font-size="19" font-weight="400" class="">and platform capability checks.</text>
+<text x="62.0" y="1831" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/win32/cvk_win32.c:1520</title>
+<text x="62.0" y="1854" font-size="17" font-weight="400" class="example">cvkImportWin32HandleImage</text>
+<title>src/posix/cvk_posix.c:106</title>
+<text x="62.0" y="1877" font-size="17" font-weight="400" class="example">cvkImportDmaBufImage [SC]</text>
+<title>src/posix/cvk_posix.c:446</title>
+<text x="62.0" y="1900" font-size="17" font-weight="400" class="example">cvkExportFdBuffer [SC]</text>
+</g>
+<path d="M857.5 1652V1681" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="592.3333333333334" y="1687" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="592.3333333333334" y="1687" width="6" height="225" rx="3" fill="#a855f7"/>
+<text x="610.3333333333334" y="1718" font-size="23" font-weight="600" class="">Memory, video and ray tracing</text>
+<text x="610.3333333333334" y="1752" font-size="19" font-weight="400" class="">Mapped-memory I/O, video-session allocation,</text>
+<text x="610.3333333333334" y="1776" font-size="19" font-weight="400" class="">acceleration structures and shader binding tables.</text>
+<text x="610.3333333333334" y="1831" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:101359</title>
+<text x="610.3333333333334" y="1854" font-size="17" font-weight="400" class="example">cvkWriteMemory [SC]</text>
+<title>src/cvk.c:101216</title>
+<text x="610.3333333333334" y="1877" font-size="17" font-weight="400" class="example">cvkAllocateVideoSessionMemory</text>
+<title>src/cvk.c:101293</title>
+<text x="610.3333333333334" y="1900" font-size="17" font-weight="400" class="example">cvkSetupRayTracingShaderBindingTable</text>
+</g>
+<path d="M1405.8333333333335 1652V1681" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="1140.6666666666667" y="1687" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1140.6666666666667" y="1687" width="6" height="225" rx="3" fill="#a855f7"/>
+<text x="1158.6666666666667" y="1718" font-size="23" font-weight="600" class="">Transfers and format arithmetic</text>
+<text x="1158.6666666666667" y="1752" font-size="19" font-weight="400" class="">Copy/blit with ownership transitions; compute plane</text>
+<text x="1158.6666666666667" y="1776" font-size="19" font-weight="400" class="">layouts and copy regions.</text>
+<text x="1158.6666666666667" y="1831" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:101591</title>
+<text x="1158.6666666666667" y="1854" font-size="17" font-weight="400" class="example">cvkCmdTransferBufferToImageQueueOwnership</text>
+<title>src/cvk.c:101463</title>
+<text x="1158.6666666666667" y="1877" font-size="17" font-weight="400" class="example">cvkCalculateFormatPlaneLayouts</text>
+<title>src/cvk.c:101532</title>
+<text x="1158.6666666666667" y="1900" font-size="17" font-weight="400" class="example">cvkGetBufferImageCopyRegions</text>
+</g>
+<path d="M1954.1666666666667 1652V1681" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="1689.0" y="1687" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="1689.0" y="1687" width="6" height="225" rx="3" fill="#a855f7"/>
+<text x="1707.0" y="1718" font-size="23" font-weight="600" class="">JSON document machinery</text>
+<text x="1707.0" y="1752" font-size="19" font-weight="400" class="">Token/value parsing, string and member access,</text>
+<text x="1707.0" y="1776" font-size="19" font-weight="400" class="">arenas and runtime handle resolution.</text>
+<text x="1707.0" y="1831" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:102091</title>
+<text x="1707.0" y="1854" font-size="17" font-weight="400" class="example">cvkParseJsonDocument [SC]</text>
+<title>src/cvk.c:102296</title>
+<text x="1707.0" y="1877" font-size="17" font-weight="400" class="example">cvkAllocateArena [SC]</text>
+<title>src/cvk.c:102357</title>
+<text x="1707.0" y="1900" font-size="17" font-weight="400" class="example">cvkResolveJsonHandle [SC]</text>
+</g>
+<path d="M2502.5 1652V1681" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="2237.3333333333335" y="1687" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2237.3333333333335" y="1687" width="6" height="225" rx="3" fill="#a855f7"/>
+<text x="2255.3333333333335" y="1718" font-size="23" font-weight="600" class="">Pipeline JSON workflows</text>
+<text x="2255.3333333333335" y="1752" font-size="19" font-weight="400" class="">Parse object graphs, resolve their handles and</text>
+<text x="2255.3333333333335" y="1776" font-size="19" font-weight="400" class="">create the described Vulkan pipeline.</text>
+<text x="2255.3333333333335" y="1831" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:102389</title>
+<text x="2255.3333333333335" y="1854" font-size="17" font-weight="400" class="example">cvkParsePipelineJson [SC]</text>
+<title>src/cvk.c:102520</title>
+<text x="2255.3333333333335" y="1877" font-size="17" font-weight="400" class="example">cvkCreatePipelineJsonObjects [SC]</text>
+<title>src/cvk.c:102721</title>
+<text x="2255.3333333333335" y="1900" font-size="17" font-weight="400" class="example">cvkCreatePipelineFromJson [SC]</text>
+</g>
+<path d="M3050.8333333333335 1652V1681" stroke="#94a3b8" fill="none" marker-end="url(#down)"/>
+<g class="content-card"><rect x="2785.666666666667" y="1687" width="530.3333333333334" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="2785.666666666667" y="1687" width="6" height="225" rx="3" fill="#a855f7"/>
+<text x="2803.666666666667" y="1718" font-size="23" font-weight="600" class="">Debugging and device identity</text>
+<text x="2803.666666666667" y="1752" font-size="19" font-weight="400" class="">Create a debug-enabled instance, report messages</text>
+<text x="2803.666666666667" y="1776" font-size="19" font-weight="400" class="">and find devices by LUID or PCI address.</text>
+<text x="2803.666666666667" y="1831" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:101122</title>
+<text x="2803.666666666667" y="1854" font-size="17" font-weight="400" class="example">cvkCreateDebugInstance [SC]</text>
+<title>src/cvk.c:101108</title>
+<text x="2803.666666666667" y="1877" font-size="17" font-weight="400" class="example">cvkWriteDebugUtilsMessage [SC]</text>
+<title>src/cvk.c:101192</title>
+<text x="2803.666666666667" y="1900" font-size="17" font-weight="400" class="example">cvkGetPhysicalDeviceByPciBusInfo [SC]</text>
+</g>
+<g id="shared-support"><rect x="3356" y="180" width="700" height="1742" rx="12" fill="#eef2f6" stroke="#cbd5e1"/>
+<text x="3376" y="219" font-size="28" font-weight="700" class="">Shared support</text>
+<text x="3376" y="252" font-size="21" font-weight="400" class="">Available across tiers</text>
+<text x="3376" y="281" font-size="18" font-weight="400" class="muted">JSON parsers: 2,500 / helpers: 19</text>
+<g class="content-card"><rect x="3374" y="310" width="664" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="3374" y="310" width="6" height="225" rx="3" fill="#64748b"/>
+<text x="3392" y="341" font-size="23" font-weight="600" class="">Generated JSON scalar parsers</text>
+<text x="3392" y="375" font-size="19" font-weight="400" class="">Parse enum names, flag sets and scalar values into their Vulkan</text>
+<text x="3392" y="399" font-size="19" font-weight="400" class="">representations.</text>
+<text x="3392" y="454" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:14815</title>
+<text x="3392" y="477" font-size="17" font-weight="400" class="example">cvkParseJsonImageLayout [SC]</text>
+<title>src/cvk.c:19213</title>
+<text x="3392" y="500" font-size="17" font-weight="400" class="example">cvkParseJsonBufferUsageFlags [SC]</text>
+</g>
+<g class="content-card"><rect x="3374" y="552" width="664" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="3374" y="552" width="6" height="225" rx="3" fill="#64748b"/>
+<text x="3392" y="583" font-size="23" font-weight="600" class="">Generated JSON structure parsers</text>
+<text x="3392" y="617" font-size="19" font-weight="400" class="">Populate profile-supported Vulkan structs and arrays from the</text>
+<text x="3392" y="641" font-size="19" font-weight="400" class="">parsed JSON document.</text>
+<text x="3392" y="696" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:24223</title>
+<text x="3392" y="719" font-size="17" font-weight="400" class="example">cvkParseJsonBufferCreateInfo [SC]</text>
+<title>src/cvk.c:33129</title>
+<text x="3392" y="742" font-size="17" font-weight="400" class="example">cvkParseJsonGraphicsPipelineCreateInfo [SC]</text>
+</g>
+<g class="content-card"><rect x="3374" y="794" width="664" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="3374" y="794" width="6" height="225" rx="3" fill="#64748b"/>
+<text x="3392" y="825" font-size="23" font-weight="600" class="">Generated JSON pNext dispatch</text>
+<text x="3392" y="859" font-size="19" font-weight="400" class="">Choose and populate the correct extension structure while</text>
+<text x="3392" y="883" font-size="19" font-weight="400" class="">traversing a JSON chain.</text>
+<text x="3392" y="938" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:62577</title>
+<text x="3392" y="961" font-size="17" font-weight="400" class="example">cvkParseJsonStructureChain [SC]</text>
+</g>
+<g class="content-card"><rect x="3374" y="1036" width="664" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="3374" y="1036" width="6" height="225" rx="3" fill="#64748b"/>
+<text x="3392" y="1067" font-size="23" font-weight="600" class="">Pure selection algorithms</text>
+<text x="3392" y="1101" font-size="19" font-weight="400" class="">Choose memory types, queue families and supported extensions from</text>
+<text x="3392" y="1125" font-size="19" font-weight="400" class="">already queried data.</text>
+<text x="3392" y="1180" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97287</title>
+<text x="3392" y="1203" font-size="17" font-weight="400" class="example">cvkGetCompatibleMemoryTypeIndex [SC]</text>
+<title>src/cvk.c:97326</title>
+<text x="3392" y="1226" font-size="17" font-weight="400" class="example">cvkGetQueueFamilyIndex [SC]</text>
+<title>src/cvk.c:97313</title>
+<text x="3392" y="1249" font-size="17" font-weight="400" class="example">cvkGetExtensionsSupport [SC]</text>
+</g>
+<g class="content-card"><rect x="3374" y="1278" width="664" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="3374" y="1278" width="6" height="225" rx="3" fill="#64748b"/>
+<text x="3392" y="1309" font-size="23" font-weight="600" class="">Arithmetic and local state</text>
+<text x="3392" y="1343" font-size="19" font-weight="400" class="">Align sizes and choose an unused video-reference slot without</text>
+<text x="3392" y="1367" font-size="19" font-weight="400" class="">calling Vulkan.</text>
+<text x="3392" y="1422" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:97352</title>
+<text x="3392" y="1445" font-size="17" font-weight="400" class="example">cvkAlignDeviceSize [SC]</text>
+<title>src/cvk.c:97357</title>
+<text x="3392" y="1468" font-size="17" font-weight="400" class="example">cvkGetInactiveVideoReferenceSlotIndex [SC]</text>
+</g>
+<g class="content-card"><rect x="3374" y="1520" width="664" height="225" rx="8" fill="white" stroke="#cbd5e1"/><rect x="3374" y="1520" width="6" height="225" rx="3" fill="#64748b"/>
+<text x="3392" y="1551" font-size="23" font-weight="600" class="">Fatal diagnostics</text>
+<text x="3392" y="1585" font-size="19" font-weight="400" class="">Report failed checks and abort. CHECK and ASSERT macros reach</text>
+<text x="3392" y="1609" font-size="19" font-weight="400" class="">this infrastructure.</text>
+<text x="3392" y="1664" font-size="15" font-weight="400" class="muted">Actual examples</text>
+<title>src/cvk.c:15</title>
+<text x="3392" y="1687" font-size="17" font-weight="400" class="example">cvkCheckResult [SC]</text>
+<title>src/cvk.c:9</title>
+<text x="3392" y="1710" font-size="17" font-weight="400" class="example">cvkFatal [SC]</text>
+</g>
+</g>
+<text x="44" y="1970" font-size="24" font-weight="700" class="">How to read the boundaries</text>
+<text x="44" y="2005" font-size="19" font-weight="400" class="">Tier 1 includes builders, extension conveniences and specializations. cvkSetupDeviceLocalBuffer is a specialization; cvkSetupBuffer is a Tier 2 composition.</text>
+<text x="44" y="2038" font-size="19" font-weight="400" class="">Platform folders contain multiple tiers. JSON document/pipeline workflows are Tier 3; generated type parsers and shared helpers sit beside the tier stack.</text>
+<text x="44" y="2071" font-size="19" font-weight="400" class="muted">Tests exercise the generated API. Python generation/research tools and CMake are repository tooling; the proposed cvkPlatform* interface is not emitted.</text>
+</svg>

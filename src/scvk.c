@@ -5,6 +5,52 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Cache records are thread-local; only the invalidation generation is shared.
+ * Vulkan's external synchronization governs handle destruction and reuse.
+ * Relaxed atomics suffice: the generation publishes no other shared data. */
+#include <stdatomic.h>
+
+static _Atomic(uint64_t) scvk_call_generation = 1;
+
+void scvkInvalidateCallCache(void)
+{
+    (void)atomic_fetch_add_explicit(&scvk_call_generation, 1, memory_order_relaxed);
+}
+
+PFN_vkVoidFunction scvkGetCachedDeviceProcAddr(scvkCallCache* pCache, VkDevice device, const char* pName)
+{
+    uint64_t           generation;
+    PFN_vkVoidFunction function;
+
+    generation = atomic_load_explicit(&scvk_call_generation, memory_order_relaxed);
+    if (pCache->function != NULL && pCache->handle == (uintptr_t)device && pCache->generation == generation)
+    {
+        return pCache->function;
+    }
+    function           = scvkGetDeviceProcAddr(device, pName);
+    pCache->handle     = (uintptr_t)device;
+    pCache->generation = generation;
+    pCache->function   = function;
+    return function;
+}
+
+PFN_vkVoidFunction scvkGetCachedInstanceProcAddr(scvkCallCache* pCache, VkInstance instance, const char* pName)
+{
+    uint64_t           generation;
+    PFN_vkVoidFunction function;
+
+    generation = atomic_load_explicit(&scvk_call_generation, memory_order_relaxed);
+    if (pCache->function != NULL && pCache->handle == (uintptr_t)instance && pCache->generation == generation)
+    {
+        return pCache->function;
+    }
+    function           = scvkGetInstanceProcAddr(instance, pName);
+    pCache->handle     = (uintptr_t)instance;
+    pCache->generation = generation;
+    pCache->function   = function;
+    return function;
+}
+
 void scvkFatal(const char* pExpression, const char* pFile, int line)
 {
     (void)fprintf(stderr, "%s:%d: scvk fatal: %s\n", pFile, line, pExpression);
@@ -20443,15 +20489,16 @@ VkResult scvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_
 }
 void scvkAcquireProfilingLock(VkDevice device, const void* pNext, VkAcquireProfilingLockFlagsKHR flags, uint64_t timeout)
 {
-    VkAcquireProfilingLockInfoKHR info;
-    PFN_vkAcquireProfilingLockKHR function;
+    VkAcquireProfilingLockInfoKHR          info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkAcquireProfilingLockKHR          function;
 
     info.sType   = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
     info.pNext   = pNext;
     info.flags   = flags;
     info.timeout = timeout;
 
-    function = (PFN_vkAcquireProfilingLockKHR)scvkGetDeviceProcAddr(device, "vkAcquireProfilingLockKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkAcquireProfilingLockKHR);
     SCVK_CHECK(function(device, &info));
 }
 void scvkAllocateCommandBuffers(VkDevice device, const void* pNext, VkCommandPool commandPool, VkCommandBufferLevel level, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers)
@@ -20520,15 +20567,16 @@ void scvkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindI
 }
 void scvkCmdBeginDebugUtilsLabel(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT             label_info;
-    PFN_vkCmdBeginDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                   label_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdBeginDebugUtilsLabelEXT       function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkCmdBeginDebugUtilsLabelEXT)scvkGetDeviceProcAddr(device, "vkCmdBeginDebugUtilsLabelEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdBeginDebugUtilsLabelEXT);
     function(commandBuffer, &label_info);
 }
 void scvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags)
@@ -20697,9 +20745,10 @@ void scvkCmdDrawIndirectCount(VkCommandBuffer commandBuffer, VkBuffer buffer, Vk
 }
 void scvkCmdEndDebugUtilsLabel(VkDevice device, VkCommandBuffer commandBuffer)
 {
-    PFN_vkCmdEndDebugUtilsLabelEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdEndDebugUtilsLabelEXT         function;
 
-    function = (PFN_vkCmdEndDebugUtilsLabelEXT)scvkGetDeviceProcAddr(device, "vkCmdEndDebugUtilsLabelEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdEndDebugUtilsLabelEXT);
     function(commandBuffer);
 }
 void scvkCmdEndQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
@@ -20728,15 +20777,16 @@ void scvkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDevi
 }
 void scvkCmdInsertDebugUtilsLabel(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT              label_info;
-    PFN_vkCmdInsertDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                   label_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdInsertDebugUtilsLabelEXT      function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkCmdInsertDebugUtilsLabelEXT)scvkGetDeviceProcAddr(device, "vkCmdInsertDebugUtilsLabelEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdInsertDebugUtilsLabelEXT);
     function(commandBuffer, &label_info);
 }
 void scvkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents)
@@ -20784,15 +20834,16 @@ void scvkCmdPushConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout
 }
 void scvkCmdRefreshObjects(VkDevice device, VkCommandBuffer commandBuffer, const void* pNext, uint32_t objectCount, const VkRefreshObjectKHR* pObjects)
 {
-    VkRefreshObjectListKHR     refresh_objects;
-    PFN_vkCmdRefreshObjectsKHR function;
+    VkRefreshObjectListKHR                 refresh_objects;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdRefreshObjectsKHR             function;
 
     refresh_objects.sType       = VK_STRUCTURE_TYPE_REFRESH_OBJECT_LIST_KHR;
     refresh_objects.pNext       = pNext;
     refresh_objects.objectCount = objectCount;
     refresh_objects.pObjects    = pObjects;
 
-    function = (PFN_vkCmdRefreshObjectsKHR)scvkGetDeviceProcAddr(device, "vkCmdRefreshObjectsKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdRefreshObjectsKHR);
     function(commandBuffer, &refresh_objects);
 }
 void scvkCmdResetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
@@ -20819,9 +20870,10 @@ void scvkCmdSetBlendConstants(VkCommandBuffer commandBuffer, const float blendCo
 }
 void scvkCmdSetColorWriteEnable(VkDevice device, VkCommandBuffer commandBuffer, uint32_t attachmentCount, const VkBool32* pColorWriteEnables)
 {
-    PFN_vkCmdSetColorWriteEnableEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetColorWriteEnableEXT        function;
 
-    function = (PFN_vkCmdSetColorWriteEnableEXT)scvkGetDeviceProcAddr(device, "vkCmdSetColorWriteEnableEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetColorWriteEnableEXT);
     function(commandBuffer, attachmentCount, pColorWriteEnables);
 }
 void scvkCmdSetDepthBias(VkCommandBuffer commandBuffer, float depthBiasConstantFactor, float depthBiasClamp, float depthBiasSlopeFactor)
@@ -20838,23 +20890,26 @@ void scvkCmdSetDeviceMask(VkCommandBuffer commandBuffer, uint32_t deviceMask)
 }
 void scvkCmdSetDiscardRectangle(VkDevice device, VkCommandBuffer commandBuffer, uint32_t firstDiscardRectangle, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles)
 {
-    PFN_vkCmdSetDiscardRectangleEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetDiscardRectangleEXT        function;
 
-    function = (PFN_vkCmdSetDiscardRectangleEXT)scvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetDiscardRectangleEXT);
     function(commandBuffer, firstDiscardRectangle, discardRectangleCount, pDiscardRectangles);
 }
 void scvkCmdSetDiscardRectangleEnable(VkDevice device, VkCommandBuffer commandBuffer, VkBool32 discardRectangleEnable)
 {
-    PFN_vkCmdSetDiscardRectangleEnableEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetDiscardRectangleEnableEXT  function;
 
-    function = (PFN_vkCmdSetDiscardRectangleEnableEXT)scvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleEnableEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetDiscardRectangleEnableEXT);
     function(commandBuffer, discardRectangleEnable);
 }
 void scvkCmdSetDiscardRectangleMode(VkDevice device, VkCommandBuffer commandBuffer, VkDiscardRectangleModeEXT discardRectangleMode)
 {
-    PFN_vkCmdSetDiscardRectangleModeEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetDiscardRectangleModeEXT    function;
 
-    function = (PFN_vkCmdSetDiscardRectangleModeEXT)scvkGetDeviceProcAddr(device, "vkCmdSetDiscardRectangleModeEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetDiscardRectangleModeEXT);
     function(commandBuffer, discardRectangleMode);
 }
 void scvkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineStageFlags stageMask)
@@ -20863,9 +20918,10 @@ void scvkCmdSetEvent(VkCommandBuffer commandBuffer, VkEvent event, VkPipelineSta
 }
 void scvkCmdSetFragmentShadingRate(VkDevice device, VkCommandBuffer commandBuffer, const VkExtent2D* pFragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2])
 {
-    PFN_vkCmdSetFragmentShadingRateKHR function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetFragmentShadingRateKHR     function;
 
-    function = (PFN_vkCmdSetFragmentShadingRateKHR)scvkGetDeviceProcAddr(device, "vkCmdSetFragmentShadingRateKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetFragmentShadingRateKHR);
     function(commandBuffer, pFragmentSize, combinerOps);
 }
 void scvkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
@@ -20874,16 +20930,18 @@ void scvkCmdSetLineWidth(VkCommandBuffer commandBuffer, float lineWidth)
 }
 void scvkCmdSetLogicOp(VkDevice device, VkCommandBuffer commandBuffer, VkLogicOp logicOp)
 {
-    PFN_vkCmdSetLogicOpEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetLogicOpEXT                 function;
 
-    function = (PFN_vkCmdSetLogicOpEXT)scvkGetDeviceProcAddr(device, "vkCmdSetLogicOpEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetLogicOpEXT);
     function(commandBuffer, logicOp);
 }
 void scvkCmdSetPatchControlPoints(VkDevice device, VkCommandBuffer commandBuffer, uint32_t patchControlPoints)
 {
-    PFN_vkCmdSetPatchControlPointsEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetPatchControlPointsEXT      function;
 
-    function = (PFN_vkCmdSetPatchControlPointsEXT)scvkGetDeviceProcAddr(device, "vkCmdSetPatchControlPointsEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetPatchControlPointsEXT);
     function(commandBuffer, patchControlPoints);
 }
 void scvkCmdSetSampleLocations(VkDevice                   device,
@@ -20894,8 +20952,9 @@ void scvkCmdSetSampleLocations(VkDevice                   device,
                                uint32_t                   sampleLocationsCount,
                                const VkSampleLocationEXT* pSampleLocations)
 {
-    VkSampleLocationsInfoEXT       sample_locations_info;
-    PFN_vkCmdSetSampleLocationsEXT function;
+    VkSampleLocationsInfoEXT               sample_locations_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetSampleLocationsEXT         function;
 
     sample_locations_info.sType                   = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
     sample_locations_info.pNext                   = pNext;
@@ -20904,7 +20963,7 @@ void scvkCmdSetSampleLocations(VkDevice                   device,
     sample_locations_info.sampleLocationsCount    = sampleLocationsCount;
     sample_locations_info.pSampleLocations        = pSampleLocations;
 
-    function = (PFN_vkCmdSetSampleLocationsEXT)scvkGetDeviceProcAddr(device, "vkCmdSetSampleLocationsEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetSampleLocationsEXT);
     function(commandBuffer, &sample_locations_info);
 }
 void scvkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors)
@@ -20930,9 +20989,10 @@ void scvkCmdSetVertexInput(VkDevice                                     device,
                            uint32_t                                     vertexAttributeDescriptionCount,
                            const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions)
 {
-    PFN_vkCmdSetVertexInputEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCmdSetVertexInputEXT             function;
 
-    function = (PFN_vkCmdSetVertexInputEXT)scvkGetDeviceProcAddr(device, "vkCmdSetVertexInputEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkCmdSetVertexInputEXT);
     function(commandBuffer, vertexBindingDescriptionCount, pVertexBindingDescriptions, vertexAttributeDescriptionCount, pVertexAttributeDescriptions);
 }
 void scvkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports)
@@ -21047,8 +21107,9 @@ void scvkCreateDebugUtilsMessenger(VkInstance                           instance
                                    const VkAllocationCallbacks*         pAllocator,
                                    VkDebugUtilsMessengerEXT*            pMessenger)
 {
-    VkDebugUtilsMessengerCreateInfoEXT create_info;
-    PFN_vkCreateDebugUtilsMessengerEXT function;
+    VkDebugUtilsMessengerCreateInfoEXT     create_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkCreateDebugUtilsMessengerEXT     function;
 
     create_info.sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     create_info.pNext           = pNext;
@@ -21058,7 +21119,7 @@ void scvkCreateDebugUtilsMessenger(VkInstance                           instance
     create_info.pfnUserCallback = pfnUserCallback;
     create_info.pUserData       = pUserData;
 
-    function = (PFN_vkCreateDebugUtilsMessengerEXT)scvkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkCreateDebugUtilsMessengerEXT);
     SCVK_CHECK(function(instance, &create_info, pAllocator, pMessenger));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pMessenger));
 }
@@ -21589,9 +21650,10 @@ void scvkDestroyBufferView(VkDevice device, VkBufferView bufferView, const VkAll
 }
 void scvkDestroyDebugUtilsMessenger(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator)
 {
-    PFN_vkDestroyDebugUtilsMessengerEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkDestroyDebugUtilsMessengerEXT    function;
 
-    function = (PFN_vkDestroyDebugUtilsMessengerEXT)scvkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkDestroyDebugUtilsMessengerEXT);
     function(instance, messenger, pAllocator);
 }
 void scvkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator)
@@ -21600,6 +21662,7 @@ void scvkDestroyDescriptorSetLayout(VkDevice device, VkDescriptorSetLayout descr
 }
 void scvkDestroyDevice(VkDevice device, const VkAllocationCallbacks* pAllocator)
 {
+    scvkInvalidateCallCache();
     vkDestroyDevice(device, pAllocator);
 }
 void scvkDestroyEvent(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
@@ -21624,6 +21687,7 @@ void scvkDestroyImageView(VkDevice device, VkImageView imageView, const VkAlloca
 }
 void scvkDestroyInstance(VkInstance instance, const VkAllocationCallbacks* pAllocator)
 {
+    scvkInvalidateCallCache();
     vkDestroyInstance(instance, pAllocator);
 }
 void scvkDestroyPipeline(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
@@ -21664,14 +21728,15 @@ void scvkDeviceWaitIdle(VkDevice device)
 }
 void scvkDisplayPowerControl(VkDevice device, VkDisplayKHR display, const void* pNext, VkDisplayPowerStateEXT powerState)
 {
-    VkDisplayPowerInfoEXT        display_power_info;
-    PFN_vkDisplayPowerControlEXT function;
+    VkDisplayPowerInfoEXT                  display_power_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkDisplayPowerControlEXT           function;
 
     display_power_info.sType      = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT;
     display_power_info.pNext      = pNext;
     display_power_info.powerState = powerState;
 
-    function = (PFN_vkDisplayPowerControlEXT)scvkGetDeviceProcAddr(device, "vkDisplayPowerControlEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkDisplayPowerControlEXT);
     SCVK_CHECK(function(device, display, &display_power_info));
 }
 void scvkEndCommandBuffer(VkCommandBuffer commandBuffer)
@@ -21741,10 +21806,11 @@ uint32_t scvkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCounters(VkInstan
                                                                         VkPerformanceCounterKHR            pCounters[SCVK_MAX_COUNTERS],
                                                                         VkPerformanceCounterDescriptionKHR pCounterDescriptions[SCVK_MAX_COUNTER_DESCRIPTIONS])
 {
+    static SCVK_THREAD_LOCAL scvkCallCache                              call_cache;
     PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR function;
     uint32_t                                                            counter_count = 0;
 
-    function = (PFN_vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR)scvkGetInstanceProcAddr(instance, "vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR);
     SCVK_CHECK(function(physicalDevice, queueFamilyIndex, &counter_count, NULL, NULL));
     SCVK_ASSERT(SCVK_MAX_COUNTERS >= counter_count);
     {
@@ -21821,9 +21887,10 @@ uint64_t scvkGetBufferOpaqueCaptureAddress(VkDevice device, const void* pNext, V
 }
 void scvkGetCalibratedTimestamps(VkDevice device, uint32_t timestampCount, const VkCalibratedTimestampInfoKHR* pTimestampInfos, uint64_t* pTimestamps, uint64_t* pMaxDeviation)
 {
-    PFN_vkGetCalibratedTimestampsKHR function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetCalibratedTimestampsKHR       function;
 
-    function = (PFN_vkGetCalibratedTimestampsKHR)scvkGetDeviceProcAddr(device, "vkGetCalibratedTimestampsKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetCalibratedTimestampsKHR);
     SCVK_CHECK(function(device, timestampCount, pTimestampInfos, pTimestamps, pMaxDeviation));
 }
 void scvkGetCommandPoolMemoryConsumption(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, void* pNext, VkCommandPoolMemoryConsumption* pConsumption)
@@ -21991,15 +22058,16 @@ uint32_t scvkGetFaultData(VkDevice device, VkFaultQueryBehavior faultQueryBehavi
 }
 void scvkGetFenceFd(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, int* pFd)
 {
-    VkFenceGetFdInfoKHR get_fd_info;
-    PFN_vkGetFenceFdKHR function;
+    VkFenceGetFdInfoKHR                    get_fd_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetFenceFdKHR                    function;
 
     get_fd_info.sType      = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
     get_fd_info.pNext      = pNext;
     get_fd_info.fence      = fence;
     get_fd_info.handleType = handleType;
 
-    function = (PFN_vkGetFenceFdKHR)scvkGetDeviceProcAddr(device, "vkGetFenceFdKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetFenceFdKHR);
     SCVK_CHECK(function(device, &get_fd_info, pFd));
 }
 VkResult scvkGetFenceStatus(VkDevice device, VkFence fence)
@@ -22013,12 +22081,13 @@ VkResult scvkGetFenceStatus(VkDevice device, VkFence fence)
 void scvkGetImageDrmFormatModifierProperties(VkDevice device, VkImage image, void* pNext, VkImageDrmFormatModifierPropertiesEXT* pProperties)
 {
     VkImageDrmFormatModifierPropertiesEXT        properties;
+    static SCVK_THREAD_LOCAL scvkCallCache       call_cache;
     PFN_vkGetImageDrmFormatModifierPropertiesEXT function;
 
     properties.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
     properties.pNext = pNext;
 
-    function = (PFN_vkGetImageDrmFormatModifierPropertiesEXT)scvkGetDeviceProcAddr(device, "vkGetImageDrmFormatModifierPropertiesEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetImageDrmFormatModifierPropertiesEXT);
     SCVK_CHECK(function(device, image, &properties));
     (*pProperties) = properties;
 }
@@ -22049,26 +22118,28 @@ PFN_vkVoidFunction scvkGetInstanceProcAddr(VkInstance instance, const char* pNam
 }
 void scvkGetMemoryFd(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, int* pFd)
 {
-    VkMemoryGetFdInfoKHR get_fd_info;
-    PFN_vkGetMemoryFdKHR function;
+    VkMemoryGetFdInfoKHR                   get_fd_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetMemoryFdKHR                   function;
 
     get_fd_info.sType      = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
     get_fd_info.pNext      = pNext;
     get_fd_info.memory     = memory;
     get_fd_info.handleType = handleType;
 
-    function = (PFN_vkGetMemoryFdKHR)scvkGetDeviceProcAddr(device, "vkGetMemoryFdKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetMemoryFdKHR);
     SCVK_CHECK(function(device, &get_fd_info, pFd));
 }
 void scvkGetMemoryFdProperties(VkDevice device, VkExternalMemoryHandleTypeFlagBits handleType, int fd, void* pNext, VkMemoryFdPropertiesKHR* pMemoryFdProperties)
 {
-    VkMemoryFdPropertiesKHR        memory_fd_properties;
-    PFN_vkGetMemoryFdPropertiesKHR function;
+    VkMemoryFdPropertiesKHR                memory_fd_properties;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetMemoryFdPropertiesKHR         function;
 
     memory_fd_properties.sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
     memory_fd_properties.pNext = pNext;
 
-    function = (PFN_vkGetMemoryFdPropertiesKHR)scvkGetDeviceProcAddr(device, "vkGetMemoryFdPropertiesKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetMemoryFdPropertiesKHR);
     SCVK_CHECK(function(device, handleType, fd, &memory_fd_properties));
     (*pMemoryFdProperties) = memory_fd_properties;
 }
@@ -22079,21 +22150,23 @@ void scvkGetMemoryHostPointerProperties(VkDevice                           devic
                                         VkMemoryHostPointerPropertiesEXT*  pMemoryHostPointerProperties)
 {
     VkMemoryHostPointerPropertiesEXT        memory_host_pointer_properties;
+    static SCVK_THREAD_LOCAL scvkCallCache  call_cache;
     PFN_vkGetMemoryHostPointerPropertiesEXT function;
 
     memory_host_pointer_properties.sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
     memory_host_pointer_properties.pNext = pNext;
 
-    function = (PFN_vkGetMemoryHostPointerPropertiesEXT)scvkGetDeviceProcAddr(device, "vkGetMemoryHostPointerPropertiesEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetMemoryHostPointerPropertiesEXT);
     SCVK_CHECK(function(device, handleType, pHostPointer, &memory_host_pointer_properties));
     (*pMemoryHostPointerProperties) = memory_host_pointer_properties;
 }
 uint32_t scvkGetPhysicalDeviceCalibrateableTimeDomains(VkInstance instance, VkPhysicalDevice physicalDevice, VkTimeDomainKHR pTimeDomains[SCVK_MAX_TIME_DOMAINS])
 {
+    static SCVK_THREAD_LOCAL scvkCallCache             call_cache;
     PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR function;
     uint32_t                                           time_domain_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceCalibrateableTimeDomainsKHR)scvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceCalibrateableTimeDomainsKHR");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceCalibrateableTimeDomainsKHR);
     SCVK_CHECK(function(physicalDevice, &time_domain_count, NULL));
     SCVK_ASSERT(SCVK_MAX_TIME_DOMAINS >= time_domain_count);
     SCVK_CHECK(function(physicalDevice, &time_domain_count, pTimeDomains));
@@ -22215,10 +22288,11 @@ void scvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkF
 }
 uint32_t scvkGetPhysicalDeviceFragmentShadingRates(VkInstance instance, VkPhysicalDevice physicalDevice, VkPhysicalDeviceFragmentShadingRateKHR pFragmentShadingRates[SCVK_MAX_FRAGMENT_SHADING_RATES])
 {
+    static SCVK_THREAD_LOCAL scvkCallCache         call_cache;
     PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR function;
     uint32_t                                       fragment_shading_rate_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR)scvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFragmentShadingRatesKHR");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceFragmentShadingRatesKHR);
     SCVK_CHECK(function(physicalDevice, &fragment_shading_rate_count, NULL));
     SCVK_ASSERT(SCVK_MAX_FRAGMENT_SHADING_RATES >= fragment_shading_rate_count);
     {
@@ -22280,12 +22354,13 @@ void scvkGetPhysicalDeviceMemoryProperties2(VkPhysicalDevice physicalDevice, voi
 void scvkGetPhysicalDeviceMultisampleProperties(VkInstance instance, VkPhysicalDevice physicalDevice, VkSampleCountFlagBits samples, void* pNext, VkMultisamplePropertiesEXT* pMultisampleProperties)
 {
     VkMultisamplePropertiesEXT                      multisample_properties;
+    static SCVK_THREAD_LOCAL scvkCallCache          call_cache;
     PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT function;
 
     multisample_properties.sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT;
     multisample_properties.pNext = pNext;
 
-    function = (PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT)scvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceMultisamplePropertiesEXT");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceMultisamplePropertiesEXT);
     function(physicalDevice, samples, &multisample_properties);
     (*pMultisampleProperties) = multisample_properties;
 }
@@ -22320,6 +22395,7 @@ void scvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkInstance       ins
                                                             uint32_t*        pNumPasses)
 {
     VkQueryPoolPerformanceCreateInfoKHR                         performance_query_create_info;
+    static SCVK_THREAD_LOCAL scvkCallCache                      call_cache;
     PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR function;
 
     performance_query_create_info.sType             = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR;
@@ -22328,7 +22404,7 @@ void scvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkInstance       ins
     performance_query_create_info.counterIndexCount = counterIndexCount;
     performance_query_create_info.pCounterIndices   = pCounterIndices;
 
-    function = (PFN_vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR)scvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR);
     function(physicalDevice, &performance_query_create_info, pNumPasses);
 }
 uint32_t scvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyProperties pQueueFamilyProperties[SCVK_MAX_QUEUE_FAMILY_PROPERTIES])
@@ -22359,10 +22435,11 @@ uint32_t scvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDe
 }
 uint32_t scvkGetPhysicalDeviceRefreshableObjectTypes(VkInstance instance, VkPhysicalDevice physicalDevice, VkObjectType pRefreshableObjectTypes[SCVK_MAX_REFRESHABLE_OBJECT_TYPES])
 {
+    static SCVK_THREAD_LOCAL scvkCallCache           call_cache;
     PFN_vkGetPhysicalDeviceRefreshableObjectTypesKHR function;
     uint32_t                                         refreshable_object_type_count = 0;
 
-    function = (PFN_vkGetPhysicalDeviceRefreshableObjectTypesKHR)scvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceRefreshableObjectTypesKHR");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceRefreshableObjectTypesKHR);
     SCVK_CHECK(function(physicalDevice, &refreshable_object_type_count, NULL));
     SCVK_ASSERT(SCVK_MAX_REFRESHABLE_OBJECT_TYPES >= refreshable_object_type_count);
     SCVK_CHECK(function(physicalDevice, &refreshable_object_type_count, pRefreshableObjectTypes));
@@ -22371,13 +22448,14 @@ uint32_t scvkGetPhysicalDeviceRefreshableObjectTypes(VkInstance instance, VkPhys
 VkResult scvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkInstance instance, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities)
 {
     VkSurfaceCapabilities2EXT                      surface_capabilities;
+    static SCVK_THREAD_LOCAL scvkCallCache         call_cache;
     PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT function;
     VkResult                                       result;
 
     surface_capabilities.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
     surface_capabilities.pNext = pNext;
 
-    function = (PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT)scvkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceSurfaceCapabilities2EXT");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkGetPhysicalDeviceSurfaceCapabilities2EXT);
     result   = function(physicalDevice, surface, &surface_capabilities);
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     if (0 <= result)
@@ -22470,23 +22548,25 @@ void scvkGetSemaphoreCounterValue(VkDevice device, VkSemaphore semaphore, uint64
 }
 void scvkGetSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, int* pFd)
 {
-    VkSemaphoreGetFdInfoKHR get_fd_info;
-    PFN_vkGetSemaphoreFdKHR function;
+    VkSemaphoreGetFdInfoKHR                get_fd_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetSemaphoreFdKHR                function;
 
     get_fd_info.sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
     get_fd_info.pNext      = pNext;
     get_fd_info.semaphore  = semaphore;
     get_fd_info.handleType = handleType;
 
-    function = (PFN_vkGetSemaphoreFdKHR)scvkGetDeviceProcAddr(device, "vkGetSemaphoreFdKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetSemaphoreFdKHR);
     SCVK_CHECK(function(device, &get_fd_info, pFd));
 }
 VkResult scvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSurfaceCounterFlagBitsEXT counter, uint64_t* pCounterValue)
 {
-    PFN_vkGetSwapchainCounterEXT function;
-    VkResult                     result;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetSwapchainCounterEXT           function;
+    VkResult                               result;
 
-    function = (PFN_vkGetSwapchainCounterEXT)scvkGetDeviceProcAddr(device, "vkGetSwapchainCounterEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetSwapchainCounterEXT);
     result   = function(device, swapchain, counter, pCounterValue);
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result));
     return result;
@@ -22502,18 +22582,20 @@ uint32_t scvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkIma
 }
 VkResult scvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
 {
-    PFN_vkGetSwapchainStatusKHR function;
-    VkResult                    result;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkGetSwapchainStatusKHR            function;
+    VkResult                               result;
 
-    function = (PFN_vkGetSwapchainStatusKHR)scvkGetDeviceProcAddr(device, "vkGetSwapchainStatusKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkGetSwapchainStatusKHR);
     result   = function(device, swapchain);
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
     return result;
 }
 void scvkImportFenceFd(VkDevice device, const void* pNext, VkFence fence, VkFenceImportFlags flags, VkExternalFenceHandleTypeFlagBits handleType, int fd)
 {
-    VkImportFenceFdInfoKHR import_fence_fd_info;
-    PFN_vkImportFenceFdKHR function;
+    VkImportFenceFdInfoKHR                 import_fence_fd_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkImportFenceFdKHR                 function;
 
     import_fence_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
     import_fence_fd_info.pNext      = pNext;
@@ -22522,13 +22604,14 @@ void scvkImportFenceFd(VkDevice device, const void* pNext, VkFence fence, VkFenc
     import_fence_fd_info.handleType = handleType;
     import_fence_fd_info.fd         = fd;
 
-    function = (PFN_vkImportFenceFdKHR)scvkGetDeviceProcAddr(device, "vkImportFenceFdKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkImportFenceFdKHR);
     SCVK_CHECK(function(device, &import_fence_fd_info));
 }
 void scvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd)
 {
-    VkImportSemaphoreFdInfoKHR import_semaphore_fd_info;
-    PFN_vkImportSemaphoreFdKHR function;
+    VkImportSemaphoreFdInfoKHR             import_semaphore_fd_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkImportSemaphoreFdKHR             function;
 
     import_semaphore_fd_info.sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
     import_semaphore_fd_info.pNext      = pNext;
@@ -22537,7 +22620,7 @@ void scvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semap
     import_semaphore_fd_info.handleType = handleType;
     import_semaphore_fd_info.fd         = fd;
 
-    function = (PFN_vkImportSemaphoreFdKHR)scvkGetDeviceProcAddr(device, "vkImportSemaphoreFdKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkImportSemaphoreFdKHR);
     SCVK_CHECK(function(device, &import_semaphore_fd_info));
 }
 void scvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
@@ -22550,35 +22633,38 @@ void scvkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, 
 }
 void scvkQueueBeginDebugUtilsLabel(VkDevice device, VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT               label_info;
-    PFN_vkQueueBeginDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                   label_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkQueueBeginDebugUtilsLabelEXT     function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkQueueBeginDebugUtilsLabelEXT)scvkGetDeviceProcAddr(device, "vkQueueBeginDebugUtilsLabelEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkQueueBeginDebugUtilsLabelEXT);
     function(queue, &label_info);
 }
 void scvkQueueEndDebugUtilsLabel(VkDevice device, VkQueue queue)
 {
-    PFN_vkQueueEndDebugUtilsLabelEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkQueueEndDebugUtilsLabelEXT       function;
 
-    function = (PFN_vkQueueEndDebugUtilsLabelEXT)scvkGetDeviceProcAddr(device, "vkQueueEndDebugUtilsLabelEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkQueueEndDebugUtilsLabelEXT);
     function(queue);
 }
 void scvkQueueInsertDebugUtilsLabel(VkDevice device, VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
 {
-    VkDebugUtilsLabelEXT                label_info;
-    PFN_vkQueueInsertDebugUtilsLabelEXT function;
+    VkDebugUtilsLabelEXT                   label_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkQueueInsertDebugUtilsLabelEXT    function;
 
     label_info.sType      = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     label_info.pNext      = pNext;
     label_info.pLabelName = pLabelName;
     memcpy(label_info.color, color, sizeof(label_info.color));
 
-    function = (PFN_vkQueueInsertDebugUtilsLabelEXT)scvkGetDeviceProcAddr(device, "vkQueueInsertDebugUtilsLabelEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkQueueInsertDebugUtilsLabelEXT);
     function(queue, &label_info);
 }
 VkResult scvkQueuePresent(VkQueue               queue,
@@ -22615,42 +22701,46 @@ void scvkQueueWaitIdle(VkQueue queue)
 }
 void scvkRegisterDeviceEvent(VkDevice device, const void* pNext, VkDeviceEventTypeEXT deviceEvent, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    VkDeviceEventInfoEXT         device_event_info;
-    PFN_vkRegisterDeviceEventEXT function;
+    VkDeviceEventInfoEXT                   device_event_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkRegisterDeviceEventEXT           function;
 
     device_event_info.sType       = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT;
     device_event_info.pNext       = pNext;
     device_event_info.deviceEvent = deviceEvent;
 
-    function = (PFN_vkRegisterDeviceEventEXT)scvkGetDeviceProcAddr(device, "vkRegisterDeviceEventEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkRegisterDeviceEventEXT);
     SCVK_CHECK(function(device, &device_event_info, pAllocator, pFence));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pFence));
 }
 void scvkRegisterDisplayEvent(VkDevice device, VkDisplayKHR display, const void* pNext, VkDisplayEventTypeEXT displayEvent, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    VkDisplayEventInfoEXT         display_event_info;
-    PFN_vkRegisterDisplayEventEXT function;
+    VkDisplayEventInfoEXT                  display_event_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkRegisterDisplayEventEXT          function;
 
     display_event_info.sType        = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT;
     display_event_info.pNext        = pNext;
     display_event_info.displayEvent = displayEvent;
 
-    function = (PFN_vkRegisterDisplayEventEXT)scvkGetDeviceProcAddr(device, "vkRegisterDisplayEventEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkRegisterDisplayEventEXT);
     SCVK_CHECK(function(device, display, &display_event_info, pAllocator, pFence));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pFence));
 }
 void scvkReleaseDisplay(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
-    PFN_vkReleaseDisplayEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkReleaseDisplayEXT                function;
 
-    function = (PFN_vkReleaseDisplayEXT)scvkGetInstanceProcAddr(instance, "vkReleaseDisplayEXT");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkReleaseDisplayEXT);
     SCVK_CHECK(function(physicalDevice, display));
 }
 void scvkReleaseProfilingLock(VkDevice device)
 {
-    PFN_vkReleaseProfilingLockKHR function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkReleaseProfilingLockKHR          function;
 
-    function = (PFN_vkReleaseProfilingLockKHR)scvkGetDeviceProcAddr(device, "vkReleaseProfilingLockKHR");
+    function = SCVK_CALL(&call_cache, Device, device, vkReleaseProfilingLockKHR);
     function(device);
 }
 void scvkResetCommandBuffer(VkCommandBuffer commandBuffer, VkCommandBufferResetFlags flags)
@@ -22679,8 +22769,9 @@ void scvkResetQueryPool(VkDevice device, VkQueryPool queryPool, uint32_t firstQu
 }
 void scvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName)
 {
-    VkDebugUtilsObjectNameInfoEXT    name_info;
-    PFN_vkSetDebugUtilsObjectNameEXT function;
+    VkDebugUtilsObjectNameInfoEXT          name_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkSetDebugUtilsObjectNameEXT       function;
 
     name_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
     name_info.pNext        = pNext;
@@ -22688,13 +22779,14 @@ void scvkSetDebugUtilsObjectName(VkDevice device, const void* pNext, VkObjectTyp
     name_info.objectHandle = objectHandle;
     name_info.pObjectName  = pObjectName;
 
-    function = (PFN_vkSetDebugUtilsObjectNameEXT)scvkGetDeviceProcAddr(device, "vkSetDebugUtilsObjectNameEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkSetDebugUtilsObjectNameEXT);
     SCVK_CHECK(function(device, &name_info));
 }
 void scvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType objectType, uint64_t objectHandle, uint64_t tagName, size_t tagSize, const void* pTag)
 {
-    VkDebugUtilsObjectTagInfoEXT    tag_info;
-    PFN_vkSetDebugUtilsObjectTagEXT function;
+    VkDebugUtilsObjectTagInfoEXT           tag_info;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkSetDebugUtilsObjectTagEXT        function;
 
     tag_info.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
     tag_info.pNext        = pNext;
@@ -22704,7 +22796,7 @@ void scvkSetDebugUtilsObjectTag(VkDevice device, const void* pNext, VkObjectType
     tag_info.tagSize      = tagSize;
     tag_info.pTag         = pTag;
 
-    function = (PFN_vkSetDebugUtilsObjectTagEXT)scvkGetDeviceProcAddr(device, "vkSetDebugUtilsObjectTagEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkSetDebugUtilsObjectTagEXT);
     SCVK_CHECK(function(device, &tag_info));
 }
 void scvkSetEvent(VkDevice device, VkEvent event)
@@ -22713,9 +22805,10 @@ void scvkSetEvent(VkDevice device, VkEvent event)
 }
 void scvkSetHdrMetadata(VkDevice device, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const VkHdrMetadataEXT* pMetadata)
 {
-    PFN_vkSetHdrMetadataEXT function;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkSetHdrMetadataEXT                function;
 
-    function = (PFN_vkSetHdrMetadataEXT)scvkGetDeviceProcAddr(device, "vkSetHdrMetadataEXT");
+    function = SCVK_CALL(&call_cache, Device, device, vkSetHdrMetadataEXT);
     function(device, swapchainCount, pSwapchains, pMetadata);
 }
 void scvkSignalSemaphore(VkDevice device, const void* pNext, VkSemaphore semaphore, uint64_t value)
@@ -22743,8 +22836,9 @@ void scvkSubmitDebugUtilsMessage(VkInstance                                insta
                                  uint32_t                                  objectCount,
                                  const VkDebugUtilsObjectNameInfoEXT*      pObjects)
 {
-    VkDebugUtilsMessengerCallbackDataEXT callback_data;
-    PFN_vkSubmitDebugUtilsMessageEXT     function;
+    VkDebugUtilsMessengerCallbackDataEXT   callback_data;
+    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
+    PFN_vkSubmitDebugUtilsMessageEXT       function;
 
     callback_data.sType            = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
     callback_data.pNext            = pNext;
@@ -22759,7 +22853,7 @@ void scvkSubmitDebugUtilsMessage(VkInstance                                insta
     callback_data.objectCount      = objectCount;
     callback_data.pObjects         = pObjects;
 
-    function = (PFN_vkSubmitDebugUtilsMessageEXT)scvkGetInstanceProcAddr(instance, "vkSubmitDebugUtilsMessageEXT");
+    function = SCVK_CALL(&call_cache, Instance, instance, vkSubmitDebugUtilsMessageEXT);
     function(instance, messageSeverity, messageTypes, &callback_data);
 }
 void scvkUnmapMemory(VkDevice device, VkDeviceMemory memory)
