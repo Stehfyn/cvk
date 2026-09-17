@@ -270,9 +270,9 @@ Then read `cvkCmdPipelineBarrier` → `cvkCmdImageQueueOwnershipBarrier` → `cv
 
 ## 7. Release builds and Volk loading
 
-Generated code targets C89/C90, using Vulkan's fixed-width integer types. The headers
-contain no C++ linkage guards. Format tables are generated from `vk.xml`; the JSON
-reader's integer conversion does not require C99 library functions.
+Generated code targets C99. The headers contain no C++ linkage guards. Vulkan format
+helpers use the pinned Vulkan-Utility-Libraries `vk_format_utils.h` header as a private
+build dependency; Vulkan SC omits these Vulkan-only helpers.
 
 Release builds enable link-time optimization (LTO) for both `cvk` and `scvk`, and for
 the test executables, plus aggressive `/Ob3` inlining with MSVC. Clang uses full LTO

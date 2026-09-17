@@ -1,4 +1,4 @@
-/* C89 integer parsing checks; no Vulkan loader is initialized. */
+/* Integer parsing checks; no Vulkan loader is initialized. */
 #include "cvk_json.h"
 #include <stdio.h>
 #include <string.h>

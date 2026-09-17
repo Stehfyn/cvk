@@ -5,942 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Format metadata from vk.xml; independent of C99 utility headers. */
-#define CVK_FORMAT_MAX_PLANES 3
-struct cvk_format_plane
-{
-    VkFormat   compatible;
-    VkExtent2D divisors;
-};
-struct cvk_format_info
-{
-    uint32_t                plane_count;
-    VkBool32                has_depth;
-    VkBool32                has_stencil;
-    uint32_t                block_size;
-    VkExtent3D              block_extent;
-    struct cvk_format_plane planes[CVK_FORMAT_MAX_PLANES];
-};
-
-static const struct cvk_format_info* format_info(VkFormat format)
-{
-    static const struct cvk_format_info unknown = {1, 0, 0, 0, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}};
-    static const struct cvk_format_info table[] = {
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 12, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 12, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 12, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 24, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 24, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 24, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 32, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 32, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 32, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 1, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 1, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 1, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 1, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 1, 1, 3, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 1, 1, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 1, 1, 5, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 8, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 8, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 8, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 8, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 10, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 10, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {12, 10, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {12, 10, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {12, 12, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {12, 12, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8_UNORM, {2, 2}}, {VK_FORMAT_R8_UNORM, {2, 2}}}},
-        {2, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8G8_UNORM, {2, 2}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8_UNORM, {2, 1}}, {VK_FORMAT_R8_UNORM, {2, 1}}}},
-        {2, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8G8_UNORM, {2, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8_UNORM, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6_UNORM_PACK16, {2, 2}}, {VK_FORMAT_R10X6_UNORM_PACK16, {2, 2}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6G10X6_UNORM_2PACK16, {2, 2}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6_UNORM_PACK16, {2, 1}}, {VK_FORMAT_R10X6_UNORM_PACK16, {2, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6G10X6_UNORM_2PACK16, {2, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4_UNORM_PACK16, {2, 2}}, {VK_FORMAT_R12X4_UNORM_PACK16, {2, 2}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4G12X4_UNORM_2PACK16, {2, 2}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4_UNORM_PACK16, {2, 1}}, {VK_FORMAT_R12X4_UNORM_PACK16, {2, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4G12X4_UNORM_2PACK16, {2, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}}},
-        {1, 0, 0, 8, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {2, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16_UNORM, {2, 2}}, {VK_FORMAT_R16_UNORM, {2, 2}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16G16_UNORM, {2, 2}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16_UNORM, {2, 1}}, {VK_FORMAT_R16_UNORM, {2, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16G16_UNORM, {2, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {3, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16_UNORM, {1, 1}}}},
-        {1, 0, 0, 8, {8, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {8, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {8, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {8, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 4, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {8, 8, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 5, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 6, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 8, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {10, 10, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {12, 10, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {12, 12, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {3, 3, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {3, 3, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {3, 3, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 3, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 3, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 3, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 3}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {4, 4, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 4, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 4, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 4, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 4}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {5, 5, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 5, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 5, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 5, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 5}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 6}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 6}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 16, {6, 6, 6}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {2, 0, 0, 3, {1, 1, 1}, {{VK_FORMAT_R8_UNORM, {1, 1}}, {VK_FORMAT_R8G8_UNORM, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R10X6_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R10X6G10X6_UNORM_2PACK16, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R12X4_UNORM_PACK16, {1, 1}}, {VK_FORMAT_R12X4G12X4_UNORM_2PACK16, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R16_UNORM, {1, 1}}, {VK_FORMAT_R16G16_UNORM, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 4, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 8, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R14X2_UNORM_PACK16_ARM, {1, 1}}, {VK_FORMAT_R14X2G14X2_UNORM_2PACK16_ARM, {2, 2}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {2, 0, 0, 6, {1, 1, 1}, {{VK_FORMAT_R14X2_UNORM_PACK16_ARM, {1, 1}}, {VK_FORMAT_R14X2G14X2_UNORM_2PACK16_ARM, {2, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 2, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}},
-        {1, 0, 0, 1, {1, 1, 1}, {{VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}, {VK_FORMAT_UNDEFINED, {1, 1}}}}};
-    switch (format)
-    {
-    case VK_FORMAT_R4G4_UNORM_PACK8:
-        return &table[0];
-    case VK_FORMAT_R4G4B4A4_UNORM_PACK16:
-        return &table[1];
-    case VK_FORMAT_B4G4R4A4_UNORM_PACK16:
-        return &table[2];
-    case VK_FORMAT_R5G6B5_UNORM_PACK16:
-        return &table[3];
-    case VK_FORMAT_B5G6R5_UNORM_PACK16:
-        return &table[4];
-    case VK_FORMAT_R5G5B5A1_UNORM_PACK16:
-        return &table[5];
-    case VK_FORMAT_B5G5R5A1_UNORM_PACK16:
-        return &table[6];
-    case VK_FORMAT_A1R5G5B5_UNORM_PACK16:
-        return &table[7];
-    case VK_FORMAT_A1B5G5R5_UNORM_PACK16:
-        return &table[8];
-    case VK_FORMAT_A8_UNORM:
-        return &table[9];
-    case VK_FORMAT_R8_UNORM:
-        return &table[10];
-    case VK_FORMAT_R8_SNORM:
-        return &table[11];
-    case VK_FORMAT_R8_USCALED:
-        return &table[12];
-    case VK_FORMAT_R8_SSCALED:
-        return &table[13];
-    case VK_FORMAT_R8_UINT:
-        return &table[14];
-    case VK_FORMAT_R8_SINT:
-        return &table[15];
-    case VK_FORMAT_R8_SRGB:
-        return &table[16];
-    case VK_FORMAT_R8G8_UNORM:
-        return &table[17];
-    case VK_FORMAT_R8G8_SNORM:
-        return &table[18];
-    case VK_FORMAT_R8G8_USCALED:
-        return &table[19];
-    case VK_FORMAT_R8G8_SSCALED:
-        return &table[20];
-    case VK_FORMAT_R8G8_UINT:
-        return &table[21];
-    case VK_FORMAT_R8G8_SINT:
-        return &table[22];
-    case VK_FORMAT_R8G8_SRGB:
-        return &table[23];
-    case VK_FORMAT_R8G8B8_UNORM:
-        return &table[24];
-    case VK_FORMAT_R8G8B8_SNORM:
-        return &table[25];
-    case VK_FORMAT_R8G8B8_USCALED:
-        return &table[26];
-    case VK_FORMAT_R8G8B8_SSCALED:
-        return &table[27];
-    case VK_FORMAT_R8G8B8_UINT:
-        return &table[28];
-    case VK_FORMAT_R8G8B8_SINT:
-        return &table[29];
-    case VK_FORMAT_R8G8B8_SRGB:
-        return &table[30];
-    case VK_FORMAT_B8G8R8_UNORM:
-        return &table[31];
-    case VK_FORMAT_B8G8R8_SNORM:
-        return &table[32];
-    case VK_FORMAT_B8G8R8_USCALED:
-        return &table[33];
-    case VK_FORMAT_B8G8R8_SSCALED:
-        return &table[34];
-    case VK_FORMAT_B8G8R8_UINT:
-        return &table[35];
-    case VK_FORMAT_B8G8R8_SINT:
-        return &table[36];
-    case VK_FORMAT_B8G8R8_SRGB:
-        return &table[37];
-    case VK_FORMAT_R8G8B8A8_UNORM:
-        return &table[38];
-    case VK_FORMAT_R8G8B8A8_SNORM:
-        return &table[39];
-    case VK_FORMAT_R8G8B8A8_USCALED:
-        return &table[40];
-    case VK_FORMAT_R8G8B8A8_SSCALED:
-        return &table[41];
-    case VK_FORMAT_R8G8B8A8_UINT:
-        return &table[42];
-    case VK_FORMAT_R8G8B8A8_SINT:
-        return &table[43];
-    case VK_FORMAT_R8G8B8A8_SRGB:
-        return &table[44];
-    case VK_FORMAT_B8G8R8A8_UNORM:
-        return &table[45];
-    case VK_FORMAT_B8G8R8A8_SNORM:
-        return &table[46];
-    case VK_FORMAT_B8G8R8A8_USCALED:
-        return &table[47];
-    case VK_FORMAT_B8G8R8A8_SSCALED:
-        return &table[48];
-    case VK_FORMAT_B8G8R8A8_UINT:
-        return &table[49];
-    case VK_FORMAT_B8G8R8A8_SINT:
-        return &table[50];
-    case VK_FORMAT_B8G8R8A8_SRGB:
-        return &table[51];
-    case VK_FORMAT_A8B8G8R8_UNORM_PACK32:
-        return &table[52];
-    case VK_FORMAT_A8B8G8R8_SNORM_PACK32:
-        return &table[53];
-    case VK_FORMAT_A8B8G8R8_USCALED_PACK32:
-        return &table[54];
-    case VK_FORMAT_A8B8G8R8_SSCALED_PACK32:
-        return &table[55];
-    case VK_FORMAT_A8B8G8R8_UINT_PACK32:
-        return &table[56];
-    case VK_FORMAT_A8B8G8R8_SINT_PACK32:
-        return &table[57];
-    case VK_FORMAT_A8B8G8R8_SRGB_PACK32:
-        return &table[58];
-    case VK_FORMAT_A2R10G10B10_UNORM_PACK32:
-        return &table[59];
-    case VK_FORMAT_A2R10G10B10_SNORM_PACK32:
-        return &table[60];
-    case VK_FORMAT_A2R10G10B10_USCALED_PACK32:
-        return &table[61];
-    case VK_FORMAT_A2R10G10B10_SSCALED_PACK32:
-        return &table[62];
-    case VK_FORMAT_A2R10G10B10_UINT_PACK32:
-        return &table[63];
-    case VK_FORMAT_A2R10G10B10_SINT_PACK32:
-        return &table[64];
-    case VK_FORMAT_A2B10G10R10_UNORM_PACK32:
-        return &table[65];
-    case VK_FORMAT_A2B10G10R10_SNORM_PACK32:
-        return &table[66];
-    case VK_FORMAT_A2B10G10R10_USCALED_PACK32:
-        return &table[67];
-    case VK_FORMAT_A2B10G10R10_SSCALED_PACK32:
-        return &table[68];
-    case VK_FORMAT_A2B10G10R10_UINT_PACK32:
-        return &table[69];
-    case VK_FORMAT_A2B10G10R10_SINT_PACK32:
-        return &table[70];
-    case VK_FORMAT_R16_UNORM:
-        return &table[71];
-    case VK_FORMAT_R16_SNORM:
-        return &table[72];
-    case VK_FORMAT_R16_USCALED:
-        return &table[73];
-    case VK_FORMAT_R16_SSCALED:
-        return &table[74];
-    case VK_FORMAT_R16_UINT:
-        return &table[75];
-    case VK_FORMAT_R16_SINT:
-        return &table[76];
-    case VK_FORMAT_R16_SFLOAT:
-        return &table[77];
-    case VK_FORMAT_R16G16_UNORM:
-        return &table[78];
-    case VK_FORMAT_R16G16_SNORM:
-        return &table[79];
-    case VK_FORMAT_R16G16_USCALED:
-        return &table[80];
-    case VK_FORMAT_R16G16_SSCALED:
-        return &table[81];
-    case VK_FORMAT_R16G16_UINT:
-        return &table[82];
-    case VK_FORMAT_R16G16_SINT:
-        return &table[83];
-    case VK_FORMAT_R16G16_SFLOAT:
-        return &table[84];
-    case VK_FORMAT_R16G16B16_UNORM:
-        return &table[85];
-    case VK_FORMAT_R16G16B16_SNORM:
-        return &table[86];
-    case VK_FORMAT_R16G16B16_USCALED:
-        return &table[87];
-    case VK_FORMAT_R16G16B16_SSCALED:
-        return &table[88];
-    case VK_FORMAT_R16G16B16_UINT:
-        return &table[89];
-    case VK_FORMAT_R16G16B16_SINT:
-        return &table[90];
-    case VK_FORMAT_R16G16B16_SFLOAT:
-        return &table[91];
-    case VK_FORMAT_R16G16B16A16_UNORM:
-        return &table[92];
-    case VK_FORMAT_R16G16B16A16_SNORM:
-        return &table[93];
-    case VK_FORMAT_R16G16B16A16_USCALED:
-        return &table[94];
-    case VK_FORMAT_R16G16B16A16_SSCALED:
-        return &table[95];
-    case VK_FORMAT_R16G16B16A16_UINT:
-        return &table[96];
-    case VK_FORMAT_R16G16B16A16_SINT:
-        return &table[97];
-    case VK_FORMAT_R16G16B16A16_SFLOAT:
-        return &table[98];
-    case VK_FORMAT_R32_UINT:
-        return &table[99];
-    case VK_FORMAT_R32_SINT:
-        return &table[100];
-    case VK_FORMAT_R32_SFLOAT:
-        return &table[101];
-    case VK_FORMAT_R32G32_UINT:
-        return &table[102];
-    case VK_FORMAT_R32G32_SINT:
-        return &table[103];
-    case VK_FORMAT_R32G32_SFLOAT:
-        return &table[104];
-    case VK_FORMAT_R32G32B32_UINT:
-        return &table[105];
-    case VK_FORMAT_R32G32B32_SINT:
-        return &table[106];
-    case VK_FORMAT_R32G32B32_SFLOAT:
-        return &table[107];
-    case VK_FORMAT_R32G32B32A32_UINT:
-        return &table[108];
-    case VK_FORMAT_R32G32B32A32_SINT:
-        return &table[109];
-    case VK_FORMAT_R32G32B32A32_SFLOAT:
-        return &table[110];
-    case VK_FORMAT_R64_UINT:
-        return &table[111];
-    case VK_FORMAT_R64_SINT:
-        return &table[112];
-    case VK_FORMAT_R64_SFLOAT:
-        return &table[113];
-    case VK_FORMAT_R64G64_UINT:
-        return &table[114];
-    case VK_FORMAT_R64G64_SINT:
-        return &table[115];
-    case VK_FORMAT_R64G64_SFLOAT:
-        return &table[116];
-    case VK_FORMAT_R64G64B64_UINT:
-        return &table[117];
-    case VK_FORMAT_R64G64B64_SINT:
-        return &table[118];
-    case VK_FORMAT_R64G64B64_SFLOAT:
-        return &table[119];
-    case VK_FORMAT_R64G64B64A64_UINT:
-        return &table[120];
-    case VK_FORMAT_R64G64B64A64_SINT:
-        return &table[121];
-    case VK_FORMAT_R64G64B64A64_SFLOAT:
-        return &table[122];
-    case VK_FORMAT_B10G11R11_UFLOAT_PACK32:
-        return &table[123];
-    case VK_FORMAT_E5B9G9R9_UFLOAT_PACK32:
-        return &table[124];
-    case VK_FORMAT_D16_UNORM:
-        return &table[125];
-    case VK_FORMAT_X8_D24_UNORM_PACK32:
-        return &table[126];
-    case VK_FORMAT_D32_SFLOAT:
-        return &table[127];
-    case VK_FORMAT_S8_UINT:
-        return &table[128];
-    case VK_FORMAT_D16_UNORM_S8_UINT:
-        return &table[129];
-    case VK_FORMAT_D24_UNORM_S8_UINT:
-        return &table[130];
-    case VK_FORMAT_D32_SFLOAT_S8_UINT:
-        return &table[131];
-    case VK_FORMAT_BC1_RGB_UNORM_BLOCK:
-        return &table[132];
-    case VK_FORMAT_BC1_RGB_SRGB_BLOCK:
-        return &table[133];
-    case VK_FORMAT_BC1_RGBA_UNORM_BLOCK:
-        return &table[134];
-    case VK_FORMAT_BC1_RGBA_SRGB_BLOCK:
-        return &table[135];
-    case VK_FORMAT_BC2_UNORM_BLOCK:
-        return &table[136];
-    case VK_FORMAT_BC2_SRGB_BLOCK:
-        return &table[137];
-    case VK_FORMAT_BC3_UNORM_BLOCK:
-        return &table[138];
-    case VK_FORMAT_BC3_SRGB_BLOCK:
-        return &table[139];
-    case VK_FORMAT_BC4_UNORM_BLOCK:
-        return &table[140];
-    case VK_FORMAT_BC4_SNORM_BLOCK:
-        return &table[141];
-    case VK_FORMAT_BC5_UNORM_BLOCK:
-        return &table[142];
-    case VK_FORMAT_BC5_SNORM_BLOCK:
-        return &table[143];
-    case VK_FORMAT_BC6H_UFLOAT_BLOCK:
-        return &table[144];
-    case VK_FORMAT_BC6H_SFLOAT_BLOCK:
-        return &table[145];
-    case VK_FORMAT_BC7_UNORM_BLOCK:
-        return &table[146];
-    case VK_FORMAT_BC7_SRGB_BLOCK:
-        return &table[147];
-    case VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK:
-        return &table[148];
-    case VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK:
-        return &table[149];
-    case VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK:
-        return &table[150];
-    case VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK:
-        return &table[151];
-    case VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK:
-        return &table[152];
-    case VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK:
-        return &table[153];
-    case VK_FORMAT_EAC_R11_UNORM_BLOCK:
-        return &table[154];
-    case VK_FORMAT_EAC_R11_SNORM_BLOCK:
-        return &table[155];
-    case VK_FORMAT_EAC_R11G11_UNORM_BLOCK:
-        return &table[156];
-    case VK_FORMAT_EAC_R11G11_SNORM_BLOCK:
-        return &table[157];
-    case VK_FORMAT_ASTC_4x4_UNORM_BLOCK:
-        return &table[158];
-    case VK_FORMAT_ASTC_4x4_SRGB_BLOCK:
-        return &table[159];
-    case VK_FORMAT_ASTC_5x4_UNORM_BLOCK:
-        return &table[160];
-    case VK_FORMAT_ASTC_5x4_SRGB_BLOCK:
-        return &table[161];
-    case VK_FORMAT_ASTC_5x5_UNORM_BLOCK:
-        return &table[162];
-    case VK_FORMAT_ASTC_5x5_SRGB_BLOCK:
-        return &table[163];
-    case VK_FORMAT_ASTC_6x5_UNORM_BLOCK:
-        return &table[164];
-    case VK_FORMAT_ASTC_6x5_SRGB_BLOCK:
-        return &table[165];
-    case VK_FORMAT_ASTC_6x6_UNORM_BLOCK:
-        return &table[166];
-    case VK_FORMAT_ASTC_6x6_SRGB_BLOCK:
-        return &table[167];
-    case VK_FORMAT_ASTC_8x5_UNORM_BLOCK:
-        return &table[168];
-    case VK_FORMAT_ASTC_8x5_SRGB_BLOCK:
-        return &table[169];
-    case VK_FORMAT_ASTC_8x6_UNORM_BLOCK:
-        return &table[170];
-    case VK_FORMAT_ASTC_8x6_SRGB_BLOCK:
-        return &table[171];
-    case VK_FORMAT_ASTC_8x8_UNORM_BLOCK:
-        return &table[172];
-    case VK_FORMAT_ASTC_8x8_SRGB_BLOCK:
-        return &table[173];
-    case VK_FORMAT_ASTC_10x5_UNORM_BLOCK:
-        return &table[174];
-    case VK_FORMAT_ASTC_10x5_SRGB_BLOCK:
-        return &table[175];
-    case VK_FORMAT_ASTC_10x6_UNORM_BLOCK:
-        return &table[176];
-    case VK_FORMAT_ASTC_10x6_SRGB_BLOCK:
-        return &table[177];
-    case VK_FORMAT_ASTC_10x8_UNORM_BLOCK:
-        return &table[178];
-    case VK_FORMAT_ASTC_10x8_SRGB_BLOCK:
-        return &table[179];
-    case VK_FORMAT_ASTC_10x10_UNORM_BLOCK:
-        return &table[180];
-    case VK_FORMAT_ASTC_10x10_SRGB_BLOCK:
-        return &table[181];
-    case VK_FORMAT_ASTC_12x10_UNORM_BLOCK:
-        return &table[182];
-    case VK_FORMAT_ASTC_12x10_SRGB_BLOCK:
-        return &table[183];
-    case VK_FORMAT_ASTC_12x12_UNORM_BLOCK:
-        return &table[184];
-    case VK_FORMAT_ASTC_12x12_SRGB_BLOCK:
-        return &table[185];
-    case VK_FORMAT_G8B8G8R8_422_UNORM:
-        return &table[186];
-    case VK_FORMAT_B8G8R8G8_422_UNORM:
-        return &table[187];
-    case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
-        return &table[188];
-    case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
-        return &table[189];
-    case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
-        return &table[190];
-    case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
-        return &table[191];
-    case VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM:
-        return &table[192];
-    case VK_FORMAT_R10X6_UNORM_PACK16:
-        return &table[193];
-    case VK_FORMAT_R10X6G10X6_UNORM_2PACK16:
-        return &table[194];
-    case VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16:
-        return &table[195];
-    case VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16:
-        return &table[196];
-    case VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16:
-        return &table[197];
-    case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16:
-        return &table[198];
-    case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
-        return &table[199];
-    case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16:
-        return &table[200];
-    case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16:
-        return &table[201];
-    case VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16:
-        return &table[202];
-    case VK_FORMAT_R12X4_UNORM_PACK16:
-        return &table[203];
-    case VK_FORMAT_R12X4G12X4_UNORM_2PACK16:
-        return &table[204];
-    case VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16:
-        return &table[205];
-    case VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16:
-        return &table[206];
-    case VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16:
-        return &table[207];
-    case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16:
-        return &table[208];
-    case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16:
-        return &table[209];
-    case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16:
-        return &table[210];
-    case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16:
-        return &table[211];
-    case VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16:
-        return &table[212];
-    case VK_FORMAT_G16B16G16R16_422_UNORM:
-        return &table[213];
-    case VK_FORMAT_B16G16R16G16_422_UNORM:
-        return &table[214];
-    case VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM:
-        return &table[215];
-    case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
-        return &table[216];
-    case VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM:
-        return &table[217];
-    case VK_FORMAT_G16_B16R16_2PLANE_422_UNORM:
-        return &table[218];
-    case VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM:
-        return &table[219];
-    case VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG:
-        return &table[220];
-    case VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG:
-        return &table[221];
-    case VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG:
-        return &table[222];
-    case VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG:
-        return &table[223];
-    case VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG:
-        return &table[224];
-    case VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG:
-        return &table[225];
-    case VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG:
-        return &table[226];
-    case VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG:
-        return &table[227];
-    case VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK:
-        return &table[228];
-    case VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK:
-        return &table[229];
-    case VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK:
-        return &table[230];
-    case VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK:
-        return &table[231];
-    case VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK:
-        return &table[232];
-    case VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK:
-        return &table[233];
-    case VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK:
-        return &table[234];
-    case VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK:
-        return &table[235];
-    case VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK:
-        return &table[236];
-    case VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK:
-        return &table[237];
-    case VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK:
-        return &table[238];
-    case VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK:
-        return &table[239];
-    case VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK:
-        return &table[240];
-    case VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK:
-        return &table[241];
-    case VK_FORMAT_ASTC_3x3x3_UNORM_BLOCK_EXT:
-        return &table[242];
-    case VK_FORMAT_ASTC_3x3x3_SRGB_BLOCK_EXT:
-        return &table[243];
-    case VK_FORMAT_ASTC_3x3x3_SFLOAT_BLOCK_EXT:
-        return &table[244];
-    case VK_FORMAT_ASTC_4x3x3_UNORM_BLOCK_EXT:
-        return &table[245];
-    case VK_FORMAT_ASTC_4x3x3_SRGB_BLOCK_EXT:
-        return &table[246];
-    case VK_FORMAT_ASTC_4x3x3_SFLOAT_BLOCK_EXT:
-        return &table[247];
-    case VK_FORMAT_ASTC_4x4x3_UNORM_BLOCK_EXT:
-        return &table[248];
-    case VK_FORMAT_ASTC_4x4x3_SRGB_BLOCK_EXT:
-        return &table[249];
-    case VK_FORMAT_ASTC_4x4x3_SFLOAT_BLOCK_EXT:
-        return &table[250];
-    case VK_FORMAT_ASTC_4x4x4_UNORM_BLOCK_EXT:
-        return &table[251];
-    case VK_FORMAT_ASTC_4x4x4_SRGB_BLOCK_EXT:
-        return &table[252];
-    case VK_FORMAT_ASTC_4x4x4_SFLOAT_BLOCK_EXT:
-        return &table[253];
-    case VK_FORMAT_ASTC_5x4x4_UNORM_BLOCK_EXT:
-        return &table[254];
-    case VK_FORMAT_ASTC_5x4x4_SRGB_BLOCK_EXT:
-        return &table[255];
-    case VK_FORMAT_ASTC_5x4x4_SFLOAT_BLOCK_EXT:
-        return &table[256];
-    case VK_FORMAT_ASTC_5x5x4_UNORM_BLOCK_EXT:
-        return &table[257];
-    case VK_FORMAT_ASTC_5x5x4_SRGB_BLOCK_EXT:
-        return &table[258];
-    case VK_FORMAT_ASTC_5x5x4_SFLOAT_BLOCK_EXT:
-        return &table[259];
-    case VK_FORMAT_ASTC_5x5x5_UNORM_BLOCK_EXT:
-        return &table[260];
-    case VK_FORMAT_ASTC_5x5x5_SRGB_BLOCK_EXT:
-        return &table[261];
-    case VK_FORMAT_ASTC_5x5x5_SFLOAT_BLOCK_EXT:
-        return &table[262];
-    case VK_FORMAT_ASTC_6x5x5_UNORM_BLOCK_EXT:
-        return &table[263];
-    case VK_FORMAT_ASTC_6x5x5_SRGB_BLOCK_EXT:
-        return &table[264];
-    case VK_FORMAT_ASTC_6x5x5_SFLOAT_BLOCK_EXT:
-        return &table[265];
-    case VK_FORMAT_ASTC_6x6x5_UNORM_BLOCK_EXT:
-        return &table[266];
-    case VK_FORMAT_ASTC_6x6x5_SRGB_BLOCK_EXT:
-        return &table[267];
-    case VK_FORMAT_ASTC_6x6x5_SFLOAT_BLOCK_EXT:
-        return &table[268];
-    case VK_FORMAT_ASTC_6x6x6_UNORM_BLOCK_EXT:
-        return &table[269];
-    case VK_FORMAT_ASTC_6x6x6_SRGB_BLOCK_EXT:
-        return &table[270];
-    case VK_FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT:
-        return &table[271];
-    case VK_FORMAT_G8_B8R8_2PLANE_444_UNORM:
-        return &table[272];
-    case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16:
-        return &table[273];
-    case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16:
-        return &table[274];
-    case VK_FORMAT_G16_B16R16_2PLANE_444_UNORM:
-        return &table[275];
-    case VK_FORMAT_A4R4G4B4_UNORM_PACK16:
-        return &table[276];
-    case VK_FORMAT_A4B4G4R4_UNORM_PACK16:
-        return &table[277];
-    case VK_FORMAT_R16G16_SFIXED5_NV:
-        return &table[278];
-    case VK_FORMAT_R10X6_UINT_PACK16_ARM:
-        return &table[279];
-    case VK_FORMAT_R10X6G10X6_UINT_2PACK16_ARM:
-        return &table[280];
-    case VK_FORMAT_R10X6G10X6B10X6A10X6_UINT_4PACK16_ARM:
-        return &table[281];
-    case VK_FORMAT_R12X4_UINT_PACK16_ARM:
-        return &table[282];
-    case VK_FORMAT_R12X4G12X4_UINT_2PACK16_ARM:
-        return &table[283];
-    case VK_FORMAT_R12X4G12X4B12X4A12X4_UINT_4PACK16_ARM:
-        return &table[284];
-    case VK_FORMAT_R14X2_UINT_PACK16_ARM:
-        return &table[285];
-    case VK_FORMAT_R14X2G14X2_UINT_2PACK16_ARM:
-        return &table[286];
-    case VK_FORMAT_R14X2G14X2B14X2A14X2_UINT_4PACK16_ARM:
-        return &table[287];
-    case VK_FORMAT_R14X2_UNORM_PACK16_ARM:
-        return &table[288];
-    case VK_FORMAT_R14X2G14X2_UNORM_2PACK16_ARM:
-        return &table[289];
-    case VK_FORMAT_R14X2G14X2B14X2A14X2_UNORM_4PACK16_ARM:
-        return &table[290];
-    case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_420_UNORM_3PACK16_ARM:
-        return &table[291];
-    case VK_FORMAT_G14X2_B14X2R14X2_2PLANE_422_UNORM_3PACK16_ARM:
-        return &table[292];
-    case VK_FORMAT_R8_BOOL_ARM:
-        return &table[293];
-    case VK_FORMAT_R16_SFLOAT_FPENCODING_BFLOAT16_ARM:
-        return &table[294];
-    case VK_FORMAT_R8_SFLOAT_FPENCODING_FLOAT8E4M3_ARM:
-        return &table[295];
-    case VK_FORMAT_R8_SFLOAT_FPENCODING_FLOAT8E5M2_ARM:
-        return &table[296];
-    default:
-        return &unknown;
-    }
-}
-
-static const struct cvk_format_plane* format_plane_info(VkFormat format, VkImageAspectFlagBits aspect)
-{
-    static const struct cvk_format_plane unknown = {VK_FORMAT_UNDEFINED, {1, 1}};
-    const struct cvk_format_info*        info    = format_info(format);
-    switch (aspect)
-    {
-    case VK_IMAGE_ASPECT_PLANE_0_BIT:
-        return &info->planes[0];
-    case VK_IMAGE_ASPECT_PLANE_1_BIT:
-        return &info->planes[1];
-    case VK_IMAGE_ASPECT_PLANE_2_BIT:
-        return &info->planes[2];
-    default:
-        return &unknown;
-    }
-}
+#include <vulkan/utility/vk_format_utils.h>
 
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {
@@ -43343,11 +42408,11 @@ void cvkReadCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize 
 }
 uint32_t cvkGetFormatPlaneCount(VkFormat format)
 {
-    return format_info(format)->plane_count;
+    return vkuFormatPlaneCount(format);
 }
 VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex)
 {
-    if (1u == format_info(format)->plane_count)
+    if (1u == vkuFormatPlaneCount(format))
     {
         return VK_IMAGE_ASPECT_COLOR_BIT;
     }
@@ -43366,11 +42431,11 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     uint32_t           plane_index;
 
     aspect_mask = 0;
-    if (format_info(format)->has_depth)
+    if (vkuFormatHasDepth(format))
     {
         aspect_mask |= VK_IMAGE_ASPECT_DEPTH_BIT;
     }
-    if (format_info(format)->has_stencil)
+    if (vkuFormatHasStencil(format))
     {
         aspect_mask |= VK_IMAGE_ASPECT_STENCIL_BIT;
     }
@@ -43378,7 +42443,7 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     {
         return aspect_mask;
     }
-    plane_count = format_info(format)->plane_count;
+    plane_count = vkuFormatPlaneCount(format);
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
         aspect_mask |= cvkGetFormatPlaneAspect(format, plane_index);
@@ -43431,11 +42496,11 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
     uint32_t     plane_count;
     uint32_t     plane_index;
 
-    plane_count  = format_info(format)->plane_count;
+    plane_count  = vkuFormatPlaneCount(format);
     plane_offset = 0;
-    (void)memset(pPlaneOffsets, 0, CVK_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
-    (void)memset(pPlaneStrides, 0, CVK_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
-    (void)memset(pPlaneExtents, 0, CVK_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
+    (void)memset(pPlaneOffsets, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
+    (void)memset(pPlaneStrides, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
+    (void)memset(pPlaneExtents, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
         if (1u == plane_count)
@@ -43446,17 +42511,17 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
         }
         else
         {
-            plane_format                      = format_plane_info(format, cvkGetFormatPlaneAspect(format, plane_index))->compatible;
-            divisors                          = format_plane_info(format, cvkGetFormatPlaneAspect(format, plane_index))->divisors;
+            plane_format                      = vkuFindMultiplaneCompatibleFormat(format, cvkGetFormatPlaneAspect(format, plane_index));
+            divisors                          = vkuFindMultiplaneExtentDivisors(format, cvkGetFormatPlaneAspect(format, plane_index));
             pPlaneExtents[plane_index].width  = (width + divisors.width - 1u) / divisors.width;
             pPlaneExtents[plane_index].height = (height + divisors.height - 1u) / divisors.height;
         }
         pPlaneExtents[plane_index].depth = depth;
-        block_extent                     = format_info(plane_format)->block_extent;
+        block_extent                     = vkuFormatTexelBlockExtent(plane_format);
         block_columns                    = (pPlaneExtents[plane_index].width + block_extent.width - 1u) / block_extent.width;
         block_rows                       = (pPlaneExtents[plane_index].height + block_extent.height - 1u) / block_extent.height;
         block_slices                     = (pPlaneExtents[plane_index].depth + block_extent.depth - 1u) / block_extent.depth;
-        row_byte_count                   = (VkDeviceSize)block_columns * format_info(plane_format)->block_size;
+        row_byte_count                   = (VkDeviceSize)block_columns * vkuFormatTexelBlockSize(plane_format);
         aligned_row_byte_count           = ((row_byte_count + rowAlignment - 1u) / rowAlignment) * rowAlignment;
         plane_byte_count                 = aligned_row_byte_count * block_rows * block_slices * layerCount;
         pPlaneOffsets[plane_index]       = plane_offset;
@@ -43468,9 +42533,9 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
 }
 VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height)
 {
-    VkDeviceSize plane_offsets[CVK_FORMAT_MAX_PLANES];
-    uint32_t     plane_strides[CVK_FORMAT_MAX_PLANES];
-    VkExtent3D   plane_extents[CVK_FORMAT_MAX_PLANES];
+    VkDeviceSize plane_offsets[VKU_FORMAT_MAX_PLANES];
+    uint32_t     plane_strides[VKU_FORMAT_MAX_PLANES];
+    VkExtent3D   plane_extents[VKU_FORMAT_MAX_PLANES];
     VkDeviceSize size;
 
     (void)cvkCalculateFormatPlaneLayouts(format, width, height, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
@@ -43486,9 +42551,9 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
                                       VkDeviceSize*            pTransferByteCount,
                                       VkImageAspectFlags*      pAspectMask)
 {
-    VkDeviceSize             plane_offsets[CVK_FORMAT_MAX_PLANES];
-    uint32_t                 plane_strides[CVK_FORMAT_MAX_PLANES];
-    VkExtent3D               plane_extents[CVK_FORMAT_MAX_PLANES];
+    VkDeviceSize             plane_offsets[VKU_FORMAT_MAX_PLANES];
+    uint32_t                 plane_strides[VKU_FORMAT_MAX_PLANES];
+    VkExtent3D               plane_extents[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceLayers plane_subresource;
     VkOffset3D               plane_offset;
     VkExtent2D               divisors;
@@ -43520,13 +42585,13 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
         }
         else
         {
-            plane_format   = format_plane_info(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index))->compatible;
-            divisors       = format_plane_info(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index))->divisors;
+            plane_format   = vkuFindMultiplaneCompatibleFormat(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index));
+            divisors       = vkuFindMultiplaneExtentDivisors(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index));
             plane_offset.x = imageOffset.x / (int32_t)divisors.width;
             plane_offset.y = imageOffset.y / (int32_t)divisors.height;
         }
-        plane_texel_size     = format_info(plane_format)->block_size;
-        block_extent         = format_info(plane_format)->block_extent;
+        plane_texel_size     = vkuFormatTexelBlockSize(plane_format);
+        block_extent         = vkuFormatTexelBlockExtent(plane_format);
         tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1u) / block_extent.width) * plane_texel_size;
         buffer_row_length    = (tight_row_byte_count == plane_strides[plane_index]) ? 0 : (plane_strides[plane_index] / plane_texel_size) * block_extent.width;
         cvkInitImageSubresourceLayers(&plane_subresource, cvkGetFormatPlaneAspect(imageFormat, plane_index), imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
@@ -43564,7 +42629,7 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
                                                uint32_t                 imageSrcQueueFamilyIndex,
                                                uint32_t                 imageDstQueueFamilyIndex)
 {
-    VkBufferImageCopy       regions[CVK_FORMAT_MAX_PLANES];
+    VkBufferImageCopy       regions[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceRange subresource_range;
     VkDeviceSize            transfer_byte_count;
     VkImageAspectFlags      aspect_mask;
@@ -43647,7 +42712,7 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
                                                uint32_t                 bufferSrcQueueFamilyIndex,
                                                uint32_t                 bufferDstQueueFamilyIndex)
 {
-    VkBufferImageCopy       regions[CVK_FORMAT_MAX_PLANES];
+    VkBufferImageCopy       regions[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceRange subresource_range;
     VkDeviceSize            transfer_byte_count;
     VkImageAspectFlags      aspect_mask;

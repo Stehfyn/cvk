@@ -1,7 +1,9 @@
 /* Tier 3 protocols (SPEC.md section 8b): source of truth kept with the generator and folded
 ** into the generated cvk.h/cvk.c. Composed from the generated surface only.
-** Profile: vulkan. Private format metadata is generated from the Vulkan registry;
+** Profile: vulkan. Format metadata comes from Vulkan-Utility-Libraries;
 ** this protocol is absent from the SC profile. */
+
+#include <vulkan/utility/vk_format_utils.h>
 
 /**
  * \brief Returns the number of format planes of a format (one for single-plane formats).
@@ -12,7 +14,7 @@
  */
 uint32_t cvkGetFormatPlaneCount(VkFormat format)
 {
-    return format_info(format)->plane_count;
+    return vkuFormatPlaneCount(format);
 }
 
 /**
@@ -25,7 +27,7 @@ uint32_t cvkGetFormatPlaneCount(VkFormat format)
  */
 VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex)
 {
-    if (1u == format_info(format)->plane_count)
+    if (1u == vkuFormatPlaneCount(format))
     {
         return VK_IMAGE_ASPECT_COLOR_BIT;
     }
@@ -60,11 +62,11 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     uint32_t           plane_index;
 
     aspect_mask = 0;
-    if (format_info(format)->has_depth)
+    if (vkuFormatHasDepth(format))
     {
         aspect_mask |= VK_IMAGE_ASPECT_DEPTH_BIT;
     }
-    if (format_info(format)->has_stencil)
+    if (vkuFormatHasStencil(format))
     {
         aspect_mask |= VK_IMAGE_ASPECT_STENCIL_BIT;
     }
@@ -72,7 +74,7 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     {
         return aspect_mask;
     }
-    plane_count = format_info(format)->plane_count;
+    plane_count = vkuFormatPlaneCount(format);
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
         aspect_mask |= cvkGetFormatPlaneAspect(format, plane_index);
@@ -147,7 +149,7 @@ VkImageSubresourceRange cvkGetFormatBaseSubresourceRange(VkFormat format)
  * \par Details:
  *  Planes follow one another; each plane's rows are rounded up to rowAlignment bytes. Plane
  *  extents apply the format's chroma divisors; block-compressed planes are measured in
- *  texel blocks. Outputs have CVK_FORMAT_MAX_PLANES entries and unused entries are zero.
+ *  texel blocks. Outputs have VKU_FORMAT_MAX_PLANES entries and unused entries are zero.
  *
  * \param[in]  format         Vulkan format
  * \param[in]  width          Image width in texels
@@ -186,11 +188,11 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
     uint32_t     plane_count;
     uint32_t     plane_index;
 
-    plane_count  = format_info(format)->plane_count;
+    plane_count  = vkuFormatPlaneCount(format);
     plane_offset = 0;
-    (void)memset(pPlaneOffsets, 0, CVK_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
-    (void)memset(pPlaneStrides, 0, CVK_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
-    (void)memset(pPlaneExtents, 0, CVK_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
+    (void)memset(pPlaneOffsets, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneOffsets[0]));
+    (void)memset(pPlaneStrides, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneStrides[0]));
+    (void)memset(pPlaneExtents, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
         if (1u == plane_count)
@@ -201,17 +203,17 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
         }
         else
         {
-            plane_format                      = format_plane_info(format, cvkGetFormatPlaneAspect(format, plane_index))->compatible;
-            divisors                          = format_plane_info(format, cvkGetFormatPlaneAspect(format, plane_index))->divisors;
+            plane_format                      = vkuFindMultiplaneCompatibleFormat(format, cvkGetFormatPlaneAspect(format, plane_index));
+            divisors                          = vkuFindMultiplaneExtentDivisors(format, cvkGetFormatPlaneAspect(format, plane_index));
             pPlaneExtents[plane_index].width  = (width + divisors.width - 1u) / divisors.width;
             pPlaneExtents[plane_index].height = (height + divisors.height - 1u) / divisors.height;
         }
         pPlaneExtents[plane_index].depth = depth;
-        block_extent                     = format_info(plane_format)->block_extent;
+        block_extent                     = vkuFormatTexelBlockExtent(plane_format);
         block_columns                    = (pPlaneExtents[plane_index].width + block_extent.width - 1u) / block_extent.width;
         block_rows                       = (pPlaneExtents[plane_index].height + block_extent.height - 1u) / block_extent.height;
         block_slices                     = (pPlaneExtents[plane_index].depth + block_extent.depth - 1u) / block_extent.depth;
-        row_byte_count                   = (VkDeviceSize)block_columns * format_info(plane_format)->block_size;
+        row_byte_count                   = (VkDeviceSize)block_columns * vkuFormatTexelBlockSize(plane_format);
         aligned_row_byte_count           = ((row_byte_count + rowAlignment - 1u) / rowAlignment) * rowAlignment;
         plane_byte_count                 = aligned_row_byte_count * block_rows * block_slices * layerCount;
         pPlaneOffsets[plane_index]       = plane_offset;
@@ -233,9 +235,9 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
  */
 VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height)
 {
-    VkDeviceSize plane_offsets[CVK_FORMAT_MAX_PLANES];
-    uint32_t     plane_strides[CVK_FORMAT_MAX_PLANES];
-    VkExtent3D   plane_extents[CVK_FORMAT_MAX_PLANES];
+    VkDeviceSize plane_offsets[VKU_FORMAT_MAX_PLANES];
+    uint32_t     plane_strides[VKU_FORMAT_MAX_PLANES];
+    VkExtent3D   plane_extents[VKU_FORMAT_MAX_PLANES];
     VkDeviceSize size;
 
     (void)cvkCalculateFormatPlaneLayouts(format, width, height, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
@@ -256,7 +258,7 @@ VkDeviceSize cvkGetFormatSize(VkFormat format, uint32_t width, uint32_t height)
  * \param[in]  imageOffset         Texel offset in the image
  * \param[in]  imageExtent         Texel extent in the image
  * \param[in]  imageSubresource    Mip level and array layers; the aspect is set per plane
- * \param[out] pRegions            Receives one region per plane; CVK_FORMAT_MAX_PLANES entries
+ * \param[out] pRegions            Receives one region per plane; VKU_FORMAT_MAX_PLANES entries
  * \param[out] pTransferByteCount  Receives the byte count covered in the buffer
  * \param[out] pAspectMask         Receives the union of the plane aspects
  *
@@ -272,9 +274,9 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
                                       VkDeviceSize*            pTransferByteCount,
                                       VkImageAspectFlags*      pAspectMask)
 {
-    VkDeviceSize             plane_offsets[CVK_FORMAT_MAX_PLANES];
-    uint32_t                 plane_strides[CVK_FORMAT_MAX_PLANES];
-    VkExtent3D               plane_extents[CVK_FORMAT_MAX_PLANES];
+    VkDeviceSize             plane_offsets[VKU_FORMAT_MAX_PLANES];
+    uint32_t                 plane_strides[VKU_FORMAT_MAX_PLANES];
+    VkExtent3D               plane_extents[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceLayers plane_subresource;
     VkOffset3D               plane_offset;
     VkExtent2D               divisors;
@@ -306,13 +308,13 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
         }
         else
         {
-            plane_format   = format_plane_info(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index))->compatible;
-            divisors       = format_plane_info(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index))->divisors;
+            plane_format   = vkuFindMultiplaneCompatibleFormat(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index));
+            divisors       = vkuFindMultiplaneExtentDivisors(imageFormat, cvkGetFormatPlaneAspect(imageFormat, plane_index));
             plane_offset.x = imageOffset.x / (int32_t)divisors.width;
             plane_offset.y = imageOffset.y / (int32_t)divisors.height;
         }
-        plane_texel_size     = format_info(plane_format)->block_size;
-        block_extent         = format_info(plane_format)->block_extent;
+        plane_texel_size     = vkuFormatTexelBlockSize(plane_format);
+        block_extent         = vkuFormatTexelBlockExtent(plane_format);
         tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1u) / block_extent.width) * plane_texel_size;
         buffer_row_length    = (tight_row_byte_count == plane_strides[plane_index]) ? 0 : (plane_strides[plane_index] / plane_texel_size) * block_extent.width;
         cvkInitImageSubresourceLayers(&plane_subresource, cvkGetFormatPlaneAspect(imageFormat, plane_index), imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
@@ -392,7 +394,7 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
                                                uint32_t                 imageSrcQueueFamilyIndex,
                                                uint32_t                 imageDstQueueFamilyIndex)
 {
-    VkBufferImageCopy       regions[CVK_FORMAT_MAX_PLANES];
+    VkBufferImageCopy       regions[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceRange subresource_range;
     VkDeviceSize            transfer_byte_count;
     VkImageAspectFlags      aspect_mask;
@@ -521,7 +523,7 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
                                                uint32_t                 bufferSrcQueueFamilyIndex,
                                                uint32_t                 bufferDstQueueFamilyIndex)
 {
-    VkBufferImageCopy       regions[CVK_FORMAT_MAX_PLANES];
+    VkBufferImageCopy       regions[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceRange subresource_range;
     VkDeviceSize            transfer_byte_count;
     VkImageAspectFlags      aspect_mask;

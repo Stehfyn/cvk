@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.25)
 project(cvk LANGUAGES C)
 
-set(CMAKE_C_STANDARD 90)
+set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 # Pinned Vulkan headers and registry (git submodules).
 add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL)
-# SDK headers use implementation extensions (including 64-bit integer types).
-# Treat third-party headers as system headers while checking cvk itself as C90.
+# Treat third-party headers as system headers while checking cvk itself as C99.
 set_target_properties(Vulkan-Headers PROPERTIES SYSTEM TRUE)
 
 # Volk and cvk use the same pinned headers and platform entry points.
@@ -76,13 +75,15 @@ endif()
 
 add_library(cvk STATIC ${CVK_SOURCES})
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# Only the header-only format utilities are needed; keep their C++ libraries out of the build.
+target_include_directories(cvk SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include)
 target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk)
 target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
 
 if(MSVC)
     target_compile_options(cvk PRIVATE /W4)
 else()
-    target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic -Werror=declaration-after-statement -Werror=implicit-function-declaration)
+    target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic -Werror=implicit-function-declaration)
 endif()
 
 # JSON parsing and mock Volk dispatch need no GPU or installed Vulkan loader.
@@ -99,6 +100,10 @@ add_executable(cvk-json-integer-test tests/json_integer_test.c)
 target_link_libraries(cvk-json-integer-test PRIVATE cvk)
 add_test(NAME cvk-json-integers COMMAND cvk-json-integer-test)
 
+add_executable(cvk-format-test tests/format_test.c)
+target_link_libraries(cvk-format-test PRIVATE cvk)
+add_test(NAME cvk-format-layouts COMMAND cvk-format-test)
+
 # Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
 # prefix scvk, a standalone library against the SC headers. Format protocols are Vulkan-only.
 set(SCVK_SOURCES src/scvk.c src/scvk_json.c)
@@ -113,5 +118,5 @@ target_include_directories(scvk SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/extern
 if(MSVC)
     target_compile_options(scvk PRIVATE /W4)
 else()
-    target_compile_options(scvk PRIVATE -Wall -Wextra -Wpedantic -Werror=declaration-after-statement -Werror=implicit-function-declaration)
+    target_compile_options(scvk PRIVATE -Wall -Wextra -Wpedantic -Werror=implicit-function-declaration)
 endif()

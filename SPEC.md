@@ -18,10 +18,11 @@ first, then the generator, then regenerate and re-run the studies.
 
 ## 2. Outputs
 
-Generated headers and sources target the C89/C90 language dialect. They have no C++
+Generated headers and sources target the C99 language dialect. They have no C++
 linkage guards. Fixed-width integer types come from the Vulkan SDK and `<stdint.h>`.
-The JSON reader parses 64-bit integers without C99 `strtoull`/`strtoll`. Vulkan format
-metadata is emitted as private C89 tables from `vk.xml`, without a C99 utility-header dependency.
+The JSON reader parses 64-bit integers without `strtoull`/`strtoll`. Vulkan format
+helpers use the pinned Vulkan-Utility-Libraries `vk_format_utils.h` as a private
+implementation dependency. The SC profile omits these Vulkan-only helpers.
 
 **Rule zero: the outputs are never edited by hand.** Any defect in `include/cvk.h` or
 `src/cvk.c` is a defect in a rule here or in `scripts/generate.py`. Fix the rule, regenerate,
@@ -538,7 +539,7 @@ generation-policy settings and require no CMake configuration.
    regenerates into a temporary directory and fails if any file under `include/` or `src/`
    differs. This is rule zero made mechanical; it runs before anything else.
 1. `python scripts/generate.py` → `include/`, `src/`.
-2. `clang -fsyntax-only -std=c17 -Wall -Wextra -Iexternal/Vulkan-Headers/include generated/cvk.c`
+2. `clang -fsyntax-only -std=c99 -Wall -Wextra -Iinclude -Iexternal/volk -isystem external/Vulkan-Headers/include -isystem external/Vulkan-Utility-Libraries/include src/cvk.c`
    with and without each platform define.
 3. `python scripts/study_reference.py --ref generated --prefix cvk` must report tier 0 name
    fidelity and mechanical parameter fidelity of 100%.
