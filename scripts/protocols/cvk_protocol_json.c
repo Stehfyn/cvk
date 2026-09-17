@@ -1,6 +1,6 @@
 /* Tier 3 protocol (SPEC.md section 8c): a JSON reader with no allocation, an arena, and the
 ** lookups the generated parsers (cvkParseJson*) use. Source of truth kept with the generator
-** and folded into the generated cvk.h/cvk.c. Composed from the generated surface only. */
+** and folded into the generated cvk_json.h/cvk_json.c. Composed from the generated surface only. */
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -268,9 +268,9 @@ VkBool32 cvkIsJsonNull(const cvkJsonValue* pValue)
 }
 
 /**
- * \brief Reads a number as an unsigned 64-bit integer; a string holding a number is accepted.
+ * \brief Parses a decimal, octal, or hexadecimal unsigned integer, saturating on overflow.
  *
- * \param[in]  pValue  The value, or NULL for zero
+ * \param[in]  pText  Null-terminated integer text
  *
  * \retval The integer
  */
@@ -335,6 +335,11 @@ uint64_t cvkParseUint64Text(const char* pText)
     return negative ? (uint64_t)0 - value : value;
 }
 
+/**
+ * \brief Reads a number as an unsigned 64-bit integer; a string holding a number is accepted.
+ * \param[in] pValue The value, or NULL for zero
+ * \return The integer
+ */
 uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
 {
     char buffer[32];
@@ -377,6 +382,10 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     if (('-' == *text) || ('+' == *text))
     {
         ++text;
+    }
+    if ((*text < '0') || (*text > '9'))
+    {
+        return 0;
     }
     magnitude = cvkParseUint64Text(text);
     if (negative)

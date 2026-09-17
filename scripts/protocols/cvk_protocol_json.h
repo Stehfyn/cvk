@@ -1,4 +1,4 @@
-/* Tier 3 header fragment (SPEC.md section 8c): the JSON reader's types, folded into cvk.h
+/* Tier 3 header fragment (SPEC.md section 8c): the JSON reader's types, folded into cvk_json.h
 ** ahead of the declarations. A document is read into a caller-provided value array with no
 ** allocation; parsed Vulkan structures and their arrays live in a caller-provided arena. */
 

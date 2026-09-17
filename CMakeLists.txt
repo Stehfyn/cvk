@@ -5,8 +5,11 @@ set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-# Pinned Vulkan headers and registry, and the utility headers (format tables) (git submodules).
+# Pinned Vulkan headers and registry (git submodules).
 add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL)
+# SDK headers use implementation extensions (including 64-bit integer types).
+# Treat third-party headers as system headers while checking cvk itself as C90.
+set_target_properties(Vulkan-Headers PROPERTIES SYSTEM TRUE)
 
 # Volk and cvk use the same pinned headers and platform entry points.
 set(VOLK_PULL_IN_VULKAN OFF)
@@ -16,6 +19,7 @@ elseif(UNIX)
     set(VOLK_STATIC_DEFINES VK_USE_PLATFORM_XLIB_KHR)
 endif()
 add_subdirectory(external/volk EXCLUDE_FROM_ALL)
+set_target_properties(volk PROPERTIES SYSTEM TRUE C_EXTENSIONS ON)
 target_link_libraries(volk PUBLIC Vulkan::Headers)
 target_compile_definitions(volk PUBLIC VK_NO_PROTOTYPES)
 
@@ -39,7 +43,7 @@ add_compile_options($<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:C,MSVC>>:/Ob
 add_compile_options($<$<AND:$<CONFIG:Release>,$<COMPILE_LANG_AND_ID:C,Clang,AppleClang>>:-flto=full>)
 add_link_options($<$<AND:$<CONFIG:Release>,$<LINK_LANG_AND_ID:C,Clang,AppleClang>>:-flto=full>)
 
-# Regenerate include/cvk.h and src/cvk.c from the registry and cvk.policy.json.
+# Regenerate the core, JSON, and platform pairs from the registries and policies.
 # Generated files are committed; run this target after changing the policy or generator.
 if(Python3_Interpreter_FOUND)
     add_custom_target(cvk-generate
@@ -63,11 +67,11 @@ endif()
 # Everything under include/ and src/ is generated. Core is platform-free; each platform has
 # its own generated pair that includes cvk.h. Tier 3 protocols (scripts/protocols/) are folded
 # into the platform pairs by the generator; "posix" is the pair for descriptor protocols.
-set(CVK_SOURCES src/cvk.c)
+set(CVK_SOURCES src/cvk.c src/cvk_json.c)
 if(WIN32)
-    list(APPEND CVK_SOURCES src/win32/cvk_win32.c)
+    list(APPEND CVK_SOURCES src/win32/cvk_win32.c src/win32/cvk_win32_json.c)
 elseif(UNIX)
-    list(APPEND CVK_SOURCES src/xlib/cvk_xlib.c src/posix/cvk_posix.c)
+    list(APPEND CVK_SOURCES src/xlib/cvk_xlib.c src/xlib/cvk_xlib_json.c src/posix/cvk_posix.c)
 endif()
 
 add_library(cvk STATIC ${CVK_SOURCES})
@@ -91,9 +95,13 @@ add_executable(cvk-volk-dispatch-test tests/volk_dispatch_test.c)
 target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk)
 add_test(NAME cvk-volk-dispatch COMMAND cvk-volk-dispatch-test)
 
+add_executable(cvk-json-integer-test tests/json_integer_test.c)
+target_link_libraries(cvk-json-integer-test PRIVATE cvk)
+add_test(NAME cvk-json-integers COMMAND cvk-json-integer-test)
+
 # Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
 # prefix scvk, a standalone library against the SC headers. Format protocols are Vulkan-only.
-set(SCVK_SOURCES src/scvk.c)
+set(SCVK_SOURCES src/scvk.c src/scvk_json.c)
 if(WIN32)
     list(APPEND SCVK_SOURCES src/win32/scvk_win32.c)
 elseif(UNIX)

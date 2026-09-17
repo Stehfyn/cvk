@@ -7,7 +7,9 @@
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
 
+/* clang-format off */
 void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
 void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
+/* clang-format on */
 
 #endif /* SCVK_WIN32_H */

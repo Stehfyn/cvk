@@ -7,10 +7,10 @@
 #include <X11/Xlib.h>
 #include <vulkan/vulkan_xlib.h>
 
+/* clang-format off */
 void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window);
-VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(const cvkJsonValue* pValue);
-void cvkParseJsonXlibSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkXlibSurfaceCreateInfoKHR* pInfo);
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
+/* clang-format on */
 
 #endif /* CVK_XLIB_H */

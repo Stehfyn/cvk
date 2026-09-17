@@ -29,6 +29,11 @@ re-verify. A commit that changes the outputs without changing the generator or t
 wrong by definition.
 
 - `include/cvk.h`, `src/cvk.c`: core profile, free of platform conditionals.
+- `include/cvk_json.h`, `src/cvk_json.c`: JSON types, reader, generated parsers, and
+  pipeline helpers, separate from the core pair. The JSON header includes `cvk.h`.
+  Platform parsers use `include/<platform>/cvk_<platform>_json.h` and matching sources;
+  those headers include `cvk_json.h` and the platform headers. The same layout applies
+  to `scvk`. CMake builds these sources into the corresponding profile library.
 - `include/scvk.h`, `src/scvk.c` (and platform pairs): the Vulkan SC profile, a standalone
   library from `scvk.policy.json` (which extends `cvk.policy.json`: api `vulkansc`, its
   registry, core `VKSC_VERSION_1_0`, every SC-supported extension, prefix `scvk` applied to
@@ -477,8 +482,8 @@ and `VK_FALSE`, pointers as arrays or objects, `"NULL"` or `null` for none, exte
 as objects with an `sType`, handles as the file's object ids, strings and fixed arrays as
 themselves. Three pieces:
 
-- **Reader** (`cvk_protocol_json.c`, with the types of `cvk_protocol_json.h` folded into the
-  header): `cvkParseJsonDocument` reads a document into a caller-provided value array with no
+- **Reader** (`cvk_protocol_json.c`, with the types of `cvk_protocol_json.h` folded into
+  `cvk_json.h`): `cvkParseJsonDocument` reads a document into a caller-provided value array with no
   allocation; members and elements are found with `cvkGetJsonMember` and `cvkGetJsonElement`;
   numbers, booleans, and strings are read by kind; `cvkArena` holds what the parsers build;
   `cvkResolveJsonHandle` maps an id through the context's resolver, or keeps it.
@@ -508,8 +513,9 @@ implementation comments and generated-file banners remain. When true, the rules 
 
 `single_line_prototypes` is a boolean policy option (default false, currently true in
 the shared policy). When true, each function declaration occupies exactly one physical
-line. The generator reapplies this layout after clang-format; the column limit cannot
-split prototypes. Function definitions keep their ordinary layout. Both options are
+line. The generator brackets declaration sections with clang-format off/on directives,
+so the column limit cannot split prototypes during generation or later formatting.
+Function definitions keep their ordinary layout. Both options are
 generation-policy settings and require no CMake configuration.
 
 - `\brief` from the verb: Create → "Creates a <noun>.", Allocate → "Allocates …",

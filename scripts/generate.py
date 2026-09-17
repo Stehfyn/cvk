@@ -1,4 +1,4 @@
-"""cvk generator prototype: registry + policy -> include/cvk.h, src/cvk.c
+"""cvk generator prototype: registry + policy -> core, JSON, and platform file pairs
 
     python scripts/generate.py [--policy cvk.policy.json] [--out-dir .]
 
@@ -124,6 +124,10 @@ class Generator:
         self.names: Dict[str, str] = {}
         self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
         self.defs: Dict[str, List[str]] = defaultdict(list)
+        self.json_decls: Dict[str, List[str]] = defaultdict(list)
+        self.json_defs: Dict[str, List[str]] = defaultdict(list)
+        self.json_names: Set[str] = set()
+        self.json_source_includes: Dict[str, List[str]] = defaultdict(list)
         self.sigs: Dict[str, Tuple[str, List[EmittedParam]]] = {}   # every emitted signature, for chains
         self.used_overrides: Set[str] = set()
         self.keep_suffix: Set[str] = set()
@@ -132,11 +136,13 @@ class Generator:
         # Tier 3 header fragments (scripts/protocols/*.h): types the protocols and the generated
         # JSON parsers share, folded into the header ahead of the declarations.
         self.fragments: List[str] = []
+        self.json_fragments: List[str] = []
         if os.path.isdir(self.PROTOCOL_DIR):
             for path in sorted(os.listdir(self.PROTOCOL_DIR)):
                 if path.endswith(".h"):
                     with open(os.path.join(self.PROTOCOL_DIR, path), encoding="utf-8") as fh:
-                        self.fragments.append(fh.read().rstrip("\n"))
+                        fragments = self.json_fragments if path.startswith("cvk_protocol_json") else self.fragments
+                        fragments.append(fh.read().rstrip("\n"))
         self.errors: List[str] = []
 
     # ------------------------------------------------------------ profile
@@ -741,7 +747,7 @@ class Generator:
         lines.append(" */")
         return "\n".join(lines) + "\n"
 
-    def place(self, plats: frozenset, decl: str, defn: str) -> None:
+    def place(self, plats: frozenset, decl: str, defn: str, *, json: bool = False) -> None:
         """Route an emitted function to the core files or to exactly one platform's files."""
         if len(plats) > 1:
             self.errors.append(f"entity spans several platforms {sorted(plats)}: {decl.splitlines()[-1]}")
@@ -751,8 +757,16 @@ class Generator:
             # Protocol metadata is parsed before placement; suppress its copied docs too.
             decl = re.sub(r"/\*\*.*?\*/\s*", "", decl, flags=re.S)
             defn = re.sub(r"/\*\*.*?\*/\s*", "", defn, flags=re.S)
-        self.decls[key].append(decl)
-        self.defs[key].append(defn)
+        if json:
+            self.json_decls[key].append(decl)
+            self.json_defs[key].append(defn)
+            self.json_names.update(re.findall(r"\b(cvk\w+)\s*\(", decl))
+        else:
+            self.decls[key].append(decl)
+            self.defs[key].append(defn)
+
+    def place_json(self, plats: frozenset, decl: str, defn: str) -> None:
+        self.place(plats, decl, defn, json=True)
 
     # ------------------------------------------------------------ builders
     def emit_builder(self, s: Struct) -> None:
@@ -968,7 +982,7 @@ class Generator:
             doc = self.doc_block(f"Reads a number from JSON, accepting the name of an API constant.", params, ret, None, [])
             sig = self.signature(ret, name, params)
             self.sigs[name] = (ret, params)
-            self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+            self.place_json(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
         # enumerations and flag bits
         for enum in sorted(self.reg.enums):
             if not enum.startswith("Vk") or not self.json_type_required(enum) or enum in self.reg.type_aliases:
@@ -985,7 +999,7 @@ class Generator:
             doc = self.doc_block(f"Parses a {enum} from JSON.", params, enum, None, [])
             sig = self.signature(enum, name, params)
             self.sigs[name] = (enum, params)
-            self.place(self.json_type_platforms(enum), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+            self.place_json(self.json_type_platforms(enum), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
         # flag sets
         for flags in sorted(self.reg.bitmasks):
             if not flags.startswith("Vk") or not self.json_type_required(flags) or flags in self.reg.type_aliases:
@@ -1003,7 +1017,7 @@ class Generator:
             doc = self.doc_block(f"Parses a {flags} from JSON.", params, flags, None, [])
             sig = self.signature(flags, name, params)
             self.sigs[name] = (flags, params)
-            self.place(self.json_type_platforms(flags), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+            self.place_json(self.json_type_platforms(flags), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
         # structures and unions
         parsed: List[Struct] = []
         for s in sorted(self.reg.structs.values(), key=lambda x: x.name):
@@ -1044,7 +1058,7 @@ class Generator:
             doc = self.doc_block(f"Parses a {s.name} from a JSON object; members absent or NULL stay zero.", params, "void", None, [])
             sig = self.signature("void", name, params)
             self.sigs[name] = ("void", params)
-            self.place(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
+            self.place_json(self.platforms_for(s.extensions, s.core_version), doc + sig + ";",
                        sig + "\n{\n" + indent("\n".join(decls + ([""] if decls else []) + body)) + "\n}")
             if s.stype and not self.platforms_for(s.extensions, s.core_version):
                 parsed.append(s)
@@ -1063,7 +1077,7 @@ class Generator:
         doc = self.doc_block("Parses one structure of an extension chain from a JSON object by its sType, into the arena.", params, "void*", None, [])
         sig = self.signature("void*", name, params)
         self.sigs[name] = ("void*", params)
-        self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
+        self.place_json(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(body)) + "\n}")
 
     # ------------------------------------------------------------ singulars
     def singular_name(self, cmd: Command, s: Optional[Struct]) -> str:
@@ -1677,6 +1691,7 @@ class Generator:
         cvk* it calls must exist, and it may not call vk* directly."""
         m_plat = re.search(r"cvk_protocol(?:_(\w+))?\.c$", os.path.basename(path))
         plat = m_plat.group(1) if m_plat.group(1) in self.PLATFORM_INCLUDES else ""   # else the core pair
+        is_json = os.path.basename(path).startswith("cvk_protocol_json")
         with open(path, encoding="utf-8") as fh:
             text = fh.read()
         # A file may name the API variant it belongs to in its leading comment (Profile: vulkan):
@@ -1690,8 +1705,9 @@ class Generator:
             self.errors.append(f"protocol {os.path.basename(path)} calls a vk* command directly")
         for inc in re.findall(r"^#include\s+<[^>]+>", text, flags=re.M):
             inc = inc[len("#include "):]
-            if inc not in self.PLATFORM_SOURCE_INCLUDES.setdefault(plat, []):
-                self.PLATFORM_SOURCE_INCLUDES[plat].append(inc)
+            includes = self.json_source_includes if is_json else self.PLATFORM_SOURCE_INCLUDES
+            if inc not in includes.setdefault(plat, []):
+                includes[plat].append(inc)
         for m in re.finditer(r"(/\*\*(?=\s).*?\*/\s*)?^(\w[\w\s\*]*?\s+(cvk\w+)\s*\((.*?)\))\s*\{", text, flags=re.S | re.M):
             doc, sig, name, plist = m.group(1) or "", m.group(2), m.group(3), m.group(4)
             depth, i, quote = 1, m.end(), ""
@@ -1729,7 +1745,7 @@ class Generator:
                 pm = re.match(r"(.*?)\b(\w+)\s*(\[[^\]]*\])?$", piece)
                 params.append(EmittedParam(piece, pm.group(2) if pm else piece, "", not piece.startswith("const") and "*" in piece))
             self.sigs[name] = (ret, params)
-            self.place(frozenset([plat]) if plat else frozenset(), doc + sig + ";", sig + "\n" + body)
+            self.place(frozenset([plat]) if plat else frozenset(), doc + sig + ";", sig + "\n" + body, json=is_json)
 
     # ---------------------------------------------------------------- chains
     LEVELS = ["instance", "physicalDevice", "device", "queue", "commandBuffer"]
@@ -1894,7 +1910,8 @@ class Generator:
         doc = self.doc_block(spec["brief"], params, ret, None, [])
         sig = self.signature(ret, name, params)
         self.sigs[name] = (ret, params)
-        self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(full))) + "\n}")
+        is_json = any(step.get("call") in self.json_names for step in spec["steps"])
+        self.place(frozenset(), doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(full))) + "\n}", json=is_json)
 
     # ---------------------------------------------------------------- run
     def run(self) -> None:
@@ -2037,11 +2054,17 @@ class Generator:
     PLATFORM_SOURCE_INCLUDES: Dict[str, List[str]] = {}
 
     def finish_header(self, text: str) -> str:
-        """Apply declaration layout after formatting too, so ColumnLimit cannot wrap it."""
+        """Apply the configured layout to function declarations only."""
         if not self.single_line_prototypes:
             return text
         pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+(?:cvk|" + re.escape(self.prefix) + r")[A-Z]\w*[ \t]*\([^;{}]*\)[ \t]*;"
         return re.sub(pattern, lambda m: re.sub(r"\s+", " ", m.group()).strip(), text)
+
+    def prototype_block(self, declarations: str) -> str:
+        if not self.single_line_prototypes:
+            return declarations
+        # Keep subsequent standalone clang-format runs consistent with the policy.
+        return "/* clang-format off */\n" + self.finish_header(declarations) + "\n/* clang-format on */"
 
     def platform_header(self, plat: str) -> str:
         guard = f"CVK_{plat.upper()}_H"
@@ -2050,7 +2073,7 @@ class Generator:
         return self.finish_header(f"#ifndef {guard}\n#define {guard}\n\n"
                 "/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
                 f"#include \"cvk.h\"\n{includes}\n\n"
-                f"{decls}\n\n#endif /* {guard} */\n")
+                f"{self.prototype_block(decls)}\n\n#endif /* {guard} */\n")
 
     def platform_source(self, plat: str) -> str:
         defs = "\n".join(self.defs[plat])
@@ -2062,6 +2085,24 @@ class Generator:
     def loader_include(self) -> str:
         # Volk must suppress Vulkan prototypes before the public core header is read.
         return f"#include {self.loader_header}\n" if self.loader_header else ""
+
+    def json_header(self, plat: str = "") -> str:
+        guard = f"CVK_{plat.upper() + '_' if plat else ''}JSON_H"
+        includes = '#include "cvk_json.h"\n' if plat else '#include "cvk.h"\n'
+        if plat:
+            includes += "".join(f"#include {i}\n" for i in self.PLATFORM_INCLUDES[plat])
+        fragments = "\n\n".join(self.json_fragments) if not plat else ""
+        declarations = self.prototype_block("\n".join(self.json_decls[plat]))
+        return self.finish_header(f"#ifndef {guard}\n#define {guard}\n\n"
+                "/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
+                f"{includes}\n{fragments}\n\n{declarations}\n\n#endif /* {guard} */\n")
+
+    def json_source(self, plat: str = "") -> str:
+        header = f"{plat}/cvk_{plat}_json.h" if plat else "cvk_json.h"
+        includes = "".join(f"#include {i}\n" for i in self.json_source_includes.get(plat, []))
+        definitions = "\n".join(self.json_defs[plat])
+        return ("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
+                f'#include "{header}"\n#include <string.h>\n{includes}\n{definitions}\n')
 
     def header(self) -> str:
         # Every policy capacity is emitted (protocols use some that no enumeration does), plus any derived.
@@ -2094,7 +2135,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
 {(chr(10) * 2).join(self.fragments)}
 
-{chr(10).join(self.decls[""])}
+{self.prototype_block(chr(10).join(self.decls[""]))}
 
 #endif /* CVK_H */
 """)
@@ -2242,6 +2283,17 @@ def main() -> None:
         with open(cp, "w", encoding="utf-8", newline="\n") as f:
             f.write(brand(g.platform_source(plat), px))
         outputs += [hp, cp]
+    for plat in sorted(g.json_decls):
+        stem = f"{px}_{plat}_json" if plat else f"{px}_json"
+        hp = os.path.join(args.out_dir, "include", plat, stem + ".h")
+        cp = os.path.join(args.out_dir, "src", plat, stem + ".c")
+        os.makedirs(os.path.dirname(hp), exist_ok=True)
+        os.makedirs(os.path.dirname(cp), exist_ok=True)
+        with open(hp, "w", encoding="utf-8", newline="\n") as f:
+            f.write(brand(g.json_header(plat), px))
+        with open(cp, "w", encoding="utf-8", newline="\n") as f:
+            f.write(brand(g.json_source(plat), px))
+        outputs += [hp, cp]
     if g.dropped:
         print(f"dropped {len(g.dropped)} compositions outside the {g.api} profile")
     # Final formatting is clang-format's (repository .clang-format); the generator's own alignment is a fallback.
@@ -2255,17 +2307,11 @@ def main() -> None:
         sys.exit(1)
     style = os.path.join(REPO_ROOT, ".clang-format")
     subprocess.run([clang_format, "-i", f"--style=file:{style}"] + outputs, check=True, cwd=args.out_dir)
-    if g.single_line_prototypes:
-        for path in outputs:
-            if path.endswith(".h"):
-                with open(path, encoding="utf-8") as f:
-                    text = g.finish_header(f.read())
-                with open(path, "w", encoding="utf-8", newline="\n") as f:
-                    f.write(text)
     t0 = sum(1 for n in g.names.values() if n.startswith("vk") and "+" not in n)
     builders = sum(1 for n in g.names if n.startswith("cvkInit"))
     conv = sum(1 for n in g.names.values() if "+" in n)
     per = ", ".join(f"{k or 'core'}={len(v)}" for k, v in sorted(g.decls.items()))
+    per += ", " + ", ".join(f"{k + '/' if k else ''}json={len(v)}" for k, v in sorted(g.json_decls.items()))
     print(f"generated {len(outputs)} files ({per}): tier0={t0} builders={builders} conveniences={conv} capacities={len(g.used_capacities)}")
 
 

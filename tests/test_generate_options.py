@@ -3,6 +3,7 @@
 import copy
 from pathlib import Path
 import re
+import subprocess
 import sys
 import unittest
 
@@ -32,14 +33,38 @@ class GeneratorOptionsTests(unittest.TestCase):
         off, on = self.variants[False], self.variants[True]
         self.assertEqual(off.sigs, on.sigs)
         self.assertEqual(off.defs, on.defs)
-        for platform, declarations in on.decls.items():
-            stripped = [re.sub(r"/\*\*.*?\*/\s*", "", decl, flags=re.S) for decl in declarations]
-            self.assertEqual(stripped, off.decls[platform])
+        self.assertEqual(off.json_defs, on.json_defs)
+        for off_decls, on_decls in ((off.decls, on.decls), (off.json_decls, on.json_decls)):
+            for platform, declarations in on_decls.items():
+                stripped = [re.sub(r"/\*\*.*?\*/\s*", "", decl, flags=re.S) for decl in declarations]
+                self.assertEqual(stripped, off_decls[platform])
         self.assertIn("\\brief", on.header())
         self.assertNotIn("/**", off.header())
         for platform in off.decls:
             if platform:
                 self.assertNotIn("/**", off.platform_header(platform))
+        for platform in off.json_decls:
+            self.assertNotIn("/**", off.json_header(platform))
+
+    def test_json_api_is_separate_from_core_and_platform_wrappers(self):
+        gen = self.variants[False]
+        for header, source in [(gen.header(), gen.source())] + [
+                (gen.platform_header(p), gen.platform_source(p)) for p in gen.decls if p]:
+            self.assertNotIn("cvkJson", header)
+            self.assertNotIn("cvkParseJson", source)
+            self.assertNotIn("cvkParsePipelineJson", source)
+        for platform in gen.json_decls:
+            header, source = gen.json_header(platform), gen.json_source(platform)
+            self.assertIn("cvkParseJson", header)
+            self.assertIn("cvkParseJson", source)
+            self.assertNotIn("volk.h", source)
+            self.assertNotRegex(source, r"\bvk[A-Z]\w*\s*\(")
+            self.assertIn('#include "cvk_json.h"' if platform else '#include "cvk.h"', header)
+        for function in ("cvkParseJsonDocument", "cvkParsePipelineJson", "cvkCreatePipelineFromJson"):
+            self.assertIn(function, gen.json_header())
+            self.assertIn(function, gen.json_source())
+        self.assertIn("#include <ctype.h>", gen.json_source())
+        self.assertNotIn("#include <ctype.h>", gen.source())
 
     def test_child_handles_do_not_gain_lookup_arguments(self):
         gen = self.variants[False]
@@ -70,6 +95,42 @@ class GeneratorOptionsTests(unittest.TestCase):
         policy = load_policy(str(ROOT / "scvk.policy.json"))
         self.assertFalse(policy["doc_comments"])
         self.assertEqual(policy["header"], "<vulkan/vulkan_sc_core.h>")
+        self.assertTrue(policy["single_line_prototypes"])
+
+    def test_one_physical_line_per_prototype_for_both_doc_modes(self):
+        pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+(cvk[A-Z]\w*)[ \t]*\([^;{}]*\)[ \t]*;"
+        for gen in self.variants.values():
+            for header in ([gen.header()] + [gen.platform_header(p) for p in gen.decls if p]
+                           + [gen.json_header(p) for p in gen.json_decls]):
+                declarations = list(re.finditer(pattern, header))
+                self.assertTrue(declarations)
+                self.assertTrue(all("\n" not in m.group() for m in declarations))
+            one_line = gen.header()
+            gen.single_line_prototypes = False
+            try:
+                multiline = gen.header()
+                self.assertTrue(any("\n" in m.group() for m in re.finditer(pattern, multiline)))
+                self.assertEqual(re.findall(pattern, one_line), re.findall(pattern, multiline))
+            finally:
+                gen.single_line_prototypes = True
+
+    def test_clang_format_respects_each_layout_configuration(self):
+        pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+cvk[A-Z]\w*[ \t]*\([^;{}]*\)[ \t]*;"
+        formatter = ["clang-format", f"--style=file:{ROOT / '.clang-format'}"]
+        for gen in self.variants.values():
+            for single_line in (False, True):
+                gen.single_line_prototypes = single_line
+                try:
+                    formatted = subprocess.check_output(formatter, input=gen.header(), text=True)
+                    self.assertEqual(formatted, subprocess.check_output(formatter, input=formatted, text=True))
+                    declarations = list(re.finditer(pattern, formatted))
+                    self.assertTrue(declarations)
+                    if single_line:
+                        self.assertTrue(all("\n" not in m.group() for m in declarations))
+                    else:
+                        self.assertTrue(any("\n" in m.group() for m in declarations))
+                finally:
+                    gen.single_line_prototypes = True
 
 
 if __name__ == "__main__":

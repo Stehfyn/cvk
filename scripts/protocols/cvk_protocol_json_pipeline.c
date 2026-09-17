@@ -1,6 +1,6 @@
 /* Tier 3 protocol (SPEC.md section 8c): a Vulkan SC pipeline JSON (the pipeline cache
 ** compiler's input, in memory) to the objects and handles it describes. Source of truth kept
-** with the generator and folded into the generated cvk.h/cvk.c. Composed from the generated
+** with the generator and folded into the generated cvk_json.h/cvk_json.c. Composed from the generated
 ** surface only: the reader (cvk_protocol_json.c) and the generated cvkParseJson* parsers. */
 
 /**

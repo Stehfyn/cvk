@@ -242,6 +242,10 @@ tier 0/1 functions exist there.
 - `cvk.h` / `cvk.c` for tiers 0, 1, 1', and templated tier 2, generated from the Vulkan registry
   plus a small policy file (naming prefix, `CVK_MAX_*` capacities, which extensions and platforms
   to include, constant-substitution table).
+- `cvk_json.h` / `cvk_json.c` for the JSON reader, generated type parsers, and pipeline
+  JSON helpers; `scvk_json.h` / `scvk_json.c` provide the SC equivalents. JSON callers
+  include these headers and link the same `cvk` or `scvk` library. Platform-specific
+  parsers live in matching pairs such as `win32/cvk_win32_json.h` / `.c`.
 - Per-platform headers (`include/xlib/cvk_xlib.h`, `include/win32/cvk_win32.h`) with the same
   tiers restricted to that platform's extensions, and matching sources under `src/<platform>/`.
   The `posix` protocol pair and `scvk` profile use the same layout. Include platform headers
@@ -320,7 +324,9 @@ Generation options live in `cvk.policy.json`, independently of CMake:
 ```
 
 These settings omit API doc comments and put each function prototype on exactly one
-line, even when it exceeds clang-format's column limit. Function definitions keep their
+line, even when it exceeds clang-format's column limit. Generated declaration sections
+carry clang-format off/on directives so standalone formatting also preserves the policy.
+Function definitions keep their
 normal formatting. `scvk.policy.json` inherits both options. A separate JSON policy can
 use `"extends": "cvk.policy.json"` and override either setting; select it with `--policy`.
 

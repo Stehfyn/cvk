@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
 
+/* clang-format off */
 void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo, const void* pNext, uint32_t waitSemaphoreValuesCount, const uint64_t* pWaitSemaphoreValues, uint32_t signalSemaphoreValuesCount, const uint64_t* pSignalSemaphoreValues);
 void cvkInitExportFenceWin32HandleInfo(VkExportFenceWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name);
 void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name);
@@ -26,27 +27,6 @@ void cvkInitSurfaceFullScreenExclusiveWin32Info(VkSurfaceFullScreenExclusiveWin3
 void cvkInitWin32KeyedMutexAcquireReleaseInfo(VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo, const void* pNext, uint32_t acquireCount, const VkDeviceMemory* pAcquireSyncs, const uint64_t* pAcquireKeys, const uint32_t* pAcquireTimeouts, uint32_t releaseCount, const VkDeviceMemory* pReleaseSyncs, const uint64_t* pReleaseKeys);
 void cvkInitWin32KeyedMutexAcquireReleaseInfoNV(VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo, const void* pNext, uint32_t acquireCount, const VkDeviceMemory* pAcquireSyncs, const uint64_t* pAcquireKeys, const uint32_t* pAcquireTimeoutMilliseconds, uint32_t releaseCount, const VkDeviceMemory* pReleaseSyncs, const uint64_t* pReleaseKeys);
 void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd);
-VkFullScreenExclusiveEXT cvkParseJsonFullScreenExclusive(const cvkJsonValue* pValue);
-VkWin32SurfaceCreateFlagsKHR cvkParseJsonWin32SurfaceCreateFlags(const cvkJsonValue* pValue);
-void cvkParseJsonD3D12FenceSubmitInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkD3D12FenceSubmitInfoKHR* pInfo);
-void cvkParseJsonExportFenceWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportFenceWin32HandleInfoKHR* pInfo);
-void cvkParseJsonExportMemoryWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMemoryWin32HandleInfoKHR* pInfo);
-void cvkParseJsonExportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportMemoryWin32HandleInfoNV* pInfo);
-void cvkParseJsonExportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkExportSemaphoreWin32HandleInfoKHR* pInfo);
-void cvkParseJsonFenceGetWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkFenceGetWin32HandleInfoKHR* pInfo);
-void cvkParseJsonImportFenceWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportFenceWin32HandleInfoKHR* pInfo);
-void cvkParseJsonImportMemoryWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMemoryWin32HandleInfoKHR* pInfo);
-void cvkParseJsonImportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportMemoryWin32HandleInfoNV* pInfo);
-void cvkParseJsonImportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkImportSemaphoreWin32HandleInfoKHR* pInfo);
-void cvkParseJsonMemoryGetWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryGetWin32HandleInfoKHR* pInfo);
-void cvkParseJsonMemoryWin32HandleProperties(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkMemoryWin32HandlePropertiesKHR* pInfo);
-void cvkParseJsonSemaphoreGetWin32HandleInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSemaphoreGetWin32HandleInfoKHR* pInfo);
-void cvkParseJsonSurfaceCapabilitiesFullScreenExclusive(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceCapabilitiesFullScreenExclusiveEXT* pInfo);
-void cvkParseJsonSurfaceFullScreenExclusiveInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceFullScreenExclusiveInfoEXT* pInfo);
-void cvkParseJsonSurfaceFullScreenExclusiveWin32Info(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkSurfaceFullScreenExclusiveWin32InfoEXT* pInfo);
-void cvkParseJsonWin32KeyedMutexAcquireReleaseInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo);
-void cvkParseJsonWin32KeyedMutexAcquireReleaseInfoNV(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo);
-void cvkParseJsonWin32SurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkWin32SurfaceCreateInfoKHR* pInfo);
 VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain);
 void cvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
 void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
@@ -92,5 +72,6 @@ void cvkImportWin32HandleImage(VkPhysicalDevice physicalDevice, VkDevice device,
 void cvkImportWin32HandleBuffer(VkPhysicalDevice physicalDevice, VkDevice device, const void* pBufferNext, VkBufferCreateFlags flags, VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name, VkDeviceSize allocationSize, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer, VkDeviceMemory* pMemory);
 void cvkExportWin32HandleImage(VkPhysicalDevice physicalDevice, VkDevice device, const void* pImageNext, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout, VkExternalMemoryHandleTypeFlagBits handleType, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkImage* pImage, VkDeviceMemory* pMemory, HANDLE* pHandle);
 void cvkExportWin32HandleBuffer(VkPhysicalDevice physicalDevice, VkDevice device, const void* pBufferNext, VkBufferCreateFlags flags, VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkExternalMemoryHandleTypeFlagBits handleType, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name, VkMemoryPropertyFlags requiredProperties, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkBuffer* pBuffer, VkDeviceMemory* pMemory, HANDLE* pHandle);
+/* clang-format on */
 
 #endif /* CVK_WIN32_H */

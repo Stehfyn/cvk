@@ -1,7 +1,7 @@
 /* Parses tests/cube.pc.json (a Vulkan SC pipeline JSON) with cvkParsePipelineJson and checks the
 ** structures it yields; no device is needed. Run by CTest as cvk-pipeline-json-parse. */
 
-#include "cvk.h"
+#include "cvk_json.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
