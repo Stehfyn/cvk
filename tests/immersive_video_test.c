@@ -22,12 +22,20 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     size_t                   different     = 0;
     int                      i;
     UINT                     x, y;
+    UINT                     backingWidth = max(width, 1920), backingHeight = max(height, 1080);
+    size_t                   transparent = 0;
 
     for (i = 0; i < 2; ++i)
     {
-        cdx11DeviceCreateTexture2D(device, width, height, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET, 0, 0, NULL, &textures[i]);
+        cdx11DeviceCreateTexture2D(device, backingWidth, backingHeight, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_RENDER_TARGET, 0, 0, NULL, &textures[i]);
         cdx11DeviceCreateRenderTargetView(device, (ID3D11Resource*)textures[i], NULL, &targets[i]);
-        cdx11DeviceCreateTexture2D(device, width, height, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, 0, NULL, &staging[i]);
+        cdx11DeviceCreateTexture2D(device, backingWidth, backingHeight, 1, 1, DXGI_FORMAT_B8G8R8A8_UNORM, sample, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, 0, NULL, &staging[i]);
+    }
+    /* Poison the destination: every pixel, including the resize margin, must
+    ** be replaced by opaque video rather than expose the desktop through it. */
+    {
+        const FLOAT poison[4] = {1, 0, 1, 0};
+        cdx11DeviceContextClearRenderTargetView(context, targets[1], poison);
     }
     ReferenceVideoStream_Draw(reference, targets[0], width, height);
     VideoStream_Draw(port, targets[1], width, height);
@@ -50,6 +58,13 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
                 ++different;
         }
     }
+    for (y = 0; y < backingHeight; ++y)
+    {
+        const BYTE* row = (const BYTE*)mapped[1].pData + y * mapped[1].RowPitch;
+        for (x = 0; x < backingWidth; ++x)
+            if (row[x * 4 + 3] != 255)
+                ++transparent;
+    }
     for (i = 0; i < 2; ++i)
     {
         cdx11DeviceContextUnmap(context, (ID3D11Resource*)staging[i], 0);
@@ -59,7 +74,9 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     }
     printf("frame %d, %ux%u: max channel difference %u; channels differing by >3: %zu\n", frame, width, height, maxDifference, different);
     /* Independent APIs can round filtering and UNORM conversion differently. */
-    return different != 0;
+    if (transparent)
+        fprintf(stderr, "Unpainted resize margin: %zu pixels\n", transparent);
+    return different != 0 || transparent != 0;
 }
 
 int wmain(int argc, wchar_t** argv)

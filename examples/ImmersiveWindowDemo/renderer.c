@@ -347,7 +347,7 @@ static void CreatePasses(VideoRenderer* r)
     VkSubpassDescription         subpass     = {.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, .colorAttachmentCount = 1, .pColorAttachments = &reference};
     VkDescriptorSetLayoutBinding bindings[2] = {{0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL},
                                                 {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL}};
-    VkPushConstantRange          constants   = {VK_SHADER_STAGE_FRAGMENT_BIT, 0, 4 * sizeof(float)};
+    VkPushConstantRange          constants   = {VK_SHADER_STAGE_FRAGMENT_BIT, 0, 6 * sizeof(float)};
     VkDescriptorPoolSize         poolSize    = {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VIDEO_RENDERER_FRAMES * 2 + 1};
     int                          i;
 
@@ -503,9 +503,9 @@ static void ReleaseImage(VideoRenderer* r, Image* image, VkImageLayout layout, V
 
 static void DrawPass(VideoRenderer* r, Image* target, int pass, VkDescriptorSet set, UINT width, UINT height)
 {
-    VkRect2D   area        = {{0, 0}, {width, height}};
-    VkViewport viewport    = {0, 0, (float)width, (float)height, 0, 1};
-    float      constants[] = {1.0f / (float)width, 1.0f / (float)height, 1.0f, 0.0f};
+    VkRect2D   area        = {{0, 0}, {target->width, target->height}};
+    VkViewport viewport    = {0, 0, (float)target->width, (float)target->height, 0, 1};
+    float      constants[] = {1.0f / (float)width, 1.0f / (float)height, 1.0f, 0.0f, (float)target->width / (float)width, (float)target->height / (float)height};
     cvkCmdBeginRenderPass(r->command, NULL, r->renderPass, target->framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewport(r->command, viewport);
     cvkCmdSetScissor(r->command, area);
@@ -522,7 +522,6 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     ID3D11Resource*      backBuffer;
     ID3D11Texture2D*     texture;
     D3D11_TEXTURE2D_DESC desc;
-    D3D11_BOX            box = {0, 0, 0, width, height, 1};
     VkDeviceMemory       syncs[2];
     uint64_t             acquireKeys[2] = {0, 0};
     uint64_t             releaseKeys[2] = {1, 0};
@@ -593,7 +592,11 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     }
     /* The copy precedes the original Direct2D caption and DXGI presentation. */
     cdxgiKeyedMutexAcquireSync(r->output.mutex, redraw ? 1 : 0, INFINITE);
-    cdx11DeviceContextCopySubresourceRegion(r->context, backBuffer, 0, 0, 0, 0, (ID3D11Resource*)r->output.texture, 0, &box);
+    /* Cover the entire composition buffer, including pixels a growing window
+    ** can expose before its geometry paint reaches DWM. The shader preserves
+    ** the exact client-area mapping and clamps the extra area to video edges.
+    ** A cropped copy leaves undefined pixels in a flip-discard back buffer. */
+    cdx11DeviceContextCopyResource(r->context, backBuffer, (ID3D11Resource*)r->output.texture);
     cdxgiKeyedMutexReleaseSync(r->output.mutex, 0);
     cdx11DeviceContextFlush(r->context);
     cdxgiUnknownRelease((IUnknown*)backBuffer);
