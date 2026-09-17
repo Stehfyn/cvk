@@ -26,6 +26,26 @@ static BOOL                    g_fPaused;
 static BOOL                    g_fDirty = TRUE; /* something other than the video changed: repaint */
 static BOOL                    g_fNewFrame;     /* the last PreDraw adopted a video frame */
 
+/* Opt into the same CPU policy as Task Manager's Efficiency mode (green leaf). */
+static void EnableEfficiencyMode(void)
+{
+    PROCESS_POWER_THROTTLING_STATE power = {0};
+    HANDLE process = GetCurrentProcess();
+
+    power.Version = PROCESS_POWER_THROTTLING_CURRENT_VERSION;
+    power.ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
+    power.StateMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
+    if (!SetProcessInformation(process, ProcessPowerThrottling, &power, sizeof(power)))
+    {
+        OutputDebugStringW(L"ImmersiveWindowDemo: Windows did not enable EcoQoS.\n");
+        return;
+    }
+    if (!SetPriorityClass(process, IDLE_PRIORITY_CLASS))
+    {
+        OutputDebugStringW(L"ImmersiveWindowDemo: Windows did not lower the process priority.\n");
+    }
+}
+
 static LARGE_INTEGER g_frequency;
 static LARGE_INTEGER g_start;
 static LONGLONG      g_shown;
@@ -235,6 +255,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     (void)lpCmdLine;
     (void)nShowCmd;
 
+    EnableEfficiencyMode();
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (FAILED(hr))

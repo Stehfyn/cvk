@@ -9,6 +9,9 @@ bindings; this is a Vulkan video renderer with native Windows integration.
 The command line, 1280x720 starting window, caption glyphs, light/dark toggle,
 resize/move handling, Space to pause/resume, Escape to close, and looping playback
 come from the pinned CDX example. As in the reference, playback is video-only.
+On startup the demo enables Windows Efficiency mode (EcoQoS and idle process
+priority), which Task Manager identifies with its green leaf on Windows 11.
+Windows can favor lower CPU frequencies and other processes under contention.
 The original public headers are reused directly from the submodule. Local copies
 of `demo.c` and `immersive_window.c` keep the controls and playback flow. Video
 and caption render into one offscreen frame. During `WM_NCCALCSIZE`, both use the
