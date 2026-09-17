@@ -755,6 +755,10 @@ class Generator:
             self.errors.append(f"entity spans several platforms {sorted(plats)}: {decl.splitlines()[-1]}")
             return
         key = next(iter(plats)) if plats else ""
+        if self.designated_initializers:
+            pattern = (r"(?m)^([ \t]*)(Vk\w+)[ \t]+(\w+);[ \t]*\n(?:[ \t]*\n)*"
+                       r"\1\3[ \t]*=[ \t]*\(\2\)[ \t]*\n\1\{")
+            defn = re.sub(pattern, r"\1\2 \3 =\n\1{", defn)
         if not self.doc_comments:
             # Protocol metadata is parsed before placement; suppress its copied docs too.
             decl = re.sub(r"/\*\*.*?\*/\s*", "", decl, flags=re.S)
@@ -1230,6 +1234,30 @@ class Generator:
                    sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
     # -------------------------------------------------------- conveniences
+    def struct_local_name(self, s: Struct, used: Set[str], plural: bool = False) -> str:
+        parts = tokens(strip_vendor(s.name[2:]))
+        while parts and parts[-1].isdigit():
+            parts.pop()
+        if parts[-1] == "Info":
+            start = max(0, len(parts) - 2)
+            while start > 0 and parts[start].isdigit():
+                start -= 1
+            role = snake("".join(parts[start:]))
+        elif parts[-1] in self.KINDS_OUT:
+            role = snake(parts[-1])
+        else:
+            role = snake("".join(parts))
+        if plural and not role.endswith("s"):
+            role += "s"
+        candidate = role
+        if candidate in used:
+            candidate = "ext_" + role
+        suffix = 2
+        while candidate in used:
+            candidate = f"ext_{role}_{suffix}"
+            suffix += 1
+        return candidate
+
     def emit_flat(self, cmd: Command, ip: Param) -> None:
         """Flattened sibling of a pointer-keeping tier 0: builds the plain-Info struct from
         its members and calls tier 0 (SPEC.md section 4)."""
@@ -1301,8 +1329,6 @@ class Generator:
         pn = "pNext" if (singular is not None or filled == 1) else f"p{stem}Next"
         idx = next(i for i, p in enumerate(base_params) if p.split()[-1] == pn)
         ext_params: List[str] = []
-        ext_var = snake(self.struct_short(ext))
-        body = [f"{ext.name} {ext_var};", ""]
         fields = [("sType", ext.stype), ("pNext", pn)]
         arrays = []
         base_names = {p.split()[-1].split("[")[0] for p in base_params}
@@ -1318,8 +1344,9 @@ class Generator:
             else:
                 ext_params.append(f"{em.full_type} {pname}")
                 fields.append((em.name, pname))
-        body += self.struct_initialization(ext, ext_var, fields, arrays)
         all_params = base_params[: idx + 1] + ext_params + base_params[idx + 1:]
+        ext_var = self.struct_local_name(ext, {p.split()[-1].split("[")[0] for p in all_params})
+        body = [f"{ext.name} {ext_var};", ""] + self.struct_initialization(ext, ext_var, fields, arrays)
         args = [p.split()[-1].split("[")[0] for p in base_params]
         args[idx] = "&" + ext_var
         call = f"{t0}({', '.join(args)})"
@@ -1416,11 +1443,10 @@ class Generator:
         count = ap.len.split(",")[0]
         cap = self.capacity_name(ap.name)
         base_var = snake(ap.name)                               # bind_infos
-        ext_var = snake(self.struct_short(ext)) + "s"           # bind_image_plane_memory_infos
         params: List[EmittedParam] = []
         args: List[str] = []
         ext_fields = [("sType", ext.stype), ("pNext", "(NULL != ppNexts) ? ppNexts[index] : NULL")]
-        base_fields = [("sType", base.stype), ("pNext", f"&{ext_var}[index]")]
+        base_fields = []
         singles: Dict[str, str] = {}                            # parallel array -> element parameter
         for p in t0_params:
             if p.name != ap.name:
@@ -1445,6 +1471,8 @@ class Generator:
                 params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{base.name}::{m.name} per element", False))
                 base_fields.append((m.name, f"{pn}[index]"))
             args.append(base_var)
+        ext_var = self.struct_local_name(ext, {p.name for p in params} | {base_var, "index"}, plural=True)
+        base_fields = [("sType", base.stype), ("pNext", f"&{ext_var}[index]")] + base_fields
         body = [f"{base.name} {base_var}[{cap}];", f"{ext.name} {ext_var}[{cap}];", "uint32_t index;", "",
                 f"CVK_ASSERT({cap} >= {count});",
                 f"for (index = 0; index < {count}; ++index)", "{"]
@@ -1531,12 +1559,12 @@ class Generator:
         # The extender's out-parameter and its chain are named after the full struct, like the function.
         ext_out = "p" + self.struct_short(ext)
         ext_next = f"p{self.struct_short(ext)}Next"
-        var = snake(ext_out)
         params: List[EmittedParam] = []
         args: List[str] = []
         # The base output struct is only the head of the chain Vulkan requires: it stays a
         # local, and the function returns exactly the struct it is named after.
         base_var = snake(op.name)
+        var = self.struct_local_name(ext, {p.name for p in t_params} | {base_var, "result", ext_out, ext_next})
         for p in t_params:
             if p is chain_param:
                 params.append(EmittedParam(f"void* {ext_next}", ext_next, f"Optional output extension chain attached to {ext.name}, or NULL", False))
@@ -2110,7 +2138,7 @@ class Generator:
         if not self.designated_initializers:
             return text
         pattern = (r"^([ \t]*)((?:\(\*pInfo\)|\w+(?:\[\w+\])?)[ \t]*=\s*\(Vk\w+\)|"
-                   r"\w+[ \t]+initialized_info_*[ \t]*=)\s*\{(.*?)\};")
+                   r"Vk\w+[ \t]+\w+[ \t]*=)\s*\{(?=\s*\.)(.*?)\};")
 
         def restore(match: re.Match) -> str:
             start = re.sub(r"\s+", " ", match[2])

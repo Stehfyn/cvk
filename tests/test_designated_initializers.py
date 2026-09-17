@@ -58,6 +58,11 @@ class DesignatedInitializerTests(unittest.TestCase):
         gen = self.variants["cvk", True]
         name = "cvkGetPhysicalDeviceNestedCommandBufferProperties"
         source = next(d for d in gen.defs[""] if d.startswith("void " + name + "("))
+        # Keep exercising the long-name wrapping case even though locals now use short role names.
+        source = source.replace("VkPhysicalDeviceNestedCommandBufferPropertiesEXT ext_properties =",
+                                "VkPhysicalDeviceNestedCommandBufferPropertiesEXT ext_properties;\n\n"
+                                "    ext_properties = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT)")
+        source = source.replace("ext_properties", "physical_device_nested_command_buffer_properties")
         formatted = gen.finish_source(subprocess.check_output(formatter, input=source, text=True))
         self.assertIn("physical_device_nested_command_buffer_properties = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT)\n    {\n", formatted)
 
@@ -68,7 +73,7 @@ class DesignatedInitializerTests(unittest.TestCase):
                 names = ("cvkCreateBuffer", "cvkBindImageMemory2", "cvkBindPlaneImageMemories")
                 definitions = [next(d for d in gen.defs[""] if d.startswith("void " + name + "(")) for name in names]
                 if enabled:
-                    self.assertIn("create_info = (VkBufferCreateInfo)", definitions[0])
+                    self.assertIn("VkBufferCreateInfo create_info =", definitions[0])
                     self.assertIn("bind_infos[index] = (VkBindImageMemoryInfo)", definitions[2])
                 body = r'''
 #define CHECK(x) do { if (!(x)) { fprintf(stderr, "line %d: %s\n", __LINE__, #x); abort(); } } while (0)

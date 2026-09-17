@@ -115,8 +115,10 @@ The explicit `cvkGet*ProcAddr` wrappers remain available and check their returne
 Block-scope variables are `snake_case` and follow the Vulkan parameter they stand for: the
 flattened input struct is named after its parameter minus the `p` (`pCreateInfo` →
 `create_info`, `pInfo` → `info`), the enumeration count after the removed count parameter
-(`pPhysicalDeviceCount` → `physical_device_count`), a chained extender after its struct
-(`VkMemoryDedicatedAllocateInfo` → `memory_dedicated_allocate_info`); explicit procedure
+(`pPhysicalDeviceCount` → `physical_device_count`), a chained extender after its role
+(`VkPipelineCreationFeedbackCreateInfo` → `create_info`, `VkMemoryDedicatedAllocateInfo`
+→ `allocate_info`, output properties → `properties`). Extender arrays use plural names;
+collisions with parameters or other locals use `ext_` and, if needed, a numeric suffix. Explicit procedure
 queries and command results use `function` and `result`. Declarations are ordered by first access in the
 statements that follow.
 
@@ -192,6 +194,8 @@ true) selects C99 designated initialization in struct and union builders and gen
 wrappers, including flattened inputs, extenders, and elements of local arrays. Scalar and
 pointer members use `(*pInfo) = (VkType)` followed by an Allman-braced initializer.
 The generator restores initializer braces after clang-format, without formatter directives.
+An adjacent local declaration and designated assignment are combined into one initialized
+declaration. Intervening statements or declarations are not reordered.
 Generated initializers never include a trailing comma; clang-format is configured not to add one.
 Fixed arrays are copied
 into a designated-initialized temporary before assigning it to `*pInfo`, so an array

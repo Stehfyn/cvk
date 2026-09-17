@@ -17,9 +17,7 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
 }
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
-    VkXlibSurfaceCreateInfoKHR create_info;
-
-    create_info = (VkXlibSurfaceCreateInfoKHR)
+    VkXlibSurfaceCreateInfoKHR create_info =
     {
         .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
         .pNext  = pNext,
