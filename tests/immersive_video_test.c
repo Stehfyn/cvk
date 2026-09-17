@@ -11,7 +11,7 @@ BOOL ReferenceVideoStream_NextFrame(VideoStream*);
 void ReferenceVideoStream_Draw(VideoStream*, ID3D11RenderTargetView*, UINT, UINT);
 void ReferenceVideoStream_Close(VideoStream*);
 
-static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStream* reference, VideoStream* port, UINT width, UINT height, int frame)
+static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStream* reference, VideoStream* port, UINT width, UINT height, int frame, BOOL nativeCopy)
 {
     ID3D11Texture2D*         textures[2];
     ID3D11Texture2D*         staging[2];
@@ -22,8 +22,10 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     size_t                   different     = 0;
     int                      i;
     UINT                     x, y;
-    UINT                     backingWidth = max(width, 1920), backingHeight = max(height, 1080);
+    UINT                     copyX = nativeCopy ? 7 : 0, copyY = nativeCopy ? 11 : 0;
+    UINT                     backingWidth = max(width + copyX + 1, 1920), backingHeight = max(height + copyY + 1, 1080);
     size_t                   transparent = 0;
+    size_t                   overwritten = 0;
 
     for (i = 0; i < 2; ++i)
     {
@@ -38,7 +40,10 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
         cdx11DeviceContextClearRenderTargetView(context, targets[1], poison);
     }
     ReferenceVideoStream_Draw(reference, targets[0], width, height);
-    VideoStream_Draw(port, targets[1], width, height);
+    if (nativeCopy)
+        VideoStream_CopyFrame(port, textures[1], 0, copyX, copyY);
+    else
+        VideoStream_Draw(port, targets[1], width, height);
     for (i = 0; i < 2; ++i)
     {
         cdx11DeviceContextCopyResource(context, (ID3D11Resource*)staging[i], (ID3D11Resource*)textures[i]);
@@ -48,7 +53,7 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     for (y = 0; y < height; ++y)
     {
         const BYTE* a = (const BYTE*)mapped[0].pData + y * mapped[0].RowPitch;
-        const BYTE* b = (const BYTE*)mapped[1].pData + y * mapped[1].RowPitch;
+        const BYTE* b = (const BYTE*)mapped[1].pData + (y + copyY) * mapped[1].RowPitch + copyX * 4;
         for (x = 0; x < width * 4; ++x)
         {
             unsigned difference = (unsigned)abs((int)a[x] - (int)b[x]);
@@ -62,8 +67,16 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     {
         const BYTE* row = (const BYTE*)mapped[1].pData + y * mapped[1].RowPitch;
         for (x = 0; x < backingWidth; ++x)
-            if (row[x * 4 + 3] != 255)
-                ++transparent;
+        {
+            BOOL inside = x >= copyX && x < copyX + width && y >= copyY && y < copyY + height;
+            if (!nativeCopy || inside)
+            {
+                if (row[x * 4 + 3] != 255)
+                    ++transparent;
+            }
+            else if (row[x * 4] != 255 || row[x * 4 + 1] != 0 || row[x * 4 + 2] != 255 || row[x * 4 + 3] != 0)
+                ++overwritten;
+        }
     }
     for (i = 0; i < 2; ++i)
     {
@@ -72,11 +85,13 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
         cdxgiUnknownRelease((IUnknown*)textures[i]);
         cdxgiUnknownRelease((IUnknown*)staging[i]);
     }
-    printf("frame %d, %ux%u: max channel difference %u; channels differing by >3: %zu\n", frame, width, height, maxDifference, different);
+    printf("frame %d, %ux%u%s: max channel difference %u; channels differing by >3: %zu\n", frame, width, height, nativeCopy ? " native copy" : "", maxDifference, different);
     /* Independent APIs can round filtering and UNORM conversion differently. */
     if (transparent)
         fprintf(stderr, "Unpainted resize margin: %zu pixels\n", transparent);
-    return different != 0 || transparent != 0;
+    if (overwritten)
+        fprintf(stderr, "Native copy overwrote %zu pixels outside its destination\n", overwritten);
+    return different != 0 || transparent != 0 || overwritten != 0;
 }
 
 int wmain(int argc, wchar_t** argv)
@@ -116,12 +131,13 @@ int wmain(int argc, wchar_t** argv)
             failed = 1;
             break;
         }
-        failed |= Compare(device, context, reference, port, info.Width, info.Height, frame);
+        failed |= Compare(device, context, reference, port, info.Width, info.Height, frame, TRUE);
+        failed |= Compare(device, context, reference, port, info.Width, info.Height, frame, FALSE);
         if (frame == 0 || frame == 64)
         {
-            failed |= Compare(device, context, reference, port, 1280, 720, frame);
-            failed |= Compare(device, context, reference, port, 321, 181, frame);
-            failed |= Compare(device, context, reference, port, info.Width, info.Height, frame);
+            failed |= Compare(device, context, reference, port, 1280, 720, frame, FALSE);
+            failed |= Compare(device, context, reference, port, 321, 181, frame, FALSE);
+            failed |= Compare(device, context, reference, port, info.Width, info.Height, frame, FALSE);
         }
     }
     VideoStream_Close(port);

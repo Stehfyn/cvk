@@ -16,9 +16,10 @@ The original public headers are reused directly from the submodule. Local copies
 of `demo.c` and `immersive_window.c` keep the controls and playback flow. Video
 and caption render into one offscreen frame. During `WM_NCCALCSIZE`, both use the
 proposed client dimensions, and the GPU completes this frame and its copy into
-the swap-chain back buffer while the window still has its old geometry. After
-synchronizing the old image with DWM, the completed replacement is presented
-before returning from `WM_NCCALCSIZE`. No GPU work or presentation is deferred
+the swap-chain back buffer while the window still has its old geometry. The
+DXGI frame-latency object paces each resize frame; there is no second `DwmFlush`
+wait after rendering. The completed replacement is presented before returning
+from `WM_NCCALCSIZE`. No GPU work or presentation is deferred
 until after the HWND changes origin. `WM_WINDOWPOSCHANGED` checks the complete
 client rectangle in screen coordinates, including its origin, against the
 submitted resize frame and repaints only if the committed geometry differs.
@@ -30,7 +31,9 @@ repeated video frames; decoding advances at the video's own frame rate. The
 swap-chain wait and vsync also pace the modal move, resize, and menu loops.
 Those loops invalidate after painting so Windows generates low-priority
 `WM_PAINT` messages after pending input, without a posted-message loop or a
-10 ms timer limiting high-refresh displays.
+10 ms timer limiting high-refresh displays. A modal paint waiting for a frame
+slot yields when input arrives. Resize frames also run the video pre-draw
+callback, so playback advances even while resize input takes priority over paint.
 The client occupies the entire window, with native nonclient rendering disabled
 using the nonclient rendering policy and native visual styles disabled on the
 HWND. The light/dark toggle changes the custom caption and system-menu colors;

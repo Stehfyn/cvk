@@ -1,8 +1,8 @@
 /* demo.c - ImmersiveWindowDemo: a borderless DirectComposition window playing demo.mp4.
 **
-** The window (immersive_window.c) owns the Direct3D 11 device, the composition swap chain and
-** the Direct2D caption. The video (video.c) decodes the file with Media Foundation on the same
-** device and draws each frame into the window's offscreen target before the caption goes on top.
+** The window owns a retained DirectComposition video surface and a separate caption.
+** Media Foundation decodes on the same D3D11 device; CVK converts new video frames.
+** DWM owns display refresh and window composition independently of video frame rate.
 ** No C runtime beyond the entry point: Win32 only.
 **
 **   ImmersiveWindowDemo [file.mp4]       default: demo.mp4 beside the executable */
@@ -19,7 +19,6 @@
 
 static ID3D11Device*           g_pDevice;
 static ID3D11DeviceContext*    g_pContext;
-static ID3D11RenderTargetView* g_pBackBufferTarget;
 static VideoStream*            g_pVideo;
 static VideoInfo               g_info;
 static BOOL                    g_fPaused;
@@ -48,67 +47,74 @@ static LARGE_INTEGER g_frequency;
 static LARGE_INTEGER g_start;
 static LONGLONG      g_shown;
 
-/* Frames of the video elapsed on the wall clock: seconds * numerator / denominator, in integers. */
-static LONGLONG FramesElapsed(void)
+#define VIDEO_TIMER 1
+static LARGE_INTEGER g_pauseStart;
+static BOOL g_clockPaused;
+
+static void ArmVideoTimer(HWND hWnd)
 {
     LARGE_INTEGER now;
-    if (0 == g_frequency.QuadPart)
-    {
-        QueryPerformanceFrequency(&g_frequency);
-        QueryPerformanceCounter(&g_start);
-    }
+    LONGLONG next, remaining;
+    UINT delay;
+    if (NULL == g_pVideo || g_clockPaused || !g_info.FrameRateNumerator || !g_info.FrameRateDenominator)
+        return;
     QueryPerformanceCounter(&now);
-    return ((now.QuadPart - g_start.QuadPart) * g_info.FrameRateNumerator) / (g_frequency.QuadPart * g_info.FrameRateDenominator);
+    next = g_start.QuadPart + (g_shown + 1) * g_frequency.QuadPart * g_info.FrameRateDenominator / g_info.FrameRateNumerator;
+    remaining = max(0, next - now.QuadPart);
+    delay = (UINT)((remaining * 1000 + g_frequency.QuadPart - 1) / g_frequency.QuadPart);
+    /* This timer advances media time, including inside native modal loops.
+    ** It does not schedule resizing or the compositor's display refresh. */
+    SetTimer(hWnd, VIDEO_TIMER, max(USER_TIMER_MINIMUM, delay), NULL);
 }
 
-/* Advances the video when the wall clock reaches the next frame, as the original PreDraw did. */
-static void PreDraw(HWND hWnd)
+static void SyncPlaybackClock(HWND hWnd)
 {
-    LONGLONG due;
-
-    (void)hWnd;
-    if (NULL == g_pVideo || g_fPaused || 0 == g_info.FrameRateNumerator)
-    {
+    BOOL paused = g_fPaused || IsIconic(hWnd);
+    LARGE_INTEGER now;
+    if (NULL == g_pVideo || paused == g_clockPaused)
         return;
+    QueryPerformanceCounter(&now);
+    if (paused)
+    {
+        g_pauseStart = now;
+        KillTimer(hWnd, VIDEO_TIMER);
     }
-    due = FramesElapsed();
-    if (due > g_shown)
+    else
+    {
+        g_start.QuadPart += now.QuadPart - g_pauseStart.QuadPart;
+    }
+    g_clockPaused = paused;
+    ArmVideoTimer(hWnd);
+}
+
+static void DrawVideo(HWND hWnd, ID3D11Texture2D* texture, UINT subresource, UINT x, UINT y)
+{
+    (void)hWnd;
+    VideoStream_CopyFrame(g_pVideo, texture, subresource, x, y);
+}
+
+static void AdvanceVideo(HWND hWnd)
+{
+    LARGE_INTEGER now;
+    LONGLONG due;
+    KillTimer(hWnd, VIDEO_TIMER);
+    if (NULL == g_pVideo || g_clockPaused)
+        return;
+    QueryPerformanceCounter(&now);
+    due = (now.QuadPart - g_start.QuadPart) * g_info.FrameRateNumerator / (g_frequency.QuadPart * g_info.FrameRateDenominator);
+    if (due > g_shown && VideoStream_NextFrame(g_pVideo))
     {
         g_shown = due;
-        VideoStream_NextFrame(g_pVideo);
+        UpdateImmersiveVideo(hWnd);
+        VideoStream_Prefetch(g_pVideo, 0);
     }
-}
-
-/* Draws the current frame under the caption: the video fills the window's client area. */
-static void Draw(HWND hWnd)
-{
-    SIZE size;
-    if (NULL == g_pVideo)
-    {
-        return;
-    }
-    if (GetImmersivePaintSize(hWnd, &size) && size.cx > 0 && size.cy > 0)
-    {
-        VideoStream_Draw(g_pVideo, g_pBackBufferTarget, (UINT)size.cx, (UINT)size.cy);
-    }
+    ArmVideoTimer(hWnd);
 }
 
 static void SetupVideo(HWND hWnd, LPCWSTR pszFile)
 {
-    void* pDevice;
-    void* pContext;
-    void* pSwapChain;
-    void* pD2DContext;
-    void* pSwapChain2;
-
-    if (!GetDeviceAndSwapchain(hWnd, &pDevice, &pContext, &pSwapChain, &pD2DContext, &pSwapChain2))
-    {
+    if (!GetImmersiveDevice(hWnd, &g_pDevice, &g_pContext))
         return;
-    }
-    g_pDevice    = (ID3D11Device*)pDevice;
-    g_pContext   = (ID3D11DeviceContext*)pContext;
-    g_pBackBufferTarget = GetImmersiveFrameTarget(hWnd);
-
     g_pVideo = VideoStream_Open(g_pDevice, g_pContext, pszFile);
     if (NULL == g_pVideo)
     {
@@ -119,8 +125,12 @@ static void SetupVideo(HWND hWnd, LPCWSTR pszFile)
         return;
     }
     VideoStream_GetInfo(g_pVideo, &g_info);
-    SetDeviceDrawCallback(hWnd, Draw);
-    SetDevicePreDrawCallback(hWnd, PreDraw);
+    SetImmersiveVideo(hWnd, g_info.Width, g_info.Height, DrawVideo);
+    if (VideoStream_NextFrame(g_pVideo))
+        UpdateImmersiveVideo(hWnd);
+    QueryPerformanceFrequency(&g_frequency);
+    QueryPerformanceCounter(&g_start);
+    ArmVideoTimer(hWnd);
 }
 
 /* the application's subclass of the immersive window: pause on Space, video teardown */
@@ -130,19 +140,23 @@ static LRESULT CALLBACK DemoProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     if (WM_KEYUP == uMsg && VK_SPACE == wParam)
     {
         g_fPaused = !g_fPaused;
+        SyncPlaybackClock(hWnd);
         return 0;
     }
+    if (WM_TIMER == uMsg && VIDEO_TIMER == wParam)
+    {
+        AdvanceVideo(hWnd);
+        return 0;
+    }
+    if (WM_SIZE == uMsg)
+        SyncPlaybackClock(hWnd);
     if (WM_DESTROY == uMsg)
     {
+        KillTimer(hWnd, VIDEO_TIMER);
         if (NULL != g_pVideo)
         {
             VideoStream_Close(g_pVideo);
             g_pVideo = NULL;
-        }
-        if (NULL != g_pBackBufferTarget)
-        {
-            cdxgiUnknownRelease((IUnknown*)g_pBackBufferTarget);
-            g_pBackBufferTarget = NULL;
         }
     }
     if (WM_NCDESTROY == uMsg)
@@ -150,19 +164,6 @@ static LRESULT CALLBACK DemoProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         RemoveWindowSubclass(hWnd, DemoProc, idSubclass);
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
-}
-
-static BOOL PumpMessageQueue(void)
-{
-    MSG  msg;
-    BOOL fQuit = FALSE;
-    while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
-    {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
-        fQuit |= (WM_QUIT == msg.message);
-    }
-    return !fQuit;
 }
 
 /* The file: the first command line argument, else demo.mp4 beside the executable. */
@@ -199,10 +200,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     WCHAR   file[MAX_PATH];
     HWND    hWnd;
     HRESULT hr;
+    MSG     msg;
+    BOOL    result;
 
     (void)hPrevInstance;
     (void)lpCmdLine;
-    (void)nShowCmd;
 
     EnableEfficiencyMode();
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -217,7 +219,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     hWnd = CreateWindowExW(WS_EX_NOREDIRECTIONBITMAP,
                            IMMERSIVE_CLASSW,
                            L"ImmersiveWindow32 Demo",
-                           BCS_DEBUG | BCS_BLURBEHIND | BCS_CENTERED | BCS_WINDOW | WS_VISIBLE,
+                           BCS_DEBUG | BCS_BLURBEHIND | BCS_CENTERED | BCS_WINDOW,
                            0,
                            0,
                            1280,
@@ -233,24 +235,13 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     SetWindowSubclass(hWnd, DemoProc, 1, 0);
     SetupVideo(hWnd, file);
 
-    /* Present every display refresh, including repeated or paused video frames.
-    ** The video clock independently decides when to adopt a new decoded frame. */
-    while (PumpMessageQueue())
+    ShowWindow(hWnd, nShowCmd);
+    UpdateWindow(hWnd);
+    while ((result = GetMessageW(&msg, NULL, 0, 0)) > 0)
     {
-        if (IsIconic(hWnd))
-        {
-            WaitMessage();
-            continue;
-        }
-        WaitForNextFrameResource(hWnd);
-        PreDraw(hWnd);
-        BeginImmersivePaint(hWnd);
-        EndImmersivePaint(hWnd, IMMERSIVE_PAINT_SEQUENCE, IMMERSIVE_PAINT_SYNC_1);
-        if (NULL != g_pVideo && !g_fPaused)
-        {
-            VideoStream_Prefetch(g_pVideo, 0);
-        }
+        TranslateMessage(&msg);
+        DispatchMessageW(&msg);
     }
     CoUninitialize();
-    return 0;
+    return result < 0 ? 1 : (int)msg.wParam;
 }

@@ -680,6 +680,46 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         CVK_CHECK(cvkWaitForFence(r->device, r->fence, VK_TRUE, UINT64_MAX));
 }
 
+void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y, int slot)
+{
+    VkDeviceMemory syncs[3];
+    uint64_t acquireKeys[3] = {0, 0, 0};
+    uint64_t releaseKeys[3] = {1, 0, 0};
+    uint32_t timeouts[3] = {INFINITE, INFINITE, INFINITE};
+    UINT width = r->converted.width;
+    UINT height = r->converted.height;
+    D3D11_BOX source = {0, 0, 0, width, height, 1};
+
+    CVK_ASSERT(slot >= 0 && slot < VIDEO_RENDERER_FRAMES);
+    if (r->output.width != width || r->output.height != height)
+    {
+        cvkDeviceWaitIdle(r->device);
+        DestroyImage(r, &r->output);
+        CreateSharedImage(r, &r->output, width, height, VK_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM, TRUE);
+    }
+    cvkResetCommandBuffer(r->command, 0);
+    cvkBeginCommandBuffer(r->command, NULL, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+    AcquireImage(r, &r->ring[slot].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    AcquireImage(r, &r->ring[slot].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    AcquireImage(r, &r->output, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+    DrawPass(r, &r->output, 0, r->frames[slot], width, height);
+    ReleaseImage(r, &r->output, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+    ReleaseImage(r, &r->ring[slot].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    ReleaseImage(r, &r->ring[slot].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    cvkEndCommandBuffer(r->command);
+    syncs[0] = r->output.memory;
+    syncs[1] = r->ring[slot].planes[0].memory;
+    syncs[2] = r->ring[slot].planes[1].memory;
+    cvkResetFence(r->device, r->fence);
+    cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(r->queue, NULL, 3, syncs, acquireKeys, timeouts, 3, syncs, releaseKeys, 0, NULL, NULL, 1, &r->command, 0, NULL, r->fence);
+    cdxgiKeyedMutexAcquireSync(r->output.mutex, 1, INFINITE);
+    cdx11DeviceContextCopySubresourceRegion(r->context, (ID3D11Resource*)target, subresource, x, y, 0, (ID3D11Resource*)r->output.texture, 0, &source);
+    cdxgiKeyedMutexReleaseSync(r->output.mutex, 0);
+    cdx11DeviceContextFlush(r->context);
+    CVK_CHECK(cvkWaitForFence(r->device, r->fence, VK_TRUE, UINT64_MAX));
+    r->outputWidth = r->outputHeight = 0;
+}
+
 void VideoRenderer_Destroy(VideoRenderer* r)
 {
     int i;

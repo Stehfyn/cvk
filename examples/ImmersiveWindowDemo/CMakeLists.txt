@@ -25,8 +25,8 @@ foreach(shader fullscreen.vert nv12.frag bicubic.frag)
     list(APPEND shader_headers "${output}")
 endforeach()
 
-add_library(immersive-video STATIC video.c renderer.c renderer.h ${shader_headers})
-target_include_directories(immersive-video PUBLIC "${reference_dir}" "${CMAKE_CURRENT_SOURCE_DIR}"
+add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers})
+target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${reference_dir}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf PRIVATE d3dcompiler)
 target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)
@@ -36,7 +36,7 @@ if(CVK_DEMO_VALIDATION)
 endif()
 
 add_executable(ImmersiveWindowDemo WIN32 demo.c immersive_window.c presentation.h
-    "${reference_dir}/immersive_window.h" "${reference_dir}/video.h"
+    "${reference_dir}/immersive_window.h"
     shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag)
 set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag
     PROPERTIES HEADER_FILE_ONLY TRUE)

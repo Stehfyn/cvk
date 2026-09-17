@@ -2,11 +2,14 @@
 #define CVK_IMMERSIVE_PRESENTATION_H
 
 #include "immersive_window.h"
-struct ID3D11RenderTargetView;
+#include <d3d11.h>
 
-/* All drawing uses one size snapshot, including a proposed resize size. */
-BOOL GetImmersivePaintSize(HWND hWnd, SIZE* size);
-/* Returns an owned reference to the offscreen video + caption render target. */
-struct ID3D11RenderTargetView* GetImmersiveFrameTarget(HWND hWnd);
+/* The callback fills the complete native-size video at the supplied surface offset.
+** The texture is borrowed only for the duration of the callback. */
+typedef void (*IMMERSIVEVIDEOPROC)(HWND hWnd, ID3D11Texture2D* texture, UINT subresource, UINT x, UINT y);
+
+BOOL GetImmersiveDevice(HWND hWnd, ID3D11Device** device, ID3D11DeviceContext** context);
+void SetImmersiveVideo(HWND hWnd, UINT width, UINT height, IMMERSIVEVIDEOPROC draw);
+void UpdateImmersiveVideo(HWND hWnd);
 
 #endif

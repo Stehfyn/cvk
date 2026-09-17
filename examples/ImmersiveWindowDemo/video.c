@@ -3,6 +3,9 @@
 ** video passes with cvk. Playback scheduling remains upstream's. */
 
 #include "video.h"
+#ifdef CVK_DEMO_VALIDATION
+#include <stdio.h>
+#endif
 
 #include <d3d10.h>
 #include "renderer.h"
@@ -30,6 +33,9 @@ struct VideoStream
     int                  current;
     BOOL                 fHaveFrame;
     BOOL                 fConverted;
+#ifdef CVK_DEMO_VALIDATION
+    int                  decodePath;
+#endif
 };
 
 #define RELEASE(p)                                                                                                                                                                                     \
@@ -423,11 +429,10 @@ VideoStream* VideoStream_Open(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     pStream->pContext = pContext;
     ProtectDevice(pDevice);
 
-    /* the device manager and the source reader: the inbox decoder (no vendor hardware MFT, which
-    ** would decode on threads of its own against this device), DXVA through the manager */
+    /* The reader attributes enable hardware transforms and DXVA through this
+    ** multithread-protected D3D11 device. Keep the decoded NV12 samples on it. */
     cmfSetupDeviceManager((IUnknown*)pDevice, &pStream->resetToken, &pStream->pManager);
     cmfCreateSourceReaderAttributes((IUnknown*)pStream->pManager, &pAttributes);
-    cmfAttributesSetUINT32(pAttributes, &MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, FALSE);
     pByteStream = MappedStream_Create(pszFile);
     if (NULL != pByteStream)
     {
@@ -472,6 +477,16 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         UINT             subresource;
         cmfDXGIBufferGetResource(pDXGIBuffer, &IID_ID3D11Texture2D, (void**)&pTexture);
         cmfDXGIBufferGetSubresourceIndex(pDXGIBuffer, &subresource);
+#ifdef CVK_DEMO_VALIDATION
+        if (pStream->decodePath != 1)
+        {
+            D3D11_TEXTURE2D_DESC desc;
+            cdx11Texture2DGetDesc(pTexture, &desc);
+            fprintf(stderr, "video: DXGI decoder output %ux%u, format %u, bind flags 0x%X, decoder binding %s\n",
+                desc.Width, desc.Height, desc.Format, desc.BindFlags, (desc.BindFlags & D3D11_BIND_DECODER) ? "yes" : "no");
+            pStream->decodePath = 1;
+        }
+#endif
         VideoRenderer_BeginUpload(pStream->pRenderer, slot);
         cdx11DeviceContextCopySubresourceRegion(pStream->pContext, (ID3D11Resource*)VideoRenderer_GetFrame(pStream->pRenderer, slot), 0, 0, 0, 0, (ID3D11Resource*)pTexture, subresource, NULL);
         VideoRenderer_EndUpload(pStream->pRenderer, slot);
@@ -483,6 +498,13 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
     {
         BYTE* pScanline0;
         LONG  pitch;
+#ifdef CVK_DEMO_VALIDATION
+        if (pStream->decodePath != 2)
+        {
+            fprintf(stderr, "video: system-memory decoder output; CPU upload fallback\n");
+            pStream->decodePath = 2;
+        }
+#endif
         cmf2DBufferLock2D((IMF2DBuffer*)p2DBuffer, &pScanline0, &pitch);
         if (pitch > 0)
         {
@@ -584,6 +606,12 @@ void VideoStream_Draw(VideoStream* pStream, ID3D11RenderTargetView* pTarget, UIN
     }
     VideoRenderer_Draw(pStream->pRenderer, pTarget, pStream->current, !pStream->fConverted, width, height);
     pStream->fConverted = TRUE;
+}
+
+void VideoStream_CopyFrame(VideoStream* stream, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y)
+{
+    if (stream->fHaveFrame)
+        VideoRenderer_CopyFrame(stream->pRenderer, target, subresource, x, y, stream->current);
 }
 
 void VideoStream_Close(VideoStream* pStream)
