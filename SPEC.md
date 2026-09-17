@@ -206,7 +206,9 @@ A blank line separates function calls from adjacent assignments or initialized d
 including checked, void-cast, returned and assigned calls. Calls whose results are assigned
 stand apart from output copies, so their assignment spacing does not depend on nearby names
 or the line limit. This applies to all generated sources and both initialization styles;
-consecutive assignments without calls stay together.
+consecutive assignments without calls stay together. `cvkAlignDeviceSize` (and its SC
+counterpart) is treated as arithmetic within an assignment run, so related size and stride
+calculations remain contiguous and aligned.
 A return statement is separated from a preceding statement or completed block by a blank
 line. A return that is the first statement in its block does not gain a leading blank line.
 Assertion groups are followed by a blank line before the next statement, including loops
@@ -270,7 +272,8 @@ command (section 3: `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixPropert
 `Requirements`, `Features`, `Support`, `Capabilities`), since an `Info`-named or bare extender
 cannot stand in for the run: `cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2Info`,
 `cvkGetPhysicalDeviceSurfaceCapabilitiesWithPresentModeCompatibility`.
-The function takes `p<ExtenderStruct>Next` in place of the output chain, fills the extender's `sType`/`pNext`,
+The function takes `pNext` in place of the output chain when it is the only chain parameter,
+or `p<ExtenderStruct>Next` when other chain parameters need to be distinguished. It fills the extender's `sType`/`pNext`,
 chains it into the base output struct, which stays a local, and returns exactly the struct it is
 named after through the out-parameter `p<ExtenderStruct>`. An output extender with pointer
 members carries caller-provided storage (`VkDrmFormatModifierPropertiesListEXT`: a count and an

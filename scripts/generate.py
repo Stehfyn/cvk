@@ -117,7 +117,9 @@ def separate_assignments_from_calls(text: str) -> str:
             first = start + len(statement) - len(statement.lstrip())
             gap = text[previous_end:first]
             calls = re.findall(r"\b([A-Za-z_]\w*)\s*\(", statement)
-            has_call = any(name not in ("if", "for", "while", "switch", "sizeof", "_Alignof") for name in calls)
+            # Alignment arithmetic belongs to the surrounding calculation/assignment run.
+            has_call = any(name not in ("if", "for", "while", "switch", "sizeof", "_Alignof",
+                                       "cvkAlignDeviceSize", "scvkAlignDeviceSize") for name in calls)
             is_return = re.match(r"\s*return\b", statement) is not None
             separate = (previous_assignment and has_call) or (previous_call and assigned) or (previous_statement and is_return)
             if separate and gap.isspace() and gap.count("\n") == 1:
@@ -1636,9 +1638,10 @@ class Generator:
         if chain_param is None:
             self.errors.append(f"output convenience {name}: no output chain parameter on {target}")
             return
-        # The extender's out-parameter and its chain are named after the full struct, like the function.
+        # Qualify the output chain only when another chain parameter needs distinguishing.
         ext_out = "p" + self.struct_short(ext)
-        ext_next = f"p{self.struct_short(ext)}Next"
+        other_next = any(p is not chain_param and re.fullmatch(r"p\w*Next", p.name) for p in t_params)
+        ext_next = f"p{self.struct_short(ext)}Next" if other_next else "pNext"
         params: List[EmittedParam] = []
         args: List[str] = []
         # The base output struct is only the head of the chain Vulkan requires: it stays a

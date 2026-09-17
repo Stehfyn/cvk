@@ -159,7 +159,6 @@ VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t p
  */
 VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t pciDomain, uint32_t pciBus, uint32_t pciDevice, uint32_t pciFunction)
 {
-    static const char* const                pci_bus_info_extension = VK_EXT_PCI_BUS_INFO_EXTENSION_NAME;
     VkPhysicalDevice                        physical_devices[CVK_MAX_PHYSICAL_DEVICES];
     VkPhysicalDevicePCIBusInfoPropertiesEXT physical_device_pci_bus_info_properties;
     uint32_t                                physical_device_count;
@@ -168,15 +167,14 @@ VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t 
     physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
     for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
     {
-        if (!cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, &pci_bus_info_extension))
+        if (cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, (const char* const[]){ VK_EXT_PCI_BUS_INFO_EXTENSION_NAME }))
         {
-            continue;
-        }
-        cvkGetPhysicalDevicePCIBusInfoProperties(physical_devices[physical_device_index], NULL, &physical_device_pci_bus_info_properties);
-        if ((pciDomain == physical_device_pci_bus_info_properties.pciDomain) && (pciBus == physical_device_pci_bus_info_properties.pciBus) &&
-            (pciDevice == physical_device_pci_bus_info_properties.pciDevice) && (pciFunction == physical_device_pci_bus_info_properties.pciFunction))
-        {
-            return physical_devices[physical_device_index];
+            cvkGetPhysicalDevicePCIBusInfoProperties(physical_devices[physical_device_index], NULL, &physical_device_pci_bus_info_properties);
+            if ((pciDomain == physical_device_pci_bus_info_properties.pciDomain) && (pciBus == physical_device_pci_bus_info_properties.pciBus) &&
+                (pciDevice == physical_device_pci_bus_info_properties.pciDevice) && (pciFunction == physical_device_pci_bus_info_properties.pciFunction))
+            {
+                return physical_devices[physical_device_index];
+            }
         }
     }
     return VK_NULL_HANDLE;

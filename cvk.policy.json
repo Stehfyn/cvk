@@ -5033,7 +5033,7 @@
             "pPhysicalDeviceRayTracingPipelineProperties": "ray_tracing_pipeline_properties"
           },
           "bind": {
-            "pPhysicalDeviceRayTracingPipelinePropertiesNext": "NULL"
+            "pNext": "NULL"
           }
         },
         {
