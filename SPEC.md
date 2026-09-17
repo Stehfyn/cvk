@@ -79,8 +79,8 @@ wrong by definition.
 |---|---|
 | tier 0 for `vkXyz[Vendor]` | `cvkXyz`; a promotable tag (`KHR`, `EXT`) is dropped, a vendor tag (`NV`, `AMD`, `QCOM`, ...) always stays (`cvkGetDisplayModeStereoPropertiesNV`); alias commands are not emitted, only their promoted target. **Canonical suffix rule:** when several in-profile commands (or structs) share a stem after suffix stripping, only the canonical one drops its suffix: lowest vendor rank (core, then `KHR`, then `EXT`, then any other vendor) when that rank is held by exactly one of them; the rest keep their suffix (`cvkCmdDrawMeshTasks` for `EXT`, `cvkCmdDrawMeshTasksNV`; `cvkInitExportMemoryAllocateInfo`, `cvkInitExportMemoryAllocateInfoNV`). Same rank held by several of the same kind: all keep the suffix. An output extender's replacement name (section 6) competes in the command group of that name, so `vkGetPhysicalDeviceExternalImageFormatPropertiesNV` keeps its suffix beside the core `VkExternalImageFormatProperties` convenience; a tie between a command and a struct at the same rank is settled by tier-0 ownership: the command keeps the plain name and the convenience takes its `With` form (`cvkGetPhysicalDeviceCooperativeMatrixProperties` is the `KHR` enumeration, `cvkGetPhysicalDeviceProperties2WithCooperativeMatrixProperties` the limits query). A plural command reserves its singular stem in the same groups (`vkCmdBuildAccelerationStructuresKHR` owns `cvkCmdBuildAccelerationStructure`, so `vkCmdBuildAccelerationStructureNV` keeps its suffix). A kept suffix always trails the whole derived name, every suffix in order of appearance (`cvkCreateImageWithExternalMemoryInfoNV`, `cvkGetGeneratedCommandsMemoryRequirementsWithTileRequirementsNVQCOM`) |
 | builder for `VkAbcInfo` | `cvkInitAbcInfo` |
-| single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Operation extenders** (`Import*`, `Export*`): the extender names the operation, so the name is `cvk<Verb><ExtenderStruct minus kind/Info>`, the `vkImportSemaphoreFdKHR` idiom: `cvkAllocateImportMemoryFd`, `cvkAllocateExportMemory`, `cvkCreateExportSemaphoreWin32Handle`, and on any platform `cvkAllocateImportMemoryZirconHandle`, `cvkAllocateImportAndroidHardwareBuffer`; when one such extender serves several bases with the same verb (`VkExportMetalObjectCreateInfoEXT`) it falls back to the next form. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `…Memory2With…`; a flattened sibling named after a struct keeps the struct's digit), unless the digit-less command is in the profile and is itself extensible, that is, takes an sType input of its own: then the digit is part of the name (`cvkCreateRenderPassWithFragmentDensityMapInfo` from `vkCreateRenderPass`, `cvkCreateRenderPass2WithFragmentDensityMapInfo` from `vkCreateRenderPass2`; `vkBindImageMemory` has no info struct, so `vkBindImageMemory2` drops its digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` → `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` → `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` → `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` → `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). The command may name the run in full or, when the run starts with the handle the base struct is about and the command is dispatched elsewhere, only its tail: `VkSurfaceFullScreenExclusiveInfoEXT` on `VkPhysicalDeviceSurfaceInfo2KHR` gives `cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes` from `vkGetPhysicalDeviceSurfacePresentModes2EXT` and `cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes` from `vkGetDeviceGroupSurfacePresentModes2EXT`; any other missing qualifier (`Compute` of `VkComputePipelineCreateInfo` in `vkGetPipelineIndirectMemoryRequirementsNV`) means the run is absent and the name is the `With` form (`cvkGetPipelineIndirectMemoryRequirementsWithBinaryInfo`). A collision is a generation error |
-| extender member sharing a base member's name | The tokens of its type absent from the base member's type distinguish it (`VkPipelineCreateFlags2 flags` beside `VkPipelineCreateFlags flags` → `flags2`, `VkBufferUsageFlags2 usage` → `usage2`); with the same type, the extender's distinct part qualifies it (`VkImageViewUsageCreateInfo::usage` on `VkPhysicalDeviceImageFormatInfo2` → `imageViewUsage`). Parallel-array names keep a name that is already plural (`flags` → `pFlags`) |
+| single-qualifier convenience | Distinct part `D` = the extender's tokens outside the blocks that match its **base struct** (block alignment; a one-token block strictly inside the extender is kept, so `DrmFormatModifier` stays whole), minus the trailing struct-kind word (`Create`, `Allocate`, `Begin`, `Bind`, `Submit`) and `Info`/version tokens; vendor suffix dropped. Placement by verb. **Operation extenders** (`Import*`, `Export*`): the extender names the operation, so the name is `cvk<Verb><ExtenderStruct minus kind/Info>`, the `vkImportSemaphoreFdKHR` idiom: `cvkAllocateImportMemoryFd`, `cvkAllocateExportMemory`, `cvkCreateExportSemaphoreWin32Handle`, and on any platform `cvkAllocateImportMemoryZirconHandle`, `cvkAllocateImportAndroidHardwareBuffer`; when one such extender serves several bases with the same verb (`VkExportMetalObjectCreateInfoEXT`) it falls back to the next form. **Constructors and everything but queries**: `<tier-0>With<D>Info`, where the tier-0 name drops its trailing version digit because a chained extender already implies the extensible form (`cvkBindImageMemoryWithPlaneInfo`, not `â€¦Memory2Withâ€¦`; a flattened sibling named after a struct keeps the struct's digit), unless the digit-less command is in the profile and is itself extensible, that is, takes an sType input of its own: then the digit is part of the name (`cvkCreateRenderPassWithFragmentDensityMapInfo` from `vkCreateRenderPass`, `cvkCreateRenderPass2WithFragmentDensityMapInfo` from `vkCreateRenderPass2`; `vkBindImageMemory` has no info struct, so `vkBindImageMemory2` drops its digit) (`cvkCreateImageViewWithUsageInfo`, `cvkAllocateMemoryWithDedicatedInfo`). **Queries** (`Get`, `Enumerate`): if the extender is a plain `Info` struct (not `CreateInfo`/`AllocateInfo`/`BeginInfo`) whose name covers the base struct's noun run, the extender is the subject of the query and the name is `cvk<Verb><ExtenderStruct>` with no command version digit (`VkImagePlaneMemoryRequirementsInfo` â†’ `cvkGetImagePlaneMemoryRequirementsInfo`, `VkPhysicalDeviceExternalImageFormatInfo` â†’ `cvkGetPhysicalDeviceExternalImageFormatInfo`); otherwise `D` is spliced into the base struct's noun run so that it wraps the run's unmatched remainder: first word of `D`, remaining run words, rest of `D`, then the command's tail, with the command's version digit dropped (`VkSemaphoreTypeCreateInfo` â†’ `cvkGetPhysicalDeviceExternalSemaphoreTypeProperties`, `VkImageStencilUsageCreateInfo` â†’ `cvkGetPhysicalDeviceImageStencilFormatUsageProperties`). The command may name the run in full or, when the run starts with the handle the base struct is about and the command is dispatched elsewhere, only its tail: `VkSurfaceFullScreenExclusiveInfoEXT` on `VkPhysicalDeviceSurfaceInfo2KHR` gives `cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes` from `vkGetPhysicalDeviceSurfacePresentModes2EXT` and `cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes` from `vkGetDeviceGroupSurfacePresentModes2EXT`; any other missing qualifier (`Compute` of `VkComputePipelineCreateInfo` in `vkGetPipelineIndirectMemoryRequirementsNV`) means the run is absent and the name is the `With` form (`cvkGetPipelineIndirectMemoryRequirementsWithBinaryInfo`). A collision is a generation error |
+| extender member sharing a base member's name | The tokens of its type absent from the base member's type distinguish it (`VkPipelineCreateFlags2 flags` beside `VkPipelineCreateFlags flags` â†’ `flags2`, `VkBufferUsageFlags2 usage` â†’ `usage2`); with the same type, the extender's distinct part qualifies it (`VkImageViewUsageCreateInfo::usage` on `VkPhysicalDeviceImageFormatInfo2` â†’ `imageViewUsage`). Parallel-array names keep a name that is already plural (`flags` â†’ `pFlags`) |
 | capacity constant for enumeration array `pFooBars` | `CVK_MAX_FOO_BARS` |
 
 Collisions after suffix stripping are a generation error, never silently resolved.
@@ -143,11 +143,11 @@ SC entry points directly; its application supplies the SC implementation, not st
 The explicit `cvkGet*ProcAddr` wrappers remain available and check their returned pointer.
 
 Block-scope variables are `snake_case` and follow the Vulkan parameter they stand for: the
-flattened input struct is named after its parameter minus the `p` (`pCreateInfo` →
-`create_info`, `pInfo` → `info`), the enumeration count after the removed count parameter
-(`pPhysicalDeviceCount` → `physical_device_count`), a chained extender after its role
-(`VkPipelineCreationFeedbackCreateInfo` → `create_info`, `VkMemoryDedicatedAllocateInfo`
-→ `allocate_info`, output properties → `properties`). Extender arrays use plural names;
+flattened input struct is named after its parameter minus the `p` (`pCreateInfo` â†’
+`create_info`, `pInfo` â†’ `info`), the enumeration count after the removed count parameter
+(`pPhysicalDeviceCount` â†’ `physical_device_count`), a chained extender after its role
+(`VkPipelineCreationFeedbackCreateInfo` â†’ `create_info`, `VkMemoryDedicatedAllocateInfo`
+â†’ `allocate_info`, output properties â†’ `properties`). Extender arrays use plural names;
 collisions with parameters or other locals use `ext_` and, if needed, a numeric suffix. Explicit procedure
 queries and command results use `function` and `result`. Declarations are ordered by first access in the
 statements that follow.
@@ -245,8 +245,8 @@ Fixed arrays are copied
 into a designated-initialized temporary before assigning it to `*pInfo`, so an array
 argument may refer to the destination's existing storage. Returned-only builders and
 updates to caller-provided output storage keep their `sType`/`pNext` assignments and leave
-output members untouched. Wrappers also preserve caller-provided counts and pointers when
-preparing in/out extension structures. Signatures and
+output members untouched. Wrappers take caller-provided counts and pointers as explicit parameters when
+preparing output extension structures; the destination struct is output-only. Signatures and
 wrapper composition are unchanged. The SC profile inherits the shared setting.
 
 **Commands with several sType inputs** (`vkCmdBeginRenderPass2` with a render pass begin info
@@ -268,7 +268,7 @@ version tokens, then restored at the end of the derived name. Thus `VkPresentTim
 produces `cvkQueuePresentWithTimesInfoGOOGLE`, with exactly one `Info`.
 
 An extender member colliding with a base member is disambiguated as in section 3, vendor tags
-excluded (`VkGraphicsPipelineLibraryFlagsEXT flags` beside `VkPipelineCreateFlags flags` →
+excluded (`VkGraphicsPipelineLibraryFlagsEXT flags` beside `VkPipelineCreateFlags flags` â†’
 `flagsGraphicsLibrary`).
 
 **Per-element extenders on array inputs** (`VkBindImagePlaneMemoryInfo` on
@@ -276,7 +276,7 @@ excluded (`VkGraphicsPipelineLibraryFlagsEXT flags` beside `VkPipelineCreateFlag
 `(handle, count, ppNexts, <extender member arrays>, <base member arrays>)`, named as the
 **plural of the singular** (last word pluralized):
 `cvkBindPlaneImageMemories(device, bindInfoCount, ppNexts, pPlaneAspects, pImages, pMemories, pMemoryOffsets)`.
-Array parameter names pluralize the member (`memory` → `pMemories`, `imageIndex` → `pImageIndices`).
+Array parameter names pluralize the member (`memory` â†’ `pMemories`, `imageIndex` â†’ `pImageIndices`).
 Only generated when neither the base nor the extender has pointer or array members, since
 parallel arrays would otherwise nest; the caller builds such arrays with the builders. The
 element array is sized by `CVK_MAX_<ArrayParam>` and the count is asserted against it. The
@@ -307,8 +307,12 @@ or `p<ExtenderStruct>Next` when other chain parameters need to be distinguished.
 chains it into the base output struct, which stays a local, and returns exactly the struct it is
 named after through the out-parameter `p<ExtenderStruct>`. An output extender with pointer
 members carries caller-provided storage (`VkDrmFormatModifierPropertiesListEXT`: a count and an
-array), so that parameter is in/out and seeds the local before the call (`pExternalImageFormatProperties`,
-`pMemoryDedicatedRequirements`). A caller who also wants the base struct calls the base query.
+array). Its members are explicit input parameters immediately after the extension chain,
+using the same collision rules as input extenders. The wrapper builds a local from those
+parameters and copies the result to the output struct after the call; it never reads the
+output destination. For example, the shader-abort-message wrapper takes `messageDataSize`
+and `pMessageData` explicitly and retains `pDeviceFaultShaderAbortMessageInfo` to receive
+the returned size. A caller who also wants the base struct calls the base query.
 
 **Extenders on the element struct of an enumeration** (`VkQueueFamilyVideoPropertiesKHR` on
 `VkQueueFamilyProperties2`) follow the same replacement rule on the enumeration's name
@@ -346,7 +350,7 @@ Two derived forms and one policy form.
   `cvkCmdAcquireImageFromExternal` and `cvkCmdReleaseImageToExternal` (top or bottom of pipe,
   no access, `VK_QUEUE_FAMILY_EXTERNAL`), `cvkCreateTimestampQueryPool`, `cvkQueuePresentImage`.
 
-Builders (`cvkInit…`) exist for every struct the caller fills, plain structs included
+Builders (`cvkInitâ€¦`) exist for every struct the caller fills, plain structs included
 (`cvkInitImageSubresourceRange`, `cvkInitPushConstantRange`, `cvkInitDescriptorImageInfo`), so
 chains can build the plain structs the sequences need.
 
@@ -403,7 +407,7 @@ the given flags; both return `VK_INVALID` if none, and `cvk.h` defines `VK_INVAL
 
 Seeded chains: `cvkGetPhysicalDevice{,Compatible}MemoryTypeIndex` (memory properties, then the
 exact or the covering selector), `cvkGetPhysicalDeviceExternalImage{Import,Export}Support`
-(external format query → `VkBool32` for the feature bit, `pDedicatedOnly` out),
+(external format query â†’ `VkBool32` for the feature bit, `pDedicatedOnly` out),
 `cvkGet{Instance,PhysicalDevice}ExtensionSupport` and `cvkGetPhysicalDeviceQueueFamilyIndex`
 (enumeration into a fixed-capacity local, then the fixed selector), `cvkSetupDeviceQueue`
 (extension support asserted, one queue create info built, device created, queue retrieved),
@@ -412,10 +416,10 @@ barrier), `cvkQueueSubmitCommandBuffer`, `cvkSetupCommandPool`, `cvkCreateComput
 `cvkSetupComputePipeline`, `cvkUpdate{,Image,Buffer}DescriptorSet`, `cvkGetQueryPoolResults64`,
 `cvkCmdDispatchItems` (workgroup arithmetic in `bind` expressions), `cvkCmdDispatchComputeItems`,
 `cvkAllocate{Image,Buffer}Memory`
-(requirements → type index → assert → allocate, all in one body; no import mask, that
+(requirements â†’ type index â†’ assert â†’ allocate, all in one body; no import mask, that
 constraint belongs to the import protocol). Plain chains use the 1.0 requirements query: the
 extensible `2` form is used only where something is chained (dedicated requirements, plane),
-`cvkSetup{Image,Buffer}` (create → allocate → bind). The second sweep over the widened
+`cvkSetup{Image,Buffer}` (create â†’ allocate â†’ bind). The second sweep over the widened
 profile added, by family: synchronization (`cvkCreateSignaledFence`, `cvkWaitFor{Fence,AllFences,AnyFence}Indefinitely`
 forms, `cvkCreateTimelineSemaphore`, `cvkWaitSemaphore[Indefinitely]`); command buffers
 (`cvkBeginOneTimeCommandBuffer`, `cvkAllocate{,Primary,Secondary}CommandBuffer[s]`,
@@ -453,18 +457,18 @@ counterpart in the others. `<Kind>` is `Compute`, `Graphics`, or `Video`.
 |---|---|---|---|
 | queue family | `cvkGetPhysicalDeviceComputeQueueFamilyIndex` (flags) | `cvkGetPhysicalDeviceGraphicsQueueFamilyIndex` | `cvkGetPhysicalDeviceVideo{Decode,Encode}QueueFamilyIndex` (flags); `cvkGetPhysicalDeviceVideoQueueFamilyIndex(requiredOperations)` on the video properties of every family (output-array extender + `cvkGetVideoQueueFamilyIndex`, policy selector) |
 | device | `cvkSetupComputeDeviceQueue` | `cvkSetupGraphicsDeviceQueue` | `cvkSetupVideoDeviceQueue(requiredOperations)` |
-| capability | features/properties output extenders | same | `cvkGetPhysicalDeviceVideoCapabilities` (+ `cvkGetPhysicalDeviceVideo{Decode,Encode,DecodeH264,...}Capabilities` output extenders), `cvkGetPhysicalDeviceVideoProfileSupport` (recoverable result → `VkBool32`), `cvkGetPhysicalDeviceVideoFormatPropertiesByIndex` |
+| capability | features/properties output extenders | same | `cvkGetPhysicalDeviceVideoCapabilities` (+ `cvkGetPhysicalDeviceVideo{Decode,Encode,DecodeH264,...}Capabilities` output extenders), `cvkGetPhysicalDeviceVideoProfileSupport` (recoverable result â†’ `VkBool32`), `cvkGetPhysicalDeviceVideoFormatPropertiesByIndex` |
 | program | `cvkCreateShaderModule`; shader object `cvkCreateComputeShader` | `cvkCreateShaderModule`; `cvkCreate{Vertex,Fragment}Shader` | session parameters: `cvkCreateVideoSessionParameters[With<Codec>Info]`, `cvkUpdateVideoSessionParameters[With<Codec>AddInfo]` |
-| layout | `cvkCreateComputePipelineLayout` (one range, `COMPUTE_BIT`) | `cvkCreateGraphicsPipelineLayout` (one range, `ALL_GRAPHICS`) | — |
-| fixed-function state | — | `cvkInit<Adjective>Pipeline<State>CreateInfo`: the builder with the canonical constants bound (`Empty` vertex input, `TriangleList`/`TriangleStrip`/`PointList`/`LineList` input assembly, `Single` viewport, `Fill` rasterization, `SampleCount` multisample, `Disabled`/`DepthTest` depth stencil, `Opaque`/`AlphaBlend` attachment, `SingleAttachment` color blend). Arrays stay caller-owned: a builder never points into chain storage | picture resources and reference slots: builders only, storage is the caller's |
+| layout | `cvkCreateComputePipelineLayout` (one range, `COMPUTE_BIT`) | `cvkCreateGraphicsPipelineLayout` (one range, `ALL_GRAPHICS`) | â€” |
+| fixed-function state | â€” | `cvkInit<Adjective>Pipeline<State>CreateInfo`: the builder with the canonical constants bound (`Empty` vertex input, `TriangleList`/`TriangleStrip`/`PointList`/`LineList` input assembly, `Single` viewport, `Fill` rasterization, `SampleCount` multisample, `Disabled`/`DepthTest` depth stencil, `Opaque`/`AlphaBlend` attachment, `SingleAttachment` color blend). Arrays stay caller-owned: a builder never points into chain storage | picture resources and reference slots: builders only, storage is the caller's |
 | object | `cvkSetupComputePipeline` (module, stage, layout, pipeline) | `cvkSetupGraphicsPipeline` (two modules, two stages, layout, pipeline over caller-provided state) | `cvkSetupVideoSession` (session, then `cvkAllocateVideoSessionMemory`: one allocation and bind per requirement, a protocol), `cvkSetup{Buffer,Image}WithVideoProfileListInfo` |
 | bind | `cvkCmdBindComputePipeline`, `cvkCmdBindComputeDescriptorSets`, `cvkCmdPushComputeConstants`, `cvkCmdBindComputeShader` | `cvkCmdBindGraphicsPipeline`, `cvkCmdBindGraphicsDescriptorSets`, `cvkCmdPushGraphicsConstants`, `cvkCmdSet{Viewport,Scissor}[2D]`, `cvkCmdSetViewportAndScissor2D` | `cvkCmdBeginVideoCoding[With<RateControl>Info]`, `cvkCmdControlVideoCoding`, `cvkCmdControlResetVideoCoding`, `cvkCmdEndVideoCoding` |
 | work | `cvkCmdDispatchItems`, `cvkCmdDispatchComputeItems` (bind, bind, push, dispatch) and 2D forms | `cvkCmdDrawGraphicsVertices`, `cvkCmdDrawGraphicsIndices` (bind, bind, push, draw) | `cvkCmdDecodeVideo[With<Codec>PictureInfo]`, `cvkCmdEncodeVideo[With<Codec>PictureInfo]` |
 | queries | `cvkCreateTimestampQueryPool` | same | `cvkCreateResultStatusQueryPool`, `cvkGetQueryResultStatus`; `cvkCreateVideoEncode[Bitstream]FeedbackQueryPool`, `cvkGetVideoEncodeBitstreamFeedback` (offset and bytes written, status returned) |
 | resources | `cvkSetup{DeviceLocal,HostVisible}Buffer` | attachments: `cvkCreateWholeImageView2D`, `cvkCreateColorRenderPass`, `cvkCreateSingleAttachmentFramebuffer` | `cvkSetupVideoImage` (2D, one level, one sample, optimal, undefined; the array layers are the pictures) and `cvkSetupVideo{DecodeDpb,DecodeDst,EncodeSrc,EncodeDpb}Image`; `cvkSetupVideo{DecodeSrc,EncodeDst}Buffer`; `cvkCreateLayerImageView2D` (one picture of the DPB array); `cvkAlignDeviceSize` for the bitstream alignments |
-| DPB | — | — | `cvkInitOriginVideoPictureResourceInfo`, `cvkInitInactiveVideoReferenceSlotInfo` (slot -1: a resource in scope that is not yet a reference), `cvkGetInactiveVideoReferenceSlotIndex` over the caller's activity flags. The DPB itself is caller state: which slot a picture takes and when it is retired is the codec's decision, encoded in the codec picture infos the tier-1 forms carry |
-| loop | `cvkQueueSubmitCommandBufferAndWaitIdle` | `cvkCmdBeginColorRendering` … `cvkCmdEndRendering` | one picture per coding scope: `cvkCmd{Decode,Encode}VideoPicture` (begin with the bound slots, decode or encode, end) and `cvkCmd{Decode,Encode}InitialVideoPicture` (reset first; encode also sets the rate control); `cvkCmdSetVideoEncode{RateControl,QualityLevel}` between scopes |
-| libraries | — | `cvkCreateGraphicsPipelineLibrary` (`LIBRARY_BIT` added), one per subset taking only the state that subset consumes: `cvkCreate{VertexInputInterface,PreRasterizationShaders,FragmentShader,FragmentOutputInterface}GraphicsPipelineLibrary`, and `cvkCreateLinkedGraphicsPipeline` (no state of its own); `cvkSetupGraphicsPipelineWithRenderingInfo` for dynamic rendering | — |
+| DPB | â€” | â€” | `cvkInitOriginVideoPictureResourceInfo`, `cvkInitInactiveVideoReferenceSlotInfo` (slot -1: a resource in scope that is not yet a reference), `cvkGetInactiveVideoReferenceSlotIndex` over the caller's activity flags. The DPB itself is caller state: which slot a picture takes and when it is retired is the codec's decision, encoded in the codec picture infos the tier-1 forms carry |
+| loop | `cvkQueueSubmitCommandBufferAndWaitIdle` | `cvkCmdBeginColorRendering` â€¦ `cvkCmdEndRendering` | one picture per coding scope: `cvkCmd{Decode,Encode}VideoPicture` (begin with the bound slots, decode or encode, end) and `cvkCmd{Decode,Encode}InitialVideoPicture` (reset first; encode also sets the rate control); `cvkCmdSetVideoEncode{RateControl,QualityLevel}` between scopes |
+| libraries | â€” | `cvkCreateGraphicsPipelineLibrary` (`LIBRARY_BIT` added), one per subset taking only the state that subset consumes: `cvkCreate{VertexInputInterface,PreRasterizationShaders,FragmentShader,FragmentOutputInterface}GraphicsPipelineLibrary`, and `cvkCreateLinkedGraphicsPipeline` (no state of its own); `cvkSetupGraphicsPipelineWithRenderingInfo` for dynamic rendering | â€” |
 
 The `<Kind>` word binds the bind point (`VK_PIPELINE_BIND_POINT_<KIND>`), the stage set
 (`COMPUTE_BIT`, `ALL_GRAPHICS`), or the queue flag; a codec is never a `<Kind>`, it is the
@@ -482,7 +486,7 @@ stage set, layout, setup, work, and shader-object forms are its own.
 | capability | `cvkGetPhysicalDeviceRayTracingPipelineProperties`, `cvkGetPhysicalDeviceAccelerationStructureProperties` (output extenders); `cvkGetPhysicalDeviceRayTracingShaderGroupHandleStride` | `cvkGetPhysicalDeviceMeshShaderProperties` |
 | program | shader modules; groups `cvkInit{General,TrianglesHit,ProceduralHit}RayTracingShaderGroupCreateInfo` | shader modules; shader objects `cvkCreate{Task,Mesh}Shader` |
 | layout | `cvkCreateRayTracingPipelineLayout` (every ray tracing stage) | `cvkCreateMeshShadingPipelineLayout` (task, mesh, fragment) |
-| resources | `cvkSetup{DeviceAddress,HostVisibleDeviceAddress}Buffer` (allocate flags chained), `cvkSetup{AccelerationStructure,Scratch,ShaderBindingTable,AccelerationStructureBuildInputBuffer}Buffer`; geometries `cvkInit{Triangles,Aabbs,Instances}AccelerationStructureGeometry` over the union builders, `cvkInitDevice…Data` forms from device addresses | — |
+| resources | `cvkSetup{DeviceAddress,HostVisibleDeviceAddress}Buffer` (allocate flags chained), `cvkSetup{AccelerationStructure,Scratch,ShaderBindingTable,AccelerationStructureBuildInputBuffer}Buffer`; geometries `cvkInit{Triangles,Aabbs,Instances}AccelerationStructureGeometry` over the union builders, `cvkInitDeviceâ€¦Data` forms from device addresses | â€” |
 | object | `cvkCreate{BottomLevel,TopLevel}AccelerationStructure`; `cvkSetup[{BottomLevel,TopLevel}]AccelerationStructure` (sizes, storage, structure, aligned scratch: a protocol); `cvkSetupRayTracingPipeline` (raygen, miss, closest hit; groups in table order); `cvkSetupRayTracingShaderBindingTable` (handles written into a mapped table, regions at the base alignment: a protocol) | `cvkSetup[Task]MeshShadingPipeline` (no vertex input or input assembly state) |
 | bind | `cvkCmdBindRayTracingPipeline`, `cvkCmdBindRayTracingDescriptorSets`, `cvkCmdPushRayTracingConstants`, `cvkUpdateAccelerationStructureDescriptorSet` | graphics bind forms; `cvkCmdPushMeshShadingConstants`; `cvkCmdBind[Task]MeshShadingShaders` |
 | work | `cvkCmdBuild[Device[{BottomLevel,TopLevel}]]AccelerationStructure`, `cvkCmdAccelerationStructureBuildBarrier`; `cvkCmdTraceRays2D`, `cvkCmdTraceRayTracingRays[2D]` (bind, bind, push, trace) | `cvkCmdDrawMeshTaskItems[2D]` (the dispatch arithmetic), `cvkCmdDrawMeshShadingTasks[2D]` (bind, bind, push, draw) |
@@ -502,13 +506,13 @@ includes into the source). `posix` is a pair the registry does not name:
 protocol calls only functions it produces and never a `vk*` command, so the protocols are the
 acceptance test of the surface: anything they cannot express is a generator defect.
 
-- `cvkImportWin32HandleImage` (`cvk_protocol_win32.c` → `cvk_win32.h/.c`) and `cvkImportFdImage`
-  (`cvk_protocol_posix.c` → `cvk_posix.h/.c`): each the complete import chain of
-  `study/MEMORY.md` §1 in one place: capability → create with the handle type declared → the
+- `cvkImportWin32HandleImage` (`cvk_protocol_win32.c` â†’ `cvk_win32.h/.c`) and `cvkImportFdImage`
+  (`cvk_protocol_posix.c` â†’ `cvk_posix.h/.c`): each the complete import chain of
+  `study/MEMORY.md` Â§1 in one place: capability â†’ create with the handle type declared â†’ the
   external object's memory types (except the opaque types the specification forbids querying)
-  → requirements with dedicated requirements chained → select within the external object's
-  memory types → allocate with the import info (dedicated info in front when `DEDICATED_ONLY`
-  or `requiresDedicatedAllocation` demands it) → bind. The external object's size is a
+  â†’ requirements with dedicated requirements chained â†’ select within the external object's
+  memory types â†’ allocate with the import info (dedicated info in front when `DEDICATED_ONLY`
+  or `requiresDedicatedAllocation` demands it) â†’ bind. The external object's size is a
   parameter, never derived. The Win32 handle stays caller-owned; the descriptor is imported as
   a `dup` so the caller's stays valid. A handle-agnostic core was tried and removed: an import
   is per handle kind, and a protocol should read as the specification's list in one place.
@@ -607,12 +611,12 @@ so the column limit cannot split prototypes during generation or later formattin
 Function definitions keep their ordinary layout. Both options are
 generation-policy settings and require no CMake configuration.
 
-- `\brief` from the verb: Create → "Creates a <noun>.", Allocate → "Allocates …",
-  Get → "Retrieves …", Enumerate → "Enumerates … into a fixed-capacity array.",
-  Cmd → "Records …", Destroy/Free → "Destroys/Frees …", else "Calls vk<Name>."
+- `\brief` from the verb: Create â†’ "Creates a <noun>.", Allocate â†’ "Allocates â€¦",
+  Get â†’ "Retrieves â€¦", Enumerate â†’ "Enumerates â€¦ into a fixed-capacity array.",
+  Cmd â†’ "Records â€¦", Destroy/Free â†’ "Destroys/Frees â€¦", else "Calls vk<Name>."
 - `\param[in]`/`\param[out]` per parameter; `pNext` always "Optional extension chain attached
   to <struct>, or NULL"; `pAllocator` always "Optional allocation callbacks, or NULL"; output
-  handles "Receives the created <type>"; enumeration arrays "Receives up to CVK_MAX_… entries".
+  handles "Receives the created <type>"; enumeration arrays "Receives up to CVK_MAX_â€¦ entries".
 - `\retval None` for `void`; `\return` text for values.
 
 ## 10. Exclusions
@@ -626,19 +630,19 @@ generation-policy settings and require no CMake configuration.
 0. `python scripts/check_generated.py` (also the CTest test `cvk-generated-files-match`)
    regenerates into a temporary directory and fails if any file under `include/` or `src/`
    differs. This is rule zero made mechanical; it runs before anything else.
-1. `python scripts/generate.py` → `include/`, `src/`.
+1. `python scripts/generate.py` â†’ `include/`, `src/`.
 2. `clang -fsyntax-only -std=c99 -Wall -Wextra -Iinclude -Iexternal/volk -isystem external/Vulkan-Headers/include -isystem external/Vulkan-Utility-Libraries/include src/cvk.c`
    with and without each platform define.
 3. `python scripts/study_reference.py --ref generated --prefix cvk` must report tier 0 name
    fidelity and mechanical parameter fidelity of 100%.
-4. Hand-written tier 3 (`study/MEMORY.md` §4.4) is compiled against the generated surface as
+4. Hand-written tier 3 (`study/MEMORY.md` Â§4.4) is compiled against the generated surface as
    the acceptance test of the taxonomy.
 
 ## 12. Open decisions
 
 - **Adjective-first convenience names.** `cvkCreateImageWithDrmFormatModifierExplicitInfo`
   follows the registry order of `VkImageDrmFormatModifierExplicitCreateInfoEXT`;
-  `…WithExplicitDrmFormatModifierInfo` reads better as English. Tabled: no rule can tell an
+  `â€¦WithExplicitDrmFormatModifierInfo` reads better as English. Tabled: no rule can tell an
   adjective (`Explicit`) from a noun (`List`), and the registry order keeps the pair on one
   stem and greppable against the struct and enum names. If adopted, it goes in the
   `name_overrides` table in `cvk.policy.json` (section 3), never as an edit.
@@ -649,7 +653,7 @@ generation-policy settings and require no CMake configuration.
   declared override, not a rule.
 
 - Whether enumerations with a `void` return should also assert a non-zero count (the
-  reference does for surface formats; the spec guarantees ≥ 1 there, not in general).
+  reference does for surface formats; the spec guarantees â‰¥ 1 there, not in general).
 - Whether `pAllocator` should be threaded at all given the policy always passes NULL.
 - Builder naming for aliased structs (`VkPhysicalDeviceProperties2KHR`): emit only the core name.
 - **Thin distinct parts from the `Flags2` structs.** `VkPipelineCreateFlags2CreateInfo` against

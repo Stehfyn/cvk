@@ -1677,17 +1677,34 @@ class Generator:
             else:
                 params.append(p)
                 args.append(p.name)
-        # An output extender with pointer members carries caller-provided storage (a count and
-        # an array to fill): it is in/out, so the caller's struct seeds the local before the call.
+        # Caller-provided storage is input, even on a returned-only extender. Flatten those
+        # fields like other wrapper inputs; never read them from the output destination.
         inout = any(m.is_pointer for m in ext.members if m.name not in ("sType", "pNext"))
-        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out,
-                                   f"In/out: receiving storage selected by the caller, receives the {ext.name}" if inout else f"Receives the {ext.name}", True))
-        body = [f"{base.name} {base_var};", f"{ext.name} {var};", ""]
+        fields = [("sType", ext.stype), ("pNext", ext_next)]
+        arrays = []
         if inout:
-            body.append(f"{var} = (*{ext_out});")
-            body += [f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
-        else:
-            body += self.struct_initialization(ext, var, [("sType", ext.stype), ("pNext", ext_next)])
+            used = {p.name for p in params} | {ext_out}
+            storage_params = []
+            for m in ext.members:
+                if m.name in ("sType", "pNext"):
+                    continue
+                pname = m.name if m.name not in used else self.member_alias(m, base, ext)
+                used.add(pname)
+                if m.array_len:
+                    text = f"const {m.full_type} {pname}[{m.array_len}]"
+                    arrays.append((m.name, pname))
+                else:
+                    text = f"{m.full_type} {pname}"
+                    fields.append((m.name, pname))
+                storage_params.append(EmittedParam(text, pname, f"{ext.name}::{m.name}", False))
+            index = next(i for i, p in enumerate(params) if p.name == ext_next) + 1
+            params[index:index] = storage_params
+            var = self.struct_local_name(ext, used | {base_var, "result", ext_next})
+        params.append(EmittedParam(f"{ext.name}* {ext_out}", ext_out,
+                                   f"Receives the {ext.name}", True))
+        args = [f"&{var}" if p is chain_param else arg for p, arg in zip(t_params, args)]
+        body = [f"{base.name} {base_var};", f"{ext.name} {var};", ""]
+        body += self.struct_initialization(ext, var, fields, arrays)
         call = f"{target}({', '.join(args)})"
         if ret != "void":
             body.insert(0, f"{ret} result;")
