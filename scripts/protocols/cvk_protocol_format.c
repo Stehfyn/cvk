@@ -27,7 +27,7 @@ uint32_t cvkGetFormatPlaneCount(VkFormat format)
  */
 VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex)
 {
-    if (1u == vkuFormatPlaneCount(format))
+    if (1 == vkuFormatPlaneCount(format))
     {
         return VK_IMAGE_ASPECT_COLOR_BIT;
     }
@@ -62,11 +62,11 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     aspect_mask = 0;
     if (vkuFormatHasDepth(format))
     {
-        aspect_mask |= VK_IMAGE_ASPECT_DEPTH_BIT;
+        aspect_mask |= (VkImageAspectFlags)VK_IMAGE_ASPECT_DEPTH_BIT;
     }
     if (vkuFormatHasStencil(format))
     {
-        aspect_mask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+        aspect_mask |= (VkImageAspectFlags)VK_IMAGE_ASPECT_STENCIL_BIT;
     }
     if (0 != aspect_mask)
     {
@@ -75,7 +75,7 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     plane_count = vkuFormatPlaneCount(format);
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
-        aspect_mask |= cvkGetFormatPlaneAspect(format, plane_index);
+        aspect_mask |= (VkImageAspectFlags)cvkGetFormatPlaneAspect(format, plane_index);
     }
     return aspect_mask;
 }
@@ -193,7 +193,7 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
     (void)memset(pPlaneExtents, 0, VKU_FORMAT_MAX_PLANES * sizeof(pPlaneExtents[0]));
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
-        if (1u == plane_count)
+        if (1 == plane_count)
         {
             plane_format                      = format;
             pPlaneExtents[plane_index].width  = width;
@@ -203,16 +203,16 @@ uint32_t cvkCalculateFormatPlaneLayouts(VkFormat      format,
         {
             plane_format                      = vkuFindMultiplaneCompatibleFormat(format, cvkGetFormatPlaneAspect(format, plane_index));
             divisors                          = vkuFindMultiplaneExtentDivisors(format, cvkGetFormatPlaneAspect(format, plane_index));
-            pPlaneExtents[plane_index].width  = (width + divisors.width - 1u) / divisors.width;
-            pPlaneExtents[plane_index].height = (height + divisors.height - 1u) / divisors.height;
+            pPlaneExtents[plane_index].width  = (width + divisors.width - 1) / divisors.width;
+            pPlaneExtents[plane_index].height = (height + divisors.height - 1) / divisors.height;
         }
         pPlaneExtents[plane_index].depth = depth;
         block_extent                     = vkuFormatTexelBlockExtent(plane_format);
-        block_columns                    = (pPlaneExtents[plane_index].width + block_extent.width - 1u) / block_extent.width;
-        block_rows                       = (pPlaneExtents[plane_index].height + block_extent.height - 1u) / block_extent.height;
-        block_slices                     = (pPlaneExtents[plane_index].depth + block_extent.depth - 1u) / block_extent.depth;
+        block_columns                    = (pPlaneExtents[plane_index].width + block_extent.width - 1) / block_extent.width;
+        block_rows                       = (pPlaneExtents[plane_index].height + block_extent.height - 1) / block_extent.height;
+        block_slices                     = (pPlaneExtents[plane_index].depth + block_extent.depth - 1) / block_extent.depth;
         row_byte_count                   = (VkDeviceSize)block_columns * vkuFormatTexelBlockSize(plane_format);
-        aligned_row_byte_count           = ((row_byte_count + rowAlignment - 1u) / rowAlignment) * rowAlignment;
+        aligned_row_byte_count           = ((row_byte_count + rowAlignment - 1) / rowAlignment) * rowAlignment;
         plane_byte_count                 = aligned_row_byte_count * block_rows * block_slices * layerCount;
         pPlaneOffsets[plane_index]       = plane_offset;
         pPlaneStrides[plane_index]       = (uint32_t)aligned_row_byte_count;
@@ -300,7 +300,7 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
         plane_offset = imageOffset;
-        if (1u == plane_count)
+        if (1 == plane_count)
         {
             plane_format = imageFormat;
         }
@@ -313,9 +313,9 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
         }
         plane_texel_size     = vkuFormatTexelBlockSize(plane_format);
         block_extent         = vkuFormatTexelBlockExtent(plane_format);
-        tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1u) / block_extent.width) * plane_texel_size;
+        tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1) / block_extent.width) * plane_texel_size;
         buffer_row_length    = (tight_row_byte_count == plane_strides[plane_index]) ? 0 : (plane_strides[plane_index] / plane_texel_size) * block_extent.width;
-        cvkInitImageSubresourceLayers(&plane_subresource, cvkGetFormatPlaneAspect(imageFormat, plane_index), imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
+        cvkInitImageSubresourceLayers(&plane_subresource, (VkImageAspectFlags)cvkGetFormatPlaneAspect(imageFormat, plane_index), imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
         cvkInitBufferImageCopy(&pRegions[plane_index], bufferOffset + plane_offsets[plane_index], buffer_row_length, 0, plane_subresource, plane_offset, plane_extents[plane_index]);
         (*pAspectMask) |= plane_subresource.aspectMask;
     }
@@ -404,7 +404,7 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pImageAcquireBarrierNext,
                                      imageSrcAccessMask,
-                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                                      initialImageLayout,
                                      transferImageLayout,
                                      imageAcquireSrcQueueFamilyIndex,
@@ -412,24 +412,24 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
                                      image,
                                      subresource_range,
                                      imageSrcStageMask,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      dependencyFlags);
     cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                       pBufferBarrierNext,
                                       bufferSrcAccessMask,
-                                      VK_ACCESS_TRANSFER_READ_BIT,
+                                      (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                                       bufferSrcQueueFamilyIndex,
                                       bufferDstQueueFamilyIndex,
                                       buffer,
                                       bufferOffset,
                                       transfer_byte_count,
                                       bufferSrcStageMask,
-                                      VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                       dependencyFlags);
     cvkCmdCopyBufferToImage(commandBuffer, buffer, image, transferImageLayout, region_count, regions);
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pImageBarrierNext,
-                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                                      imageDstAccessMask,
                                      transferImageLayout,
                                      finalImageLayout,
@@ -437,7 +437,7 @@ void cvkCmdTransferBufferToImageQueueOwnership(VkCommandBuffer          commandB
                                      imageDstQueueFamilyIndex,
                                      image,
                                      subresource_range,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      imageDstStageMask,
                                      dependencyFlags);
 }
@@ -533,7 +533,7 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pImageAcquireBarrierNext,
                                      imageSrcAccessMask,
-                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                                      initialImageLayout,
                                      transferImageLayout,
                                      imageAcquireSrcQueueFamilyIndex,
@@ -541,24 +541,24 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
                                      image,
                                      subresource_range,
                                      imageSrcStageMask,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      dependencyFlags);
     cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                       pBufferAcquireBarrierNext,
                                       bufferSrcAccessMask,
-                                      VK_ACCESS_TRANSFER_WRITE_BIT,
+                                      (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                                       bufferAcquireSrcQueueFamilyIndex,
                                       bufferAcquireDstQueueFamilyIndex,
                                       buffer,
                                       bufferOffset,
                                       transfer_byte_count,
                                       bufferSrcStageMask,
-                                      VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                       dependencyFlags);
     cvkCmdCopyImageToBuffer(commandBuffer, image, transferImageLayout, buffer, region_count, regions);
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pImageBarrierNext,
-                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                                      imageDstAccessMask,
                                      transferImageLayout,
                                      finalImageLayout,
@@ -566,19 +566,19 @@ void cvkCmdTransferImageToBufferQueueOwnership(VkCommandBuffer          commandB
                                      imageDstQueueFamilyIndex,
                                      image,
                                      subresource_range,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      imageDstStageMask,
                                      dependencyFlags);
     cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                       pBufferBarrierNext,
-                                      VK_ACCESS_TRANSFER_WRITE_BIT,
+                                      (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                                       bufferDstAccessMask,
                                       bufferSrcQueueFamilyIndex,
                                       bufferDstQueueFamilyIndex,
                                       buffer,
                                       bufferOffset,
                                       transfer_byte_count,
-                                      VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                       bufferDstStageMask,
                                       dependencyFlags);
 }
@@ -676,7 +676,7 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pSrcAcquireBarrierNext,
                                      srcAccessMask,
-                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                                      srcInitialLayout,
                                      srcTransferLayout,
                                      srcAcquireQueueFamilyIndex,
@@ -684,12 +684,12 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
                                      srcImage,
                                      src_range,
                                      srcStageMask,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      dependencyFlags);
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pDstAcquireBarrierNext,
                                      dstAccessMask,
-                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                                      dstInitialLayout,
                                      dstTransferLayout,
                                      dstAcquireQueueFamilyIndex,
@@ -697,12 +697,12 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
                                      dstImage,
                                      dst_range,
                                      dstStageMask,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      dependencyFlags);
     cvkCmdCopyImage(commandBuffer, srcImage, srcTransferLayout, dstImage, dstTransferLayout, 1, &region);
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pSrcBarrierNext,
-                                     VK_ACCESS_TRANSFER_READ_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                                      srcDstAccessMask,
                                      srcTransferLayout,
                                      srcFinalLayout,
@@ -710,12 +710,12 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
                                      srcDstQueueFamilyIndex,
                                      srcImage,
                                      src_range,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      srcDstStageMask,
                                      dependencyFlags);
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pDstBarrierNext,
-                                     VK_ACCESS_TRANSFER_WRITE_BIT,
+                                     (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                                      dstDstAccessMask,
                                      dstTransferLayout,
                                      dstFinalLayout,
@@ -723,7 +723,7 @@ void cvkCmdTransferImageToImageQueueOwnership(VkCommandBuffer          commandBu
                                      dstDstQueueFamilyIndex,
                                      dstImage,
                                      dst_range,
-                                     VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                                      dstDstStageMask,
                                      dependencyFlags);
 }
@@ -814,46 +814,46 @@ void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
     cvkCmdImageBarrier(commandBuffer,
                        pSrcAcquireBarrierNext,
                        srcAccessMask,
-                       VK_ACCESS_TRANSFER_READ_BIT,
+                       (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                        srcInitialLayout,
                        srcTransferLayout,
                        srcImage,
                        src_range,
                        srcStageMask,
-                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                        dependencyFlags);
     cvkCmdImageBarrier(commandBuffer,
                        pDstAcquireBarrierNext,
                        dstAccessMask,
-                       VK_ACCESS_TRANSFER_WRITE_BIT,
+                       (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                        dstInitialLayout,
                        dstTransferLayout,
                        dstImage,
                        dst_range,
                        dstStageMask,
-                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                        dependencyFlags);
     cvkCmdBlitImage(commandBuffer, srcImage, srcTransferLayout, dstImage, dstTransferLayout, 1, &region, filter);
     cvkCmdImageBarrier(commandBuffer,
                        pSrcBarrierNext,
-                       VK_ACCESS_TRANSFER_READ_BIT,
+                       (VkAccessFlags)VK_ACCESS_TRANSFER_READ_BIT,
                        srcDstAccessMask,
                        srcTransferLayout,
                        srcFinalLayout,
                        srcImage,
                        src_range,
-                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                        srcDstStageMask,
                        dependencyFlags);
     cvkCmdImageBarrier(commandBuffer,
                        pDstBarrierNext,
-                       VK_ACCESS_TRANSFER_WRITE_BIT,
+                       (VkAccessFlags)VK_ACCESS_TRANSFER_WRITE_BIT,
                        dstDstAccessMask,
                        dstTransferLayout,
                        dstFinalLayout,
                        dstImage,
                        dst_range,
-                       VK_PIPELINE_STAGE_TRANSFER_BIT,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                        dstDstStageMask,
                        dependencyFlags);
 }

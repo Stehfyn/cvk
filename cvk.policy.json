@@ -202,11 +202,11 @@
         },
         {
           "set": {
-            "pDedicatedOnly": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT)) ? VK_TRUE : VK_FALSE"
+            "pDedicatedOnly": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT)) ? VK_TRUE : VK_FALSE"
           }
         },
         {
-          "return": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT)) ? VK_TRUE : VK_FALSE"
+          "return": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT)) ? VK_TRUE : VK_FALSE"
         }
       ]
     },
@@ -249,11 +249,11 @@
         },
         {
           "set": {
-            "pDedicatedOnly": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT)) ? VK_TRUE : VK_FALSE"
+            "pDedicatedOnly": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT)) ? VK_TRUE : VK_FALSE"
           }
         },
         {
-          "return": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT)) ? VK_TRUE : VK_FALSE"
+          "return": "((VK_SUCCESS == result) && (external_image_format_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT)) ? VK_TRUE : VK_FALSE"
         }
       ]
     },
@@ -643,7 +643,7 @@
         {
           "call": "cvkCreatePipelineLayout",
           "bind": {
-            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1 : 0",
             "pPushConstantRanges": "&push_constant_range"
           }
         }
@@ -836,9 +836,9 @@
         {
           "call": "cvkCmdDispatch",
           "bind": {
-            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1u) / (itemsPerInvocation.width * localSize.width)",
-            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1u) / (itemsPerInvocation.height * localSize.height)",
-            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1u) / (itemsPerInvocation.depth * localSize.depth)"
+            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width)",
+            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height)",
+            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth)"
           }
         }
       ]
@@ -2480,11 +2480,11 @@
         },
         {
           "set": {
-            "pDedicatedOnly": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
+            "pDedicatedOnly": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
           }
         },
         {
-          "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+          "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
         }
       ]
     },
@@ -2509,11 +2509,11 @@
         },
         {
           "set": {
-            "pDedicatedOnly": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
+            "pDedicatedOnly": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT) ? VK_TRUE : VK_FALSE"
           }
         },
         {
-          "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
+          "return": "(external_buffer_properties.externalMemoryProperties.externalMemoryFeatures & (VkExternalMemoryFeatureFlags)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) ? VK_TRUE : VK_FALSE"
         }
       ]
     },
@@ -2579,7 +2579,7 @@
         {
           "call": "cvkCreatePipelineLayout",
           "bind": {
-            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1 : 0",
             "pPushConstantRanges": "&push_constant_range"
           }
         }
@@ -4723,7 +4723,7 @@
         {
           "call": "cvkCreatePipelineLayout",
           "bind": {
-            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1 : 0",
             "pPushConstantRanges": "&push_constant_range"
           }
         }
@@ -5160,7 +5160,7 @@
         {
           "call": "cvkCreatePipelineLayout",
           "bind": {
-            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1u : 0u",
+            "pushConstantRangeCount": "(0 != pushConstantSize) ? 1 : 0",
             "pPushConstantRanges": "&push_constant_range"
           }
         }
@@ -5567,9 +5567,9 @@
         {
           "call": "cvkCmdDrawMeshTasks",
           "bind": {
-            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1u) / (itemsPerInvocation.width * localSize.width)",
-            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1u) / (itemsPerInvocation.height * localSize.height)",
-            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1u) / (itemsPerInvocation.depth * localSize.depth)"
+            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width)",
+            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height)",
+            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth)"
           }
         }
       ]

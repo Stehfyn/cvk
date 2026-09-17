@@ -253,7 +253,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     CVK_ASSERT(planeCount == modifier_plane_count);
 
     /* capability: importable with this modifier; several memory objects need a disjoint image, which cannot be dedicated-only */
-    flags = (1u < memoryObjectCount) ? VK_IMAGE_CREATE_DISJOINT_BIT : 0;
+    flags = (1 < memoryObjectCount) ? (VkImageCreateFlags)VK_IMAGE_CREATE_DISJOINT_BIT : 0;
     cvkInitPhysicalDeviceImageDrmFormatModifierInfo(&physical_device_image_drm_format_modifier_info, NULL, drmFormatModifier, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices);
     importable = cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
                                                                 VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
@@ -265,7 +265,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
                                                                 &physical_device_image_drm_format_modifier_info,
                                                                 &dedicated);
     CVK_ASSERT(importable);
-    CVK_ASSERT((1u == memoryObjectCount) || !dedicated);
+    CVK_ASSERT((1 == memoryObjectCount) || !dedicated);
 
     /* create, with the handle type declared and the explicit plane layouts */
     for (plane_index = 0; plane_index < planeCount; ++plane_index)
@@ -279,7 +279,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     cvkInitImageDrmFormatModifierExplicitCreateInfo(&image_drm_format_modifier_explicit_create_info, pImageNext, drmFormatModifier, planeCount, plane_layouts);
     cvkCreateImageWithExternalMemoryInfo(device,
                                          &image_drm_format_modifier_explicit_create_info,
-                                         VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
+                                         (VkExternalMemoryHandleTypeFlags)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
                                          flags,
                                          VK_IMAGE_TYPE_2D,
                                          format,
@@ -303,7 +303,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
         object_memory_type_bits[object_index] = memory_fd_properties.memoryTypeBits;
     }
 
-    if (1u == memoryObjectCount)
+    if (1 == memoryObjectCount)
     {
         /* one memory object: whole-image requirements with dedicated requirements chained */
         cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);

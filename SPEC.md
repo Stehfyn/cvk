@@ -20,6 +20,9 @@ first, then the generator, then regenerate and re-run the studies.
 
 Generated headers and sources target the C99 language dialect. They have no C++
 linkage guards. Fixed-width integer types come from the Vulkan SDK and `<stdint.h>`.
+Integer literals omit unsigned suffixes when the surrounding expression or destination
+already supplies the required type. Keep suffixes where they affect correctness, such as
+`1u << memory_type_index`, which must support bit 31 without a signed left shift.
 Calls to `memcpy`, `memset`, and `memmove` that discard the return value explicitly
 cast it to `(void)`, in generated code and authored protocols alike.
 The JSON reader parses 64-bit integers without `strtoull`/`strtoll`. Vulkan format
@@ -350,8 +353,12 @@ policy file. **The chain's signature is computed from its steps' signatures**, n
 
 Flag constants in bound mask arguments are cast to the registry's underlying `VkFlags` or
 `VkFlags64` type before bitwise operations; the result is cast to the parameter's flags
-typedef. This also applies to single flag constants and preserves aliases in the destination
-cast. Ordinary enum arguments and already-typed mask variables pass through unchanged.
+typedef. A single flag constant gets only the destination typedef cast, for example
+`(VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT`. Aliases are preserved in the
+destination cast. Ordinary enum arguments and already-typed mask variables pass through unchanged.
+Authored protocol arguments, mask assignments and bit tests also cast flag-bit enums and
+enum-valued helper results explicitly to the corresponding flags typedef. This includes
+compound assignments and conditional expressions; enum-to-enum uses keep their enum type.
 
 The one piece of logic the registry cannot supply, memory type selection
 (`cvkGetCompatibleMemoryTypeIndex`: first type in the mask whose property flags **cover** the

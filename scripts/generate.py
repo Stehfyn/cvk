@@ -1925,6 +1925,8 @@ class Generator:
         while enum in self.reg.type_aliases:
             enum = self.reg.type_aliases[enum]
         bits = set(self.reg.enums.get(enum, []) + self.reg.enum_extends.get(enum, []))
+        if expression.strip() in bits:
+            return f"({ctype}){expression.strip()}"
         typed = re.sub(r"\bVK_\w+\b", lambda m: f"({base}){m[0]}" if m[0] in bits else m[0], expression)
         if typed != expression or re.search(r"(?<![|&])[|&](?![|&])|[~^]", expression):
             return f"({ctype})({typed})"
@@ -2304,7 +2306,7 @@ class Generator:
         # Every policy capacity is emitted (protocols use some that no enumeration does), plus any derived.
         all_caps = dict(self.capacities)
         all_caps.update(self.used_capacities)
-        caps = "\n".join(f"#define {k} ({v}U)" for k, v in sorted(all_caps.items()))
+        caps = "\n".join(f"#define {k} ({v})" for k, v in sorted(all_caps.items()))
         return self.finish_header(f"""#ifndef CVK_H
 #define CVK_H
 

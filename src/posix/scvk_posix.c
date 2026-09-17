@@ -181,7 +181,7 @@ void scvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     SCVK_ASSERT(planeCount == modifier_plane_count);
 
     /* capability: importable with this modifier; several memory objects need a disjoint image, which cannot be dedicated-only */
-    flags = (1u < memoryObjectCount) ? VK_IMAGE_CREATE_DISJOINT_BIT : 0;
+    flags = (1 < memoryObjectCount) ? (VkImageCreateFlags)VK_IMAGE_CREATE_DISJOINT_BIT : 0;
 
     scvkInitPhysicalDeviceImageDrmFormatModifierInfo(&physical_device_image_drm_format_modifier_info, NULL, drmFormatModifier, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices);
 
@@ -196,7 +196,7 @@ void scvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
                                                                  &dedicated);
 
     SCVK_ASSERT(importable);
-    SCVK_ASSERT((1u == memoryObjectCount) || !dedicated);
+    SCVK_ASSERT((1 == memoryObjectCount) || !dedicated);
 
     /* create, with the handle type declared and the explicit plane layouts */
     for (plane_index = 0; plane_index < planeCount; ++plane_index)
@@ -210,7 +210,7 @@ void scvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     scvkInitImageDrmFormatModifierExplicitCreateInfo(&image_drm_format_modifier_explicit_create_info, pImageNext, drmFormatModifier, planeCount, plane_layouts);
     scvkCreateImageWithExternalMemoryInfo(device,
                                           &image_drm_format_modifier_explicit_create_info,
-                                          VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
+                                          (VkExternalMemoryHandleTypeFlags)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
                                           flags,
                                           VK_IMAGE_TYPE_2D,
                                           format,
@@ -235,7 +235,7 @@ void scvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
         object_memory_type_bits[object_index] = memory_fd_properties.memoryTypeBits;
     }
 
-    if (1u == memoryObjectCount)
+    if (1 == memoryObjectCount)
     {
         /* one memory object: whole-image requirements with dedicated requirements chained */
         scvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
