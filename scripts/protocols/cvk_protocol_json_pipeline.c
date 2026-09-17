@@ -29,7 +29,7 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
         char                buffer[32];
 
         CVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
-        memcpy(buffer, member->pKey, member->keyLength);
+        (void)memcpy(buffer, member->pKey, member->keyLength);
         buffer[member->keyLength] = '\0';
         (*ppIds)[index]           = cvkParseUint64Text(buffer);
     }
@@ -60,7 +60,7 @@ void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipe
     void*               elements;
     uint32_t            index;
 
-    memset(pPipeline, 0, sizeof(*pPipeline));
+    (void)memset(pPipeline, 0, sizeof(*pPipeline));
     state = cvkGetJsonMember(&pContext->document, root, "GraphicsPipelineState");
     if (NULL != state)
     {
@@ -229,7 +229,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
     uint32_t index;
     uint32_t inner;
 
-    memset(pObjects, 0, sizeof(*pObjects));
+    (void)memset(pObjects, 0, sizeof(*pObjects));
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerCount);
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->descriptorSetLayoutCount);

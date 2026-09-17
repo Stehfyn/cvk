@@ -20,6 +20,8 @@ first, then the generator, then regenerate and re-run the studies.
 
 Generated headers and sources target the C99 language dialect. They have no C++
 linkage guards. Fixed-width integer types come from the Vulkan SDK and `<stdint.h>`.
+Calls to `memcpy`, `memset`, and `memmove` that discard the return value explicitly
+cast it to `(void)`, in generated code and authored protocols alike.
 The JSON reader parses 64-bit integers without `strtoull`/`strtoll`. Vulkan format
 helpers use the pinned Vulkan-Utility-Libraries `vk_format_utils.h` as a private
 implementation dependency. The SC profile omits these Vulkan-only helpers.
@@ -186,14 +188,17 @@ setting that member: `cvkInitClearValueColor`, `cvkInitClearColorValueFloat32`,
 Chains build union values through them, never through a raw assignment.
 
 **Initialization style.** The boolean policy option `designated_initializers` (default
-true) selects C99 designated initialization in struct and union builders. Scalar and
+true) selects C99 designated initialization in struct and union builders and generated
+wrappers, including flattened inputs, extenders, and elements of local arrays. Scalar and
 pointer members use `(*pInfo) = (VkType)` followed by an Allman-braced initializer.
 The generator restores initializer braces after clang-format, without formatter directives.
 Generated initializers never include a trailing comma; clang-format is configured not to add one.
 Fixed arrays are copied
 into a designated-initialized temporary before assigning it to `*pInfo`, so an array
-argument may refer to the destination's existing storage. Returned-only builders keep
-their `sType`/`pNext` assignments and leave output members untouched. Signatures and
+argument may refer to the destination's existing storage. Returned-only builders and
+updates to caller-provided output storage keep their `sType`/`pNext` assignments and leave
+output members untouched. Wrappers also preserve caller-provided counts and pointers when
+preparing in/out extension structures. Signatures and
 wrapper composition are unchanged. The SC profile inherits the shared setting.
 
 **Commands with several sType inputs** (`vkCmdBeginRenderPass2` with a render pass begin info

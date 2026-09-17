@@ -417,7 +417,7 @@ void cvkWriteMemory(VkDevice         device,
 
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
-    memcpy(mapped, pData, (size_t)size);
+    (void)memcpy(mapped, pData, (size_t)size);
     cvkFlushMappedMemoryRange(device, pRangeNext, memory, offset, size);
     cvkUnmapMemory(device, memory);
 }
@@ -452,7 +452,7 @@ void cvkReadMemory(VkDevice         device,
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
     cvkInvalidateMappedMemoryRange(device, pRangeNext, memory, offset, size);
-    memcpy(pData, mapped, (size_t)size);
+    (void)memcpy(pData, mapped, (size_t)size);
     cvkUnmapMemory(device, memory);
 }
 
@@ -479,7 +479,7 @@ void cvkWriteCoherentMemory(VkDevice         device,
 
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
-    memcpy(mapped, pData, (size_t)size);
+    (void)memcpy(mapped, pData, (size_t)size);
     cvkUnmapMemory(device, memory);
 }
 
@@ -506,6 +506,6 @@ void cvkReadCoherentMemory(VkDevice         device,
 
     CVK_ASSERT(VK_WHOLE_SIZE != size);
     cvkMapMemory(device, memory, offset, size, flags, &mapped);
-    memcpy(pData, mapped, (size_t)size);
+    (void)memcpy(pData, mapped, (size_t)size);
     cvkUnmapMemory(device, memory);
 }

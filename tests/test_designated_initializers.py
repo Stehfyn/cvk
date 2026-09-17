@@ -43,6 +43,95 @@ class DesignatedInitializerTests(unittest.TestCase):
         policy.pop("designated_initializers")
         self.assertTrue(Generator(self.variants["cvk", False].reg, policy).designated_initializers)
 
+    def test_allman_initializers_survive_formatter_line_wrapping(self):
+        formatter = ["clang-format", f"--style=file:{ROOT / '.clang-format'}"]
+        for profile in ("cvk", "scvk"):
+            gen = self.variants[profile, True]
+            sources = [gen.source()] + [gen.platform_source(p) for p in gen.defs if p]
+            for source in sources:
+                formatted = subprocess.check_output(formatter, input=source, text=True)
+                finished = gen.finish_source(formatted)
+                self.assertNotRegex(finished, r"\(Vk\w+\)[ \t]*\{")
+                self.assertNotRegex(finished, r"=\s*\n\s*\(Vk\w+\)\s*\{")
+                self.assertNotRegex(finished, r",\s*}")
+                self.assertEqual(finished, gen.finish_source(subprocess.check_output(formatter, input=finished, text=True)))
+        gen = self.variants["cvk", True]
+        name = "cvkGetPhysicalDeviceNestedCommandBufferProperties"
+        source = next(d for d in gen.defs[""] if d.startswith("void " + name + "("))
+        formatted = gen.finish_source(subprocess.check_output(formatter, input=source, text=True))
+        self.assertIn("physical_device_nested_command_buffer_properties = (VkPhysicalDeviceNestedCommandBufferPropertiesEXT)\n    {\n", formatted)
+
+    @unittest.skipUnless(shutil.which("clang"), "clang is required for C99 runtime checks")
+    def test_wrappers_pass_initialized_inputs_and_array_chains(self):
+        for (profile, enabled), gen in self.variants.items():
+            with self.subTest(profile=profile, enabled=enabled), tempfile.TemporaryDirectory() as tmp:
+                names = ("cvkCreateBuffer", "cvkBindImageMemory2", "cvkBindPlaneImageMemories")
+                definitions = [next(d for d in gen.defs[""] if d.startswith("void " + name + "(")) for name in names]
+                if enabled:
+                    self.assertIn("create_info = (VkBufferCreateInfo)", definitions[0])
+                    self.assertIn("bind_infos[index] = (VkBindImageMemoryInfo)", definitions[2])
+                body = r'''
+#define CHECK(x) do { if (!(x)) { fprintf(stderr, "line %d: %s\n", __LINE__, #x); abort(); } } while (0)
+#define CVK_ASSERT(x) CHECK(x)
+#define CVK_CHECK(x) CHECK((x) == VK_SUCCESS)
+#define CVK_MAX_BIND_INFOS 4
+static int calls;
+static int next;
+VKAPI_ATTR VkResult VKAPI_CALL vkCreateBuffer(VkDevice device, const VkBufferCreateInfo* info,
+                                              const VkAllocationCallbacks* allocator, VkBuffer* buffer)
+{
+    CHECK(device == (VkDevice)(uintptr_t)1 && allocator == NULL);
+    CHECK(info->sType == VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO && info->pNext == &next);
+    CHECK(info->flags == VK_BUFFER_CREATE_SPARSE_BINDING_BIT && info->size == 4096);
+    CHECK(info->usage == VK_BUFFER_USAGE_TRANSFER_DST_BIT && info->sharingMode == VK_SHARING_MODE_CONCURRENT);
+    CHECK(info->queueFamilyIndexCount == 2 && info->pQueueFamilyIndices[0] == 3 && info->pQueueFamilyIndices[1] == 5);
+    *buffer = (VkBuffer)(uintptr_t)2;
+    ++calls;
+    return VK_SUCCESS;
+}
+VKAPI_ATTR VkResult VKAPI_CALL vkBindImageMemory2(VkDevice device, uint32_t count, const VkBindImageMemoryInfo* infos)
+{
+    CHECK(device == (VkDevice)(uintptr_t)1 && count == 2);
+    for (uint32_t i = 0; i < count; ++i) {
+        const VkBindImagePlaneMemoryInfo* plane = infos[i].pNext;
+        CHECK(infos[i].sType == VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO);
+        CHECK(infos[i].image == (VkImage)(uintptr_t)(3 + i));
+        CHECK(infos[i].memory == (VkDeviceMemory)(uintptr_t)(5 + i) && infos[i].memoryOffset == 256 * (i + 1));
+        CHECK(plane->sType == VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO);
+        CHECK(plane->pNext == (i ? NULL : &next));
+        CHECK(plane->planeAspect == (i ? VK_IMAGE_ASPECT_PLANE_1_BIT : VK_IMAGE_ASPECT_PLANE_0_BIT));
+    }
+    ++calls;
+    return VK_SUCCESS;
+}
+'''
+                main = r'''
+int main(void)
+{
+    uint32_t families[2] = {3, 5};
+    VkBuffer buffer;
+    cvkCreateBuffer((VkDevice)(uintptr_t)1, &next, VK_BUFFER_CREATE_SPARSE_BINDING_BIT, 4096,
+                    VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_SHARING_MODE_CONCURRENT, 2, families, NULL, &buffer);
+    CHECK(buffer == (VkBuffer)(uintptr_t)2);
+    const void* nexts[2] = {&next, NULL};
+    VkImageAspectFlagBits aspects[2] = {VK_IMAGE_ASPECT_PLANE_0_BIT, VK_IMAGE_ASPECT_PLANE_1_BIT};
+    VkImage images[2] = {(VkImage)(uintptr_t)3, (VkImage)(uintptr_t)4};
+    VkDeviceMemory memories[2] = {(VkDeviceMemory)(uintptr_t)5, (VkDeviceMemory)(uintptr_t)6};
+    VkDeviceSize offsets[2] = {256, 512};
+    cvkBindPlaneImageMemories((VkDevice)(uintptr_t)1, 2, nexts, aspects, images, memories, offsets);
+    CHECK(calls == 2);
+    return 0;
+}
+'''
+                source = Path(tmp) / "wrappers.c"
+                source.write_text(f"#include {gen.vk_header}\n#include <stdio.h>\n#include <stdlib.h>\n"
+                                  + body + "\n".join(definitions) + main, encoding="utf-8")
+                exe = Path(tmp) / "wrappers.exe"
+                headers = ROOT / "external" / ("Vulkan-Headers" if profile == "cvk" else "VulkanSC-Headers") / "include"
+                subprocess.run(["clang", "-std=c99", "-Wall", "-Wextra", "-pedantic-errors", "-isystem", str(headers),
+                                str(source), "-o", str(exe)], check=True, capture_output=True, text=True)
+                subprocess.run([str(exe)], check=True, capture_output=True, text=True)
+
     @unittest.skipUnless(shutil.which("clang"), "clang is required for C99 runtime checks")
     def test_struct_union_array_and_output_builders(self):
         for (profile, enabled), gen in self.variants.items():
@@ -74,7 +163,7 @@ class DesignatedInitializerTests(unittest.TestCase):
     cvkInitClearValueColor(&clear, color);
     CHECK(memcmp(clear.color.float32, values, sizeof(values)) == 0);
     VkPhysicalDeviceProperties2 properties;
-    memset(&properties, 0, sizeof(properties));
+    (void)memset(&properties, 0, sizeof(properties));
     properties.properties.vendorID = 123;
     properties.properties.deviceID = 456;
     cvkInitPhysicalDeviceProperties2(&properties, &next);

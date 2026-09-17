@@ -328,7 +328,7 @@ These settings omit API doc comments and put each function prototype on exactly 
 line, even when it exceeds clang-format's column limit. Generated declaration sections
 carry clang-format off/on directives so standalone formatting also preserves the policy.
 Function definitions keep their
-normal formatting. Set `"designated_initializers": true` to make `cvkInit*` builders use
+normal formatting. Set `"designated_initializers": true` to make builders and generated wrappers use
 C99 designated initializers with Allman braces instead of separate member assignments:
 
 ```c
@@ -341,7 +341,8 @@ C99 designated initializers with Allman braces instead of separate member assign
 
 The generator restores Allman initializer braces after clang-format; running clang-format
 alone may rejoin them. Fixed arrays are copied through a temporary;
-returned-only builders still update only `sType` and `pNext`, preserving output members.
+Returned-only builders and updates to caller-provided output storage still change only
+the required fields, preserving existing output members and buffer pointers.
 The default is true; set it to false for separate member assignments. `scvk.policy.json` inherits these options. A separate JSON policy can
 use `"extends": "cvk.policy.json"` and override any setting; select it with `--policy`.
 

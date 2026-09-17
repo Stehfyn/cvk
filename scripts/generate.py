@@ -539,22 +539,24 @@ class Generator:
                 stem = p.name[1:] if p.name.startswith("p") else p.name
                 locals_.append(f"{s.name} {var};")
                 locals_.append("")
-                locals_.append(f"{var}.sType = {s.stype};")
+                fields = [("sType", s.stype)]
+                arrays = []
                 for m in s.members:
                     if m.name == "sType":
                         continue
                     if m.name == "pNext":
                         pn = "pNext" if filled == 1 else f"p{stem}Next"
                         params.append(EmittedParam(f"{self.pnext_type(s)} {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
-                        locals_.append(f"{var}.pNext = {pn};")
+                        fields.append(("pNext", pn))
                         continue
                     if m.array_len:
                         params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
-                        locals_.append(f"memcpy({var}.{m.name}, {m.name}, sizeof({var}.{m.name}));")
+                        arrays.append((m.name, m.name))
                     else:
                         params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
-                        locals_.append(f"{var}.{m.name} = {m.name};")
+                        fields.append((m.name, m.name))
                     pre += self.member_assert(m, "", s.members)
+                locals_ += self.struct_initialization(s, var, fields, arrays)
                 call_args.append(f"&{var}")
             elif r == "P":
                 s = reg.struct_of(p.type)
@@ -566,8 +568,7 @@ class Generator:
                 var = snake(p.name)
                 locals_.append(f"{s.name} {var};")
                 locals_.append("")
-                locals_.append(f"{var}.sType = {s.stype};")
-                locals_.append(f"{var}.pNext = {pn};")
+                locals_ += self.struct_initialization(s, var, [("sType", s.stype), ("pNext", pn)])
                 call_args.append(f"&{var}")
                 post.append(f"(*{p.name}) = {var};")
             elif p is enum_count:
@@ -628,13 +629,14 @@ class Generator:
                     body.append("    uint32_t index;")
                     body.append(f"    for (index = 0; index < {count_var}; ++index)")
                     body.append("    {")
-                    body.append(f"        {arr}[index].sType = {s.stype};")
                     if q.name in ext_arrays:
                         ext_param = ext_arrays[q.name]
-                        body.append(f"        {arr}[index].pNext = &{ext_param}[index];")
+                        body += ["        " + line for line in self.struct_initialization(
+                            s, f"{arr}[index]", [("sType", s.stype), ("pNext", f"&{ext_param}[index]")])]
                         body.append(f"        {ext_param}[index].sType = {out_ext.stype};")
                         body.append(f"        {ext_param}[index].pNext = NULL;")
                     else:
+                        body.append(f"        {arr}[index].sType = {s.stype};")
                         body.append(f"        {arr}[index].pNext = NULL;")
                     body.append("    }")
                     body.append("}")
@@ -775,6 +777,16 @@ class Generator:
         entries = [f"    .{name.ljust(width)} = {value}" for name, value in values]
         return [start, "{"] + ",\n".join(entries).splitlines() + ["};"]
 
+    def struct_initialization(self, s: Struct, target: str, fields: List[Tuple[str, str]],
+                              arrays: Optional[List[Tuple[str, str]]] = None) -> List[str]:
+        """Initialize wrapper-owned storage, including each element of a local array."""
+        arrays = arrays or []
+        if self.designated_initializers:
+            body = self.designated_initializer(f"{target} = ({s.name})", fields + [(name, "{0}") for name, _ in arrays])
+        else:
+            body = [f"{target}.{name} = {value};" for name, value in fields]
+        return body + [f"(void)memcpy({target}.{name}, {value}, sizeof({target}.{name}));" for name, value in arrays]
+
     def designated_builder_body(self, s: Struct, fields: List[Tuple[str, str]], arrays: List[Param]) -> List[str]:
         """Initialize the complete value, copying array arguments before writing pInfo."""
         values = fields + [(m.name, "{0}") for m in arrays]
@@ -785,7 +797,7 @@ class Generator:
         while local in {m.name for m in s.members}:
             local += "_"
         return (self.designated_initializer(f"{s.name} {local} =", values)
-                + [f"memcpy({local}.{m.name}, {m.name}, sizeof({local}.{m.name}));" for m in arrays]
+                + [f"(void)memcpy({local}.{m.name}, {m.name}, sizeof({local}.{m.name}));" for m in arrays]
                 + [f"(*pInfo) = {local};"])
 
     def emit_builder(self, s: Struct) -> None:
@@ -805,7 +817,7 @@ class Generator:
                     continue
                 if m.array_len:
                     params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
-                    body.append(f"memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
+                    body.append(f"(void)memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
                     arrays.append(m)
                 else:
                     params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
@@ -831,7 +843,7 @@ class Generator:
             params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
             if m.array_len:
                 params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
-                body = [f"memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
+                body = [f"(void)memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
             else:
                 params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
                 body = [f"pInfo->{m.name} = {m.name};"]
@@ -907,7 +919,7 @@ class Generator:
         if m.array_len:
             dims = [d for d in m.array_len.split("][")]
             if t == "char" and len(dims) == 1:
-                return ["if (CVK_JSON_STRING == value->kind)", "{", f"    memcpy({dst}, value->pText, (value->textLength < sizeof({dst})) ? value->textLength : sizeof({dst}) - 1);", "}"], False, False
+                return ["if (CVK_JSON_STRING == value->kind)", "{", f"    (void)memcpy({dst}, value->pText, (value->textLength < sizeof({dst})) ? value->textLength : sizeof({dst}) - 1);", "}"], False, False
             elem = self.json_scalar(t, "cvkGetJsonElement(&pContext->document, value, index)")
             if elem is None and struct_ok:
                 elem = None
@@ -1071,7 +1083,7 @@ class Generator:
                 needs_storage |= ns
                 needs_inner |= any("inner" in l for l in stmts)
                 members.append((m, stmts))
-            body.append(f"memset(pInfo, 0, sizeof(*pInfo));")
+            body.append(f"(void)memset(pInfo, 0, sizeof(*pInfo));")
             if s.stype:
                 body.append(f"pInfo->sType = {s.stype};")
             for m, stmts in members:
@@ -1176,19 +1188,22 @@ class Generator:
             if p.name == count:
                 args.append("1")
             elif p.name == ap.name and s is not None:
-                body += [f"{s.name} {var};", "", f"{var}.sType = {s.stype};"]
+                body += [f"{s.name} {var};", ""]
+                fields = [("sType", s.stype)]
+                arrays = []
                 for m in s.members:
                     if m.name == "sType":
                         continue
                     if m.name == "pNext":
                         params.append(EmittedParam(f"{self.pnext_type(s)} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
-                        body.append(f"{var}.pNext = pNext;")
+                        fields.append(("pNext", "pNext"))
                     elif m.array_len:
                         params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
-                        body.append(f"memcpy({var}.{m.name}, {m.name}, sizeof({var}.{m.name}));")
+                        arrays.append((m.name, m.name))
                     else:
                         params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
-                        body.append(f"{var}.{m.name} = {m.name};")
+                        fields.append((m.name, m.name))
+                body += self.struct_initialization(s, var, fields, arrays)
                 args.append(f"&{var}")
             elif p.name == ap.name:
                 elem = ap.type
@@ -1228,7 +1243,9 @@ class Generator:
         var = snake(ip.name)
         params: List[EmittedParam] = []
         args: List[str] = []
-        body: List[str] = [f"{s.name} {var};", "", f"{var}.sType = {s.stype};"]
+        body: List[str] = [f"{s.name} {var};", ""]
+        fields = [("sType", s.stype)]
+        arrays = []
         p_out = next((q for q, r in zip(cmd.params, self.roles(cmd)) if r == "P"), None)
         for p in t0_params:
             if p.name != ip.name:
@@ -1247,14 +1264,15 @@ class Generator:
                     continue
                 if m.name == "pNext":
                     params.append(EmittedParam(f"{self.pnext_type(s)} {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
-                    body.append(f"{var}.pNext = {pn};")
+                    fields.append(("pNext", pn))
                 elif m.array_len:
                     params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
-                    body.append(f"memcpy({var}.{m.name}, {m.name}, sizeof({var}.{m.name}));")
+                    arrays.append((m.name, m.name))
                 else:
                     params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
-                    body.append(f"{var}.{m.name} = {m.name};")
+                    fields.append((m.name, m.name))
             args.append(f"&{var}")
+        body += self.struct_initialization(s, var, fields, arrays)
         call = f"{t0}({', '.join(args)})"
         body.append(("return " if ret != "void" else "") + call + ";")
         doc = self.doc_block(f"{self.brief(cmd)[:-1]} from the fields of {s.name}.", params, ret, None, [])
@@ -1284,7 +1302,9 @@ class Generator:
         idx = next(i for i, p in enumerate(base_params) if p.split()[-1] == pn)
         ext_params: List[str] = []
         ext_var = snake(self.struct_short(ext))
-        body = [f"{ext.name} {ext_var};", "", f"{ext_var}.sType = {ext.stype};", f"{ext_var}.pNext = {pn};"]
+        body = [f"{ext.name} {ext_var};", ""]
+        fields = [("sType", ext.stype), ("pNext", pn)]
+        arrays = []
         base_names = {p.split()[-1].split("[")[0] for p in base_params}
         # The chain parameter now feeds the extender: its type is the extender's pNext type.
         base_params[idx] = f"{self.pnext_type(ext)} {pn}"
@@ -1294,10 +1314,11 @@ class Generator:
             pname = em.name if em.name not in base_names else self.member_alias(em, base, ext)
             if em.array_len:
                 ext_params.append(f"const {em.full_type} {pname}[{em.array_len}]")
-                body.append(f"memcpy({ext_var}.{em.name}, {pname}, sizeof({ext_var}.{em.name}));")
+                arrays.append((em.name, pname))
             else:
                 ext_params.append(f"{em.full_type} {pname}")
-                body.append(f"{ext_var}.{em.name} = {pname};")
+                fields.append((em.name, pname))
+        body += self.struct_initialization(ext, ext_var, fields, arrays)
         all_params = base_params[: idx + 1] + ext_params + base_params[idx + 1:]
         args = [p.split()[-1].split("[")[0] for p in base_params]
         args[idx] = "&" + ext_var
@@ -1398,7 +1419,8 @@ class Generator:
         ext_var = snake(self.struct_short(ext)) + "s"           # bind_image_plane_memory_infos
         params: List[EmittedParam] = []
         args: List[str] = []
-        fill: List[str] = []
+        ext_fields = [("sType", ext.stype), ("pNext", "(NULL != ppNexts) ? ppNexts[index] : NULL")]
+        base_fields = [("sType", base.stype), ("pNext", f"&{ext_var}[index]")]
         singles: Dict[str, str] = {}                            # parallel array -> element parameter
         for p in t0_params:
             if p.name != ap.name:
@@ -1414,23 +1436,20 @@ class Generator:
                 pn = self.plural(alias)
                 singles[pn] = alias
                 params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{ext.name}::{m.name} per element", False))
-                fill.append(f"{ext_var}[index].{m.name} = {pn}[index];")
+                ext_fields.append((m.name, f"{pn}[index]"))
             for m in base.members:
                 if m.name in ("sType", "pNext"):
                     continue
                 pn = self.plural(m.name)
                 singles[pn] = m.name
                 params.append(EmittedParam(f"const {m.full_type}* {pn}", pn, f"{base.name}::{m.name} per element", False))
-                fill.append(f"{base_var}[index].{m.name} = {pn}[index];")
+                base_fields.append((m.name, f"{pn}[index]"))
             args.append(base_var)
         body = [f"{base.name} {base_var}[{cap}];", f"{ext.name} {ext_var}[{cap}];", "uint32_t index;", "",
                 f"CVK_ASSERT({cap} >= {count});",
-                f"for (index = 0; index < {count}; ++index)", "{",
-                f"    {ext_var}[index].sType = {ext.stype};",
-                f"    {ext_var}[index].pNext = (NULL != ppNexts) ? ppNexts[index] : NULL;"]
-        body += ["    " + l for l in fill if l.startswith(ext_var)]
-        body += [f"    {base_var}[index].sType = {base.stype};", f"    {base_var}[index].pNext = &{ext_var}[index];"]
-        body += ["    " + l for l in fill if l.startswith(base_var)]
+                f"for (index = 0; index < {count}; ++index)", "{"]
+        body += ["    " + line for line in self.struct_initialization(ext, f"{ext_var}[index]", ext_fields)]
+        body += ["    " + line for line in self.struct_initialization(base, f"{base_var}[index]", base_fields)]
         body += ["}", ("return " if ret != "void" else "") + f"{t0}({', '.join(args)});"]
         doc = self.doc_block(f"{self.brief(cmd)[:-1]} with {ext.name} chained to every element.", params, ret, None, [])
         sig = self.signature(ret, name, params)
@@ -1535,7 +1554,9 @@ class Generator:
         body = [f"{base.name} {base_var};", f"{ext.name} {var};", ""]
         if inout:
             body.append(f"{var} = (*{ext_out});")
-        body += [f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
+            body += [f"{var}.sType = {ext.stype};", f"{var}.pNext = {ext_next};"]
+        else:
+            body += self.struct_initialization(ext, var, [("sType", ext.stype), ("pNext", ext_next)])
         call = f"{target}({', '.join(args)})"
         if ret != "void":
             body.insert(0, f"{ret} result;")
@@ -2088,11 +2109,11 @@ class Generator:
         """Restore multiline Allman initializers after clang-format folds short ones."""
         if not self.designated_initializers:
             return text
-        pattern = (r"^([ \t]*)(\(\*pInfo\)[ \t]*=[ \t]*\(\w+\)|"
+        pattern = (r"^([ \t]*)((?:\(\*pInfo\)|\w+(?:\[\w+\])?)[ \t]*=\s*\(Vk\w+\)|"
                    r"\w+[ \t]+initialized_info_*[ \t]*=)\s*\{(.*?)\};")
 
         def restore(match: re.Match) -> str:
-            start = re.sub(r"[ \t]+", " ", match[2])
+            start = re.sub(r"\s+", " ", match[2])
             fields = [field.strip().split("=", 1) for field in re.split(r",\s*(?=\.)", match[3].strip())]
             values = [(name.strip()[1:], value.strip()) for name, value in fields]
             return "\n".join(match[1] + line for line in self.designated_initializer(start, values))

@@ -17,7 +17,7 @@ static int64_t parse_signed(const char* text)
 {
     cvkJsonValue value;
 
-    memset(&value, 0, sizeof(value));
+    (void)memset(&value, 0, sizeof(value));
     value.kind       = CVK_JSON_STRING;
     value.pText      = text;
     value.textLength = (uint32_t)strlen(text);

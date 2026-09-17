@@ -9669,7 +9669,7 @@ void cvkParseJsonAabbPositions(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "minX");
     if (!cvkIsJsonNull(value))
     {
@@ -9707,7 +9707,7 @@ void cvkParseJsonAccelerationStructureBuildGeometryInfo(const cvkJsonContext* pC
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9781,7 +9781,7 @@ void cvkParseJsonAccelerationStructureBuildRangeInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "primitiveCount");
     if (!cvkIsJsonNull(value))
     {
@@ -9807,7 +9807,7 @@ void cvkParseJsonAccelerationStructureBuildSizesInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9834,7 +9834,7 @@ void cvkParseJsonAccelerationStructureCaptureDescriptorDataInfo(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9856,7 +9856,7 @@ void cvkParseJsonAccelerationStructureCreateInfo2(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9888,7 +9888,7 @@ void cvkParseJsonAccelerationStructureCreateInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9930,7 +9930,7 @@ void cvkParseJsonAccelerationStructureCreateInfoNV(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9952,7 +9952,7 @@ void cvkParseJsonAccelerationStructureDeviceAddressInfo(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9969,7 +9969,7 @@ void cvkParseJsonAccelerationStructureGeometryAabbsData(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_AABBS_DATA_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -9991,7 +9991,7 @@ void cvkParseJsonAccelerationStructureGeometryData(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "triangles");
     if (!cvkIsJsonNull(value))
     {
@@ -10015,7 +10015,7 @@ void cvkParseJsonAccelerationStructureGeometryInstancesData(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10037,7 +10037,7 @@ void cvkParseJsonAccelerationStructureGeometry(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10064,7 +10064,7 @@ void cvkParseJsonAccelerationStructureGeometryLinearSweptSpheresDataNV(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_LINEAR_SWEPT_SPHERES_DATA_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10133,7 +10133,7 @@ void cvkParseJsonAccelerationStructureGeometryMicromapData(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_MICROMAP_DATA_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10192,7 +10192,7 @@ void cvkParseJsonAccelerationStructureGeometryMotionTrianglesDataNV(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_MOTION_TRIANGLES_DATA_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10209,7 +10209,7 @@ void cvkParseJsonAccelerationStructureGeometrySpheresDataNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_SPHERES_DATA_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10266,7 +10266,7 @@ void cvkParseJsonAccelerationStructureGeometryTrianglesData(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10315,7 +10315,7 @@ void cvkParseJsonAccelerationStructureInfoNV(const cvkJsonContext* pContext, con
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10360,7 +10360,7 @@ void cvkParseJsonAccelerationStructureInstance(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "transform");
     if (!cvkIsJsonNull(value))
     {
@@ -10396,7 +10396,7 @@ void cvkParseJsonAccelerationStructureMatrixMotionInstanceNV(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "transformT0");
     if (!cvkIsJsonNull(value))
     {
@@ -10437,7 +10437,7 @@ void cvkParseJsonAccelerationStructureMemoryRequirementsInfoNV(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10459,7 +10459,7 @@ void cvkParseJsonAccelerationStructureMotionInfoNV(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MOTION_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10481,7 +10481,7 @@ void cvkParseJsonAccelerationStructureMotionInstanceDataNV(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "staticInstance");
     if (!cvkIsJsonNull(value))
     {
@@ -10505,7 +10505,7 @@ void cvkParseJsonAccelerationStructureMotionInstanceNV(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "type");
     if (!cvkIsJsonNull(value))
     {
@@ -10526,7 +10526,7 @@ void cvkParseJsonAccelerationStructureSRTMotionInstanceNV(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "transformT0");
     if (!cvkIsJsonNull(value))
     {
@@ -10569,7 +10569,7 @@ void cvkParseJsonAccelerationStructureTrianglesOpacityMicromapEXT(const cvkJsonC
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10638,7 +10638,7 @@ void cvkParseJsonAccelerationStructureTrianglesOpacityMicromap(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10677,7 +10677,7 @@ void cvkParseJsonAccelerationStructureVersionInfo(const cvkJsonContext* pContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_VERSION_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10702,7 +10702,7 @@ void cvkParseJsonAcquireNextImageInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10739,7 +10739,7 @@ void cvkParseJsonAcquireProfilingLockInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10759,7 +10759,7 @@ void cvkParseJsonAcquireProfilingLockInfo(const cvkJsonContext* pContext, const 
 }
 void cvkParseJsonAllocationCallbacks(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkAllocationCallbacks* pInfo)
 {
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     (void)pContext;
     (void)pObject;
 }
@@ -10767,7 +10767,7 @@ void cvkParseJsonAmigoProfilingSubmitInfoSEC(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_AMIGO_PROFILING_SUBMIT_INFO_SEC;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10790,7 +10790,7 @@ void cvkParseJsonAntiLagDataAMD(const cvkJsonContext* pContext, const cvkJsonVal
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10819,7 +10819,7 @@ void cvkParseJsonAntiLagPresentationInfoAMD(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10841,7 +10841,7 @@ void cvkParseJsonApplicationInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10878,7 +10878,7 @@ void cvkParseJsonAttachmentDescription(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "flags");
     if (!cvkIsJsonNull(value))
     {
@@ -10929,7 +10929,7 @@ void cvkParseJsonAttachmentDescription2(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -10986,7 +10986,7 @@ void cvkParseJsonAttachmentDescriptionStencilLayout(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11008,7 +11008,7 @@ void cvkParseJsonAttachmentFeedbackLoopInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_FEEDBACK_LOOP_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11025,7 +11025,7 @@ void cvkParseJsonAttachmentReference(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "attachment");
     if (!cvkIsJsonNull(value))
     {
@@ -11041,7 +11041,7 @@ void cvkParseJsonAttachmentReference2(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11068,7 +11068,7 @@ void cvkParseJsonAttachmentReferenceStencilLayout(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11087,7 +11087,7 @@ void cvkParseJsonAttachmentSampleCountInfoAMD(const cvkJsonContext* pContext, co
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_ATTACHMENT_SAMPLE_COUNT_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11122,7 +11122,7 @@ void cvkParseJsonAttachmentSampleLocations(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "attachmentIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -11138,7 +11138,7 @@ void cvkParseJsonBeginCustomResolveInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BEGIN_CUSTOM_RESOLVE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11152,7 +11152,7 @@ void cvkParseJsonBindAccelerationStructureMemoryInfoNV(const cvkJsonContext* pCo
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11199,7 +11199,7 @@ void cvkParseJsonBindBufferMemoryDeviceGroupInfo(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11229,7 +11229,7 @@ void cvkParseJsonBindBufferMemoryInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11256,7 +11256,7 @@ void cvkParseJsonBindDataGraphPipelineSessionMemoryInfoARM(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_DATA_GRAPH_PIPELINE_SESSION_MEMORY_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11293,7 +11293,7 @@ void cvkParseJsonBindDescriptorBufferEmbeddedSamplersInfo(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11322,7 +11322,7 @@ void cvkParseJsonBindDescriptorSetsInfo(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11385,7 +11385,7 @@ void cvkParseJsonBindHeapInfo(const cvkJsonContext* pContext, const cvkJsonValue
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_HEAP_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11414,7 +11414,7 @@ void cvkParseJsonBindImageMemoryDeviceGroupInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11462,7 +11462,7 @@ void cvkParseJsonBindImageMemoryInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11489,7 +11489,7 @@ void cvkParseJsonBindImageMemorySwapchainInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11511,7 +11511,7 @@ void cvkParseJsonBindImagePlaneMemoryInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11528,7 +11528,7 @@ void cvkParseJsonBindIndexBuffer3Info(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_INDEX_BUFFER_3_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11555,7 +11555,7 @@ void cvkParseJsonBindIndexBufferIndirectCommand(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -11576,7 +11576,7 @@ void cvkParseJsonBindIndexBufferIndirectCommandNV(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -11599,7 +11599,7 @@ void cvkParseJsonBindMemoryStatus(const cvkJsonContext* pContext, const cvkJsonV
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11624,7 +11624,7 @@ void cvkParseJsonBindPipelineIndirectCommandNV(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pipelineAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -11635,7 +11635,7 @@ void cvkParseJsonBindShaderGroupIndirectCommandNV(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "groupIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -11648,7 +11648,7 @@ void cvkParseJsonBindSparseInfo(const cvkJsonContext* pContext, const cvkJsonVal
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11750,7 +11750,7 @@ void cvkParseJsonBindTensorMemoryInfoARM(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_TENSOR_MEMORY_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11777,7 +11777,7 @@ void cvkParseJsonBindTransformFeedbackBuffer2Info(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_TRANSFORM_FEEDBACK_BUFFER_2_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11799,7 +11799,7 @@ void cvkParseJsonBindVertexBuffer3Info(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_VERTEX_BUFFER_3_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11826,7 +11826,7 @@ void cvkParseJsonBindVertexBufferIndirectCommand(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -11847,7 +11847,7 @@ void cvkParseJsonBindVertexBufferIndirectCommandNV(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -11868,7 +11868,7 @@ void cvkParseJsonBindVideoSessionMemoryInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BIND_VIDEO_SESSION_MEMORY_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11900,7 +11900,7 @@ void cvkParseJsonBlitImageCubicWeightsInfoQCOM(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_CUBIC_WEIGHTS_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11919,7 +11919,7 @@ void cvkParseJsonBlitImageInfo2(const cvkJsonContext* pContext, const cvkJsonVal
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11974,7 +11974,7 @@ void cvkParseJsonBufferCaptureDescriptorDataInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -11991,7 +11991,7 @@ void cvkParseJsonBufferCopy(const cvkJsonContext* pContext, const cvkJsonValue* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -12012,7 +12012,7 @@ void cvkParseJsonBufferCopy2(const cvkJsonContext* pContext, const cvkJsonValue*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_COPY_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12041,7 +12041,7 @@ void cvkParseJsonBufferCreateInfo(const cvkJsonContext* pContext, const cvkJsonV
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12091,7 +12091,7 @@ void cvkParseJsonBufferDeviceAddressAlignmentAllocateInfoVALVE(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_ALIGNMENT_ALLOCATE_INFO_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12108,7 +12108,7 @@ void cvkParseJsonBufferDeviceAddressCreateInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12125,7 +12125,7 @@ void cvkParseJsonBufferDeviceAddressInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12142,7 +12142,7 @@ void cvkParseJsonBufferImageCopy(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -12178,7 +12178,7 @@ void cvkParseJsonBufferImageCopy2(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12220,7 +12220,7 @@ void cvkParseJsonBufferMemoryBarrier(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12267,7 +12267,7 @@ void cvkParseJsonBufferMemoryBarrier2(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12324,7 +12324,7 @@ void cvkParseJsonBufferMemoryRequirementsInfo2(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12341,7 +12341,7 @@ void cvkParseJsonBufferOpaqueCaptureAddressCreateInfo(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12358,7 +12358,7 @@ void cvkParseJsonBufferUsageFlags2CreateInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12375,7 +12375,7 @@ void cvkParseJsonBufferViewCreateInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12412,7 +12412,7 @@ void cvkParseJsonBuildPartitionedAccelerationStructureIndirectCommandNV(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "opType");
     if (!cvkIsJsonNull(value))
     {
@@ -12433,7 +12433,7 @@ void cvkParseJsonBuildPartitionedAccelerationStructureInfoNV(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_BUILD_PARTITIONED_ACCELERATION_STRUCTURE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12475,7 +12475,7 @@ void cvkParseJsonCalibratedTimestampInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12492,7 +12492,7 @@ void cvkParseJsonCheckpointData2NV(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12509,7 +12509,7 @@ void cvkParseJsonCheckpointDataNV(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CHECKPOINT_DATA_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12526,7 +12526,7 @@ void cvkParseJsonClearAttachment(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "aspectMask");
     if (!cvkIsJsonNull(value))
     {
@@ -12548,7 +12548,7 @@ void cvkParseJsonClearColorValue(const cvkJsonContext* pContext, const cvkJsonVa
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "float32");
     if (!cvkIsJsonNull(value))
     {
@@ -12590,7 +12590,7 @@ void cvkParseJsonClearDepthStencilValue(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "depth");
     if (!cvkIsJsonNull(value))
     {
@@ -12606,7 +12606,7 @@ void cvkParseJsonClearRect(const cvkJsonContext* pContext, const cvkJsonValue* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "rect");
     if (!cvkIsJsonNull(value))
     {
@@ -12627,7 +12627,7 @@ void cvkParseJsonClearValue(const cvkJsonContext* pContext, const cvkJsonValue* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "color");
     if (!cvkIsJsonNull(value))
     {
@@ -12647,7 +12647,7 @@ void cvkParseJsonClusterAccelerationStructureBuildClustersBottomLevelInfoNV(cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "clusterReferencesCount");
     if (!cvkIsJsonNull(value))
     {
@@ -12668,7 +12668,7 @@ void cvkParseJsonClusterAccelerationStructureBuildTriangleClusterInfoNV(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "clusterID");
     if (!cvkIsJsonNull(value))
     {
@@ -12761,7 +12761,7 @@ void cvkParseJsonClusterAccelerationStructureBuildTriangleClusterTemplateInfoNV(
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "clusterID");
     if (!cvkIsJsonNull(value))
     {
@@ -12857,7 +12857,7 @@ void cvkParseJsonClusterAccelerationStructureClustersBottomLevelInputNV(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_CLUSTERS_BOTTOM_LEVEL_INPUT_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12879,7 +12879,7 @@ void cvkParseJsonClusterAccelerationStructureCommandsInfoNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_COMMANDS_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -12933,7 +12933,7 @@ void cvkParseJsonClusterAccelerationStructureGeometryIndexAndGeometryFlagsNV(con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "geometryIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -12954,7 +12954,7 @@ void cvkParseJsonClusterAccelerationStructureGetTemplateIndicesInfoNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "clusterTemplateAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -12965,7 +12965,7 @@ void cvkParseJsonClusterAccelerationStructureInputInfoNV(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_INPUT_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13002,7 +13002,7 @@ void cvkParseJsonClusterAccelerationStructureInstantiateClusterInfoNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "clusterIdOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -13033,7 +13033,7 @@ void cvkParseJsonClusterAccelerationStructureMoveObjectsInfoNV(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcAccelerationStructure");
     if (!cvkIsJsonNull(value))
     {
@@ -13044,7 +13044,7 @@ void cvkParseJsonClusterAccelerationStructureMoveObjectsInputNV(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_MOVE_OBJECTS_INPUT_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13072,7 +13072,7 @@ void cvkParseJsonClusterAccelerationStructureOpInputNV(const cvkJsonContext* pCo
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pClustersBottomLevel");
     if (!cvkIsJsonNull(value))
     {
@@ -13102,7 +13102,7 @@ void cvkParseJsonClusterAccelerationStructureTriangleClusterInputNV(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_TRIANGLE_CLUSTER_INPUT_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13154,7 +13154,7 @@ void cvkParseJsonCoarseSampleLocationNV(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pixelX");
     if (!cvkIsJsonNull(value))
     {
@@ -13177,7 +13177,7 @@ void cvkParseJsonCoarseSampleOrderCustomNV(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "shadingRate");
     if (!cvkIsJsonNull(value))
     {
@@ -13211,7 +13211,7 @@ void cvkParseJsonColorBlendAdvanced(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "advancedBlendOp");
     if (!cvkIsJsonNull(value))
     {
@@ -13242,7 +13242,7 @@ void cvkParseJsonColorBlendEquation(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcColorBlendFactor");
     if (!cvkIsJsonNull(value))
     {
@@ -13278,7 +13278,7 @@ void cvkParseJsonCommandBufferAllocateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13306,7 +13306,7 @@ void cvkParseJsonCommandBufferBeginInfo(const cvkJsonContext* pContext, const cv
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13330,7 +13330,7 @@ void cvkParseJsonCommandBufferInheritanceConditionalRenderingInfo(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_CONDITIONAL_RENDERING_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13348,7 +13348,7 @@ void cvkParseJsonCommandBufferInheritanceDescriptorHeapInfo(const cvkJsonContext
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_DESCRIPTOR_HEAP_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13374,7 +13374,7 @@ void cvkParseJsonCommandBufferInheritanceInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13416,7 +13416,7 @@ void cvkParseJsonCommandBufferInheritanceRenderPassTransformInfoQCOM(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDER_PASS_TRANSFORM_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13440,7 +13440,7 @@ void cvkParseJsonCommandBufferInheritanceRenderingInfo(const cvkJsonContext* pCo
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDERING_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13496,7 +13496,7 @@ void cvkParseJsonCommandBufferInheritanceViewportScissorInfoNV(const cvkJsonCont
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_VIEWPORT_SCISSOR_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13525,7 +13525,7 @@ void cvkParseJsonCommandBufferSubmitInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13547,7 +13547,7 @@ void cvkParseJsonCommandPoolCreateInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13569,7 +13569,7 @@ void cvkParseJsonComponentMapping(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "r");
     if (!cvkIsJsonNull(value))
     {
@@ -13595,7 +13595,7 @@ void cvkParseJsonComputeOccupancyPriorityParametersNV(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMPUTE_OCCUPANCY_PRIORITY_PARAMETERS_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13617,7 +13617,7 @@ void cvkParseJsonComputePipelineCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13654,7 +13654,7 @@ void cvkParseJsonComputePipelineIndirectBufferInfoNV(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_INDIRECT_BUFFER_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13681,7 +13681,7 @@ void cvkParseJsonConditionalRenderingBeginInfo2(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13708,7 +13708,7 @@ void cvkParseJsonConditionalRenderingBeginInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13735,7 +13735,7 @@ void cvkParseJsonConformanceVersion(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "major");
     if (!cvkIsJsonNull(value))
     {
@@ -13763,7 +13763,7 @@ void cvkParseJsonConvertCooperativeVectorMatrixInfoNV(const cvkJsonContext* pCon
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CONVERT_COOPERATIVE_VECTOR_MATRIX_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13843,7 +13843,7 @@ void cvkParseJsonCooperativeMatrixFlexibleDimensionsPropertiesNV(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13905,7 +13905,7 @@ void cvkParseJsonCooperativeMatrixProperties2(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -13952,7 +13952,7 @@ void cvkParseJsonCooperativeMatrixProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14009,7 +14009,7 @@ void cvkParseJsonCooperativeMatrixPropertiesNV(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14061,7 +14061,7 @@ void cvkParseJsonCooperativeVectorPropertiesNV(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COOPERATIVE_VECTOR_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14103,7 +14103,7 @@ void cvkParseJsonCopyAccelerationStructureInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14130,7 +14130,7 @@ void cvkParseJsonCopyAccelerationStructureToMemoryInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_ACCELERATION_STRUCTURE_TO_MEMORY_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14159,7 +14159,7 @@ void cvkParseJsonCopyBufferInfo2(const cvkJsonContext* pContext, const cvkJsonVa
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14201,7 +14201,7 @@ void cvkParseJsonCopyBufferToImageInfo2(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14246,7 +14246,7 @@ void cvkParseJsonCopyCommandTransformInfoQCOM(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_COMMAND_TRANSFORM_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14263,7 +14263,7 @@ void cvkParseJsonCopyDescriptorSet(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14312,7 +14312,7 @@ void cvkParseJsonCopyDeviceMemoryImageInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_IMAGE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14349,7 +14349,7 @@ void cvkParseJsonCopyDeviceMemoryInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_DEVICE_MEMORY_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14381,7 +14381,7 @@ void cvkParseJsonCopyImageInfo2(const cvkJsonContext* pContext, const cvkJsonVal
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14433,7 +14433,7 @@ void cvkParseJsonCopyImageToBufferInfo2(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14480,7 +14480,7 @@ void cvkParseJsonCopyImageToImageInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14537,7 +14537,7 @@ void cvkParseJsonCopyImageToMemoryInfo(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14582,7 +14582,7 @@ void cvkParseJsonCopyMemoryIndirectCommand(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -14603,7 +14603,7 @@ void cvkParseJsonCopyMemoryIndirectInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MEMORY_INDIRECT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14635,7 +14635,7 @@ void cvkParseJsonCopyMemoryToAccelerationStructureInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14662,7 +14662,7 @@ void cvkParseJsonCopyMemoryToImageIndirectCommand(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -14700,7 +14700,7 @@ void cvkParseJsonCopyMemoryToImageIndirectInfo(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INDIRECT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14752,7 +14752,7 @@ void cvkParseJsonCopyMemoryToImageInfo(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14797,7 +14797,7 @@ void cvkParseJsonCopyMemoryToMicromapInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_MICROMAP_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14824,7 +14824,7 @@ void cvkParseJsonCopyMicromapInfo(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MICROMAP_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14851,7 +14851,7 @@ void cvkParseJsonCopyMicromapToMemoryInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_MICROMAP_TO_MEMORY_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14880,7 +14880,7 @@ void cvkParseJsonCopyTensorInfoARM(const cvkJsonContext* pContext, const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_COPY_TENSOR_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14920,7 +14920,7 @@ void cvkParseJsonCuFunctionCreateInfoNVX(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CU_FUNCTION_CREATE_INFO_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -14942,7 +14942,7 @@ void cvkParseJsonCuLaunchInfoNVX(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CU_LAUNCH_INFO_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15004,7 +15004,7 @@ void cvkParseJsonCuModuleCreateInfoNVX(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CU_MODULE_CREATE_INFO_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15021,7 +15021,7 @@ void cvkParseJsonCuModuleTexturingModeCreateInfoNVX(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CU_MODULE_TEXTURING_MODE_CREATE_INFO_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15040,7 +15040,7 @@ void cvkParseJsonCustomResolveCreateInfo(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_CUSTOM_RESOLVE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15085,7 +15085,7 @@ void cvkParseJsonDataGraphOpticalFlowImageFormatInfoARM(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15102,7 +15102,7 @@ void cvkParseJsonDataGraphOpticalFlowImageFormatPropertiesARM(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15120,7 +15120,7 @@ void cvkParseJsonDataGraphPipelineBuiltinModelCreateInfoQCOM(const cvkJsonContex
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_BUILTIN_MODEL_CREATE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15139,7 +15139,7 @@ void cvkParseJsonDataGraphPipelineCompilerControlCreateInfoARM(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_COMPILER_CONTROL_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15156,7 +15156,7 @@ void cvkParseJsonDataGraphPipelineConstantARM(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15175,7 +15175,7 @@ void cvkParseJsonDataGraphPipelineConstantTensorSemiStructuredSparsityInfoARM(co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CONSTANT_TENSOR_SEMI_STRUCTURED_SPARSITY_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15204,7 +15204,7 @@ void cvkParseJsonDataGraphPipelineCreateInfoARM(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15244,7 +15244,7 @@ void cvkParseJsonDataGraphPipelineDispatchInfoARM(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_DISPATCH_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15263,7 +15263,7 @@ void cvkParseJsonDataGraphPipelineIdentifierCreateInfoARM(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_IDENTIFIER_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15293,7 +15293,7 @@ void cvkParseJsonDataGraphPipelineInfoARM(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15310,7 +15310,7 @@ void cvkParseJsonDataGraphPipelineNeuralStatisticsCreateInfoARM(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_NEURAL_STATISTICS_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15327,7 +15327,7 @@ void cvkParseJsonDataGraphPipelineOpticalFlowCreateInfoARM(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15384,7 +15384,7 @@ void cvkParseJsonDataGraphPipelineOpticalFlowDispatchInfoARM(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_OPTICAL_FLOW_DISPATCH_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15406,7 +15406,7 @@ void cvkParseJsonDataGraphPipelinePropertyQueryResultARM(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_PROPERTY_QUERY_RESULT_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15433,7 +15433,7 @@ void cvkParseJsonDataGraphPipelineResourceInfoARM(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15460,7 +15460,7 @@ void cvkParseJsonDataGraphPipelineResourceInfoImageLayoutARM(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_RESOURCE_INFO_IMAGE_LAYOUT_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15477,7 +15477,7 @@ void cvkParseJsonDataGraphPipelineSessionBindPointRequirementARM(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENT_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15504,7 +15504,7 @@ void cvkParseJsonDataGraphPipelineSessionBindPointRequirementsInfoARM(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENTS_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15521,7 +15521,7 @@ void cvkParseJsonDataGraphPipelineSessionCreateInfoARM(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15543,7 +15543,7 @@ void cvkParseJsonDataGraphPipelineSessionMemoryRequirementsInfoARM(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_MEMORY_REQUIREMENTS_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15570,7 +15570,7 @@ void cvkParseJsonDataGraphPipelineSessionNeuralStatisticsCreateInfoARM(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_NEURAL_STATISTICS_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15589,7 +15589,7 @@ void cvkParseJsonDataGraphPipelineShaderModuleCreateInfoARM(const cvkJsonContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SHADER_MODULE_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15636,7 +15636,7 @@ void cvkParseJsonDataGraphPipelineSingleNodeConnectionARM(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CONNECTION_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15665,7 +15665,7 @@ void cvkParseJsonDataGraphPipelineSingleNodeCreateInfoARM(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SINGLE_NODE_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15702,7 +15702,7 @@ void cvkParseJsonDataGraphProcessingEngineCreateInfoARM(const cvkJsonContext* pC
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PROCESSING_ENGINE_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15734,13 +15734,13 @@ void cvkParseJsonDataGraphTOSANameQualityARM(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "name");
     if (!cvkIsJsonNull(value))
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "qualityFlags");
@@ -15754,7 +15754,7 @@ void cvkParseJsonDebugMarkerMarkerInfo(const cvkJsonContext* pContext, const cvk
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15782,7 +15782,7 @@ void cvkParseJsonDebugMarkerObjectNameInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15809,7 +15809,7 @@ void cvkParseJsonDebugMarkerObjectTagInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15841,7 +15841,7 @@ void cvkParseJsonDebugReportCallbackCreateInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15859,7 +15859,7 @@ void cvkParseJsonDebugUtilsLabel(const cvkJsonContext* pContext, const cvkJsonVa
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15889,7 +15889,7 @@ void cvkParseJsonDebugUtilsMessengerCallbackData(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -15975,7 +15975,7 @@ void cvkParseJsonDebugUtilsMessengerCreateInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16002,7 +16002,7 @@ void cvkParseJsonDebugUtilsObjectNameInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16029,7 +16029,7 @@ void cvkParseJsonDebugUtilsObjectTagInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16063,7 +16063,7 @@ void cvkParseJsonDecompressMemoryInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DECOMPRESS_MEMORY_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16098,7 +16098,7 @@ void cvkParseJsonDecompressMemoryRegion(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -16124,7 +16124,7 @@ void cvkParseJsonDecompressMemoryRegionNV(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -16155,7 +16155,7 @@ void cvkParseJsonDedicatedAllocationBufferCreateInfoNV(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16172,7 +16172,7 @@ void cvkParseJsonDedicatedAllocationImageCreateInfoNV(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16189,7 +16189,7 @@ void cvkParseJsonDedicatedAllocationMemoryAllocateInfoNV(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16213,7 +16213,7 @@ void cvkParseJsonDependencyInfo(const cvkJsonContext* pContext, const cvkJsonVal
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16284,7 +16284,7 @@ void cvkParseJsonDepthBiasInfo(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEPTH_BIAS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16311,7 +16311,7 @@ void cvkParseJsonDepthBiasRepresentationInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEPTH_BIAS_REPRESENTATION_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16333,7 +16333,7 @@ void cvkParseJsonDepthClampRange(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "minDepthClamp");
     if (!cvkIsJsonNull(value))
     {
@@ -16349,7 +16349,7 @@ void cvkParseJsonDescriptorAddressInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16376,7 +16376,7 @@ void cvkParseJsonDescriptorBufferBindingInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16398,7 +16398,7 @@ void cvkParseJsonDescriptorBufferBindingPushDescriptorBufferHandle(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16415,7 +16415,7 @@ void cvkParseJsonDescriptorBufferInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "buffer");
     if (!cvkIsJsonNull(value))
     {
@@ -16438,7 +16438,7 @@ void cvkParseJsonDescriptorData(const cvkJsonContext* pContext, const cvkJsonVal
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pSampler");
     if (!cvkIsJsonNull(value))
     {
@@ -16528,7 +16528,7 @@ void cvkParseJsonDescriptorGetInfo(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16550,7 +16550,7 @@ void cvkParseJsonDescriptorGetTensorInfoARM(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_GET_TENSOR_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -16567,7 +16567,7 @@ void cvkParseJsonDescriptorImageInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "sampler");
     if (!cvkIsJsonNull(value))
     {
@@ -16589,7 +16589,7 @@ void cvkParseJsonDescriptorMappingSourceConstantOffset(const cvkJsonContext* pCo
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "heapOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16622,7 +16622,7 @@ void cvkParseJsonDescriptorMappingSourceData(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "constantOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16694,7 +16694,7 @@ void cvkParseJsonDescriptorMappingSourceHeapData(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "heapOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16710,7 +16710,7 @@ void cvkParseJsonDescriptorMappingSourceIndirectAddress(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pushOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16727,7 +16727,7 @@ void cvkParseJsonDescriptorMappingSourceIndirectIndexArray(const cvkJsonContext*
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "heapOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16786,7 +16786,7 @@ void cvkParseJsonDescriptorMappingSourceIndirectIndex(const cvkJsonContext* pCon
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "heapOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16855,7 +16855,7 @@ void cvkParseJsonDescriptorMappingSourcePushIndex(const cvkJsonContext* pContext
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "heapOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16914,7 +16914,7 @@ void cvkParseJsonDescriptorMappingSourceShaderRecordIndex(const cvkJsonContext* 
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "heapOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -16974,7 +16974,7 @@ void cvkParseJsonDescriptorPoolCreateInfo(const cvkJsonContext* pContext, const 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17014,7 +17014,7 @@ void cvkParseJsonDescriptorPoolInlineUniformBlockCreateInfo(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_INLINE_UNIFORM_BLOCK_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17031,7 +17031,7 @@ void cvkParseJsonDescriptorPoolSize(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "type");
     if (!cvkIsJsonNull(value))
     {
@@ -17049,7 +17049,7 @@ void cvkParseJsonDescriptorSetAllocateInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17085,7 +17085,7 @@ void cvkParseJsonDescriptorSetAndBindingMapping(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_AND_BINDING_MAPPING_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17127,7 +17127,7 @@ void cvkParseJsonDescriptorSetBindingReferenceVALVE(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_BINDING_REFERENCE_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17151,7 +17151,7 @@ void cvkParseJsonDescriptorSetLayoutBinding(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "binding");
     if (!cvkIsJsonNull(value))
     {
@@ -17192,7 +17192,7 @@ void cvkParseJsonDescriptorSetLayoutBindingFlagsCreateInfo(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17224,7 +17224,7 @@ void cvkParseJsonDescriptorSetLayoutCreateInfo(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17259,7 +17259,7 @@ void cvkParseJsonDescriptorSetLayoutHostMappingInfoVALVE(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17281,7 +17281,7 @@ void cvkParseJsonDescriptorSetLayoutSupport(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17300,7 +17300,7 @@ void cvkParseJsonDescriptorSetVariableDescriptorCountAllocateInfo(const cvkJsonC
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17330,7 +17330,7 @@ void cvkParseJsonDescriptorSetVariableDescriptorCountLayoutSupport(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17349,7 +17349,7 @@ void cvkParseJsonDescriptorUpdateTemplateCreateInfo(const cvkJsonContext* pConte
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17409,7 +17409,7 @@ void cvkParseJsonDescriptorUpdateTemplateEntry(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "dstBinding");
     if (!cvkIsJsonNull(value))
     {
@@ -17445,7 +17445,7 @@ void cvkParseJsonDeviceAddressBindingCallbackData(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_ADDRESS_BINDING_CALLBACK_DATA_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17477,7 +17477,7 @@ void cvkParseJsonDeviceAddressRange(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "address");
     if (!cvkIsJsonNull(value))
     {
@@ -17494,7 +17494,7 @@ void cvkParseJsonDeviceBufferMemoryRequirements(const cvkJsonContext* pContext, 
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17515,7 +17515,7 @@ void cvkParseJsonDeviceCreateInfo(const cvkJsonContext* pContext, const cvkJsonV
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17593,7 +17593,7 @@ void cvkParseJsonDeviceDeviceMemoryReportCreateInfo(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17610,7 +17610,7 @@ void cvkParseJsonDeviceDiagnosticsConfigCreateInfoNV(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17627,7 +17627,7 @@ void cvkParseJsonDeviceEventInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17644,7 +17644,7 @@ void cvkParseJsonDeviceFaultAddressInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "addressType");
     if (!cvkIsJsonNull(value))
     {
@@ -17665,7 +17665,7 @@ void cvkParseJsonDeviceFaultCounts(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17692,7 +17692,7 @@ void cvkParseJsonDeviceFaultDebugInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_DEBUG_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17710,7 +17710,7 @@ void cvkParseJsonDeviceFaultInfoEXT(const cvkJsonContext* pContext, const cvkJso
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17722,7 +17722,7 @@ void cvkParseJsonDeviceFaultInfoEXT(const cvkJsonContext* pContext, const cvkJso
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "pAddressInfos");
@@ -17744,7 +17744,7 @@ void cvkParseJsonDeviceFaultInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17766,7 +17766,7 @@ void cvkParseJsonDeviceFaultInfo(const cvkJsonContext* pContext, const cvkJsonVa
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "faultAddressInfo");
@@ -17789,7 +17789,7 @@ void cvkParseJsonDeviceFaultShaderAbortMessageInfo(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_SHADER_ABORT_MESSAGE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17807,7 +17807,7 @@ void cvkParseJsonDeviceFaultVendorBinaryHeaderVersionOne(const cvkJsonContext* p
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "headerSize");
     if (!cvkIsJsonNull(value))
     {
@@ -17874,13 +17874,13 @@ void cvkParseJsonDeviceFaultVendorInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "description");
     if (!cvkIsJsonNull(value))
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "vendorFaultCode");
@@ -17898,7 +17898,7 @@ void cvkParseJsonDeviceGroupBindSparseInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17920,7 +17920,7 @@ void cvkParseJsonDeviceGroupCommandBufferBeginInfo(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17939,7 +17939,7 @@ void cvkParseJsonDeviceGroupDeviceCreateInfo(const cvkJsonContext* pContext, con
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -17970,7 +17970,7 @@ void cvkParseJsonDeviceGroupPresentCapabilities(const cvkJsonContext* pContext, 
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18000,7 +18000,7 @@ void cvkParseJsonDeviceGroupPresentInfo(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18037,7 +18037,7 @@ void cvkParseJsonDeviceGroupRenderPassBeginInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18074,7 +18074,7 @@ void cvkParseJsonDeviceGroupSubmitInfo(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18140,7 +18140,7 @@ void cvkParseJsonDeviceGroupSwapchainCreateInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18158,7 +18158,7 @@ void cvkParseJsonDeviceImageMemoryRequirements(const cvkJsonContext* pContext, c
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18183,7 +18183,7 @@ void cvkParseJsonDeviceImageSubresourceInfo(const cvkJsonContext* pContext, cons
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18209,7 +18209,7 @@ void cvkParseJsonDeviceMemoryCopy(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_COPY_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18241,7 +18241,7 @@ void cvkParseJsonDeviceMemoryImageCopy(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_IMAGE_COPY_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18293,7 +18293,7 @@ void cvkParseJsonDeviceMemoryOpaqueCaptureAddressInfo(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18310,7 +18310,7 @@ void cvkParseJsonDeviceMemoryOverallocationCreateInfoAMD(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18327,7 +18327,7 @@ void cvkParseJsonDeviceMemoryReportCallbackData(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18374,7 +18374,7 @@ void cvkParseJsonDeviceOrHostAddressConst(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "deviceAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -18386,7 +18386,7 @@ void cvkParseJsonDeviceOrHostAddress(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "deviceAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -18398,7 +18398,7 @@ void cvkParseJsonDevicePipelineBinaryInternalCacheControl(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_PIPELINE_BINARY_INTERNAL_CACHE_CONTROL_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18415,7 +18415,7 @@ void cvkParseJsonDevicePrivateDataCreateInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_PRIVATE_DATA_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18434,7 +18434,7 @@ void cvkParseJsonDeviceQueueCreateInfo(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18474,7 +18474,7 @@ void cvkParseJsonDeviceQueueGlobalPriorityCreateInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18491,7 +18491,7 @@ void cvkParseJsonDeviceQueueInfo2(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18518,7 +18518,7 @@ void cvkParseJsonDeviceQueueShaderCoreControlCreateInfoARM(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_SHADER_CORE_CONTROL_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18536,7 +18536,7 @@ void cvkParseJsonDeviceTensorMemoryRequirementsARM(const cvkJsonContext* pContex
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DEVICE_TENSOR_MEMORY_REQUIREMENTS_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18555,7 +18555,7 @@ void cvkParseJsonDirectDriverLoadingInfoLUNARG(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DIRECT_DRIVER_LOADING_INFO_LUNARG;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18574,7 +18574,7 @@ void cvkParseJsonDirectDriverLoadingListLUNARG(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DIRECT_DRIVER_LOADING_LIST_LUNARG;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18609,7 +18609,7 @@ void cvkParseJsonDispatchIndirect2Info(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPATCH_INDIRECT_2_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18631,7 +18631,7 @@ void cvkParseJsonDispatchIndirectCommand(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -18652,7 +18652,7 @@ void cvkParseJsonDispatchParametersARM(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPATCH_PARAMETERS_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18679,7 +18679,7 @@ void cvkParseJsonDispatchTileInfoQCOM(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPATCH_TILE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18691,7 +18691,7 @@ void cvkParseJsonDisplayEventInfo(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18708,7 +18708,7 @@ void cvkParseJsonDisplayModeCreateInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18730,7 +18730,7 @@ void cvkParseJsonDisplayModeParameters(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "visibleRegion");
     if (!cvkIsJsonNull(value))
     {
@@ -18746,7 +18746,7 @@ void cvkParseJsonDisplayModeProperties2(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18763,7 +18763,7 @@ void cvkParseJsonDisplayModeProperties(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "displayMode");
     if (!cvkIsJsonNull(value))
     {
@@ -18779,7 +18779,7 @@ void cvkParseJsonDisplayModeStereoPropertiesNV(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_STEREO_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18796,7 +18796,7 @@ void cvkParseJsonDisplayNativeHdrSurfaceCapabilitiesAMD(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_NATIVE_HDR_SURFACE_CAPABILITIES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18813,7 +18813,7 @@ void cvkParseJsonDisplayPlaneCapabilities2(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_CAPABILITIES_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18830,7 +18830,7 @@ void cvkParseJsonDisplayPlaneCapabilities(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "supportedAlpha");
     if (!cvkIsJsonNull(value))
     {
@@ -18881,7 +18881,7 @@ void cvkParseJsonDisplayPlaneInfo2(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18903,7 +18903,7 @@ void cvkParseJsonDisplayPlaneProperties2(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18920,7 +18920,7 @@ void cvkParseJsonDisplayPlaneProperties(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "currentDisplay");
     if (!cvkIsJsonNull(value))
     {
@@ -18936,7 +18936,7 @@ void cvkParseJsonDisplayPowerInfo(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18953,7 +18953,7 @@ void cvkParseJsonDisplayPresentInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18980,7 +18980,7 @@ void cvkParseJsonDisplayProperties2(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_PROPERTIES_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -18997,7 +18997,7 @@ void cvkParseJsonDisplayProperties(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "display");
     if (!cvkIsJsonNull(value))
     {
@@ -19038,7 +19038,7 @@ void cvkParseJsonDisplaySurfaceCreateInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19090,7 +19090,7 @@ void cvkParseJsonDisplaySurfaceStereoCreateInfoNV(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19107,7 +19107,7 @@ void cvkParseJsonDrawIndexedIndirectCommand(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "indexCount");
     if (!cvkIsJsonNull(value))
     {
@@ -19138,7 +19138,7 @@ void cvkParseJsonDrawIndirect2Info(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DRAW_INDIRECT_2_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19165,7 +19165,7 @@ void cvkParseJsonDrawIndirectCommand(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "vertexCount");
     if (!cvkIsJsonNull(value))
     {
@@ -19191,7 +19191,7 @@ void cvkParseJsonDrawIndirectCount2Info(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DRAW_INDIRECT_COUNT_2_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19228,7 +19228,7 @@ void cvkParseJsonDrawIndirectCountIndirectCommand(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "bufferAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -19249,7 +19249,7 @@ void cvkParseJsonDrawMeshTasksIndirectCommand(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "groupCountX");
     if (!cvkIsJsonNull(value))
     {
@@ -19270,7 +19270,7 @@ void cvkParseJsonDrawMeshTasksIndirectCommandNV(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "taskCount");
     if (!cvkIsJsonNull(value))
     {
@@ -19286,7 +19286,7 @@ void cvkParseJsonDrmFormatModifierProperties2(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "drmFormatModifier");
     if (!cvkIsJsonNull(value))
     {
@@ -19307,7 +19307,7 @@ void cvkParseJsonDrmFormatModifierProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "drmFormatModifier");
     if (!cvkIsJsonNull(value))
     {
@@ -19330,7 +19330,7 @@ void cvkParseJsonDrmFormatModifierPropertiesList2(const cvkJsonContext* pContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19362,7 +19362,7 @@ void cvkParseJsonDrmFormatModifierPropertiesList(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19392,7 +19392,7 @@ void cvkParseJsonEventCreateInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19409,7 +19409,7 @@ void cvkParseJsonExportFenceCreateInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19426,7 +19426,7 @@ void cvkParseJsonExportMemoryAllocateInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19443,7 +19443,7 @@ void cvkParseJsonExportMemoryAllocateInfoNV(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19460,7 +19460,7 @@ void cvkParseJsonExportSemaphoreCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19477,13 +19477,13 @@ void cvkParseJsonExtensionProperties(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "extensionName");
     if (!cvkIsJsonNull(value))
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->extensionName, value->pText, (value->textLength < sizeof(pInfo->extensionName)) ? value->textLength : sizeof(pInfo->extensionName) - 1);
+            (void)memcpy(pInfo->extensionName, value->pText, (value->textLength < sizeof(pInfo->extensionName)) ? value->textLength : sizeof(pInfo->extensionName) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "specVersion");
@@ -19496,7 +19496,7 @@ void cvkParseJsonExtent2D(const cvkJsonContext* pContext, const cvkJsonValue* pO
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "width");
     if (!cvkIsJsonNull(value))
     {
@@ -19512,7 +19512,7 @@ void cvkParseJsonExtent3D(const cvkJsonContext* pContext, const cvkJsonValue* pO
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "width");
     if (!cvkIsJsonNull(value))
     {
@@ -19533,7 +19533,7 @@ void cvkParseJsonExternalBufferProperties(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19550,7 +19550,7 @@ void cvkParseJsonExternalComputeQueueCreateInfoNV(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19567,7 +19567,7 @@ void cvkParseJsonExternalComputeQueueDataParamsNV(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DATA_PARAMS_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19584,7 +19584,7 @@ void cvkParseJsonExternalComputeQueueDeviceCreateInfoNV(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_COMPUTE_QUEUE_DEVICE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19601,7 +19601,7 @@ void cvkParseJsonExternalFenceProperties(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19628,7 +19628,7 @@ void cvkParseJsonExternalImageFormatProperties(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19645,7 +19645,7 @@ void cvkParseJsonExternalImageFormatPropertiesNV(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "imageFormatProperties");
     if (!cvkIsJsonNull(value))
     {
@@ -19671,7 +19671,7 @@ void cvkParseJsonExternalMemoryAcquireUnmodified(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_ACQUIRE_UNMODIFIED_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19688,7 +19688,7 @@ void cvkParseJsonExternalMemoryBufferCreateInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19705,7 +19705,7 @@ void cvkParseJsonExternalMemoryImageCreateInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19722,7 +19722,7 @@ void cvkParseJsonExternalMemoryImageCreateInfoNV(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19739,7 +19739,7 @@ void cvkParseJsonExternalMemoryProperties(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "externalMemoryFeatures");
     if (!cvkIsJsonNull(value))
     {
@@ -19760,7 +19760,7 @@ void cvkParseJsonExternalMemoryTensorCreateInfoARM(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_TENSOR_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19777,7 +19777,7 @@ void cvkParseJsonExternalSemaphoreProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19804,7 +19804,7 @@ void cvkParseJsonExternalTensorPropertiesARM(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXTERNAL_TENSOR_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19821,7 +19821,7 @@ void cvkParseJsonFenceCreateInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19838,7 +19838,7 @@ void cvkParseJsonFenceGetFdInfo(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19860,7 +19860,7 @@ void cvkParseJsonFilterCubicImageViewImageFormatProperties(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19882,7 +19882,7 @@ void cvkParseJsonFormatProperties(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "linearTilingFeatures");
     if (!cvkIsJsonNull(value))
     {
@@ -19903,7 +19903,7 @@ void cvkParseJsonFormatProperties2(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19920,7 +19920,7 @@ void cvkParseJsonFormatProperties3(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19947,7 +19947,7 @@ void cvkParseJsonFormatProperties4(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_4_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -19975,7 +19975,7 @@ void cvkParseJsonFragmentShadingRateAttachmentInfo(const cvkJsonContext* pContex
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20001,7 +20001,7 @@ void cvkParseJsonFrameBoundary(const cvkJsonContext* pContext, const cvkJsonValu
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20071,7 +20071,7 @@ void cvkParseJsonFrameBoundaryTensorsARM(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAME_BOUNDARY_TENSORS_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20103,7 +20103,7 @@ void cvkParseJsonFramebufferAttachmentImageInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20160,7 +20160,7 @@ void cvkParseJsonFramebufferAttachmentsCreateInfo(const cvkJsonContext* pContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20192,7 +20192,7 @@ void cvkParseJsonFramebufferCreateInfo(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20247,7 +20247,7 @@ void cvkParseJsonFramebufferMixedSamplesCombinationNV(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_MIXED_SAMPLES_COMBINATION_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20279,7 +20279,7 @@ void cvkParseJsonGeneratedCommandsInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20343,7 +20343,7 @@ void cvkParseJsonGeneratedCommandsInfoNV(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20428,7 +20428,7 @@ void cvkParseJsonGeneratedCommandsMemoryRequirementsInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20460,7 +20460,7 @@ void cvkParseJsonGeneratedCommandsMemoryRequirementsInfoNV(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20492,7 +20492,7 @@ void cvkParseJsonGeneratedCommandsPipelineInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20511,7 +20511,7 @@ void cvkParseJsonGeneratedCommandsShaderInfo(const cvkJsonContext* pContext, con
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20541,7 +20541,7 @@ void cvkParseJsonGeometryAABBNV(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20573,7 +20573,7 @@ void cvkParseJsonGeometryDataNV(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "triangles");
     if (!cvkIsJsonNull(value))
     {
@@ -20589,7 +20589,7 @@ void cvkParseJsonGeometryNV(const cvkJsonContext* pContext, const cvkJsonValue* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GEOMETRY_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20616,7 +20616,7 @@ void cvkParseJsonGeometryTrianglesNV(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GEOMETRY_TRIANGLES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20685,7 +20685,7 @@ void cvkParseJsonGetLatencyMarkerInfoNV(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20715,7 +20715,7 @@ void cvkParseJsonGpaDeviceClockModeInfoAMD(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GPA_DEVICE_CLOCK_MODE_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20742,7 +20742,7 @@ void cvkParseJsonGpaDeviceGetClockInfoAMD(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GPA_DEVICE_GET_CLOCK_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20774,7 +20774,7 @@ void cvkParseJsonGpaPerfBlockPropertiesAMD(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "blockType");
     if (!cvkIsJsonNull(value))
     {
@@ -20815,7 +20815,7 @@ void cvkParseJsonGpaPerfCounterAMD(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "blockType");
     if (!cvkIsJsonNull(value))
     {
@@ -20838,7 +20838,7 @@ void cvkParseJsonGpaSampleBeginInfoAMD(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GPA_SAMPLE_BEGIN_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20928,7 +20928,7 @@ void cvkParseJsonGpaSessionCreateInfoAMD(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GPA_SESSION_CREATE_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -20947,7 +20947,7 @@ void cvkParseJsonGraphicsPipelineCreateInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21070,7 +21070,7 @@ void cvkParseJsonGraphicsPipelineLibraryCreateInfo(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21089,7 +21089,7 @@ void cvkParseJsonGraphicsPipelineShaderGroupsCreateInfoNV(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21139,7 +21139,7 @@ void cvkParseJsonGraphicsShaderGroupCreateInfoNV(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_GRAPHICS_SHADER_GROUP_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21183,7 +21183,7 @@ void cvkParseJsonHdrMetadata(const cvkJsonContext* pContext, const cvkJsonValue*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_HDR_METADATA_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21235,7 +21235,7 @@ void cvkParseJsonHdrVividDynamicMetadataHUAWEI(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_HDR_VIVID_DYNAMIC_METADATA_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21252,7 +21252,7 @@ void cvkParseJsonHeadlessSurfaceCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21269,7 +21269,7 @@ void cvkParseJsonHostAddressRangeConst(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "size");
     if (!cvkIsJsonNull(value))
     {
@@ -21280,7 +21280,7 @@ void cvkParseJsonHostAddressRange(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "size");
     if (!cvkIsJsonNull(value))
     {
@@ -21291,7 +21291,7 @@ void cvkParseJsonHostImageCopyDevicePerformanceQuery(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21313,7 +21313,7 @@ void cvkParseJsonHostImageLayoutTransitionInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21345,7 +21345,7 @@ void cvkParseJsonImageAlignmentControlCreateInfoMESA(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21363,7 +21363,7 @@ void cvkParseJsonImageBlit(const cvkJsonContext* pContext, const cvkJsonValue* p
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcSubresource");
     if (!cvkIsJsonNull(value))
     {
@@ -21402,7 +21402,7 @@ void cvkParseJsonImageBlit2(const cvkJsonContext* pContext, const cvkJsonValue* 
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21446,7 +21446,7 @@ void cvkParseJsonImageCaptureDescriptorDataInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21465,7 +21465,7 @@ void cvkParseJsonImageCompressionControl(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_CONTROL_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21500,7 +21500,7 @@ void cvkParseJsonImageCompressionProperties(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_COMPRESSION_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21522,7 +21522,7 @@ void cvkParseJsonImageCopy(const cvkJsonContext* pContext, const cvkJsonValue* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcSubresource");
     if (!cvkIsJsonNull(value))
     {
@@ -21553,7 +21553,7 @@ void cvkParseJsonImageCopy2(const cvkJsonContext* pContext, const cvkJsonValue* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_COPY_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21590,7 +21590,7 @@ void cvkParseJsonImageCreateFlags2CreateInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21609,7 +21609,7 @@ void cvkParseJsonImageCreateInfo(const cvkJsonContext* pContext, const cvkJsonVa
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21695,7 +21695,7 @@ void cvkParseJsonImageDescriptorInfo(const cvkJsonContext* pContext, const cvkJs
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DESCRIPTOR_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21721,7 +21721,7 @@ void cvkParseJsonImageDrmFormatModifierExplicitCreateInfo(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21758,7 +21758,7 @@ void cvkParseJsonImageDrmFormatModifierListCreateInfo(const cvkJsonContext* pCon
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21788,7 +21788,7 @@ void cvkParseJsonImageDrmFormatModifierProperties(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21807,7 +21807,7 @@ void cvkParseJsonImageFormatListCreateInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21837,7 +21837,7 @@ void cvkParseJsonImageFormatProperties(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "maxExtent");
     if (!cvkIsJsonNull(value))
     {
@@ -21868,7 +21868,7 @@ void cvkParseJsonImageFormatProperties2(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21885,7 +21885,7 @@ void cvkParseJsonImageMemoryBarrier(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21937,7 +21937,7 @@ void cvkParseJsonImageMemoryBarrier2(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -21999,7 +21999,7 @@ void cvkParseJsonImageMemoryRequirementsInfo2(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22016,7 +22016,7 @@ void cvkParseJsonImagePlaneMemoryRequirementsInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22033,7 +22033,7 @@ void cvkParseJsonImageResolve(const cvkJsonContext* pContext, const cvkJsonValue
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcSubresource");
     if (!cvkIsJsonNull(value))
     {
@@ -22064,7 +22064,7 @@ void cvkParseJsonImageResolve2(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22101,7 +22101,7 @@ void cvkParseJsonImageSparseMemoryRequirementsInfo2(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22118,7 +22118,7 @@ void cvkParseJsonImageStencilUsage2CreateInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_2_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22135,7 +22135,7 @@ void cvkParseJsonImageStencilUsageCreateInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22152,7 +22152,7 @@ void cvkParseJsonImageSubresource(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "aspectMask");
     if (!cvkIsJsonNull(value))
     {
@@ -22173,7 +22173,7 @@ void cvkParseJsonImageSubresource2(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22190,7 +22190,7 @@ void cvkParseJsonImageSubresourceLayers(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "aspectMask");
     if (!cvkIsJsonNull(value))
     {
@@ -22216,7 +22216,7 @@ void cvkParseJsonImageSubresourceRange(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "aspectMask");
     if (!cvkIsJsonNull(value))
     {
@@ -22247,7 +22247,7 @@ void cvkParseJsonImageSwapchainCreateInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22264,7 +22264,7 @@ void cvkParseJsonImageTilingControlCreateInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_TILING_CONTROL_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22281,7 +22281,7 @@ void cvkParseJsonImageToMemoryCopy(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22318,7 +22318,7 @@ void cvkParseJsonImageUsageFlags2CreateInfoKHR(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22335,7 +22335,7 @@ void cvkParseJsonImageViewASTCDecodeMode(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22352,7 +22352,7 @@ void cvkParseJsonImageViewAddressPropertiesNVX(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ADDRESS_PROPERTIES_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22374,7 +22374,7 @@ void cvkParseJsonImageViewCaptureDescriptorDataInfo(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22391,7 +22391,7 @@ void cvkParseJsonImageViewCreateInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22433,7 +22433,7 @@ void cvkParseJsonImageViewHandleInfoNVX(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_HANDLE_INFO_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22460,7 +22460,7 @@ void cvkParseJsonImageViewMinLodCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_MIN_LOD_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22477,7 +22477,7 @@ void cvkParseJsonImageViewSampleWeightCreateInfoQCOM(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_SAMPLE_WEIGHT_CREATE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22504,7 +22504,7 @@ void cvkParseJsonImageViewSlicedCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_SLICED_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22526,7 +22526,7 @@ void cvkParseJsonImageViewUsage2CreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22543,7 +22543,7 @@ void cvkParseJsonImageViewUsageCreateInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22560,7 +22560,7 @@ void cvkParseJsonImportFenceFdInfo(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22592,7 +22592,7 @@ void cvkParseJsonImportMemoryFdInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22614,7 +22614,7 @@ void cvkParseJsonImportMemoryHostPointerInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22631,7 +22631,7 @@ void cvkParseJsonImportSemaphoreFdInfo(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22663,7 +22663,7 @@ void cvkParseJsonIndirectCommandsExecutionSetToken(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "type");
     if (!cvkIsJsonNull(value))
     {
@@ -22679,7 +22679,7 @@ void cvkParseJsonIndirectCommandsIndexBufferToken(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "mode");
     if (!cvkIsJsonNull(value))
     {
@@ -22692,7 +22692,7 @@ void cvkParseJsonIndirectCommandsLayoutCreateInfo(const cvkJsonContext* pContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22744,7 +22744,7 @@ void cvkParseJsonIndirectCommandsLayoutCreateInfoNV(const cvkJsonContext* pConte
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22802,7 +22802,7 @@ void cvkParseJsonIndirectCommandsLayoutPushDataTokenNV(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_PUSH_DATA_TOKEN_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22824,7 +22824,7 @@ void cvkParseJsonIndirectCommandsLayoutToken(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22853,7 +22853,7 @@ void cvkParseJsonIndirectCommandsLayoutTokenNV(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -22946,7 +22946,7 @@ void cvkParseJsonIndirectCommandsPushConstantToken(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "updateRange");
     if (!cvkIsJsonNull(value))
     {
@@ -22957,7 +22957,7 @@ void cvkParseJsonIndirectCommandsStreamNV(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "buffer");
     if (!cvkIsJsonNull(value))
     {
@@ -22974,7 +22974,7 @@ void cvkParseJsonIndirectCommandsTokenData(const cvkJsonContext* pContext, const
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pPushConstant");
     if (!cvkIsJsonNull(value))
     {
@@ -23012,7 +23012,7 @@ void cvkParseJsonIndirectCommandsVertexBufferToken(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "vertexBindingUnit");
     if (!cvkIsJsonNull(value))
     {
@@ -23023,7 +23023,7 @@ void cvkParseJsonIndirectExecutionSetCreateInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23046,7 +23046,7 @@ void cvkParseJsonIndirectExecutionSetInfo(const cvkJsonContext* pContext, const 
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pPipelineInfo");
     if (!cvkIsJsonNull(value))
     {
@@ -23068,7 +23068,7 @@ void cvkParseJsonIndirectExecutionSetPipelineInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23092,7 +23092,7 @@ void cvkParseJsonIndirectExecutionSetShaderInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23160,7 +23160,7 @@ void cvkParseJsonIndirectExecutionSetShaderLayoutInfo(const cvkJsonContext* pCon
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23191,7 +23191,7 @@ void cvkParseJsonInitializePerformanceApiInfoINTEL(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INITIALIZE_PERFORMANCE_API_INFO_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23203,7 +23203,7 @@ void cvkParseJsonInputAttachmentAspectReference(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "subpass");
     if (!cvkIsJsonNull(value))
     {
@@ -23226,7 +23226,7 @@ void cvkParseJsonInstanceCreateInfo(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23286,7 +23286,7 @@ void cvkParseJsonLatencySleepInfoNV(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23308,7 +23308,7 @@ void cvkParseJsonLatencySleepModeInfoNV(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23335,7 +23335,7 @@ void cvkParseJsonLatencySubmissionPresentIdNV(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23354,7 +23354,7 @@ void cvkParseJsonLatencySurfaceCapabilitiesNV(const cvkJsonContext* pContext, co
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23384,7 +23384,7 @@ void cvkParseJsonLatencyTimingsFrameReportNV(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_LATENCY_TIMINGS_FRAME_REPORT_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23466,13 +23466,13 @@ void cvkParseJsonLayerProperties(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "layerName");
     if (!cvkIsJsonNull(value))
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->layerName, value->pText, (value->textLength < sizeof(pInfo->layerName)) ? value->textLength : sizeof(pInfo->layerName) - 1);
+            (void)memcpy(pInfo->layerName, value->pText, (value->textLength < sizeof(pInfo->layerName)) ? value->textLength : sizeof(pInfo->layerName) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "specVersion");
@@ -23490,7 +23490,7 @@ void cvkParseJsonLayerProperties(const cvkJsonContext* pContext, const cvkJsonVa
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
 }
@@ -23498,7 +23498,7 @@ void cvkParseJsonLayerSetting(const cvkJsonContext* pContext, const cvkJsonValue
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pLayerName");
     if (!cvkIsJsonNull(value))
     {
@@ -23526,7 +23526,7 @@ void cvkParseJsonLayerSettingsCreateInfo(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23556,7 +23556,7 @@ void cvkParseJsonMappedMemoryRange(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23583,7 +23583,7 @@ void cvkParseJsonMemoryAllocateFlagsInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23605,7 +23605,7 @@ void cvkParseJsonMemoryAllocateInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23627,7 +23627,7 @@ void cvkParseJsonMemoryBarrier(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23649,7 +23649,7 @@ void cvkParseJsonMemoryBarrier2(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23681,7 +23681,7 @@ void cvkParseJsonMemoryBarrierAccessFlags3(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23703,7 +23703,7 @@ void cvkParseJsonMemoryDedicatedAllocateInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23725,7 +23725,7 @@ void cvkParseJsonMemoryDedicatedAllocateInfoTensorARM(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_TENSOR_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23742,7 +23742,7 @@ void cvkParseJsonMemoryDedicatedRequirements(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23764,7 +23764,7 @@ void cvkParseJsonMemoryFdProperties(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23781,7 +23781,7 @@ void cvkParseJsonMemoryGetFdInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23803,7 +23803,7 @@ void cvkParseJsonMemoryGetRemoteAddressInfoNV(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_REMOTE_ADDRESS_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23825,7 +23825,7 @@ void cvkParseJsonMemoryHeap(const cvkJsonContext* pContext, const cvkJsonValue* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "size");
     if (!cvkIsJsonNull(value))
     {
@@ -23841,7 +23841,7 @@ void cvkParseJsonMemoryHostPointerProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23858,7 +23858,7 @@ void cvkParseJsonMemoryMapInfo(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_MAP_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23890,7 +23890,7 @@ void cvkParseJsonMemoryMapPlacedInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_MAP_PLACED_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23902,7 +23902,7 @@ void cvkParseJsonMemoryMarkerInfoAMD(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_MARKER_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23934,7 +23934,7 @@ void cvkParseJsonMemoryOpaqueCaptureAddressAllocateInfo(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23951,7 +23951,7 @@ void cvkParseJsonMemoryPriorityAllocateInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_PRIORITY_ALLOCATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -23968,7 +23968,7 @@ void cvkParseJsonMemoryRangeBarrier(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIER_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24022,7 +24022,7 @@ void cvkParseJsonMemoryRangeBarriersInfo(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_RANGE_BARRIERS_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24052,7 +24052,7 @@ void cvkParseJsonMemoryRequirements(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "size");
     if (!cvkIsJsonNull(value))
     {
@@ -24073,7 +24073,7 @@ void cvkParseJsonMemoryRequirements2(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24090,7 +24090,7 @@ void cvkParseJsonMemoryToImageCopy(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24127,7 +24127,7 @@ void cvkParseJsonMemoryType(const cvkJsonContext* pContext, const cvkJsonValue* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "propertyFlags");
     if (!cvkIsJsonNull(value))
     {
@@ -24143,7 +24143,7 @@ void cvkParseJsonMemoryUnmapInfo(const cvkJsonContext* pContext, const cvkJsonVa
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24167,7 +24167,7 @@ void cvkParseJsonMicromapBuildInfo(const cvkJsonContext* pContext, const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MICROMAP_BUILD_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24251,7 +24251,7 @@ void cvkParseJsonMicromapBuildSizesInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MICROMAP_BUILD_SIZES_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24278,7 +24278,7 @@ void cvkParseJsonMicromapCreateInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MICROMAP_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24320,7 +24320,7 @@ void cvkParseJsonMicromapTriangle(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "dataOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -24341,7 +24341,7 @@ void cvkParseJsonMicromapUsageEXT(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "count");
     if (!cvkIsJsonNull(value))
     {
@@ -24362,7 +24362,7 @@ void cvkParseJsonMicromapUsage(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "count");
     if (!cvkIsJsonNull(value))
     {
@@ -24385,7 +24385,7 @@ void cvkParseJsonMicromapVersionInfo(const cvkJsonContext* pContext, const cvkJs
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MICROMAP_VERSION_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24410,7 +24410,7 @@ void cvkParseJsonMultiDrawIndexedInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "firstIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -24431,7 +24431,7 @@ void cvkParseJsonMultiDrawInfo(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "firstVertex");
     if (!cvkIsJsonNull(value))
     {
@@ -24447,7 +24447,7 @@ void cvkParseJsonMultisampleProperties(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24464,7 +24464,7 @@ void cvkParseJsonMultisampledRenderToSingleSampledInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24486,7 +24486,7 @@ void cvkParseJsonMultiviewPerViewAttributesInfoNVX(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24510,7 +24510,7 @@ void cvkParseJsonMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM(const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MULTIVIEW_PER_VIEW_RENDER_AREAS_RENDER_PASS_BEGIN_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24542,7 +24542,7 @@ void cvkParseJsonMutableDescriptorTypeCreateInfo(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MUTABLE_DESCRIPTOR_TYPE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24574,7 +24574,7 @@ void cvkParseJsonMutableDescriptorTypeList(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "descriptorTypeCount");
     if (!cvkIsJsonNull(value))
     {
@@ -24598,7 +24598,7 @@ void cvkParseJsonOffset2D(const cvkJsonContext* pContext, const cvkJsonValue* pO
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -24614,7 +24614,7 @@ void cvkParseJsonOffset3D(const cvkJsonContext* pContext, const cvkJsonValue* pO
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -24636,7 +24636,7 @@ void cvkParseJsonOpaqueCaptureDataCreateInfo(const cvkJsonContext* pContext, con
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DATA_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24655,7 +24655,7 @@ void cvkParseJsonOpaqueCaptureDescriptorDataCreateInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24669,7 +24669,7 @@ void cvkParseJsonOpticalFlowExecuteInfoNV(const cvkJsonContext* pContext, const 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_EXECUTE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24704,7 +24704,7 @@ void cvkParseJsonOpticalFlowImageFormatInfoNV(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24721,7 +24721,7 @@ void cvkParseJsonOpticalFlowImageFormatPropertiesNV(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24738,7 +24738,7 @@ void cvkParseJsonOpticalFlowSessionCreateInfoNV(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_SESSION_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24795,7 +24795,7 @@ void cvkParseJsonOpticalFlowSessionCreatePrivateDataInfoNV(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_SESSION_CREATE_PRIVATE_DATA_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24817,7 +24817,7 @@ void cvkParseJsonOutOfBandQueueTypeInfoNV(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_OUT_OF_BAND_QUEUE_TYPE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24834,7 +24834,7 @@ void cvkParseJsonPartitionedAccelerationStructureFlagsNV(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_FLAGS_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24851,7 +24851,7 @@ void cvkParseJsonPartitionedAccelerationStructureInstancesInputNV(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCES_INPUT_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -24888,7 +24888,7 @@ void cvkParseJsonPartitionedAccelerationStructureUpdateInstanceDataNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "instanceIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -24910,7 +24910,7 @@ void cvkParseJsonPartitionedAccelerationStructureWriteInstanceDataNV(const cvkJs
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "transform");
     if (!cvkIsJsonNull(value))
     {
@@ -24970,7 +24970,7 @@ void cvkParseJsonPartitionedAccelerationStructureWritePartitionTranslationDataNV
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "partitionIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -24994,7 +24994,7 @@ void cvkParseJsonPastPresentationTiming(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25049,7 +25049,7 @@ void cvkParseJsonPastPresentationTimingGOOGLE(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "presentID");
     if (!cvkIsJsonNull(value))
     {
@@ -25080,7 +25080,7 @@ void cvkParseJsonPastPresentationTimingInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25104,7 +25104,7 @@ void cvkParseJsonPastPresentationTimingProperties(const cvkJsonContext* pContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PAST_PRESENTATION_TIMING_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25144,7 +25144,7 @@ void cvkParseJsonPerTileBeginInfoQCOM(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PER_TILE_BEGIN_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25156,7 +25156,7 @@ void cvkParseJsonPerTileEndInfoQCOM(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PER_TILE_END_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25168,7 +25168,7 @@ void cvkParseJsonPerfHintInfoQCOM(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERF_HINT_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25190,7 +25190,7 @@ void cvkParseJsonPerformanceConfigurationAcquireInfoINTEL(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_CONFIGURATION_ACQUIRE_INFO_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25207,7 +25207,7 @@ void cvkParseJsonPerformanceCounterARM(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25224,7 +25224,7 @@ void cvkParseJsonPerformanceCounterDescriptionARM(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25241,7 +25241,7 @@ void cvkParseJsonPerformanceCounterDescriptionARM(const cvkJsonContext* pContext
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
 }
@@ -25249,7 +25249,7 @@ void cvkParseJsonPerformanceCounterDescription(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25266,7 +25266,7 @@ void cvkParseJsonPerformanceCounterDescription(const cvkJsonContext* pContext, c
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "category");
@@ -25274,7 +25274,7 @@ void cvkParseJsonPerformanceCounterDescription(const cvkJsonContext* pContext, c
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->category, value->pText, (value->textLength < sizeof(pInfo->category)) ? value->textLength : sizeof(pInfo->category) - 1);
+            (void)memcpy(pInfo->category, value->pText, (value->textLength < sizeof(pInfo->category)) ? value->textLength : sizeof(pInfo->category) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "description");
@@ -25282,7 +25282,7 @@ void cvkParseJsonPerformanceCounterDescription(const cvkJsonContext* pContext, c
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
 }
@@ -25291,7 +25291,7 @@ void cvkParseJsonPerformanceCounter(const cvkJsonContext* pContext, const cvkJso
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25329,7 +25329,7 @@ void cvkParseJsonPerformanceCounterResult(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "int32");
     if (!cvkIsJsonNull(value))
     {
@@ -25371,7 +25371,7 @@ void cvkParseJsonPerformanceMarkerInfoINTEL(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_MARKER_INFO_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25388,7 +25388,7 @@ void cvkParseJsonPerformanceOverrideInfoINTEL(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_OVERRIDE_INFO_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25415,7 +25415,7 @@ void cvkParseJsonPerformanceQuerySubmitInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25432,7 +25432,7 @@ void cvkParseJsonPerformanceStreamMarkerInfoINTEL(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PERFORMANCE_STREAM_MARKER_INFO_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25449,7 +25449,7 @@ void cvkParseJsonPerformanceValueDataINTEL(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "value32");
     if (!cvkIsJsonNull(value))
     {
@@ -25485,7 +25485,7 @@ void cvkParseJsonPerformanceValueINTEL(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "type");
     if (!cvkIsJsonNull(value))
     {
@@ -25501,7 +25501,7 @@ void cvkParseJsonPhysicalDevice16BitStorageFeatures(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25533,7 +25533,7 @@ void cvkParseJsonPhysicalDevice4444FormatsFeatures(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25555,7 +25555,7 @@ void cvkParseJsonPhysicalDevice8BitStorageFeatures(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25582,7 +25582,7 @@ void cvkParseJsonPhysicalDeviceASTCDecodeFeatures(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25599,7 +25599,7 @@ void cvkParseJsonPhysicalDeviceAccelerationStructureFeatures(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25636,7 +25636,7 @@ void cvkParseJsonPhysicalDeviceAccelerationStructureProperties(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25688,7 +25688,7 @@ void cvkParseJsonPhysicalDeviceAddressBindingReportFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ADDRESS_BINDING_REPORT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25705,7 +25705,7 @@ void cvkParseJsonPhysicalDeviceAmigoProfilingFeaturesSEC(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_AMIGO_PROFILING_FEATURES_SEC;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25722,7 +25722,7 @@ void cvkParseJsonPhysicalDeviceAntiLagFeaturesAMD(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25741,7 +25741,7 @@ void cvkParseJsonPhysicalDeviceAttachmentFeedbackLoopDynamicStateFeatures(const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_DYNAMIC_STATE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25758,7 +25758,7 @@ void cvkParseJsonPhysicalDeviceAttachmentFeedbackLoopLayoutFeatures(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_LAYOUT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25775,7 +25775,7 @@ void cvkParseJsonPhysicalDeviceBlendOperationAdvancedFeatures(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25792,7 +25792,7 @@ void cvkParseJsonPhysicalDeviceBlendOperationAdvancedProperties(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25834,7 +25834,7 @@ void cvkParseJsonPhysicalDeviceBorderColorSwizzleFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25858,7 +25858,7 @@ void cvkParseJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentFeaturesVAL
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_FEATURES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25877,7 +25877,7 @@ void cvkParseJsonPhysicalDeviceBufferDeviceAddressAllocationAlignmentPropertiesV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_ALLOCATION_ALIGNMENT_PROPERTIES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25894,7 +25894,7 @@ void cvkParseJsonPhysicalDeviceBufferDeviceAddressFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25921,7 +25921,7 @@ void cvkParseJsonPhysicalDeviceBufferDeviceAddressFeaturesEXT(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25948,7 +25948,7 @@ void cvkParseJsonPhysicalDeviceClusterAccelerationStructureFeaturesNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_ACCELERATION_STRUCTURE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -25965,7 +25965,7 @@ void cvkParseJsonPhysicalDeviceClusterAccelerationStructurePropertiesNV(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_ACCELERATION_STRUCTURE_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26017,7 +26017,7 @@ void cvkParseJsonPhysicalDeviceClusterCullingShaderFeaturesHUAWEI(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_FEATURES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26040,7 +26040,7 @@ void cvkParseJsonPhysicalDeviceClusterCullingShaderPropertiesHUAWEI(const cvkJso
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_PROPERTIES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26084,7 +26084,7 @@ void cvkParseJsonPhysicalDeviceClusterCullingShaderVrsFeaturesHUAWEI(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_CULLING_SHADER_VRS_FEATURES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26101,7 +26101,7 @@ void cvkParseJsonPhysicalDeviceCoherentMemoryFeaturesAMD(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26118,7 +26118,7 @@ void cvkParseJsonPhysicalDeviceColorWriteEnableFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26135,7 +26135,7 @@ void cvkParseJsonPhysicalDeviceCommandBufferInheritanceFeaturesNV(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26152,7 +26152,7 @@ void cvkParseJsonPhysicalDeviceComputeOccupancyPriorityFeaturesNV(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_OCCUPANCY_PRIORITY_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26169,7 +26169,7 @@ void cvkParseJsonPhysicalDeviceComputeShaderDerivativesFeatures(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26191,7 +26191,7 @@ void cvkParseJsonPhysicalDeviceComputeShaderDerivativesProperties(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26208,7 +26208,7 @@ void cvkParseJsonPhysicalDeviceConditionalRenderingFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26230,7 +26230,7 @@ void cvkParseJsonPhysicalDeviceConservativeRasterizationProperties(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26287,7 +26287,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrix2FeaturesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26334,7 +26334,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrix2PropertiesNV(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26361,7 +26361,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixConversionFeaturesQCOM(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_CONVERSION_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26378,7 +26378,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixDecodeVectorFeaturesNV(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_DECODE_VECTOR_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26395,7 +26395,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26417,7 +26417,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixFeaturesNV(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26439,7 +26439,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixInfo2(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_INFO_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26471,7 +26471,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixMaintenance1Features(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_MAINTENANCE_1_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26508,7 +26508,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixProperties(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26525,7 +26525,7 @@ void cvkParseJsonPhysicalDeviceCooperativeMatrixPropertiesNV(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26542,7 +26542,7 @@ void cvkParseJsonPhysicalDeviceCooperativeVectorFeaturesNV(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26564,7 +26564,7 @@ void cvkParseJsonPhysicalDeviceCooperativeVectorPropertiesNV(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26596,7 +26596,7 @@ void cvkParseJsonPhysicalDeviceCopyMemoryIndirectFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26618,7 +26618,7 @@ void cvkParseJsonPhysicalDeviceCopyMemoryIndirectFeaturesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26635,7 +26635,7 @@ void cvkParseJsonPhysicalDeviceCopyMemoryIndirectProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COPY_MEMORY_INDIRECT_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26652,7 +26652,7 @@ void cvkParseJsonPhysicalDeviceCornerSampledImageFeaturesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26669,7 +26669,7 @@ void cvkParseJsonPhysicalDeviceCoverageReductionModeFeaturesNV(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26686,7 +26686,7 @@ void cvkParseJsonPhysicalDeviceCubicClampFeaturesQCOM(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_CLAMP_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26703,7 +26703,7 @@ void cvkParseJsonPhysicalDeviceCubicWeightsFeaturesQCOM(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_WEIGHTS_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26720,7 +26720,7 @@ void cvkParseJsonPhysicalDeviceCustomBorderColorFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26742,7 +26742,7 @@ void cvkParseJsonPhysicalDeviceCustomBorderColorProperties(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26759,7 +26759,7 @@ void cvkParseJsonPhysicalDeviceCustomResolveFeatures(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUSTOM_RESOLVE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26776,7 +26776,7 @@ void cvkParseJsonPhysicalDeviceDataGraphFeaturesARM(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26813,7 +26813,7 @@ void cvkParseJsonPhysicalDeviceDataGraphModelFeaturesQCOM(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_MODEL_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26832,7 +26832,7 @@ void cvkParseJsonPhysicalDeviceDataGraphNeuralAcceleratorStatisticsFeaturesARM(c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_NEURAL_ACCELERATOR_STATISTICS_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26849,7 +26849,7 @@ void cvkParseJsonPhysicalDeviceDataGraphOperationSupportARM(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "operationType");
     if (!cvkIsJsonNull(value))
     {
@@ -26860,7 +26860,7 @@ void cvkParseJsonPhysicalDeviceDataGraphOperationSupportARM(const cvkJsonContext
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "version");
@@ -26873,7 +26873,7 @@ void cvkParseJsonPhysicalDeviceDataGraphOpticalFlowFeaturesARM(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DATA_GRAPH_OPTICAL_FLOW_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26890,7 +26890,7 @@ void cvkParseJsonPhysicalDeviceDataGraphProcessingEngineARM(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "type");
     if (!cvkIsJsonNull(value))
     {
@@ -26908,7 +26908,7 @@ void cvkParseJsonPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV(const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26925,7 +26925,7 @@ void cvkParseJsonPhysicalDeviceDepthBiasControlFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_BIAS_CONTROL_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26957,7 +26957,7 @@ void cvkParseJsonPhysicalDeviceDepthClampControlFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26974,7 +26974,7 @@ void cvkParseJsonPhysicalDeviceDepthClampZeroOneFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -26991,7 +26991,7 @@ void cvkParseJsonPhysicalDeviceDepthClipControlFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27008,7 +27008,7 @@ void cvkParseJsonPhysicalDeviceDepthClipEnableFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27025,7 +27025,7 @@ void cvkParseJsonPhysicalDeviceDepthStencilResolveProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27057,7 +27057,7 @@ void cvkParseJsonPhysicalDeviceDescriptorBufferDensityMapProperties(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27074,7 +27074,7 @@ void cvkParseJsonPhysicalDeviceDescriptorBufferFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27106,7 +27106,7 @@ void cvkParseJsonPhysicalDeviceDescriptorBufferProperties(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27283,7 +27283,7 @@ void cvkParseJsonPhysicalDeviceDescriptorBufferTensorFeaturesARM(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_TENSOR_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27300,7 +27300,7 @@ void cvkParseJsonPhysicalDeviceDescriptorBufferTensorPropertiesARM(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_TENSOR_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27327,7 +27327,7 @@ void cvkParseJsonPhysicalDeviceDescriptorHeapFeatures(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27349,7 +27349,7 @@ void cvkParseJsonPhysicalDeviceDescriptorHeapProperties(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27456,7 +27456,7 @@ void cvkParseJsonPhysicalDeviceDescriptorHeapTensorPropertiesARM(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_TENSOR_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27483,7 +27483,7 @@ void cvkParseJsonPhysicalDeviceDescriptorIndexingFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27595,7 +27595,7 @@ void cvkParseJsonPhysicalDeviceDescriptorIndexingProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27722,7 +27722,7 @@ void cvkParseJsonPhysicalDeviceDescriptorPoolOverallocationFeaturesNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27739,7 +27739,7 @@ void cvkParseJsonPhysicalDeviceDescriptorSetHostMappingFeaturesVALVE(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27756,7 +27756,7 @@ void cvkParseJsonPhysicalDeviceDeviceAddressCommandsFeatures(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_ADDRESS_COMMANDS_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27773,7 +27773,7 @@ void cvkParseJsonPhysicalDeviceDeviceGeneratedCommandsComputeFeaturesNV(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_COMPUTE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27800,7 +27800,7 @@ void cvkParseJsonPhysicalDeviceDeviceGeneratedCommandsFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27822,7 +27822,7 @@ void cvkParseJsonPhysicalDeviceDeviceGeneratedCommandsFeaturesNV(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27839,7 +27839,7 @@ void cvkParseJsonPhysicalDeviceDeviceGeneratedCommandsProperties(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27911,7 +27911,7 @@ void cvkParseJsonPhysicalDeviceDeviceGeneratedCommandsPropertiesNV(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27968,7 +27968,7 @@ void cvkParseJsonPhysicalDeviceDeviceMemoryReportFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -27985,7 +27985,7 @@ void cvkParseJsonPhysicalDeviceDiagnosticsConfigFeaturesNV(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28002,7 +28002,7 @@ void cvkParseJsonPhysicalDeviceDiscardRectangleProperties(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28019,7 +28019,7 @@ void cvkParseJsonPhysicalDeviceDriverProperties(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28036,7 +28036,7 @@ void cvkParseJsonPhysicalDeviceDriverProperties(const cvkJsonContext* pContext, 
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
+            (void)memcpy(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "driverInfo");
@@ -28044,7 +28044,7 @@ void cvkParseJsonPhysicalDeviceDriverProperties(const cvkJsonContext* pContext, 
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
+            (void)memcpy(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "conformanceVersion");
@@ -28057,7 +28057,7 @@ void cvkParseJsonPhysicalDeviceDrmProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRM_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28099,7 +28099,7 @@ void cvkParseJsonPhysicalDeviceDynamicRenderingFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28116,7 +28116,7 @@ void cvkParseJsonPhysicalDeviceDynamicRenderingLocalReadFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28135,7 +28135,7 @@ void cvkParseJsonPhysicalDeviceDynamicRenderingUnusedAttachmentsFeatures(const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28152,7 +28152,7 @@ void cvkParseJsonPhysicalDeviceElapsedTimerQueryFeaturesQCOM(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ELAPSED_TIMER_QUERY_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28169,7 +28169,7 @@ void cvkParseJsonPhysicalDeviceExclusiveScissorFeaturesNV(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXCLUSIVE_SCISSOR_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28186,7 +28186,7 @@ void cvkParseJsonPhysicalDeviceExtendedDynamicState2Features(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28213,7 +28213,7 @@ void cvkParseJsonPhysicalDeviceExtendedDynamicState3Features(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28380,7 +28380,7 @@ void cvkParseJsonPhysicalDeviceExtendedDynamicState3Properties(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28397,7 +28397,7 @@ void cvkParseJsonPhysicalDeviceExtendedDynamicStateFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28414,7 +28414,7 @@ void cvkParseJsonPhysicalDeviceExtendedFlagsFeatures(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_FLAGS_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28431,7 +28431,7 @@ void cvkParseJsonPhysicalDeviceExtendedSparseAddressSpaceFeaturesNV(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28448,7 +28448,7 @@ void cvkParseJsonPhysicalDeviceExtendedSparseAddressSpacePropertiesNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28475,7 +28475,7 @@ void cvkParseJsonPhysicalDeviceExternalBufferInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28502,7 +28502,7 @@ void cvkParseJsonPhysicalDeviceExternalComputeQueuePropertiesNV(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_COMPUTE_QUEUE_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28524,7 +28524,7 @@ void cvkParseJsonPhysicalDeviceExternalFenceInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28541,7 +28541,7 @@ void cvkParseJsonPhysicalDeviceExternalImageFormatInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28558,7 +28558,7 @@ void cvkParseJsonPhysicalDeviceExternalMemoryHostProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28575,7 +28575,7 @@ void cvkParseJsonPhysicalDeviceExternalMemoryRDMAFeaturesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_RDMA_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28592,7 +28592,7 @@ void cvkParseJsonPhysicalDeviceExternalSemaphoreInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28610,7 +28610,7 @@ void cvkParseJsonPhysicalDeviceExternalTensorInfoARM(const cvkJsonContext* pCont
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_TENSOR_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28639,7 +28639,7 @@ void cvkParseJsonPhysicalDeviceFaultFeaturesEXT(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28661,7 +28661,7 @@ void cvkParseJsonPhysicalDeviceFaultFeatures(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28693,7 +28693,7 @@ void cvkParseJsonPhysicalDeviceFaultProperties(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -28710,7 +28710,7 @@ void cvkParseJsonPhysicalDeviceFeatures(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "robustBufferAccess");
     if (!cvkIsJsonNull(value))
     {
@@ -28991,7 +28991,7 @@ void cvkParseJsonPhysicalDeviceFeatures2(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29008,7 +29008,7 @@ void cvkParseJsonPhysicalDeviceFloatControlsProperties(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29105,7 +29105,7 @@ void cvkParseJsonPhysicalDeviceFormatPackFeaturesARM(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FORMAT_PACK_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29122,7 +29122,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMap2Features(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29139,7 +29139,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMap2Properties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29171,7 +29171,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMapFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29198,7 +29198,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMapLayeredFeaturesVALVE(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_FEATURES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29215,7 +29215,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMapLayeredPropertiesVALVE(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_LAYERED_PROPERTIES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29232,7 +29232,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMapOffsetFeatures(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29249,7 +29249,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMapOffsetProperties(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29266,7 +29266,7 @@ void cvkParseJsonPhysicalDeviceFragmentDensityMapProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29293,7 +29293,7 @@ void cvkParseJsonPhysicalDeviceFragmentShaderBarycentricFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29310,7 +29310,7 @@ void cvkParseJsonPhysicalDeviceFragmentShaderBarycentricProperties(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29327,7 +29327,7 @@ void cvkParseJsonPhysicalDeviceFragmentShaderInterlockFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29354,7 +29354,7 @@ void cvkParseJsonPhysicalDeviceFragmentShadingRateEnumsFeaturesNV(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29381,7 +29381,7 @@ void cvkParseJsonPhysicalDeviceFragmentShadingRateEnumsPropertiesNV(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29398,7 +29398,7 @@ void cvkParseJsonPhysicalDeviceFragmentShadingRateFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29425,7 +29425,7 @@ void cvkParseJsonPhysicalDeviceFragmentShadingRate(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29447,7 +29447,7 @@ void cvkParseJsonPhysicalDeviceFragmentShadingRateProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29544,7 +29544,7 @@ void cvkParseJsonPhysicalDeviceFrameBoundaryFeatures(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAME_BOUNDARY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29561,7 +29561,7 @@ void cvkParseJsonPhysicalDeviceGlobalPriorityQueryFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29578,7 +29578,7 @@ void cvkParseJsonPhysicalDeviceGpaFeaturesAMD(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_FEATURES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29610,7 +29610,7 @@ void cvkParseJsonPhysicalDeviceGpaProperties2AMD(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_2_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29629,7 +29629,7 @@ void cvkParseJsonPhysicalDeviceGpaPropertiesAMD(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GPA_PROPERTIES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29674,7 +29674,7 @@ void cvkParseJsonPhysicalDeviceGraphicsPipelineLibraryFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29691,7 +29691,7 @@ void cvkParseJsonPhysicalDeviceGraphicsPipelineLibraryProperties(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29714,7 +29714,7 @@ void cvkParseJsonPhysicalDeviceGroupProperties(const cvkJsonContext* pContext, c
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29747,7 +29747,7 @@ void cvkParseJsonPhysicalDeviceHdrVividFeaturesHUAWEI(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29764,7 +29764,7 @@ void cvkParseJsonPhysicalDeviceHostImageCopyFeatures(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29783,7 +29783,7 @@ void cvkParseJsonPhysicalDeviceHostImageCopyProperties(const cvkJsonContext* pCo
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29847,7 +29847,7 @@ void cvkParseJsonPhysicalDeviceHostQueryResetFeatures(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29865,7 +29865,7 @@ void cvkParseJsonPhysicalDeviceIDProperties(const cvkJsonContext* pContext, cons
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29920,7 +29920,7 @@ void cvkParseJsonPhysicalDeviceImage2DViewOf3DFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29942,7 +29942,7 @@ void cvkParseJsonPhysicalDeviceImageAlignmentControlFeaturesMESA(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29959,7 +29959,7 @@ void cvkParseJsonPhysicalDeviceImageAlignmentControlPropertiesMESA(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_PROPERTIES_MESA;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29976,7 +29976,7 @@ void cvkParseJsonPhysicalDeviceImageCompressionControlFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -29993,7 +29993,7 @@ void cvkParseJsonPhysicalDeviceImageCompressionControlSwapchainFeatures(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30012,7 +30012,7 @@ void cvkParseJsonPhysicalDeviceImageDrmFormatModifierInfo(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30052,7 +30052,7 @@ void cvkParseJsonPhysicalDeviceImageFormatInfo2(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30089,7 +30089,7 @@ void cvkParseJsonPhysicalDeviceImageProcessing2FeaturesQCOM(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30106,7 +30106,7 @@ void cvkParseJsonPhysicalDeviceImageProcessing2PropertiesQCOM(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_2_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30123,7 +30123,7 @@ void cvkParseJsonPhysicalDeviceImageProcessing3FeaturesQCOM(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_3_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30150,7 +30150,7 @@ void cvkParseJsonPhysicalDeviceImageProcessingFeaturesQCOM(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30177,7 +30177,7 @@ void cvkParseJsonPhysicalDeviceImageProcessingPropertiesQCOM(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_PROCESSING_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30209,7 +30209,7 @@ void cvkParseJsonPhysicalDeviceImageRobustnessFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30226,7 +30226,7 @@ void cvkParseJsonPhysicalDeviceImageSlicedViewOf3DFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_SLICED_VIEW_OF_3D_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30243,7 +30243,7 @@ void cvkParseJsonPhysicalDeviceImageTilingControlFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_TILING_CONTROL_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30260,7 +30260,7 @@ void cvkParseJsonPhysicalDeviceImageViewImageFormatInfo(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30277,7 +30277,7 @@ void cvkParseJsonPhysicalDeviceImageViewMinLodFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30294,7 +30294,7 @@ void cvkParseJsonPhysicalDeviceImagelessFramebufferFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30311,7 +30311,7 @@ void cvkParseJsonPhysicalDeviceIndexTypeUint8Features(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30328,7 +30328,7 @@ void cvkParseJsonPhysicalDeviceInheritedViewportScissorFeaturesNV(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INHERITED_VIEWPORT_SCISSOR_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30345,7 +30345,7 @@ void cvkParseJsonPhysicalDeviceInlineUniformBlockFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30367,7 +30367,7 @@ void cvkParseJsonPhysicalDeviceInlineUniformBlockProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30404,7 +30404,7 @@ void cvkParseJsonPhysicalDeviceInternallySynchronizedQueuesFeatures(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INTERNALLY_SYNCHRONIZED_QUEUES_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30421,7 +30421,7 @@ void cvkParseJsonPhysicalDeviceInvocationMaskFeaturesHUAWEI(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INVOCATION_MASK_FEATURES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30438,7 +30438,7 @@ void cvkParseJsonPhysicalDeviceLayeredApiProperties(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30465,7 +30465,7 @@ void cvkParseJsonPhysicalDeviceLayeredApiProperties(const cvkJsonContext* pConte
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->deviceName, value->pText, (value->textLength < sizeof(pInfo->deviceName)) ? value->textLength : sizeof(pInfo->deviceName) - 1);
+            (void)memcpy(pInfo->deviceName, value->pText, (value->textLength < sizeof(pInfo->deviceName)) ? value->textLength : sizeof(pInfo->deviceName) - 1);
         }
     }
 }
@@ -30475,7 +30475,7 @@ void cvkParseJsonPhysicalDeviceLayeredApiPropertiesList(const cvkJsonContext* pC
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30505,7 +30505,7 @@ void cvkParseJsonPhysicalDeviceLayeredApiVulkanProperties(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30522,7 +30522,7 @@ void cvkParseJsonPhysicalDeviceLayeredDriverPropertiesMSFT(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_DRIVER_PROPERTIES_MSFT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30539,7 +30539,7 @@ void cvkParseJsonPhysicalDeviceLegacyDitheringFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30556,7 +30556,7 @@ void cvkParseJsonPhysicalDeviceLegacyVertexAttributesFeatures(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30573,7 +30573,7 @@ void cvkParseJsonPhysicalDeviceLegacyVertexAttributesProperties(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_VERTEX_ATTRIBUTES_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -30591,7 +30591,7 @@ void cvkParseJsonPhysicalDeviceLimits(const cvkJsonContext* pContext, const cvkJ
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "maxImageDimension1D");
     if (!cvkIsJsonNull(value))
     {
@@ -31163,7 +31163,7 @@ void cvkParseJsonPhysicalDeviceLineRasterizationFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31205,7 +31205,7 @@ void cvkParseJsonPhysicalDeviceLineRasterizationProperties(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31222,7 +31222,7 @@ void cvkParseJsonPhysicalDeviceLinearColorAttachmentFeaturesNV(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINEAR_COLOR_ATTACHMENT_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31239,7 +31239,7 @@ void cvkParseJsonPhysicalDeviceMaintenance10Features(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31256,7 +31256,7 @@ void cvkParseJsonPhysicalDeviceMaintenance10Properties(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_10_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31283,7 +31283,7 @@ void cvkParseJsonPhysicalDeviceMaintenance11Features(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_11_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31300,7 +31300,7 @@ void cvkParseJsonPhysicalDeviceMaintenance3Properties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31322,7 +31322,7 @@ void cvkParseJsonPhysicalDeviceMaintenance4Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31339,7 +31339,7 @@ void cvkParseJsonPhysicalDeviceMaintenance4Properties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31356,7 +31356,7 @@ void cvkParseJsonPhysicalDeviceMaintenance5Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31373,7 +31373,7 @@ void cvkParseJsonPhysicalDeviceMaintenance5Properties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31415,7 +31415,7 @@ void cvkParseJsonPhysicalDeviceMaintenance6Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31432,7 +31432,7 @@ void cvkParseJsonPhysicalDeviceMaintenance6Properties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31459,7 +31459,7 @@ void cvkParseJsonPhysicalDeviceMaintenance7Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31476,7 +31476,7 @@ void cvkParseJsonPhysicalDeviceMaintenance7Properties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31528,7 +31528,7 @@ void cvkParseJsonPhysicalDeviceMaintenance8Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31545,7 +31545,7 @@ void cvkParseJsonPhysicalDeviceMaintenance9Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31562,7 +31562,7 @@ void cvkParseJsonPhysicalDeviceMaintenance9Properties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_9_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31584,7 +31584,7 @@ void cvkParseJsonPhysicalDeviceMapMemoryPlacedFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31611,7 +31611,7 @@ void cvkParseJsonPhysicalDeviceMapMemoryPlacedProperties(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31629,7 +31629,7 @@ void cvkParseJsonPhysicalDeviceMemoryBudgetProperties(const cvkJsonContext* pCon
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31663,7 +31663,7 @@ void cvkParseJsonPhysicalDeviceMemoryDecompressionFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31680,7 +31680,7 @@ void cvkParseJsonPhysicalDeviceMemoryDecompressionProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_DECOMPRESSION_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31702,7 +31702,7 @@ void cvkParseJsonPhysicalDeviceMemoryPriorityFeatures(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31720,7 +31720,7 @@ void cvkParseJsonPhysicalDeviceMemoryProperties(const cvkJsonContext* pContext, 
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "memoryTypeCount");
     if (!cvkIsJsonNull(value))
     {
@@ -31758,7 +31758,7 @@ void cvkParseJsonPhysicalDeviceMemoryProperties2(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31775,7 +31775,7 @@ void cvkParseJsonPhysicalDeviceMeshShaderFeatures(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31812,7 +31812,7 @@ void cvkParseJsonPhysicalDeviceMeshShaderFeaturesNV(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -31835,7 +31835,7 @@ void cvkParseJsonPhysicalDeviceMeshShaderProperties(const cvkJsonContext* pConte
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32012,7 +32012,7 @@ void cvkParseJsonPhysicalDeviceMeshShaderPropertiesNV(const cvkJsonContext* pCon
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32101,7 +32101,7 @@ void cvkParseJsonPhysicalDeviceMultiDrawFeatures(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32118,7 +32118,7 @@ void cvkParseJsonPhysicalDeviceMultiDrawProperties(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32137,7 +32137,7 @@ void cvkParseJsonPhysicalDeviceMultisampledRenderToSingleSampledFeatures(const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32154,7 +32154,7 @@ void cvkParseJsonPhysicalDeviceMultisampledRenderToSwapchainFeatures(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SWAPCHAIN_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32171,7 +32171,7 @@ void cvkParseJsonPhysicalDeviceMultiviewFeatures(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32198,7 +32198,7 @@ void cvkParseJsonPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32215,7 +32215,7 @@ void cvkParseJsonPhysicalDeviceMultiviewPerViewRenderAreasFeaturesQCOM(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_RENDER_AREAS_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32232,7 +32232,7 @@ void cvkParseJsonPhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_VIEWPORTS_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32249,7 +32249,7 @@ void cvkParseJsonPhysicalDeviceMultiviewProperties(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32271,7 +32271,7 @@ void cvkParseJsonPhysicalDeviceMutableDescriptorTypeFeatures(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32288,7 +32288,7 @@ void cvkParseJsonPhysicalDeviceNestedCommandBufferFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NESTED_COMMAND_BUFFER_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32315,7 +32315,7 @@ void cvkParseJsonPhysicalDeviceNestedCommandBufferProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NESTED_COMMAND_BUFFER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32332,7 +32332,7 @@ void cvkParseJsonPhysicalDeviceNonSeamlessCubeMapFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32349,7 +32349,7 @@ void cvkParseJsonPhysicalDeviceOpacityMicromapFeaturesEXT(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32376,7 +32376,7 @@ void cvkParseJsonPhysicalDeviceOpacityMicromapFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32393,7 +32393,7 @@ void cvkParseJsonPhysicalDeviceOpacityMicromapPropertiesEXT(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32415,7 +32415,7 @@ void cvkParseJsonPhysicalDeviceOpacityMicromapProperties(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32447,7 +32447,7 @@ void cvkParseJsonPhysicalDeviceOpticalFlowFeaturesNV(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPTICAL_FLOW_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32464,7 +32464,7 @@ void cvkParseJsonPhysicalDeviceOpticalFlowPropertiesNV(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_OPTICAL_FLOW_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32531,7 +32531,7 @@ void cvkParseJsonPhysicalDevicePCIBusInfoProperties(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32563,7 +32563,7 @@ void cvkParseJsonPhysicalDevicePageableDeviceLocalMemoryFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32582,7 +32582,7 @@ void cvkParseJsonPhysicalDevicePartitionedAccelerationStructureFeaturesNV(const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PARTITIONED_ACCELERATION_STRUCTURE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32601,7 +32601,7 @@ void cvkParseJsonPhysicalDevicePartitionedAccelerationStructurePropertiesNV(cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PARTITIONED_ACCELERATION_STRUCTURE_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32618,7 +32618,7 @@ void cvkParseJsonPhysicalDevicePerStageDescriptorSetFeaturesNV(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PER_STAGE_DESCRIPTOR_SET_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32640,7 +32640,7 @@ void cvkParseJsonPhysicalDevicePerformanceCountersByRegionFeaturesARM(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32657,7 +32657,7 @@ void cvkParseJsonPhysicalDevicePerformanceCountersByRegionPropertiesARM(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_COUNTERS_BY_REGION_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32694,7 +32694,7 @@ void cvkParseJsonPhysicalDevicePerformanceQueryFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32716,7 +32716,7 @@ void cvkParseJsonPhysicalDevicePerformanceQueryProperties(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32733,7 +32733,7 @@ void cvkParseJsonPhysicalDevicePipelineBinaryFeatures(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32750,7 +32750,7 @@ void cvkParseJsonPhysicalDevicePipelineBinaryProperties(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_BINARY_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32787,7 +32787,7 @@ void cvkParseJsonPhysicalDevicePipelineCacheIncrementalModeFeaturesSEC(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CACHE_INCREMENTAL_MODE_FEATURES_SEC;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32804,7 +32804,7 @@ void cvkParseJsonPhysicalDevicePipelineCreationCacheControlFeatures(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32821,7 +32821,7 @@ void cvkParseJsonPhysicalDevicePipelineExecutablePropertiesFeatures(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32838,7 +32838,7 @@ void cvkParseJsonPhysicalDevicePipelineLibraryGroupHandlesFeatures(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_LIBRARY_GROUP_HANDLES_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32855,7 +32855,7 @@ void cvkParseJsonPhysicalDevicePipelineOpacityMicromapFeaturesARM(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACITY_MICROMAP_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32872,7 +32872,7 @@ void cvkParseJsonPhysicalDevicePipelinePropertiesFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32889,7 +32889,7 @@ void cvkParseJsonPhysicalDevicePipelineProtectedAccessFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32906,7 +32906,7 @@ void cvkParseJsonPhysicalDevicePipelineRobustnessFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32923,7 +32923,7 @@ void cvkParseJsonPhysicalDevicePipelineRobustnessProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32955,7 +32955,7 @@ void cvkParseJsonPhysicalDevicePointClippingProperties(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32972,7 +32972,7 @@ void cvkParseJsonPhysicalDevicePresentBarrierFeaturesNV(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_BARRIER_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -32989,7 +32989,7 @@ void cvkParseJsonPhysicalDevicePresentId2Features(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_2_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33006,7 +33006,7 @@ void cvkParseJsonPhysicalDevicePresentIdFeatures(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33023,7 +33023,7 @@ void cvkParseJsonPhysicalDevicePresentMeteringFeaturesNV(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_METERING_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33040,7 +33040,7 @@ void cvkParseJsonPhysicalDevicePresentModeFifoLatestReadyFeatures(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_MODE_FIFO_LATEST_READY_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33057,7 +33057,7 @@ void cvkParseJsonPhysicalDevicePresentTimingFeatures(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_TIMING_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33084,7 +33084,7 @@ void cvkParseJsonPhysicalDevicePresentWait2Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_2_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33101,7 +33101,7 @@ void cvkParseJsonPhysicalDevicePresentWaitFeatures(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33118,7 +33118,7 @@ void cvkParseJsonPhysicalDevicePrimitiveRestartIndexFeatures(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_RESTART_INDEX_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33135,7 +33135,7 @@ void cvkParseJsonPhysicalDevicePrimitiveTopologyListRestartFeatures(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33157,7 +33157,7 @@ void cvkParseJsonPhysicalDevicePrimitivesGeneratedQueryFeatures(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33184,7 +33184,7 @@ void cvkParseJsonPhysicalDevicePrivateDataBaseHandleFeaturesNV(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_BASE_HANDLE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33201,7 +33201,7 @@ void cvkParseJsonPhysicalDevicePrivateDataFeatures(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33219,7 +33219,7 @@ void cvkParseJsonPhysicalDeviceProperties(const cvkJsonContext* pContext, const 
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "apiVersion");
     if (!cvkIsJsonNull(value))
     {
@@ -33250,7 +33250,7 @@ void cvkParseJsonPhysicalDeviceProperties(const cvkJsonContext* pContext, const 
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->deviceName, value->pText, (value->textLength < sizeof(pInfo->deviceName)) ? value->textLength : sizeof(pInfo->deviceName) - 1);
+            (void)memcpy(pInfo->deviceName, value->pText, (value->textLength < sizeof(pInfo->deviceName)) ? value->textLength : sizeof(pInfo->deviceName) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "pipelineCacheUUID");
@@ -33279,7 +33279,7 @@ void cvkParseJsonPhysicalDeviceProperties2(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33296,7 +33296,7 @@ void cvkParseJsonPhysicalDeviceProtectedMemoryFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33313,7 +33313,7 @@ void cvkParseJsonPhysicalDeviceProtectedMemoryProperties(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33330,7 +33330,7 @@ void cvkParseJsonPhysicalDeviceProvokingVertexFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33352,7 +33352,7 @@ void cvkParseJsonPhysicalDeviceProvokingVertexProperties(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33374,7 +33374,7 @@ void cvkParseJsonPhysicalDevicePushConstantBankFeaturesNV(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_CONSTANT_BANK_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33391,7 +33391,7 @@ void cvkParseJsonPhysicalDevicePushConstantBankPropertiesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_CONSTANT_BANK_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33423,7 +33423,7 @@ void cvkParseJsonPhysicalDevicePushDescriptorProperties(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33442,7 +33442,7 @@ void cvkParseJsonPhysicalDeviceQueueFamilyDataGraphProcessingEngineInfoARM(const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33464,7 +33464,7 @@ void cvkParseJsonPhysicalDeviceQueuePerfHintFeaturesQCOM(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_PERF_HINT_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33481,7 +33481,7 @@ void cvkParseJsonPhysicalDeviceQueuePerfHintPropertiesQCOM(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_QUEUE_PERF_HINT_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33498,7 +33498,7 @@ void cvkParseJsonPhysicalDeviceRGBA10X6FormatsFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RGBA10X6_FORMATS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33517,7 +33517,7 @@ void cvkParseJsonPhysicalDeviceRasterizationOrderAttachmentAccessFeatures(const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33544,7 +33544,7 @@ void cvkParseJsonPhysicalDeviceRawAccessChainsFeaturesNV(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33561,7 +33561,7 @@ void cvkParseJsonPhysicalDeviceRayQueryFeatures(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33578,7 +33578,7 @@ void cvkParseJsonPhysicalDeviceRayTracingInvocationReorderFeatures(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33595,7 +33595,7 @@ void cvkParseJsonPhysicalDeviceRayTracingInvocationReorderFeaturesNV(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33612,7 +33612,7 @@ void cvkParseJsonPhysicalDeviceRayTracingInvocationReorderProperties(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33634,7 +33634,7 @@ void cvkParseJsonPhysicalDeviceRayTracingInvocationReorderPropertiesNV(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33651,7 +33651,7 @@ void cvkParseJsonPhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_LINEAR_SWEPT_SPHERES_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33673,7 +33673,7 @@ void cvkParseJsonPhysicalDeviceRayTracingMaintenance1Features(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33695,7 +33695,7 @@ void cvkParseJsonPhysicalDeviceRayTracingMotionBlurFeaturesNV(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_MOTION_BLUR_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33717,7 +33717,7 @@ void cvkParseJsonPhysicalDeviceRayTracingPipelineFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33754,7 +33754,7 @@ void cvkParseJsonPhysicalDeviceRayTracingPipelineProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33806,7 +33806,7 @@ void cvkParseJsonPhysicalDeviceRayTracingPositionFetchFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_POSITION_FETCH_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33823,7 +33823,7 @@ void cvkParseJsonPhysicalDeviceRayTracingPropertiesNV(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33875,7 +33875,7 @@ void cvkParseJsonPhysicalDeviceRayTracingValidationFeaturesNV(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33892,7 +33892,7 @@ void cvkParseJsonPhysicalDeviceRelaxedLineRasterizationFeaturesIMG(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RELAXED_LINE_RASTERIZATION_FEATURES_IMG;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33909,7 +33909,7 @@ void cvkParseJsonPhysicalDeviceRenderPassStripedFeaturesARM(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33926,7 +33926,7 @@ void cvkParseJsonPhysicalDeviceRenderPassStripedPropertiesARM(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33948,7 +33948,7 @@ void cvkParseJsonPhysicalDeviceRepresentativeFragmentTestFeaturesNV(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33965,7 +33965,7 @@ void cvkParseJsonPhysicalDeviceRobustness2Features(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -33992,7 +33992,7 @@ void cvkParseJsonPhysicalDeviceRobustness2Properties(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34015,7 +34015,7 @@ void cvkParseJsonPhysicalDeviceSampleLocationsProperties(const cvkJsonContext* p
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34058,7 +34058,7 @@ void cvkParseJsonPhysicalDeviceSamplerFilterMinmaxProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34080,7 +34080,7 @@ void cvkParseJsonPhysicalDeviceSamplerYcbcrConversionFeatures(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34097,7 +34097,7 @@ void cvkParseJsonPhysicalDeviceScalarBlockLayoutFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34116,7 +34116,7 @@ void cvkParseJsonPhysicalDeviceSchedulingControlsDispatchParametersPropertiesARM
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_DISPATCH_PARAMETERS_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34143,7 +34143,7 @@ void cvkParseJsonPhysicalDeviceSchedulingControlsFeaturesARM(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34160,7 +34160,7 @@ void cvkParseJsonPhysicalDeviceSchedulingControlsPropertiesARM(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34177,7 +34177,7 @@ void cvkParseJsonPhysicalDeviceSeparateDepthStencilLayoutsFeatures(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34194,7 +34194,7 @@ void cvkParseJsonPhysicalDeviceShader64BitIndexingFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_64_BIT_INDEXING_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34211,7 +34211,7 @@ void cvkParseJsonPhysicalDeviceShaderAbortFeatures(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ABORT_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34228,7 +34228,7 @@ void cvkParseJsonPhysicalDeviceShaderAbortProperties(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ABORT_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34245,7 +34245,7 @@ void cvkParseJsonPhysicalDeviceShaderAtomicFloat16VectorFeaturesNV(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34262,7 +34262,7 @@ void cvkParseJsonPhysicalDeviceShaderAtomicFloat2Features(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34334,7 +34334,7 @@ void cvkParseJsonPhysicalDeviceShaderAtomicFloatFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34406,7 +34406,7 @@ void cvkParseJsonPhysicalDeviceShaderAtomicInt64Features(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34428,7 +34428,7 @@ void cvkParseJsonPhysicalDeviceShaderBfloat16Features(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_BFLOAT16_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34455,7 +34455,7 @@ void cvkParseJsonPhysicalDeviceShaderClockFeatures(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34477,7 +34477,7 @@ void cvkParseJsonPhysicalDeviceShaderConstantDataFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CONSTANT_DATA_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34494,7 +34494,7 @@ void cvkParseJsonPhysicalDeviceShaderCoreBuiltinsFeaturesARM(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_BUILTINS_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34511,7 +34511,7 @@ void cvkParseJsonPhysicalDeviceShaderCoreBuiltinsPropertiesARM(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_BUILTINS_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34538,7 +34538,7 @@ void cvkParseJsonPhysicalDeviceShaderCoreProperties2AMD(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34560,7 +34560,7 @@ void cvkParseJsonPhysicalDeviceShaderCorePropertiesAMD(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34642,7 +34642,7 @@ void cvkParseJsonPhysicalDeviceShaderCorePropertiesARM(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34669,7 +34669,7 @@ void cvkParseJsonPhysicalDeviceShaderDemoteToHelperInvocationFeatures(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34686,7 +34686,7 @@ void cvkParseJsonPhysicalDeviceShaderDrawParametersFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34705,7 +34705,7 @@ void cvkParseJsonPhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD(const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EARLY_AND_LATE_FRAGMENT_TESTS_FEATURES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34722,7 +34722,7 @@ void cvkParseJsonPhysicalDeviceShaderExpectAssumeFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34739,7 +34739,7 @@ void cvkParseJsonPhysicalDeviceShaderFloat16Int8Features(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34761,7 +34761,7 @@ void cvkParseJsonPhysicalDeviceShaderFloat8Features(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT8_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34783,7 +34783,7 @@ void cvkParseJsonPhysicalDeviceShaderFloatControls2Features(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34800,7 +34800,7 @@ void cvkParseJsonPhysicalDeviceShaderFmaFeatures(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FMA_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34827,7 +34827,7 @@ void cvkParseJsonPhysicalDeviceShaderImageAtomicInt64Features(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34849,7 +34849,7 @@ void cvkParseJsonPhysicalDeviceShaderImageFootprintFeaturesNV(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34866,7 +34866,7 @@ void cvkParseJsonPhysicalDeviceShaderInstrumentationFeaturesARM(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34883,7 +34883,7 @@ void cvkParseJsonPhysicalDeviceShaderInstrumentationPropertiesARM(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INSTRUMENTATION_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34905,7 +34905,7 @@ void cvkParseJsonPhysicalDeviceShaderIntegerDotProductFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -34922,7 +34922,7 @@ void cvkParseJsonPhysicalDeviceShaderIntegerDotProductProperties(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35084,7 +35084,7 @@ void cvkParseJsonPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35101,7 +35101,7 @@ void cvkParseJsonPhysicalDeviceShaderLongVectorFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35118,7 +35118,7 @@ void cvkParseJsonPhysicalDeviceShaderLongVectorProperties(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_LONG_VECTOR_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35135,7 +35135,7 @@ void cvkParseJsonPhysicalDeviceShaderMaximalReconvergenceFeatures(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35152,7 +35152,7 @@ void cvkParseJsonPhysicalDeviceShaderMixedFloatDotProductFeaturesVALVE(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MIXED_FLOAT_DOT_PRODUCT_FEATURES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35184,7 +35184,7 @@ void cvkParseJsonPhysicalDeviceShaderModuleIdentifierFeatures(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35202,7 +35202,7 @@ void cvkParseJsonPhysicalDeviceShaderModuleIdentifierProperties(const cvkJsonCon
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35225,7 +35225,7 @@ void cvkParseJsonPhysicalDeviceShaderMultipleWaitQueuesFeaturesQCOM(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35242,7 +35242,7 @@ void cvkParseJsonPhysicalDeviceShaderMultipleWaitQueuesPropertiesQCOM(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MULTIPLE_WAIT_QUEUES_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35259,7 +35259,7 @@ void cvkParseJsonPhysicalDeviceShaderOCPMicroscalingTypesFeatures(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OCP_MICROSCALING_TYPES_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35291,7 +35291,7 @@ void cvkParseJsonPhysicalDeviceShaderObjectFeatures(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35309,7 +35309,7 @@ void cvkParseJsonPhysicalDeviceShaderObjectProperties(const cvkJsonContext* pCon
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_OBJECT_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35337,7 +35337,7 @@ void cvkParseJsonPhysicalDeviceShaderQuadControlFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_QUAD_CONTROL_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35354,7 +35354,7 @@ void cvkParseJsonPhysicalDeviceShaderRelaxedExtendedInstructionFeatures(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_EXTENDED_INSTRUCTION_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35371,7 +35371,7 @@ void cvkParseJsonPhysicalDeviceShaderReplicatedCompositesFeatures(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35388,7 +35388,7 @@ void cvkParseJsonPhysicalDeviceShaderSMBuiltinsFeaturesNV(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35405,7 +35405,7 @@ void cvkParseJsonPhysicalDeviceShaderSMBuiltinsPropertiesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35427,7 +35427,7 @@ void cvkParseJsonPhysicalDeviceShaderSplitBarrierFeatures(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35444,7 +35444,7 @@ void cvkParseJsonPhysicalDeviceShaderSplitBarrierProperties(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SPLIT_BARRIER_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35461,7 +35461,7 @@ void cvkParseJsonPhysicalDeviceShaderSubgroupExtendedTypesFeatures(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35478,7 +35478,7 @@ void cvkParseJsonPhysicalDeviceShaderSubgroupPartitionedFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_PARTITIONED_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35495,7 +35495,7 @@ void cvkParseJsonPhysicalDeviceShaderSubgroupRotateFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35517,7 +35517,7 @@ void cvkParseJsonPhysicalDeviceShaderSubgroupUniformControlFlowFeatures(const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35534,7 +35534,7 @@ void cvkParseJsonPhysicalDeviceShaderTerminateInvocationFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35551,7 +35551,7 @@ void cvkParseJsonPhysicalDeviceShaderTileImageFeatures(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35578,7 +35578,7 @@ void cvkParseJsonPhysicalDeviceShaderTileImageProperties(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_TILE_IMAGE_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35605,7 +35605,7 @@ void cvkParseJsonPhysicalDeviceShaderUniformBufferUnsizedArrayFeatures(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNIFORM_BUFFER_UNSIZED_ARRAY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35622,7 +35622,7 @@ void cvkParseJsonPhysicalDeviceShaderUntypedPointersFeatures(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_UNTYPED_POINTERS_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35639,7 +35639,7 @@ void cvkParseJsonPhysicalDeviceShadingRateImageFeaturesNV(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADING_RATE_IMAGE_FEATURES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35661,7 +35661,7 @@ void cvkParseJsonPhysicalDeviceShadingRateImagePropertiesNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADING_RATE_IMAGE_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35688,7 +35688,7 @@ void cvkParseJsonPhysicalDeviceSparseImageFormatInfo2(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35725,7 +35725,7 @@ void cvkParseJsonPhysicalDeviceSparseProperties(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "residencyStandard2DBlockShape");
     if (!cvkIsJsonNull(value))
     {
@@ -35756,7 +35756,7 @@ void cvkParseJsonPhysicalDeviceSubgroupProperties(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35788,7 +35788,7 @@ void cvkParseJsonPhysicalDeviceSubgroupSizeControlFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35810,7 +35810,7 @@ void cvkParseJsonPhysicalDeviceSubgroupSizeControlProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35842,7 +35842,7 @@ void cvkParseJsonPhysicalDeviceSubpassMergeFeedbackFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_MERGE_FEEDBACK_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35859,7 +35859,7 @@ void cvkParseJsonPhysicalDeviceSubpassShadingFeaturesHUAWEI(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_FEATURES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35876,7 +35876,7 @@ void cvkParseJsonPhysicalDeviceSubpassShadingPropertiesHUAWEI(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBPASS_SHADING_PROPERTIES_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35893,7 +35893,7 @@ void cvkParseJsonPhysicalDeviceSurfaceInfo2(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35910,7 +35910,7 @@ void cvkParseJsonPhysicalDeviceSwapchainMaintenance1Features(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35927,7 +35927,7 @@ void cvkParseJsonPhysicalDeviceSynchronization2Features(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35944,7 +35944,7 @@ void cvkParseJsonPhysicalDeviceTensorFeaturesARM(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TENSOR_FEATURES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -35986,7 +35986,7 @@ void cvkParseJsonPhysicalDeviceTensorPropertiesARM(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TENSOR_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36063,7 +36063,7 @@ void cvkParseJsonPhysicalDeviceTexelBufferAlignmentFeatures(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36080,7 +36080,7 @@ void cvkParseJsonPhysicalDeviceTexelBufferAlignmentProperties(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36112,7 +36112,7 @@ void cvkParseJsonPhysicalDeviceTextureCompressionASTC3DFeatures(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_3D_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36129,7 +36129,7 @@ void cvkParseJsonPhysicalDeviceTextureCompressionASTCHDRFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36146,7 +36146,7 @@ void cvkParseJsonPhysicalDeviceThrottleHintFeaturesSEC(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_THROTTLE_HINT_FEATURES_SEC;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36163,7 +36163,7 @@ void cvkParseJsonPhysicalDeviceTileMemoryHeapFeaturesQCOM(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36180,7 +36180,7 @@ void cvkParseJsonPhysicalDeviceTileMemoryHeapPropertiesQCOM(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_MEMORY_HEAP_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36202,7 +36202,7 @@ void cvkParseJsonPhysicalDeviceTilePropertiesFeaturesQCOM(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_PROPERTIES_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36219,7 +36219,7 @@ void cvkParseJsonPhysicalDeviceTileShadingFeaturesQCOM(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36301,7 +36301,7 @@ void cvkParseJsonPhysicalDeviceTileShadingPropertiesQCOM(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TILE_SHADING_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36333,7 +36333,7 @@ void cvkParseJsonPhysicalDeviceTimelineSemaphoreFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36350,7 +36350,7 @@ void cvkParseJsonPhysicalDeviceTimelineSemaphoreProperties(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36367,7 +36367,7 @@ void cvkParseJsonPhysicalDeviceToolProperties(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36379,7 +36379,7 @@ void cvkParseJsonPhysicalDeviceToolProperties(const cvkJsonContext* pContext, co
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "version");
@@ -36387,7 +36387,7 @@ void cvkParseJsonPhysicalDeviceToolProperties(const cvkJsonContext* pContext, co
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->version, value->pText, (value->textLength < sizeof(pInfo->version)) ? value->textLength : sizeof(pInfo->version) - 1);
+            (void)memcpy(pInfo->version, value->pText, (value->textLength < sizeof(pInfo->version)) ? value->textLength : sizeof(pInfo->version) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "purposes");
@@ -36400,7 +36400,7 @@ void cvkParseJsonPhysicalDeviceToolProperties(const cvkJsonContext* pContext, co
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "layer");
@@ -36408,7 +36408,7 @@ void cvkParseJsonPhysicalDeviceToolProperties(const cvkJsonContext* pContext, co
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->layer, value->pText, (value->textLength < sizeof(pInfo->layer)) ? value->textLength : sizeof(pInfo->layer) - 1);
+            (void)memcpy(pInfo->layer, value->pText, (value->textLength < sizeof(pInfo->layer)) ? value->textLength : sizeof(pInfo->layer) - 1);
         }
     }
 }
@@ -36416,7 +36416,7 @@ void cvkParseJsonPhysicalDeviceTransformFeedbackFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36438,7 +36438,7 @@ void cvkParseJsonPhysicalDeviceTransformFeedbackProperties(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36500,7 +36500,7 @@ void cvkParseJsonPhysicalDeviceUnifiedImageLayoutsFeatures(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFIED_IMAGE_LAYOUTS_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36522,7 +36522,7 @@ void cvkParseJsonPhysicalDeviceUniformBufferStandardLayoutFeatures(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36539,7 +36539,7 @@ void cvkParseJsonPhysicalDeviceVariablePointersFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36561,7 +36561,7 @@ void cvkParseJsonPhysicalDeviceVertexAttributeDivisorFeatures(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36583,7 +36583,7 @@ void cvkParseJsonPhysicalDeviceVertexAttributeDivisorProperties(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36605,7 +36605,7 @@ void cvkParseJsonPhysicalDeviceVertexAttributeDivisorPropertiesEXT(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36622,7 +36622,7 @@ void cvkParseJsonPhysicalDeviceVertexAttributeRobustnessFeatures(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36639,7 +36639,7 @@ void cvkParseJsonPhysicalDeviceVertexInputDynamicStateFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36656,7 +36656,7 @@ void cvkParseJsonPhysicalDeviceVideoDecodeVP9Features(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_DECODE_VP9_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36673,7 +36673,7 @@ void cvkParseJsonPhysicalDeviceVideoEncodeAV1Features(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36690,7 +36690,7 @@ void cvkParseJsonPhysicalDeviceVideoEncodeFeedback2Features(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_FEEDBACK_2_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36707,7 +36707,7 @@ void cvkParseJsonPhysicalDeviceVideoEncodeIntraRefreshFeatures(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_INTRA_REFRESH_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36725,7 +36725,7 @@ void cvkParseJsonPhysicalDeviceVideoEncodeQualityLevelInfo(const cvkJsonContext*
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUALITY_LEVEL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36749,7 +36749,7 @@ void cvkParseJsonPhysicalDeviceVideoEncodeQuantizationMapFeatures(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36766,7 +36766,7 @@ void cvkParseJsonPhysicalDeviceVideoEncodeRgbConversionFeaturesVALVE(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_RGB_CONVERSION_FEATURES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36783,7 +36783,7 @@ void cvkParseJsonPhysicalDeviceVideoFormatInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36800,7 +36800,7 @@ void cvkParseJsonPhysicalDeviceVideoMaintenance1Features(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_1_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36817,7 +36817,7 @@ void cvkParseJsonPhysicalDeviceVideoMaintenance2Features(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36834,7 +36834,7 @@ void cvkParseJsonPhysicalDeviceVulkan11Features(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -36907,7 +36907,7 @@ void cvkParseJsonPhysicalDeviceVulkan11Properties(const cvkJsonContext* pContext
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -37012,7 +37012,7 @@ void cvkParseJsonPhysicalDeviceVulkan12Features(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -37259,7 +37259,7 @@ void cvkParseJsonPhysicalDeviceVulkan12Properties(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -37276,7 +37276,7 @@ void cvkParseJsonPhysicalDeviceVulkan12Properties(const cvkJsonContext* pContext
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
+            (void)memcpy(pInfo->driverName, value->pText, (value->textLength < sizeof(pInfo->driverName)) ? value->textLength : sizeof(pInfo->driverName) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "driverInfo");
@@ -37284,7 +37284,7 @@ void cvkParseJsonPhysicalDeviceVulkan12Properties(const cvkJsonContext* pContext
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
+            (void)memcpy(pInfo->driverInfo, value->pText, (value->textLength < sizeof(pInfo->driverInfo)) ? value->textLength : sizeof(pInfo->driverInfo) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "conformanceVersion");
@@ -37537,7 +37537,7 @@ void cvkParseJsonPhysicalDeviceVulkan13Features(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -37624,7 +37624,7 @@ void cvkParseJsonPhysicalDeviceVulkan13Properties(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -37861,7 +37861,7 @@ void cvkParseJsonPhysicalDeviceVulkan14Features(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -37980,7 +37980,7 @@ void cvkParseJsonPhysicalDeviceVulkan14Properties(const cvkJsonContext* pContext
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38139,7 +38139,7 @@ void cvkParseJsonPhysicalDeviceVulkanMemoryModelFeatures(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38166,7 +38166,7 @@ void cvkParseJsonPhysicalDeviceWorkgroupMemoryExplicitLayoutFeatures(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_FEATURES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38198,7 +38198,7 @@ void cvkParseJsonPhysicalDeviceYcbcr2Plane444FormatsFeatures(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38215,7 +38215,7 @@ void cvkParseJsonPhysicalDeviceYcbcrDegammaFeaturesQCOM(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_DEGAMMA_FEATURES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38232,7 +38232,7 @@ void cvkParseJsonPhysicalDeviceYcbcrImageArraysFeatures(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38249,7 +38249,7 @@ void cvkParseJsonPhysicalDeviceZeroInitializeDeviceMemoryFeatures(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_DEVICE_MEMORY_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38266,7 +38266,7 @@ void cvkParseJsonPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38284,7 +38284,7 @@ void cvkParseJsonPipelineBinaryCreateInfo(const cvkJsonContext* pContext, const 
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38315,7 +38315,7 @@ void cvkParseJsonPipelineBinaryDataInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_DATA_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38332,7 +38332,7 @@ void cvkParseJsonPipelineBinaryData(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "dataSize");
     if (!cvkIsJsonNull(value))
     {
@@ -38345,7 +38345,7 @@ void cvkParseJsonPipelineBinaryHandlesInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_HANDLES_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38377,7 +38377,7 @@ void cvkParseJsonPipelineBinaryInfo(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38408,7 +38408,7 @@ void cvkParseJsonPipelineBinaryKey(const cvkJsonContext* pContext, const cvkJson
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_BINARY_KEY_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38438,7 +38438,7 @@ void cvkParseJsonPipelineBinaryKeysAndData(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "binaryCount");
     if (!cvkIsJsonNull(value))
     {
@@ -38475,7 +38475,7 @@ void cvkParseJsonPipelineCacheCreateInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38498,7 +38498,7 @@ void cvkParseJsonPipelineCacheHeaderVersionDataGraphQCOM(const cvkJsonContext* p
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "headerSize");
     if (!cvkIsJsonNull(value))
     {
@@ -38536,7 +38536,7 @@ void cvkParseJsonPipelineCacheHeaderVersionOne(const cvkJsonContext* pContext, c
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "headerSize");
     if (!cvkIsJsonNull(value))
     {
@@ -38573,7 +38573,7 @@ void cvkParseJsonPipelineColorBlendAdvancedStateCreateInfo(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38600,7 +38600,7 @@ void cvkParseJsonPipelineColorBlendAttachmentState(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "blendEnable");
     if (!cvkIsJsonNull(value))
     {
@@ -38648,7 +38648,7 @@ void cvkParseJsonPipelineColorBlendStateCreateInfo(const cvkJsonContext* pContex
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38706,7 +38706,7 @@ void cvkParseJsonPipelineColorWriteCreateInfo(const cvkJsonContext* pContext, co
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_WRITE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38736,7 +38736,7 @@ void cvkParseJsonPipelineCompilerControlCreateInfoAMD(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38755,7 +38755,7 @@ void cvkParseJsonPipelineCoverageModulationStateCreateInfoNV(const cvkJsonContex
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38800,7 +38800,7 @@ void cvkParseJsonPipelineCoverageReductionStateCreateInfoNV(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_REDUCTION_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38822,7 +38822,7 @@ void cvkParseJsonPipelineCoverageToColorStateCreateInfoNV(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38849,7 +38849,7 @@ void cvkParseJsonPipelineCreateFlags2CreateInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38866,7 +38866,7 @@ void cvkParseJsonPipelineCreateInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38878,7 +38878,7 @@ void cvkParseJsonPipelineCreationFeedback(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "flags");
     if (!cvkIsJsonNull(value))
     {
@@ -38896,7 +38896,7 @@ void cvkParseJsonPipelineCreationFeedbackCreateInfo(const cvkJsonContext* pConte
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38933,7 +38933,7 @@ void cvkParseJsonPipelineDepthStencilStateCreateInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -38997,7 +38997,7 @@ void cvkParseJsonPipelineDiscardRectangleStateCreateInfo(const cvkJsonContext* p
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39039,7 +39039,7 @@ void cvkParseJsonPipelineDynamicStateCreateInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39074,7 +39074,7 @@ void cvkParseJsonPipelineExecutableInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39096,7 +39096,7 @@ void cvkParseJsonPipelineExecutableInternalRepresentation(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39108,7 +39108,7 @@ void cvkParseJsonPipelineExecutableInternalRepresentation(const cvkJsonContext* 
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "description");
@@ -39116,7 +39116,7 @@ void cvkParseJsonPipelineExecutableInternalRepresentation(const cvkJsonContext* 
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "isText");
@@ -39134,7 +39134,7 @@ void cvkParseJsonPipelineExecutableProperties(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39151,7 +39151,7 @@ void cvkParseJsonPipelineExecutableProperties(const cvkJsonContext* pContext, co
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "description");
@@ -39159,7 +39159,7 @@ void cvkParseJsonPipelineExecutableProperties(const cvkJsonContext* pContext, co
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "subgroupSize");
@@ -39172,7 +39172,7 @@ void cvkParseJsonPipelineExecutableStatistic(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_STATISTIC_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39184,7 +39184,7 @@ void cvkParseJsonPipelineExecutableStatistic(const cvkJsonContext* pContext, con
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "description");
@@ -39192,7 +39192,7 @@ void cvkParseJsonPipelineExecutableStatistic(const cvkJsonContext* pContext, con
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "format");
@@ -39210,7 +39210,7 @@ void cvkParseJsonPipelineExecutableStatisticValue(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "b32");
     if (!cvkIsJsonNull(value))
     {
@@ -39240,7 +39240,7 @@ void cvkParseJsonPipelineFragmentDensityMapLayeredCreateInfoVALVE(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_DENSITY_MAP_LAYERED_CREATE_INFO_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39258,7 +39258,7 @@ void cvkParseJsonPipelineFragmentShadingRateEnumStateCreateInfoNV(const cvkJsonC
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_ENUM_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39292,7 +39292,7 @@ void cvkParseJsonPipelineFragmentShadingRateStateCreateInfo(const cvkJsonContext
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39320,7 +39320,7 @@ void cvkParseJsonPipelineIndirectDeviceAddressInfoNV(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_INDIRECT_DEVICE_ADDRESS_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39342,7 +39342,7 @@ void cvkParseJsonPipelineInfo(const cvkJsonContext* pContext, const cvkJsonValue
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39359,7 +39359,7 @@ void cvkParseJsonPipelineInputAssemblyStateCreateInfo(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39388,7 +39388,7 @@ void cvkParseJsonPipelineLayoutCreateInfo(const cvkJsonContext* pContext, const 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39444,7 +39444,7 @@ void cvkParseJsonPipelineLibraryCreateInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39476,7 +39476,7 @@ void cvkParseJsonPipelineMultisampleStateCreateInfo(const cvkJsonContext* pConte
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39532,7 +39532,7 @@ void cvkParseJsonPipelinePropertiesIdentifier(const cvkJsonContext* pContext, co
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_PROPERTIES_IDENTIFIER_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39555,7 +39555,7 @@ void cvkParseJsonPipelineRasterizationConservativeStateCreateInfo(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39582,7 +39582,7 @@ void cvkParseJsonPipelineRasterizationDepthClipStateCreateInfo(const cvkJsonCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39604,7 +39604,7 @@ void cvkParseJsonPipelineRasterizationLineStateCreateInfo(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39636,7 +39636,7 @@ void cvkParseJsonPipelineRasterizationProvokingVertexStateCreateInfo(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_PROVOKING_VERTEX_STATE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39653,7 +39653,7 @@ void cvkParseJsonPipelineRasterizationStateCreateInfo(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39720,7 +39720,7 @@ void cvkParseJsonPipelineRasterizationStateRasterizationOrderAMD(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39737,7 +39737,7 @@ void cvkParseJsonPipelineRasterizationStateStreamCreateInfo(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39761,7 +39761,7 @@ void cvkParseJsonPipelineRenderingCreateInfo(const cvkJsonContext* pContext, con
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39806,7 +39806,7 @@ void cvkParseJsonPipelineRepresentativeFragmentTestStateCreateInfoNV(const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_REPRESENTATIVE_FRAGMENT_TEST_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39823,7 +39823,7 @@ void cvkParseJsonPipelineRobustnessCreateInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39855,7 +39855,7 @@ void cvkParseJsonPipelineSampleLocationsStateCreateInfo(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39878,7 +39878,7 @@ void cvkParseJsonPipelineShaderStageCreateInfo(const cvkJsonContext* pContext, c
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39919,7 +39919,7 @@ void cvkParseJsonPipelineShaderStageModuleIdentifierCreateInfo(const cvkJsonCont
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_MODULE_IDENTIFIER_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39949,7 +39949,7 @@ void cvkParseJsonPipelineShaderStageRequiredSubgroupSizeCreateInfo(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39966,7 +39966,7 @@ void cvkParseJsonPipelineTessellationDomainOriginStateCreateInfo(const cvkJsonCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -39983,7 +39983,7 @@ void cvkParseJsonPipelineTessellationStateCreateInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40007,7 +40007,7 @@ void cvkParseJsonPipelineVertexInputDivisorStateCreateInfo(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40039,7 +40039,7 @@ void cvkParseJsonPipelineVertexInputStateCreateInfo(const cvkJsonContext* pConte
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40094,7 +40094,7 @@ void cvkParseJsonPipelineViewportCoarseSampleOrderStateCreateInfoNV(const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_COARSE_SAMPLE_ORDER_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40130,7 +40130,7 @@ void cvkParseJsonPipelineViewportDepthClampControlCreateInfo(const cvkJsonContex
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40154,7 +40154,7 @@ void cvkParseJsonPipelineViewportDepthClipControlCreateInfo(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLIP_CONTROL_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40173,7 +40173,7 @@ void cvkParseJsonPipelineViewportExclusiveScissorStateCreateInfoNV(const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40205,7 +40205,7 @@ void cvkParseJsonPipelineViewportShadingRateImageStateCreateInfoNV(const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SHADING_RATE_IMAGE_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40242,7 +40242,7 @@ void cvkParseJsonPipelineViewportStateCreateInfo(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40297,7 +40297,7 @@ void cvkParseJsonPipelineViewportSwizzleStateCreateInfoNV(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40334,7 +40334,7 @@ void cvkParseJsonPipelineViewportWScalingStateCreateInfoNV(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40371,7 +40371,7 @@ void cvkParseJsonPresentId2(const cvkJsonContext* pContext, const cvkJsonValue* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_ID_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40403,7 +40403,7 @@ void cvkParseJsonPresentId(const cvkJsonContext* pContext, const cvkJsonValue* p
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_ID_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40435,7 +40435,7 @@ void cvkParseJsonPresentInfo(const cvkJsonContext* pContext, const cvkJsonValue*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40511,7 +40511,7 @@ void cvkParseJsonPresentRegion(const cvkJsonContext* pContext, const cvkJsonValu
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "rectangleCount");
     if (!cvkIsJsonNull(value))
     {
@@ -40537,7 +40537,7 @@ void cvkParseJsonPresentRegions(const cvkJsonContext* pContext, const cvkJsonVal
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40567,7 +40567,7 @@ void cvkParseJsonPresentStageTime(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "stage");
     if (!cvkIsJsonNull(value))
     {
@@ -40583,7 +40583,7 @@ void cvkParseJsonPresentTimeGOOGLE(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "presentID");
     if (!cvkIsJsonNull(value))
     {
@@ -40601,7 +40601,7 @@ void cvkParseJsonPresentTimesInfoGOOGLE(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40631,7 +40631,7 @@ void cvkParseJsonPresentTimingInfo(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_TIMING_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40668,7 +40668,7 @@ void cvkParseJsonPresentTimingSurfaceCapabilities(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_TIMING_SURFACE_CAPABILITIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40702,7 +40702,7 @@ void cvkParseJsonPresentTimingsInfo(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_TIMINGS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40732,7 +40732,7 @@ void cvkParseJsonPresentWait2Info(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRESENT_WAIT_2_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40754,7 +40754,7 @@ void cvkParseJsonPrivateDataSlotCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PRIVATE_DATA_SLOT_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40771,7 +40771,7 @@ void cvkParseJsonProtectedSubmitInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40788,7 +40788,7 @@ void cvkParseJsonPushConstantBankInfoNV(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PUSH_CONSTANT_BANK_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40805,7 +40805,7 @@ void cvkParseJsonPushConstantRange(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "stageFlags");
     if (!cvkIsJsonNull(value))
     {
@@ -40826,7 +40826,7 @@ void cvkParseJsonPushConstantsInfo(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40858,7 +40858,7 @@ void cvkParseJsonPushDataInfo(const cvkJsonContext* pContext, const cvkJsonValue
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PUSH_DATA_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40882,7 +40882,7 @@ void cvkParseJsonPushDescriptorSetInfo(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40927,7 +40927,7 @@ void cvkParseJsonPushDescriptorSetWithTemplateInfo(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40954,7 +40954,7 @@ void cvkParseJsonQueryLowLatencySupportNV(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_LOW_LATENCY_SUPPORT_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -40966,7 +40966,7 @@ void cvkParseJsonQueryPoolCreateInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41000,7 +41000,7 @@ void cvkParseJsonQueryPoolPerformanceCreateInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41035,7 +41035,7 @@ void cvkParseJsonQueryPoolPerformanceQueryCreateInfoINTEL(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_QUERY_CREATE_INFO_INTEL;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41052,7 +41052,7 @@ void cvkParseJsonQueryPoolVideoEncodeFeedbackCreateInfo(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_VIDEO_ENCODE_FEEDBACK_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41069,7 +41069,7 @@ void cvkParseJsonQueryPoolVideoEncodePerPartitionFeedbackCreateInfo(const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUERY_POOL_VIDEO_ENCODE_PER_PARTITION_FEEDBACK_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41091,7 +41091,7 @@ void cvkParseJsonQueueFamilyCheckpointProperties2NV(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41108,7 +41108,7 @@ void cvkParseJsonQueueFamilyCheckpointPropertiesNV(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41125,7 +41125,7 @@ void cvkParseJsonQueueFamilyDataGraphOpticalFlowPropertiesARM(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_OPTICAL_FLOW_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41177,7 +41177,7 @@ void cvkParseJsonQueueFamilyDataGraphProcessingEnginePropertiesARM(const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROCESSING_ENGINE_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41199,7 +41199,7 @@ void cvkParseJsonQueueFamilyDataGraphPropertiesARM(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41223,7 +41223,7 @@ void cvkParseJsonQueueFamilyDataGraphTOSAPropertiesARM(const cvkJsonContext* pCo
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_TOSA_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41277,7 +41277,7 @@ void cvkParseJsonQueueFamilyGlobalPriorityProperties(const cvkJsonContext* pCont
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41305,7 +41305,7 @@ void cvkParseJsonQueueFamilyOptimalImageTransferGranularityProperties(const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_OPTIMAL_IMAGE_TRANSFER_GRANULARITY_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41322,7 +41322,7 @@ void cvkParseJsonQueueFamilyOwnershipTransferProperties(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_OWNERSHIP_TRANSFER_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41339,7 +41339,7 @@ void cvkParseJsonQueueFamilyProperties(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "queueFlags");
     if (!cvkIsJsonNull(value))
     {
@@ -41365,7 +41365,7 @@ void cvkParseJsonQueueFamilyProperties2(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41382,7 +41382,7 @@ void cvkParseJsonQueueFamilyQueryResultStatusProperties(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41399,7 +41399,7 @@ void cvkParseJsonQueueFamilyVideoProperties(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_VIDEO_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41418,7 +41418,7 @@ void cvkParseJsonRayTracingPipelineClusterAccelerationStructureCreateInfoNV(cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CLUSTER_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41437,7 +41437,7 @@ void cvkParseJsonRayTracingPipelineCreateInfo(const cvkJsonContext* pContext, co
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41533,7 +41533,7 @@ void cvkParseJsonRayTracingPipelineCreateInfoNV(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41606,7 +41606,7 @@ void cvkParseJsonRayTracingPipelineInterfaceCreateInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_INTERFACE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41628,7 +41628,7 @@ void cvkParseJsonRayTracingShaderGroupCreateInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41665,7 +41665,7 @@ void cvkParseJsonRayTracingShaderGroupCreateInfoNV(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41702,7 +41702,7 @@ void cvkParseJsonRect2D(const cvkJsonContext* pContext, const cvkJsonValue* pObj
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "offset");
     if (!cvkIsJsonNull(value))
     {
@@ -41718,7 +41718,7 @@ void cvkParseJsonRectLayer(const cvkJsonContext* pContext, const cvkJsonValue* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "offset");
     if (!cvkIsJsonNull(value))
     {
@@ -41739,7 +41739,7 @@ void cvkParseJsonRefreshCycleDurationGOOGLE(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "refreshDuration");
     if (!cvkIsJsonNull(value))
     {
@@ -41750,7 +41750,7 @@ void cvkParseJsonReleaseCapturedPipelineDataInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RELEASE_CAPTURED_PIPELINE_DATA_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41769,7 +41769,7 @@ void cvkParseJsonReleaseSwapchainImagesInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RELEASE_SWAPCHAIN_IMAGES_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41806,7 +41806,7 @@ void cvkParseJsonRenderPassAttachmentBeginInfo(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41838,7 +41838,7 @@ void cvkParseJsonRenderPassBeginInfo(const cvkJsonContext* pContext, const cvkJs
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41885,7 +41885,7 @@ void cvkParseJsonRenderPassCreateInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -41958,7 +41958,7 @@ void cvkParseJsonRenderPassCreateInfo2(const cvkJsonContext* pContext, const cvk
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42047,7 +42047,7 @@ void cvkParseJsonRenderPassCreationControl(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATION_CONTROL_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42065,7 +42065,7 @@ void cvkParseJsonRenderPassCreationFeedbackCreateInfo(const cvkJsonContext* pCon
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATION_FEEDBACK_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42084,7 +42084,7 @@ void cvkParseJsonRenderPassCreationFeedbackInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "postMergeSubpassCount");
     if (!cvkIsJsonNull(value))
     {
@@ -42095,7 +42095,7 @@ void cvkParseJsonRenderPassFragmentDensityMapCreateInfo(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42114,7 +42114,7 @@ void cvkParseJsonRenderPassFragmentDensityMapOffsetEndInfo(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42146,7 +42146,7 @@ void cvkParseJsonRenderPassInputAttachmentAspectCreateInfo(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42178,7 +42178,7 @@ void cvkParseJsonRenderPassMultiviewCreateInfo(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42246,7 +42246,7 @@ void cvkParseJsonRenderPassPerformanceCountersByRegionBeginInfoARM(const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_PERFORMANCE_COUNTERS_BY_REGION_BEGIN_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42301,7 +42301,7 @@ void cvkParseJsonRenderPassSampleLocationsBeginInfo(const cvkJsonContext* pConte
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42351,7 +42351,7 @@ void cvkParseJsonRenderPassStripeBeginInfoARM(const cvkJsonContext* pContext, co
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_BEGIN_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42381,7 +42381,7 @@ void cvkParseJsonRenderPassStripeInfoARM(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42400,7 +42400,7 @@ void cvkParseJsonRenderPassStripeSubmitInfoARM(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_STRIPE_SUBMIT_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42431,7 +42431,7 @@ void cvkParseJsonRenderPassSubpassFeedbackCreateInfo(const cvkJsonContext* pCont
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_SUBPASS_FEEDBACK_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42450,7 +42450,7 @@ void cvkParseJsonRenderPassSubpassFeedbackInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "subpassMergeStatus");
     if (!cvkIsJsonNull(value))
     {
@@ -42461,7 +42461,7 @@ void cvkParseJsonRenderPassSubpassFeedbackInfo(const cvkJsonContext* pContext, c
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "postMergeIndex");
@@ -42474,7 +42474,7 @@ void cvkParseJsonRenderPassTileShadingCreateInfoQCOM(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_TILE_SHADING_CREATE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42496,7 +42496,7 @@ void cvkParseJsonRenderPassTransformBeginInfoQCOM(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDER_PASS_TRANSFORM_BEGIN_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42515,7 +42515,7 @@ void cvkParseJsonRenderingAreaInfo(const cvkJsonContext* pContext, const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42560,7 +42560,7 @@ void cvkParseJsonRenderingAttachmentFlagsInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_FLAGS_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42577,7 +42577,7 @@ void cvkParseJsonRenderingAttachmentInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42631,7 +42631,7 @@ void cvkParseJsonRenderingAttachmentLocationInfo(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42661,7 +42661,7 @@ void cvkParseJsonRenderingEndInfo(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_END_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42673,7 +42673,7 @@ void cvkParseJsonRenderingFragmentDensityMapAttachmentInfo(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42695,7 +42695,7 @@ void cvkParseJsonRenderingFragmentShadingRateAttachmentInfo(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42724,7 +42724,7 @@ void cvkParseJsonRenderingInfo(const cvkJsonContext* pContext, const cvkJsonValu
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42790,7 +42790,7 @@ void cvkParseJsonRenderingInputAttachmentIndexInfo(const cvkJsonContext* pContex
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42848,7 +42848,7 @@ void cvkParseJsonResolveImageInfo2(const cvkJsonContext* pContext, const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RESOLVE_IMAGE_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42898,7 +42898,7 @@ void cvkParseJsonResolveImageModeInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RESOLVE_IMAGE_MODE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42926,7 +42926,7 @@ void cvkParseJsonResourceDescriptorData(const cvkJsonContext* pContext, const cv
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "pImage");
     if (!cvkIsJsonNull(value))
     {
@@ -42964,7 +42964,7 @@ void cvkParseJsonResourceDescriptorInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_RESOURCE_DESCRIPTOR_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -42986,7 +42986,7 @@ void cvkParseJsonSRTDataNV(const cvkJsonContext* pContext, const cvkJsonValue* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "sx");
     if (!cvkIsJsonNull(value))
     {
@@ -43072,7 +43072,7 @@ void cvkParseJsonSampleLocation(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -43090,7 +43090,7 @@ void cvkParseJsonSampleLocationsInfo(const cvkJsonContext* pContext, const cvkJs
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43130,7 +43130,7 @@ void cvkParseJsonSamplerBlockMatchWindowCreateInfoQCOM(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_BLOCK_MATCH_WINDOW_CREATE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43152,7 +43152,7 @@ void cvkParseJsonSamplerBorderColorComponentMappingCreateInfo(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43174,7 +43174,7 @@ void cvkParseJsonSamplerCaptureDescriptorDataInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43191,7 +43191,7 @@ void cvkParseJsonSamplerCreateInfo(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43283,7 +43283,7 @@ void cvkParseJsonSamplerCubicWeightsCreateInfoQCOM(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CUBIC_WEIGHTS_CREATE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43300,7 +43300,7 @@ void cvkParseJsonSamplerCustomBorderColorCreateInfo(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43322,7 +43322,7 @@ void cvkParseJsonSamplerCustomBorderColorIndexCreateInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_INDEX_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43339,7 +43339,7 @@ void cvkParseJsonSamplerReductionModeCreateInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43356,7 +43356,7 @@ void cvkParseJsonSamplerYcbcrConversionCreateInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43408,7 +43408,7 @@ void cvkParseJsonSamplerYcbcrConversionImageFormatProperties(const cvkJsonContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43425,7 +43425,7 @@ void cvkParseJsonSamplerYcbcrConversionInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43442,7 +43442,7 @@ void cvkParseJsonSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM(const cvkJsonC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_YCBCR_DEGAMMA_CREATE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43464,7 +43464,7 @@ void cvkParseJsonSemaphoreCreateInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43481,7 +43481,7 @@ void cvkParseJsonSemaphoreGetFdInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43503,7 +43503,7 @@ void cvkParseJsonSemaphoreSignalInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43525,7 +43525,7 @@ void cvkParseJsonSemaphoreSubmitInfo(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43557,7 +43557,7 @@ void cvkParseJsonSemaphoreTypeCreateInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43581,7 +43581,7 @@ void cvkParseJsonSemaphoreWaitInfo(const cvkJsonContext* pContext, const cvkJson
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43631,7 +43631,7 @@ void cvkParseJsonSetDescriptorBufferOffsetsInfo(const cvkJsonContext* pContext, 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SET_DESCRIPTOR_BUFFER_OFFSETS_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43689,7 +43689,7 @@ void cvkParseJsonSetLatencyMarkerInfoNV(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43711,7 +43711,7 @@ void cvkParseJsonSetPresentConfigNV(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SET_PRESENT_CONFIG_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43733,7 +43733,7 @@ void cvkParseJsonSetStateFlagsIndirectCommandNV(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "data");
     if (!cvkIsJsonNull(value))
     {
@@ -43746,7 +43746,7 @@ void cvkParseJsonShaderCreateInfo(const cvkJsonContext* pContext, const cvkJsonV
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43834,7 +43834,7 @@ void cvkParseJsonShaderDescriptorSetAndBindingMappingInfo(const cvkJsonContext* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_DESCRIPTOR_SET_AND_BINDING_MAPPING_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43864,7 +43864,7 @@ void cvkParseJsonShaderInstrumentationCreateInfoARM(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43876,7 +43876,7 @@ void cvkParseJsonShaderInstrumentationMetricDataHeaderARM(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "resultIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -43902,7 +43902,7 @@ void cvkParseJsonShaderInstrumentationMetricDescriptionARM(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_METRIC_DESCRIPTION_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43914,7 +43914,7 @@ void cvkParseJsonShaderInstrumentationMetricDescriptionARM(const cvkJsonContext*
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
+            (void)memcpy(pInfo->name, value->pText, (value->textLength < sizeof(pInfo->name)) ? value->textLength : sizeof(pInfo->name) - 1);
         }
     }
     value = cvkGetJsonMember(&pContext->document, pObject, "description");
@@ -43922,7 +43922,7 @@ void cvkParseJsonShaderInstrumentationMetricDescriptionARM(const cvkJsonContext*
     {
         if (CVK_JSON_STRING == value->kind)
         {
-            memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
+            (void)memcpy(pInfo->description, value->pText, (value->textLength < sizeof(pInfo->description)) ? value->textLength : sizeof(pInfo->description) - 1);
         }
     }
 }
@@ -43932,7 +43932,7 @@ void cvkParseJsonShaderModuleCreateInfo(const cvkJsonContext* pContext, const cv
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43968,7 +43968,7 @@ void cvkParseJsonShaderModuleIdentifier(const cvkJsonContext* pContext, const cv
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_MODULE_IDENTIFIER_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -43996,7 +43996,7 @@ void cvkParseJsonShaderModuleValidationCacheCreateInfo(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44013,7 +44013,7 @@ void cvkParseJsonShaderResourceUsageAMD(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "numUsedVgprs");
     if (!cvkIsJsonNull(value))
     {
@@ -44045,7 +44045,7 @@ void cvkParseJsonShaderStatisticsInfoAMD(const cvkJsonContext* pContext, const c
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "shaderStageMask");
     if (!cvkIsJsonNull(value))
     {
@@ -44094,7 +44094,7 @@ void cvkParseJsonShadingRatePaletteNV(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "shadingRatePaletteEntryCount");
     if (!cvkIsJsonNull(value))
     {
@@ -44118,7 +44118,7 @@ void cvkParseJsonSharedPresentSurfaceCapabilities2(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44135,7 +44135,7 @@ void cvkParseJsonSharedPresentSurfaceCapabilities(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44154,7 +44154,7 @@ void cvkParseJsonSparseBufferMemoryBindInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "buffer");
     if (!cvkIsJsonNull(value))
     {
@@ -44183,7 +44183,7 @@ void cvkParseJsonSparseImageFormatProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "aspectMask");
     if (!cvkIsJsonNull(value))
     {
@@ -44204,7 +44204,7 @@ void cvkParseJsonSparseImageFormatProperties2(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44221,7 +44221,7 @@ void cvkParseJsonSparseImageMemoryBind(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "subresource");
     if (!cvkIsJsonNull(value))
     {
@@ -44259,7 +44259,7 @@ void cvkParseJsonSparseImageMemoryBindInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "image");
     if (!cvkIsJsonNull(value))
     {
@@ -44288,7 +44288,7 @@ void cvkParseJsonSparseImageMemoryRequirements(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "formatProperties");
     if (!cvkIsJsonNull(value))
     {
@@ -44319,7 +44319,7 @@ void cvkParseJsonSparseImageMemoryRequirements2(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44338,7 +44338,7 @@ void cvkParseJsonSparseImageOpaqueMemoryBindInfo(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "image");
     if (!cvkIsJsonNull(value))
     {
@@ -44367,7 +44367,7 @@ void cvkParseJsonSparseMemoryBind(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "resourceOffset");
     if (!cvkIsJsonNull(value))
     {
@@ -44400,7 +44400,7 @@ void cvkParseJsonSpecializationInfo(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "mapEntryCount");
     if (!cvkIsJsonNull(value))
     {
@@ -44429,7 +44429,7 @@ void cvkParseJsonSpecializationMapEntry(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "constantID");
     if (!cvkIsJsonNull(value))
     {
@@ -44450,7 +44450,7 @@ void cvkParseJsonStencilOpState(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "failOp");
     if (!cvkIsJsonNull(value))
     {
@@ -44491,7 +44491,7 @@ void cvkParseJsonStridedDeviceAddressNV(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "startAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -44507,7 +44507,7 @@ void cvkParseJsonStridedDeviceAddressRange(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "address");
     if (!cvkIsJsonNull(value))
     {
@@ -44528,7 +44528,7 @@ void cvkParseJsonStridedDeviceAddressRegion(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "deviceAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -44551,7 +44551,7 @@ void cvkParseJsonSubmitInfo(const cvkJsonContext* pContext, const cvkJsonValue* 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44632,7 +44632,7 @@ void cvkParseJsonSubmitInfo2(const cvkJsonContext* pContext, const cvkJsonValue*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44703,7 +44703,7 @@ void cvkParseJsonSubpassBeginInfo(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44720,7 +44720,7 @@ void cvkParseJsonSubpassDependency(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "srcSubpass");
     if (!cvkIsJsonNull(value))
     {
@@ -44761,7 +44761,7 @@ void cvkParseJsonSubpassDependency2(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -44815,7 +44815,7 @@ void cvkParseJsonSubpassDescription(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "flags");
     if (!cvkIsJsonNull(value))
     {
@@ -44907,7 +44907,7 @@ void cvkParseJsonSubpassDescription2(const cvkJsonContext* pContext, const cvkJs
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45009,7 +45009,7 @@ void cvkParseJsonSubpassDescriptionDepthStencilResolve(const cvkJsonContext* pCo
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45038,7 +45038,7 @@ void cvkParseJsonSubpassEndInfo(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45050,7 +45050,7 @@ void cvkParseJsonSubpassResolvePerformanceQuery(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45067,7 +45067,7 @@ void cvkParseJsonSubpassSampleLocations(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "subpassIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -45083,7 +45083,7 @@ void cvkParseJsonSubpassShadingPipelineCreateInfoHUAWEI(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45105,7 +45105,7 @@ void cvkParseJsonSubresourceHostMemcpySize(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45122,7 +45122,7 @@ void cvkParseJsonSubresourceLayout(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "offset");
     if (!cvkIsJsonNull(value))
     {
@@ -45153,7 +45153,7 @@ void cvkParseJsonSubresourceLayout2(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45170,7 +45170,7 @@ void cvkParseJsonSubsampledImageFormatProperties(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SUBSAMPLED_IMAGE_FORMAT_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45187,7 +45187,7 @@ void cvkParseJsonSurfaceCapabilities2EXT(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45254,7 +45254,7 @@ void cvkParseJsonSurfaceCapabilities2(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45271,7 +45271,7 @@ void cvkParseJsonSurfaceCapabilities(const cvkJsonContext* pContext, const cvkJs
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "minImageCount");
     if (!cvkIsJsonNull(value))
     {
@@ -45327,7 +45327,7 @@ void cvkParseJsonSurfaceCapabilitiesPresentBarrierNV(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_BARRIER_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45344,7 +45344,7 @@ void cvkParseJsonSurfaceCapabilitiesPresentId2(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_ID_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45361,7 +45361,7 @@ void cvkParseJsonSurfaceCapabilitiesPresentWait2(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_PRESENT_WAIT_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45378,7 +45378,7 @@ void cvkParseJsonSurfaceFormat2(const cvkJsonContext* pContext, const cvkJsonVal
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45395,7 +45395,7 @@ void cvkParseJsonSurfaceFormat(const cvkJsonContext* pContext, const cvkJsonValu
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "format");
     if (!cvkIsJsonNull(value))
     {
@@ -45413,7 +45413,7 @@ void cvkParseJsonSurfacePresentModeCompatibility(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45443,7 +45443,7 @@ void cvkParseJsonSurfacePresentMode(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45460,7 +45460,7 @@ void cvkParseJsonSurfacePresentScalingCapabilities(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_PRESENT_SCALING_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45497,7 +45497,7 @@ void cvkParseJsonSurfaceProtectedCapabilities(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45514,7 +45514,7 @@ void cvkParseJsonSwapchainCalibratedTimestampInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CALIBRATED_TIMESTAMP_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45541,7 +45541,7 @@ void cvkParseJsonSwapchainCounterCreateInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45560,7 +45560,7 @@ void cvkParseJsonSwapchainCreateInfo(const cvkJsonContext* pContext, const cvkJs
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45660,7 +45660,7 @@ void cvkParseJsonSwapchainDisplayNativeHdrCreateInfoAMD(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45677,7 +45677,7 @@ void cvkParseJsonSwapchainFlagsSurfaceCapabilities(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_FLAGS_SURFACE_CAPABILITIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45694,7 +45694,7 @@ void cvkParseJsonSwapchainLatencyCreateInfoNV(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45711,7 +45711,7 @@ void cvkParseJsonSwapchainPresentBarrierCreateInfoNV(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_BARRIER_CREATE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45730,7 +45730,7 @@ void cvkParseJsonSwapchainPresentFenceInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_FENCE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45762,7 +45762,7 @@ void cvkParseJsonSwapchainPresentModeInfo(const cvkJsonContext* pContext, const 
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45794,7 +45794,7 @@ void cvkParseJsonSwapchainPresentModesCreateInfo(const cvkJsonContext* pContext,
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45824,7 +45824,7 @@ void cvkParseJsonSwapchainPresentScalingCreateInfo(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_SCALING_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45853,7 +45853,7 @@ void cvkParseJsonSwapchainTimeDomainProperties(const cvkJsonContext* pContext, c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_TIME_DOMAIN_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45896,7 +45896,7 @@ void cvkParseJsonSwapchainTimingProperties(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SWAPCHAIN_TIMING_PROPERTIES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45918,7 +45918,7 @@ void cvkParseJsonTensorCaptureDescriptorDataInfoARM(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_CAPTURE_DESCRIPTOR_DATA_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45937,7 +45937,7 @@ void cvkParseJsonTensorCopyARM(const cvkJsonContext* pContext, const cvkJsonValu
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_COPY_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -45995,7 +45995,7 @@ void cvkParseJsonTensorCreateInfoARM(const cvkJsonContext* pContext, const cvkJs
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46044,7 +46044,7 @@ void cvkParseJsonTensorDependencyInfoARM(const cvkJsonContext* pContext, const c
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_DEPENDENCY_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46076,7 +46076,7 @@ void cvkParseJsonTensorDescriptionARM(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_DESCRIPTION_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46134,7 +46134,7 @@ void cvkParseJsonTensorExplicitTilingFormatPropertiesARM(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_EXPLICIT_TILING_FORMAT_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46171,7 +46171,7 @@ void cvkParseJsonTensorFormatPropertiesARM(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_FORMAT_PROPERTIES_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46193,7 +46193,7 @@ void cvkParseJsonTensorMemoryBarrierARM(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_MEMORY_BARRIER_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46240,7 +46240,7 @@ void cvkParseJsonTensorMemoryRequirementsInfoARM(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_MEMORY_REQUIREMENTS_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46258,7 +46258,7 @@ void cvkParseJsonTensorRollingBackingCreateInfoARM(const cvkJsonContext* pContex
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_ROLLING_BACKING_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46281,7 +46281,7 @@ void cvkParseJsonTensorViewCaptureDescriptorDataInfoARM(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46298,7 +46298,7 @@ void cvkParseJsonTensorViewCreateInfoARM(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TENSOR_VIEW_CREATE_INFO_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46325,7 +46325,7 @@ void cvkParseJsonTexelBufferDescriptorInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TEXEL_BUFFER_DESCRIPTOR_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46347,7 +46347,7 @@ void cvkParseJsonTextureLODGatherFormatPropertiesAMD(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46364,7 +46364,7 @@ void cvkParseJsonThrottleHintSubmitInfoSEC(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_THROTTLE_HINT_SUBMIT_INFO_SEC;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46381,7 +46381,7 @@ void cvkParseJsonTileMemoryBindInfoQCOM(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46398,7 +46398,7 @@ void cvkParseJsonTileMemoryRequirementsQCOM(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TILE_MEMORY_REQUIREMENTS_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46420,7 +46420,7 @@ void cvkParseJsonTileMemorySizeInfoQCOM(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TILE_MEMORY_SIZE_INFO_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46437,7 +46437,7 @@ void cvkParseJsonTilePropertiesQCOM(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TILE_PROPERTIES_QCOM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46466,7 +46466,7 @@ void cvkParseJsonTimelineSemaphoreSubmitInfo(const cvkJsonContext* pContext, con
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46514,7 +46514,7 @@ void cvkParseJsonTraceRaysIndirectCommand2(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "raygenShaderRecordAddress");
     if (!cvkIsJsonNull(value))
     {
@@ -46590,7 +46590,7 @@ void cvkParseJsonTraceRaysIndirectCommand(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "width");
     if (!cvkIsJsonNull(value))
     {
@@ -46613,7 +46613,7 @@ void cvkParseJsonTransformMatrix(const cvkJsonContext* pContext, const cvkJsonVa
     uint32_t            index;
     uint32_t            inner;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "matrix");
     if (!cvkIsJsonNull(value))
     {
@@ -46633,7 +46633,7 @@ void cvkParseJsonValidationCacheCreateInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46657,7 +46657,7 @@ void cvkParseJsonValidationFeatures(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46707,7 +46707,7 @@ void cvkParseJsonValidationFlags(const cvkJsonContext* pContext, const cvkJsonVa
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46737,7 +46737,7 @@ void cvkParseJsonVertexInputAttributeDescription(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "location");
     if (!cvkIsJsonNull(value))
     {
@@ -46763,7 +46763,7 @@ void cvkParseJsonVertexInputAttributeDescription2(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46795,7 +46795,7 @@ void cvkParseJsonVertexInputBindingDescription(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "binding");
     if (!cvkIsJsonNull(value))
     {
@@ -46816,7 +46816,7 @@ void cvkParseJsonVertexInputBindingDescription2(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46848,7 +46848,7 @@ void cvkParseJsonVertexInputBindingDivisorDescription(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "binding");
     if (!cvkIsJsonNull(value))
     {
@@ -46866,7 +46866,7 @@ void cvkParseJsonVideoBeginCodingInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_BEGIN_CODING_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46911,7 +46911,7 @@ void cvkParseJsonVideoCapabilities(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46968,7 +46968,7 @@ void cvkParseJsonVideoCodingControlInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_CODING_CONTROL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46985,7 +46985,7 @@ void cvkParseJsonVideoDecodeAV1Capabilities(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -46997,7 +46997,7 @@ void cvkParseJsonVideoDecodeAV1DpbSlotInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_DPB_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47009,7 +47009,7 @@ void cvkParseJsonVideoDecodeAV1InlineSessionParametersInfo(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47023,7 +47023,7 @@ void cvkParseJsonVideoDecodeAV1PictureInfo(const cvkJsonContext* pContext, const
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47082,7 +47082,7 @@ void cvkParseJsonVideoDecodeAV1ProfileInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47099,7 +47099,7 @@ void cvkParseJsonVideoDecodeAV1SessionParametersCreateInfo(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47111,7 +47111,7 @@ void cvkParseJsonVideoDecodeCapabilities(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47128,7 +47128,7 @@ void cvkParseJsonVideoDecodeH264Capabilities(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47145,7 +47145,7 @@ void cvkParseJsonVideoDecodeH264DpbSlotInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_DPB_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47157,7 +47157,7 @@ void cvkParseJsonVideoDecodeH264InlineSessionParametersInfo(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_INLINE_SESSION_PARAMETERS_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47171,7 +47171,7 @@ void cvkParseJsonVideoDecodeH264PictureInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47201,7 +47201,7 @@ void cvkParseJsonVideoDecodeH264ProfileInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47218,7 +47218,7 @@ void cvkParseJsonVideoDecodeH264SessionParametersAddInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_SESSION_PARAMETERS_ADD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47241,7 +47241,7 @@ void cvkParseJsonVideoDecodeH264SessionParametersCreateInfo(const cvkJsonContext
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47270,7 +47270,7 @@ void cvkParseJsonVideoDecodeH265Capabilities(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47282,7 +47282,7 @@ void cvkParseJsonVideoDecodeH265DpbSlotInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_DPB_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47294,7 +47294,7 @@ void cvkParseJsonVideoDecodeH265InlineSessionParametersInfo(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_INLINE_SESSION_PARAMETERS_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47308,7 +47308,7 @@ void cvkParseJsonVideoDecodeH265PictureInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47338,7 +47338,7 @@ void cvkParseJsonVideoDecodeH265ProfileInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47350,7 +47350,7 @@ void cvkParseJsonVideoDecodeH265SessionParametersAddInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_SESSION_PARAMETERS_ADD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47378,7 +47378,7 @@ void cvkParseJsonVideoDecodeH265SessionParametersCreateInfo(const cvkJsonContext
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47414,7 +47414,7 @@ void cvkParseJsonVideoDecodeInfo(const cvkJsonContext* pContext, const cvkJsonVa
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47476,7 +47476,7 @@ void cvkParseJsonVideoDecodeUsageInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_USAGE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47493,7 +47493,7 @@ void cvkParseJsonVideoDecodeVP9Capabilities(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_VP9_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47506,7 +47506,7 @@ void cvkParseJsonVideoDecodeVP9PictureInfo(const cvkJsonContext* pContext, const
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_VP9_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47544,7 +47544,7 @@ void cvkParseJsonVideoDecodeVP9ProfileInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_DECODE_VP9_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47556,7 +47556,7 @@ void cvkParseJsonVideoEncodeAV1Capabilities(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47683,7 +47683,7 @@ void cvkParseJsonVideoEncodeAV1DpbSlotInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_DPB_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47695,7 +47695,7 @@ void cvkParseJsonVideoEncodeAV1FrameSize(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "intraFrameSize");
     if (!cvkIsJsonNull(value))
     {
@@ -47716,7 +47716,7 @@ void cvkParseJsonVideoEncodeAV1GopRemainingFrameInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_GOP_REMAINING_FRAME_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47749,7 +47749,7 @@ void cvkParseJsonVideoEncodeAV1PictureInfo(const cvkJsonContext* pContext, const
     const cvkJsonValue* value;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47797,7 +47797,7 @@ void cvkParseJsonVideoEncodeAV1ProfileInfo(const cvkJsonContext* pContext, const
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47809,7 +47809,7 @@ void cvkParseJsonVideoEncodeAV1QIndex(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "intraQIndex");
     if (!cvkIsJsonNull(value))
     {
@@ -47830,7 +47830,7 @@ void cvkParseJsonVideoEncodeAV1QualityLevelProperties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUALITY_LEVEL_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47917,7 +47917,7 @@ void cvkParseJsonVideoEncodeAV1QuantizationMapCapabilities(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47939,7 +47939,7 @@ void cvkParseJsonVideoEncodeAV1RateControlInfo(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_RATE_CONTROL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -47976,7 +47976,7 @@ void cvkParseJsonVideoEncodeAV1RateControlLayerInfo(const cvkJsonContext* pConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_RATE_CONTROL_LAYER_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48018,7 +48018,7 @@ void cvkParseJsonVideoEncodeAV1SessionCreateInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_SESSION_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48035,7 +48035,7 @@ void cvkParseJsonVideoEncodeAV1SessionParametersCreateInfo(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48052,7 +48052,7 @@ void cvkParseJsonVideoEncodeCapabilities(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48099,7 +48099,7 @@ void cvkParseJsonVideoEncodeFeedback2Capabilities(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_FEEDBACK_2_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48121,7 +48121,7 @@ void cvkParseJsonVideoEncodeH264Capabilities(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48193,7 +48193,7 @@ void cvkParseJsonVideoEncodeH264DpbSlotInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_DPB_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48205,7 +48205,7 @@ void cvkParseJsonVideoEncodeH264FrameSize(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "frameISize");
     if (!cvkIsJsonNull(value))
     {
@@ -48226,7 +48226,7 @@ void cvkParseJsonVideoEncodeH264GopRemainingFrameInfo(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_GOP_REMAINING_FRAME_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48258,7 +48258,7 @@ void cvkParseJsonVideoEncodeH264NaluSliceInfo(const cvkJsonContext* pContext, co
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_NALU_SLICE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48277,7 +48277,7 @@ void cvkParseJsonVideoEncodeH264PictureInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48312,7 +48312,7 @@ void cvkParseJsonVideoEncodeH264ProfileInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48324,7 +48324,7 @@ void cvkParseJsonVideoEncodeH264Qp(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "qpI");
     if (!cvkIsJsonNull(value))
     {
@@ -48345,7 +48345,7 @@ void cvkParseJsonVideoEncodeH264QualityLevelProperties(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUALITY_LEVEL_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48402,7 +48402,7 @@ void cvkParseJsonVideoEncodeH264QuantizationMapCapabilities(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48424,7 +48424,7 @@ void cvkParseJsonVideoEncodeH264RateControlInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_RATE_CONTROL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48461,7 +48461,7 @@ void cvkParseJsonVideoEncodeH264RateControlLayerInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_RATE_CONTROL_LAYER_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48503,7 +48503,7 @@ void cvkParseJsonVideoEncodeH264SessionCreateInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_SESSION_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48520,7 +48520,7 @@ void cvkParseJsonVideoEncodeH264SessionParametersAddInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_SESSION_PARAMETERS_ADD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48543,7 +48543,7 @@ void cvkParseJsonVideoEncodeH264SessionParametersCreateInfo(const cvkJsonContext
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48572,7 +48572,7 @@ void cvkParseJsonVideoEncodeH264SessionParametersFeedbackInfo(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_SESSION_PARAMETERS_FEEDBACK_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48594,7 +48594,7 @@ void cvkParseJsonVideoEncodeH264SessionParametersGetInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_SESSION_PARAMETERS_GET_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48626,7 +48626,7 @@ void cvkParseJsonVideoEncodeH265Capabilities(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48713,7 +48713,7 @@ void cvkParseJsonVideoEncodeH265DpbSlotInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_DPB_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48725,7 +48725,7 @@ void cvkParseJsonVideoEncodeH265FrameSize(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "frameISize");
     if (!cvkIsJsonNull(value))
     {
@@ -48746,7 +48746,7 @@ void cvkParseJsonVideoEncodeH265GopRemainingFrameInfo(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_GOP_REMAINING_FRAME_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48778,7 +48778,7 @@ void cvkParseJsonVideoEncodeH265NaluSliceSegmentInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_NALU_SLICE_SEGMENT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48797,7 +48797,7 @@ void cvkParseJsonVideoEncodeH265PictureInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PICTURE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48827,7 +48827,7 @@ void cvkParseJsonVideoEncodeH265ProfileInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48839,7 +48839,7 @@ void cvkParseJsonVideoEncodeH265Qp(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "qpI");
     if (!cvkIsJsonNull(value))
     {
@@ -48860,7 +48860,7 @@ void cvkParseJsonVideoEncodeH265QualityLevelProperties(const cvkJsonContext* pCo
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUALITY_LEVEL_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48912,7 +48912,7 @@ void cvkParseJsonVideoEncodeH265QuantizationMapCapabilities(const cvkJsonContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48934,7 +48934,7 @@ void cvkParseJsonVideoEncodeH265RateControlInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_RATE_CONTROL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -48971,7 +48971,7 @@ void cvkParseJsonVideoEncodeH265RateControlLayerInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_RATE_CONTROL_LAYER_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49013,7 +49013,7 @@ void cvkParseJsonVideoEncodeH265SessionCreateInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_SESSION_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49030,7 +49030,7 @@ void cvkParseJsonVideoEncodeH265SessionParametersAddInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_SESSION_PARAMETERS_ADD_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49058,7 +49058,7 @@ void cvkParseJsonVideoEncodeH265SessionParametersCreateInfo(const cvkJsonContext
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49092,7 +49092,7 @@ void cvkParseJsonVideoEncodeH265SessionParametersFeedbackInfo(const cvkJsonConte
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_SESSION_PARAMETERS_FEEDBACK_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49119,7 +49119,7 @@ void cvkParseJsonVideoEncodeH265SessionParametersGetInfo(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_SESSION_PARAMETERS_GET_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49163,7 +49163,7 @@ void cvkParseJsonVideoEncodeInfo(const cvkJsonContext* pContext, const cvkJsonVa
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49230,7 +49230,7 @@ void cvkParseJsonVideoEncodeIntraRefreshCapabilities(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49267,7 +49267,7 @@ void cvkParseJsonVideoEncodeIntraRefreshInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_INTRA_REFRESH_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49289,7 +49289,7 @@ void cvkParseJsonVideoEncodeProfileRgbConversionInfoVALVE(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_PROFILE_RGB_CONVERSION_INFO_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49306,7 +49306,7 @@ void cvkParseJsonVideoEncodeQualityLevelInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUALITY_LEVEL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49323,7 +49323,7 @@ void cvkParseJsonVideoEncodeQualityLevelProperties(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUALITY_LEVEL_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49345,7 +49345,7 @@ void cvkParseJsonVideoEncodeQuantizationMapCapabilities(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49362,7 +49362,7 @@ void cvkParseJsonVideoEncodeQuantizationMapInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49384,7 +49384,7 @@ void cvkParseJsonVideoEncodeQuantizationMapSessionParametersCreateInfo(const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49403,7 +49403,7 @@ void cvkParseJsonVideoEncodeRateControlInfo(const cvkJsonContext* pContext, cons
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RATE_CONTROL_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49453,7 +49453,7 @@ void cvkParseJsonVideoEncodeRateControlLayerInfo(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RATE_CONTROL_LAYER_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49485,7 +49485,7 @@ void cvkParseJsonVideoEncodeRgbConversionCapabilitiesVALVE(const cvkJsonContext*
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_RGB_CONVERSION_CAPABILITIES_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49517,7 +49517,7 @@ void cvkParseJsonVideoEncodeSessionIntraRefreshCreateInfo(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_INTRA_REFRESH_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49534,7 +49534,7 @@ void cvkParseJsonVideoEncodeSessionParametersFeedbackInfo(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_PARAMETERS_FEEDBACK_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49551,7 +49551,7 @@ void cvkParseJsonVideoEncodeSessionParametersGetInfo(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_PARAMETERS_GET_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49568,7 +49568,7 @@ void cvkParseJsonVideoEncodeSessionRgbConversionCreateInfoVALVE(const cvkJsonCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_SESSION_RGB_CONVERSION_CREATE_INFO_VALVE;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49600,7 +49600,7 @@ void cvkParseJsonVideoEncodeUsageInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_USAGE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49627,7 +49627,7 @@ void cvkParseJsonVideoEndCodingInfo(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_END_CODING_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49644,7 +49644,7 @@ void cvkParseJsonVideoFormatAV1QuantizationMapProperties(const cvkJsonContext* p
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49661,7 +49661,7 @@ void cvkParseJsonVideoFormatH265QuantizationMapProperties(const cvkJsonContext* 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49678,7 +49678,7 @@ void cvkParseJsonVideoFormatProperties(const cvkJsonContext* pContext, const cvk
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49720,7 +49720,7 @@ void cvkParseJsonVideoFormatQuantizationMapProperties(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49737,7 +49737,7 @@ void cvkParseJsonVideoInlineQueryInfo(const cvkJsonContext* pContext, const cvkJ
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_INLINE_QUERY_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49764,7 +49764,7 @@ void cvkParseJsonVideoPictureResourceInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_PICTURE_RESOURCE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49796,7 +49796,7 @@ void cvkParseJsonVideoProfileInfo(const cvkJsonContext* pContext, const cvkJsonV
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_PROFILE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49830,7 +49830,7 @@ void cvkParseJsonVideoProfileListInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_PROFILE_LIST_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49860,7 +49860,7 @@ void cvkParseJsonVideoReferenceIntraRefreshInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_REFERENCE_INTRA_REFRESH_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49878,7 +49878,7 @@ void cvkParseJsonVideoReferenceSlotInfo(const cvkJsonContext* pContext, const cv
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_REFERENCE_SLOT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49903,7 +49903,7 @@ void cvkParseJsonVideoSessionCreateInfo(const cvkJsonContext* pContext, const cv
     const cvkJsonValue* value;
     void*               storage;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_SESSION_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49964,7 +49964,7 @@ void cvkParseJsonVideoSessionMemoryRequirements(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_SESSION_MEMORY_REQUIREMENTS_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -49986,7 +49986,7 @@ void cvkParseJsonVideoSessionParametersCreateInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_SESSION_PARAMETERS_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50013,7 +50013,7 @@ void cvkParseJsonVideoSessionParametersUpdateInfo(const cvkJsonContext* pContext
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_VIDEO_SESSION_PARAMETERS_UPDATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50030,7 +50030,7 @@ void cvkParseJsonViewport(const cvkJsonContext* pContext, const cvkJsonValue* pO
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -50066,7 +50066,7 @@ void cvkParseJsonViewportSwizzleNV(const cvkJsonContext* pContext, const cvkJson
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -50092,7 +50092,7 @@ void cvkParseJsonViewportWScalingNV(const cvkJsonContext* pContext, const cvkJso
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "xcoeff");
     if (!cvkIsJsonNull(value))
     {
@@ -50110,7 +50110,7 @@ void cvkParseJsonWriteDescriptorSet(const cvkJsonContext* pContext, const cvkJso
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50188,7 +50188,7 @@ void cvkParseJsonWriteDescriptorSetAccelerationStructure(const cvkJsonContext* p
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50221,7 +50221,7 @@ void cvkParseJsonWriteDescriptorSetAccelerationStructureNV(const cvkJsonContext*
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50252,7 +50252,7 @@ void cvkParseJsonWriteDescriptorSetInlineUniformBlock(const cvkJsonContext* pCon
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50271,7 +50271,7 @@ void cvkParseJsonWriteDescriptorSetPartitionedAccelerationStructureNV(const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_PARTITIONED_ACCELERATION_STRUCTURE_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50303,7 +50303,7 @@ void cvkParseJsonWriteDescriptorSetTensorARM(const cvkJsonContext* pContext, con
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_TENSOR_ARM;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50333,7 +50333,7 @@ void cvkParseJsonWriteIndirectExecutionSetPipeline(const cvkJsonContext* pContex
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50355,7 +50355,7 @@ void cvkParseJsonWriteIndirectExecutionSetShader(const cvkJsonContext* pContext,
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -50377,7 +50377,7 @@ void cvkParseJsonXYColor(const cvkJsonContext* pContext, const cvkJsonValue* pOb
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     value = cvkGetJsonMember(&pContext->document, pObject, "x");
     if (!cvkIsJsonNull(value))
     {
@@ -57598,7 +57598,7 @@ uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
     {
         return 0;
     }
-    memcpy(buffer, pValue->pText, pValue->textLength);
+    (void)memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     return cvkParseUint64Text(buffer);
 }
@@ -57613,7 +57613,7 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     {
         return 0;
     }
-    memcpy(buffer, pValue->pText, pValue->textLength);
+    (void)memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
     while (isspace((unsigned char)*text))
@@ -57644,7 +57644,7 @@ double cvkGetJsonDouble(const cvkJsonValue* pValue)
     {
         return 0.0;
     }
-    memcpy(buffer, pValue->pText, pValue->textLength);
+    (void)memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     return strtod(buffer, NULL);
 }
@@ -57747,7 +57747,7 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
             char buffer[32];
 
             CVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
-            memcpy(buffer, token, (size_t)(token_end - token));
+            (void)memcpy(buffer, token, (size_t)(token_end - token));
             buffer[token_end - token] = '\0';
             flags |= cvkParseUint64Text(buffer); /* a numeric token */
         }
@@ -57841,7 +57841,7 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
         char                buffer[32];
 
         CVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
-        memcpy(buffer, member->pKey, member->keyLength);
+        (void)memcpy(buffer, member->pKey, member->keyLength);
         buffer[member->keyLength] = '\0';
         (*ppIds)[index]           = cvkParseUint64Text(buffer);
     }
@@ -57856,7 +57856,7 @@ void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipe
     void*               elements;
     uint32_t            index;
 
-    memset(pPipeline, 0, sizeof(*pPipeline));
+    (void)memset(pPipeline, 0, sizeof(*pPipeline));
     state = cvkGetJsonMember(&pContext->document, root, "GraphicsPipelineState");
     if (NULL != state)
     {
@@ -57993,7 +57993,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
     uint32_t index;
     uint32_t inner;
 
-    memset(pObjects, 0, sizeof(*pObjects));
+    (void)memset(pObjects, 0, sizeof(*pObjects));
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerCount);
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->descriptorSetLayoutCount);

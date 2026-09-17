@@ -22,7 +22,7 @@ void cvkParseJsonD3D12FenceSubmitInfo(const cvkJsonContext* pContext, const cvkJ
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -70,7 +70,7 @@ void cvkParseJsonExportFenceWin32HandleInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -82,7 +82,7 @@ void cvkParseJsonExportMemoryWin32HandleInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -94,7 +94,7 @@ void cvkParseJsonExportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -106,7 +106,7 @@ void cvkParseJsonExportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -118,7 +118,7 @@ void cvkParseJsonFenceGetWin32HandleInfo(const cvkJsonContext* pContext, const c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -140,7 +140,7 @@ void cvkParseJsonImportFenceWin32HandleInfo(const cvkJsonContext* pContext, cons
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -167,7 +167,7 @@ void cvkParseJsonImportMemoryWin32HandleInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -184,7 +184,7 @@ void cvkParseJsonImportMemoryWin32HandleInfoNV(const cvkJsonContext* pContext, c
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -201,7 +201,7 @@ void cvkParseJsonImportSemaphoreWin32HandleInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -228,7 +228,7 @@ void cvkParseJsonMemoryGetWin32HandleInfo(const cvkJsonContext* pContext, const 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -250,7 +250,7 @@ void cvkParseJsonMemoryWin32HandleProperties(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -267,7 +267,7 @@ void cvkParseJsonSemaphoreGetWin32HandleInfo(const cvkJsonContext* pContext, con
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -289,7 +289,7 @@ void cvkParseJsonSurfaceCapabilitiesFullScreenExclusive(const cvkJsonContext* pC
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -306,7 +306,7 @@ void cvkParseJsonSurfaceFullScreenExclusiveInfo(const cvkJsonContext* pContext, 
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -323,7 +323,7 @@ void cvkParseJsonSurfaceFullScreenExclusiveWin32Info(const cvkJsonContext* pCont
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -337,7 +337,7 @@ void cvkParseJsonWin32KeyedMutexAcquireReleaseInfo(const cvkJsonContext* pContex
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -426,7 +426,7 @@ void cvkParseJsonWin32KeyedMutexAcquireReleaseInfoNV(const cvkJsonContext* pCont
     void*               storage;
     uint32_t            index;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
@@ -513,7 +513,7 @@ void cvkParseJsonWin32SurfaceCreateInfo(const cvkJsonContext* pContext, const cv
 {
     const cvkJsonValue* value;
 
-    memset(pInfo, 0, sizeof(*pInfo));
+    (void)memset(pInfo, 0, sizeof(*pInfo));
     pInfo->sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))

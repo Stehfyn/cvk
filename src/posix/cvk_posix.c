@@ -255,7 +255,6 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
     {
         object_index = pPlaneMemoryObjectIndices[plane_index];
         CVK_ASSERT(memoryObjectCount > object_index);
-        /* memory plane aspects are consecutive bits from VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT */
         plane_aspects[plane_index] = (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT << plane_index);
         cvkGetImagePlaneMemoryRequirementsInfo(device, NULL, plane_aspects[plane_index], (*pImage), NULL, &memory_requirements);
         CVK_ASSERT(pMemoryObjectSizes[object_index] >= memory_requirements.memoryRequirements.size);

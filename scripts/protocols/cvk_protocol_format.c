@@ -31,7 +31,6 @@ VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeInd
     {
         return VK_IMAGE_ASPECT_COLOR_BIT;
     }
-    /* format plane aspects are consecutive bits from VK_IMAGE_ASPECT_PLANE_0_BIT */
     return (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_PLANE_0_BIT << planeIndex);
 }
 
@@ -44,7 +43,6 @@ VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeInd
  */
 VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex)
 {
-    /* memory plane aspects are consecutive bits from VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT */
     return (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT << planeIndex);
 }
 

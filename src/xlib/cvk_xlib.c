@@ -19,11 +19,14 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
 {
     VkXlibSurfaceCreateInfoKHR create_info;
 
-    create_info.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    create_info.pNext  = pNext;
-    create_info.flags  = flags;
-    create_info.dpy    = dpy;
-    create_info.window = window;
+    create_info = (VkXlibSurfaceCreateInfoKHR)
+    {
+        .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
+        .pNext  = pNext,
+        .flags  = flags,
+        .dpy    = dpy,
+        .window = window
+    };
     CVK_CHECK(vkCreateXlibSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
