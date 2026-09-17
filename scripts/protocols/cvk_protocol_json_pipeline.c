@@ -31,7 +31,7 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
         CVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
         memcpy(buffer, member->pKey, member->keyLength);
         buffer[member->keyLength] = '\0';
-        (*ppIds)[index]           = strtoull(buffer, NULL, 0);
+        (*ppIds)[index]           = cvkParseUint64Text(buffer);
     }
     return count;
 }

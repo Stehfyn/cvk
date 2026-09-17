@@ -7,41 +7,7 @@
 #include <windows.h>
 #include <vulkan/vulkan_win32.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-/**
- * \brief Acquires winrt display.
- *
- * \par Details:
- *  Wraps vkAcquireWinrtDisplayNV. Aborts on any error result.
- *
- * \param[in] instance        Parent handle used to resolve the extension command
- * \param[in] physicalDevice  VkPhysicalDevice value
- * \param[in] display         VkDisplayKHR value
- *
- * \retval None
- */
-void scvkAcquireWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display);
-/**
- * \brief Retrieves winrt display.
- *
- * \par Details:
- *  Wraps vkGetWinrtDisplayNV. Aborts on any error result.
- *
- * \param[in] instance          Parent handle used to resolve the extension command
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] deviceRelativeId  uint32_t value
- * \param[out] pDisplay          Receives the created VkDisplayKHR
- *
- * \retval None
- */
-void scvkGetWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
-
-#ifdef __cplusplus
-}
-#endif
+void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display);
+void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay);
 
 #endif /* SCVK_WIN32_H */

@@ -18,6 +18,11 @@ first, then the generator, then regenerate and re-run the studies.
 
 ## 2. Outputs
 
+Generated headers and sources target the C89/C90 language dialect. They have no C++
+linkage guards. Fixed-width integer types come from the Vulkan SDK and `<stdint.h>`.
+The JSON reader parses 64-bit integers without C99 `strtoull`/`strtoll`. Vulkan format
+metadata is emitted as private C89 tables from `vk.xml`, without a C99 utility-header dependency.
+
 **Rule zero: the outputs are never edited by hand.** Any defect in `include/cvk.h` or
 `src/cvk.c` is a defect in a rule here or in `scripts/generate.py`. Fix the rule, regenerate,
 re-verify. A commit that changes the outputs without changing the generator or the policy is
@@ -36,7 +41,7 @@ wrong by definition.
   layout applies to `scvk` and the `posix` protocol pair; sources include their headers
   as `<platform>/<prefix>_<platform>.h` relative to the public `include/` directory.
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
-- Every emitted function has a full Doxygen block with fixed phrasing (section 9).
+- `doc_comments` controls emitted Doxygen blocks (section 9); the shared policy disables them.
 
 ## 3. Names (derived)
 
@@ -83,34 +88,28 @@ returns `VkResult`, aborts if the value is negative (all `VK_ERROR_*` are negati
 the informational code back. Enumerations abort on `VK_INCOMPLETE` because the capacity is
 asserted first.
 
-Dispatch (policy): commands in the profile's core version, and commands of extensions the
-loader exports as trampolines (surface, swapchain, display, platform surfaces, debug
-utilities; the list is `LOADER_LINKED` in the generator), are called directly. Every other
-extension command uses `CVK_CALL(&call_cache, Device|Instance, handle, vkCommand)` to
-obtain a typed function pointer. Each wrapper owns a zero-initialized, thread-local cache
-for its command and scope, retaining the most recently used handle. A hit skips resolution;
-a miss uses `cvkGetDeviceProcAddr` or `cvkGetInstanceProcAddr`, both fatal if absent.
-The generated wrappers of `vkGet*ProcAddr` remain uncached resolution infrastructure.
-`cvkDestroyDevice` and `cvkDestroyInstance` invalidate caches across all threads through
-an atomic generation, so reusing a numeric handle reloads its pointer. Applications destroying
-handles outside cvk must call `cvkInvalidateCallCache` before using replacement handles.
-Cache invalidation does not replace Vulkan's external synchronization requirements.
-The function pointer is declared with the other locals and loaded immediately before the
-first call, never in its declaration. The level of a command is read from its first handle's parent chain in the
-registry: device level when the chain reaches `VkDevice` (`VkQueue`, `VkCommandBuffer` via
-`VkCommandPool`, `VkExternalComputeQueueNV`), instance level when it reaches only `VkInstance`
-(`VkPhysicalDevice`). A resolved command whose first handle is not the level handle gains that
-handle as its first parameter (`VkDevice device`, `VkInstance instance`). The parent selects
-the correct dispatch cache entry without a separate initialization API. The pointer local
-is `function`, or `function_pointer` when a parameter is named `function`
-(`vkDestroyCuFunctionNVX`).
+Dispatch (policy): every wrapper calls its `vkCommand` entry point directly. The Vulkan
+profile includes `<volk.h>` privately in its implementation files and uses Volk's global
+function pointers. Public headers include `<vulkan/vulkan_core.h>` or
+`<vulkan/vulkan_sc_core.h>` and expose no Volk declarations. The application calls
+`volkInitialize()` before instance creation and `volkLoadInstance(instance)` afterwards;
+it may then use `volkLoadDevice(device)` to load device-specific pointers. Required
+entry points must be loaded before their wrappers are called. cvk performs no loading,
+caching, invalidation, or implicit device selection. It adds no parent device/instance
+parameters for dispatch. Reloading Volk's globals is the application's responsibility;
+`volkLoadDevice` selects one device and is not a per-device table interface.
+The CMake target links Volk and uses the pinned Vulkan headers, with the platform defines
+matching the generated platform sources. Do not link the Vulkan loader library alongside
+Volk's global symbols. The separate Vulkan SC profile retains its native headers and calls
+SC entry points directly; its application supplies the SC implementation, not standard Volk.
+The explicit `cvkGet*ProcAddr` wrappers remain available and check their returned pointer.
 
 Block-scope variables are `snake_case` and follow the Vulkan parameter they stand for: the
 flattened input struct is named after its parameter minus the `p` (`pCreateInfo` →
 `create_info`, `pInfo` → `info`), the enumeration count after the removed count parameter
 (`pPhysicalDeviceCount` → `physical_device_count`), a chained extender after its struct
-(`VkMemoryDedicatedAllocateInfo` → `memory_dedicated_allocate_info`), and resolved commands
-and results are `function` and `result`. Declarations are ordered by first access in the
+(`VkMemoryDedicatedAllocateInfo` → `memory_dedicated_allocate_info`); explicit procedure
+queries and command results use `function` and `result`. Declarations are ordered by first access in the
 statements that follow.
 
 **Recoverable errors (policy).** Vulkan reports some conditions the caller is expected to
@@ -138,7 +137,7 @@ a non-const pointer is declared `I` (`vkGetExternalComputeQueueDataNV::params`,
 Input assertions are a policy switch (`input_asserts` in the policy file), currently **off**:
 no precondition on parameters or flattened members is emitted. What is always emitted are
 the post-call checks, which are the wrapper's own contract: a created handle is
-`!= VK_NULL_HANDLE`, a resolved command pointer is `!= NULL`, and an enumeration count is
+`!= VK_NULL_HANDLE`, an explicit procedure-query result is `!= NULL`, and an enumeration count is
 `<= CVK_MAX_*`. When the switch is on, the rules below apply.
 
 - Non-optional handle or pointer parameter/member: `!= VK_NULL_HANDLE` / `!= NULL`.
@@ -501,6 +500,17 @@ themselves. Three pieces:
   pipeline) under CTest.
 
 ## 9. Documentation phrasing (derived)
+
+`doc_comments` is a boolean policy option (default true, currently false in
+`cvk.policy.json`, inherited by Vulkan SC). When false, generated declarations and
+definitions omit Doxygen blocks, including copied protocol documentation. Ordinary
+implementation comments and generated-file banners remain. When true, the rules below apply.
+
+`single_line_prototypes` is a boolean policy option (default false, currently true in
+the shared policy). When true, each function declaration occupies exactly one physical
+line. The generator reapplies this layout after clang-format; the column limit cannot
+split prototypes. Function definitions keep their ordinary layout. Both options are
+generation-policy settings and require no CMake configuration.
 
 - `\brief` from the verb: Create → "Creates a <noun>.", Allocate → "Allocates …",
   Get → "Retrieves …", Enumerate → "Enumerates … into a fixed-capacity array.",

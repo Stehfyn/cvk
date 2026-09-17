@@ -7,75 +7,10 @@
 #include <X11/Xlib.h>
 #include <vulkan/vulkan_xlib.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-/**
- * \brief Initializes a VkXlibSurfaceCreateInfoKHR.
- *
- * \param[out] pInfo   Receives the initialized VkXlibSurfaceCreateInfoKHR
- * \param[in] pNext   Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags   VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy     VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window  VkXlibSurfaceCreateInfoKHR::window
- *
- * \retval None
- */
 void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window);
-/**
- * \brief Parses a VkXlibSurfaceCreateFlagsKHR from JSON.
- *
- * \param[in] pValue  The value: bit names joined by |, a number, or NULL
- *
- * \return The VkXlibSurfaceCreateFlagsKHR returned by the command.
- */
 VkXlibSurfaceCreateFlagsKHR cvkParseJsonXlibSurfaceCreateFlags(const cvkJsonValue* pValue);
-/**
- * \brief Parses a VkXlibSurfaceCreateInfoKHR from a JSON object; members absent or NULL stay zero.
- *
- * \param[in] pContext  Parsing context: document, arena, handle resolver
- * \param[in] pObject   The JSON object of the VkXlibSurfaceCreateInfoKHR
- * \param[out] pInfo     Receives the parsed VkXlibSurfaceCreateInfoKHR, zeroed first
- *
- * \retval None
- */
 void cvkParseJsonXlibSurfaceCreateInfo(const cvkJsonContext* pContext, const cvkJsonValue* pObject, VkXlibSurfaceCreateInfoKHR* pInfo);
-/**
- * \brief Creates a xlib surface.
- *
- * \par Details:
- *  Wraps vkCreateXlibSurfaceKHR. Aborts on any error result.
- *
- * \param[in] instance    VkInstance value
- * \param[in] pNext       Optional extension chain attached to VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in] flags       VkXlibSurfaceCreateInfoKHR::flags
- * \param[in] dpy         VkXlibSurfaceCreateInfoKHR::dpy
- * \param[in] window      VkXlibSurfaceCreateInfoKHR::window
- * \param[in] pAllocator  Optional allocation callbacks, or NULL
- * \param[out] pSurface    Receives the created VkSurfaceKHR
- *
- * \retval None
- */
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-/**
- * \brief Retrieves physical device xlib presentation support.
- *
- * \par Details:
- *  Wraps vkGetPhysicalDeviceXlibPresentationSupportKHR.
- *
- * \param[in] physicalDevice    VkPhysicalDevice value
- * \param[in] queueFamilyIndex  uint32_t value
- * \param[out] dpy               Receives the Display
- * \param[in] visualID          VisualID value
- *
- * \return The VkBool32 returned by the command.
- */
 VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* CVK_XLIB_H */

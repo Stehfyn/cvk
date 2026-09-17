@@ -1,13 +1,23 @@
 cmake_minimum_required(VERSION 3.25)
 project(cvk LANGUAGES C)
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 # Pinned Vulkan headers and registry, and the utility headers (format tables) (git submodules).
 add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL)
-add_subdirectory(external/Vulkan-Utility-Libraries EXCLUDE_FROM_ALL)
+
+# Volk and cvk use the same pinned headers and platform entry points.
+set(VOLK_PULL_IN_VULKAN OFF)
+if(WIN32)
+    set(VOLK_STATIC_DEFINES VK_USE_PLATFORM_WIN32_KHR)
+elseif(UNIX)
+    set(VOLK_STATIC_DEFINES VK_USE_PLATFORM_XLIB_KHR)
+endif()
+add_subdirectory(external/volk EXCLUDE_FROM_ALL)
+target_link_libraries(volk PUBLIC Vulkan::Headers)
+target_compile_definitions(volk PUBLIC VK_NO_PROTOTYPES)
 
 find_package(Python3 COMPONENTS Interpreter)
 
@@ -17,8 +27,6 @@ include(CheckIPOSupported)
 check_ipo_supported(LANGUAGES C)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
-# MSVC's C17 atomics are still enabled through this compiler option.
-add_compile_options($<$<COMPILE_LANG_AND_ID:C,MSVC>:/experimental:c11atomics>)
 # Give the compositional wrappers MSVC's more aggressive Release inlining budget.
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     # Remove the default /Ob2 to avoid an override warning on every compilation.
@@ -64,34 +72,27 @@ endif()
 
 add_library(cvk STATIC ${CVK_SOURCES})
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(cvk PUBLIC Vulkan::Headers)
-# Utility headers are third-party: a system include so their own pedantic warnings do not surface.
-target_include_directories(cvk SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include)
+target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk)
+target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
 
 if(MSVC)
     target_compile_options(cvk PRIVATE /W4)
 else()
-    target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic -Werror=declaration-after-statement -Werror=implicit-function-declaration)
 endif()
 
-# The JSON tier's test: parses a Vulkan SC pipeline JSON into structures; needs the loader to link.
-find_package(Vulkan QUIET)
-if(Vulkan_FOUND AND Vulkan_VERSION VERSION_GREATER_EQUAL 1.4)
-    add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
-    target_link_libraries(cvk-pipeline-json-test PRIVATE cvk Vulkan::Vulkan)
-    add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json)
+# JSON parsing and mock Volk dispatch need no GPU or installed Vulkan loader.
+enable_testing()
+add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
+target_link_libraries(cvk-pipeline-json-test PRIVATE cvk)
+add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json)
 
-    find_package(Threads REQUIRED)
-    add_executable(cvk-call-cache-test tests/call_cache_test.c)
-    target_link_libraries(cvk-call-cache-test PRIVATE cvk Vulkan::Vulkan Threads::Threads)
-    add_test(NAME cvk-call-cache COMMAND cvk-call-cache-test)
-else()
-    message(STATUS "Vulkan 1.4 loader not found (the library links its core commands): the pipeline JSON test is not built")
-endif()
+add_executable(cvk-volk-dispatch-test tests/volk_dispatch_test.c)
+target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk)
+add_test(NAME cvk-volk-dispatch COMMAND cvk-volk-dispatch-test)
 
 # Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
-# prefix scvk, a standalone library against the SC headers. The format protocols need the
-# utility headers, which describe formats the SC headers lack, so that file is absent from it.
+# prefix scvk, a standalone library against the SC headers. Format protocols are Vulkan-only.
 set(SCVK_SOURCES src/scvk.c)
 if(WIN32)
     list(APPEND SCVK_SOURCES src/win32/scvk_win32.c)
@@ -104,5 +105,5 @@ target_include_directories(scvk SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/extern
 if(MSVC)
     target_compile_options(scvk PRIVATE /W4)
 else()
-    target_compile_options(scvk PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(scvk PRIVATE -Wall -Wextra -Wpedantic -Werror=declaration-after-statement -Werror=implicit-function-declaration)
 endif()

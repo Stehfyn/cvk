@@ -3,6 +3,7 @@
 ** and folded into the generated cvk.h/cvk.c. Composed from the generated surface only. */
 
 #include <stdlib.h>
+#include <ctype.h>
 
 /**
  * \brief Parses one JSON value at the reader's cursor into the reader's value array and returns its index.
@@ -273,6 +274,67 @@ VkBool32 cvkIsJsonNull(const cvkJsonValue* pValue)
  *
  * \retval The integer
  */
+uint64_t cvkParseUint64Text(const char* pText)
+{
+    uint64_t value;
+    uint32_t base;
+    uint32_t digit;
+    VkBool32 negative;
+
+    value = 0;
+    base = 10;
+    negative = VK_FALSE;
+    while (isspace((unsigned char)*pText))
+    {
+        ++pText;
+    }
+    if (('-' == *pText) || ('+' == *pText))
+    {
+        negative = ('-' == *pText) ? VK_TRUE : VK_FALSE;
+        ++pText;
+    }
+    if ('0' == *pText)
+    {
+        base = 8;
+        ++pText;
+        if (('x' == *pText) || ('X' == *pText))
+        {
+            base = 16;
+            ++pText;
+        }
+    }
+    while ('\0' != *pText)
+    {
+        if (('0' <= *pText) && (*pText <= '9'))
+        {
+            digit = (uint32_t)(*pText - '0');
+        }
+        else if (('a' <= *pText) && (*pText <= 'f'))
+        {
+            digit = (uint32_t)(*pText - 'a') + 10;
+        }
+        else if (('A' <= *pText) && (*pText <= 'F'))
+        {
+            digit = (uint32_t)(*pText - 'A') + 10;
+        }
+        else
+        {
+            break;
+        }
+        if (digit >= base)
+        {
+            break;
+        }
+        if (value > (UINT64_MAX - digit) / base)
+        {
+            return UINT64_MAX;
+        }
+        value = value * base + digit;
+        ++pText;
+    }
+    return negative ? (uint64_t)0 - value : value;
+}
+
 uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
 {
     char buffer[32];
@@ -283,7 +345,7 @@ uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
     }
     memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
-    return strtoull(buffer, NULL, 0);
+    return cvkParseUint64Text(buffer);
 }
 
 /**
@@ -296,6 +358,9 @@ uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
 int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
 {
     char buffer[32];
+    const char* text;
+    uint64_t magnitude;
+    VkBool32 negative;
 
     if ((NULL == pValue) || ((CVK_JSON_NUMBER != pValue->kind) && (CVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
     {
@@ -303,7 +368,22 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     }
     memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
-    return strtoll(buffer, NULL, 0);
+    text = buffer;
+    while (isspace((unsigned char)*text))
+    {
+        ++text;
+    }
+    negative = ('-' == *text) ? VK_TRUE : VK_FALSE;
+    if (('-' == *text) || ('+' == *text))
+    {
+        ++text;
+    }
+    magnitude = cvkParseUint64Text(text);
+    if (negative)
+    {
+        return magnitude > (uint64_t)INT64_MAX ? INT64_MIN : -(int64_t)magnitude;
+    }
+    return magnitude > (uint64_t)INT64_MAX ? INT64_MAX : (int64_t)magnitude;
 }
 
 /**
@@ -466,7 +546,7 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
             CVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
             memcpy(buffer, token, (size_t)(token_end - token));
             buffer[token_end - token] = '\0';
-            flags |= strtoull(buffer, NULL, 0); /* a numeric token */
+            flags |= cvkParseUint64Text(buffer); /* a numeric token */
         }
     }
     return flags;

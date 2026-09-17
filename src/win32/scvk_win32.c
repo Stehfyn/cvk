@@ -3,20 +3,12 @@
 #include "win32/scvk_win32.h"
 #include <string.h>
 
-void scvkAcquireWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, VkDisplayKHR display)
+void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
-    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
-    PFN_vkAcquireWinrtDisplayNV            function;
-
-    function = SCVK_CALL(&call_cache, Instance, instance, vkAcquireWinrtDisplayNV);
-    SCVK_CHECK(function(physicalDevice, display));
+    SCVK_CHECK(vkAcquireWinrtDisplayNV(physicalDevice, display));
 }
-void scvkGetWinrtDisplayNV(VkInstance instance, VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
+void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
 {
-    static SCVK_THREAD_LOCAL scvkCallCache call_cache;
-    PFN_vkGetWinrtDisplayNV                function;
-
-    function = SCVK_CALL(&call_cache, Instance, instance, vkGetWinrtDisplayNV);
-    SCVK_CHECK(function(physicalDevice, deviceRelativeId, pDisplay));
+    SCVK_CHECK(vkGetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));
 }

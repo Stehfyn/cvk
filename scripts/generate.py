@@ -13,6 +13,7 @@ import json
 import os
 import re
 import sys
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple
@@ -23,10 +24,6 @@ from study_commands import role_of  # noqa: E402
 
 VENDORS = ("KHR", "EXT", "NV", "NVX", "AMD", "AMDX", "INTEL", "GOOGLE", "ARM", "QCOM", "MESA", "VALVE", "HUAWEI",
            "FUCHSIA", "SEC", "LUNARG", "ANDROID", "IMG", "MSFT", "NN", "MVK", "GGP", "QNX", "OHOS", "KHX")
-# Extensions whose commands the Vulkan loader exports as trampolines (its export table: the WSI
-# extensions), linked directly; every other extension command is resolved per call.
-LOADER_LINKED = {"VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display", "VK_KHR_display_swapchain", "VK_KHR_win32_surface", "VK_KHR_xlib_surface", "VK_KHR_xcb_surface", "VK_KHR_wayland_surface", "VK_KHR_android_surface", "VK_EXT_headless_surface", "VK_KHR_get_physical_device_properties2", "VK_KHR_device_group_creation", "VK_KHR_external_memory_capabilities", "VK_KHR_external_semaphore_capabilities", "VK_KHR_external_fence_capabilities", "VK_KHR_get_surface_capabilities2", "VK_KHR_get_display_properties2", "VK_EXT_acquire_xlib_display"}
-DEVICE_LEVEL = ("VkDevice", "VkQueue", "VkCommandBuffer")
 
 
 def strip_vendor(name: str) -> str:
@@ -104,7 +101,8 @@ class Generator:
         # protocol whose step is absent from the profile is dropped or an error.
         self.api: str = policy.get("api", "vulkan")
         self.prefix: str = policy.get("prefix", "cvk")
-        self.vk_header: str = policy.get("header", "<vulkan/vulkan.h>")
+        self.vk_header: str = policy.get("header", "<vulkan/vulkan_core.h>")
+        self.loader_header: Optional[str] = policy.get("loader_header", "<volk.h>" if self.api == "vulkan" else None)
         self.drop_missing: bool = policy.get("missing", "error") == "drop"
         self.dropped: List[str] = []
         self.core_versions: Set[str] = reg.feature_closure(self.core)
@@ -120,6 +118,8 @@ class Generator:
         self.capacities: Dict[str, int] = dict(policy.get("capacities", {}))
         self.default_capacity = policy.get("default_capacity", 64)
         self.input_asserts: bool = bool(policy.get("input_asserts", False))
+        self.doc_comments: bool = bool(policy.get("doc_comments", True))
+        self.single_line_prototypes: bool = bool(policy.get("single_line_prototypes", False))
         self.used_capacities: Dict[str, int] = {}
         self.names: Dict[str, str] = {}
         self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
@@ -178,12 +178,6 @@ class Generator:
                     return frozenset()
                 plats.add(x.platform)
         return frozenset(plats)
-
-    def is_core(self, cmd: Command) -> bool:
-        return cmd.core_version in self.core_versions
-
-    def linked(self, cmd: Command) -> bool:
-        return self.is_core(cmd) or any(e in LOADER_LINKED for e in cmd.extensions if e in self.exts)
 
     # -------------------------------------------------------------- names
     def register(self, name: str, origin: str) -> str:
@@ -413,22 +407,6 @@ class Generator:
         overrides = self.policy.get("role_overrides", {})
         return [overrides.get(f"{cmd.name}::{p.name}", role_of(self.reg, cmd, p, cmd.params)) for p in cmd.params]
 
-    def level_of(self, cmd: Command) -> Optional[str]:
-        """The dispatch level of a command from its first handle's parent chain: VkDevice when
-        the chain reaches a device (VkCommandBuffer -> VkCommandPool -> VkDevice,
-        VkExternalComputeQueueNV -> VkDevice), VkInstance when it reaches only an instance,
-        None for global commands."""
-        if not cmd.params or cmd.params[0].is_pointer:
-            return None
-        h = cmd.params[0].type
-        seen = set()
-        while h and h not in seen:
-            seen.add(h)
-            if h in ("VkDevice", "VkInstance"):
-                return h
-            h = self.reg.handles.get(h)
-        return None
-
     @staticmethod
     def pnext_type(s: Struct) -> str:
         """The struct's own pNext member type: `const void*` for inputs, `void*` for outputs and
@@ -548,16 +526,6 @@ class Generator:
                     enum_count = p
                     enum_arrays = [(q, self.capacity_name(q.name)) for q in arrays]
 
-        # Device/instance-level extension commands dispatched on a child handle need the parent.
-        parent: Optional[str] = None
-        level = self.level_of(cmd)
-        if not self.linked(cmd):
-            if level and cmd.params[0].type != level:
-                parent = f"{level} {level[2:].lower()}"
-            if parent:
-                params.append(EmittedParam(parent, parent.split()[1], "Parent handle used to resolve the extension command", False))
-                pre.append(f"CVK_ASSERT(VK_NULL_HANDLE != {parent.split()[1]});")
-
         for p, r in zip(cmd.params, roles):
             if r == "I":
                 s = reg.struct_of(p.type)
@@ -627,15 +595,6 @@ class Generator:
 
         # Call expression and result policy.
         fn = cmd.name
-        resolve: Optional[str] = None
-        if not self.linked(cmd):
-            scope, handle = ("Device", "device") if level == "VkDevice" else ("Instance", "instance")
-            # Declaration only here; the load is emitted immediately before the first call.
-            # The local is `function` unless a parameter takes that name (vkDestroyCuFunctionNVX).
-            fn = "function_pointer" if any(q.name == "function" for q in params) else "function"
-            locals_.insert(0, f"PFN_{cmd.name} {fn};")
-            locals_.insert(0, "static CVK_THREAD_LOCAL cvkCallCache call_cache;")
-            resolve = f"{fn} = CVK_CALL(&call_cache, {scope}, {handle}, {cmd.name});"
         call = f"{fn}({', '.join(call_args)})"
         enum_args = {ext_arrays.get(q.name) and snake(q.name) or q.name for q, _ in enum_arrays}
 
@@ -695,13 +654,10 @@ class Generator:
             body.append(f"CVK_CHECK({call});")
             body += post
         elif cmd.return_type == "void":
-            if cmd.name in ("vkDestroyDevice", "vkDestroyInstance"):
-                # Invalidate before the driver can recycle the handle on another thread.
-                body.append("cvkInvalidateCallCache();")
             body.append(f"{call};")
             body += post
         elif cmd.return_type == "PFN_vkVoidFunction":
-            # The generated *ProcAddr wrappers are the resolution infrastructure: fatal when absent.
+            # Explicit procedure queries keep their non-null result contract.
             ret = cmd.return_type
             body.insert(0, "PFN_vkVoidFunction function;")
             body.append(f"function = {call};")
@@ -712,16 +668,11 @@ class Generator:
             body.append(f"return {call};")
 
         # Order: declarations first (C89-style block), then asserts, then statements.
-        if resolve:
-            first_call = next(i for i, l in enumerate(body) if f"{fn}(" in l)
-            body[first_call:first_call] = ["", resolve]
-        decl_lines = [l for l in body if re.match(r"^(static CVK_THREAD_LOCAL cvkCallCache call_cache;|PFN_\w+ function(_pointer)?;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+(\[\w+\])?;)", l)]
+        decl_lines = [l for l in body if re.match(r"^(PFN_vkVoidFunction function;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+(\[\w+\])?;)", l)]
         other = [l for l in body if l not in decl_lines]
 
         # Declarations in order of first access in the statements that follow.
         def first_use(decl: str) -> int:
-            if decl.startswith("static CVK_THREAD_LOCAL"):
-                return next((i for i, l in enumerate(other) if "call_cache" in l), len(other))
             var = re.match(r"^\S+\s+(\w+)", decl).group(1)
             return next((i for i, l in enumerate(other) if re.search(rf"\b{var}\b", l)), len(other))
         decl_lines.sort(key=first_use)
@@ -770,6 +721,8 @@ class Generator:
         return f"{ret} {name}(" + (",\n" + pad).join(f"{t.ljust(width)} {n}" for t, n in split) + ")"
 
     def doc_block(self, brief: str, params: List[EmittedParam], ret: str, cmd: Optional[Command], informational: List[str]) -> str:
+        if not self.doc_comments:
+            return ""
         lines = ["/**", f" * \\brief {brief}", " *"]
         if cmd:
             lines.append(f" * \\par Details:\n *  Wraps {cmd.name}." + (" Aborts on any error result." if cmd.return_type == "VkResult" else ""))
@@ -794,6 +747,10 @@ class Generator:
             self.errors.append(f"entity spans several platforms {sorted(plats)}: {decl.splitlines()[-1]}")
             return
         key = next(iter(plats)) if plats else ""
+        if not self.doc_comments:
+            # Protocol metadata is parsed before placement; suppress its copied docs too.
+            decl = re.sub(r"/\*\*.*?\*/\s*", "", decl, flags=re.S)
+            defn = re.sub(r"/\*\*.*?\*/\s*", "", defn, flags=re.S)
         self.decls[key].append(decl)
         self.defs[key].append(defn)
 
@@ -972,6 +929,17 @@ class Generator:
                     "    }", f"    {dst} = ({const}{t}*)storage;", "}"], True, True
         return [], False, False
 
+    @staticmethod
+    def json_name_table(values: List[str], dynamic: bool) -> List[str]:
+        # Vulkan's 64-bit flag bits are const objects, not C89 constant expressions.
+        # Assign their values after declaring the automatic table.
+        if dynamic:
+            lines = [f"cvkJsonName table[{len(values)}];", ""]
+            for i, value in enumerate(values):
+                lines += [f'table[{i}].pName = "{value}";', f"table[{i}].value = (uint64_t){value};"]
+            return lines + [""]
+        return ["static const cvkJsonName table[] = {"] + [f'    {{"{v}", (uint64_t){v}}},' for v in values] + ["};", ""]
+
     def emit_json_parsers(self) -> None:
         """SPEC.md section 8c: cvkParseJson<Type> for every enumeration, flag set, structure, and
         union of the profile, and cvkParseJsonStructureChain dispatching on sType. The JSON
@@ -1010,8 +978,7 @@ class Generator:
             params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: an enumerant name or a number, or NULL", False)]
             body = []
             if values:
-                # 64-bit bits are static const objects in the headers, not constant expressions: their table is automatic.
-                body += [f"{'' if enum in self.reg.enums64 else 'static '}const cvkJsonName table[] = {{"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in values] + ["};", ""]
+                body += self.json_name_table(values, enum in self.reg.enums64)
                 body.append(f"return ({enum})cvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));")
             else:
                 body.append(f"return ({enum})cvkGetJsonInt64(pValue);")
@@ -1029,7 +996,7 @@ class Generator:
             params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: bit names joined by |, a number, or NULL", False)]
             body = []
             if values:
-                body += [f"{'' if bits in self.reg.enums64 else 'static '}const cvkJsonName table[] = {{"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in values] + ["};", ""]
+                body += self.json_name_table(values, bits in self.reg.enums64)
                 body.append(f"return ({flags})cvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));")
             else:
                 body.append(f"return ({flags})cvkGetJsonUint64(pValue);")
@@ -2069,27 +2036,39 @@ class Generator:
     }
     PLATFORM_SOURCE_INCLUDES: Dict[str, List[str]] = {}
 
+    def finish_header(self, text: str) -> str:
+        """Apply declaration layout after formatting too, so ColumnLimit cannot wrap it."""
+        if not self.single_line_prototypes:
+            return text
+        pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+(?:cvk|" + re.escape(self.prefix) + r")[A-Z]\w*[ \t]*\([^;{}]*\)[ \t]*;"
+        return re.sub(pattern, lambda m: re.sub(r"\s+", " ", m.group()).strip(), text)
+
     def platform_header(self, plat: str) -> str:
         guard = f"CVK_{plat.upper()}_H"
         includes = "\n".join(f"#include {i}" for i in self.PLATFORM_INCLUDES[plat])
         decls = "\n".join(self.decls[plat])
-        return (f"#ifndef {guard}\n#define {guard}\n\n"
+        return self.finish_header(f"#ifndef {guard}\n#define {guard}\n\n"
                 "/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
-                f"#include \"cvk.h\"\n{includes}\n\n#ifdef __cplusplus\nextern \"C\" {{\n#endif\n\n"
-                f"{decls}\n\n#ifdef __cplusplus\n}}\n#endif\n\n#endif /* {guard} */\n")
+                f"#include \"cvk.h\"\n{includes}\n\n"
+                f"{decls}\n\n#endif /* {guard} */\n")
 
     def platform_source(self, plat: str) -> str:
         defs = "\n".join(self.defs[plat])
         includes = "".join(f"#include {i}\n" for i in self.PLATFORM_SOURCE_INCLUDES.get(plat, []))
         return ("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
+                f"{self.loader_include()}"
                 f"#include \"{plat}/cvk_{plat}.h\"\n#include <string.h>\n{includes}\n{defs}\n")
+
+    def loader_include(self) -> str:
+        # Volk must suppress Vulkan prototypes before the public core header is read.
+        return f"#include {self.loader_header}\n" if self.loader_header else ""
 
     def header(self) -> str:
         # Every policy capacity is emitted (protocols use some that no enumeration does), plus any derived.
         all_caps = dict(self.capacities)
         all_caps.update(self.used_capacities)
         caps = "\n".join(f"#define {k} ({v}U)" for k, v in sorted(all_caps.items()))
-        return f"""#ifndef CVK_H
+        return self.finish_header(f"""#ifndef CVK_H
 #define CVK_H
 
 /* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */
@@ -2097,10 +2076,6 @@ class Generator:
 #include {self.vk_header}
 #include <stddef.h>
 #include <stdint.h>
-
-#ifdef __cplusplus
-extern "C" {{
-#endif
 
 /* Fatal diagnostics. Override CVK_ASSERT before including to change the policy. */
 void cvkFatal(const char* pExpression, const char* pFile, int line);
@@ -2110,8 +2085,6 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 #define CVK_ASSERT(expression) ((expression) ? (void)0 : cvkFatal(#expression, __FILE__, __LINE__))
 #endif
 #define CVK_CHECK(expression) cvkCheckResult((expression), #expression, __FILE__, __LINE__)
-
-{self.dispatch_template("h")}
 
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
@@ -2123,23 +2096,77 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
 {chr(10).join(self.decls[""])}
 
-#ifdef __cplusplus
-}}
-#endif
-
 #endif /* CVK_H */
+""")
+
+    def format_tables(self) -> str:
+        """Private C89 format lookups, derived from the pinned registry's formats."""
+        if self.api != "vulkan":
+            return ""
+        formats = [f for f in ET.parse(self.reg.path).findall("formats/format")
+                   if self.enum_value_in_profile(f.get("name"))]
+        planes_default = "{VK_FORMAT_UNDEFINED, {1, 1}}"
+        rows = []
+        for f in formats:
+            components = {c.get("name") for c in f.findall("component")}
+            planes = ["{" + p.get("compatible") + ", {" + p.get("widthDivisor") + ", " +
+                      p.get("heightDivisor") + "}}" for p in f.findall("plane")]
+            count = len(planes) or 1
+            planes += [planes_default] * (3 - len(planes))
+            rows.append("    {" + f"{count}, {int('D' in components)}, {int('S' in components)}, " +
+                        f.get("blockSize") + ", {" + f.get("blockExtent", "1,1,1") + "}, {" +
+                        ", ".join(planes) + "}}")
+        table = ",\n".join(rows)
+        cases = "\n".join(f"    case {f.get('name')}: return &table[{i}];" for i, f in enumerate(formats))
+        return f"""/* Format metadata from vk.xml; independent of C99 utility headers. */
+#define CVK_FORMAT_MAX_PLANES 3
+struct cvk_format_plane {{ VkFormat compatible; VkExtent2D divisors; }};
+struct cvk_format_info
+{{
+    uint32_t plane_count;
+    VkBool32 has_depth;
+    VkBool32 has_stencil;
+    uint32_t block_size;
+    VkExtent3D block_extent;
+    struct cvk_format_plane planes[CVK_FORMAT_MAX_PLANES];
+}};
+
+static const struct cvk_format_info* format_info(VkFormat format)
+{{
+    static const struct cvk_format_info unknown = {{1, 0, 0, 0, {{1, 1, 1}}, {{{planes_default}, {planes_default}, {planes_default}}}}};
+    static const struct cvk_format_info table[] = {{
+{table}
+    }};
+    switch (format)
+    {{
+{cases}
+    default: return &unknown;
+    }}
+}}
+
+static const struct cvk_format_plane* format_plane_info(VkFormat format, VkImageAspectFlagBits aspect)
+{{
+    static const struct cvk_format_plane unknown = {planes_default};
+    const struct cvk_format_info* info = format_info(format);
+    switch (aspect)
+    {{
+    case VK_IMAGE_ASPECT_PLANE_0_BIT: return &info->planes[0];
+    case VK_IMAGE_ASPECT_PLANE_1_BIT: return &info->planes[1];
+    case VK_IMAGE_ASPECT_PLANE_2_BIT: return &info->planes[2];
+    default: return &unknown;
+    }}
+}}
 """
 
     def source(self) -> str:
         return f"""/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */
 
-#include "cvk.h"
+{self.loader_include()}#include "cvk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 {"".join(f"#include {i}{chr(10)}" for i in self.PLATFORM_SOURCE_INCLUDES.get("", []) if i not in ("<stdio.h>", "<stdlib.h>", "<string.h>"))}
-{self.dispatch_template("c")}
-
+{self.format_tables()}
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {{
     (void)fprintf(stderr, "%s:%d: cvk fatal: %s\\n", pFile, line, pExpression);
@@ -2157,12 +2184,6 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
 {chr(10).join(self.defs[""])}
 """
-
-    @staticmethod
-    def dispatch_template(suffix: str) -> str:
-        with open(os.path.join(REPO_ROOT, "scripts", "templates", f"cvk_dispatch.{suffix}"), encoding="utf-8") as source:
-            return source.read()
-
 
 def load_policy(path: str) -> dict:
     """A policy may extend another (scvk.policy.json extends cvk.policy.json): the base is
@@ -2234,6 +2255,13 @@ def main() -> None:
         sys.exit(1)
     style = os.path.join(REPO_ROOT, ".clang-format")
     subprocess.run([clang_format, "-i", f"--style=file:{style}"] + outputs, check=True, cwd=args.out_dir)
+    if g.single_line_prototypes:
+        for path in outputs:
+            if path.endswith(".h"):
+                with open(path, encoding="utf-8") as f:
+                    text = g.finish_header(f.read())
+                with open(path, "w", encoding="utf-8", newline="\n") as f:
+                    f.write(text)
     t0 = sum(1 for n in g.names.values() if n.startswith("vk") and "+" not in n)
     builders = sum(1 for n in g.names if n.startswith("cvkInit"))
     conv = sum(1 for n in g.names.values() if "+" in n)

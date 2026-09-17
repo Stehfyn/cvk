@@ -21,6 +21,8 @@
   },
   "default_capacity": 64,
   "input_asserts": false,
+  "doc_comments": false,
+  "single_line_prototypes": true,
   "role_overrides": {
     "vkGetExternalComputeQueueDataNV::params": "I",
     "vkSetGpaDeviceClockModeAMD::pInfo": "I"

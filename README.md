@@ -206,14 +206,13 @@ and property flags locally, while tier-0 wrappers make the Vulkan calls.
 - **Fixed-capacity enumeration.** Two-call `vkEnumerate*` / `vkGet*` patterns write into
   caller-provided arrays sized by `CVK_MAX_*` constants (`VkPhysicalDevice p[CVK_MAX_PHYSICAL_DEVICES]`),
   with the count asserted against the cap. No heap allocation anywhere in the wrapper.
-- **Extension commands are resolved per call** through `cvkGetDeviceProcAddr` / `cvkGetInstanceProcAddr`,
-  which are themselves fatal on missing symbols. No global function-pointer table.
+- **Commands call Volk's loaded entry points.** The application initializes and loads Volk
+  before calling cvk; wrappers use its global `vk*` function pointers directly.
 - **Positional argument order mirrors the Vulkan struct order**, prefixed by the owning handle(s),
   followed by `pAllocator`, then out-params last. Multi-struct setups interleave in
   creation order (image args, then memory args).
-- **Doxygen contract on every prototype**: `\brief`, `\par Details`, one `\param[in|out]` per
-  argument with fixed wording conventions ("Optional extension chain … or NULL",
-  "Receives the created …"), `\retval None`. Definitions carry only `\par Details`.
+- **Optional Doxygen comments**: `doc_comments` in the shared policy controls API
+  documentation blocks. It is currently `false` for both cvk and scvk.
 
 ## 4. Why the shape is generatable
 
@@ -247,8 +246,8 @@ tier 0/1 functions exist there.
   tiers restricted to that platform's extensions, and matching sources under `src/<platform>/`.
   The `posix` protocol pair and `scvk` profile use the same layout. Include platform headers
   as, for example, `#include "win32/cvk_win32.h"` with `include/` on the include path.
-- Doxygen contracts generated from the registry's parameter descriptions with the fixed phrasing
-  above, so hand-written tier 3 code reads identically to generated tier 0–2 code.
+- Optional Doxygen contracts generated from the registry's parameter descriptions;
+  enable them with `"doc_comments": true` in the policy.
 - Assertion sets derived mechanically: `optional="false"` handles → non-null assert, `len=`
   attributes → `count == 0 || ptr != NULL`, non-`optional` bitmasks → non-zero assert.
 
@@ -265,7 +264,11 @@ Then read `cvkCmdPipelineBarrier` → `cvkCmdImageQueueOwnershipBarrier` → `cv
 `cvkCmdAcquireImageFromExternal` → `cvkCmdTransferBufferToImageQueueOwnership` →
 `cvkCmdTransferBufferToImage2D`. Those two chains exhibit every tier and every naming rule here.
 
-## 7. Release builds and dispatch caching
+## 7. Release builds and Volk loading
+
+Generated code targets C89/C90, using Vulkan's fixed-width integer types. The headers
+contain no C++ linkage guards. Format tables are generated from `vk.xml`; the JSON
+reader's integer conversion does not require C99 library functions.
 
 Release builds enable link-time optimization (LTO) for both `cvk` and `scvk`, and for
 the test executables, plus aggressive `/Ob3` inlining with MSVC. Clang uses full LTO
@@ -281,13 +284,87 @@ ctest --test-dir build/windows-msvc-2026 -C Release --output-on-failure
 
 The `ninja-clang` and `linux` presets already select Release. Applications linking these
 static libraries should also enable `INTERPROCEDURAL_OPTIMIZATION_RELEASE` on their
-executable target so optimization can cross the application/library boundary. When
-building the generated C sources directly with MSVC, add `/experimental:c11atomics`.
+executable target so optimization can cross the application/library boundary.
 
-Extension wrappers use `CVK_CALL` to cache resolved function pointers per wrapper and
-thread, retaining the most recently used device or instance. Core and loader-exported
-commands keep their direct calls. Destroying a device or instance through cvk invalidates
-caches across all threads. If handles are destroyed outside cvk, call
-`cvkInvalidateCallCache()` before using replacement handles; use the corresponding
-`scvkInvalidateCallCache()` for the SC profile. Vulkan's synchronization requirements
-still apply.
+The `cvk` target links the pinned [Volk](https://github.com/zeux/volk) submodule privately and
+exports `VK_NO_PROTOTYPES`. Its implementation and Volk use the current platform's Vulkan
+define. Initialize submodules
+with `git submodule update --init --recursive` before configuring. `cvk.h` includes
+`vulkan/vulkan_core.h`; `scvk.h` includes `vulkan/vulkan_sc_core.h`. Volk is included only
+by cvk's implementation files. Application code that initializes Volk includes `<volk.h>`
+itself and links `volk::volk`. Do not also link `Vulkan::Vulkan` / `vulkan-1`.
+
+The application owns loading:
+
+1. Call `volkInitialize()` and check its result before creating the instance.
+2. Create the instance, then call `volkLoadInstance(instance)` before instance/device work.
+3. Optionally call `volkLoadDevice(device)` after device creation for device-specific pointers.
+
+Required functions must be loaded before entering cvk, including compositions that use
+extension commands. `volkLoadDevice` selects one device's global pointers; cvk does not
+select devices or use `VolkDeviceTable`. With several devices, use instance-loaded dispatch
+or manage loading at the application level. See [Volk's loading documentation](https://github.com/zeux/volk#basic-usage).
+Generated functions call the loaded `vk*` pointers directly. The extra parent device or
+instance arguments formerly used only for lookup have been removed, along with cache APIs.
+
+`scvk` remains a separate Vulkan SC library using SC headers and direct SC entry points;
+its application links the SC implementation. Standard Volk is used only by `cvk`.
+
+## Generation configuration
+
+Generation options live in `cvk.policy.json`, independently of CMake:
+
+```json
+"doc_comments": false,
+"single_line_prototypes": true
+```
+
+These settings omit API doc comments and put each function prototype on exactly one
+line, even when it exceeds clang-format's column limit. Function definitions keep their
+normal formatting. `scvk.policy.json` inherits both options. A separate JSON policy can
+use `"extends": "cvk.policy.json"` and override either setting; select it with `--policy`.
+
+```sh
+python scripts/generate.py --policy cvk.policy.json
+python scripts/generate.py --policy scvk.policy.json
+```
+
+## Vulkan structures by command
+
+[study/coverage.html](study/coverage.html) is a searchable map from Vulkan commands and
+structures to cvk wrappers, builders, and extender conveniences, with source locations.
+[study/coverage.md](study/coverage.md) summarizes command coverage, excluded platforms,
+and output-array chain limitations; [study/coverage.json](study/coverage.json) contains
+the complete map. Coverage is checked against declarations, definitions, and Vulkan
+call/dispatch sites in the current generated files. It measures API surface, not
+Vulkan conformance. Regenerate it after the structure inventory below:
+
+```sh
+python scripts/study_coverage.py
+```
+
+[study/command_structs.md](study/command_structs.md) lists structures for every Vulkan
+command in the pinned registry: direct input/output parameters, nested members, and
+allowed `pNext` extenders with their exact chain bases. Command aliases share a section;
+structure aliases appear in an appendix. It covers all core versions and supported
+extensions, including every platform, independently of the wrapper policy.
+[study/command_structs.json](study/command_structs.json) contains the same relationships
+plus structure origins, aliases, `sType`, and registry attributes for further processing.
+
+Regenerate both reports:
+
+```sh
+python scripts/study_command_structs.py --json study/command_structs.json
+```
+
+Dump only query commands, or filter by command-name glob (`--command` is repeatable):
+
+```sh
+python scripts/study_command_structs.py --queries-only --out study/query_structs.md
+python scripts/study_command_structs.py --command "vkGetPhysicalDevice*" --out study/physical_device_structs.md
+```
+
+The dump preserves registry relationships; command-specific valid usage and device
+feature/extension requirements still determine which combinations can actually be used.
+It does not infer typed contents of opaque `void*` payloads or callback parameters.
+Use `--xml PATH --api vulkansc` to inspect the Vulkan SC registry instead.

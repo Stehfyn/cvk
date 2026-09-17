@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cvk · Vulkan coverage map</title>
+<style>
+:root{color-scheme:light;--ink:#172d38;--muted:#526774;--line:#d6e1e6;--accent:#006a69}*{box-sizing:border-box}body{margin:0;background:#f5f8fa;color:var(--ink);font:15px/1.5 system-ui,sans-serif}header{padding:24px 32px;background:#102e3c;color:white}h1{margin:0;font-size:28px}header p{margin:6px 0;max-width:1000px;color:#d5e5eb}main{padding:20px 32px}.metrics{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 20px}.metric{background:white;border:1px solid var(--line);padding:12px 20px;border-radius:8px}.metric strong{display:block;font-size:25px}.filters{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}input,select{padding:9px;border:1px solid #9bafb9;border-radius:5px;background:white;font:inherit;color:var(--ink)}input{width:min(580px,80vw)}.layout{display:grid;grid-template-columns:minmax(300px,35%) minmax(0,1fr);gap:20px}.panel{background:white;border:1px solid var(--line);border-radius:8px;overflow:hidden}#command-list{max-height:75vh;overflow:auto}.command{display:block;width:100%;border:0;border-bottom:1px solid var(--line);background:white;color:var(--ink);text-align:left;padding:12px 15px;cursor:pointer;overflow-wrap:anywhere}.command:hover,.command[aria-pressed=true]{background:#e4f2f1}.command small{display:block;color:var(--muted)}#detail{padding:20px;max-height:75vh;overflow:auto}h2{font-size:19px;overflow-wrap:anywhere;margin-top:0}h3{font-size:16px;margin:24px 0 8px}p{margin:8px 0}.muted{color:var(--muted)}code{font-size:12px;overflow-wrap:anywhere}a{color:var(--accent)}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;vertical-align:top;padding:8px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}th{background:#f0f5f7;position:sticky;top:-20px}td small{display:block;color:var(--muted)}.notice{padding:12px;background:#fff4d9;border-left:4px solid #b87c00}.tag{display:inline-block;border-radius:4px;background:#e4f2f1;padding:2px 6px;font-size:12px}.outside{background:#edf0f3}.missing{background:#ffe7df}details{margin:12px 0}summary{cursor:pointer}footer{padding:16px 32px;color:var(--muted);font-size:12px}@media(max-width:950px){main,header{padding:16px}.layout{grid-template-columns:1fr}#command-list{max-height:35vh}#detail{max-height:none}table{font-size:12px}td,th{padding:5px}}
+</style>
+<style>#detail small{display:block;color:var(--muted)}</style>
+<header><h1>cvk · Vulkan coverage map</h1><p>Explore each Vulkan function, its cvk wrapper, and the structures it accepts directly, through members, or in pNext chains.</p><p>Repository API coverage against the pinned registry. Wrapper presence does not establish Vulkan conformance or support for every chain combination.</p></header>
+<main>
+<div class="metrics" id="metrics"></div>
+<div class="filters">
+<label>Search commands, cvk helpers, structures, or extensions<input id="search" type="search" placeholder="e.g. VkMemoryDedicatedRequirements" autocomplete="off"></label>
+<label>Coverage<select id="status"><option value="">All commands</option><option>covered</option><option>outside profile</option><option>missing wrapper</option></select></label>
+<label>Dispatch handle<select id="dispatch"><option value="">All handles</option></select></label>
+</div>
+<p id="result-count" class="muted" aria-live="polite"></p>
+<div class="layout"><nav class="panel" id="command-list" aria-label="Vulkan commands"></nav><section class="panel" id="detail" aria-live="polite"></section></div>
+</main>
+<footer id="provenance"></footer>
+<script id="data" type="application/json">__COVERAGE_DATA__</script>
+<script>
+"use strict";
+const data=JSON.parse(document.getElementById("data").textContent);
+const byId=id=>document.getElementById(id);
+const escape=value=>String(value??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const code=value=>`<code>${escape(value)}</code>`;
+const functionLink=name=>{
+  const f=data.functions[name],s=f?.source;
+  return s?.path?`<a href="../${escape(s.path)}#L${s.line}" title="${escape(s.path)}:${s.line}">${code(name)}</a><small>${escape(s.path)}:${s.line}</small>`:code(name);
+};
+const covered=data.summary.statuses.covered||0;
+byId("metrics").innerHTML=[
+  [`${covered} / ${data.summary.canonical_commands}`,"Canonical commands covered"],
+  [data.summary.selected_commands,"Commands selected by policy"],
+  [data.summary.statuses['missing wrapper']||0,"Selected commands missing wrappers"],
+  [data.summary.structures,"Structures / unions mapped"]
+].map(([value,label])=>`<div class="metric"><strong>${value}</strong>${label}</div>`).join("");
+byId("provenance").textContent=`${data.core} · platforms: ${data.platforms.join(', ')} · registry SHA-256: ${data.registry_sha256}. Source links are relative to the repository; line numbers are shown for local editors.`;
+for(const handle of [...new Set(data.commands.map(c=>c.dispatch))].sort()){
+  const option=document.createElement("option");option.value=handle;option.textContent=handle;byId("dispatch").append(option);
+}
+const searchText=new Map(data.commands.map(c=>[c.command,[...c.names,...c.extensions,...c.related_functions,...c.structures.flatMap(s=>[s.structure,...data.structures[s.structure].aliases,...data.structures[s.structure].builders])].join(' ').toLowerCase()]));
+let selected=decodeURIComponent(location.hash.slice(1));
+function detail(command){
+  const c=command;
+  if(!c){byId("detail").innerHTML='<p>No commands match these filters.</p>';return;}
+  const resets=c.parameters.filter(p=>p.wrapper_resets_array_pnext);
+  let html=`<h2>${escape(c.command)}</h2><p><span class="tag">${escape(c.status)}</span> ${escape(c.dispatch)} · ${escape(c.lifecycle)}</p>`;
+  if(c.reason)html+=`<p>${escape(c.reason)}</p>`;
+  html+=`<p class="muted">${c.names.map(code).join(' · ')}</p><p>${c.core_version?code(c.core_version)+' · ':''}${c.extensions.map(code).join(' · ')}</p>`;
+  html+=`<h3>cvk wrapper</h3><p>${c.wrappers.map(functionLink).join('<br>')||'No verified public wrapper in this repository.'}</p>`;
+  if(resets.length)html+=`<p class="notice">This wrapper resets array-element <code>pNext</code> to <code>NULL</code> for ${resets.map(p=>code(p.name)).join(', ')}. Prepared chains are overwritten. Dedicated extender helpers may cover individual outputs; arbitrary multi-extender chains are not established.</p>`;
+  html+=`<details><summary>Related cvk functions (${c.related_functions.length})</summary><table><thead><tr><th>Function / source</th><th>Kind</th></tr></thead><tbody>${c.related_functions.map(n=>`<tr><td>${functionLink(n)}</td><td>${escape(data.functions[n].kind)}</td></tr>`).join('')}</tbody></table></details>`;
+  html+=`<h3>Structures and chain paths (${c.structures.length})</h3><p class="muted">Builder status and command/extender helpers are separate. A helper listed for a type is not proof that it handles every nested path shown. Paths use [] for arrays and pNext&lt;Type&gt; for a node in the stated base's chain.</p>`;
+  html+=c.structures.length?`<table><thead><tr><th>Structure / relation</th><th>Path / chain base</th><th>Builder</th><th>Command/extender helper</th></tr></thead><tbody>${c.structures.map(row=>{
+    const st=data.structures[row.structure],helpers=c.extender_helpers[row.structure]||[];
+    return `<tr><td>${code(row.structure)}<small>${escape(row.relation)}</small>${st.aliases.length?`<details><summary>Aliases</summary>${st.aliases.map(code).join('<br>')}</details>`:''}</td><td>${code(row.path)}${row.chain_base?`<small>Base: ${code(row.chain_base)}</small>`:''}</td><td>${st.builders.map(functionLink).join('<br>')||escape(st.status)}</td><td>${helpers.map(functionLink).join('<br>')||'None observed'}</td></tr>`;
+  }).join('')}</tbody></table>`:'<p>No typed structure parameters.</p>';
+  byId("detail").innerHTML=html;
+}
+function render(){
+  const query=byId("search").value.toLowerCase().trim(),status=byId("status").value,dispatch=byId("dispatch").value;
+  const commands=data.commands.filter(c=>(!query||searchText.get(c.command).includes(query))&&(!status||c.status===status)&&(!dispatch||c.dispatch===dispatch));
+  if(!commands.some(c=>c.command===selected))selected=commands[0]?.command||'';
+  byId("result-count").textContent=`${commands.length} of ${data.commands.length} canonical commands · aliases grouped`;
+  byId("command-list").innerHTML=commands.map(c=>`<button type="button" class="command" data-command="${escape(c.command)}" aria-pressed="${c.command===selected}">${code(c.command)}<small>${escape(c.status)} · ${new Set(c.structures.map(s=>s.structure)).size} structures</small></button>`).join('');
+  detail(commands.find(c=>c.command===selected));
+}
+byId("command-list").addEventListener('click',event=>{
+  const button=event.target.closest('button[data-command]');if(!button)return;
+  selected=button.dataset.command;history.replaceState(null,'','#'+encodeURIComponent(selected));render();
+});
+byId("search").addEventListener('input',render);byId("status").addEventListener('change',render);byId("dispatch").addEventListener('change',render);
+render();
+</script>
+</html>
