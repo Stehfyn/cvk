@@ -1,5 +1,5 @@
 /* Media Foundation decoder and mapped byte stream from the pinned cdx demo.
-** The two-slot decode ring feeds shared NV12 textures; renderer.c performs both
+** The two-slot decode ring feeds GPU copies into shared planes; renderer.c performs both
 ** video passes with cvk. Playback scheduling remains upstream's. */
 
 #include "video.h"

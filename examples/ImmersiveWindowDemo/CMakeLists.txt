@@ -28,7 +28,7 @@ endforeach()
 add_library(immersive-video STATIC video.c renderer.c renderer.h ${shader_headers})
 target_include_directories(immersive-video PUBLIC "${reference_dir}" "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
-target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf)
+target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf PRIVATE d3dcompiler)
 target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)
 option(CVK_DEMO_VALIDATION "Enable Vulkan validation in ImmersiveWindowDemo" OFF)
 if(CVK_DEMO_VALIDATION)

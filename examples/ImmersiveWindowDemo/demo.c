@@ -23,8 +23,6 @@ static ID3D11RenderTargetView* g_pBackBufferTarget;
 static VideoStream*            g_pVideo;
 static VideoInfo               g_info;
 static BOOL                    g_fPaused;
-static BOOL                    g_fDirty = TRUE; /* something other than the video changed: repaint */
-static BOOL                    g_fNewFrame;     /* the last PreDraw adopted a video frame */
 
 /* Opt into the same CPU policy as Task Manager's Efficiency mode (green leaf). */
 static void EnableEfficiencyMode(void)
@@ -63,25 +61,6 @@ static LONGLONG FramesElapsed(void)
     return ((now.QuadPart - g_start.QuadPart) * g_info.FrameRateNumerator) / (g_frequency.QuadPart * g_info.FrameRateDenominator);
 }
 
-/* Milliseconds until the next video frame is due; a long wait when there is nothing to pace. */
-static DWORD MillisecondsToNextFrame(void)
-{
-    LARGE_INTEGER now;
-    LONGLONG      nextTicks;
-    if (NULL == g_pVideo || g_fPaused || 0 == g_info.FrameRateNumerator)
-    {
-        return 1000;
-    }
-    (void)FramesElapsed();
-    QueryPerformanceCounter(&now);
-    nextTicks = g_start.QuadPart + ((g_shown + 1) * g_frequency.QuadPart * g_info.FrameRateDenominator) / g_info.FrameRateNumerator;
-    if (nextTicks <= now.QuadPart)
-    {
-        return 0;
-    }
-    return (DWORD)((nextTicks - now.QuadPart) * 1000 / g_frequency.QuadPart);
-}
-
 /* Advances the video when the wall clock reaches the next frame, as the original PreDraw did. */
 static void PreDraw(HWND hWnd)
 {
@@ -95,8 +74,8 @@ static void PreDraw(HWND hWnd)
     due = FramesElapsed();
     if (due > g_shown)
     {
-        g_shown     = due;
-        g_fNewFrame = VideoStream_NextFrame(g_pVideo) || g_fNewFrame;
+        g_shown = due;
+        VideoStream_NextFrame(g_pVideo);
     }
 }
 
@@ -152,36 +131,6 @@ static LRESULT CALLBACK DemoProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
     {
         g_fPaused = !g_fPaused;
         return 0;
-    }
-    /* anything the caption or the frame reflects: hover and clicks on the caption, activation,
-    ** geometry, colours, DPI */
-    switch (uMsg)
-    {
-    case WM_NCMOUSEMOVE:
-    case WM_NCMOUSELEAVE:
-    case WM_MOUSEMOVE:
-    case WM_MOUSELEAVE:
-    case WM_NCLBUTTONDOWN:
-    case WM_NCLBUTTONUP:
-    case WM_NCLBUTTONDBLCLK:
-    case WM_NCRBUTTONUP:
-    case WM_ACTIVATE:
-    case WM_NCACTIVATE:
-    case WM_SIZE:
-    case WM_WINDOWPOSCHANGED:
-    case WM_DISPLAYCHANGE:
-    case WM_DPICHANGED:
-    case WM_SYSCOLORCHANGE:
-    case WM_SETTINGCHANGE:
-    case WM_THEMECHANGED:
-    case WM_SYSCOMMAND:
-    case WM_EXITSIZEMOVE:
-    case WM_EXITMENULOOP:
-    case WM_INITD2D:
-        g_fDirty = TRUE;
-        break;
-    default:
-        break;
     }
     if (WM_DESTROY == uMsg)
     {
@@ -284,9 +233,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     SetWindowSubclass(hWnd, DemoProc, 1, 0);
     SetupVideo(hWnd, file);
 
-    /* Paint when there is something new: a video frame that came due, or a change the caption
-    ** reflects. Otherwise sleep until the next frame is due or a message arrives, so an idle or
-    ** paused window costs nothing. The window's own resize path paints its geometry frames. */
+    /* Present every display refresh, including repeated or paused video frames.
+    ** The video clock independently decides when to adopt a new decoded frame. */
     while (PumpMessageQueue())
     {
         if (IsIconic(hWnd))
@@ -294,26 +242,13 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
             WaitMessage();
             continue;
         }
+        WaitForNextFrameResource(hWnd);
         PreDraw(hWnd);
-        if (g_fNewFrame || g_fDirty)
+        BeginImmersivePaint(hWnd);
+        EndImmersivePaint(hWnd, IMMERSIVE_PAINT_SEQUENCE, IMMERSIVE_PAINT_SYNC_1);
+        if (NULL != g_pVideo && !g_fPaused)
         {
-            g_fNewFrame = FALSE;
-            g_fDirty    = FALSE;
-            /* BeginImmersivePaint waits on this swap chain's frame-latency
-            ** handle. A separate scanline/vblank wait delays the Vulkan work
-            ** until after the blank and uses the wrong clock across monitors. */
-            BeginImmersivePaint(hWnd);
-            EndImmersivePaint(hWnd, IMMERSIVE_PAINT_RESTART, IMMERSIVE_PAINT_SYNC_0);
-        }
-        else
-        {
-            DWORD wait = MillisecondsToNextFrame();
-            if (NULL != g_pVideo && !g_fPaused && wait > 4)
-            {
-                VideoStream_Prefetch(g_pVideo, wait - 4); /* decode ahead in the time before the next frame */
-                wait = MillisecondsToNextFrame();
-            }
-            MsgWaitForMultipleObjects(0, NULL, FALSE, wait, QS_ALLINPUT);
+            VideoStream_Prefetch(g_pVideo, 0);
         }
     }
     CoUninitialize();

@@ -25,12 +25,27 @@ submitted resize frame and repaints only if the committed geometry differs.
 The resize present discards queued frames with outdated dimensions.
 
 The composition chain has two flip-sequential buffers and a one-frame latency
-limit. Client-size changes invalidate the complete image (`WVR_REDRAW`).
+limit. Presentation runs at the display refresh rate, including paused and
+repeated video frames; decoding advances at the video's own frame rate. The
+swap-chain wait and vsync also pace the modal move, resize, and menu loops.
+Those loops invalidate after painting so Windows generates low-priority
+`WM_PAINT` messages after pending input, without a posted-message loop or a
+10 ms timer limiting high-refresh displays.
+The client occupies the entire window, with native nonclient rendering disabled
+using the nonclient rendering policy and native visual styles disabled on the
+HWND. The light/dark toggle changes the custom caption and system-menu colors;
+it does not apply an Explorer window theme. Caption and edge hit tests use
+screen coordinates without offsets; native move/resize commands use the
+message's hit-test result rather than cached hover state.
 `WM_PAINT` redraws video and caption; background erasure does not discard repaint
 requests. `presentation.h` exposes the shared frame target and drawing dimensions
 to the local demo without changing the upstream API.
 
-Decoded NV12 textures and the BGRA output stay on the GPU. The renderer selects
+Decoded NV12 textures and the BGRA output stay on the GPU. D3D11 copies the two
+NV12 planes into shared R8 and RG8 textures with unfiltered shader loads; Vulkan
+performs color conversion and scaling. This avoids the native NVIDIA driver's
+corrupted chroma and device loss when importing a shared multi-planar NV12 image.
+The renderer selects
 the Vulkan device with the same adapter LUID as D3D11 and synchronizes shared
 textures with keyed mutexes and Vulkan external queue ownership barriers. The
 output is allocated at the composition back buffer's desktop size, so dragging a
@@ -46,9 +61,10 @@ uninitialized or transparent pixels before its new geometry frame arrives.
 
 Requires Windows, a Windows SDK/C compiler, Python 3, and the Vulkan SDK's `glslc`
 on PATH (or under `VULKAN_SDK`). Runtime requires Vulkan 1.1, 16x anisotropic
-filtering, multi-planar NV12 support, `VK_KHR_external_memory_win32`, and
-`VK_KHR_win32_keyed_mutex` on the window's adapter. Shared NV12 and BGRA import
-support is checked at startup. Shader binaries are embedded in the executable.
+filtering, `VK_KHR_external_memory_win32`, and `VK_KHR_win32_keyed_mutex` on the
+window's adapter. Shared R8, RG8, and BGRA import support is checked at startup.
+Vulkan shader binaries are embedded in the executable; the D3D11 plane-copy
+shaders are compiled at startup with the Windows D3D compiler.
 
 ```powershell
 git submodule update --init --recursive

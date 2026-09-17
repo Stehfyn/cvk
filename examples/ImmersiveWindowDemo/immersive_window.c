@@ -33,7 +33,6 @@
 
 #define RECTWIDTH(rc)    (labs((rc).right - (rc).left))
 #define RECTHEIGHT(rc)   (labs((rc).bottom - (rc).top))
-#define CLAMP(x, lo, hi) (max(min((x), (hi)), (lo)))
 
 #define CAPTION_HEIGHT_DIPS       30
 #define CAPTION_BUTTON_WIDTH_DIPS 45
@@ -135,9 +134,10 @@ typedef struct tagIMMERSIVEWINDOW
     BOOL           fLightMode;
     BOOL           fDarkMode;
     CAPTIONBUTTON  eHotCaptionButton;
-    /* the geometry of the last presented frame, stamped with the composition frame it targets */
+    CAPTIONBUTTON  ePressedCaptionButton;
+    UINT           modalDepth;
+    /* The geometry of the prepared or last presented frame. */
     SIZE     szContent;
-    LONGLONG llTargetFrame;
     BOOL     fContentValid;
     BOOL     fInResizePaint;
     SIZE     szPaint;
@@ -524,17 +524,13 @@ static BOOL GetCaptionRect(HWND hWnd, LPRECT lprc)
 {
     const UINT dpi     = GetDpiForWindow(hWnd);
     const int  nHeight = MulDiv(CAPTION_HEIGHT_DIPS, (int)dpi, 96);
-    SIZE       border;
-    const BOOL fMaximized = IsMaximized(hWnd);
+    POINT      origin = {0, 0};
 
-    if (!GetWindowRect(hWnd, lprc))
+    if (!GetClientRect(hWnd, lprc) || !ClientToScreen(hWnd, &origin))
     {
         return FALSE;
     }
-    GetWindowBorders(hWnd, &border);
-    lprc->top += border.cy * !fMaximized;
-    lprc->left += border.cx * !fMaximized;
-    lprc->right -= border.cx * !fMaximized;
+    OffsetRect(lprc, origin.x, origin.y);
     lprc->bottom = lprc->top + nHeight;
     return TRUE;
 }
@@ -599,15 +595,6 @@ static BOOL ContentSizeMatches(LPIMMERSIVEWINDOW pw, LPCRECT lprc)
     return pw->fContentValid && (pw->szContent.cx == lprc->right - lprc->left) && (pw->szContent.cy == lprc->bottom - lprc->top);
 }
 
-static BOOL ContentTargetsCurrentFrame(LPIMMERSIVEWINDOW pw, LPCRECT lprc)
-{
-    if (!ContentSizeMatches(pw, lprc) || NULL == pw->pDCompDevice)
-    {
-        return FALSE;
-    }
-    return pw->llTargetFrame == cdcompDeviceGetNextEstimatedFrameTime(pw->pDCompDevice);
-}
-
 static BOOL StampPresentedContent(HWND hWnd, LPIMMERSIVEWINDOW pw)
 {
     (void)hWnd;
@@ -617,10 +604,6 @@ static BOOL StampPresentedContent(HWND hWnd, LPIMMERSIVEWINDOW pw)
     }
     pw->szContent    = pw->szPaint;
     pw->fContentValid = TRUE;
-    if (NULL != pw->pDCompDevice)
-    {
-        pw->llTargetFrame = cdcompDeviceGetNextEstimatedFrameTime(pw->pDCompDevice);
-    }
     return TRUE;
 }
 
@@ -683,20 +666,6 @@ static void ApplyAppMode(HWND hWnd, BOOL fDark)
     {
         g_FlushMenuTheme();
     }
-    SetWindowTheme(hWnd, L"DarkMode_Explorer", fDark ? NULL : L" ");
-}
-
-static HRESULT EnableBlurBehind(HWND hWnd)
-{
-    DWM_BLURBEHIND bb;
-    HRESULT        hr;
-    ZeroMemory(&bb, sizeof(bb));
-    bb.dwFlags  = DWM_BB_ENABLE | DWM_BB_BLURREGION;
-    bb.fEnable  = TRUE;
-    bb.hRgnBlur = CreateRectRgn(0, 0, -1, -1);
-    hr          = DwmEnableBlurBehindWindow(hWnd, &bb);
-    DeleteObject(bb.hRgnBlur);
-    return hr;
 }
 
 /* ------------------------------------------------------------------------------------------ 5 */
@@ -704,17 +673,17 @@ static HRESULT EnableBlurBehind(HWND hWnd)
 static BOOL OnNCCreate(HWND hWnd, LPCREATESTRUCT lpcs)
 {
     LPIMMERSIVEWINDOW pw;
-    BOOL              fAllowNcPaint = FALSE;
+    const enum DWMNCRENDERINGPOLICY ncPolicy = DWMNCRP_DISABLED;
     POINT             pt;
     MONITORINFO       mi;
 
     EnableNonClientDpiScaling(hWnd);
-    DwmSetWindowAttribute(hWnd, DWMWA_ALLOW_NCPAINT, &fAllowNcPaint, sizeof(fAllowNcPaint));
 
     pw = (LPIMMERSIVEWINDOW)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(IMMERSIVEWINDOW));
     Check(NULL != pw, "HeapAlloc");
     SetWindowLongPtr(hWnd, 0, (LONG_PTR)pw);
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)lpcs->lpCreateParams);
+    Check(SUCCEEDED(DwmSetWindowAttribute(hWnd, DWMWA_NCRENDERING_POLICY, &ncPolicy, sizeof(ncPolicy))), "disable native frame");
 
     /* BCS_CENTERED: center the window on the monitor under the cursor */
     mi.cbSize = sizeof(mi);
@@ -729,13 +698,16 @@ static BOOL OnNCCreate(HWND hWnd, LPCREATESTRUCT lpcs)
 
 static void SyncFrameChange(HWND hWnd)
 {
-    SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+    SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 static BOOL OnCreate(HWND hWnd, LPCREATESTRUCT lpcs)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
     pw->fDarkMode        = TRUE;
+    /* The caption is rendered by PaintCaption. Disabling DWM nonclient
+    ** rendering alone leaves the themed nonclient implementation active. */
+    Check(SUCCEEDED(SetWindowTheme(hWnd, L"", L"")), "disable native window theme");
     SyncFrameChange(hWnd);
     SendMessageW(hWnd, WM_INITD2D, 0, 0);
     FORWARD_WM_CREATE(hWnd, lpcs, DefWindowProcW);
@@ -760,28 +732,12 @@ static void OnNCDestroy(HWND hWnd)
     FORWARD_WM_NCDESTROY(hWnd, DefWindowProcW);
 }
 
-static void OnSize(HWND hWnd, UINT state, int cx, int cy)
-{
-    if (SIZE_MAXIMIZED == state)
-    {
-        WINDOWPLACEMENT wp;
-        wp.length = sizeof(wp);
-        GetWindowPlacement(hWnd, &wp);
-        SetWindowPlacement(hWnd, &wp);
-    }
-    (void)cx;
-    (void)cy;
-}
-
 static void OnActivate(HWND hWnd, UINT state, HWND hwndActDeact, BOOL fMinimized)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
     g_fActive            = (WA_INACTIVE != state);
     if (!fMinimized)
     {
-        const MARGINS margins = {1, 1, -1, 1};
-        DwmExtendFrameIntoClientArea(hWnd, &margins);
-        EnableBlurBehind(hWnd);
         ApplyAppMode(hWnd, pw->fDarkMode);
     }
     FORWARD_WM_ACTIVATE(hWnd, state, hwndActDeact, fMinimized, DefWindowProcW);
@@ -806,6 +762,12 @@ static void OnPaint(HWND hWnd)
         RenderGeometryFrame(hWnd, pw, IMMERSIVE_PAINT_SEQUENCE, IMMERSIVE_PAINT_SYNC_1);
     }
     EndPaint(hWnd, &paint);
+    if (NULL != pw && 0 != pw->modalDepth && NULL != pw->pD3D11DeviceContext && !IsIconic(hWnd))
+    {
+        /* Generated WM_PAINT stays behind input; Present(1) and the frame
+        ** latency object provide the clock while DefWindowProc owns the loop. */
+        InvalidateRect(hWnd, NULL, FALSE);
+    }
 }
 
 static BOOL OnEraseBkgnd(HWND hWnd, HDC hDC)
@@ -821,7 +783,6 @@ static void OnGetMinMaxInfo(HWND hWnd, LPMINMAXINFO lpmmi)
     RECT          rcCaption;
     RECT          rcButton;
     SIZE          border;
-    GUITHREADINFO gti;
     HMONITOR      hMonitor;
     MONITORINFO   mi;
 
@@ -831,19 +792,14 @@ static void OnGetMinMaxInfo(HWND hWnd, LPMINMAXINFO lpmmi)
     lpmmi->ptMinTrackSize.x = 5 * RECTWIDTH(rcButton) + 2 * border.cy;
     lpmmi->ptMinTrackSize.y = RECTHEIGHT(rcCaption) + border.cy;
 
-    gti.cbSize = sizeof(gti);
-    if (GetGUIThreadInfo(GetCurrentThreadId(), &gti) && gti.hwndMoveSize == hWnd)
-    {
-        return;
-    }
     hMonitor  = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
     mi.cbSize = sizeof(mi);
     if (NULL != hMonitor && GetMonitorInfoW(hMonitor, &mi))
     {
-        lpmmi->ptMaxPosition.x  = labs(mi.rcMonitor.left - mi.rcWork.left);
-        lpmmi->ptMaxPosition.y  = labs(mi.rcMonitor.top - mi.rcWork.top) + 1;
+        lpmmi->ptMaxPosition.x  = mi.rcWork.left - mi.rcMonitor.left;
+        lpmmi->ptMaxPosition.y  = mi.rcWork.top - mi.rcMonitor.top;
         lpmmi->ptMaxTrackSize.x = RECTWIDTH(mi.rcWork);
-        lpmmi->ptMaxTrackSize.y = RECTHEIGHT(mi.rcWork) - 1;
+        lpmmi->ptMaxTrackSize.y = RECTHEIGHT(mi.rcWork);
         lpmmi->ptMaxSize        = lpmmi->ptMaxTrackSize;
     }
 }
@@ -851,31 +807,14 @@ static void OnGetMinMaxInfo(HWND hWnd, LPMINMAXINFO lpmmi)
 static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpcsp)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
-    RECT              rcCaption;
 
     if (!fCalcValidRects)
     {
         return 0;
     }
     Trace("WM_NCCALCSIZE", 0);
-    /* keep the client area exactly the window rectangle minus the side and bottom borders */
-    if (IsMaximized(hWnd))
-    {
-        MONITORINFO mi;
-        mi.cbSize = sizeof(mi);
-        if (GetMonitorInfoW(MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &mi))
-        {
-            lpcsp->rgrc[0] = mi.rcWork;
-        }
-    }
-    else if (GetCaptionRect(hWnd, &rcCaption))
-    {
-        SIZE border;
-        GetWindowBorders(hWnd, &border);
-        lpcsp->rgrc[0].left += border.cx;
-        lpcsp->rgrc[0].right -= border.cx;
-        lpcsp->rgrc[0].bottom -= border.cy;
-    }
+    /* The proposed window rectangle is also the client rectangle. Keep this
+    ** origin and size together for the pre-resize image below. */
 
     /* Finish the expensive GPU work BEFORE Windows changes the HWND bounds.
     ** GetClientRect still reports the old size here, so pass the proposed size
@@ -920,7 +859,6 @@ static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpc
 
 static UINT OnNCHitTest(HWND hWnd, int x, int y)
 {
-    LPIMMERSIVEWINDOW pw = GetState(hWnd);
     RECT              rcWindow;
     SIZE              border;
     const BOOL        fMaximized = IsMaximized(hWnd);
@@ -934,12 +872,20 @@ static UINT OnNCHitTest(HWND hWnd, int x, int y)
 
     GetWindowBorders(hWnd, &border);
     cursor.x = x;
-    cursor.y = y + (!fMaximized * border.cy) - !fMaximized;
+    cursor.y = y;
     GetWindowRect(hWnd, &rcWindow);
-    result = NCHIT_LEFT * (cursor.x == CLAMP(cursor.x, rcWindow.left, rcWindow.left + (border.cx + 5) * !fMaximized)) |
-             NCHIT_TOP * (cursor.y == CLAMP(cursor.y, rcWindow.top - 2, rcWindow.top + (border.cy + 5) * !fMaximized)) |
-             NCHIT_RIGHT * (cursor.x == CLAMP(cursor.x, rcWindow.right - (border.cx + 5) * !fMaximized, rcWindow.right)) |
-             NCHIT_BOTTOM * (cursor.y == CLAMP(cursor.y, rcWindow.bottom - 5, rcWindow.bottom + border.cy));
+    if (!PtInRect(&rcWindow, cursor))
+    {
+        return HTNOWHERE;
+    }
+    result = NCHIT_CLIENT;
+    if (!fMaximized)
+    {
+        if (x < rcWindow.left + border.cx) result |= NCHIT_LEFT;
+        if (x >= rcWindow.right - border.cx) result |= NCHIT_RIGHT;
+        if (y < rcWindow.top + border.cy) result |= NCHIT_TOP;
+        if (y >= rcWindow.bottom - border.cy) result |= NCHIT_BOTTOM;
+    }
     switch (result)
     {
     case NCHIT_LEFT:
@@ -966,30 +912,24 @@ static UINT OnNCHitTest(HWND hWnd, int x, int y)
         GetCaptionButtonRect(hWnd, &rcLightDark, CB_LIGHTDARKBUTTON);
         if (PtInRect(&rcMax, cursor))
         {
-            pw->eHotCaptionButton = CB_MAXBUTTON;
             return HTMAXBUTTON;
         }
         if (PtInRect(&rcMin, cursor))
         {
-            pw->eHotCaptionButton = CB_MINBUTTON;
             return HTMINBUTTON;
         }
         if (PtInRect(&rcClose, cursor))
         {
-            pw->eHotCaptionButton = CB_CLOSEBUTTON;
             return HTCLOSE;
         }
         if (PtInRect(&rcLightDark, cursor))
         {
-            pw->eHotCaptionButton = CB_LIGHTDARKBUTTON;
             return HTMENU;
         }
         if (PtInRect(&rcCaption, cursor))
         {
-            pw->eHotCaptionButton = CB_CAPTION;
             return HTCAPTION;
         }
-        pw->eHotCaptionButton = CB_NONE;
         return HTCLIENT;
     default:
         return HTNOWHERE;
@@ -998,79 +938,47 @@ static UINT OnNCHitTest(HWND hWnd, int x, int y)
 
 static void OnNCPaint(HWND hWnd, HRGN hrgn)
 {
-    ValidateRgn(hWnd, hrgn);
-    FORWARD_WM_NCPAINT(hWnd, hrgn, DefWindowProcW);
+    (void)hWnd;
+    (void)hrgn;
 }
 
 static BOOL OnNCActivate(HWND hWnd, BOOL fActive, HWND hwndActDeact, BOOL fMinimized)
 {
-    (void)fActive;
     (void)hwndActDeact;
     (void)fMinimized;
-    /* always tell DefWindowProc the window is active so that it never paints an inactive frame */
-    return (BOOL)DefWindowProcW(hWnd, WM_NCACTIVATE, TRUE, 0L);
+    return (BOOL)DefWindowProcW(hWnd, WM_NCACTIVATE, fActive, -1);
+}
+
+static CAPTIONBUTTON CaptionButtonFromHitTest(UINT codeHitTest)
+{
+    switch (codeHitTest)
+    {
+    case HTCLOSE: return CB_CLOSEBUTTON;
+    case HTMAXBUTTON: return CB_MAXBUTTON;
+    case HTMINBUTTON: return CB_MINBUTTON;
+    case HTMENU: return CB_LIGHTDARKBUTTON;
+    case HTCAPTION: return CB_CAPTION;
+    default: return CB_NONE;
+    }
 }
 
 static void OnNCMouseMove(HWND hWnd, int x, int y, UINT codeHitTest)
 {
-    LPIMMERSIVEWINDOW pw = GetState(hWnd);
-    switch (codeHitTest)
-    {
-    case HTTOP:
-    case HTTOPLEFT:
-    case HTTOPRIGHT:
-    case HTBOTTOM:
-    case HTBOTTOMLEFT:
-    case HTBOTTOMRIGHT:
-    case HTLEFT:
-    case HTRIGHT:
-        pw->eHotCaptionButton = CB_NONE;
-        return;
-    default:
-    {
-        SIZE  border;
-        POINT cursor;
-        RECT  rcCaption, rcMin, rcMax, rcClose, rcLightDark;
-        GetWindowBorders(hWnd, &border);
-        cursor.x = x;
-        cursor.y = y + (!IsMaximized(hWnd) * border.cy) - 1;
-        GetCaptionRect(hWnd, &rcCaption);
-        GetCaptionButtonRect(hWnd, &rcMin, CB_MINBUTTON);
-        GetCaptionButtonRect(hWnd, &rcMax, CB_MAXBUTTON);
-        GetCaptionButtonRect(hWnd, &rcClose, CB_CLOSEBUTTON);
-        GetCaptionButtonRect(hWnd, &rcLightDark, CB_LIGHTDARKBUTTON);
-        if (PtInRect(&rcMin, cursor))
-        {
-            pw->eHotCaptionButton = CB_MINBUTTON;
-        }
-        else if (PtInRect(&rcMax, cursor))
-        {
-            pw->eHotCaptionButton = CB_MAXBUTTON;
-        }
-        else if (PtInRect(&rcClose, cursor))
-        {
-            pw->eHotCaptionButton = CB_CLOSEBUTTON;
-        }
-        else if (PtInRect(&rcLightDark, cursor))
-        {
-            pw->eHotCaptionButton = CB_LIGHTDARKBUTTON;
-        }
-        else if (PtInRect(&rcCaption, cursor))
-        {
-            pw->eHotCaptionButton = CB_CAPTION;
-        }
-        FORWARD_WM_NCMOUSEMOVE(hWnd, x, y, codeHitTest, DefWindowProcW);
-    }
-    }
+    TRACKMOUSEEVENT track = {sizeof(track), TME_LEAVE | TME_NONCLIENT, hWnd, 0};
+    GetState(hWnd)->eHotCaptionButton = CaptionButtonFromHitTest(codeHitTest);
+    TrackMouseEvent(&track);
+    FORWARD_WM_NCMOUSEMOVE(hWnd, x, y, codeHitTest, DefWindowProcW);
 }
 
 static void OnNCLButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
-    (void)fDoubleClick;
-    if (CB_NONE == pw->eHotCaptionButton || CB_CAPTION == pw->eHotCaptionButton)
+    pw->ePressedCaptionButton = CaptionButtonFromHitTest(codeHitTest);
+    if (CB_NONE == pw->ePressedCaptionButton || CB_CAPTION == pw->ePressedCaptionButton)
     {
-        FORWARD_WM_NCLBUTTONDOWN(hWnd, FALSE, x, y, codeHitTest, DefWindowProcW);
+        /* DefWindowProc owns native move/size capture. A previous hover must
+        ** never prevent the current edge hit from reaching it. */
+        FORWARD_WM_NCLBUTTONDOWN(hWnd, fDoubleClick, x, y, codeHitTest, DefWindowProcW);
     }
 }
 
@@ -1079,19 +987,24 @@ static void OnNCLButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
     static ULONGLONG  ullLastToggle;
     ULONGLONG         ullNow;
-    (void)codeHitTest;
-    switch (pw->eHotCaptionButton)
+    CAPTIONBUTTON pressed = pw->ePressedCaptionButton;
+    pw->ePressedCaptionButton = CB_NONE;
+    if (pressed != CaptionButtonFromHitTest(codeHitTest))
+    {
+        return;
+    }
+    switch (pressed)
     {
     case CB_CLOSEBUTTON:
         SendMessageW(hWnd, WM_CLOSE, 0, 0);
         break;
     case CB_MAXBUTTON:
         pw->eHotCaptionButton = CB_NONE;
-        PostMessageW(hWnd, WM_SYSCOMMAND, IsMaximized(hWnd) ? (SC_RESTORE | HTMAXBUTTON) : (SC_MAXIMIZE | HTMAXBUTTON), 0);
+        PostMessageW(hWnd, WM_SYSCOMMAND, IsMaximized(hWnd) ? SC_RESTORE : SC_MAXIMIZE, 0);
         break;
     case CB_MINBUTTON:
         pw->eHotCaptionButton = CB_NONE;
-        PostMessageW(hWnd, WM_SYSCOMMAND, SC_MINIMIZE | HTMINBUTTON, 0);
+        PostMessageW(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
         break;
     case CB_LIGHTDARKBUTTON:
         ullNow = GetTickCount64();
@@ -1118,14 +1031,13 @@ static void OnNCLButtonDblClk(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT c
     (void)y;
     if (HTCAPTION == codeHitTest)
     {
-        PostMessageW(hWnd, WM_SYSCOMMAND, IsMaximized(hWnd) ? (SC_RESTORE | HTMAXBUTTON) : (SC_MAXIMIZE | HTMAXBUTTON), 0);
+        PostMessageW(hWnd, WM_SYSCOMMAND, IsMaximized(hWnd) ? SC_RESTORE : SC_MAXIMIZE, 0);
     }
 }
 
 static void OnNCRButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
 {
-    LPIMMERSIVEWINDOW pw = GetState(hWnd);
-    if (CB_CAPTION == pw->eHotCaptionButton)
+    if (HTCAPTION == codeHitTest)
     {
         POINT pt;
         HMENU hMenu = GetSystemMenu(hWnd, FALSE);
@@ -1159,30 +1071,20 @@ static void OnKeyUp(HWND hWnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
     FORWARD_WM_KEYUP(hWnd, vk, cRepeat, flags, DefWindowProcW);
 }
 
-static void OnSysCommand(HWND hWnd, UINT cmd, int x, int y)
+static void BeginModalPainting(HWND hWnd)
 {
-    switch (GET_SC_WPARAM(cmd))
-    {
-    case SC_CLOSE:
-        SendMessageW(hWnd, WM_CLOSE, 0, 0);
-        /* falls through */
-    case SC_MOVE:
-        PostMessageW(hWnd, WM_MOUSEMOVE, 0, 0);
-        break;
-    default:
-        break;
-    }
-    FORWARD_WM_SYSCOMMAND(hWnd, cmd, x, y, DefWindowProcW);
+    ++GetState(hWnd)->modalDepth;
+    InvalidateRect(hWnd, NULL, FALSE);
 }
 
-static void OnTimer(HWND hWnd, UINT id)
+static void EndModalPainting(HWND hWnd)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
-    RECT              rcContent;
-    if ((0 == id || 0x69 == id) && GetWindowContentRect(hWnd, &rcContent) && ContentRectHasArea(&rcContent) && !ContentTargetsCurrentFrame(pw, &rcContent))
+    if (0 != pw->modalDepth)
     {
-        RenderGeometryFrame(hWnd, pw, IMMERSIVE_PAINT_SEQUENCE, IMMERSIVE_PAINT_SYNC_1);
+        --pw->modalDepth;
     }
+    InvalidateRect(hWnd, NULL, FALSE);
 }
 
 static void OnEnterSizeMove(HWND hWnd)
@@ -1190,32 +1092,30 @@ static void OnEnterSizeMove(HWND hWnd)
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
     pw->ri.fMoving       = FALSE;
     pw->ri.fResizing     = FALSE;
-    SetTimer(hWnd, 0x69, USER_TIMER_MINIMUM, NULL);
+    BeginModalPainting(hWnd);
 }
 
 static void OnExitSizeMove(HWND hWnd)
 {
-    KillTimer(hWnd, 0x69);
-    OnTimer(hWnd, 0);
+    EndModalPainting(hWnd);
 }
 
-/* a menu loop (the system menu) is modal like a size loop: the timer keeps the frame current */
+/* The system menu also dispatches generated WM_PAINT while its modal loop runs. */
 static void OnEnterMenuLoop(HWND hWnd, BOOL fIsTrackPopupMenu)
 {
     (void)fIsTrackPopupMenu;
-    SetTimer(hWnd, 0x69, USER_TIMER_MINIMUM, NULL);
+    BeginModalPainting(hWnd);
 }
 
 static void OnExitMenuLoop(HWND hWnd, BOOL fIsShortcutMenu)
 {
     (void)fIsShortcutMenu;
-    KillTimer(hWnd, 0x69);
-    OnTimer(hWnd, 0);
+    EndModalPainting(hWnd);
 }
 
 static void OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
 {
-    (void)hWnd;
+    GetState(hWnd)->eHotCaptionButton = CB_NONE;
     (void)x;
     (void)y;
     (void)keyFlags;
@@ -1282,6 +1182,10 @@ static void OnWindowPosChanged(HWND hWnd, const LPWINDOWPOS lpwpos)
             ValidateRect(hWnd, NULL);
         }
     }
+    if (0 != pw->modalDepth)
+    {
+        InvalidateRect(hWnd, NULL, FALSE);
+    }
     Trace("WM_WINDOWPOSCHANGED done", 0);
 }
 
@@ -1289,12 +1193,9 @@ static void OnDwmNcRenderingChanged(HWND hWnd, BOOL fEnabled)
 {
     if (fEnabled)
     {
-        const BOOL fAllowNcPaint = FALSE;
-        const BOOL fPassive      = TRUE;
-        DwmSetWindowAttribute(hWnd, DWMWA_ALLOW_NCPAINT, &fAllowNcPaint, sizeof(fAllowNcPaint));
-        DwmSetWindowAttribute(hWnd, DWMWA_PASSIVE_UPDATE_MODE, &fPassive, sizeof(fPassive));
+        const enum DWMNCRENDERINGPOLICY ncPolicy = DWMNCRP_DISABLED;
+        Check(SUCCEEDED(DwmSetWindowAttribute(hWnd, DWMWA_NCRENDERING_POLICY, &ncPolicy, sizeof(ncPolicy))), "disable native frame");
     }
-    DefWindowProcW(hWnd, WM_DWMNCRENDERINGCHANGED, (WPARAM)fEnabled, 0);
 }
 
 /* ------------------------------------------------------------------------------------------ 6 */
@@ -1546,8 +1447,7 @@ VOID WINAPI WaitForNextFrameResource(HWND hWnd)
     if (NULL != pw && NULL != pw->hFrameLatencyWaitableObject && !pw->fFrameSlotReady)
     {
         Check(WAIT_OBJECT_0 == WaitForSingleObject(pw->hFrameLatencyWaitableObject, INFINITE), "frame latency wait");
-        /* More than one NCCALCSIZE may precede the eventual present. Replacing
-        ** an offscreen preparation must not consume another presentation slot. */
+        /* The application and BeginImmersivePaint may both wait for this frame. */
         pw->fFrameSlotReady = TRUE;
     }
 }
@@ -1617,7 +1517,6 @@ LRESULT CALLBACK DefImmersiveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         HANDLE_MSG(hWnd, WM_SYSCOLORCHANGE, OnSysColorChange);
         HANDLE_MSG(hWnd, WM_SETCURSOR, OnSetCursor);
         HANDLE_MSG(hWnd, WM_GETMINMAXINFO, OnGetMinMaxInfo);
-        HANDLE_MSG(hWnd, WM_SIZE, OnSize);
         HANDLE_MSG(hWnd, WM_MOVING, OnMoving);
         HANDLE_MSG(hWnd, WM_SIZING, OnSizing);
         HANDLE_MSG(hWnd, WM_WINDOWPOSCHANGED, OnWindowPosChanged);
@@ -1632,8 +1531,6 @@ LRESULT CALLBACK DefImmersiveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
         HANDLE_MSG(hWnd, WM_NCRBUTTONUP, OnNCRButtonUp);
         HANDLE_MSG(hWnd, WM_NCMOUSELEAVE, OnNCMouseLeave);
         HANDLE_MSG(hWnd, WM_KEYUP, OnKeyUp);
-        HANDLE_MSG(hWnd, WM_SYSCOMMAND, OnSysCommand);
-        HANDLE_MSG(hWnd, WM_TIMER, OnTimer);
         HANDLE_MSG(hWnd, WM_MOUSEMOVE, OnMouseMove);
         HANDLE_MSG(hWnd, WM_PARENTNOTIFY, OnParentNotify);
         HANDLE_MSG(hWnd, WM_ENTERMENULOOP, OnEnterMenuLoop);
@@ -1659,7 +1556,7 @@ VOID WINAPI InitImmersiveControls(VOID)
     }
     ResolvePrivateThemeApis();
     ZeroMemory(&wc, sizeof(wc));
-    wc.style         = CS_OWNDC | CS_BYTEALIGNWINDOW | CS_BYTEALIGNCLIENT;
+    wc.style         = CS_OWNDC | CS_BYTEALIGNWINDOW | CS_BYTEALIGNCLIENT | CS_DBLCLKS;
     wc.lpfnWndProc   = DefImmersiveProc;
     wc.cbWndExtra    = sizeof(LONG_PTR);
     wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
