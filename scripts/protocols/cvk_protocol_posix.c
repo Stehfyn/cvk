@@ -141,7 +141,7 @@ void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
     cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
 
     /* bind */
-    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
 
 /**
@@ -326,7 +326,7 @@ void cvkImportDmaBufImage(VkPhysicalDevice             physicalDevice,
             allocate_next = &memory_dedicated_allocate_info;
         }
         cvkAllocateMemory(device, allocate_next, pMemoryObjectSizes[0], memory_type_index, pAllocator, &pMemories[0]);
-        cvkBindImageMemory(device, (*pImage), pMemories[0], 0);
+        cvkBindImageMemory(device, (*pImage), pMemories[0], VK_NO_OFFSET);
         return;
     }
 
@@ -463,7 +463,7 @@ void cvkImportFdBuffer(VkPhysicalDevice                   physicalDevice,
     cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
 
     /* bind */
-    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
 }
 
 /**
@@ -581,7 +581,7 @@ void cvkExportFdImage(VkPhysicalDevice                   physicalDevice,
     cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
 
     /* bind, then export */
-    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
     cvkGetMemoryFd(device, NULL, (*pMemory), handleType, pFd);
 }
 
@@ -667,6 +667,6 @@ void cvkExportFdBuffer(VkPhysicalDevice                   physicalDevice,
     cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
 
     /* bind, then export */
-    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
     cvkGetMemoryFd(device, NULL, (*pMemory), handleType, pFd);
 }

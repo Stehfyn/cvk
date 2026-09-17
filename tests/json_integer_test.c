@@ -24,8 +24,23 @@ static int64_t parse_signed(const char* text)
     return cvkGetJsonInt64(&value);
 }
 
+static uint64_t parse_named_constant(const char* text)
+{
+    cvkJsonValue value;
+
+    (void)memset(&value, 0, sizeof(value));
+    value.kind       = CVK_JSON_STRING;
+    value.pText      = text;
+    value.textLength = (uint32_t)strlen(text);
+
+    return cvkParseJsonUint64(&value);
+}
+
 int main(void)
 {
+    CHECK(parse_named_constant("VK_SHADER_INDEX_UNUSED_AMDX") == UINT32_MAX);
+    CHECK(parse_named_constant("VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_BYTE_ALIGNMENT_AMDX") == 128);
+    CHECK(parse_named_constant("VK_COMPRESSED_TRIANGLE_FORMAT_DGF1_BYTE_STRIDE_AMDX") == 128);
     CHECK(cvkParseUint64Text("18446744073709551615") == UINT64_MAX);
     CHECK(cvkParseUint64Text("18446744073709551616") == UINT64_MAX);
     CHECK(cvkParseUint64Text("0xffffffffffffffff") == UINT64_MAX);

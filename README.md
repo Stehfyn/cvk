@@ -250,6 +250,10 @@ tier 0/1 functions exist there.
   tiers restricted to that platform's extensions, and matching sources under `src/<platform>/`.
   The `posix` protocol pair and `scvk` profile use the same layout. Include platform headers
   as, for example, `#include "win32/cvk_win32.h"` with `include/` on the include path.
+  The default `"platforms": "all"` policy emits every category supported by each
+  profile's registry, including `provisional/` for beta extensions. Unsupported
+  categories produce no empty files; Vulkan SC currently emits Win32, QNX Screen,
+  SCI, and the POSIX protocols.
 - Optional Doxygen contracts generated from the registry's parameter descriptions;
   enable them with `"doc_comments": true` in the policy.
 - Assertion sets derived mechanically: `optional="false"` handles → non-null assert, `len=`
@@ -268,27 +272,35 @@ Then read `cvkCmdPipelineBarrier` → `cvkCmdImageQueueOwnershipBarrier` → `cv
 `cvkCmdAcquireImageFromExternal` → `cvkCmdTransferBufferToImageQueueOwnership` →
 `cvkCmdTransferBufferToImage2D`. Those two chains exhibit every tier and every naming rule here.
 
-## 7. Release builds and Volk loading
+## 7. Optimized builds and Volk loading
 
 Generated code targets C99. The headers contain no C++ linkage guards. Vulkan format
 helpers use the pinned Vulkan-Utility-Libraries `vk_format_utils.h` header as a private
 build dependency; Vulkan SC omits these Vulkan-only helpers.
 
-Release builds enable link-time optimization (LTO) for both `cvk` and `scvk`, and for
-the test executables, plus aggressive `/Ob3` inlining with MSVC. Clang uses full LTO
-for optimization across the generated wrapper tiers. CMake checks LTO support
-during configuration. The Windows
-build preset still defaults to Debug; select Release explicitly:
+Every build configuration enables speed optimization and link-time optimization (LTO)
+for both `cvk` and `scvk`, and for the test executables: `/O2 /Ob3` with MSVC,
+or `-O3` with GCC and Clang. Clang uses full LTO across the generated wrapper tiers.
+MSVC Debug runtime checks are disabled because they conflict with optimization.
+CMake checks LTO support during configuration. All build presets select Release:
 
 ```sh
 cmake --preset windows-msvc-2026
-cmake --build --preset windows-msvc-2026 --config Release
+cmake --build --preset windows-msvc-2026
 ctest --test-dir build/windows-msvc-2026 -C Release --output-on-failure
 ```
 
-The `ninja-clang` and `linux` presets already select Release. Applications linking these
-static libraries should also enable `INTERPROCEDURAL_OPTIMIZATION_RELEASE` on their
-executable target so optimization can cross the application/library boundary.
+Applications linking these static libraries should also enable
+`INTERPROCEDURAL_OPTIMIZATION` on their executable target so optimization can cross
+the application/library boundary. Generated functions use ordinary definitions;
+the compiler decides which calls to inline.
+
+Generation is independent of the host OS. CMake compiles the target's default platform
+pairs; select others with a semicolon-separated `CVK_PLATFORMS` cache value, for example
+`-DCVK_PLATFORMS="xcb;wayland;posix"`. An empty value builds only the core and JSON
+sources. Native SDK headers must be available for the selected platforms. Add
+`provisional` to compile beta helpers. The same selection configures Volk's dispatch
+pointers and includes whichever platform pairs exist for `cvk` and `scvk`.
 
 The `cvk` target links the pinned [Volk](https://github.com/zeux/volk) submodule privately and
 exports `VK_NO_PROTOTYPES`. Its implementation and Volk use the current platform's Vulkan

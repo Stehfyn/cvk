@@ -151,6 +151,7 @@ class Registry:
     removed: Set[str] = field(default_factory=set)                        # names an API variant's <remove> blocks drop
     enums64: Set[str] = field(default_factory=set)                        # 64-bit flag bit enumerations (values are static const objects, not enumerators)
     constants: Dict[str, str] = field(default_factory=dict)               # API constant name -> C type (VK_SUBPASS_EXTERNAL -> uint32_t)
+    constant_values: Dict[str, str] = field(default_factory=dict)         # API constant name -> registry C expression
     bitmask_bases: Dict[str, str] = field(default_factory=dict)           # canonical flags type -> VkFlags or VkFlags64
 
     def feature_closure(self, name: str) -> Set[str]:
@@ -251,12 +252,14 @@ class Registry:
 
         enums64: Set[str] = set()
         constants: Dict[str, str] = {}
+        constant_values: Dict[str, str] = {}
         for e in root.findall("enums"):
             enums[e.get("name")] = [v.get("name") for v in e.findall("enum") if api_ok(v)]
             if e.get("name") == "API Constants":
                 for v in e.findall("enum"):
                     if api_ok(v) and v.get("type") and not v.get("alias"):
                         constants[v.get("name")] = v.get("type")
+                        constant_values[v.get("name")] = v.get("value")
             if e.get("bitwidth") == "64":
                 enums64.add(e.get("name"))
 
@@ -436,7 +439,7 @@ class Registry:
             bitmasks=bitmasks, path=path, feature_depends=feature_depends, api=api,
             enum_provenance=enum_provenance, type_provenance=type_provenance, enum_extends=enum_extends,
             type_aliases=type_aliases, type_feature=type_feature, removed=removed_types | removed_enums | removed_commands,
-            enums64=enums64, constants=constants, bitmask_bases=bitmask_bases,
+            enums64=enums64, constants=constants, constant_values=constant_values, bitmask_bases=bitmask_bases,
         )
 
     @staticmethod

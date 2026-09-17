@@ -118,13 +118,14 @@ def separate_assignments_from_calls(text: str) -> str:
             gap = text[previous_end:first]
             calls = re.findall(r"\b([A-Za-z_]\w*)\s*\(", statement)
             # Alignment arithmetic belongs to the surrounding calculation/assignment run.
-            has_call = any(name not in ("if", "for", "while", "switch", "sizeof", "_Alignof",
+            has_call = any(name not in ("if", "for", "while", "switch", "sizeof", "_Alignof", "VK_COUNT_OF",
                                        "cvkAlignDeviceSize", "scvkAlignDeviceSize") for name in calls)
             is_return = re.match(r"\s*return\b", statement) is not None
-            separate = (previous_assignment and has_call) or (previous_call and assigned) or (previous_statement and is_return)
+            is_assert = re.match(r"\s*(?:CVK|SCVK)_ASSERT\s*\(", statement) is not None
+            separate = not is_assert and ((previous_assignment and has_call) or (previous_call and assigned) or (previous_statement and is_return))
             if separate and gap.isspace() and gap.count("\n") == 1:
                 insertions.append(previous_end)
-            if re.match(r"\s*(?:CVK|SCVK)_ASSERT\s*\(", statement):
+            if is_assert:
                 following = re.compile(r"\s*(\S)").match(masked, token.end())
                 if following:
                     next_start = following.start(1)
@@ -169,12 +170,13 @@ class Generator:
         self.drop_missing: bool = policy.get("missing", "error") == "drop"
         self.dropped: List[str] = []
         self.core_versions: Set[str] = reg.feature_closure(self.core)
+        platforms = policy.get("platforms", [])
+        self.platforms: Set[str] = set(reg.platforms if platforms == "all" else platforms)
         if policy["extensions"] == "all":
             # Every extension the registry supports for the profile's API that is platform-neutral
-            # or belongs to one of the policy's platforms; provisional (beta) ones only if listed.
-            plats = set(policy.get("platforms", []))
+            # or belongs to one of the policy's selected platform categories.
             self.exts: Set[str] = {e.name for e in reg.extensions.values()
-                                   if self.api in e.supported and (e.platform is None or e.platform in plats)}
+                                   if self.api in e.supported and (e.platform is None or e.platform in self.platforms)}
         else:
             self.exts = set(policy["extensions"])
         self.cmds: List[Command] = reg.profile(self.core, sorted(self.exts))
@@ -208,6 +210,10 @@ class Generator:
                         fragments = self.json_fragments if path.startswith("cvk_protocol_json") else self.fragments
                         fragments.append(fh.read().rstrip("\n"))
         self.errors: List[str] = []
+        for platform in sorted(self.platforms - set(reg.platforms)):
+            self.errors.append(f"unknown registry platform: {platform}")
+        for platform in sorted(self.platforms - set(self.PLATFORM_INCLUDES)):
+            self.errors.append(f"missing header mapping for platform: {platform}")
 
     # ------------------------------------------------------------ profile
     def struct_in_profile(self, s: Struct) -> bool:
@@ -1071,8 +1077,7 @@ class Generator:
                     "    }", f"    {dst} = ({const}{t}*)storage;", "}"], True, True
         return [], False, False
 
-    @staticmethod
-    def json_name_table(values: List[str], dynamic: bool) -> List[str]:
+    def json_name_table(self, values: List[str], dynamic: bool) -> List[str]:
         # Vulkan's 64-bit flag bits are const objects, not C constant expressions.
         # Assign their values after declaring the automatic table.
         if dynamic:
@@ -1080,7 +1085,15 @@ class Generator:
             for i, value in enumerate(values):
                 lines += [f'table[{i}].pName = "{value}";', f"table[{i}].value = (uint64_t){value};"]
             return lines + [""]
-        entries = [f'    {{"{v}", (uint64_t){v}}}' for v in values]
+        entries = []
+        for value in values:
+            expression = value
+            origin = self.reg.enum_provenance.get(value)
+            if value in self.reg.constants and self.platforms_for([origin], None):
+                # Numeric readers live in core even when a named constant belongs to a
+                # platform header. Preserve its value without requiring that native SDK.
+                expression = f"({self.reg.constants[value]})({self.reg.constant_values[value]})"
+            entries.append(f'    {{"{value}", (uint64_t){expression}}}')
         return ["static const cvkJsonName table[] = {"] + ",\n".join(entries).splitlines() + ["};", ""]
 
     def emit_json_parsers(self) -> None:
@@ -1419,6 +1432,12 @@ class Generator:
         for em in ext.members:
             if em.name in ("sType", "pNext"):
                 continue
+            if em.name in self.policy.get("shared_extender_members", {}).get(ext.name, []):
+                if em.is_pointer or em.array_len or f"{em.full_type} {em.name}" not in base_params:
+                    self.errors.append(f"shared extender member {ext.name}::{em.name} has no matching scalar in {t0}")
+                    continue
+                fields.append((em.name, em.name))
+                continue
             pname = em.name if em.name not in base_names else self.member_alias(em, base, ext)
             if em.array_len:
                 ext_params.append(f"const {em.full_type} {pname}[{em.array_len}]")
@@ -1483,9 +1502,10 @@ class Generator:
         (Info2, Properties2); a digit inside a name (Vulkan12) is part of that name."""
         import difflib
         e = tokens(self.struct_short(ext))
+        tag = e.pop() if e and e[-1] in VENDORS else ""
         if len(e) >= 2 and e[-1].isdigit() and (e[-2] in self.KINDS_OUT or e[-2] == "Info"):
             e.pop()
-        b = tokens(self.struct_short(base))
+        b = tokens(strip_vendor(self.struct_short(base)))
         blocks = [m for m in difflib.SequenceMatcher(None, e, b, autojunk=False).get_matching_blocks() if m.size]
         matched = set()
         for m in blocks:
@@ -1498,7 +1518,7 @@ class Generator:
         strip = self.KIND + (("Info",) if strip_info else ())
         while d and d[-1] in strip:
             d.pop()
-        return d
+        return d + ([tag] if tag else [])
 
     def emit_array_convenience(self, cmd: Command, ap: Param, ext: Struct) -> None:
         """SPEC.md section 6: <tier-0>With<D>Info for an array input, as parallel arrays.
@@ -1921,6 +1941,8 @@ class Generator:
         base = self.reg.bitmask_bases.get(canonical)
         if base is None:
             return expression
+        if expression.strip() == "0":
+            return f"({ctype})0"
         enum = self.reg.bitmasks[canonical]
         while enum in self.reg.type_aliases:
             enum = self.reg.type_aliases[enum]
@@ -2046,7 +2068,11 @@ class Generator:
                         self.errors.append(f"chain {name}: input {pname} is {inputs[pname].text} and {ptype} {pname} for {fn}; bind one of them")
                     args.append(pname)
             call = f"{fn}({', '.join(args)})"
-            if step.get("return"):
+            if step.get("check"):
+                if sret != "VkResult" or any(key in step for key in ("return", "store", "into")):
+                    self.errors.append(f"chain {name}: check requires an otherwise unconsumed VkResult from {fn}")
+                body.append(f"CVK_CHECK({call});")
+            elif step.get("return"):
                 ret = sret
                 body.append(f"return {call};")
             elif "store" in step:
@@ -2060,7 +2086,7 @@ class Generator:
                 available[stem("p" + "".join(w.capitalize() for w in var.split("_")))] = var
                 body.append(f"{var} = {call};")
             elif sret == "VkResult":
-                self.errors.append(f"chain {name}: step {fn} returns VkResult; route it with return, into, or store")
+                self.errors.append(f"chain {name}: step {fn} returns VkResult; route it with check, return, into, or store")
             else:
                 body.append(f"{call};")
 
@@ -2168,9 +2194,10 @@ class Generator:
         for cmd, ap, ext, nm in singular_ext:
             if by_name[nm] > 1:
                 whole = tokens(self.struct_short(ext))
+                tag = whole.pop() if whole and whole[-1] in VENDORS else ""
                 while whole and (whole[-1] in self.KIND or whole[-1] == "Info" or whole[-1].isdigit()):
                     whole.pop()
-                nm = self.singular_name(cmd, self.reg.struct_of(ap.type)) + "With" + "".join(whole) + "Info"
+                nm = self.singular_name(cmd, self.reg.struct_of(ap.type)) + "With" + "".join(whole) + "Info" + tag
             self.emit_convenience(cmd, ap, ext, singular=self.singular_name(cmd, self.reg.struct_of(ap.type)), name_override=nm)
         # Gap 1: per-element extenders on array inputs (parallel-array form).
         for cmd in self.cmds:
@@ -2227,19 +2254,67 @@ class Generator:
     # Header includes per platform pair. "posix" is a home the registry does not name:
     # VK_KHR_external_memory_fd is platform-neutral, but descriptor ownership needs dup(2).
     PLATFORM_INCLUDES = {
+        "android": ["<vulkan/vulkan_android.h>"],
+        "directfb": ["<directfb.h>", "<vulkan/vulkan_directfb.h>"],
+        "fuchsia": ["<zircon/types.h>", "<vulkan/vulkan_fuchsia.h>"],
+        "ggp": ["<ggp_c/vulkan_types.h>", "<vulkan/vulkan_ggp.h>"],
+        "ios": ["<vulkan/vulkan_ios.h>"],
+        "macos": ["<vulkan/vulkan_macos.h>"],
+        "metal": ["<vulkan/vulkan_metal.h>"],
+        "ohos": ["<vulkan/vulkan_ohos.h>"],
+        "provisional": ["<vulkan/vulkan_beta.h>"],
+        "sci": ["<nvscisync.h>", "<nvscibuf.h>", "<vulkan/vulkan_sci.h>"],
+        "screen": ["<screen/screen.h>", "<vulkan/vulkan_screen.h>"],
+        "ubm": ["<vulkan/vulkan_ubm.h>"],
+        "vi": ["<vulkan/vulkan_vi.h>"],
         "win32": ["<windows.h>", "<vulkan/vulkan_win32.h>"],
         "xlib": ["<X11/Xlib.h>", "<vulkan/vulkan_xlib.h>"],
+        "xlib_xrandr": ["<X11/Xlib.h>", "<X11/extensions/Xrandr.h>", "<vulkan/vulkan_xlib_xrandr.h>"],
         "xcb": ["<xcb/xcb.h>", "<vulkan/vulkan_xcb.h>"],
         "wayland": ["<wayland-client.h>", "<vulkan/vulkan_wayland.h>"],
         "posix": [],
     }
     PLATFORM_SOURCE_INCLUDES: Dict[str, List[str]] = {}
 
+    def format_flag_expressions(self, text: str) -> str:
+        """Keep each operand of a compound mask on its own line after clang-format."""
+        masked = re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',
+                        lambda m: re.sub(r"[^\n]", " ", m[0]), text, flags=re.S)
+        edits = []
+        for match in re.finditer(r"\((Vk\w+)\)\s*\(", masked):
+            if match[1] not in self.reg.bitmasks:
+                continue
+            depth, start = 1, match.end()
+            parts = []
+            for i in range(start, len(masked)):
+                char = masked[i]
+                if char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                elif depth == 1 and char in "|&^" and masked[i - 1] != char and masked[i + 1] not in (char, "="):
+                    parts.append(text[start:i].strip() + " " + char)
+                    start = i + 1
+            else:
+                continue
+            if not parts or masked[match.start():i] != text[match.start():i]:
+                continue
+            parts.append(text[start:i].strip())
+            column = match.start() - text.rfind("\n", 0, match.start()) - 1
+            padding = " " * (column + 4)
+            expression = f"({match[1]})(\n" + "\n".join(padding + re.sub(r"\s+", " ", part) for part in parts) + ")"
+            edits.append((match.start(), i + 1, expression))
+        for start, end, expression in reversed(edits):
+            text = text[:start] + expression + text[end:]
+        return text
+
     def finish_source(self, text: str) -> str:
         """Separate assignments from calls and restore Allman initializers after clang-format."""
         text = separate_assignments_from_calls(text)
         if not self.designated_initializers:
-            return text
+            return self.format_flag_expressions(text)
         pattern = (r"^([ \t]*)((?:\(\*pInfo\)|\w+(?:\[\w+\])?)[ \t]*=\s*\(Vk\w+\)|"
                    r"Vk\w+[ \t]+\w+[ \t]*=)\s*\{(?=\s*\.)(.*?)\};")
 
@@ -2249,7 +2324,7 @@ class Generator:
             values = [(name.strip()[1:], value.strip()) for name, value in fields]
             return "\n".join(match[1] + line for line in self.designated_initializer(start, values))
 
-        return re.sub(pattern, restore, text, flags=re.M | re.S)
+        return self.format_flag_expressions(re.sub(pattern, restore, text, flags=re.M | re.S))
 
     def finish_header(self, text: str) -> str:
         """Apply the configured layout to function declarations only."""
@@ -2276,9 +2351,12 @@ class Generator:
     def platform_source(self, plat: str) -> str:
         defs = "\n".join(self.defs[plat])
         includes = "".join(f"#include {i}\n" for i in self.PLATFORM_SOURCE_INCLUDES.get(plat, []))
+        # Expose this platform's extensions before Volk declares their dispatch pointers.
+        # In particular, the pinned Volk does not include vulkan_ubm.h itself.
+        preamble = "#ifndef VK_NO_PROTOTYPES\n#define VK_NO_PROTOTYPES\n#endif\n" if self.loader_header else ""
         return ("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
-                f"{self.loader_include()}"
-                f"#include \"{plat}/cvk_{plat}.h\"\n#include <string.h>\n{includes}\n{defs}\n")
+                f"{preamble}#include \"{plat}/cvk_{plat}.h\"\n{self.loader_include()}"
+                f"#include <string.h>\n{includes}\n{defs}\n")
 
     def loader_include(self) -> str:
         # Volk must suppress Vulkan prototypes before the public core header is read.
@@ -2327,6 +2405,9 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
+
+#define VK_NO_OFFSET ((VkDeviceSize)0)
+#define VK_COUNT_OF(array) ((uint32_t)(sizeof(array) / sizeof((array)[0])))
 
 /* Fixed capacities, from cvk.policy.json. */
 {caps}
@@ -2392,6 +2473,7 @@ def main() -> None:
     ap.add_argument("--policy", default=os.path.join(REPO_ROOT, "cvk.policy.json"))
     ap.add_argument("--out-dir", default=REPO_ROOT)
     args = ap.parse_args()
+    args.out_dir = os.path.abspath(args.out_dir)
     policy = load_policy(args.policy)
     reg = Registry.load(os.path.join(REPO_ROOT, policy["registry"]) if "registry" in policy else Registry.load.__defaults__[0], policy.get("api", "vulkan"))
     g = Generator(reg, policy)

@@ -15529,7 +15529,6 @@ VkResult cvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKHR
     };
 
     result = vkAcquireNextImage2KHR(device, &acquire_info, pImageIndex);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
 
     return result;
@@ -15539,7 +15538,6 @@ VkResult cvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_t
     VkResult result;
 
     result = vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
 
     return result;
@@ -15682,7 +15680,6 @@ VkResult cvkBuildAccelerationStructures(VkDevice                                
     VkResult result;
 
     result = vkBuildAccelerationStructuresKHR(device, deferredOperation, infoCount, pInfos, ppBuildRangeInfos);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -15692,7 +15689,6 @@ VkResult cvkBuildMicromaps(VkDevice device, VkDeferredOperationKHR deferredOpera
     VkResult result;
 
     result = vkBuildMicromapsEXT(device, deferredOperation, infoCount, pInfos);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18130,7 +18126,6 @@ VkResult cvkConvertCooperativeVectorMatrixNV(VkDevice                          d
     };
 
     result = vkConvertCooperativeVectorMatrixNV(device, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18155,7 +18150,6 @@ VkResult cvkCopyAccelerationStructure(VkDevice                           device,
     };
 
     result = vkCopyAccelerationStructureKHR(device, deferredOperation, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18180,7 +18174,6 @@ VkResult cvkCopyAccelerationStructureToMemory(VkDevice                          
     };
 
     result = vkCopyAccelerationStructureToMemoryKHR(device, deferredOperation, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18245,7 +18238,6 @@ VkResult cvkCopyMemoryToAccelerationStructure(VkDevice                          
     };
 
     result = vkCopyMemoryToAccelerationStructureKHR(device, deferredOperation, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18280,7 +18272,6 @@ VkResult cvkCopyMemoryToMicromap(VkDevice device, VkDeferredOperationKHR deferre
     };
 
     result = vkCopyMemoryToMicromapEXT(device, deferredOperation, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18300,7 +18291,6 @@ VkResult cvkCopyMicromap(VkDevice device, VkDeferredOperationKHR deferredOperati
     };
 
     result = vkCopyMicromapEXT(device, deferredOperation, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18320,7 +18310,6 @@ VkResult cvkCopyMicromapToMemory(VkDevice device, VkDeferredOperationKHR deferre
     };
 
     result = vkCopyMicromapToMemoryEXT(device, deferredOperation, &info);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18464,7 +18453,6 @@ VkResult cvkCreateComputePipelines(VkDevice                           device,
     VkResult result;
 
     result = vkCreateComputePipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18524,7 +18512,6 @@ VkResult cvkCreateDataGraphPipelinesARM(VkDevice                                
     VkResult result;
 
     result = vkCreateDataGraphPipelinesARM(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -18815,7 +18802,6 @@ VkResult cvkCreateGraphicsPipelines(VkDevice                            device,
     VkResult result;
 
     result = vkCreateGraphicsPipelines(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -19080,7 +19066,6 @@ VkResult cvkCreatePipelineBinaries(VkDevice                              device,
     };
 
     result = vkCreatePipelineBinariesKHR(device, &create_info, pAllocator, &binaries);
-
     CVK_ASSERT((0 <= result));
 
     (*pBinaries) = binaries;
@@ -19176,7 +19161,6 @@ VkResult cvkCreateRayTracingPipelines(VkDevice                                 d
     VkResult result;
 
     result = vkCreateRayTracingPipelinesKHR(device, deferredOperation, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -19191,7 +19175,6 @@ VkResult cvkCreateRayTracingPipelinesNV(VkDevice                                
     VkResult result;
 
     result = vkCreateRayTracingPipelinesNV(device, pipelineCache, createInfoCount, pCreateInfos, pAllocator, pPipelines);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -19380,7 +19363,6 @@ VkResult cvkCreateShaders(VkDevice device, uint32_t createInfoCount, const VkSha
     VkResult result;
 
     result = vkCreateShadersEXT(device, createInfoCount, pCreateInfos, pAllocator, pShaders);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -19390,7 +19372,6 @@ VkResult cvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, con
     VkResult result;
 
     result = vkCreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -19442,7 +19423,6 @@ VkResult cvkCreateSwapchain(VkDevice                      device,
     };
 
     result = vkCreateSwapchainKHR(device, &create_info, pAllocator, pSwapchain);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -19606,7 +19586,6 @@ VkResult cvkDeferredOperationJoin(VkDevice device, VkDeferredOperationKHR operat
     VkResult result;
 
     result = vkDeferredOperationJoinKHR(device, operation);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -20206,7 +20185,6 @@ VkResult cvkGetDataGraphPipelinePropertiesARM(VkDevice device, const void* pNext
     };
 
     result = vkGetDataGraphPipelinePropertiesARM(device, &pipeline_info, propertiesCount, pProperties);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -20281,7 +20259,6 @@ VkResult cvkGetDeferredOperationResult(VkDevice device, VkDeferredOperationKHR o
     VkResult result;
 
     result = vkGetDeferredOperationResultKHR(device, operation);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -20417,7 +20394,6 @@ VkResult cvkGetDeviceFaultDebugInfo(VkDevice device, void* pNext, VkDeviceFaultD
     };
 
     result = vkGetDeviceFaultDebugInfoKHR(device, &debug_info);
-
     CVK_ASSERT((0 <= result));
 
     (*pDebugInfo) = debug_info;
@@ -20443,7 +20419,6 @@ VkResult cvkGetDeviceFaultInfo(VkDevice device, void* pFaultCountsNext, VkDevice
     };
 
     result = vkGetDeviceFaultInfoEXT(device, &fault_counts, &fault_info);
-
     CVK_ASSERT((0 <= result));
 
     (*pFaultCounts) = fault_counts;
@@ -20492,7 +20467,6 @@ VkResult cvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR surf
     VkResult result;
 
     result = vkGetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -20601,7 +20575,6 @@ PFN_vkVoidFunction cvkGetDeviceProcAddr(VkDevice device, const char* pName)
     PFN_vkVoidFunction function;
 
     function = vkGetDeviceProcAddr(device, pName);
-
     CVK_ASSERT(NULL != function);
 
     return function;
@@ -20630,7 +20603,6 @@ VkResult cvkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(VkDevice device, VkRen
     VkResult result;
 
     result = vkGetDeviceSubpassShadingMaxWorkgroupSizeHUAWEI(device, renderpass, pMaxWorkgroupSize);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -20757,7 +20729,6 @@ VkResult cvkGetEncodedVideoSessionParameters(VkDevice                           
     };
 
     result = vkGetEncodedVideoSessionParametersKHR(device, pVideoSessionParametersInfo, &feedback_info, pDataSize, pData);
-
     CVK_ASSERT((0 <= result));
 
     (*pFeedbackInfo) = feedback_info;
@@ -20769,7 +20740,6 @@ VkResult cvkGetEventStatus(VkDevice device, VkEvent event)
     VkResult result;
 
     result = vkGetEventStatus(device, event);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -20802,7 +20772,6 @@ VkResult cvkGetFenceStatus(VkDevice device, VkFence fence)
     VkResult result;
 
     result = vkGetFenceStatus(device, fence);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -21049,7 +21018,6 @@ PFN_vkVoidFunction cvkGetInstanceProcAddr(VkInstance instance, const char* pName
     PFN_vkVoidFunction function;
 
     function = vkGetInstanceProcAddr(instance, pName);
-
     CVK_ASSERT(NULL != function);
 
     return function;
@@ -21183,7 +21151,6 @@ VkResult cvkGetPastPresentationTiming(VkDevice                               dev
     };
 
     result = vkGetPastPresentationTimingEXT(device, pPastPresentationTimingInfo, &past_presentation_timing_properties);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -21437,7 +21404,6 @@ VkResult cvkGetPhysicalDeviceExternalImageFormatPropertiesNV(VkPhysicalDevice   
     VkResult result;
 
     result = vkGetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice, format, type, tiling, usage, flags, externalHandleType, pExternalImageFormatProperties);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
 
     return result;
@@ -21550,7 +21516,6 @@ VkResult cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         phys
     VkResult result;
 
     result = vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
 
     return result;
@@ -21570,7 +21535,6 @@ VkResult cvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice            
     };
 
     result = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result) || (VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) ||
                (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) ||
                (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
@@ -21911,7 +21875,6 @@ VkResult cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDe
     };
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &surface_capabilities);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -21933,7 +21896,6 @@ VkResult cvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevic
     };
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, &surface_capabilities);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -21948,7 +21910,6 @@ VkResult cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice
     VkResult result;
 
     result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -22004,7 +21965,6 @@ VkResult cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uin
     VkResult result;
 
     result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -22041,7 +22001,6 @@ VkResult cvkGetPhysicalDeviceVideoCapabilities(VkPhysicalDevice physicalDevice, 
     };
 
     result = vkGetPhysicalDeviceVideoCapabilitiesKHR(physicalDevice, pVideoProfile, &capabilities);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) ||
                (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
 
@@ -22067,7 +22026,6 @@ VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkPhysicalDevice 
     };
 
     result = vkGetPhysicalDeviceVideoEncodeQualityLevelPropertiesKHR(physicalDevice, pQualityLevelInfo, &quality_level_properties);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR == result) ||
                (VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR == result) || (VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR == result));
 
@@ -22122,7 +22080,6 @@ VkResult cvkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache,
     VkResult result;
 
     result = vkGetPipelineCacheData(device, pipelineCache, pDataSize, pData);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -22276,7 +22233,6 @@ VkResult cvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t
     VkResult result;
 
     result = vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -22338,7 +22294,6 @@ VkResult cvkGetRefreshCycleDurationGOOGLE(VkDevice device, VkSwapchainKHR swapch
     VkResult result;
 
     result = vkGetRefreshCycleDurationGOOGLE(device, swapchain, pDisplayTimingProperties);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -22401,7 +22356,6 @@ VkResult cvkGetShaderBinaryData(VkDevice device, VkShaderEXT shader, size_t* pDa
     VkResult result;
 
     result = vkGetShaderBinaryDataEXT(device, shader, pDataSize, pData);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -22411,7 +22365,6 @@ VkResult cvkGetShaderInfoAMD(VkDevice device, VkPipeline pipeline, VkShaderStage
     VkResult result;
 
     result = vkGetShaderInfoAMD(device, pipeline, shaderStage, infoType, pInfoSize, pInfo);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -22425,7 +22378,6 @@ VkResult cvkGetShaderInstrumentationValuesARM(VkDevice                          
     VkResult result;
 
     result = vkGetShaderInstrumentationValuesARM(device, instrumentation, pMetricBlockCount, pMetricValues, flags);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -22481,7 +22433,6 @@ VkResult cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSur
     VkResult result;
 
     result = vkGetSwapchainCounterEXT(device, swapchain, counter, pCounterValue);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result));
 
     return result;
@@ -22504,7 +22455,6 @@ VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
     VkResult result;
 
     result = vkGetSwapchainStatusKHR(device, swapchain);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
 
     return result;
@@ -22521,7 +22471,6 @@ VkResult cvkGetSwapchainTimeDomainProperties(VkDevice device, VkSwapchainKHR swa
     };
 
     result = vkGetSwapchainTimeDomainPropertiesEXT(device, swapchain, &swapchain_time_domain_properties, pTimeDomainsCounter);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -22547,7 +22496,6 @@ VkResult cvkGetSwapchainTimingProperties(VkDevice                        device,
     };
 
     result = vkGetSwapchainTimingPropertiesEXT(device, swapchain, &swapchain_timing_properties, pSwapchainTimingPropertiesCounter);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -22610,7 +22558,6 @@ VkResult cvkGetValidationCacheData(VkDevice device, VkValidationCacheEXT validat
     VkResult result;
 
     result = vkGetValidationCacheDataEXT(device, validationCache, pDataSize, pData);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -22794,7 +22741,6 @@ VkResult cvkQueuePresent(VkQueue               queue,
     };
 
     result = vkQueuePresentKHR(queue, &present_info);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
 
     return result;
@@ -22901,7 +22847,6 @@ VkResult cvkReleaseSwapchainImages(VkDevice device, const void* pNext, VkSwapcha
     };
 
     result = vkReleaseSwapchainImagesKHR(device, &release_info);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -23033,7 +22978,6 @@ VkResult cvkSetSwapchainPresentTimingQueueSize(VkDevice device, VkSwapchainKHR s
     VkResult result;
 
     result = vkSetSwapchainPresentTimingQueueSizeEXT(device, swapchain, size);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -23157,7 +23101,6 @@ VkResult cvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* p
     VkResult result;
 
     result = vkWaitForFences(device, fenceCount, pFences, waitAll, timeout);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -23176,7 +23119,6 @@ VkResult cvkWaitForPresent2(VkDevice device, VkSwapchainKHR swapchain, const voi
     };
 
     result = vkWaitForPresent2KHR(device, swapchain, &present_wait2_info);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
 
     return result;
@@ -23186,7 +23128,6 @@ VkResult cvkWaitForPresent(VkDevice device, VkSwapchainKHR swapchain, uint64_t p
     VkResult result;
 
     result = vkWaitForPresentKHR(device, swapchain, presentId, timeout);
-
     CVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result) || (VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT == result));
 
     return result;
@@ -23207,7 +23148,6 @@ VkResult cvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFl
     };
 
     result = vkWaitSemaphores(device, &wait_info, timeout);
-
     CVK_ASSERT((0 <= result));
 
     return result;
@@ -25064,18 +25004,18 @@ void cvkCmdBeginRenderingWithMultisampledRenderToSingleSampledInfo(VkCommandBuff
 
     cvkCmdBeginRendering(commandBuffer, &sampled_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
-void cvkCmdBeginRenderingWithMultiviewPerViewAttributesInfoInfoNVX(VkCommandBuffer                  commandBuffer,
-                                                                   const void*                      pNext,
-                                                                   VkBool32                         perViewAttributes,
-                                                                   VkBool32                         perViewAttributesPositionXOnly,
-                                                                   VkRenderingFlags                 flags,
-                                                                   VkRect2D                         renderArea,
-                                                                   uint32_t                         layerCount,
-                                                                   uint32_t                         viewMask,
-                                                                   uint32_t                         colorAttachmentCount,
-                                                                   const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                   const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                   const VkRenderingAttachmentInfo* pStencilAttachment)
+void cvkCmdBeginRenderingWithMultiviewPerViewAttributesInfoNVX(VkCommandBuffer                  commandBuffer,
+                                                               const void*                      pNext,
+                                                               VkBool32                         perViewAttributes,
+                                                               VkBool32                         perViewAttributesPositionXOnly,
+                                                               VkRenderingFlags                 flags,
+                                                               VkRect2D                         renderArea,
+                                                               uint32_t                         layerCount,
+                                                               uint32_t                         viewMask,
+                                                               uint32_t                         colorAttachmentCount,
+                                                               const VkRenderingAttachmentInfo* pColorAttachments,
+                                                               const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                               const VkRenderingAttachmentInfo* pStencilAttachment)
 {
     VkMultiviewPerViewAttributesInfoNVX attributes_info =
     {
@@ -25087,18 +25027,18 @@ void cvkCmdBeginRenderingWithMultiviewPerViewAttributesInfoInfoNVX(VkCommandBuff
 
     cvkCmdBeginRendering(commandBuffer, &attributes_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
-void cvkCmdBeginRenderingWithMultiviewPerViewRenderAreasRenderPassBeginInfoInfoQCOM(VkCommandBuffer                  commandBuffer,
-                                                                                    const void*                      pNext,
-                                                                                    uint32_t                         perViewRenderAreaCount,
-                                                                                    const VkRect2D*                  pPerViewRenderAreas,
-                                                                                    VkRenderingFlags                 flags,
-                                                                                    VkRect2D                         renderArea,
-                                                                                    uint32_t                         layerCount,
-                                                                                    uint32_t                         viewMask,
-                                                                                    uint32_t                         colorAttachmentCount,
-                                                                                    const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                                    const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                                    const VkRenderingAttachmentInfo* pStencilAttachment)
+void cvkCmdBeginRenderingWithMultiviewPerViewRenderAreasRenderPassInfoQCOM(VkCommandBuffer                  commandBuffer,
+                                                                           const void*                      pNext,
+                                                                           uint32_t                         perViewRenderAreaCount,
+                                                                           const VkRect2D*                  pPerViewRenderAreas,
+                                                                           VkRenderingFlags                 flags,
+                                                                           VkRect2D                         renderArea,
+                                                                           uint32_t                         layerCount,
+                                                                           uint32_t                         viewMask,
+                                                                           uint32_t                         colorAttachmentCount,
+                                                                           const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                           const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                           const VkRenderingAttachmentInfo* pStencilAttachment)
 {
     VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM begin_info =
     {
@@ -25110,21 +25050,21 @@ void cvkCmdBeginRenderingWithMultiviewPerViewRenderAreasRenderPassBeginInfoInfoQ
 
     cvkCmdBeginRendering(commandBuffer, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
-void cvkCmdBeginRenderingWithRenderPassPerformanceCountersByRegionBeginInfoInfoARM(VkCommandBuffer                  commandBuffer,
-                                                                                   void*                            pNext,
-                                                                                   uint32_t                         counterAddressCount,
-                                                                                   const VkDeviceAddress*           pCounterAddresses,
-                                                                                   VkBool32                         serializeRegions,
-                                                                                   uint32_t                         counterIndexCount,
-                                                                                   uint32_t*                        pCounterIndices,
-                                                                                   VkRenderingFlags                 flags,
-                                                                                   VkRect2D                         renderArea,
-                                                                                   uint32_t                         layerCount,
-                                                                                   uint32_t                         viewMask,
-                                                                                   uint32_t                         colorAttachmentCount,
-                                                                                   const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                                   const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                                   const VkRenderingAttachmentInfo* pStencilAttachment)
+void cvkCmdBeginRenderingWithRenderPassPerformanceCountersByRegionInfoARM(VkCommandBuffer                  commandBuffer,
+                                                                          void*                            pNext,
+                                                                          uint32_t                         counterAddressCount,
+                                                                          const VkDeviceAddress*           pCounterAddresses,
+                                                                          VkBool32                         serializeRegions,
+                                                                          uint32_t                         counterIndexCount,
+                                                                          uint32_t*                        pCounterIndices,
+                                                                          VkRenderingFlags                 flags,
+                                                                          VkRect2D                         renderArea,
+                                                                          uint32_t                         layerCount,
+                                                                          uint32_t                         viewMask,
+                                                                          uint32_t                         colorAttachmentCount,
+                                                                          const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                          const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                          const VkRenderingAttachmentInfo* pStencilAttachment)
 {
     VkRenderPassPerformanceCountersByRegionBeginInfoARM begin_info =
     {
@@ -25139,18 +25079,18 @@ void cvkCmdBeginRenderingWithRenderPassPerformanceCountersByRegionBeginInfoInfoA
 
     cvkCmdBeginRendering(commandBuffer, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
-void cvkCmdBeginRenderingWithRenderPassStripeBeginInfoInfoARM(VkCommandBuffer                  commandBuffer,
-                                                              const void*                      pNext,
-                                                              uint32_t                         stripeInfoCount,
-                                                              const VkRenderPassStripeInfoARM* pStripeInfos,
-                                                              VkRenderingFlags                 flags,
-                                                              VkRect2D                         renderArea,
-                                                              uint32_t                         layerCount,
-                                                              uint32_t                         viewMask,
-                                                              uint32_t                         colorAttachmentCount,
-                                                              const VkRenderingAttachmentInfo* pColorAttachments,
-                                                              const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                              const VkRenderingAttachmentInfo* pStencilAttachment)
+void cvkCmdBeginRenderingWithRenderPassStripeInfoARM(VkCommandBuffer                  commandBuffer,
+                                                     const void*                      pNext,
+                                                     uint32_t                         stripeInfoCount,
+                                                     const VkRenderPassStripeInfoARM* pStripeInfos,
+                                                     VkRenderingFlags                 flags,
+                                                     VkRect2D                         renderArea,
+                                                     uint32_t                         layerCount,
+                                                     uint32_t                         viewMask,
+                                                     uint32_t                         colorAttachmentCount,
+                                                     const VkRenderingAttachmentInfo* pColorAttachments,
+                                                     const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                     const VkRenderingAttachmentInfo* pStencilAttachment)
 {
     VkRenderPassStripeBeginInfoARM begin_info =
     {
@@ -25162,18 +25102,18 @@ void cvkCmdBeginRenderingWithRenderPassStripeBeginInfoInfoARM(VkCommandBuffer   
 
     cvkCmdBeginRendering(commandBuffer, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
-void cvkCmdBeginRenderingWithRenderPassTileShadingCreateInfoInfoQCOM(VkCommandBuffer                  commandBuffer,
-                                                                     const void*                      pNext,
-                                                                     VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
-                                                                     VkExtent2D                       tileApronSize,
-                                                                     VkRenderingFlags                 flags,
-                                                                     VkRect2D                         renderArea,
-                                                                     uint32_t                         layerCount,
-                                                                     uint32_t                         viewMask,
-                                                                     uint32_t                         colorAttachmentCount,
-                                                                     const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                     const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                     const VkRenderingAttachmentInfo* pStencilAttachment)
+void cvkCmdBeginRenderingWithRenderPassTileShadingInfoQCOM(VkCommandBuffer                  commandBuffer,
+                                                           const void*                      pNext,
+                                                           VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
+                                                           VkExtent2D                       tileApronSize,
+                                                           VkRenderingFlags                 flags,
+                                                           VkRect2D                         renderArea,
+                                                           uint32_t                         layerCount,
+                                                           uint32_t                         viewMask,
+                                                           uint32_t                         colorAttachmentCount,
+                                                           const VkRenderingAttachmentInfo* pColorAttachments,
+                                                           const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                           const VkRenderingAttachmentInfo* pStencilAttachment)
 {
     VkRenderPassTileShadingCreateInfoQCOM create_info =
     {
@@ -25233,17 +25173,17 @@ void cvkCmdBeginRenderingWithFragmentShadingRateAttachmentInfo(VkCommandBuffer  
 
     cvkCmdBeginRendering(commandBuffer, &attachment_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment);
 }
-void cvkCmdBeginRenderingWithTileMemorySizeInfoInfoQCOM(VkCommandBuffer                  commandBuffer,
-                                                        const void*                      pNext,
-                                                        VkDeviceSize                     size,
-                                                        VkRenderingFlags                 flags,
-                                                        VkRect2D                         renderArea,
-                                                        uint32_t                         layerCount,
-                                                        uint32_t                         viewMask,
-                                                        uint32_t                         colorAttachmentCount,
-                                                        const VkRenderingAttachmentInfo* pColorAttachments,
-                                                        const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                        const VkRenderingAttachmentInfo* pStencilAttachment)
+void cvkCmdBeginRenderingWithTileMemorySizeInfoQCOM(VkCommandBuffer                  commandBuffer,
+                                                    const void*                      pNext,
+                                                    VkDeviceSize                     size,
+                                                    VkRenderingFlags                 flags,
+                                                    VkRect2D                         renderArea,
+                                                    uint32_t                         layerCount,
+                                                    uint32_t                         viewMask,
+                                                    uint32_t                         colorAttachmentCount,
+                                                    const VkRenderingAttachmentInfo* pColorAttachments,
+                                                    const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                    const VkRenderingAttachmentInfo* pStencilAttachment)
 {
     VkTileMemorySizeInfoQCOM size_info =
     {
@@ -25484,16 +25424,16 @@ void cvkCmdBindDescriptorSetsWithPipelineLayoutInfo(VkCommandBuffer             
 
     cvkCmdBindDescriptorSets2(commandBuffer, &create_info, stageFlags, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
 }
-void cvkCmdBlitImageWithCubicWeightsInfoInfoQCOM(VkCommandBuffer          commandBuffer,
-                                                 const void*              pNext,
-                                                 VkCubicFilterWeightsQCOM cubicWeights,
-                                                 VkImage                  srcImage,
-                                                 VkImageLayout            srcImageLayout,
-                                                 VkImage                  dstImage,
-                                                 VkImageLayout            dstImageLayout,
-                                                 uint32_t                 regionCount,
-                                                 const VkImageBlit2*      pRegions,
-                                                 VkFilter                 filter)
+void cvkCmdBlitImageWithCubicWeightsInfoQCOM(VkCommandBuffer          commandBuffer,
+                                             const void*              pNext,
+                                             VkCubicFilterWeightsQCOM cubicWeights,
+                                             VkImage                  srcImage,
+                                             VkImageLayout            srcImageLayout,
+                                             VkImage                  dstImage,
+                                             VkImageLayout            dstImageLayout,
+                                             uint32_t                 regionCount,
+                                             const VkImageBlit2*      pRegions,
+                                             VkFilter                 filter)
 {
     VkBlitImageCubicWeightsInfoQCOM weights_info =
     {
@@ -25811,12 +25751,12 @@ void cvkCmdDecodeVideoWithInlineQueryInfo(VkCommandBuffer                    com
 
     cvkCmdDecodeVideo(commandBuffer, &query_info, flags, srcBuffer, srcBufferOffset, srcBufferRange, dstPictureResource, pSetupReferenceSlot, referenceSlotCount, pReferenceSlots);
 }
-void cvkCmdDispatchDataGraphWithOpticalFlowInfoARM(VkCommandBuffer                       commandBuffer,
-                                                   VkDataGraphPipelineSessionARM         session,
-                                                   void*                                 pNext,
-                                                   VkDataGraphOpticalFlowExecuteFlagsARM flagsOpticalFlowExecute,
-                                                   uint32_t                              meanFlowL1NormHint,
-                                                   VkDataGraphPipelineDispatchFlagsARM   flags)
+void cvkCmdDispatchDataGraphWithOpticalFlowInfoARMARM(VkCommandBuffer                       commandBuffer,
+                                                      VkDataGraphPipelineSessionARM         session,
+                                                      void*                                 pNext,
+                                                      VkDataGraphOpticalFlowExecuteFlagsARM flagsOpticalFlowExecute,
+                                                      uint32_t                              meanFlowL1NormHint,
+                                                      VkDataGraphPipelineDispatchFlagsARM   flags)
 {
     VkDataGraphPipelineOpticalFlowDispatchInfoARM dispatch_info =
     {
@@ -26366,14 +26306,14 @@ void cvkCmdPushConstantsWithPipelineLayoutInfo(VkCommandBuffer              comm
 
     cvkCmdPushConstants2(commandBuffer, &create_info, layout, stageFlags, offset, size, pValues);
 }
-void cvkCmdPushConstantsWithConstantBankInfoInfoNV(VkCommandBuffer    commandBuffer,
-                                                   const void*        pNext,
-                                                   uint32_t           bank,
-                                                   VkPipelineLayout   layout,
-                                                   VkShaderStageFlags stageFlags,
-                                                   uint32_t           offset,
-                                                   uint32_t           size,
-                                                   const void*        pValues)
+void cvkCmdPushConstantsWithConstantBankInfoNV(VkCommandBuffer    commandBuffer,
+                                               const void*        pNext,
+                                               uint32_t           bank,
+                                               VkPipelineLayout   layout,
+                                               VkShaderStageFlags stageFlags,
+                                               uint32_t           offset,
+                                               uint32_t           size,
+                                               const void*        pValues)
 {
     VkPushConstantBankInfoNV bank_info =
     {
@@ -26384,7 +26324,7 @@ void cvkCmdPushConstantsWithConstantBankInfoInfoNV(VkCommandBuffer    commandBuf
 
     cvkCmdPushConstants2(commandBuffer, &bank_info, layout, stageFlags, offset, size, pValues);
 }
-void cvkCmdPushDataWithConstantBankInfoInfoNV(VkCommandBuffer commandBuffer, const void* pNext, uint32_t bank, uint32_t offset, VkHostAddressRangeConstEXT data)
+void cvkCmdPushDataWithConstantBankInfoNV(VkCommandBuffer commandBuffer, const void* pNext, uint32_t bank, uint32_t offset, VkHostAddressRangeConstEXT data)
 {
     VkPushConstantBankInfoNV bank_info =
     {
@@ -26639,18 +26579,18 @@ void cvkCreateAccelerationStructure2WithOpaqueCaptureDescriptorDataInfo(VkDevice
 
     cvkCreateAccelerationStructure2(device, &create_info, createFlags, addressRange, addressFlags, type, pAllocator, pAccelerationStructure);
 }
-void cvkCreateAccelerationStructureWithMotionInfoInfoNV(VkDevice                                 device,
-                                                        const void*                              pNext,
-                                                        uint32_t                                 maxInstances,
-                                                        VkAccelerationStructureMotionInfoFlagsNV flags,
-                                                        VkAccelerationStructureCreateFlagsKHR    createFlags,
-                                                        VkBuffer                                 buffer,
-                                                        VkDeviceSize                             offset,
-                                                        VkDeviceSize                             size,
-                                                        VkAccelerationStructureTypeKHR           type,
-                                                        VkDeviceAddress                          deviceAddress,
-                                                        const VkAllocationCallbacks*             pAllocator,
-                                                        VkAccelerationStructureKHR*              pAccelerationStructure)
+void cvkCreateAccelerationStructureWithMotionInfoNV(VkDevice                                 device,
+                                                    const void*                              pNext,
+                                                    uint32_t                                 maxInstances,
+                                                    VkAccelerationStructureMotionInfoFlagsNV flags,
+                                                    VkAccelerationStructureCreateFlagsKHR    createFlags,
+                                                    VkBuffer                                 buffer,
+                                                    VkDeviceSize                             offset,
+                                                    VkDeviceSize                             size,
+                                                    VkAccelerationStructureTypeKHR           type,
+                                                    VkDeviceAddress                          deviceAddress,
+                                                    const VkAllocationCallbacks*             pAllocator,
+                                                    VkAccelerationStructureKHR*              pAccelerationStructure)
 {
     VkAccelerationStructureMotionInfoNV motion_info =
     {
@@ -26700,17 +26640,17 @@ void cvkCreateAccelerationStructureWithOpaqueCaptureDescriptorDataInfoNV(VkDevic
 
     cvkCreateAccelerationStructureNV(device, &create_info, compactedSize, info, pAllocator, pAccelerationStructure);
 }
-void cvkCreateBufferWithDeviceAddressAlignmentAllocateInfoInfoVALVE(VkDevice                     device,
-                                                                    void*                        pNext,
-                                                                    uint32_t                     alignment,
-                                                                    VkBufferCreateFlags          flags,
-                                                                    VkDeviceSize                 size,
-                                                                    VkBufferUsageFlags           usage,
-                                                                    VkSharingMode                sharingMode,
-                                                                    uint32_t                     queueFamilyIndexCount,
-                                                                    const uint32_t*              pQueueFamilyIndices,
-                                                                    const VkAllocationCallbacks* pAllocator,
-                                                                    VkBuffer*                    pBuffer)
+void cvkCreateBufferWithDeviceAddressAlignmentInfoVALVE(VkDevice                     device,
+                                                        void*                        pNext,
+                                                        uint32_t                     alignment,
+                                                        VkBufferCreateFlags          flags,
+                                                        VkDeviceSize                 size,
+                                                        VkBufferUsageFlags           usage,
+                                                        VkSharingMode                sharingMode,
+                                                        uint32_t                     queueFamilyIndexCount,
+                                                        const uint32_t*              pQueueFamilyIndices,
+                                                        const VkAllocationCallbacks* pAllocator,
+                                                        VkBuffer*                    pBuffer)
 {
     VkBufferDeviceAddressAlignmentAllocateInfoVALVE allocate_info =
     {
@@ -26909,13 +26849,13 @@ void cvkCreateCommandPoolWithDataGraphProcessingEngineInfoARM(VkDevice          
 
     cvkCreateCommandPool(device, &create_info, flags, queueFamilyIndex, pAllocator, pCommandPool);
 }
-void cvkCreateCuModuleWithTexturingModeInfoNVX(VkDevice                     device,
-                                               const void*                  pNext,
-                                               VkBool32                     use64bitTexturing,
-                                               size_t                       dataSize,
-                                               const void*                  pData,
-                                               const VkAllocationCallbacks* pAllocator,
-                                               VkCuModuleNVX*               pModule)
+void cvkCreateCuModuleWithTexturingModeInfoNVXNVX(VkDevice                     device,
+                                                  const void*                  pNext,
+                                                  VkBool32                     use64bitTexturing,
+                                                  size_t                       dataSize,
+                                                  const void*                  pData,
+                                                  const VkAllocationCallbacks* pAllocator,
+                                                  VkCuModuleNVX*               pModule)
 {
     VkCuModuleTexturingModeCreateInfoNVX create_info =
     {
@@ -26926,13 +26866,13 @@ void cvkCreateCuModuleWithTexturingModeInfoNVX(VkDevice                     devi
 
     cvkCreateCuModuleNVX(device, &create_info, dataSize, pData, pAllocator, pModule);
 }
-void cvkCreateDataGraphPipelineSessionWithNeuralStatisticsInfoARM(VkDevice                                 device,
-                                                                  const void*                              pNext,
-                                                                  VkNeuralAcceleratorStatisticsModeARM     mode,
-                                                                  VkDataGraphPipelineSessionCreateFlagsARM flags,
-                                                                  VkPipeline                               dataGraphPipeline,
-                                                                  const VkAllocationCallbacks*             pAllocator,
-                                                                  VkDataGraphPipelineSessionARM*           pSession)
+void cvkCreateDataGraphPipelineSessionWithNeuralStatisticsInfoARMARM(VkDevice                                 device,
+                                                                     const void*                              pNext,
+                                                                     VkNeuralAcceleratorStatisticsModeARM     mode,
+                                                                     VkDataGraphPipelineSessionCreateFlagsARM flags,
+                                                                     VkPipeline                               dataGraphPipeline,
+                                                                     const VkAllocationCallbacks*             pAllocator,
+                                                                     VkDataGraphPipelineSessionARM*           pSession)
 {
     VkDataGraphPipelineSessionNeuralStatisticsCreateInfoARM create_info =
     {
@@ -27380,24 +27320,24 @@ void cvkCreateFramebufferWithAttachmentsInfo(VkDevice                           
 
     cvkCreateFramebuffer(device, &create_info, flags, renderPass, attachmentCount, pAttachments, width, height, layers, pAllocator, pFramebuffer);
 }
-void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfoInfoARM(VkDevice                                 device,
-                                                                  const void*                              pNext,
-                                                                  VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlow,
-                                                                  VkImageCreateFlags                       flags,
-                                                                  VkImageType                              imageType,
-                                                                  VkFormat                                 format,
-                                                                  VkExtent3D                               extent,
-                                                                  uint32_t                                 mipLevels,
-                                                                  uint32_t                                 arrayLayers,
-                                                                  VkSampleCountFlagBits                    samples,
-                                                                  VkImageTiling                            tiling,
-                                                                  VkImageUsageFlags                        usage,
-                                                                  VkSharingMode                            sharingMode,
-                                                                  uint32_t                                 queueFamilyIndexCount,
-                                                                  const uint32_t*                          pQueueFamilyIndices,
-                                                                  VkImageLayout                            initialLayout,
-                                                                  const VkAllocationCallbacks*             pAllocator,
-                                                                  VkImage*                                 pImage)
+void cvkCreateImageWithDataGraphOpticalFlowImageFormatInfoARM(VkDevice                                 device,
+                                                              const void*                              pNext,
+                                                              VkDataGraphOpticalFlowImageUsageFlagsARM usageDataGraphOpticalFlow,
+                                                              VkImageCreateFlags                       flags,
+                                                              VkImageType                              imageType,
+                                                              VkFormat                                 format,
+                                                              VkExtent3D                               extent,
+                                                              uint32_t                                 mipLevels,
+                                                              uint32_t                                 arrayLayers,
+                                                              VkSampleCountFlagBits                    samples,
+                                                              VkImageTiling                            tiling,
+                                                              VkImageUsageFlags                        usage,
+                                                              VkSharingMode                            sharingMode,
+                                                              uint32_t                                 queueFamilyIndexCount,
+                                                              const uint32_t*                          pQueueFamilyIndices,
+                                                              VkImageLayout                            initialLayout,
+                                                              const VkAllocationCallbacks*             pAllocator,
+                                                              VkImage*                                 pImage)
 {
     VkDataGraphOpticalFlowImageFormatInfoARM format_info =
     {
@@ -28140,24 +28080,24 @@ void cvkCreateImageWithOpaqueCaptureDescriptorDataInfo(VkDevice                 
                    pAllocator,
                    pImage);
 }
-void cvkCreateImageWithOpticalFlowImageFormatInfoInfoNV(VkDevice                     device,
-                                                        const void*                  pNext,
-                                                        VkOpticalFlowUsageFlagsNV    usageOpticalFlow,
-                                                        VkImageCreateFlags           flags,
-                                                        VkImageType                  imageType,
-                                                        VkFormat                     format,
-                                                        VkExtent3D                   extent,
-                                                        uint32_t                     mipLevels,
-                                                        uint32_t                     arrayLayers,
-                                                        VkSampleCountFlagBits        samples,
-                                                        VkImageTiling                tiling,
-                                                        VkImageUsageFlags            usage,
-                                                        VkSharingMode                sharingMode,
-                                                        uint32_t                     queueFamilyIndexCount,
-                                                        const uint32_t*              pQueueFamilyIndices,
-                                                        VkImageLayout                initialLayout,
-                                                        const VkAllocationCallbacks* pAllocator,
-                                                        VkImage*                     pImage)
+void cvkCreateImageWithOpticalFlowImageFormatInfoNV(VkDevice                     device,
+                                                    const void*                  pNext,
+                                                    VkOpticalFlowUsageFlagsNV    usageOpticalFlow,
+                                                    VkImageCreateFlags           flags,
+                                                    VkImageType                  imageType,
+                                                    VkFormat                     format,
+                                                    VkExtent3D                   extent,
+                                                    uint32_t                     mipLevels,
+                                                    uint32_t                     arrayLayers,
+                                                    VkSampleCountFlagBits        samples,
+                                                    VkImageTiling                tiling,
+                                                    VkImageUsageFlags            usage,
+                                                    VkSharingMode                sharingMode,
+                                                    uint32_t                     queueFamilyIndexCount,
+                                                    const uint32_t*              pQueueFamilyIndices,
+                                                    VkImageLayout                initialLayout,
+                                                    const VkAllocationCallbacks* pAllocator,
+                                                    VkImage*                     pImage)
 {
     VkOpticalFlowImageFormatInfoNV format_info =
     {
@@ -28579,22 +28519,22 @@ void cvkCreateInstanceWithValidationFlagsInfo(const void*                  pNext
 
     cvkCreateInstance(&validation_flags, flags, pApplicationInfo, enabledLayerCount, ppEnabledLayerNames, enabledExtensionCount, ppEnabledExtensionNames, pAllocator, pInstance);
 }
-void cvkCreateOpticalFlowSessionWithPrivateDataInfoNV(VkDevice                          device,
-                                                      void*                             pNext,
-                                                      uint32_t                          id,
-                                                      uint32_t                          size,
-                                                      const void*                       pPrivateData,
-                                                      uint32_t                          width,
-                                                      uint32_t                          height,
-                                                      VkFormat                          imageFormat,
-                                                      VkFormat                          flowVectorFormat,
-                                                      VkFormat                          costFormat,
-                                                      VkOpticalFlowGridSizeFlagsNV      outputGridSize,
-                                                      VkOpticalFlowGridSizeFlagsNV      hintGridSize,
-                                                      VkOpticalFlowPerformanceLevelNV   performanceLevel,
-                                                      VkOpticalFlowSessionCreateFlagsNV flags,
-                                                      const VkAllocationCallbacks*      pAllocator,
-                                                      VkOpticalFlowSessionNV*           pSession)
+void cvkCreateOpticalFlowSessionWithPrivateDataInfoNVNV(VkDevice                          device,
+                                                        void*                             pNext,
+                                                        uint32_t                          id,
+                                                        uint32_t                          size,
+                                                        const void*                       pPrivateData,
+                                                        uint32_t                          width,
+                                                        uint32_t                          height,
+                                                        VkFormat                          imageFormat,
+                                                        VkFormat                          flowVectorFormat,
+                                                        VkFormat                          costFormat,
+                                                        VkOpticalFlowGridSizeFlagsNV      outputGridSize,
+                                                        VkOpticalFlowGridSizeFlagsNV      hintGridSize,
+                                                        VkOpticalFlowPerformanceLevelNV   performanceLevel,
+                                                        VkOpticalFlowSessionCreateFlagsNV flags,
+                                                        const VkAllocationCallbacks*      pAllocator,
+                                                        VkOpticalFlowSessionNV*           pSession)
 {
     VkOpticalFlowSessionCreatePrivateDataInfoNV data_info =
     {
@@ -28995,18 +28935,18 @@ void cvkCreateRenderPassWithTileShadingInfoQCOM(VkDevice                        
 
     cvkCreateRenderPass(device, &create_info, flags, attachmentCount, pAttachments, subpassCount, pSubpasses, dependencyCount, pDependencies, pAllocator, pRenderPass);
 }
-void cvkCreateRenderPassWithTileMemorySizeInfoInfoQCOM(VkDevice                       device,
-                                                       const void*                    pNext,
-                                                       VkDeviceSize                   size,
-                                                       VkRenderPassCreateFlags        flags,
-                                                       uint32_t                       attachmentCount,
-                                                       const VkAttachmentDescription* pAttachments,
-                                                       uint32_t                       subpassCount,
-                                                       const VkSubpassDescription*    pSubpasses,
-                                                       uint32_t                       dependencyCount,
-                                                       const VkSubpassDependency*     pDependencies,
-                                                       const VkAllocationCallbacks*   pAllocator,
-                                                       VkRenderPass*                  pRenderPass)
+void cvkCreateRenderPassWithTileMemorySizeInfoQCOM(VkDevice                       device,
+                                                   const void*                    pNext,
+                                                   VkDeviceSize                   size,
+                                                   VkRenderPassCreateFlags        flags,
+                                                   uint32_t                       attachmentCount,
+                                                   const VkAttachmentDescription* pAttachments,
+                                                   uint32_t                       subpassCount,
+                                                   const VkSubpassDescription*    pSubpasses,
+                                                   uint32_t                       dependencyCount,
+                                                   const VkSubpassDependency*     pDependencies,
+                                                   const VkAllocationCallbacks*   pAllocator,
+                                                   VkRenderPass*                  pRenderPass)
 {
     VkTileMemorySizeInfoQCOM size_info =
     {
@@ -29163,20 +29103,20 @@ void cvkCreateRenderPass2WithTileShadingInfoQCOM(VkDevice                       
                          pAllocator,
                          pRenderPass);
 }
-void cvkCreateRenderPass2WithTileMemorySizeInfoInfoQCOM(VkDevice                        device,
-                                                        const void*                     pNext,
-                                                        VkDeviceSize                    size,
-                                                        VkRenderPassCreateFlags         flags,
-                                                        uint32_t                        attachmentCount,
-                                                        const VkAttachmentDescription2* pAttachments,
-                                                        uint32_t                        subpassCount,
-                                                        const VkSubpassDescription2*    pSubpasses,
-                                                        uint32_t                        dependencyCount,
-                                                        const VkSubpassDependency2*     pDependencies,
-                                                        uint32_t                        correlatedViewMaskCount,
-                                                        const uint32_t*                 pCorrelatedViewMasks,
-                                                        const VkAllocationCallbacks*    pAllocator,
-                                                        VkRenderPass*                   pRenderPass)
+void cvkCreateRenderPass2WithTileMemorySizeInfoQCOM(VkDevice                        device,
+                                                    const void*                     pNext,
+                                                    VkDeviceSize                    size,
+                                                    VkRenderPassCreateFlags         flags,
+                                                    uint32_t                        attachmentCount,
+                                                    const VkAttachmentDescription2* pAttachments,
+                                                    uint32_t                        subpassCount,
+                                                    const VkSubpassDescription2*    pSubpasses,
+                                                    uint32_t                        dependencyCount,
+                                                    const VkSubpassDependency2*     pDependencies,
+                                                    uint32_t                        correlatedViewMaskCount,
+                                                    const uint32_t*                 pCorrelatedViewMasks,
+                                                    const VkAllocationCallbacks*    pAllocator,
+                                                    VkRenderPass*                   pRenderPass)
 {
     VkTileMemorySizeInfoQCOM size_info =
     {
@@ -30299,16 +30239,16 @@ VkResult cvkCreateSwapchainWithPresentScalingInfo(VkDevice                      
                               pAllocator,
                               pSwapchain);
 }
-void cvkCreateTensorWithExternalMemoryInfoARM(VkDevice                        device,
-                                              const void*                     pNext,
-                                              VkExternalMemoryHandleTypeFlags handleTypes,
-                                              VkTensorCreateFlagsARM          flags,
-                                              const VkTensorDescriptionARM*   pDescription,
-                                              VkSharingMode                   sharingMode,
-                                              uint32_t                        queueFamilyIndexCount,
-                                              const uint32_t*                 pQueueFamilyIndices,
-                                              const VkAllocationCallbacks*    pAllocator,
-                                              VkTensorARM*                    pTensor)
+void cvkCreateTensorWithExternalMemoryInfoARMARM(VkDevice                        device,
+                                                 const void*                     pNext,
+                                                 VkExternalMemoryHandleTypeFlags handleTypes,
+                                                 VkTensorCreateFlagsARM          flags,
+                                                 const VkTensorDescriptionARM*   pDescription,
+                                                 VkSharingMode                   sharingMode,
+                                                 uint32_t                        queueFamilyIndexCount,
+                                                 const uint32_t*                 pQueueFamilyIndices,
+                                                 const VkAllocationCallbacks*    pAllocator,
+                                                 VkTensorARM*                    pTensor)
 {
     VkExternalMemoryTensorCreateInfoARM create_info =
     {
@@ -30359,16 +30299,16 @@ void cvkCreateTensorWithOpaqueCaptureDescriptorDataInfoARM(VkDevice             
 
     cvkCreateTensorARM(device, &create_info, flags, pDescription, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pTensor);
 }
-void cvkCreateTensorWithRollingBackingInfoARM(VkDevice                      device,
-                                              const void*                   pNext,
-                                              const uint32_t                wraps[VK_MAX_TENSOR_CREATE_INFO_ROLLING_BACKING_WRAP_COUNT_ARM],
-                                              VkTensorCreateFlagsARM        flags,
-                                              const VkTensorDescriptionARM* pDescription,
-                                              VkSharingMode                 sharingMode,
-                                              uint32_t                      queueFamilyIndexCount,
-                                              const uint32_t*               pQueueFamilyIndices,
-                                              const VkAllocationCallbacks*  pAllocator,
-                                              VkTensorARM*                  pTensor)
+void cvkCreateTensorWithRollingBackingInfoARMARM(VkDevice                      device,
+                                                 const void*                   pNext,
+                                                 const uint32_t                wraps[VK_MAX_TENSOR_CREATE_INFO_ROLLING_BACKING_WRAP_COUNT_ARM],
+                                                 VkTensorCreateFlagsARM        flags,
+                                                 const VkTensorDescriptionARM* pDescription,
+                                                 VkSharingMode                 sharingMode,
+                                                 uint32_t                      queueFamilyIndexCount,
+                                                 const uint32_t*               pQueueFamilyIndices,
+                                                 const VkAllocationCallbacks*  pAllocator,
+                                                 VkTensorARM*                  pTensor)
 {
     VkTensorRollingBackingCreateInfoARM create_info =
     {
@@ -30760,7 +30700,7 @@ void cvkCreateVideoSessionParametersWithEncodeQuantizationMapInfo(VkDevice      
 
     cvkCreateVideoSessionParameters(device, &create_info, flags, videoSessionParametersTemplate, videoSession, pAllocator, pVideoSessionParameters);
 }
-void cvkGetDescriptorWithTensorInfoInfoARM(VkDevice device, const void* pNext, VkTensorViewARM tensorView, VkDescriptorType type, VkDescriptorDataEXT data, size_t dataSize, void* pDescriptor)
+void cvkGetDescriptorWithTensorInfoARM(VkDevice device, const void* pNext, VkTensorViewARM tensorView, VkDescriptorType type, VkDescriptorDataEXT data, size_t dataSize, void* pDescriptor)
 {
     VkDescriptorGetTensorInfoARM tensor_info =
     {
@@ -30863,20 +30803,20 @@ void cvkGetDynamicRenderingMultisampledRenderToSingleSampledTilePropertiesQCOM(V
 
     cvkGetRenderingInfo(device, &sampled_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingMultiviewPerViewAttributesInfoTilePropertiesNVXQCOM(VkDevice                         device,
-                                                                               const void*                      pRenderingInfoNext,
-                                                                               VkBool32                         perViewAttributes,
-                                                                               VkBool32                         perViewAttributesPositionXOnly,
-                                                                               VkRenderingFlags                 flags,
-                                                                               VkRect2D                         renderArea,
-                                                                               uint32_t                         layerCount,
-                                                                               uint32_t                         viewMask,
-                                                                               uint32_t                         colorAttachmentCount,
-                                                                               const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                               const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                               const VkRenderingAttachmentInfo* pStencilAttachment,
-                                                                               void*                            pPropertiesNext,
-                                                                               VkTilePropertiesQCOM*            pProperties)
+void cvkGetDynamicRenderingMultiviewPerViewAttributesTilePropertiesNVXQCOM(VkDevice                         device,
+                                                                           const void*                      pRenderingInfoNext,
+                                                                           VkBool32                         perViewAttributes,
+                                                                           VkBool32                         perViewAttributesPositionXOnly,
+                                                                           VkRenderingFlags                 flags,
+                                                                           VkRect2D                         renderArea,
+                                                                           uint32_t                         layerCount,
+                                                                           uint32_t                         viewMask,
+                                                                           uint32_t                         colorAttachmentCount,
+                                                                           const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                           const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                           const VkRenderingAttachmentInfo* pStencilAttachment,
+                                                                           void*                            pPropertiesNext,
+                                                                           VkTilePropertiesQCOM*            pProperties)
 {
     VkMultiviewPerViewAttributesInfoNVX attributes_info =
     {
@@ -30888,20 +30828,20 @@ void cvkGetDynamicRenderingMultiviewPerViewAttributesInfoTilePropertiesNVXQCOM(V
 
     cvkGetRenderingInfo(device, &attributes_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassBeginInfoTilePropertiesQCOMQCOM(VkDevice                         device,
-                                                                                                const void*                      pRenderingInfoNext,
-                                                                                                uint32_t                         perViewRenderAreaCount,
-                                                                                                const VkRect2D*                  pPerViewRenderAreas,
-                                                                                                VkRenderingFlags                 flags,
-                                                                                                VkRect2D                         renderArea,
-                                                                                                uint32_t                         layerCount,
-                                                                                                uint32_t                         viewMask,
-                                                                                                uint32_t                         colorAttachmentCount,
-                                                                                                const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                                                const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                                                const VkRenderingAttachmentInfo* pStencilAttachment,
-                                                                                                void*                            pPropertiesNext,
-                                                                                                VkTilePropertiesQCOM*            pProperties)
+void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassTilePropertiesQCOMQCOM(VkDevice                         device,
+                                                                                       const void*                      pRenderingInfoNext,
+                                                                                       uint32_t                         perViewRenderAreaCount,
+                                                                                       const VkRect2D*                  pPerViewRenderAreas,
+                                                                                       VkRenderingFlags                 flags,
+                                                                                       VkRect2D                         renderArea,
+                                                                                       uint32_t                         layerCount,
+                                                                                       uint32_t                         viewMask,
+                                                                                       uint32_t                         colorAttachmentCount,
+                                                                                       const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                                       const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                                       const VkRenderingAttachmentInfo* pStencilAttachment,
+                                                                                       void*                            pPropertiesNext,
+                                                                                       VkTilePropertiesQCOM*            pProperties)
 {
     VkMultiviewPerViewRenderAreasRenderPassBeginInfoQCOM begin_info =
     {
@@ -30913,23 +30853,23 @@ void cvkGetDynamicRenderingMultiviewPerViewRenderAreasRenderPassBeginInfoTilePro
 
     cvkGetRenderingInfo(device, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingRenderPassPerformanceCountersByRegionBeginInfoTilePropertiesARMQCOM(VkDevice                         device,
-                                                                                               void*                            pRenderingInfoNext,
-                                                                                               uint32_t                         counterAddressCount,
-                                                                                               const VkDeviceAddress*           pCounterAddresses,
-                                                                                               VkBool32                         serializeRegions,
-                                                                                               uint32_t                         counterIndexCount,
-                                                                                               uint32_t*                        pCounterIndices,
-                                                                                               VkRenderingFlags                 flags,
-                                                                                               VkRect2D                         renderArea,
-                                                                                               uint32_t                         layerCount,
-                                                                                               uint32_t                         viewMask,
-                                                                                               uint32_t                         colorAttachmentCount,
-                                                                                               const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                                               const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                                               const VkRenderingAttachmentInfo* pStencilAttachment,
-                                                                                               void*                            pPropertiesNext,
-                                                                                               VkTilePropertiesQCOM*            pProperties)
+void cvkGetDynamicRenderingRenderPassPerformanceCountersByRegionTilePropertiesARMQCOM(VkDevice                         device,
+                                                                                      void*                            pRenderingInfoNext,
+                                                                                      uint32_t                         counterAddressCount,
+                                                                                      const VkDeviceAddress*           pCounterAddresses,
+                                                                                      VkBool32                         serializeRegions,
+                                                                                      uint32_t                         counterIndexCount,
+                                                                                      uint32_t*                        pCounterIndices,
+                                                                                      VkRenderingFlags                 flags,
+                                                                                      VkRect2D                         renderArea,
+                                                                                      uint32_t                         layerCount,
+                                                                                      uint32_t                         viewMask,
+                                                                                      uint32_t                         colorAttachmentCount,
+                                                                                      const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                                      const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                                      const VkRenderingAttachmentInfo* pStencilAttachment,
+                                                                                      void*                            pPropertiesNext,
+                                                                                      VkTilePropertiesQCOM*            pProperties)
 {
     VkRenderPassPerformanceCountersByRegionBeginInfoARM begin_info =
     {
@@ -30944,20 +30884,20 @@ void cvkGetDynamicRenderingRenderPassPerformanceCountersByRegionBeginInfoTilePro
 
     cvkGetRenderingInfo(device, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingRenderPassStripeBeginInfoTilePropertiesARMQCOM(VkDevice                         device,
-                                                                          const void*                      pRenderingInfoNext,
-                                                                          uint32_t                         stripeInfoCount,
-                                                                          const VkRenderPassStripeInfoARM* pStripeInfos,
-                                                                          VkRenderingFlags                 flags,
-                                                                          VkRect2D                         renderArea,
-                                                                          uint32_t                         layerCount,
-                                                                          uint32_t                         viewMask,
-                                                                          uint32_t                         colorAttachmentCount,
-                                                                          const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                          const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                          const VkRenderingAttachmentInfo* pStencilAttachment,
-                                                                          void*                            pPropertiesNext,
-                                                                          VkTilePropertiesQCOM*            pProperties)
+void cvkGetDynamicRenderingRenderPassStripeTilePropertiesARMQCOM(VkDevice                         device,
+                                                                 const void*                      pRenderingInfoNext,
+                                                                 uint32_t                         stripeInfoCount,
+                                                                 const VkRenderPassStripeInfoARM* pStripeInfos,
+                                                                 VkRenderingFlags                 flags,
+                                                                 VkRect2D                         renderArea,
+                                                                 uint32_t                         layerCount,
+                                                                 uint32_t                         viewMask,
+                                                                 uint32_t                         colorAttachmentCount,
+                                                                 const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                 const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                 const VkRenderingAttachmentInfo* pStencilAttachment,
+                                                                 void*                            pPropertiesNext,
+                                                                 VkTilePropertiesQCOM*            pProperties)
 {
     VkRenderPassStripeBeginInfoARM begin_info =
     {
@@ -30969,20 +30909,20 @@ void cvkGetDynamicRenderingRenderPassStripeBeginInfoTilePropertiesARMQCOM(VkDevi
 
     cvkGetRenderingInfo(device, &begin_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingRenderPassTileShadingCreateInfoTilePropertiesQCOMQCOM(VkDevice                         device,
-                                                                                 const void*                      pRenderingInfoNext,
-                                                                                 VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
-                                                                                 VkExtent2D                       tileApronSize,
-                                                                                 VkRenderingFlags                 flags,
-                                                                                 VkRect2D                         renderArea,
-                                                                                 uint32_t                         layerCount,
-                                                                                 uint32_t                         viewMask,
-                                                                                 uint32_t                         colorAttachmentCount,
-                                                                                 const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                                 const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                                 const VkRenderingAttachmentInfo* pStencilAttachment,
-                                                                                 void*                            pPropertiesNext,
-                                                                                 VkTilePropertiesQCOM*            pProperties)
+void cvkGetDynamicRenderingRenderPassTileShadingTilePropertiesQCOMQCOM(VkDevice                         device,
+                                                                       const void*                      pRenderingInfoNext,
+                                                                       VkTileShadingRenderPassFlagsQCOM flagsTileShadingRenderPass,
+                                                                       VkExtent2D                       tileApronSize,
+                                                                       VkRenderingFlags                 flags,
+                                                                       VkRect2D                         renderArea,
+                                                                       uint32_t                         layerCount,
+                                                                       uint32_t                         viewMask,
+                                                                       uint32_t                         colorAttachmentCount,
+                                                                       const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                       const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                       const VkRenderingAttachmentInfo* pStencilAttachment,
+                                                                       void*                            pPropertiesNext,
+                                                                       VkTilePropertiesQCOM*            pProperties)
 {
     VkRenderPassTileShadingCreateInfoQCOM create_info =
     {
@@ -31046,19 +30986,19 @@ void cvkGetRenderingFragmentShadingRateAttachmentInfo(VkDevice                  
 
     cvkGetRenderingInfo(device, &attachment_info, flags, renderArea, layerCount, viewMask, colorAttachmentCount, pColorAttachments, pDepthAttachment, pStencilAttachment, pPropertiesNext, pProperties);
 }
-void cvkGetDynamicRenderingTileMemorySizeInfoTilePropertiesQCOMQCOM(VkDevice                         device,
-                                                                    const void*                      pRenderingInfoNext,
-                                                                    VkDeviceSize                     size,
-                                                                    VkRenderingFlags                 flags,
-                                                                    VkRect2D                         renderArea,
-                                                                    uint32_t                         layerCount,
-                                                                    uint32_t                         viewMask,
-                                                                    uint32_t                         colorAttachmentCount,
-                                                                    const VkRenderingAttachmentInfo* pColorAttachments,
-                                                                    const VkRenderingAttachmentInfo* pDepthAttachment,
-                                                                    const VkRenderingAttachmentInfo* pStencilAttachment,
-                                                                    void*                            pPropertiesNext,
-                                                                    VkTilePropertiesQCOM*            pProperties)
+void cvkGetDynamicRenderingTileMemorySizeTilePropertiesQCOMQCOM(VkDevice                         device,
+                                                                const void*                      pRenderingInfoNext,
+                                                                VkDeviceSize                     size,
+                                                                VkRenderingFlags                 flags,
+                                                                VkRect2D                         renderArea,
+                                                                uint32_t                         layerCount,
+                                                                uint32_t                         viewMask,
+                                                                uint32_t                         colorAttachmentCount,
+                                                                const VkRenderingAttachmentInfo* pColorAttachments,
+                                                                const VkRenderingAttachmentInfo* pDepthAttachment,
+                                                                const VkRenderingAttachmentInfo* pStencilAttachment,
+                                                                void*                            pPropertiesNext,
+                                                                VkTilePropertiesQCOM*            pProperties)
 {
     VkTileMemorySizeInfoQCOM size_info =
     {
@@ -31177,16 +31117,16 @@ void cvkGetImagePlaneMemoryRequirementsInfo(VkDevice               device,
 
     cvkGetImageMemoryRequirementsInfo2(device, &requirements_info, image, pMemoryRequirementsNext, pMemoryRequirements);
 }
-void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfoNV(VkDevice                                  device,
-                                                                      void*                                     pInfoNext,
-                                                                      VkBool32                                  enablePartitionTranslation,
-                                                                      VkBuildAccelerationStructureFlagsKHR      flags,
-                                                                      uint32_t                                  instanceCount,
-                                                                      uint32_t                                  maxInstancePerPartitionCount,
-                                                                      uint32_t                                  partitionCount,
-                                                                      uint32_t                                  maxInstanceInGlobalPartitionCount,
-                                                                      void*                                     pSizeInfoNext,
-                                                                      VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo)
+void cvkGetPartitionedAccelerationStructuresBuildSizesWithFlagsInfoNVNV(VkDevice                                  device,
+                                                                        void*                                     pInfoNext,
+                                                                        VkBool32                                  enablePartitionTranslation,
+                                                                        VkBuildAccelerationStructureFlagsKHR      flags,
+                                                                        uint32_t                                  instanceCount,
+                                                                        uint32_t                                  maxInstancePerPartitionCount,
+                                                                        uint32_t                                  partitionCount,
+                                                                        uint32_t                                  maxInstanceInGlobalPartitionCount,
+                                                                        void*                                     pSizeInfoNext,
+                                                                        VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo)
 {
     VkPartitionedAccelerationStructureFlagsNV partitioned_acceleration_structure_flags =
     {
@@ -31367,16 +31307,16 @@ VkResult cvkGetPhysicalDeviceImageStencilFormatUsageProperties(VkPhysicalDevice 
 
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &create_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice          physicalDevice,
-                                                                           void*                     pImageFormatInfoNext,
-                                                                           VkImageUsageFlags2KHR     usage2,
-                                                                           VkFormat                  format,
-                                                                           VkImageType               type,
-                                                                           VkImageTiling             tiling,
-                                                                           VkImageUsageFlags         usage,
-                                                                           VkImageCreateFlags        flags,
-                                                                           void*                     pImageFormatPropertiesNext,
-                                                                           VkImageFormatProperties2* pImageFormatProperties)
+VkResult cvkGetPhysicalDeviceImageUsageFormatFlags2PropertiesKHR(VkPhysicalDevice          physicalDevice,
+                                                                 void*                     pImageFormatInfoNext,
+                                                                 VkImageUsageFlags2KHR     usage2,
+                                                                 VkFormat                  format,
+                                                                 VkImageType               type,
+                                                                 VkImageTiling             tiling,
+                                                                 VkImageUsageFlags         usage,
+                                                                 VkImageCreateFlags        flags,
+                                                                 void*                     pImageFormatPropertiesNext,
+                                                                 VkImageFormatProperties2* pImageFormatProperties)
 {
     VkImageUsageFlags2CreateInfoKHR create_info =
     {
@@ -31495,15 +31435,15 @@ VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDev
 
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &list_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2CreateInfoPropertiesKHR(VkPhysicalDevice               physicalDevice,
-                                                                                 void*                          pNext,
-                                                                                 VkImageUsageFlags2KHR          usage2,
-                                                                                 VkFormat                       format,
-                                                                                 VkImageType                    type,
-                                                                                 VkSampleCountFlagBits          samples,
-                                                                                 VkImageUsageFlags              usage,
-                                                                                 VkImageTiling                  tiling,
-                                                                                 VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
+uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2PropertiesKHR(VkPhysicalDevice               physicalDevice,
+                                                                       void*                          pNext,
+                                                                       VkImageUsageFlags2KHR          usage2,
+                                                                       VkFormat                       format,
+                                                                       VkImageType                    type,
+                                                                       VkSampleCountFlagBits          samples,
+                                                                       VkImageUsageFlags              usage,
+                                                                       VkImageTiling                  tiling,
+                                                                       VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
 {
     VkImageUsageFlags2CreateInfoKHR create_info =
     {
@@ -31701,15 +31641,15 @@ VkResult cvkGetVideoEncodeH265ProfileInfo(VkPhysicalDevice                 physi
 
     return cvkGetVideoProfileInfo(physicalDevice, &profile_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeProfileRgbConversionInfoInfoVALVE(VkPhysicalDevice                 physicalDevice,
-                                                                                          const void*                      pVideoProfileNext,
-                                                                                          VkBool32                         performEncodeRgbConversion,
-                                                                                          VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
-                                                                                          VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
-                                                                                          VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
-                                                                                          VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
-                                                                                          void*                            pCapabilitiesNext,
-                                                                                          VkVideoCapabilitiesKHR*          pCapabilities)
+VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeProfileRgbConversionInfoVALVE(VkPhysicalDevice                 physicalDevice,
+                                                                                      const void*                      pVideoProfileNext,
+                                                                                      VkBool32                         performEncodeRgbConversion,
+                                                                                      VkVideoCodecOperationFlagBitsKHR videoCodecOperation,
+                                                                                      VkVideoChromaSubsamplingFlagsKHR chromaSubsampling,
+                                                                                      VkVideoComponentBitDepthFlagsKHR lumaBitDepth,
+                                                                                      VkVideoComponentBitDepthFlagsKHR chromaBitDepth,
+                                                                                      void*                            pCapabilitiesNext,
+                                                                                      VkVideoCapabilitiesKHR*          pCapabilities)
 {
     VkVideoEncodeProfileRgbConversionInfoVALVE conversion_info =
     {
@@ -31743,11 +31683,11 @@ VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkPhysicalDevi
 
     return cvkGetVideoProfileInfo(physicalDevice, &usage_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2CreateInfoPropertiesKHR(VkPhysicalDevice           physicalDevice,
-                                                                                void*                      pNext,
-                                                                                VkImageUsageFlags2KHR      usage,
-                                                                                VkImageUsageFlags          imageUsage,
-                                                                                VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2PropertiesKHR(VkPhysicalDevice           physicalDevice,
+                                                                      void*                      pNext,
+                                                                      VkImageUsageFlags2KHR      usage,
+                                                                      VkImageUsageFlags          imageUsage,
+                                                                      VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
     VkImageUsageFlags2CreateInfoKHR create_info =
     {
@@ -31775,18 +31715,18 @@ uint32_t cvkGetPhysicalDeviceVideoProfileFormatListProperties(VkPhysicalDevice  
 
     return cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, &list_info, imageUsage, pVideoFormatProperties);
 }
-void cvkGetPipelineIndirectMemoryRequirementsWithIndirectBufferInfoInfoNVNV(VkDevice                        device,
-                                                                            const void*                     pCreateInfoNext,
-                                                                            VkDeviceAddress                 deviceAddress,
-                                                                            VkDeviceSize                    size,
-                                                                            VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
-                                                                            VkPipelineCreateFlags           flags,
-                                                                            VkPipelineShaderStageCreateInfo stage,
-                                                                            VkPipelineLayout                layout,
-                                                                            VkPipeline                      basePipelineHandle,
-                                                                            int32_t                         basePipelineIndex,
-                                                                            void*                           pMemoryRequirementsNext,
-                                                                            VkMemoryRequirements2*          pMemoryRequirements)
+void cvkGetPipelineIndirectMemoryRequirementsWithIndirectBufferInfoNVNV(VkDevice                        device,
+                                                                        const void*                     pCreateInfoNext,
+                                                                        VkDeviceAddress                 deviceAddress,
+                                                                        VkDeviceSize                    size,
+                                                                        VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
+                                                                        VkPipelineCreateFlags           flags,
+                                                                        VkPipelineShaderStageCreateInfo stage,
+                                                                        VkPipelineLayout                layout,
+                                                                        VkPipeline                      basePipelineHandle,
+                                                                        int32_t                         basePipelineIndex,
+                                                                        void*                           pMemoryRequirementsNext,
+                                                                        VkMemoryRequirements2*          pMemoryRequirements)
 {
     VkComputePipelineIndirectBufferInfoNV buffer_info =
     {
@@ -32177,22 +32117,21 @@ VkResult cvkQueuePresentWithRegionsInfo(VkQueue                   queue,
 
     return cvkQueuePresent(queue, &present_regions, waitSemaphoreCount, pWaitSemaphores, swapchainCount, pSwapchains, pImageIndices, pResults);
 }
-VkResult cvkQueuePresentWithTimesInfoInfoGOOGLE(VkQueue                    queue,
-                                                const void*                pNext,
-                                                uint32_t                   timesInfoGOOGLESwapchainCount,
-                                                const VkPresentTimeGOOGLE* pTimes,
-                                                uint32_t                   waitSemaphoreCount,
-                                                const VkSemaphore*         pWaitSemaphores,
-                                                uint32_t                   swapchainCount,
-                                                const VkSwapchainKHR*      pSwapchains,
-                                                const uint32_t*            pImageIndices,
-                                                VkResult*                  pResults)
+VkResult cvkQueuePresentWithTimesInfoGOOGLE(VkQueue                    queue,
+                                            const void*                pNext,
+                                            const VkPresentTimeGOOGLE* pTimes,
+                                            uint32_t                   waitSemaphoreCount,
+                                            const VkSemaphore*         pWaitSemaphores,
+                                            uint32_t                   swapchainCount,
+                                            const VkSwapchainKHR*      pSwapchains,
+                                            const uint32_t*            pImageIndices,
+                                            VkResult*                  pResults)
 {
     VkPresentTimesInfoGOOGLE times_info =
     {
         .sType          = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE,
         .pNext          = pNext,
-        .swapchainCount = timesInfoGOOGLESwapchainCount,
+        .swapchainCount = swapchainCount,
         .pTimes         = pTimes
     };
 
@@ -32715,19 +32654,19 @@ void cvkCmdWriteDescriptorSetWithTensorInfoARM(VkCommandBuffer               com
                              pBufferInfo,
                              pTexelBufferView);
 }
-VkResult cvkCreateComputePipelineWithIndirectBufferInfoInfoNV(VkDevice                        device,
-                                                              VkPipelineCache                 pipelineCache,
-                                                              const void*                     pNext,
-                                                              VkDeviceAddress                 deviceAddress,
-                                                              VkDeviceSize                    size,
-                                                              VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
-                                                              VkPipelineCreateFlags           flags,
-                                                              VkPipelineShaderStageCreateInfo stage,
-                                                              VkPipelineLayout                layout,
-                                                              VkPipeline                      basePipelineHandle,
-                                                              int32_t                         basePipelineIndex,
-                                                              const VkAllocationCallbacks*    pAllocator,
-                                                              VkPipeline*                     pPipeline)
+VkResult cvkCreateComputePipelineWithIndirectBufferInfoNV(VkDevice                        device,
+                                                          VkPipelineCache                 pipelineCache,
+                                                          const void*                     pNext,
+                                                          VkDeviceAddress                 deviceAddress,
+                                                          VkDeviceSize                    size,
+                                                          VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
+                                                          VkPipelineCreateFlags           flags,
+                                                          VkPipelineShaderStageCreateInfo stage,
+                                                          VkPipelineLayout                layout,
+                                                          VkPipeline                      basePipelineHandle,
+                                                          int32_t                         basePipelineIndex,
+                                                          const VkAllocationCallbacks*    pAllocator,
+                                                          VkPipeline*                     pPipeline)
 {
     VkComputePipelineIndirectBufferInfoNV buffer_info =
     {
@@ -32928,17 +32867,17 @@ VkResult cvkCreateDataGraphPipelineInfoWithBuiltinModelInfoARMQCOM(VkDevice     
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithCompilerControlInfoARM(VkDevice                                  device,
-                                                                  VkDeferredOperationKHR                    deferredOperation,
-                                                                  VkPipelineCache                           pipelineCache,
-                                                                  const void*                               pNext,
-                                                                  const char*                               pVendorOptions,
-                                                                  VkPipelineCreateFlags2                    flags,
-                                                                  VkPipelineLayout                          layout,
-                                                                  uint32_t                                  resourceInfoCount,
-                                                                  const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
-                                                                  const VkAllocationCallbacks*              pAllocator,
-                                                                  VkPipeline*                               pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithCompilerControlInfoARMARM(VkDevice                                  device,
+                                                                     VkDeferredOperationKHR                    deferredOperation,
+                                                                     VkPipelineCache                           pipelineCache,
+                                                                     const void*                               pNext,
+                                                                     const char*                               pVendorOptions,
+                                                                     VkPipelineCreateFlags2                    flags,
+                                                                     VkPipelineLayout                          layout,
+                                                                     uint32_t                                  resourceInfoCount,
+                                                                     const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                     const VkAllocationCallbacks*              pAllocator,
+                                                                     VkPipeline*                               pPipeline)
 {
     VkDataGraphPipelineCompilerControlCreateInfoARM create_info =
     {
@@ -32949,18 +32888,18 @@ VkResult cvkCreateDataGraphPipelineInfoWithCompilerControlInfoARM(VkDevice      
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithIdentifierInfoARM(VkDevice                                  device,
-                                                             VkDeferredOperationKHR                    deferredOperation,
-                                                             VkPipelineCache                           pipelineCache,
-                                                             const void*                               pNext,
-                                                             uint32_t                                  identifierSize,
-                                                             const uint8_t*                            pIdentifier,
-                                                             VkPipelineCreateFlags2                    flags,
-                                                             VkPipelineLayout                          layout,
-                                                             uint32_t                                  resourceInfoCount,
-                                                             const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
-                                                             const VkAllocationCallbacks*              pAllocator,
-                                                             VkPipeline*                               pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithIdentifierInfoARMARM(VkDevice                                  device,
+                                                                VkDeferredOperationKHR                    deferredOperation,
+                                                                VkPipelineCache                           pipelineCache,
+                                                                const void*                               pNext,
+                                                                uint32_t                                  identifierSize,
+                                                                const uint8_t*                            pIdentifier,
+                                                                VkPipelineCreateFlags2                    flags,
+                                                                VkPipelineLayout                          layout,
+                                                                uint32_t                                  resourceInfoCount,
+                                                                const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                const VkAllocationCallbacks*              pAllocator,
+                                                                VkPipeline*                               pPipeline)
 {
     VkDataGraphPipelineIdentifierCreateInfoARM create_info =
     {
@@ -32972,17 +32911,17 @@ VkResult cvkCreateDataGraphPipelineInfoWithIdentifierInfoARM(VkDevice           
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithNeuralStatisticsInfoARM(VkDevice                                  device,
-                                                                   VkDeferredOperationKHR                    deferredOperation,
-                                                                   VkPipelineCache                           pipelineCache,
-                                                                   const void*                               pNext,
-                                                                   VkBool32                                  allowNeuralStatistics,
-                                                                   VkPipelineCreateFlags2                    flags,
-                                                                   VkPipelineLayout                          layout,
-                                                                   uint32_t                                  resourceInfoCount,
-                                                                   const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
-                                                                   const VkAllocationCallbacks*              pAllocator,
-                                                                   VkPipeline*                               pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithNeuralStatisticsInfoARMARM(VkDevice                                  device,
+                                                                      VkDeferredOperationKHR                    deferredOperation,
+                                                                      VkPipelineCache                           pipelineCache,
+                                                                      const void*                               pNext,
+                                                                      VkBool32                                  allowNeuralStatistics,
+                                                                      VkPipelineCreateFlags2                    flags,
+                                                                      VkPipelineLayout                          layout,
+                                                                      uint32_t                                  resourceInfoCount,
+                                                                      const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                      const VkAllocationCallbacks*              pAllocator,
+                                                                      VkPipeline*                               pPipeline)
 {
     VkDataGraphPipelineNeuralStatisticsCreateInfoARM create_info =
     {
@@ -32993,25 +32932,25 @@ VkResult cvkCreateDataGraphPipelineInfoWithNeuralStatisticsInfoARM(VkDevice     
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithOpticalFlowInfoARM(VkDevice                                  device,
-                                                              VkDeferredOperationKHR                    deferredOperation,
-                                                              VkPipelineCache                           pipelineCache,
-                                                              void*                                     pNext,
-                                                              uint32_t                                  width,
-                                                              uint32_t                                  height,
-                                                              VkFormat                                  imageFormat,
-                                                              VkFormat                                  flowVectorFormat,
-                                                              VkFormat                                  costFormat,
-                                                              VkDataGraphOpticalFlowGridSizeFlagsARM    outputGridSize,
-                                                              VkDataGraphOpticalFlowGridSizeFlagsARM    hintGridSize,
-                                                              VkDataGraphOpticalFlowPerformanceLevelARM performanceLevel,
-                                                              VkDataGraphOpticalFlowCreateFlagsARM      flagsDataGraphOpticalFlow,
-                                                              VkPipelineCreateFlags2                    flags,
-                                                              VkPipelineLayout                          layout,
-                                                              uint32_t                                  resourceInfoCount,
-                                                              const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
-                                                              const VkAllocationCallbacks*              pAllocator,
-                                                              VkPipeline*                               pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithOpticalFlowInfoARMARM(VkDevice                                  device,
+                                                                 VkDeferredOperationKHR                    deferredOperation,
+                                                                 VkPipelineCache                           pipelineCache,
+                                                                 void*                                     pNext,
+                                                                 uint32_t                                  width,
+                                                                 uint32_t                                  height,
+                                                                 VkFormat                                  imageFormat,
+                                                                 VkFormat                                  flowVectorFormat,
+                                                                 VkFormat                                  costFormat,
+                                                                 VkDataGraphOpticalFlowGridSizeFlagsARM    outputGridSize,
+                                                                 VkDataGraphOpticalFlowGridSizeFlagsARM    hintGridSize,
+                                                                 VkDataGraphOpticalFlowPerformanceLevelARM performanceLevel,
+                                                                 VkDataGraphOpticalFlowCreateFlagsARM      flagsDataGraphOpticalFlow,
+                                                                 VkPipelineCreateFlags2                    flags,
+                                                                 VkPipelineLayout                          layout,
+                                                                 uint32_t                                  resourceInfoCount,
+                                                                 const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                 const VkAllocationCallbacks*              pAllocator,
+                                                                 VkPipeline*                               pPipeline)
 {
     VkDataGraphPipelineOpticalFlowCreateInfoARM create_info =
     {
@@ -33030,21 +32969,21 @@ VkResult cvkCreateDataGraphPipelineInfoWithOpticalFlowInfoARM(VkDevice          
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithDataGraphPipelineShaderModuleCreateInfoInfoARMARM(VkDevice                                  device,
-                                                                                             VkDeferredOperationKHR                    deferredOperation,
-                                                                                             VkPipelineCache                           pipelineCache,
-                                                                                             const void*                               pNext,
-                                                                                             VkShaderModule                            module,
-                                                                                             const char*                               pName,
-                                                                                             const VkSpecializationInfo*               pSpecializationInfo,
-                                                                                             uint32_t                                  constantCount,
-                                                                                             const VkDataGraphPipelineConstantARM*     pConstants,
-                                                                                             VkPipelineCreateFlags2                    flags,
-                                                                                             VkPipelineLayout                          layout,
-                                                                                             uint32_t                                  resourceInfoCount,
-                                                                                             const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
-                                                                                             const VkAllocationCallbacks*              pAllocator,
-                                                                                             VkPipeline*                               pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithShaderModuleInfoARMARM(VkDevice                                  device,
+                                                                  VkDeferredOperationKHR                    deferredOperation,
+                                                                  VkPipelineCache                           pipelineCache,
+                                                                  const void*                               pNext,
+                                                                  VkShaderModule                            module,
+                                                                  const char*                               pName,
+                                                                  const VkSpecializationInfo*               pSpecializationInfo,
+                                                                  uint32_t                                  constantCount,
+                                                                  const VkDataGraphPipelineConstantARM*     pConstants,
+                                                                  VkPipelineCreateFlags2                    flags,
+                                                                  VkPipelineLayout                          layout,
+                                                                  uint32_t                                  resourceInfoCount,
+                                                                  const VkDataGraphPipelineResourceInfoARM* pResourceInfos,
+                                                                  const VkAllocationCallbacks*              pAllocator,
+                                                                  VkPipeline*                               pPipeline)
 {
     VkDataGraphPipelineShaderModuleCreateInfoARM create_info =
     {
@@ -33059,19 +32998,19 @@ VkResult cvkCreateDataGraphPipelineInfoWithDataGraphPipelineShaderModuleCreateIn
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithSingleNodeInfoARM(VkDevice                                          device,
-                                                             VkDeferredOperationKHR                            deferredOperation,
-                                                             VkPipelineCache                                   pipelineCache,
-                                                             void*                                             pNext,
-                                                             VkDataGraphPipelineNodeTypeARM                    nodeType,
-                                                             uint32_t                                          connectionCount,
-                                                             const VkDataGraphPipelineSingleNodeConnectionARM* pConnections,
-                                                             VkPipelineCreateFlags2                            flags,
-                                                             VkPipelineLayout                                  layout,
-                                                             uint32_t                                          resourceInfoCount,
-                                                             const VkDataGraphPipelineResourceInfoARM*         pResourceInfos,
-                                                             const VkAllocationCallbacks*                      pAllocator,
-                                                             VkPipeline*                                       pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithSingleNodeInfoARMARM(VkDevice                                          device,
+                                                                VkDeferredOperationKHR                            deferredOperation,
+                                                                VkPipelineCache                                   pipelineCache,
+                                                                void*                                             pNext,
+                                                                VkDataGraphPipelineNodeTypeARM                    nodeType,
+                                                                uint32_t                                          connectionCount,
+                                                                const VkDataGraphPipelineSingleNodeConnectionARM* pConnections,
+                                                                VkPipelineCreateFlags2                            flags,
+                                                                VkPipelineLayout                                  layout,
+                                                                uint32_t                                          resourceInfoCount,
+                                                                const VkDataGraphPipelineResourceInfoARM*         pResourceInfos,
+                                                                const VkAllocationCallbacks*                      pAllocator,
+                                                                VkPipeline*                                       pPipeline)
 {
     VkDataGraphPipelineSingleNodeCreateInfoARM create_info =
     {
@@ -33084,18 +33023,18 @@ VkResult cvkCreateDataGraphPipelineInfoWithSingleNodeInfoARM(VkDevice           
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateDataGraphPipelineInfoWithProcessingEngineInfoARM(VkDevice                                      device,
-                                                                   VkDeferredOperationKHR                        deferredOperation,
-                                                                   VkPipelineCache                               pipelineCache,
-                                                                   const void*                                   pNext,
-                                                                   uint32_t                                      processingEngineCount,
-                                                                   VkPhysicalDeviceDataGraphProcessingEngineARM* pProcessingEngines,
-                                                                   VkPipelineCreateFlags2                        flags,
-                                                                   VkPipelineLayout                              layout,
-                                                                   uint32_t                                      resourceInfoCount,
-                                                                   const VkDataGraphPipelineResourceInfoARM*     pResourceInfos,
-                                                                   const VkAllocationCallbacks*                  pAllocator,
-                                                                   VkPipeline*                                   pPipeline)
+VkResult cvkCreateDataGraphPipelineInfoWithProcessingEngineInfoARMARM(VkDevice                                      device,
+                                                                      VkDeferredOperationKHR                        deferredOperation,
+                                                                      VkPipelineCache                               pipelineCache,
+                                                                      const void*                                   pNext,
+                                                                      uint32_t                                      processingEngineCount,
+                                                                      VkPhysicalDeviceDataGraphProcessingEngineARM* pProcessingEngines,
+                                                                      VkPipelineCreateFlags2                        flags,
+                                                                      VkPipelineLayout                              layout,
+                                                                      uint32_t                                      resourceInfoCount,
+                                                                      const VkDataGraphPipelineResourceInfoARM*     pResourceInfos,
+                                                                      const VkAllocationCallbacks*                  pAllocator,
+                                                                      VkPipeline*                                   pPipeline)
 {
     VkDataGraphProcessingEngineCreateInfoARM create_info =
     {
@@ -33157,31 +33096,31 @@ VkResult cvkCreateDataGraphPipelineInfoWithShaderModuleInfoARM(VkDevice         
 
     return cvkCreateDataGraphPipelineInfoARM(device, deferredOperation, pipelineCache, &create_info, flags, layout, resourceInfoCount, pResourceInfos, pAllocator, pPipeline);
 }
-VkResult cvkCreateGraphicsPipelineWithAttachmentSampleCountInfoInfoAMD(VkDevice                                      device,
-                                                                       VkPipelineCache                               pipelineCache,
-                                                                       const void*                                   pNext,
-                                                                       uint32_t                                      colorAttachmentCount,
-                                                                       const VkSampleCountFlagBits*                  pColorAttachmentSamples,
-                                                                       VkSampleCountFlagBits                         depthStencilAttachmentSamples,
-                                                                       VkPipelineCreateFlags                         flags,
-                                                                       uint32_t                                      stageCount,
-                                                                       const VkPipelineShaderStageCreateInfo*        pStages,
-                                                                       const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
-                                                                       const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
-                                                                       const VkPipelineTessellationStateCreateInfo*  pTessellationState,
-                                                                       const VkPipelineViewportStateCreateInfo*      pViewportState,
-                                                                       const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
-                                                                       const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
-                                                                       const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
-                                                                       const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
-                                                                       const VkPipelineDynamicStateCreateInfo*       pDynamicState,
-                                                                       VkPipelineLayout                              layout,
-                                                                       VkRenderPass                                  renderPass,
-                                                                       uint32_t                                      subpass,
-                                                                       VkPipeline                                    basePipelineHandle,
-                                                                       int32_t                                       basePipelineIndex,
-                                                                       const VkAllocationCallbacks*                  pAllocator,
-                                                                       VkPipeline*                                   pPipeline)
+VkResult cvkCreateGraphicsPipelineWithAttachmentSampleCountInfoAMD(VkDevice                                      device,
+                                                                   VkPipelineCache                               pipelineCache,
+                                                                   const void*                                   pNext,
+                                                                   uint32_t                                      colorAttachmentCount,
+                                                                   const VkSampleCountFlagBits*                  pColorAttachmentSamples,
+                                                                   VkSampleCountFlagBits                         depthStencilAttachmentSamples,
+                                                                   VkPipelineCreateFlags                         flags,
+                                                                   uint32_t                                      stageCount,
+                                                                   const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                   const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                   const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                   const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                   const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                   const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                   const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                   const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                   const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                   const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                   VkPipelineLayout                              layout,
+                                                                   VkRenderPass                                  renderPass,
+                                                                   uint32_t                                      subpass,
+                                                                   VkPipeline                                    basePipelineHandle,
+                                                                   int32_t                                       basePipelineIndex,
+                                                                   const VkAllocationCallbacks*                  pAllocator,
+                                                                   VkPipeline*                                   pPipeline)
 {
     VkAttachmentSampleCountInfoAMD count_info =
     {
@@ -33391,30 +33330,30 @@ VkResult cvkCreateGraphicsPipelineWithShaderGroupsInfoNV(VkDevice               
                                      pAllocator,
                                      pPipeline);
 }
-VkResult cvkCreateGraphicsPipelineWithMultiviewPerViewAttributesInfoInfoNVX(VkDevice                                      device,
-                                                                            VkPipelineCache                               pipelineCache,
-                                                                            const void*                                   pNext,
-                                                                            VkBool32                                      perViewAttributes,
-                                                                            VkBool32                                      perViewAttributesPositionXOnly,
-                                                                            VkPipelineCreateFlags                         flags,
-                                                                            uint32_t                                      stageCount,
-                                                                            const VkPipelineShaderStageCreateInfo*        pStages,
-                                                                            const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
-                                                                            const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
-                                                                            const VkPipelineTessellationStateCreateInfo*  pTessellationState,
-                                                                            const VkPipelineViewportStateCreateInfo*      pViewportState,
-                                                                            const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
-                                                                            const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
-                                                                            const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
-                                                                            const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
-                                                                            const VkPipelineDynamicStateCreateInfo*       pDynamicState,
-                                                                            VkPipelineLayout                              layout,
-                                                                            VkRenderPass                                  renderPass,
-                                                                            uint32_t                                      subpass,
-                                                                            VkPipeline                                    basePipelineHandle,
-                                                                            int32_t                                       basePipelineIndex,
-                                                                            const VkAllocationCallbacks*                  pAllocator,
-                                                                            VkPipeline*                                   pPipeline)
+VkResult cvkCreateGraphicsPipelineWithMultiviewPerViewAttributesInfoNVX(VkDevice                                      device,
+                                                                        VkPipelineCache                               pipelineCache,
+                                                                        const void*                                   pNext,
+                                                                        VkBool32                                      perViewAttributes,
+                                                                        VkBool32                                      perViewAttributesPositionXOnly,
+                                                                        VkPipelineCreateFlags                         flags,
+                                                                        uint32_t                                      stageCount,
+                                                                        const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                        const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                        const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                        const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                        const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                        const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                        const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                        const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                        const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                        const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                        VkPipelineLayout                              layout,
+                                                                        VkRenderPass                                  renderPass,
+                                                                        uint32_t                                      subpass,
+                                                                        VkPipeline                                    basePipelineHandle,
+                                                                        int32_t                                       basePipelineIndex,
+                                                                        const VkAllocationCallbacks*                  pAllocator,
+                                                                        VkPipeline*                                   pPipeline)
 {
     VkMultiviewPerViewAttributesInfoNVX attributes_info =
     {
@@ -36078,20 +36017,20 @@ void cvkCmdBindPushDescriptorBufferHandleDescriptorBuffer(VkCommandBuffer comman
 {
     cvkCmdBindPushDescriptorBufferHandleDescriptorBuffers(commandBuffer, 1, &pNext, &buffer, &address, &usage);
 }
-VkResult cvkCreateIndirectBufferInfoComputePipelineNVs(VkDevice                               device,
-                                                       VkPipelineCache                        pipelineCache,
-                                                       uint32_t                               createInfoCount,
-                                                       const void* const*                     ppNexts,
-                                                       const VkDeviceAddress*                 pDeviceAddress,
-                                                       const VkDeviceSize*                    pSizes,
-                                                       const VkDeviceAddress*                 pPipelineDeviceAddressCaptureReplaies,
-                                                       const VkPipelineCreateFlags*           pFlags,
-                                                       const VkPipelineShaderStageCreateInfo* pStages,
-                                                       const VkPipelineLayout*                pLayouts,
-                                                       const VkPipeline*                      pBasePipelineHandles,
-                                                       const int32_t*                         pBasePipelineIndices,
-                                                       const VkAllocationCallbacks*           pAllocator,
-                                                       VkPipeline*                            pPipelines)
+VkResult cvkCreateIndirectBufferComputePipelineNVs(VkDevice                               device,
+                                                   VkPipelineCache                        pipelineCache,
+                                                   uint32_t                               createInfoCount,
+                                                   const void* const*                     ppNexts,
+                                                   const VkDeviceAddress*                 pDeviceAddress,
+                                                   const VkDeviceSize*                    pSizes,
+                                                   const VkDeviceAddress*                 pPipelineDeviceAddressCaptureReplaies,
+                                                   const VkPipelineCreateFlags*           pFlags,
+                                                   const VkPipelineShaderStageCreateInfo* pStages,
+                                                   const VkPipelineLayout*                pLayouts,
+                                                   const VkPipeline*                      pBasePipelineHandles,
+                                                   const int32_t*                         pBasePipelineIndices,
+                                                   const VkAllocationCallbacks*           pAllocator,
+                                                   VkPipeline*                            pPipelines)
 {
     VkComputePipelineCreateInfo           create_infos[CVK_MAX_CREATE_INFOS];
     VkComputePipelineIndirectBufferInfoNV buffer_infos[CVK_MAX_CREATE_INFOS];
@@ -36123,34 +36062,34 @@ VkResult cvkCreateIndirectBufferInfoComputePipelineNVs(VkDevice                 
 
     return cvkCreateComputePipelines(device, pipelineCache, createInfoCount, create_infos, pAllocator, pPipelines);
 }
-VkResult cvkCreateIndirectBufferInfoComputePipelineNV(VkDevice                        device,
-                                                      VkPipelineCache                 pipelineCache,
-                                                      const void*                     pNext,
-                                                      VkDeviceAddress                 deviceAddress,
-                                                      VkDeviceSize                    size,
-                                                      VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
-                                                      VkPipelineCreateFlags           flags,
-                                                      VkPipelineShaderStageCreateInfo stage,
-                                                      VkPipelineLayout                layout,
-                                                      VkPipeline                      basePipelineHandle,
-                                                      int32_t                         basePipelineIndex,
-                                                      const VkAllocationCallbacks*    pAllocator,
-                                                      VkPipeline*                     pPipelines)
+VkResult cvkCreateIndirectBufferComputePipelineNV(VkDevice                        device,
+                                                  VkPipelineCache                 pipelineCache,
+                                                  const void*                     pNext,
+                                                  VkDeviceAddress                 deviceAddress,
+                                                  VkDeviceSize                    size,
+                                                  VkDeviceAddress                 pipelineDeviceAddressCaptureReplay,
+                                                  VkPipelineCreateFlags           flags,
+                                                  VkPipelineShaderStageCreateInfo stage,
+                                                  VkPipelineLayout                layout,
+                                                  VkPipeline                      basePipelineHandle,
+                                                  int32_t                         basePipelineIndex,
+                                                  const VkAllocationCallbacks*    pAllocator,
+                                                  VkPipeline*                     pPipelines)
 {
-    return cvkCreateIndirectBufferInfoComputePipelineNVs(device,
-                                                         pipelineCache,
-                                                         1,
-                                                         &pNext,
-                                                         &deviceAddress,
-                                                         &size,
-                                                         &pipelineDeviceAddressCaptureReplay,
-                                                         &flags,
-                                                         &stage,
-                                                         &layout,
-                                                         &basePipelineHandle,
-                                                         &basePipelineIndex,
-                                                         pAllocator,
-                                                         pPipelines);
+    return cvkCreateIndirectBufferComputePipelineNVs(device,
+                                                     pipelineCache,
+                                                     1,
+                                                     &pNext,
+                                                     &deviceAddress,
+                                                     &size,
+                                                     &pipelineDeviceAddressCaptureReplay,
+                                                     &flags,
+                                                     &stage,
+                                                     &layout,
+                                                     &basePipelineHandle,
+                                                     &basePipelineIndex,
+                                                     pAllocator,
+                                                     pPipelines);
 }
 VkResult cvkCreateCompilerControlComputePipelineAMDs(VkDevice                                 device,
                                                      VkPipelineCache                          pipelineCache,
@@ -43290,11 +43229,11 @@ VkResult cvkGetPhysicalDeviceDisplayNativeHdrSurfaceCapabilitiesAMD(VkPhysicalDe
 
     return result;
 }
-VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2CreateInfoInfoKHR(VkPhysicalDevice                 physicalDevice,
-                                                                                      const void*                      pSurfaceInfoNext,
-                                                                                      VkSurfaceKHR                     surface,
-                                                                                      void*                            pImageUsageFlags2CreateInfoKHRNext,
-                                                                                      VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR)
+VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesWithImageUsageFlags2InfoKHR(VkPhysicalDevice                 physicalDevice,
+                                                                            const void*                      pSurfaceInfoNext,
+                                                                            VkSurfaceKHR                     surface,
+                                                                            void*                            pImageUsageFlags2CreateInfoKHRNext,
+                                                                            VkImageUsageFlags2CreateInfoKHR* pImageUsageFlags2CreateInfoKHR)
 {
     VkResult                        result;
     VkSurfaceCapabilities2KHR       surface_capabilities;
@@ -44634,7 +44573,6 @@ void cvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
     cvkGetImageMemoryRequirements(device, image, &memory_requirements);
 
     memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
-
     CVK_ASSERT(VK_INVALID != memory_type_index);
 
     cvkAllocateMemory(device, pMemoryNext, memory_requirements.size, memory_type_index, pAllocator, pMemory);
@@ -44653,7 +44591,6 @@ void cvkAllocateBufferMemory(VkPhysicalDevice             physicalDevice,
     cvkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
 
     memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
-
     CVK_ASSERT(VK_INVALID != memory_type_index);
 
     cvkAllocateMemory(device, pMemoryNext, memory_requirements.size, memory_type_index, pAllocator, pMemory);
@@ -44698,7 +44635,7 @@ void cvkSetupImage(VkPhysicalDevice             physicalDevice,
                    pAllocator,
                    pImage);
     cvkAllocateImageMemory(physicalDevice, device, (*pImage), requiredProperties, pMemoryNext, pAllocator, pMemory);
-    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
 void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
                     VkDevice                     device,
@@ -44717,7 +44654,7 @@ void cvkSetupBuffer(VkPhysicalDevice             physicalDevice,
 {
     cvkCreateBuffer(device, pBufferNext, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
     cvkAllocateBufferMemory(physicalDevice, device, (*pBuffer), requiredProperties, pMemoryNext, pAllocator, pMemory);
-    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
 }
 void cvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
                          uint32_t                        queueFamilyIndex,
@@ -44739,7 +44676,6 @@ void cvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
     VkDeviceQueueCreateInfo device_queue_create_info;
 
     extensions_supported = cvkGetPhysicalDeviceExtensionSupport(physicalDevice, NULL, enabledExtensionCount, ppEnabledExtensionNames);
-
     CVK_ASSERT(extensions_supported);
 
     cvkInitDeviceQueueCreateInfo(&device_queue_create_info, pQueueNext, queueFlags, queueFamilyIndex, 1, &queuePriority);
@@ -44833,7 +44769,7 @@ void cvkCmdAcquireImageFromExternal(VkCommandBuffer         commandBuffer,
 {
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pNext,
-                                     0,
+                                     (VkAccessFlags)0,
                                      dstAccessMask,
                                      oldLayout,
                                      newLayout,
@@ -44859,7 +44795,7 @@ void cvkCmdReleaseImageToExternal(VkCommandBuffer         commandBuffer,
     cvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                      pNext,
                                      srcAccessMask,
-                                     0,
+                                     (VkAccessFlags)0,
                                      oldLayout,
                                      newLayout,
                                      srcQueueFamilyIndex,
@@ -44924,7 +44860,7 @@ void cvkCmdAcquireBufferFromExternal(VkCommandBuffer      commandBuffer,
 {
     cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                       pNext,
-                                      0,
+                                      (VkAccessFlags)0,
                                       dstAccessMask,
                                       VK_QUEUE_FAMILY_EXTERNAL,
                                       dstQueueFamilyIndex,
@@ -44948,7 +44884,7 @@ void cvkCmdReleaseBufferToExternal(VkCommandBuffer      commandBuffer,
     cvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                       pNext,
                                       srcAccessMask,
-                                      0,
+                                      (VkAccessFlags)0,
                                       srcQueueFamilyIndex,
                                       VK_QUEUE_FAMILY_EXTERNAL,
                                       buffer,
@@ -45084,7 +45020,7 @@ void cvkUpdateBufferDescriptorSet(VkDevice         device,
 }
 void cvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
 {
-    cvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_TIMESTAMP, queryCount, 0, pAllocator, pQueryPool);
+    cvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_TIMESTAMP, queryCount, (VkQueryPipelineStatisticFlags)0, pAllocator, pQueryPool);
 }
 VkResult cvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults)
 {
@@ -45095,7 +45031,9 @@ VkResult cvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32
                                   (size_t)queryCount * sizeof(uint64_t),
                                   pResults,
                                   sizeof(uint64_t),
-                                  (VkQueryResultFlags)(flags | (VkFlags)VK_QUERY_RESULT_64_BIT));
+                                  (VkQueryResultFlags)(
+                                      flags |
+                                      (VkFlags)VK_QUERY_RESULT_64_BIT));
 }
 void cvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
 {
@@ -45259,15 +45197,15 @@ void cvkQueueSubmitCommandBufferAndWaitIdle(VkQueue                     queue,
 }
 void cvkMapWholeMemory(VkDevice device, VkDeviceMemory memory, void** ppData)
 {
-    cvkMapMemory(device, memory, 0, VK_WHOLE_SIZE, 0, ppData);
+    cvkMapMemory(device, memory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, ppData);
 }
 void cvkFlushWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory)
 {
-    cvkFlushMappedMemoryRange(device, pNext, memory, 0, VK_WHOLE_SIZE);
+    cvkFlushMappedMemoryRange(device, pNext, memory, VK_NO_OFFSET, VK_WHOLE_SIZE);
 }
 void cvkInvalidateWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory)
 {
-    cvkInvalidateMappedMemoryRange(device, pNext, memory, 0, VK_WHOLE_SIZE);
+    cvkInvalidateMappedMemoryRange(device, pNext, memory, VK_NO_OFFSET, VK_WHOLE_SIZE);
 }
 void cvkAllocateDeviceLocalImageMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkImage image, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
@@ -45282,7 +45220,9 @@ void cvkAllocateHostVisibleBufferMemory(VkPhysicalDevice physicalDevice, VkDevic
     cvkAllocateBufferMemory(physicalDevice,
                             device,
                             buffer,
-                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                            (VkMemoryPropertyFlags)(
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                             pMemoryNext,
                             pAllocator,
                             pMemory);
@@ -45382,7 +45322,9 @@ void cvkSetupHostVisibleBuffer(VkPhysicalDevice             physicalDevice,
                    sharingMode,
                    queueFamilyIndexCount,
                    pQueueFamilyIndices,
-                   (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                   (VkMemoryPropertyFlags)(
+                       (VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                       (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                    pMemoryNext,
                    pAllocator,
                    pBuffer,
@@ -45571,7 +45513,6 @@ VkPhysicalDevice cvkGetPhysicalDeviceByIndex(VkInstance instance, uint32_t physi
     uint32_t         physical_device_count;
 
     physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
-
     CVK_ASSERT(physical_device_count > physicalDeviceIndex);
 
     return physical_devices[physicalDeviceIndex];
@@ -45598,7 +45539,6 @@ void cvkSetupComputeDeviceQueue(VkPhysicalDevice                physicalDevice,
     uint32_t queue_family_index;
 
     queue_family_index = cvkGetPhysicalDeviceComputeQueueFamilyIndex(physicalDevice);
-
     CVK_ASSERT(VK_INVALID != queue_family_index);
 
     cvkSetupDeviceQueue(physicalDevice,
@@ -45639,7 +45579,6 @@ void cvkSetupGraphicsDeviceQueue(VkPhysicalDevice                physicalDevice,
     uint32_t queue_family_index;
 
     queue_family_index = cvkGetPhysicalDeviceGraphicsQueueFamilyIndex(physicalDevice);
-
     CVK_ASSERT(VK_INVALID != queue_family_index);
 
     cvkSetupDeviceQueue(physicalDevice,
@@ -45680,7 +45619,6 @@ void cvkSetupTransferDeviceQueue(VkPhysicalDevice                physicalDevice,
     uint32_t queue_family_index;
 
     queue_family_index = cvkGetPhysicalDeviceTransferQueueFamilyIndex(physicalDevice);
-
     CVK_ASSERT(VK_INVALID != queue_family_index);
 
     cvkSetupDeviceQueue(physicalDevice,
@@ -45776,11 +45714,11 @@ void cvkUpdateUniformBufferDescriptorSet(VkDevice        device,
 }
 void cvkUpdateWholeStorageBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
 {
-    cvkUpdateStorageBufferDescriptorSet(device, buffer, 0, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
+    cvkUpdateStorageBufferDescriptorSet(device, buffer, VK_NO_OFFSET, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
 }
 void cvkUpdateWholeUniformBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
 {
-    cvkUpdateUniformBufferDescriptorSet(device, buffer, 0, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
+    cvkUpdateUniformBufferDescriptorSet(device, buffer, VK_NO_OFFSET, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
 }
 void cvkCmdWriteTopOfPipeTimestamp(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
 {
@@ -46072,9 +46010,18 @@ void cvkCreateColorRenderPass(VkDevice                     device,
     VkAttachmentReference   attachment_reference;
     VkSubpassDescription    subpass_description;
 
-    cvkInitAttachmentDescription(&attachment_description, 0, format, samples, loadOp, storeOp, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, initialLayout, finalLayout);
+    cvkInitAttachmentDescription(&attachment_description,
+                                 (VkAttachmentDescriptionFlags)0,
+                                 format,
+                                 samples,
+                                 loadOp,
+                                 storeOp,
+                                 VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                 VK_ATTACHMENT_STORE_OP_DONT_CARE,
+                                 initialLayout,
+                                 finalLayout);
     cvkInitAttachmentReference(&attachment_reference, 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-    cvkInitSubpassDescription(&subpass_description, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, 1, &attachment_reference, NULL, NULL, 0, NULL);
+    cvkInitSubpassDescription(&subpass_description, (VkSubpassDescriptionFlags)0, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, 1, &attachment_reference, NULL, NULL, 0, NULL);
     cvkCreateRenderPass(device, pRenderPassNext, flags, 1, &attachment_description, 1, &subpass_description, 0, NULL, pAllocator, pRenderPass);
 }
 VkResult cvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapchain, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
@@ -46216,7 +46163,11 @@ void cvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachme
         VK_BLEND_FACTOR_ONE,
         VK_BLEND_FACTOR_ZERO,
         VK_BLEND_OP_ADD,
-        (VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | (VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT));
+        (VkColorComponentFlags)(
+            (VkFlags)VK_COLOR_COMPONENT_R_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_G_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_B_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_A_BIT));
 }
 void cvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo)
 {
@@ -46229,7 +46180,11 @@ void cvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAtta
         VK_BLEND_FACTOR_ONE,
         VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
         VK_BLEND_OP_ADD,
-        (VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | (VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT));
+        (VkColorComponentFlags)(
+            (VkFlags)VK_COLOR_COMPONENT_R_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_G_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_B_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_A_BIT));
 }
 void cvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo*       pInfo,
                                                               const void*                                pNext,
@@ -46314,7 +46269,7 @@ VkResult cvkSetupGraphicsPipeline(VkDevice                                      
                                      pipelineCache,
                                      pPipelineNext,
                                      flags,
-                                     2,
+                                     VK_COUNT_OF(shader_stages),
                                      shader_stages,
                                      pVertexInputState,
                                      pInputAssemblyState,
@@ -46426,7 +46381,7 @@ VkResult cvkCreateFragmentShader(VkDevice                     device,
                            pShaderNext,
                            flags,
                            VK_SHADER_STAGE_FRAGMENT_BIT,
-                           0,
+                           (VkShaderStageFlags)0,
                            VK_SHADER_CODE_TYPE_SPIRV_EXT,
                            codeSize,
                            pCode,
@@ -46457,7 +46412,7 @@ VkResult cvkCreateComputeShader(VkDevice                     device,
                            pShaderNext,
                            flags,
                            VK_SHADER_STAGE_COMPUTE_BIT,
-                           0,
+                           (VkShaderStageFlags)0,
                            VK_SHADER_CODE_TYPE_SPIRV_EXT,
                            codeSize,
                            pCode,
@@ -46472,9 +46427,9 @@ VkResult cvkCreateComputeShader(VkDevice                     device,
 }
 void cvkCmdBindComputeShader(VkCommandBuffer commandBuffer, VkShaderEXT shader)
 {
-    VkShaderStageFlagBits stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    VkShaderStageFlagBits stages[] = {VK_SHADER_STAGE_COMPUTE_BIT};
 
-    cvkCmdBindShaders(commandBuffer, 1, &stage, &shader);
+    cvkCmdBindShaders(commandBuffer, VK_COUNT_OF(stages), stages, &shader);
 }
 uint32_t cvkGetPhysicalDeviceVideoQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkVideoCodecOperationFlagsKHR requiredOperations)
 {
@@ -46504,7 +46459,6 @@ void cvkSetupVideoDeviceQueue(VkPhysicalDevice                physicalDevice,
     uint32_t queue_family_index;
 
     queue_family_index = cvkGetPhysicalDeviceVideoQueueFamilyIndex(physicalDevice, requiredOperations);
-
     CVK_ASSERT(VK_INVALID != queue_family_index);
 
     cvkSetupDeviceQueue(physicalDevice,
@@ -46542,7 +46496,7 @@ VkBool32 cvkGetPhysicalDeviceVideoProfileSupport(VkPhysicalDevice physicalDevice
 }
 void cvkCreateResultStatusQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
 {
-    cvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_RESULT_STATUS_ONLY_KHR, queryCount, 0, pAllocator, pQueryPool);
+    cvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_RESULT_STATUS_ONLY_KHR, queryCount, (VkQueryPipelineStatisticFlags)0, pAllocator, pQueryPool);
 }
 void cvkCreateVideoEncodeFeedbackQueryPool(VkDevice                      device,
                                            const void*                   pQueryPoolNext,
@@ -46552,7 +46506,15 @@ void cvkCreateVideoEncodeFeedbackQueryPool(VkDevice                      device,
                                            const VkAllocationCallbacks*  pAllocator,
                                            VkQueryPool*                  pQueryPool)
 {
-    cvkCreateQueryPoolWithVideoEncodeFeedbackInfo(device, pQueryPoolNext, encodeFeedbackFlags, flags, VK_QUERY_TYPE_VIDEO_ENCODE_FEEDBACK_KHR, queryCount, 0, pAllocator, pQueryPool);
+    cvkCreateQueryPoolWithVideoEncodeFeedbackInfo(device,
+                                                  pQueryPoolNext,
+                                                  encodeFeedbackFlags,
+                                                  flags,
+                                                  VK_QUERY_TYPE_VIDEO_ENCODE_FEEDBACK_KHR,
+                                                  queryCount,
+                                                  (VkQueryPipelineStatisticFlags)0,
+                                                  pAllocator,
+                                                  pQueryPool);
 }
 void cvkSetupBufferWithVideoProfileListInfo(VkPhysicalDevice             physicalDevice,
                                             VkDevice                     device,
@@ -46573,7 +46535,7 @@ void cvkSetupBufferWithVideoProfileListInfo(VkPhysicalDevice             physica
 {
     cvkCreateBufferWithVideoProfileListInfo(device, pBufferNext, profileCount, pProfiles, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
     cvkAllocateBufferMemory(physicalDevice, device, (*pBuffer), requiredProperties, pMemoryNext, pAllocator, pMemory);
-    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
 }
 void cvkSetupImageWithVideoProfileListInfo(VkPhysicalDevice             physicalDevice,
                                            VkDevice                     device,
@@ -46619,7 +46581,7 @@ void cvkSetupImageWithVideoProfileListInfo(VkPhysicalDevice             physical
                                            pAllocator,
                                            pImage);
     cvkAllocateImageMemory(physicalDevice, device, (*pImage), requiredProperties, pMemoryNext, pAllocator, pMemory);
-    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
 void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkPhysicalDevice            physicalDevice,
                                                       const void*                 pNext,
@@ -46631,7 +46593,6 @@ void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkPhysicalDevice          
     uint32_t                   video_format_property_count;
 
     video_format_property_count = cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, pNext, imageUsage, video_format_properties);
-
     CVK_ASSERT(video_format_property_count > videoFormatPropertyIndex);
 
     (*pVideoFormatProperties) = video_format_properties[videoFormatPropertyIndex];
@@ -46965,9 +46926,9 @@ void cvkCmdDecodeVideoPicture(VkCommandBuffer                    commandBuffer,
                               uint32_t                           boundReferenceSlotCount,
                               const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots)
 {
-    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, (VkVideoBeginCodingFlagsKHR)0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
     cvkCmdDecodeVideo(commandBuffer, pNext, flags, srcBuffer, srcBufferOffset, srcBufferRange, dstPictureResource, pSetupReferenceSlot, referenceSlotCount, pReferenceSlots);
-    cvkCmdEndVideoCoding(commandBuffer, NULL, 0);
+    cvkCmdEndVideoCoding(commandBuffer, NULL, (VkVideoEndCodingFlagsKHR)0);
 }
 void cvkCmdDecodeInitialVideoPicture(VkCommandBuffer                    commandBuffer,
                                      VkVideoSessionKHR                  videoSession,
@@ -46985,10 +46946,10 @@ void cvkCmdDecodeInitialVideoPicture(VkCommandBuffer                    commandB
                                      uint32_t                           boundReferenceSlotCount,
                                      const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots)
 {
-    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, (VkVideoBeginCodingFlagsKHR)0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
     cvkCmdResetVideoCoding(commandBuffer, NULL);
     cvkCmdDecodeVideo(commandBuffer, pNext, flags, srcBuffer, srcBufferOffset, srcBufferRange, dstPictureResource, pSetupReferenceSlot, referenceSlotCount, pReferenceSlots);
-    cvkCmdEndVideoCoding(commandBuffer, NULL, 0);
+    cvkCmdEndVideoCoding(commandBuffer, NULL, (VkVideoEndCodingFlagsKHR)0);
 }
 void cvkCmdEncodeVideoPicture(VkCommandBuffer                    commandBuffer,
                               VkVideoSessionKHR                  videoSession,
@@ -47007,7 +46968,7 @@ void cvkCmdEncodeVideoPicture(VkCommandBuffer                    commandBuffer,
                               uint32_t                           boundReferenceSlotCount,
                               const VkVideoReferenceSlotInfoKHR* pBoundReferenceSlots)
 {
-    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, (VkVideoBeginCodingFlagsKHR)0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
     cvkCmdEncodeVideo(commandBuffer,
                       pNext,
                       flags,
@@ -47019,7 +46980,7 @@ void cvkCmdEncodeVideoPicture(VkCommandBuffer                    commandBuffer,
                       referenceSlotCount,
                       pReferenceSlots,
                       precedingExternallyEncodedBytes);
-    cvkCmdEndVideoCoding(commandBuffer, NULL, 0);
+    cvkCmdEndVideoCoding(commandBuffer, NULL, (VkVideoEndCodingFlagsKHR)0);
 }
 void cvkCmdEncodeInitialVideoPicture(VkCommandBuffer                             commandBuffer,
                                      VkVideoSessionKHR                           videoSession,
@@ -47045,7 +47006,7 @@ void cvkCmdEncodeInitialVideoPicture(VkCommandBuffer                            
                                      const VkVideoReferenceSlotInfoKHR*          pBoundReferenceSlots,
                                      const void*                                 pRateControlNext)
 {
-    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, 0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
+    cvkCmdBeginVideoCoding(commandBuffer, pBeginNext, (VkVideoBeginCodingFlagsKHR)0, videoSession, videoSessionParameters, boundReferenceSlotCount, pBoundReferenceSlots);
     cvkCmdResetVideoCoding(commandBuffer, NULL);
     cvkCmdSetVideoEncodeRateControl(commandBuffer, pRateControlNext, flagsEncodeRate, rateControlMode, layerCount, pLayers, virtualBufferSizeInMs, initialVirtualBufferSizeInMs);
     cvkCmdEncodeVideo(commandBuffer,
@@ -47059,23 +47020,22 @@ void cvkCmdEncodeInitialVideoPicture(VkCommandBuffer                            
                       referenceSlotCount,
                       pReferenceSlots,
                       precedingExternallyEncodedBytes);
-    cvkCmdEndVideoCoding(commandBuffer, NULL, 0);
+    cvkCmdEndVideoCoding(commandBuffer, NULL, (VkVideoEndCodingFlagsKHR)0);
 }
 VkQueryResultStatusKHR cvkGetQueryResultStatus(VkDevice device, VkQueryPool queryPool, uint32_t query)
 {
-    VkResult result;
-    int32_t  status;
+    int32_t status;
 
-    result = cvkGetQueryPoolResults(device,
-                                    queryPool,
-                                    query,
-                                    1,
-                                    sizeof(status),
-                                    &status,
-                                    sizeof(status),
-                                    (VkQueryResultFlags)((VkFlags)VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | (VkFlags)VK_QUERY_RESULT_WAIT_BIT));
-
-    CVK_ASSERT(VK_SUCCESS == result);
+    CVK_CHECK(cvkGetQueryPoolResults(device,
+                                     queryPool,
+                                     query,
+                                     1,
+                                     sizeof(status),
+                                     &status,
+                                     sizeof(status),
+                                     (VkQueryResultFlags)(
+                                         (VkFlags)VK_QUERY_RESULT_WITH_STATUS_BIT_KHR |
+                                         (VkFlags)VK_QUERY_RESULT_WAIT_BIT)));
 
     return (VkQueryResultStatusKHR)status;
 }
@@ -47089,7 +47049,9 @@ void cvkCreateVideoEncodeBitstreamFeedbackQueryPool(VkDevice                    
     cvkCreateVideoEncodeFeedbackQueryPool(
         device,
         pQueryPoolNext,
-        (VkVideoEncodeFeedbackFlagsKHR)((VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR | (VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR),
+        (VkVideoEncodeFeedbackFlagsKHR)(
+            (VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+            (VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR),
         flags,
         queryCount,
         pAllocator,
@@ -47097,19 +47059,18 @@ void cvkCreateVideoEncodeBitstreamFeedbackQueryPool(VkDevice                    
 }
 VkQueryResultStatusKHR cvkGetVideoEncodeBitstreamFeedback(VkDevice device, VkQueryPool queryPool, uint32_t query, uint32_t* pBitstreamBufferOffset, uint32_t* pBitstreamBytesWritten)
 {
-    VkResult result;
     uint32_t feedback[3];
 
-    result = cvkGetQueryPoolResults(device,
-                                    queryPool,
-                                    query,
-                                    1,
-                                    sizeof(feedback),
-                                    feedback,
-                                    sizeof(feedback),
-                                    (VkQueryResultFlags)((VkFlags)VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | (VkFlags)VK_QUERY_RESULT_WAIT_BIT));
-
-    CVK_ASSERT(VK_SUCCESS == result);
+    CVK_CHECK(cvkGetQueryPoolResults(device,
+                                     queryPool,
+                                     query,
+                                     1,
+                                     sizeof(feedback),
+                                     feedback,
+                                     sizeof(feedback),
+                                     (VkQueryResultFlags)(
+                                         (VkFlags)VK_QUERY_RESULT_WITH_STATUS_BIT_KHR |
+                                         (VkFlags)VK_QUERY_RESULT_WAIT_BIT)));
 
     (*pBitstreamBufferOffset) = feedback[0];
     (*pBitstreamBytesWritten) = feedback[1];
@@ -47142,7 +47103,9 @@ VkResult cvkCreateGraphicsPipelineLibrary(VkDevice                              
                                                                     pipelineCache,
                                                                     pPipelineNext,
                                                                     flagsGraphicsLibrary,
-                                                                    (VkPipelineCreateFlags)(flags | (VkFlags)VK_PIPELINE_CREATE_LIBRARY_BIT_KHR),
+                                                                    (VkPipelineCreateFlags)(
+                                                                        flags |
+                                                                        (VkFlags)VK_PIPELINE_CREATE_LIBRARY_BIT_KHR),
                                                                     stageCount,
                                                                     pStages,
                                                                     pVertexInputState,
@@ -47399,7 +47362,7 @@ VkResult cvkSetupGraphicsPipelineWithRenderingInfo(VkDevice                     
                                                       depthAttachmentFormat,
                                                       stencilAttachmentFormat,
                                                       flags,
-                                                      2,
+                                                      VK_COUNT_OF(shader_stages),
                                                       shader_stages,
                                                       pVertexInputState,
                                                       pInputAssemblyState,
@@ -47420,13 +47383,15 @@ VkResult cvkSetupGraphicsPipelineWithRenderingInfo(VkDevice                     
 }
 void cvkCmdBindGraphicsShaders(VkCommandBuffer commandBuffer, VkShaderEXT vertexShader, VkShaderEXT fragmentShader)
 {
-    VkShaderStageFlagBits stages[2] = {VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT};
+    VkShaderStageFlagBits stages[2];
     VkShaderEXT           shaders[2];
 
+    stages[0]  = VK_SHADER_STAGE_VERTEX_BIT;
+    stages[1]  = VK_SHADER_STAGE_FRAGMENT_BIT;
     shaders[0] = vertexShader;
     shaders[1] = fragmentShader;
 
-    cvkCmdBindShaders(commandBuffer, 2, stages, shaders);
+    cvkCmdBindShaders(commandBuffer, VK_COUNT_OF(stages), stages, shaders);
 }
 void cvkSetupDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
                                  VkDevice                     device,
@@ -47450,7 +47415,9 @@ void cvkSetupDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
                               pBufferNext,
                               flags,
                               size,
-                              (VkBufferUsageFlags)(usage | (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
+                              (VkBufferUsageFlags)(
+                                  usage |
+                                  (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
                               sharingMode,
                               queueFamilyIndexCount,
                               pQueueFamilyIndices,
@@ -47481,7 +47448,9 @@ void cvkSetupHostVisibleDeviceAddressBuffer(VkPhysicalDevice             physica
                               pBufferNext,
                               flags,
                               size,
-                              (VkBufferUsageFlags)(usage | (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
+                              (VkBufferUsageFlags)(
+                                  usage |
+                                  (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
                               sharingMode,
                               queueFamilyIndexCount,
                               pQueueFamilyIndices,
@@ -47771,10 +47740,14 @@ void cvkCmdAccelerationStructureBuildBarrier(VkCommandBuffer commandBuffer)
     cvkCmdMemoryBarrier(commandBuffer,
                         NULL,
                         (VkAccessFlags)VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
-                        (VkAccessFlags)((VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR | (VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR),
+                        (VkAccessFlags)(
+                            (VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR |
+                            (VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR),
                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-                        (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR | (VkFlags)VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR),
-                        0);
+                        (VkPipelineStageFlags)(
+                            (VkFlags)VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR |
+                            (VkFlags)VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR),
+                        (VkDependencyFlags)0);
 }
 void cvkUpdateAccelerationStructureDescriptorSet(VkDevice                   device,
                                                  const void*                pNext,
@@ -47806,8 +47779,13 @@ void cvkCmdPushRayTracingConstants(VkCommandBuffer commandBuffer, VkPipelineLayo
 {
     cvkCmdPushConstants(commandBuffer,
                         layout,
-                        (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_RAYGEN_BIT_KHR | (VkFlags)VK_SHADER_STAGE_ANY_HIT_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR |
-                                             (VkFlags)VK_SHADER_STAGE_MISS_BIT_KHR | (VkFlags)VK_SHADER_STAGE_INTERSECTION_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CALLABLE_BIT_KHR),
+                        (VkShaderStageFlags)(
+                            (VkFlags)VK_SHADER_STAGE_RAYGEN_BIT_KHR |
+                            (VkFlags)VK_SHADER_STAGE_ANY_HIT_BIT_KHR |
+                            (VkFlags)VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR |
+                            (VkFlags)VK_SHADER_STAGE_MISS_BIT_KHR |
+                            (VkFlags)VK_SHADER_STAGE_INTERSECTION_BIT_KHR |
+                            (VkFlags)VK_SHADER_STAGE_CALLABLE_BIT_KHR),
                         offset,
                         size,
                         pValues);
@@ -47825,8 +47803,13 @@ void cvkCreateRayTracingPipelineLayout(VkDevice                     device,
     VkPushConstantRange push_constant_range;
 
     cvkInitPushConstantRange(&push_constant_range,
-                             (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_RAYGEN_BIT_KHR | (VkFlags)VK_SHADER_STAGE_ANY_HIT_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR |
-                                                  (VkFlags)VK_SHADER_STAGE_MISS_BIT_KHR | (VkFlags)VK_SHADER_STAGE_INTERSECTION_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CALLABLE_BIT_KHR),
+                             (VkShaderStageFlags)(
+                                 (VkFlags)VK_SHADER_STAGE_RAYGEN_BIT_KHR |
+                                 (VkFlags)VK_SHADER_STAGE_ANY_HIT_BIT_KHR |
+                                 (VkFlags)VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR |
+                                 (VkFlags)VK_SHADER_STAGE_MISS_BIT_KHR |
+                                 (VkFlags)VK_SHADER_STAGE_INTERSECTION_BIT_KHR |
+                                 (VkFlags)VK_SHADER_STAGE_CALLABLE_BIT_KHR),
                              pushConstantOffset,
                              pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1 : 0, &push_constant_range, pAllocator, pPipelineLayout);
@@ -47906,9 +47889,9 @@ VkResult cvkSetupRayTracingPipeline(VkDevice                         device,
                                        pipelineCache,
                                        pPipelineNext,
                                        flags,
-                                       3,
+                                       VK_COUNT_OF(shader_stages),
                                        shader_stages,
-                                       3,
+                                       VK_COUNT_OF(shader_groups),
                                        shader_groups,
                                        maxPipelineRayRecursionDepth,
                                        NULL,
@@ -48001,7 +47984,10 @@ void cvkCmdPushMeshShadingConstants(VkCommandBuffer commandBuffer, VkPipelineLay
 {
     cvkCmdPushConstants(commandBuffer,
                         layout,
-                        (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_TASK_BIT_EXT | (VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT | (VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
+                        (VkShaderStageFlags)(
+                            (VkFlags)VK_SHADER_STAGE_TASK_BIT_EXT |
+                            (VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT |
+                            (VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
                         offset,
                         size,
                         pValues);
@@ -48019,7 +48005,10 @@ void cvkCreateMeshShadingPipelineLayout(VkDevice                     device,
     VkPushConstantRange push_constant_range;
 
     cvkInitPushConstantRange(&push_constant_range,
-                             (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_TASK_BIT_EXT | (VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT | (VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
+                             (VkShaderStageFlags)(
+                                 (VkFlags)VK_SHADER_STAGE_TASK_BIT_EXT |
+                                 (VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT |
+                                 (VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
                              pushConstantOffset,
                              pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1 : 0, &push_constant_range, pAllocator, pPipelineLayout);
@@ -48074,7 +48063,7 @@ VkResult cvkSetupMeshShadingPipeline(VkDevice                                   
                                      pipelineCache,
                                      pPipelineNext,
                                      flags,
-                                     2,
+                                     VK_COUNT_OF(shader_stages),
                                      shader_stages,
                                      NULL,
                                      NULL,
@@ -48152,7 +48141,7 @@ VkResult cvkSetupTaskMeshShadingPipeline(VkDevice                               
                                      pipelineCache,
                                      pPipelineNext,
                                      flags,
-                                     3,
+                                     VK_COUNT_OF(shader_stages),
                                      shader_stages,
                                      NULL,
                                      NULL,
@@ -48310,25 +48299,31 @@ VkResult cvkCreateMeshShader(VkDevice                     device,
 }
 void cvkCmdBindMeshShadingShaders(VkCommandBuffer commandBuffer, VkShaderEXT meshShader, VkShaderEXT fragmentShader)
 {
-    VkShaderStageFlagBits stages[3] = {VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT};
+    VkShaderStageFlagBits stages[3];
     VkShaderEXT           shaders[3];
 
+    stages[0]  = VK_SHADER_STAGE_TASK_BIT_EXT;
+    stages[1]  = VK_SHADER_STAGE_MESH_BIT_EXT;
+    stages[2]  = VK_SHADER_STAGE_FRAGMENT_BIT;
     shaders[0] = VK_NULL_HANDLE;
     shaders[1] = meshShader;
     shaders[2] = fragmentShader;
 
-    cvkCmdBindShaders(commandBuffer, 3, stages, shaders);
+    cvkCmdBindShaders(commandBuffer, VK_COUNT_OF(stages), stages, shaders);
 }
 void cvkCmdBindTaskMeshShadingShaders(VkCommandBuffer commandBuffer, VkShaderEXT taskShader, VkShaderEXT meshShader, VkShaderEXT fragmentShader)
 {
-    VkShaderStageFlagBits stages[3] = {VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT};
+    VkShaderStageFlagBits stages[3];
     VkShaderEXT           shaders[3];
 
+    stages[0]  = VK_SHADER_STAGE_TASK_BIT_EXT;
+    stages[1]  = VK_SHADER_STAGE_MESH_BIT_EXT;
+    stages[2]  = VK_SHADER_STAGE_FRAGMENT_BIT;
     shaders[0] = taskShader;
     shaders[1] = meshShader;
     shaders[2] = fragmentShader;
 
-    cvkCmdBindShaders(commandBuffer, 3, stages, shaders);
+    cvkCmdBindShaders(commandBuffer, VK_COUNT_OF(stages), stages, shaders);
 }
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                          VkDebugUtilsMessageTypeFlagsEXT             messageTypes,
@@ -48378,12 +48373,11 @@ void cvkCreateDebugInstance(const void*                          pNext,
 
     /* capability: every extension must be supported; nothing is dropped silently */
     supported = cvkGetInstanceExtensionSupport(NULL, extension_count, extensions);
-
     CVK_ASSERT(supported);
 
     /* create with the messenger info chained, so creation itself is reported */
     cvkCreateInstanceWithDebugUtilsMessengerInfo(pNext,
-                                                 0,
+                                                 (VkDebugUtilsMessengerCreateFlagsEXT)0,
                                                  messageSeverity,
                                                  messageType,
                                                  pfnUserCallback,
@@ -48398,7 +48392,7 @@ void cvkCreateDebugInstance(const void*                          pNext,
                                                  pInstance);
 
     /* the messenger for every later message */
-    cvkCreateDebugUtilsMessenger((*pInstance), NULL, 0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
+    cvkCreateDebugUtilsMessenger((*pInstance), NULL, (VkDebugUtilsMessengerCreateFlagsEXT)0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
 }
 VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t pLuid[VK_LUID_SIZE])
 {
@@ -48460,7 +48454,6 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
     for (requirement_index = 0; requirement_index < memory_requirements_count; ++requirement_index)
     {
         memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements[requirement_index].memoryRequirements.memoryTypeBits, requiredProperties);
-
         CVK_ASSERT(VK_INVALID != memory_type_index);
 
         cvkAllocateMemory(device, pMemoryNext, memory_requirements[requirement_index].memoryRequirements.size, memory_type_index, pAllocator, &pMemories[requirement_index]);
@@ -48516,11 +48509,33 @@ void cvkSetupAccelerationStructure(VkPhysicalDevice                          phy
     cvkGetAccelerationStructureBuildSizes(device, VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, &build_geometry_info, pMaxPrimitiveCounts, NULL, &build_sizes_info);
 
     /* storage and structure */
-    cvkSetupAccelerationStructureBuffer(physicalDevice, device, NULL, 0, build_sizes_info.accelerationStructureSize, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
-    cvkCreateAccelerationStructure(device, NULL, 0, (*pBuffer), 0, build_sizes_info.accelerationStructureSize, type, 0, pAllocator, pAccelerationStructure);
+    cvkSetupAccelerationStructureBuffer(physicalDevice,
+                                        device,
+                                        NULL,
+                                        (VkBufferCreateFlags)0,
+                                        build_sizes_info.accelerationStructureSize,
+                                        VK_SHARING_MODE_EXCLUSIVE,
+                                        0,
+                                        NULL,
+                                        NULL,
+                                        pAllocator,
+                                        pBuffer,
+                                        pMemory);
+    cvkCreateAccelerationStructure(device, NULL, (VkAccelerationStructureCreateFlagsKHR)0, (*pBuffer), 0, build_sizes_info.accelerationStructureSize, type, 0, pAllocator, pAccelerationStructure);
 
     /* scratch, with room to align its address */
-    cvkSetupScratchBuffer(physicalDevice, device, NULL, 0, build_sizes_info.buildScratchSize + scratch_alignment, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pScratchBuffer, pScratchMemory);
+    cvkSetupScratchBuffer(physicalDevice,
+                          device,
+                          NULL,
+                          (VkBufferCreateFlags)0,
+                          build_sizes_info.buildScratchSize + scratch_alignment,
+                          VK_SHARING_MODE_EXCLUSIVE,
+                          0,
+                          NULL,
+                          NULL,
+                          pAllocator,
+                          pScratchBuffer,
+                          pScratchMemory);
 
     (*pScratchDeviceAddress) = cvkAlignDeviceSize(cvkGetBufferDeviceAddress(device, NULL, (*pScratchBuffer)), scratch_alignment);
 }
@@ -48560,7 +48575,18 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
     hit_size      = cvkAlignDeviceSize(hitGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
     callable_size = cvkAlignDeviceSize(callableGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
 
-    cvkSetupShaderBindingTableBuffer(physicalDevice, device, NULL, 0, raygen_size + miss_size + hit_size + callable_size, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    cvkSetupShaderBindingTableBuffer(physicalDevice,
+                                     device,
+                                     NULL,
+                                     (VkBufferCreateFlags)0,
+                                     raygen_size + miss_size + hit_size + callable_size,
+                                     VK_SHARING_MODE_EXCLUSIVE,
+                                     0,
+                                     NULL,
+                                     NULL,
+                                     pAllocator,
+                                     pBuffer,
+                                     pMemory);
 
     base_address = cvkGetBufferDeviceAddress(device, NULL, (*pBuffer));
 
@@ -49310,13 +49336,13 @@ void cvkCmdTransferBufferToExternalImage(VkCommandBuffer          commandBuffer,
                                               imageSubresource,
                                               pImageAcquireBarrierNext,
                                               (VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                              0,
+                                              (VkAccessFlags)0,
                                               initialImageLayout,
                                               VK_QUEUE_FAMILY_EXTERNAL,
                                               queueFamilyIndex,
                                               pImageBarrierNext,
                                               (VkPipelineStageFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                              0,
+                                              (VkAccessFlags)0,
                                               finalImageLayout,
                                               queueFamilyIndex,
                                               VK_QUEUE_FAMILY_EXTERNAL);

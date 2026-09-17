@@ -14,7 +14,12 @@ first, then the generator, then regenerate and re-run the studies.
 - `cvk.policy.json`: profile (core version, extension list or `"all"`, platforms), capacity
   constants, `role_overrides` for registry quirks, the tier-1' substitution table, and the
   tier-2 chain table. The profile is `VK_VERSION_1_4` with every extension whose platform is
-  none or one of the profile's platforms (`win32`, `xlib`).
+  none or one of the profile's platforms. `platforms: "all"` selects every platform
+  category in that profile's registry, including provisional extensions. A list selects
+  only the named categories. Output is independent of the generation host; categories
+  with no supported entities in an API profile do not produce empty files.
+  CMake's `CVK_PLATFORMS` list independently selects which generated pairs to compile
+  for the target SDK and derives their protect macros from the pinned registry.
 
 ## 2. Outputs
 
@@ -23,11 +28,25 @@ linkage guards. Fixed-width integer types come from the Vulkan SDK and `<stdint.
 Integer literals omit unsigned suffixes when the surrounding expression or destination
 already supplies the required type. Keep suffixes where they affect correctness, such as
 `1u << memory_type_index`, which must support bit 31 without a signed left shift.
+Zero-valued flag arguments explicitly name the destination mask type, for example
+`(VkAccessFlags)0`, in generated compositions and authored protocols.
+Zero byte offsets in memory binding, mapping, mapped ranges, and whole-buffer descriptors
+use `VK_NO_OFFSET`, defined by the generated core headers as `((VkDeviceSize)0)`.
+Shader-object binding helpers derive the stage count with `VK_COUNT_OF(stages)`.
+When parallel shader storage is needed, declare a sized stages array and the shader
+array first, then assign their elements. A lone stages array may use an initializer.
+`VK_COUNT_OF` returns a `uint32_t` element count for an array; it is not for pointer
+arguments. Parallel shader arrays declare the same explicit numeric size as the stages array.
+Pipeline setup helpers likewise pass `VK_COUNT_OF(shader_stages)` and
+`VK_COUNT_OF(shader_groups)` when consuming those complete local arrays.
 Calls to `memcpy`, `memset`, and `memmove` that discard the return value explicitly
 cast it to `(void)`, in generated code and authored protocols alike.
 The JSON reader parses 64-bit integers without `strtoull`/`strtoll`. Vulkan format
 helpers use the pinned Vulkan-Utility-Libraries `vk_format_utils.h` as a private
 implementation dependency. The SC profile omits these Vulkan-only helpers.
+Core JSON numeric readers accept platform API constant names using their typed registry
+values, without including native SDK headers. Platform sources expose their Vulkan
+extension declarations before including Volk so its dispatch declarations are complete.
 
 **Rule zero: the outputs are never edited by hand.** Any defect in `include/cvk.h` or
 `src/cvk.c` is a defect in a rule here or in `scripts/generate.py`. Fix the rule, regenerate,
@@ -48,7 +67,7 @@ wrong by definition.
   may declare the variant it belongs to (`Profile: vulkan` on the format protocols, whose
   utility-library tables describe formats the SC headers lack).
 - `include/<platform>/cvk_<platform>.h`, `src/<platform>/cvk_<platform>.c` per registry
-  platform (`win32`, `xlib`), each including `cvk.h` and its platform headers. The same
+  platform, each including `cvk.h` and its native and Vulkan platform headers. The same
   layout applies to `scvk` and the `posix` protocol pair; sources include their headers
   as `<platform>/<prefix>_<platform>.h` relative to the public `include/` directory.
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
@@ -216,6 +235,7 @@ A return statement is separated from a preceding statement or completed block by
 line. A return that is the first statement in its block does not gain a leading blank line.
 Assertion groups are followed by a blank line before the next statement, including loops
 and calls. Consecutive assertions stay together; no blank line is added before a closing brace.
+Do not insert a blank line before an assertion checking the preceding operation's result.
 Enumeration loop indices are declared with the function's other locals, without an extra
 scope around the loop.
 An adjacent local declaration and designated assignment are combined into one initialized
@@ -240,6 +260,13 @@ singular (`cvkCreateGraphicsPipelineWithRenderingInfo`, `cvkCreateComputePipelin
 coincide (`VkPipelineLibraryCreateInfoKHR` and `VkGraphicsPipelineLibraryCreateInfoEXT` both
 leave `Library`) each take their whole struct name instead
 (`cvkCreateGraphicsPipelineWithPipelineLibraryInfo`, `cvkCreateGraphicsPipelineWithGraphicsPipelineLibraryInfo`).
+`shared_extender_members` reuses a base scalar parameter when policy records a required
+equality. `VkPresentTimesInfoGOOGLE::swapchainCount` shares `VkPresentInfoKHR`'s count
+as required by `VUID-VkPresentTimesInfoGOOGLE-swapchainCount-01247`.
+Retained vendor tags are set aside while removing trailing struct-kind, `Info`, and
+version tokens, then restored at the end of the derived name. Thus `VkPresentTimesInfoGOOGLE`
+produces `cvkQueuePresentWithTimesInfoGOOGLE`, with exactly one `Info`.
+
 An extender member colliding with a base member is disambiguated as in section 3, vendor tags
 excluded (`VkGraphicsPipelineLibraryFlagsEXT flags` beside `VkPipelineCreateFlags flags` →
 `flagsGraphicsLibrary`).
@@ -340,6 +367,9 @@ policy file. **The chain's signature is computed from its steps' signatures**, n
   `set` assigns a chain output; `store`/`return` route a step's return value; `declare` adds a
   local with an initializer (`float blend_constants[4] = { 0.0f, ... }`); a `local` of the form
   `name[i]` is an element of a chain-local array sized by its highest index (`shader_stages[1]`);
+- `check: true` wraps a `VkResult`-returning call in `CVK_CHECK` when only `VK_SUCCESS`
+  is accepted. It replaces a result temporary followed by a success assertion and cannot
+  be combined with another return-value route;
 - two steps wanting one name for different types (`VkShaderModuleCreateFlags flags` and
   `VkPipelineCreateFlags flags`) is a generation error: the policy binds one of them to a
   declared input (`shaderModuleFlags`, `pipelineLayoutFlags`), so the unqualified name stays
@@ -356,6 +386,10 @@ Flag constants in bound mask arguments are cast to the registry's underlying `Vk
 typedef. A single flag constant gets only the destination typedef cast, for example
 `(VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT`. Aliases are preserved in the
 destination cast. Ordinary enum arguments and already-typed mask variables pass through unchanged.
+Compound mask expressions break after the destination cast's opening parenthesis, with
+one operand per line, indented one level from the cast. Binary operators end each
+continuation line; the closing parenthesis follows the final operand. This layout is
+restored after clang-format without formatter-disable comments.
 Authored protocol arguments, mask assignments and bit tests also cast flag-bit enums and
 enum-valued helper results explicitly to the corresponding flags typedef. This includes
 compound assignments and conditional expressions; enum-to-enum uses keep their enum type.

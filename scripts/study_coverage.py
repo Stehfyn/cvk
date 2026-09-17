@@ -181,7 +181,7 @@ def build_coverage():
                                commands=canonical, covered=sum(by_name[c]["status"] == "covered" for c in canonical)))
     return dict(
         registry=inventory["registry"], registry_sha256=inventory["registry_sha256"],
-        policy="cvk.policy.json", core=gen.core, platforms=policy["platforms"],
+        policy="cvk.policy.json", core=gen.core, platforms=sorted(gen.platforms),
         input_hashes={**fingerprints, **{p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest()
                                       for p in ("cvk.policy.json", "scripts/generate.py", "scripts/vkxml.py", "study/command_structs.json")}},
         summary=dict(canonical_commands=len(commands), command_spellings=inventory["command_count"],

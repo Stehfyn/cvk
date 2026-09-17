@@ -4225,7 +4225,6 @@ VkResult scvkAcquireNextImage2(VkDevice device, const void* pNext, VkSwapchainKH
     };
 
     result = vkAcquireNextImage2KHR(device, &acquire_info, pImageIndex);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -4235,7 +4234,6 @@ VkResult scvkAcquireNextImage(VkDevice device, VkSwapchainKHR swapchain, uint64_
     VkResult result;
 
     result = vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, pImageIndex);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -5364,7 +5362,6 @@ VkResult scvkCreateSharedSwapchains(VkDevice device, uint32_t swapchainCount, co
     VkResult result;
 
     result = vkCreateSharedSwapchainsKHR(device, swapchainCount, pCreateInfos, pAllocator, pSwapchains);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -5416,7 +5413,6 @@ VkResult scvkCreateSwapchain(VkDevice                      device,
     };
 
     result = vkCreateSwapchainKHR(device, &create_info, pAllocator, pSwapchain);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -5758,7 +5754,6 @@ VkResult scvkGetDeviceGroupSurfacePresentModes(VkDevice device, VkSurfaceKHR sur
     VkResult result;
 
     result = vkGetDeviceGroupSurfacePresentModesKHR(device, surface, pModes);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -5783,7 +5778,6 @@ PFN_vkVoidFunction scvkGetDeviceProcAddr(VkDevice device, const char* pName)
     PFN_vkVoidFunction function;
 
     function = vkGetDeviceProcAddr(device, pName);
-
     SCVK_ASSERT(NULL != function);
 
     return function;
@@ -5874,7 +5868,6 @@ VkResult scvkGetEventStatus(VkDevice device, VkEvent event)
     VkResult result;
 
     result = vkGetEventStatus(device, event);
-
     SCVK_ASSERT((0 <= result));
 
     return result;
@@ -5916,7 +5909,6 @@ VkResult scvkGetFenceStatus(VkDevice device, VkFence fence)
     VkResult result;
 
     result = vkGetFenceStatus(device, fence);
-
     SCVK_ASSERT((0 <= result));
 
     return result;
@@ -5958,7 +5950,6 @@ PFN_vkVoidFunction scvkGetInstanceProcAddr(VkInstance instance, const char* pNam
     PFN_vkVoidFunction function;
 
     function = vkGetInstanceProcAddr(instance, pName);
-
     SCVK_ASSERT(NULL != function);
 
     return function;
@@ -6190,7 +6181,6 @@ VkResult scvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         phy
     VkResult result;
 
     result = vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, type, tiling, usage, flags, pImageFormatProperties);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
 
     return result;
@@ -6210,7 +6200,6 @@ VkResult scvkGetPhysicalDeviceImageFormatProperties2(VkPhysicalDevice           
     };
 
     result = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, pImageFormatInfo, &image_format_properties);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
 
     if (0 <= result)
@@ -6353,7 +6342,6 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalD
     };
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &surface_capabilities);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -6375,7 +6363,6 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities2(VkPhysicalDevice physicalDevi
     };
 
     result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, pSurfaceInfo, &surface_capabilities);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
@@ -6390,7 +6377,6 @@ VkResult scvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevic
     VkResult result;
 
     result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -6446,7 +6432,6 @@ VkResult scvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, ui
     VkResult result;
 
     result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, pSupported);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -6456,7 +6441,6 @@ VkResult scvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_
     VkResult result;
 
     result = vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, dataSize, pData, stride, flags);
-
     SCVK_ASSERT((0 <= result));
 
     return result;
@@ -6486,7 +6470,6 @@ VkResult scvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSu
     VkResult result;
 
     result = vkGetSwapchainCounterEXT(device, swapchain, counter, pCounterValue);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result));
 
     return result;
@@ -6509,7 +6492,6 @@ VkResult scvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
     VkResult result;
 
     result = vkGetSwapchainStatusKHR(device, swapchain);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -6605,7 +6587,6 @@ VkResult scvkQueuePresent(VkQueue               queue,
     };
 
     result = vkQueuePresentKHR(queue, &present_info);
-
     SCVK_ASSERT((0 <= result) || (VK_ERROR_OUT_OF_DATE_KHR == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     return result;
@@ -6768,7 +6749,6 @@ VkResult scvkWaitForFences(VkDevice device, uint32_t fenceCount, const VkFence* 
     VkResult result;
 
     result = vkWaitForFences(device, fenceCount, pFences, waitAll, timeout);
-
     SCVK_ASSERT((0 <= result));
 
     return result;
@@ -6789,7 +6769,6 @@ VkResult scvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitF
     };
 
     result = vkWaitSemaphores(device, &wait_info, timeout);
-
     SCVK_ASSERT((0 <= result));
 
     return result;
@@ -10734,7 +10713,6 @@ void scvkAllocateImageMemory(VkPhysicalDevice             physicalDevice,
     scvkGetImageMemoryRequirements(device, image, &memory_requirements);
 
     memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
-
     SCVK_ASSERT(VK_INVALID != memory_type_index);
 
     scvkAllocateMemory(device, pMemoryNext, memory_requirements.size, memory_type_index, pAllocator, pMemory);
@@ -10753,7 +10731,6 @@ void scvkAllocateBufferMemory(VkPhysicalDevice             physicalDevice,
     scvkGetBufferMemoryRequirements(device, buffer, &memory_requirements);
 
     memory_type_index = scvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryTypeBits, requiredProperties);
-
     SCVK_ASSERT(VK_INVALID != memory_type_index);
 
     scvkAllocateMemory(device, pMemoryNext, memory_requirements.size, memory_type_index, pAllocator, pMemory);
@@ -10798,7 +10775,7 @@ void scvkSetupImage(VkPhysicalDevice             physicalDevice,
                     pAllocator,
                     pImage);
     scvkAllocateImageMemory(physicalDevice, device, (*pImage), requiredProperties, pMemoryNext, pAllocator, pMemory);
-    scvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    scvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
 void scvkSetupBuffer(VkPhysicalDevice             physicalDevice,
                      VkDevice                     device,
@@ -10817,7 +10794,7 @@ void scvkSetupBuffer(VkPhysicalDevice             physicalDevice,
 {
     scvkCreateBuffer(device, pBufferNext, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
     scvkAllocateBufferMemory(physicalDevice, device, (*pBuffer), requiredProperties, pMemoryNext, pAllocator, pMemory);
-    scvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    scvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
 }
 void scvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
                           uint32_t                        queueFamilyIndex,
@@ -10839,7 +10816,6 @@ void scvkSetupDeviceQueue(VkPhysicalDevice                physicalDevice,
     VkDeviceQueueCreateInfo device_queue_create_info;
 
     extensions_supported = scvkGetPhysicalDeviceExtensionSupport(physicalDevice, NULL, enabledExtensionCount, ppEnabledExtensionNames);
-
     SCVK_ASSERT(extensions_supported);
 
     scvkInitDeviceQueueCreateInfo(&device_queue_create_info, pQueueNext, queueFlags, queueFamilyIndex, 1, &queuePriority);
@@ -10933,7 +10909,7 @@ void scvkCmdAcquireImageFromExternal(VkCommandBuffer         commandBuffer,
 {
     scvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                       pNext,
-                                      0,
+                                      (VkAccessFlags)0,
                                       dstAccessMask,
                                       oldLayout,
                                       newLayout,
@@ -10959,7 +10935,7 @@ void scvkCmdReleaseImageToExternal(VkCommandBuffer         commandBuffer,
     scvkCmdImageQueueOwnershipBarrier(commandBuffer,
                                       pNext,
                                       srcAccessMask,
-                                      0,
+                                      (VkAccessFlags)0,
                                       oldLayout,
                                       newLayout,
                                       srcQueueFamilyIndex,
@@ -11024,7 +11000,7 @@ void scvkCmdAcquireBufferFromExternal(VkCommandBuffer      commandBuffer,
 {
     scvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                        pNext,
-                                       0,
+                                       (VkAccessFlags)0,
                                        dstAccessMask,
                                        VK_QUEUE_FAMILY_EXTERNAL,
                                        dstQueueFamilyIndex,
@@ -11048,7 +11024,7 @@ void scvkCmdReleaseBufferToExternal(VkCommandBuffer      commandBuffer,
     scvkCmdBufferQueueOwnershipBarrier(commandBuffer,
                                        pNext,
                                        srcAccessMask,
-                                       0,
+                                       (VkAccessFlags)0,
                                        srcQueueFamilyIndex,
                                        VK_QUEUE_FAMILY_EXTERNAL,
                                        buffer,
@@ -11151,7 +11127,7 @@ void scvkUpdateBufferDescriptorSet(VkDevice         device,
 }
 void scvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool)
 {
-    scvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_TIMESTAMP, queryCount, 0, pAllocator, pQueryPool);
+    scvkCreateQueryPool(device, pQueryPoolNext, flags, VK_QUERY_TYPE_TIMESTAMP, queryCount, (VkQueryPipelineStatisticFlags)0, pAllocator, pQueryPool);
 }
 VkResult scvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults)
 {
@@ -11162,7 +11138,9 @@ VkResult scvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint3
                                    (size_t)queryCount * sizeof(uint64_t),
                                    pResults,
                                    sizeof(uint64_t),
-                                   (VkQueryResultFlags)(flags | (VkFlags)VK_QUERY_RESULT_64_BIT));
+                                   (VkQueryResultFlags)(
+                                       flags |
+                                       (VkFlags)VK_QUERY_RESULT_64_BIT));
 }
 void scvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
 {
@@ -11326,15 +11304,15 @@ void scvkQueueSubmitCommandBufferAndWaitIdle(VkQueue                     queue,
 }
 void scvkMapWholeMemory(VkDevice device, VkDeviceMemory memory, void** ppData)
 {
-    scvkMapMemory(device, memory, 0, VK_WHOLE_SIZE, 0, ppData);
+    scvkMapMemory(device, memory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, ppData);
 }
 void scvkFlushWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory)
 {
-    scvkFlushMappedMemoryRange(device, pNext, memory, 0, VK_WHOLE_SIZE);
+    scvkFlushMappedMemoryRange(device, pNext, memory, VK_NO_OFFSET, VK_WHOLE_SIZE);
 }
 void scvkInvalidateWholeMappedMemory(VkDevice device, const void* pNext, VkDeviceMemory memory)
 {
-    scvkInvalidateMappedMemoryRange(device, pNext, memory, 0, VK_WHOLE_SIZE);
+    scvkInvalidateMappedMemoryRange(device, pNext, memory, VK_NO_OFFSET, VK_WHOLE_SIZE);
 }
 void scvkAllocateDeviceLocalImageMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkImage image, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
@@ -11349,7 +11327,9 @@ void scvkAllocateHostVisibleBufferMemory(VkPhysicalDevice physicalDevice, VkDevi
     scvkAllocateBufferMemory(physicalDevice,
                              device,
                              buffer,
-                             (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                             (VkMemoryPropertyFlags)(
+                                 (VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                 (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                              pMemoryNext,
                              pAllocator,
                              pMemory);
@@ -11449,7 +11429,9 @@ void scvkSetupHostVisibleBuffer(VkPhysicalDevice             physicalDevice,
                     sharingMode,
                     queueFamilyIndexCount,
                     pQueueFamilyIndices,
-                    (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                    (VkMemoryPropertyFlags)(
+                        (VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                        (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                     pMemoryNext,
                     pAllocator,
                     pBuffer,
@@ -11638,7 +11620,6 @@ VkPhysicalDevice scvkGetPhysicalDeviceByIndex(VkInstance instance, uint32_t phys
     uint32_t         physical_device_count;
 
     physical_device_count = scvkEnumeratePhysicalDevices(instance, physical_devices);
-
     SCVK_ASSERT(physical_device_count > physicalDeviceIndex);
 
     return physical_devices[physicalDeviceIndex];
@@ -11665,7 +11646,6 @@ void scvkSetupComputeDeviceQueue(VkPhysicalDevice                physicalDevice,
     uint32_t queue_family_index;
 
     queue_family_index = scvkGetPhysicalDeviceComputeQueueFamilyIndex(physicalDevice);
-
     SCVK_ASSERT(VK_INVALID != queue_family_index);
 
     scvkSetupDeviceQueue(physicalDevice,
@@ -11706,7 +11686,6 @@ void scvkSetupGraphicsDeviceQueue(VkPhysicalDevice                physicalDevice
     uint32_t queue_family_index;
 
     queue_family_index = scvkGetPhysicalDeviceGraphicsQueueFamilyIndex(physicalDevice);
-
     SCVK_ASSERT(VK_INVALID != queue_family_index);
 
     scvkSetupDeviceQueue(physicalDevice,
@@ -11747,7 +11726,6 @@ void scvkSetupTransferDeviceQueue(VkPhysicalDevice                physicalDevice
     uint32_t queue_family_index;
 
     queue_family_index = scvkGetPhysicalDeviceTransferQueueFamilyIndex(physicalDevice);
-
     SCVK_ASSERT(VK_INVALID != queue_family_index);
 
     scvkSetupDeviceQueue(physicalDevice,
@@ -11843,11 +11821,11 @@ void scvkUpdateUniformBufferDescriptorSet(VkDevice        device,
 }
 void scvkUpdateWholeStorageBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
 {
-    scvkUpdateStorageBufferDescriptorSet(device, buffer, 0, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
+    scvkUpdateStorageBufferDescriptorSet(device, buffer, VK_NO_OFFSET, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
 }
 void scvkUpdateWholeUniformBufferDescriptorSet(VkDevice device, VkBuffer buffer, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement)
 {
-    scvkUpdateUniformBufferDescriptorSet(device, buffer, 0, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
+    scvkUpdateUniformBufferDescriptorSet(device, buffer, VK_NO_OFFSET, VK_WHOLE_SIZE, pNext, dstSet, dstBinding, dstArrayElement);
 }
 void scvkCmdWriteTopOfPipeTimestamp(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query)
 {
@@ -11899,9 +11877,18 @@ void scvkCreateColorRenderPass(VkDevice                     device,
     VkAttachmentReference   attachment_reference;
     VkSubpassDescription    subpass_description;
 
-    scvkInitAttachmentDescription(&attachment_description, 0, format, samples, loadOp, storeOp, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, initialLayout, finalLayout);
+    scvkInitAttachmentDescription(&attachment_description,
+                                  (VkAttachmentDescriptionFlags)0,
+                                  format,
+                                  samples,
+                                  loadOp,
+                                  storeOp,
+                                  VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+                                  VK_ATTACHMENT_STORE_OP_DONT_CARE,
+                                  initialLayout,
+                                  finalLayout);
     scvkInitAttachmentReference(&attachment_reference, 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-    scvkInitSubpassDescription(&subpass_description, 0, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, 1, &attachment_reference, NULL, NULL, 0, NULL);
+    scvkInitSubpassDescription(&subpass_description, (VkSubpassDescriptionFlags)0, VK_PIPELINE_BIND_POINT_GRAPHICS, 0, NULL, 1, &attachment_reference, NULL, NULL, 0, NULL);
     scvkCreateRenderPass(device, pRenderPassNext, flags, 1, &attachment_description, 1, &subpass_description, 0, NULL, pAllocator, pRenderPass);
 }
 VkResult scvkAcquireNextImageIndefinitely(VkDevice device, VkSwapchainKHR swapchain, VkSemaphore semaphore, VkFence fence, uint32_t* pImageIndex)
@@ -12043,7 +12030,11 @@ void scvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachm
         VK_BLEND_FACTOR_ONE,
         VK_BLEND_FACTOR_ZERO,
         VK_BLEND_OP_ADD,
-        (VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | (VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT));
+        (VkColorComponentFlags)(
+            (VkFlags)VK_COLOR_COMPONENT_R_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_G_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_B_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_A_BIT));
 }
 void scvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo)
 {
@@ -12056,7 +12047,11 @@ void scvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAtt
         VK_BLEND_FACTOR_ONE,
         VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
         VK_BLEND_OP_ADD,
-        (VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | (VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT));
+        (VkColorComponentFlags)(
+            (VkFlags)VK_COLOR_COMPONENT_R_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_G_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_B_BIT |
+            (VkFlags)VK_COLOR_COMPONENT_A_BIT));
 }
 void scvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo*       pInfo,
                                                                const void*                                pNext,
@@ -12168,7 +12163,9 @@ void scvkSetupDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
                                pBufferNext,
                                flags,
                                size,
-                               (VkBufferUsageFlags)(usage | (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
+                               (VkBufferUsageFlags)(
+                                   usage |
+                                   (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
                                sharingMode,
                                queueFamilyIndexCount,
                                pQueueFamilyIndices,
@@ -12199,7 +12196,9 @@ void scvkSetupHostVisibleDeviceAddressBuffer(VkPhysicalDevice             physic
                                pBufferNext,
                                flags,
                                size,
-                               (VkBufferUsageFlags)(usage | (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
+                               (VkBufferUsageFlags)(
+                                   usage |
+                                   (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
                                sharingMode,
                                queueFamilyIndexCount,
                                pQueueFamilyIndices,
@@ -12283,12 +12282,11 @@ void scvkCreateDebugInstance(const void*                          pNext,
 
     /* capability: every extension must be supported; nothing is dropped silently */
     supported = scvkGetInstanceExtensionSupport(NULL, extension_count, extensions);
-
     SCVK_ASSERT(supported);
 
     /* create with the messenger info chained, so creation itself is reported */
     scvkCreateInstanceWithDebugUtilsMessengerInfo(pNext,
-                                                  0,
+                                                  (VkDebugUtilsMessengerCreateFlagsEXT)0,
                                                   messageSeverity,
                                                   messageType,
                                                   pfnUserCallback,
@@ -12303,7 +12301,7 @@ void scvkCreateDebugInstance(const void*                          pNext,
                                                   pInstance);
 
     /* the messenger for every later message */
-    scvkCreateDebugUtilsMessenger((*pInstance), NULL, 0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
+    scvkCreateDebugUtilsMessenger((*pInstance), NULL, (VkDebugUtilsMessengerCreateFlagsEXT)0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
 }
 VkPhysicalDevice scvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t pLuid[VK_LUID_SIZE])
 {

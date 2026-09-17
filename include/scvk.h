@@ -19,6 +19,9 @@ void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile
 /* Sentinel for an unavailable index. */
 #define VK_INVALID (UINT32_MAX)
 
+#define VK_NO_OFFSET       ((VkDeviceSize)0)
+#define VK_COUNT_OF(array) ((uint32_t)(sizeof(array) / sizeof((array)[0])))
+
 /* Fixed capacities, from scvk.policy.json. */
 #define SCVK_MAX_BIND_INFOS                       (64)
 #define SCVK_MAX_COUNTERS                         (64)

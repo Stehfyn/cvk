@@ -33,13 +33,14 @@ class CoverageTests(unittest.TestCase):
         self.assertIn("vkGetPhysicalDeviceFeatures2KHR", command["names"])
         self.assertNotIn("vkGetPhysicalDeviceFeatures2KHR", self.commands)
 
-    def test_platform_and_provisional_exclusions(self):
+    def test_platform_and_provisional_coverage(self):
         for name, category in (("vkCreateWaylandSurfaceKHR", "wayland"),
                                ("vkCmdDispatchGraphAMDX", "provisional"),
                                ("vkAcquireXlibDisplayEXT", "xlib_xrandr")):
             command = self.commands[name]
-            self.assertEqual(command["status"], "outside profile")
-            self.assertIn(category, command["reason"])
+            self.assertEqual(command["status"], "covered")
+            self.assertTrue(any(self.report["functions"][name]["source"]["path"].startswith(f"src/{category}/")
+                                for name in command["wrappers"]))
         self.assertEqual(self.commands["vkCreateWin32SurfaceKHR"]["status"], "covered")
 
     def test_query_helpers_and_builders_are_distinct(self):

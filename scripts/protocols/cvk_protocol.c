@@ -93,7 +93,7 @@ void cvkCreateDebugInstance(const void*                          pNext,
 
     /* create with the messenger info chained, so creation itself is reported */
     cvkCreateInstanceWithDebugUtilsMessengerInfo(pNext,
-                                                 0,
+                                                 (VkDebugUtilsMessengerCreateFlagsEXT)0,
                                                  messageSeverity,
                                                  messageType,
                                                  pfnUserCallback,
@@ -108,7 +108,7 @@ void cvkCreateDebugInstance(const void*                          pNext,
                                                  pInstance);
 
     /* the messenger for every later message */
-    cvkCreateDebugUtilsMessenger((*pInstance), NULL, 0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
+    cvkCreateDebugUtilsMessenger((*pInstance), NULL, (VkDebugUtilsMessengerCreateFlagsEXT)0, messageSeverity, messageType, pfnUserCallback, pUserData, pAllocator, pMessenger);
 }
 
 /**
@@ -285,11 +285,11 @@ void cvkSetupAccelerationStructure(VkPhysicalDevice                         phys
     cvkGetAccelerationStructureBuildSizes(device, VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR, &build_geometry_info, pMaxPrimitiveCounts, NULL, &build_sizes_info);
 
     /* storage and structure */
-    cvkSetupAccelerationStructureBuffer(physicalDevice, device, NULL, 0, build_sizes_info.accelerationStructureSize, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
-    cvkCreateAccelerationStructure(device, NULL, 0, (*pBuffer), 0, build_sizes_info.accelerationStructureSize, type, 0, pAllocator, pAccelerationStructure);
+    cvkSetupAccelerationStructureBuffer(physicalDevice, device, NULL, (VkBufferCreateFlags)0, build_sizes_info.accelerationStructureSize, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    cvkCreateAccelerationStructure(device, NULL, (VkAccelerationStructureCreateFlagsKHR)0, (*pBuffer), 0, build_sizes_info.accelerationStructureSize, type, 0, pAllocator, pAccelerationStructure);
 
     /* scratch, with room to align its address */
-    cvkSetupScratchBuffer(physicalDevice, device, NULL, 0, build_sizes_info.buildScratchSize + scratch_alignment, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pScratchBuffer, pScratchMemory);
+    cvkSetupScratchBuffer(physicalDevice, device, NULL, (VkBufferCreateFlags)0, build_sizes_info.buildScratchSize + scratch_alignment, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pScratchBuffer, pScratchMemory);
     (*pScratchDeviceAddress) = cvkAlignDeviceSize(cvkGetBufferDeviceAddress(device, NULL, (*pScratchBuffer)), scratch_alignment);
 }
 
@@ -354,7 +354,7 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
     hit_size      = cvkAlignDeviceSize(hitGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
     callable_size = cvkAlignDeviceSize(callableGroupCount * handle_stride, ray_tracing_pipeline_properties.shaderGroupBaseAlignment);
 
-    cvkSetupShaderBindingTableBuffer(physicalDevice, device, NULL, 0, raygen_size + miss_size + hit_size + callable_size, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
+    cvkSetupShaderBindingTableBuffer(physicalDevice, device, NULL, (VkBufferCreateFlags)0, raygen_size + miss_size + hit_size + callable_size, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, pAllocator, pBuffer, pMemory);
     base_address = cvkGetBufferDeviceAddress(device, NULL, (*pBuffer));
 
     /* handles straight into the mapped table: region by region, group by group */

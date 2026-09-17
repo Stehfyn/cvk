@@ -57,6 +57,19 @@ class DesignatedInitializerTests(unittest.TestCase):
             self.assertIn("cvkCmdSetViewportAndScissor2D", gen.sigs)
             self.assertNotIn("CmdSetFirst", gen.source())
 
+    def test_present_times_uses_one_count_and_one_info_suffix(self):
+        for enabled in (False, True):
+            gen = self.variants["cvk", enabled]
+            name = "cvkQueuePresentWithTimesInfoGOOGLE"
+            ret, params = gen.sigs[name]
+            self.assertEqual(ret, "VkResult")
+            self.assertEqual([p.name for p in params].count("swapchainCount"), 1)
+            self.assertFalse(any("timesInfo" in p.name for p in params))
+            source = next(d for d in gen.defs[""] if d.startswith("VkResult " + name + "("))
+            self.assertRegex(source, r"\.swapchainCount\s*= swapchainCount")
+            self.assertIn("swapchainCount, pSwapchains", source)
+            self.assertFalse(any("InfoInfo" in n for n in gen.sigs))
+
     def test_allman_initializers_survive_formatter_line_wrapping(self):
         formatter = ["clang-format", f"--style=file:{ROOT / '.clang-format'}"]
         for profile in ("cvk", "scvk"):

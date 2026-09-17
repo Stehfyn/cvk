@@ -136,7 +136,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
 
     /* bind */
-    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
 
 /**
@@ -241,7 +241,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
 
     /* bind */
-    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
 }
 
 /**
@@ -372,7 +372,7 @@ void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
 
     /* bind, then export */
-    cvkBindImageMemory(device, (*pImage), (*pMemory), 0);
+    cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
     cvkGetMemoryWin32Handle(device, NULL, (*pMemory), handleType, pHandle);
 }
 
@@ -471,6 +471,6 @@ void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
 
     /* bind, then export */
-    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), 0);
+    cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);
     cvkGetMemoryWin32Handle(device, NULL, (*pMemory), handleType, pHandle);
 }

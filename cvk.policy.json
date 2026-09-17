@@ -1,10 +1,7 @@
 {
   "core": "VK_VERSION_1_4",
   "extensions": "all",
-  "platforms": [
-    "win32",
-    "xlib"
-  ],
+  "platforms": "all",
   "capacities": {
     "CVK_MAX_PHYSICAL_DEVICES": 32,
     "CVK_MAX_QUEUE_FAMILY_PROPERTIES": 64,
@@ -24,6 +21,9 @@
   "doc_comments": false,
   "single_line_prototypes": true,
   "designated_initializers": true,
+  "shared_extender_members": {
+    "VkPresentTimesInfoGOOGLE": ["swapchainCount"]
+  },
   "role_overrides": {
     "vkGetExternalComputeQueueDataNV::params": "I",
     "vkSetGpaDeviceClockModeAMD::pInfo": "I"
@@ -323,7 +323,7 @@
         {
           "call": "cvkBindImageMemory",
           "bind": {
-            "memoryOffset": "0"
+            "memoryOffset": "VK_NO_OFFSET"
           }
         }
       ]
@@ -340,7 +340,7 @@
         {
           "call": "cvkBindBufferMemory",
           "bind": {
-            "memoryOffset": "0"
+            "memoryOffset": "VK_NO_OFFSET"
           }
         }
       ]
@@ -1603,7 +1603,7 @@
         {
           "call": "cvkMapMemory",
           "bind": {
-            "offset": "0",
+            "offset": "VK_NO_OFFSET",
             "size": "VK_WHOLE_SIZE",
             "flags": "0"
           }
@@ -1616,7 +1616,7 @@
         {
           "call": "cvkFlushMappedMemoryRange",
           "bind": {
-            "offset": "0",
+            "offset": "VK_NO_OFFSET",
             "size": "VK_WHOLE_SIZE"
           }
         }
@@ -1628,7 +1628,7 @@
         {
           "call": "cvkInvalidateMappedMemoryRange",
           "bind": {
-            "offset": "0",
+            "offset": "VK_NO_OFFSET",
             "size": "VK_WHOLE_SIZE"
           }
         }
@@ -2112,7 +2112,7 @@
         {
           "call": "cvkUpdateStorageBufferDescriptorSet",
           "bind": {
-            "offset": "0",
+            "offset": "VK_NO_OFFSET",
             "range": "VK_WHOLE_SIZE"
           }
         }
@@ -2124,7 +2124,7 @@
         {
           "call": "cvkUpdateUniformBufferDescriptorSet",
           "bind": {
-            "offset": "0",
+            "offset": "VK_NO_OFFSET",
             "range": "VK_WHOLE_SIZE"
           }
         }
@@ -3061,7 +3061,7 @@
         {
           "call": "cvkCreateGraphicsPipeline",
           "bind": {
-            "stageCount": "2",
+            "stageCount": "VK_COUNT_OF(shader_stages)",
             "pStages": "shader_stages",
             "layout": "(*pPipelineLayout)",
             "basePipelineHandle": "VK_NULL_HANDLE",
@@ -3201,13 +3201,13 @@
       ],
       "steps": [
         {
-          "declare": "VkShaderStageFlagBits stage = VK_SHADER_STAGE_COMPUTE_BIT"
+          "declare": "VkShaderStageFlagBits stages[] = { VK_SHADER_STAGE_COMPUTE_BIT }"
         },
         {
           "call": "cvkCmdBindShaders",
           "bind": {
-            "stageCount": "1",
-            "pStages": "&stage",
+            "stageCount": "VK_COUNT_OF(stages)",
+            "pStages": "stages",
             "pShaders": "&shader"
           }
         }
@@ -3348,7 +3348,7 @@
         {
           "call": "cvkBindBufferMemory",
           "bind": {
-            "memoryOffset": "0"
+            "memoryOffset": "VK_NO_OFFSET"
           }
         }
       ]
@@ -3365,7 +3365,7 @@
         {
           "call": "cvkBindImageMemory",
           "bind": {
-            "memoryOffset": "0"
+            "memoryOffset": "VK_NO_OFFSET"
           }
         }
       ]
@@ -3801,7 +3801,7 @@
         },
         {
           "call": "cvkGetQueryPoolResults",
-          "into": "result",
+          "check": true,
           "bind": {
             "firstQuery": "query",
             "queryCount": "1",
@@ -3810,9 +3810,6 @@
             "stride": "sizeof(status)",
             "flags": "VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT"
           }
-        },
-        {
-          "assert": "VK_SUCCESS == result"
         },
         {
           "return": "(VkQueryResultStatusKHR)status"
@@ -3859,7 +3856,7 @@
         },
         {
           "call": "cvkGetQueryPoolResults",
-          "into": "result",
+          "check": true,
           "bind": {
             "firstQuery": "query",
             "queryCount": "1",
@@ -3868,9 +3865,6 @@
             "stride": "sizeof(feedback)",
             "flags": "VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT"
           }
-        },
-        {
-          "assert": "VK_SUCCESS == result"
         },
         {
           "set": {
@@ -4159,7 +4153,7 @@
         {
           "call": "cvkCreateGraphicsPipelineWithRenderingInfo",
           "bind": {
-            "stageCount": "2",
+            "stageCount": "VK_COUNT_OF(shader_stages)",
             "pStages": "shader_stages",
             "layout": "(*pPipelineLayout)",
             "basePipelineHandle": "VK_NULL_HANDLE",
@@ -4187,13 +4181,15 @@
       ],
       "steps": [
         {
-          "declare": "VkShaderStageFlagBits stages[2] = { VK_SHADER_STAGE_VERTEX_BIT, VK_SHADER_STAGE_FRAGMENT_BIT }"
+          "declare": "VkShaderStageFlagBits stages[2]"
         },
         {
           "declare": "VkShaderEXT shaders[2]"
         },
         {
           "assign": {
+            "stages[0]": "VK_SHADER_STAGE_VERTEX_BIT",
+            "stages[1]": "VK_SHADER_STAGE_FRAGMENT_BIT",
             "shaders[0]": "vertexShader",
             "shaders[1]": "fragmentShader"
           }
@@ -4201,7 +4197,7 @@
         {
           "call": "cvkCmdBindShaders",
           "bind": {
-            "stageCount": "2",
+            "stageCount": "VK_COUNT_OF(stages)",
             "pStages": "stages",
             "pShaders": "shaders"
           }
@@ -5008,9 +5004,9 @@
           "call": "cvkCreateRayTracingPipeline",
           "bind": {
             "deferredOperation": "VK_NULL_HANDLE",
-            "stageCount": "3",
+            "stageCount": "VK_COUNT_OF(shader_stages)",
             "pStages": "shader_stages",
-            "groupCount": "3",
+            "groupCount": "VK_COUNT_OF(shader_groups)",
             "pGroups": "shader_groups",
             "pLibraryInfo": "NULL",
             "pLibraryInterface": "NULL",
@@ -5319,7 +5315,7 @@
             "layout": "(*pPipelineLayout)",
             "basePipelineHandle": "VK_NULL_HANDLE",
             "basePipelineIndex": "-1",
-            "stageCount": "2",
+            "stageCount": "VK_COUNT_OF(shader_stages)",
             "pStages": "shader_stages"
           },
           "return": true
@@ -5537,7 +5533,7 @@
             "layout": "(*pPipelineLayout)",
             "basePipelineHandle": "VK_NULL_HANDLE",
             "basePipelineIndex": "-1",
-            "stageCount": "3",
+            "stageCount": "VK_COUNT_OF(shader_stages)",
             "pStages": "shader_stages"
           },
           "return": true
@@ -5783,13 +5779,16 @@
       ],
       "steps": [
         {
-          "declare": "VkShaderStageFlagBits stages[3] = { VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT }"
+          "declare": "VkShaderStageFlagBits stages[3]"
         },
         {
           "declare": "VkShaderEXT shaders[3]"
         },
         {
           "assign": {
+            "stages[0]": "VK_SHADER_STAGE_TASK_BIT_EXT",
+            "stages[1]": "VK_SHADER_STAGE_MESH_BIT_EXT",
+            "stages[2]": "VK_SHADER_STAGE_FRAGMENT_BIT",
             "shaders[0]": "VK_NULL_HANDLE",
             "shaders[1]": "meshShader",
             "shaders[2]": "fragmentShader"
@@ -5798,7 +5797,7 @@
         {
           "call": "cvkCmdBindShaders",
           "bind": {
-            "stageCount": "3",
+            "stageCount": "VK_COUNT_OF(stages)",
             "pStages": "stages",
             "pShaders": "shaders"
           }
@@ -5826,13 +5825,16 @@
       ],
       "steps": [
         {
-          "declare": "VkShaderStageFlagBits stages[3] = { VK_SHADER_STAGE_TASK_BIT_EXT, VK_SHADER_STAGE_MESH_BIT_EXT, VK_SHADER_STAGE_FRAGMENT_BIT }"
+          "declare": "VkShaderStageFlagBits stages[3]"
         },
         {
           "declare": "VkShaderEXT shaders[3]"
         },
         {
           "assign": {
+            "stages[0]": "VK_SHADER_STAGE_TASK_BIT_EXT",
+            "stages[1]": "VK_SHADER_STAGE_MESH_BIT_EXT",
+            "stages[2]": "VK_SHADER_STAGE_FRAGMENT_BIT",
             "shaders[0]": "taskShader",
             "shaders[1]": "meshShader",
             "shaders[2]": "fragmentShader"
@@ -5841,7 +5843,7 @@
         {
           "call": "cvkCmdBindShaders",
           "bind": {
-            "stageCount": "3",
+            "stageCount": "VK_COUNT_OF(stages)",
             "pStages": "stages",
             "pShaders": "shaders"
           }

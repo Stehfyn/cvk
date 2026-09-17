@@ -44,6 +44,13 @@ def implicit_flag_conversions(reg, ast):
             return node["referencedDecl"].get("name")
         return next((name for child in node.get("inner", []) if (name := referenced_function(child))), None)
 
+    def uncast_zero(node):
+        if node.get("kind") == "IntegerLiteral":
+            return node.get("value") == "0"
+        if node.get("kind") in ("ImplicitCastExpr", "ParenExpr"):
+            return any(uncast_zero(child) for child in node.get("inner", []))
+        return False
+
     def diagnostic(node, function, target):
         location = node.get("range", {}).get("begin", {})
         return function, location.get("expansionLoc", location), target
@@ -57,7 +64,7 @@ def implicit_flag_conversions(reg, ast):
         if node.get("kind") == "CallExpr" and children:
             parameters = signatures.get(referenced_function(children[0]), [])
             for target, argument in zip(parameters, children[1:]):
-                if target in reg.bitmasks and uncast_bits(argument):
+                if target in reg.bitmasks and (uncast_bits(argument) or uncast_zero(argument)):
                     yield diagnostic(argument, function, target)
         if node.get("kind") in ("BinaryOperator", "CompoundAssignOperator") and node.get("opcode", "").endswith("=") and len(children) == 2:
             target = children[0].get("type", {}).get("qualType")
@@ -113,6 +120,8 @@ class FlagExpressionTests(unittest.TestCase):
                          "(VkPipelineStageFlags2KHR)VK_PIPELINE_STAGE_2_COPY_BIT_KHR")
         self.assertEqual(flags("VkPipelineStageFlags", "VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT"),
                          "(VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT")
+        for ctype in ("VkAccessFlags", "VkAccessFlags2KHR", "VkMemoryMapFlags", "VkDependencyFlags"):
+            self.assertEqual(flags(ctype, "0"), f"({ctype})0")
         for ctype, expression in (("VkBlendFactor", "VK_BLEND_FACTOR_ONE"), ("VkBool32", "VK_FALSE"),
                                   ("VkColorComponentFlags", "colorWriteMask"), ("VkBufferUsageFlags*", "pUsage")):
             self.assertEqual(flags(ctype, expression), expression)
