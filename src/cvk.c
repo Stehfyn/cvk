@@ -952,8 +952,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 {
     if (VK_SUCCESS != result)
     {
-        (void)fprintf(stderr, "%s:%d: cvk fatal: %s returned %d\n", pFile, line, pExpression, (int)result);
-        abort();
+        cvkFatal(pExpression, pFile, line);
     }
 }
 

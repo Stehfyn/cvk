@@ -15,8 +15,7 @@ void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile
 {
     if (VK_SUCCESS != result)
     {
-        (void)fprintf(stderr, "%s:%d: scvk fatal: %s returned %d\n", pFile, line, pExpression, (int)result);
-        abort();
+        scvkFatal(pExpression, pFile, line);
     }
 }
 
