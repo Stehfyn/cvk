@@ -1,64 +1,53 @@
 # ImmersiveWindowDemo
 
-The CDX ImmersiveWindowDemo with its two video rendering passes ported to CVK:
-NV12 to BGRA, then the original scaling shader and sampler settings. Both passes
-run in Vulkan. Media Foundation still decodes the video, and the original Windows
-caption uses Direct2D/DirectWrite over DirectComposition. CDX supplies those Windows
-bindings; this is a Vulkan video renderer with native Windows integration.
+Media Foundation decodes video using a multithread-protected D3D11 device.
+CVK converts NV12 to BGRA on the Vulkan device with the same adapter LUID.
+D2D scales the cached native-resolution BGRA texture and draws the caption
+directly into one `CreateSwapChainForComposition` swap chain. DirectComposition
+hosts that swap chain in the borderless window.
 
-The command line, 1280x720 starting window, caption glyphs, light/dark toggle,
-resize/move handling, Space to pause/resume, Escape to close, and looping playback
-come from the pinned CDX example. As in the reference, playback is video-only.
-On startup the demo enables Windows Efficiency mode (EcoQoS and idle process
-priority), which Task Manager identifies with its green leaf on Windows 11.
-Windows can favor lower CPU frequencies and other processes under contention.
-The original public headers are reused directly from the submodule. Local copies
-of `demo.c` and `immersive_window.c` keep the controls and playback flow. Video
-and caption render into one offscreen frame. During `WM_NCCALCSIZE`, both use the
-proposed client dimensions, and the GPU completes this frame and its copy into
-the swap-chain back buffer while the window still has its old geometry. The
-DXGI frame-latency object paces each resize frame; there is no second `DwmFlush`
-wait after rendering. The completed replacement is presented before returning
-from `WM_NCCALCSIZE`. No GPU work or presentation is deferred
-until after the HWND changes origin. `WM_WINDOWPOSCHANGED` checks the complete
-client rectangle in screen coordinates, including its origin, against the
-submitted resize frame and repaints only if the committed geometry differs.
-The resize present discards queued frames with outdated dimensions.
+Each present contains a complete video and caption image. The two
+flip-sequential buffers are client-sized, fully repainted, and paced by the
+frame-latency waitable object with a maximum latency of one. The D2D target is
+unbound and released before `ResizeBuffers`, then recreated from buffer zero.
+`WM_NCCALCSIZE` renders the proposed client dimensions before the HWND moves;
+`WM_WINDOWPOSCHANGED` checks the committed dimensions. The visual tree stays
+fixed during resizing; there is no independently committed video transform or
+caption position. No desktop-sized render target, whole-desktop copy,
+`DwmFlush`, or GPU query polling is used.
 
-The composition chain has two flip-sequential buffers and a one-frame latency
-limit. Presentation runs at the display refresh rate, including paused and
-repeated video frames; decoding advances at the video's own frame rate. The
-swap-chain wait and vsync also pace the modal move, resize, and menu loops.
-Those loops invalidate after painting so Windows generates low-priority
-`WM_PAINT` messages after pending input, without a posted-message loop or a
-10 ms timer limiting high-refresh displays. A modal paint waiting for a frame
-slot yields when input arrives. Resize frames also run the video pre-draw
-callback, so playback advances even while resize input takes priority over paint.
-The client occupies the entire window, with native nonclient rendering disabled
-using the nonclient rendering policy and native visual styles disabled on the
-HWND. The light/dark toggle changes the custom caption and system-menu colors;
-it does not apply an Explorer window theme. Caption and edge hit tests use
-screen coordinates without offsets; native move/resize commands use the
-message's hit-test result rather than cached hover state.
-`WM_PAINT` redraws video and caption; background erasure does not discard repaint
-requests. `presentation.h` exposes the shared frame target and drawing dimensions
-to the local demo without changing the upstream API.
+Resize presents discard queued frames with outdated dimensions using
+`DXGI_PRESENT_RESTART`. On leaving the move/size loop, the window redraws its
+final client rectangle and current caption hover state, then waits for the
+frame-latency signal before normal playback resumes. That signal is retained
+for the next render, avoiding a second wait for the same available frame slot.
 
-Decoded NV12 textures and the BGRA output stay on the GPU. D3D11 copies the two
-NV12 planes into shared R8 and RG8 textures with unfiltered shader loads; Vulkan
-performs color conversion and scaling. This avoids the native NVIDIA driver's
-corrupted chroma and device loss when importing a shared multi-planar NV12 image.
-The renderer selects
-the Vulkan device with the same adapter LUID as D3D11 and synchronizes shared
-textures with keyed mutexes and Vulkan external queue ownership barriers. The
-output is allocated at the composition back buffer's desktop size, so dragging a
-window edge does not reallocate it. Conversion is cached per frame; scaling is
-also cached when neither the frame nor the client size changes.
+NV12 conversion and the native-size GPU copy run only when a new decoded frame
+is adopted. Resizing and caption changes reuse that cached BGRA texture. Video
+and caption are drawn together, including clearing previous caption pixels.
+Hover, leave, theme, maximize and minimize state changes request a complete
+frame; input-triggered paints are dispatched immediately with `UpdateWindow`.
+The media timer advances playback inside native move/size/menu loops. DWM
+composes at display refresh independently of the media timer. Paused and
+minimized playback does not repeatedly convert or copy the same video frame.
 
-Every presented backing buffer is fully painted. The shader keeps the original
-client-area sampling coordinates and extends edge pixels into the area outside
-the current client rectangle. This prevents a growing window from exposing
-uninitialized or transparent pixels before its new geometry frame arrives.
+The client occupies the entire window. Native nonclient rendering and native
+window visual styles are disabled. Native move/resize capture stays with
+`DefWindowProc`; caption and edge hit tests use screen coordinates directly.
+Space pauses/resumes, Escape closes, playback loops, and the starting window
+is 1280x720. Playback is video-only. The existing Efficiency mode CPU policy
+(EcoQoS and idle priority) is retained.
+
+D3D11 copies decoded NV12 planes to shared R8 and RG8 textures with unfiltered
+shader loads. Vulkan imports those single-plane textures and converts directly
+into shared BGRA. Keyed mutexes and external queue ownership barriers protect
+the D3D11/Vulkan handoff. This avoids importing the native NVIDIA driver's
+multi-planar NV12 layout. A system-memory decode fallback remains for formats
+the GPU decoder cannot handle; validation builds report which path is active.
+
+The original scaled `VideoStream_Draw` API remains available to the reference
+comparison test. The window uses `VideoStream_CopyFrame`, which does one native
+conversion pass. It does not run the reference scaling shader.
 
 ## Build and run
 
@@ -98,6 +87,17 @@ cmake --build build/windows-msvc-2026 --config Debug --target cvk-immersive-vide
 ctest --test-dir build/windows-msvc-2026 -C Debug -R cvk-immersive-video-pixels --output-on-failure
 ```
 
-Set `IMMERSIVE_TRACE` to a log filename to record geometry draw and presentation
-timings. The pixel test needs a real compatible GPU; it is disabled unless
+The test also compares native conversion copies at a nonzero destination offset
+and verifies that pixels outside that destination remain unchanged.
+
+Set `IMMERSIVE_TRACE` to a log filename to record composition presentation timings. The pixel test needs a real compatible GPU; it is disabled unless
 `CVK_DEMO_TEST_VIDEO` is set and is separate from the GPU-independent CVK tests.
+
+API contracts used by the window:
+
+- [Composition swap-chain creation](https://learn.microsoft.com/en-us/windows/win32/api/dxgi1_2/nf-dxgi1_2-idxgifactory2-createswapchainforcomposition)
+- [Back-buffer reference lifetime during resize](https://learn.microsoft.com/en-us/windows/win32/api/dxgi/nf-dxgi-idxgiswapchain-resizebuffers)
+- [Frame-latency waitable object](https://learn.microsoft.com/en-us/windows/win32/api/dxgi1_3/nf-dxgi1_3-idxgiswapchain2-getframelatencywaitableobject)
+- [Discarding queued presentations after resize](https://learn.microsoft.com/en-us/windows/win32/direct3ddxgi/dxgi-present)
+- [DirectComposition architecture](https://learn.microsoft.com/en-us/windows/win32/directcomp/architecture-and-components)
+- [DXVA through the Source Reader device manager](https://learn.microsoft.com/en-us/windows/win32/medfound/mf-source-reader-d3d-manager)

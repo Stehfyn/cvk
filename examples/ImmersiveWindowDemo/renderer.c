@@ -146,6 +146,9 @@ static void CreateDevice(VideoRenderer* r)
     }
     if (!r->physical || properties.properties.apiVersion < VK_API_VERSION_1_1)
         Fail("The window's graphics adapter must support Vulkan 1.1.");
+#ifdef CVK_DEMO_VALIDATION
+    fprintf(stderr, "video: Vulkan adapter %s (vendor 0x%X), matched to D3D11 LUID\n", properties.properties.deviceName, properties.properties.vendorID);
+#endif
     extensionCount = cvkEnumerateDeviceExtensionProperties(r->physical, NULL, extensions);
     for (i = 0; i < VK_COUNT_OF(required); ++i)
     {

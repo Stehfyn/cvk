@@ -1,8 +1,8 @@
 /* demo.c - ImmersiveWindowDemo: a borderless DirectComposition window playing demo.mp4.
 **
-** The window owns a retained DirectComposition video surface and a separate caption.
+** The window owns a composition swap chain and a cached native-resolution video bitmap.
 ** Media Foundation decodes on the same D3D11 device; CVK converts new video frames.
-** DWM owns display refresh and window composition independently of video frame rate.
+** D2D scales the cached video and draws the caption into the same presented frame.
 ** No C runtime beyond the entry point: Win32 only.
 **
 **   ImmersiveWindowDemo [file.mp4]       default: demo.mp4 beside the executable */
@@ -64,7 +64,8 @@ static void ArmVideoTimer(HWND hWnd)
     delay = (UINT)((remaining * 1000 + g_frequency.QuadPart - 1) / g_frequency.QuadPart);
     /* This timer advances media time, including inside native modal loops.
     ** It does not schedule resizing or the compositor's display refresh. */
-    SetTimer(hWnd, VIDEO_TIMER, max(USER_TIMER_MINIMUM, delay), NULL);
+    if (!SetTimer(hWnd, VIDEO_TIMER, max(USER_TIMER_MINIMUM, delay), NULL))
+        PostMessageW(hWnd, WM_CLOSE, 0, 0);
 }
 
 static void SyncPlaybackClock(HWND hWnd)

@@ -4,7 +4,7 @@
 #include "immersive_window.h"
 #include <d3d11.h>
 
-/* The callback fills the complete native-size video at the supplied surface offset.
+/* The callback fills the complete native-size video texture at the supplied offset.
 ** The texture is borrowed only for the duration of the callback. */
 typedef void (*IMMERSIVEVIDEOPROC)(HWND hWnd, ID3D11Texture2D* texture, UINT subresource, UINT x, UINT y);
 

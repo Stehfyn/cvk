@@ -137,6 +137,7 @@ typedef struct tagIMMERSIVEWINDOW
     BOOL fHaveVideo;
     BOOL fFrameDirty;
     BOOL fRendering;
+    BOOL fFrameSlotReady;
 } IMMERSIVEWINDOW, *LPIMMERSIVEWINDOW;
 
 /* uxtheme private ordinals and the composition attribute, resolved once */
@@ -497,7 +498,17 @@ static BOOL GetCaptionButtonRect(HWND hWnd, LPRECT lprc, CAPTIONBUTTON eButton)
     return GetCaptionButtonRectFast(lprc, MulDiv(CAPTION_BUTTON_WIDTH_DIPS, (int)GetDpiForWindow(hWnd), 96), eButton);
 }
 
-static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height);
+static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height, UINT presentFlags);
+
+static void WaitForFrameSlot(LPIMMERSIVEWINDOW pw)
+{
+    if (!pw->fFrameSlotReady)
+    {
+        DWORD result = WaitForSingleObject(pw->hFrameLatency, INFINITE);
+        Check(WAIT_OBJECT_0 == result, "composition frame latency wait");
+        pw->fFrameSlotReady = TRUE;
+    }
+}
 
 static void InvalidateCaption(HWND hWnd)
 {
@@ -643,7 +654,7 @@ static void OnPaint(HWND hWnd)
         cdcompDeviceCheckDeviceState(pw->pDCompDevice, &valid);
         Check(valid, "DirectComposition device state");
         GetClientRect(hWnd, &client);
-        RenderFrame(hWnd, pw, client.right, client.bottom);
+        RenderFrame(hWnd, pw, client.right, client.bottom, 0);
     }
     EndPaint(hWnd, &paint);
 }
@@ -693,7 +704,7 @@ static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpc
         LONG width = proposed->right - proposed->left;
         LONG height = proposed->bottom - proposed->top;
         if (pw->szClient.cx != width || pw->szClient.cy != height)
-            RenderFrame(hWnd, pw, width, height);
+            RenderFrame(hWnd, pw, width, height, DXGI_PRESENT_RESTART);
     }
     return 0;
 }
@@ -935,8 +946,24 @@ static void OnEnterSizeMove(HWND hWnd)
 static void OnExitSizeMove(HWND hWnd)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
+    RECT client;
+    POINT cursor;
     pw->ri.fMoving = FALSE;
     pw->ri.fResizing = FALSE;
+    pw->ePressedCaptionButton = CB_NONE;
+    pw->eHotCaptionButton = CB_NONE;
+    if (GetCursorPos(&cursor))
+        pw->eHotCaptionButton = CaptionButtonFromHitTest(OnNCHitTest(hWnd, cursor.x, cursor.y));
+    if (NULL != pw->pSwapChain && !IsIconic(hWnd) && GetClientRect(hWnd, &client) && client.right > 0 && client.bottom > 0)
+    {
+        /* End the modal loop with one complete frame at the committed geometry.
+        ** RESTART discards queued presentations from preceding resize sizes.
+        ** Retire this present before normal playback resumes; retain the frame
+        ** slot token so the next render does not wait for it a second time. */
+        RenderFrame(hWnd, pw, client.right, client.bottom, DXGI_PRESENT_RESTART);
+        WaitForFrameSlot(pw);
+        ValidateRect(hWnd, NULL);
+    }
 }
 
 static void OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
@@ -996,7 +1023,7 @@ static void OnWindowPosChanged(HWND hWnd, const LPWINDOWPOS lpwpos)
         GetClientRect(hWnd, &client);
         if (pw->fFrameDirty || pw->szClient.cx != client.right || pw->szClient.cy != client.bottom ||
             pw->captionDpi != GetDpiForWindow(hWnd) || pw->fCaptionMaximized != IsMaximized(hWnd))
-            RenderFrame(hWnd, pw, client.right, client.bottom);
+            RenderFrame(hWnd, pw, client.right, client.bottom, DXGI_PRESENT_RESTART);
         ValidateRect(hWnd, NULL);
     }
     FORWARD_WM_WINDOWPOSCHANGED(hWnd, lpwpos, DefWindowProcW);
@@ -1139,7 +1166,7 @@ static void PaintCaption(HWND hWnd, LPIMMERSIVEWINDOW pw)
               DWRITE_MEASURING_MODE_NATURAL);
 }
 
-static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height)
+static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height, UINT presentFlags)
 {
     ID2D1RenderTarget* target = (ID2D1RenderTarget*)pw->pD2D1DeviceContext;
     D2D1_RECT_F destination = {0, 0, (FLOAT)width, (FLOAT)height};
@@ -1147,7 +1174,7 @@ static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height
     if (width <= 0 || height <= 0 || pw->fRendering || NULL == pw->pSwapChain)
         return;
     pw->fRendering = TRUE;
-    Check(WAIT_OBJECT_0 == WaitForSingleObject(pw->hFrameLatency, INFINITE), "composition frame latency wait");
+    WaitForFrameSlot(pw);
     if (pw->szClient.cx != width || pw->szClient.cy != height)
     {
         IDXGISurface* surface;
@@ -1163,6 +1190,7 @@ static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height
         cdxgiUnknownRelease((IUnknown*)surface);
         pw->szClient.cx = width;
         pw->szClient.cy = height;
+        presentFlags |= DXGI_PRESENT_RESTART;
     }
     cd2dDeviceContextSetTarget(pw->pD2D1DeviceContext, (ID2D1Image*)pw->pTargetBitmap);
     cd2dRenderTargetSetDpi(target, 96, 96);
@@ -1177,8 +1205,9 @@ static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height
     result = cd2dRenderTargetEndDraw(target, NULL, NULL);
     Check(SUCCEEDED(result), "frame EndDraw");
     cd2dDeviceContextClearTarget(pw->pD2D1DeviceContext);
-    result = cdxgiSwapChainPresent((IDXGISwapChain*)pw->pSwapChain, 1, 0);
+    result = cdxgiSwapChainPresent((IDXGISwapChain*)pw->pSwapChain, 1, presentFlags);
     Check(SUCCEEDED(result), "composition Present");
+    pw->fFrameSlotReady = FALSE;
     pw->captionDpi = GetDpiForWindow(hWnd);
     pw->fCaptionMaximized = IsMaximized(hWnd);
     pw->fFrameDirty = FALSE;
@@ -1230,7 +1259,7 @@ void UpdateImmersiveVideo(HWND hWnd)
     pw->fHaveVideo = TRUE;
     pw->fFrameDirty = TRUE;
     if (!IsIconic(hWnd) && GetClientRect(hWnd, &client))
-        RenderFrame(hWnd, pw, client.right, client.bottom);
+        RenderFrame(hWnd, pw, client.right, client.bottom, 0);
 }
 
 BOOL GetResizeInfo(HWND hWnd, LPRESIZEINFO lpri)
