@@ -243,7 +243,9 @@ VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
     VkResult result;
 
     result = vkAcquireFullScreenExclusiveModeEXT(device, swapchain);
+
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+
     return result;
 }
 void cvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)
@@ -260,6 +262,7 @@ void cvkCreateWin32Surface(VkInstance instance, const void* pNext, VkWin32Surfac
         .hinstance = hinstance,
         .hwnd      = hwnd
     };
+
     CVK_CHECK(vkCreateWin32SurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
@@ -274,8 +277,11 @@ VkResult cvkGetDeviceGroupSurfacePresentModes2(VkDevice device, const void* pNex
         .pNext   = pNext,
         .surface = surface
     };
-    result       = vkGetDeviceGroupSurfacePresentModes2EXT(device, &surface_info, pModes);
+
+    result = vkGetDeviceGroupSurfacePresentModes2EXT(device, &surface_info, pModes);
+
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+
     return result;
 }
 void cvkGetFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType, HANDLE* pHandle)
@@ -287,6 +293,7 @@ void cvkGetFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence, V
         .fence      = fence,
         .handleType = handleType
     };
+
     CVK_CHECK(vkGetFenceWin32HandleKHR(device, &get_win32_handle_info, pHandle));
 }
 void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE* pHandle)
@@ -298,6 +305,7 @@ void cvkGetMemoryWin32Handle(VkDevice device, const void* pNext, VkDeviceMemory 
         .memory     = memory,
         .handleType = handleType
     };
+
     CVK_CHECK(vkGetMemoryWin32HandleKHR(device, &get_win32_handle_info, pHandle));
 }
 void cvkGetMemoryWin32HandleNV(VkDevice device, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE* pHandle)
@@ -311,13 +319,15 @@ void cvkGetMemoryWin32HandleProperties(VkDevice device, VkExternalMemoryHandleTy
         .sType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR,
         .pNext = pNext
     };
+
     CVK_CHECK(vkGetMemoryWin32HandlePropertiesKHR(device, handleType, handle, &memory_win32_handle_properties));
+
     (*pMemoryWin32HandleProperties) = memory_win32_handle_properties;
 }
 uint32_t cvkGetPhysicalDeviceSurfacePresentModes2(VkPhysicalDevice physicalDevice, const void* pNext, VkSurfaceKHR surface, VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
 {
     VkPhysicalDeviceSurfaceInfo2KHR surface_info;
-    uint32_t                        present_mode_count = 0;
+    uint32_t                        present_mode_count;
 
     surface_info = (VkPhysicalDeviceSurfaceInfo2KHR)
     {
@@ -325,9 +335,14 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModes2(VkPhysicalDevice physicalDevic
         .pNext   = pNext,
         .surface = surface
     };
+
+    present_mode_count = 0;
+
     CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, &surface_info, &present_mode_count, NULL));
     CVK_ASSERT(CVK_MAX_PRESENT_MODES >= present_mode_count);
+
     CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, &surface_info, &present_mode_count, pPresentModes));
+
     return present_mode_count;
 }
 VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex)
@@ -343,6 +358,7 @@ void cvkGetSemaphoreWin32Handle(VkDevice device, const void* pNext, VkSemaphore 
         .semaphore  = semaphore,
         .handleType = handleType
     };
+
     CVK_CHECK(vkGetSemaphoreWin32HandleKHR(device, &get_win32_handle_info, pHandle));
 }
 void cvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
@@ -362,6 +378,7 @@ void cvkImportFenceWin32Handle(VkDevice device, const void* pNext, VkFence fence
         .handle     = handle,
         .name       = name
     };
+
     CVK_CHECK(vkImportFenceWin32HandleKHR(device, &import_fence_win32_handle_info));
 }
 void cvkImportSemaphoreWin32Handle(VkDevice                              device,
@@ -382,6 +399,7 @@ void cvkImportSemaphoreWin32Handle(VkDevice                              device,
         .handle     = handle,
         .name       = name
     };
+
     CVK_CHECK(vkImportSemaphoreWin32HandleKHR(device, &import_semaphore_win32_handle_info));
 }
 VkResult cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
@@ -389,7 +407,9 @@ VkResult cvkReleaseFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapc
     VkResult result;
 
     result = vkReleaseFullScreenExclusiveModeEXT(device, swapchain);
+
     CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+
     return result;
 }
 void cvkAllocateExportMemoryWin32Handle(VkDevice                     device,
@@ -410,6 +430,7 @@ void cvkAllocateExportMemoryWin32Handle(VkDevice                     device,
         .dwAccess    = dwAccess,
         .name        = name
     };
+
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateExportMemoryWin32HandleNV(VkDevice                     device,
@@ -428,6 +449,7 @@ void cvkAllocateExportMemoryWin32HandleNV(VkDevice                     device,
         .pAttributes = pAttributes,
         .dwAccess    = dwAccess
     };
+
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateImportMemoryWin32Handle(VkDevice                           device,
@@ -448,6 +470,7 @@ void cvkAllocateImportMemoryWin32Handle(VkDevice                           devic
         .handle     = handle,
         .name       = name
     };
+
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkAllocateImportMemoryWin32HandleNV(VkDevice                          device,
@@ -466,6 +489,7 @@ void cvkAllocateImportMemoryWin32HandleNV(VkDevice                          devi
         .handleType = handleType,
         .handle     = handle
     };
+
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
 void cvkCreateExportFenceWin32Handle(VkDevice                     device,
@@ -485,6 +509,7 @@ void cvkCreateExportFenceWin32Handle(VkDevice                     device,
         .dwAccess    = dwAccess,
         .name        = name
     };
+
     cvkCreateFence(device, &handle_info, flags, pAllocator, pFence);
 }
 void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
@@ -504,6 +529,7 @@ void cvkCreateExportSemaphoreWin32Handle(VkDevice                     device,
         .dwAccess    = dwAccess,
         .name        = name
     };
+
     cvkCreateSemaphore(device, &handle_info, flags, pAllocator, pSemaphore);
 }
 VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
@@ -534,6 +560,7 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice          
         .pNext               = pNext,
         .fullScreenExclusive = fullScreenExclusive
     };
+
     return cvkCreateSwapchain(device,
                               &exclusive_info,
                               flags,
@@ -583,6 +610,7 @@ VkResult cvkCreateSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevice     
         .pNext    = pNext,
         .hmonitor = hmonitor
     };
+
     return cvkCreateSwapchain(device,
                               &win32_info,
                               flags,
@@ -616,6 +644,7 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusivePresentModes(VkDevice       
         .pNext               = pNext,
         .fullScreenExclusive = fullScreenExclusive
     };
+
     return cvkGetDeviceGroupSurfacePresentModes2(device, &exclusive_info, surface, pModes);
 }
 VkResult cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice device, const void* pNext, HMONITOR hmonitor, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
@@ -626,6 +655,7 @@ VkResult cvkGetDeviceGroupSurfaceFullScreenExclusiveWin32PresentModes(VkDevice d
         .pNext    = pNext,
         .hmonitor = hmonitor
     };
+
     return cvkGetDeviceGroupSurfacePresentModes2(device, &win32_info, surface, pModes);
 }
 VkResult cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* pNext, VkPresentModeKHR presentMode, VkSurfaceKHR surface, VkDeviceGroupPresentModeFlagsKHR* pModes)
@@ -636,6 +666,7 @@ VkResult cvkGetDeviceGroupSurfacePresentModePresentModes(VkDevice device, void* 
         .pNext       = pNext,
         .presentMode = presentMode
     };
+
     return cvkGetDeviceGroupSurfacePresentModes2(device, &surface_present_mode, surface, pModes);
 }
 VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDevice           physicalDevice,
@@ -651,6 +682,7 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveCapabilities(VkPhysicalDe
         .pNext               = pSurfaceInfoNext,
         .fullScreenExclusive = fullScreenExclusive
     };
+
     return cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &exclusive_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysicalDevice           physicalDevice,
@@ -666,6 +698,7 @@ VkResult cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Capabilities(VkPhysi
         .pNext    = pSurfaceInfoNext,
         .hmonitor = hmonitor
     };
+
     return cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &win32_info, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice         physicalDevice,
@@ -680,6 +713,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveFormats(VkPhysicalDevice 
         .pNext               = pNext,
         .fullScreenExclusive = fullScreenExclusive
     };
+
     return cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &exclusive_info, surface, pSurfaceFormats);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDevice    physicalDevice,
@@ -694,6 +728,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32Formats(VkPhysicalDe
         .pNext    = pNext,
         .hmonitor = hmonitor
     };
+
     return cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &win32_info, surface, pSurfaceFormats);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkPhysicalDevice         physicalDevice,
@@ -708,6 +743,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusivePresentModes(VkPhysicalDe
         .pNext               = pNext,
         .fullScreenExclusive = fullScreenExclusive
     };
+
     return cvkGetPhysicalDeviceSurfacePresentModes2(physicalDevice, &exclusive_info, surface, pPresentModes);
 }
 uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkPhysicalDevice physicalDevice,
@@ -722,6 +758,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFullScreenExclusiveWin32PresentModes(VkPhysi
         .pNext    = pNext,
         .hmonitor = hmonitor
     };
+
     return cvkGetPhysicalDeviceSurfacePresentModes2(physicalDevice, &win32_info, surface, pPresentModes);
 }
 uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkPhysicalDevice physicalDevice,
@@ -736,6 +773,7 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModePresentModes(VkPhysicalDevice phy
         .pNext       = pNext,
         .presentMode = presentMode
     };
+
     return cvkGetPhysicalDeviceSurfacePresentModes2(physicalDevice, &surface_present_mode, surface, pPresentModes);
 }
 VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice                      device,
@@ -766,6 +804,7 @@ VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveInfo(VkDevice    
         .pNext               = pNext,
         .fullScreenExclusive = fullScreenExclusive
     };
+
     return cvkCreateSharedSwapchain(device,
                                     &exclusive_info,
                                     flags,
@@ -815,6 +854,7 @@ VkResult cvkCreateSharedSwapchainWithSurfaceFullScreenExclusiveWin32Info(VkDevic
         .pNext    = pNext,
         .hmonitor = hmonitor
     };
+
     return cvkCreateSharedSwapchain(device,
                                     &win32_info,
                                     flags,
@@ -860,6 +900,7 @@ void cvkQueueSubmitInfoWithD3D12FenceInfo(VkQueue                     queue,
         .signalSemaphoreValuesCount = signalSemaphoreValuesCount,
         .pSignalSemaphoreValues     = pSignalSemaphoreValues
     };
+
     cvkQueueSubmitInfo(queue, &submit_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(VkQueue                     queue,
@@ -892,6 +933,7 @@ void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(VkQueue            
         .pReleaseSyncs    = pReleaseSyncs,
         .pReleaseKeys     = pReleaseKeys
     };
+
     cvkQueueSubmitInfo(queue, &release_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue                     queue,
@@ -924,6 +966,7 @@ void cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue      
         .pReleaseSyncs               = pReleaseSyncs,
         .pReleaseKeys                = pReleaseKeys
     };
+
     cvkQueueSubmitInfo(queue, &release_info, waitSemaphoreCount, pWaitSemaphores, pWaitDstStageMask, commandBufferCount, pCommandBuffers, signalSemaphoreCount, pSignalSemaphores, fence);
 }
 void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfo(VkQueue                          queue,
@@ -956,6 +999,7 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfo(VkQueue           
         .pReleaseSyncs    = pReleaseSyncs,
         .pReleaseKeys     = pReleaseKeys
     };
+
     cvkQueueSubmitInfo2(queue, &release_info, flags, waitSemaphoreInfoCount, pWaitSemaphoreInfos, commandBufferInfoCount, pCommandBufferInfos, signalSemaphoreInfoCount, pSignalSemaphoreInfos, fence);
 }
 void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue                          queue,
@@ -988,6 +1032,7 @@ void cvkQueueSubmitInfo2WithWin32KeyedMutexAcquireReleaseInfoInfoNV(VkQueue     
         .pReleaseSyncs               = pReleaseSyncs,
         .pReleaseKeys                = pReleaseKeys
     };
+
     cvkQueueSubmitInfo2(queue, &release_info, flags, waitSemaphoreInfoCount, pWaitSemaphoreInfos, commandBufferInfoCount, pCommandBufferInfos, signalSemaphoreInfoCount, pSignalSemaphoreInfos, fence);
 }
 VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDevice                             physicalDevice,
@@ -1003,8 +1048,11 @@ VkResult cvkGetPhysicalDeviceSurfaceCapabilitiesFullScreenExclusive(VkPhysicalDe
         .sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT,
         .pNext = pSurfaceCapabilitiesFullScreenExclusiveNext
     };
+
     result = cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, pSurfaceInfoNext, surface, &surface_capabilities_full_screen_exclusive, &surface_capabilities);
+
     (*pSurfaceCapabilitiesFullScreenExclusive) = surface_capabilities_full_screen_exclusive;
+
     return result;
 }
 void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice,
@@ -1046,6 +1094,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 
     /* capability: the handle type must be importable for this image description */
     importable = cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
+
     CVK_ASSERT(importable);
 
     /* create, with the handle type declared */
@@ -1073,6 +1122,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT != handleType) && (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT != handleType) && (NULL != handle))
     {
         cvkGetMemoryWin32HandleProperties(device, handleType, handle, NULL, &memory_win32_handle_properties);
+
         external_memory_type_bits = memory_win32_handle_properties.memoryTypeBits;
     }
 
@@ -1080,6 +1130,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
     cvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
     CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
         dedicated = VK_TRUE;
@@ -1087,14 +1138,17 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 
     /* select within the external object's memory types */
     memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits, requiredProperties);
+
     CVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* allocate: import info heads the caller's chain, dedicated info in front when required; the handle stays caller-owned */
     cvkInitImportMemoryWin32HandleInfo(&import_memory_win32_handle_info, pMemoryNext, handleType, handle, name);
+
     allocate_next = &import_memory_win32_handle_info;
     if (dedicated)
     {
         cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_win32_handle_info, (*pImage), VK_NULL_HANDLE);
+
         allocate_next = &memory_dedicated_allocate_info;
     }
     cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
@@ -1134,6 +1188,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
 
     /* capability: the handle type must be importable for this buffer description */
     importable = cvkGetPhysicalDeviceExternalBufferImportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
+
     CVK_ASSERT(importable);
 
     /* create, with the handle type declared */
@@ -1154,6 +1209,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT != handleType) && (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT != handleType) && (NULL != handle))
     {
         cvkGetMemoryWin32HandleProperties(device, handleType, handle, NULL, &memory_win32_handle_properties);
+
         external_memory_type_bits = memory_win32_handle_properties.memoryTypeBits;
     }
 
@@ -1161,6 +1217,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
     cvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
     CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
         dedicated = VK_TRUE;
@@ -1168,14 +1225,17 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
 
     /* select within the external object's memory types */
     memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits & external_memory_type_bits, requiredProperties);
+
     CVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* allocate: import info heads the caller's chain, dedicated info in front when required; the handle stays caller-owned */
     cvkInitImportMemoryWin32HandleInfo(&import_memory_win32_handle_info, pMemoryNext, handleType, handle, name);
+
     allocate_next = &import_memory_win32_handle_info;
     if (dedicated)
     {
         cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_win32_handle_info, VK_NULL_HANDLE, (*pBuffer));
+
         allocate_next = &memory_dedicated_allocate_info;
     }
     cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
@@ -1221,6 +1281,7 @@ void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 
     /* capability: the handle type must be exportable for this image description */
     exportable = cvkGetPhysicalDeviceExternalImageExportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
+
     CVK_ASSERT(exportable);
 
     /* create, with the handle type declared */
@@ -1253,6 +1314,7 @@ void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 
     /* select */
     memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits, requiredProperties);
+
     CVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* allocate: export info heads the chain, dedicated info when required, then the Win32 handle info where permitted */
@@ -1260,12 +1322,14 @@ void cvkExportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     if (dedicated)
     {
         cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, pMemoryNext, (*pImage), VK_NULL_HANDLE);
+
         allocate_next = &memory_dedicated_allocate_info;
     }
     if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT == handleType) || (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT == handleType) ||
         (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT == handleType))
     {
         cvkInitExportMemoryWin32HandleInfo(&export_memory_win32_handle_info, allocate_next, pAttributes, dwAccess, name);
+
         allocate_next = &export_memory_win32_handle_info;
     }
     cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);
@@ -1305,6 +1369,7 @@ void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
 
     /* capability: the handle type must be exportable for this buffer description */
     exportable = cvkGetPhysicalDeviceExternalBufferExportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
+
     CVK_ASSERT(exportable);
 
     /* create, with the handle type declared */
@@ -1330,6 +1395,7 @@ void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
 
     /* select */
     memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements.memoryRequirements.memoryTypeBits, requiredProperties);
+
     CVK_ASSERT(VK_INVALID != memory_type_index);
 
     /* allocate: export info heads the chain, dedicated info when required, then the Win32 handle info where permitted */
@@ -1337,12 +1403,14 @@ void cvkExportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     if (dedicated)
     {
         cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, pMemoryNext, VK_NULL_HANDLE, (*pBuffer));
+
         allocate_next = &memory_dedicated_allocate_info;
     }
     if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT == handleType) || (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT == handleType) ||
         (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT == handleType))
     {
         cvkInitExportMemoryWin32HandleInfo(&export_memory_win32_handle_info, allocate_next, pAttributes, dwAccess, name);
+
         allocate_next = &export_memory_win32_handle_info;
     }
     cvkAllocateExportMemory(device, allocate_next, (VkExternalMemoryHandleTypeFlags)handleType, memory_requirements.memoryRequirements.size, memory_type_index, pAllocator, pMemory);

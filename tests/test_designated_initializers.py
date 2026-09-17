@@ -43,6 +43,20 @@ class DesignatedInitializerTests(unittest.TestCase):
         policy.pop("designated_initializers")
         self.assertTrue(Generator(self.variants["cvk", False].reg, policy).designated_initializers)
 
+    def test_nominal_dynamic_state_forms(self):
+        for gen in self.variants.values():
+            for noun, ctype in (("Scissor", "VkRect2D"), ("Viewport", "VkViewport")):
+                name, value = "cvkCmdSet" + noun, noun.lower()
+                ret, params = gen.sigs[name]
+                self.assertEqual(ret, "void")
+                self.assertEqual([p.text for p in params], ["VkCommandBuffer commandBuffer", f"{ctype} {value}"])
+                source = next(d for d in gen.defs[""] if d.startswith("void " + name + "("))
+                self.assertIn(f"vkCmdSet{noun}(commandBuffer, 0, 1, &{value});", source)
+                self.assertNotIn("cvkCmdSetFirst" + noun, gen.sigs)
+                self.assertIn(name + "2D", gen.sigs)
+            self.assertIn("cvkCmdSetViewportAndScissor2D", gen.sigs)
+            self.assertNotIn("CmdSetFirst", gen.source())
+
     def test_allman_initializers_survive_formatter_line_wrapping(self):
         formatter = ["clang-format", f"--style=file:{ROOT / '.clang-format'}"]
         for profile in ("cvk", "scvk"):

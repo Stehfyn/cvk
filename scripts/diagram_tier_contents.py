@@ -32,7 +32,7 @@ SECTIONS = [
         ("Pipelines and descriptors", "Build graphics/compute/mesh/ray-tracing pipelines, layouts and descriptor updates.", ["cvkSetupGraphicsPipeline", "cvkSetupRayTracingPipeline", "cvkUpdateImageDescriptorSet"]),
         ("Recording sequences", "Bind required state and issue graphics, compute, mesh, video or ray-tracing work.", ["cvkCmdDispatchComputeItems", "cvkCmdDecodeVideoPicture", "cvkCmdTraceRayTracingRays"]),
         ("Barriers and ownership", "Build barrier structures and submit them, including queue-family ownership transfers.", ["cvkCmdMemoryBarrier2", "cvkCmdImageQueueOwnershipBarrier2", "cvkCmdBufferQueueOwnershipBarrier"]),
-        ("Compound builders and adapters", "Build nested structures, union members or 2D geometry before forwarding to another helper.", ["cvkCreateImage2D", "cvkInitTrianglesAccelerationStructureGeometry", "cvkCmdSetFirstViewportAndScissor2D"]),
+        ("Compound builders and adapters", "Build nested structures, union members or 2D geometry before forwarding to another helper.", ["cvkCreateImage2D", "cvkInitTrianglesAccelerationStructureGeometry", "cvkCmdSetViewportAndScissor2D"]),
     ]),
     ("1p", "Tier 1' / specializations", "A singular operation or a one-call policy chain fixes arguments of a more general helper.", "#0891b2", [
         ("Count-of-one operations", "Turn an array operation into one element, including per-element extension variants.", ["cvkCreateComputePipeline", "cvkWaitForFence", "cvkBindPlaneImageMemory"]),

@@ -25,6 +25,7 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
         .dpy    = dpy,
         .window = window
     };
+
     CVK_CHECK(vkCreateXlibSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }

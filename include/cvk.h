@@ -1668,7 +1668,7 @@ void cvkCmdSetRepresentativeFragmentTestEnableNV(VkCommandBuffer commandBuffer, 
 void cvkCmdSetSampleLocations(VkCommandBuffer commandBuffer, const void* pNext, VkSampleCountFlagBits sampleLocationsPerPixel, VkExtent2D sampleLocationGridSize, uint32_t sampleLocationsCount, const VkSampleLocationEXT* pSampleLocations);
 void cvkCmdSetSampleLocationsEnable(VkCommandBuffer commandBuffer, VkBool32 sampleLocationsEnable);
 void cvkCmdSetSampleMask(VkCommandBuffer commandBuffer, VkSampleCountFlagBits samples, const VkSampleMask* pSampleMask);
-void cvkCmdSetScissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* pScissors);
+void cvkCmdSetScissor(VkCommandBuffer commandBuffer, VkRect2D scissor);
 void cvkCmdSetScissorWithCount(VkCommandBuffer commandBuffer, uint32_t scissorCount, const VkRect2D* pScissors);
 void cvkCmdSetShadingRateImageEnableNV(VkCommandBuffer commandBuffer, VkBool32 shadingRateImageEnable);
 void cvkCmdSetStencilCompareMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t compareMask);
@@ -1678,7 +1678,7 @@ void cvkCmdSetStencilTestEnable(VkCommandBuffer commandBuffer, VkBool32 stencilT
 void cvkCmdSetStencilWriteMask(VkCommandBuffer commandBuffer, VkStencilFaceFlags faceMask, uint32_t writeMask);
 void cvkCmdSetTessellationDomainOrigin(VkCommandBuffer commandBuffer, VkTessellationDomainOrigin domainOrigin);
 void cvkCmdSetVertexInput(VkCommandBuffer commandBuffer, uint32_t vertexBindingDescriptionCount, const VkVertexInputBindingDescription2EXT* pVertexBindingDescriptions, uint32_t vertexAttributeDescriptionCount, const VkVertexInputAttributeDescription2EXT* pVertexAttributeDescriptions);
-void cvkCmdSetViewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* pViewports);
+void cvkCmdSetViewport(VkCommandBuffer commandBuffer, VkViewport viewport);
 void cvkCmdSetViewportShadingRatePaletteNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkShadingRatePaletteNV* pShadingRatePalettes);
 void cvkCmdSetViewportSwizzleNV(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewportSwizzleNV* pViewportSwizzles);
 void cvkCmdSetViewportWScalingEnableNV(VkCommandBuffer commandBuffer, VkBool32 viewportWScalingEnable);
@@ -3194,11 +3194,9 @@ void cvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilS
 void cvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo);
 void cvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo);
 void cvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo* pInfo, const void* pNext, VkPipelineColorBlendStateCreateFlags flags, const VkPipelineColorBlendAttachmentState* pAttachment);
-void cvkCmdSetFirstViewport(VkCommandBuffer commandBuffer, VkViewport viewport);
-void cvkCmdSetFirstScissor(VkCommandBuffer commandBuffer, VkRect2D scissor);
-void cvkCmdSetFirstViewport2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
-void cvkCmdSetFirstScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
-void cvkCmdSetFirstViewportAndScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
+void cvkCmdSetViewport2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
+void cvkCmdSetScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
+void cvkCmdSetViewportAndScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D);
 VkResult cvkSetupGraphicsPipeline(VkDevice device, const void* pPipelineLayoutNext, uint32_t setLayoutCount, const VkDescriptorSetLayout* pSetLayouts, uint32_t pushConstantOffset, uint32_t pushConstantSize, VkPipelineCache pipelineCache, const void* pPipelineNext, VkPipelineCreateFlags flags, const VkPipelineVertexInputStateCreateInfo* pVertexInputState, const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState, const VkPipelineTessellationStateCreateInfo* pTessellationState, const VkPipelineViewportStateCreateInfo* pViewportState, const VkPipelineRasterizationStateCreateInfo* pRasterizationState, const VkPipelineMultisampleStateCreateInfo* pMultisampleState, const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState, const VkPipelineColorBlendStateCreateInfo* pColorBlendState, const VkPipelineDynamicStateCreateInfo* pDynamicState, VkRenderPass renderPass, uint32_t subpass, VkShaderModuleCreateFlags shaderModuleFlags, VkPipelineLayoutCreateFlags pipelineLayoutFlags, const void* pVertexShaderModuleNext, size_t vertexCodeSize, const uint32_t* pVertexCode, const void* pFragmentShaderModuleNext, size_t fragmentCodeSize, const uint32_t* pFragmentCode, const void* pVertexStageNext, const void* pFragmentStageNext, VkPipelineShaderStageCreateFlags stageFlags, const char* pVertexEntryPoint, const VkSpecializationInfo* pVertexSpecializationInfo, const char* pFragmentEntryPoint, const VkSpecializationInfo* pFragmentSpecializationInfo, const VkAllocationCallbacks* pAllocator, VkShaderModule* pVertexShaderModule, VkShaderModule* pFragmentShaderModule, VkPipelineLayout* pPipelineLayout, VkPipeline* pPipeline);
 void cvkCmdDrawGraphicsVertices(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance, uint32_t pushConstantOffset, uint32_t pushConstantSize, const void* pPushConstants);
 void cvkCmdDrawGraphicsIndices(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance, uint32_t pushConstantOffset, uint32_t pushConstantSize, const void* pPushConstants);

@@ -82,6 +82,68 @@ def align_assignments(lines: List[str]) -> List[str]:
     return out
 
 
+def separate_assignments_from_calls(text: str) -> str:
+    """Separate calls, adjacent assignments, assertions and returns across source emitters.
+
+    Scan statement boundaries without treating initializer braces or for-loop semicolons
+    as blocks/statements. Mask literals, comments and directives so their punctuation is inert.
+    """
+    masked = re.sub(r'^\s*#(?:[^\n]*\\\n)*[^\n]*|/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'',
+                    lambda m: re.sub(r"[^\n]", " ", m[0]), text, flags=re.M | re.S)
+    start = parens = initializer = 0
+    assigned = previous_assignment = previous_call = False
+    previous_statement = False
+    previous_end = 0
+    insertions = []
+    for token in re.finditer(r"[(){};]|(?<![=!<>])=(?!=)", masked):
+        symbol = token[0]
+        if symbol == "(":
+            parens += 1
+        elif symbol == ")":
+            parens -= 1
+        elif symbol == "=" and not parens:
+            assigned = True
+        elif symbol == "{" and (initializer or assigned or parens):
+            initializer += 1
+        elif symbol == "}" and initializer:
+            initializer -= 1
+        elif symbol in ("{", "}"):
+            start = token.end()
+            assigned = previous_assignment = previous_call = False
+            previous_statement = symbol == "}"
+            previous_end = token.end()
+        elif symbol == ";" and not parens and not initializer:
+            statement = masked[start:token.end()]
+            first = start + len(statement) - len(statement.lstrip())
+            gap = text[previous_end:first]
+            calls = re.findall(r"\b([A-Za-z_]\w*)\s*\(", statement)
+            has_call = any(name not in ("if", "for", "while", "switch", "sizeof", "_Alignof") for name in calls)
+            is_return = re.match(r"\s*return\b", statement) is not None
+            separate = (previous_assignment and has_call) or (previous_call and assigned) or (previous_statement and is_return)
+            if separate and gap.isspace() and gap.count("\n") == 1:
+                insertions.append(previous_end)
+            if re.match(r"\s*(?:CVK|SCVK)_ASSERT\s*\(", statement):
+                following = re.compile(r"\s*(\S)").match(masked, token.end())
+                if following:
+                    next_start = following.start(1)
+                    gap = text[token.end():next_start]
+                    next_assert = re.compile(r"(?:CVK|SCVK)_ASSERT\b").match(masked, next_start)
+                    if masked[next_start] != "}" and not next_assert and gap.isspace() and gap.count("\n") == 1:
+                        insertions.append(token.end())
+            previous_assignment = assigned
+            previous_call = has_call
+            previous_statement = True
+            previous_end = start = token.end()
+            assigned = False
+    chunks = []
+    start = 0
+    for offset in sorted(set(insertions)):
+        chunks.append(text[start:offset] + "\n")
+        start = offset
+    chunks.append(text[start:])
+    return "".join(chunks)
+
+
 @dataclass
 class EmittedParam:
     text: str            # "const void* pNext"
@@ -523,6 +585,13 @@ class Generator:
         call_args: List[str] = []
         enum_count: Optional[Param] = None
         enum_arrays: List[Tuple[Param, str]] = []
+        form = self.policy.get("command_forms", {}).get(cmd.name, {}) if out_ext is None else {}
+        bindings = form.get("bind", {})
+        by_value = form.get("by_value", {})
+        for unknown in (bindings.keys() | by_value.keys()) - {p.name for p in cmd.params}:
+            self.errors.append(f"command form {cmd.name}: unknown parameter {unknown}")
+        for duplicate in bindings.keys() & by_value.keys():
+            self.errors.append(f"command form {cmd.name}: {duplicate} cannot be both bound and passed by value")
 
         # Two-call enumeration detection: a count parameter that sizes an output array.
         for p, r in zip(cmd.params, roles):
@@ -533,7 +602,16 @@ class Generator:
                     enum_arrays = [(q, self.capacity_name(q.name)) for q in arrays]
 
         for p, r in zip(cmd.params, roles):
-            if r == "I":
+            if p.name in bindings:
+                call_args.append(self.typed_flags(p.full_type, bindings[p.name]))
+            elif p.name in by_value:
+                if p.pointer_depth != 1 or not p.is_const:
+                    self.errors.append(f"command form {cmd.name}: {p.name} must be an input pointer")
+                    return
+                value = by_value[p.name]
+                params.append(EmittedParam(f"{p.type} {value}", value, f"The {p.type} value", False))
+                call_args.append(f"&{value}")
+            elif r == "I":
                 s = reg.struct_of(p.type)
                 var = snake(p.name)
                 stem = p.name[1:] if p.name.startswith("p") else p.name
@@ -615,7 +693,8 @@ class Generator:
             ret = "uint32_t"
             count_var = snake(enum_count.name)
             first = f"{fn}({', '.join('NULL' if a in enum_args else a for a in call_args)})"
-            body.insert(0, f"uint32_t {count_var} = 0;")
+            body.insert(0, f"uint32_t {count_var};")
+            body += ["", f"{count_var} = 0;", ""]
             if cmd.return_type == "VkResult":
                 body.append(f"CVK_CHECK({first});")
             else:
@@ -625,21 +704,21 @@ class Generator:
                 s = reg.struct_of(q.type)
                 if s and s.stype:
                     arr = snake(q.name) if q.name in ext_arrays else q.name
+                    if "uint32_t index;" not in body:
+                        body.insert(0, "uint32_t index;")
+                    body.append(f"for (index = 0; index < {count_var}; ++index)")
                     body.append("{")
-                    body.append("    uint32_t index;")
-                    body.append(f"    for (index = 0; index < {count_var}; ++index)")
-                    body.append("    {")
                     if q.name in ext_arrays:
                         ext_param = ext_arrays[q.name]
-                        body += ["        " + line for line in self.struct_initialization(
+                        body += ["    " + line for line in self.struct_initialization(
                             s, f"{arr}[index]", [("sType", s.stype), ("pNext", f"&{ext_param}[index]")])]
-                        body.append(f"        {ext_param}[index].sType = {out_ext.stype};")
-                        body.append(f"        {ext_param}[index].pNext = NULL;")
+                        body.append(f"    {ext_param}[index].sType = {out_ext.stype};")
+                        body.append(f"    {ext_param}[index].pNext = NULL;")
                     else:
-                        body.append(f"        {arr}[index].sType = {s.stype};")
-                        body.append(f"        {arr}[index].pNext = NULL;")
-                    body.append("    }")
+                        body.append(f"    {arr}[index].sType = {s.stype};")
+                        body.append(f"    {arr}[index].pNext = NULL;")
                     body.append("}")
+                    body.append("")
             if cmd.return_type == "VkResult":
                 body.append(f"CVK_CHECK({call});")
             else:
@@ -676,7 +755,7 @@ class Generator:
             body.append(f"return {call};")
 
         # Order: declarations first, then asserts, then statements.
-        decl_lines = [l for l in body if re.match(r"^(PFN_vkVoidFunction function;|VkResult result;|uint32_t \w+ = 0;|Vk\w+ \w+(\[\w+\])?;)", l)]
+        decl_lines = [l for l in body if re.match(r"^(PFN_vkVoidFunction function;|VkResult result;|uint32_t \w+;|Vk\w+ \w+(\[\w+\])?;)", l)]
         other = [l for l in body if l not in decl_lines]
 
         # Declarations in order of first access in the statements that follow.
@@ -695,7 +774,7 @@ class Generator:
             pre = []
         body = decl_lines + ([""] if decl_lines else []) + pre + ([""] if pre else []) + other
 
-        brief = self.brief(cmd)
+        brief = form.get("brief", self.brief(cmd))
         plats = self.platforms_for(cmd.extensions, cmd.core_version)
         if out_ext is not None:
             brief = f"{brief[:-1]} with {out_ext.name} chained to every element."
@@ -763,6 +842,7 @@ class Generator:
             # Protocol metadata is parsed before placement; suppress its copied docs too.
             decl = re.sub(r"/\*\*.*?\*/\s*", "", decl, flags=re.S)
             defn = re.sub(r"/\*\*.*?\*/\s*", "", defn, flags=re.S)
+        defn = separate_assignments_from_calls(defn)
         if json:
             self.json_decls[key].append(decl)
             self.json_defs[key].append(defn)
@@ -2151,7 +2231,8 @@ class Generator:
     PLATFORM_SOURCE_INCLUDES: Dict[str, List[str]] = {}
 
     def finish_source(self, text: str) -> str:
-        """Restore multiline Allman initializers after clang-format folds short ones."""
+        """Separate assignments from calls and restore Allman initializers after clang-format."""
+        text = separate_assignments_from_calls(text)
         if not self.designated_initializers:
             return text
         pattern = (r"^([ \t]*)((?:\(\*pInfo\)|\w+(?:\[\w+\])?)[ \t]*=\s*\(Vk\w+\)|"

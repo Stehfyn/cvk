@@ -69,9 +69,17 @@ use the final name, and it fails if an entry never matches a generated name (sta
 are errors). Every entry is a recorded decision, never an edit. The table is currently empty.
 `Enumerate` is kept: it is Vulkan's marker for the two-call protocol.
 
-## 4. Tier 0: one function per profile command (derived)
+## 4. Tier 0: one function per profile command
 
-Parameters in registry order, transformed by role:
+The plain cvk command name makes the nominal operation first-class. The policy's
+`command_forms` table can bind Vulkan parameters to constants and replace an input
+pointer with a named value parameter (`by_value`). These forms call Vulkan directly.
+`cvkCmdSetScissor(commandBuffer, scissor)` and `cvkCmdSetViewport(commandBuffer, viewport)`
+take one value and set slot zero, passing `0, 1, &value` to Vulkan. Their `2D` and combined
+helpers use the same names without `First`. Call Vulkan directly for arbitrary array
+ranges; cvk does not add a passthrough sibling for these commands.
+
+Other parameters remain in registry order, transformed by role:
 
 | Role | Emitted |
 |---|---|
@@ -83,7 +91,7 @@ Parameters in registry order, transformed by role:
 | output handle | out-pointer; asserted non-null before, `!= VK_NULL_HANDLE` after |
 | output sType struct (`P`) | `void* p<Stem>Next` immediately before the out-pointer. The wrapper fills a local named after the parameter (`support`, `memory_requirements`) with `sType`/`pNext`, passes it, and copies it to the out-pointer after the call; the caller's struct is never written before the call. Each struct fill is its own block |
 | output POD struct / scalar | out-pointer verbatim |
-| two-call enumeration | count pointer removed; function returns `uint32_t`; array becomes `T p<Name>[CVK_MAX_<NAME>]` |
+| two-call enumeration | count pointer removed; function returns `uint32_t`; array becomes `T p<Name>[CVK_MAX_<NAME>]`. The local count is declared without an initializer, then assigned zero after input-struct initialization, immediately before the count query |
 | non-`VkResult` return | passed through |
 
 When more than one struct is filled (two `I`, or `I` and `P`), each `pNext` is `p<Stem>Next`
@@ -194,6 +202,17 @@ true) selects C99 designated initialization in struct and union builders and gen
 wrappers, including flattened inputs, extenders, and elements of local arrays. Scalar and
 pointer members use `(*pInfo) = (VkType)` followed by an Allman-braced initializer.
 The generator restores initializer braces after clang-format, without formatter directives.
+A blank line separates function calls from adjacent assignments or initialized declarations,
+including checked, void-cast, returned and assigned calls. Calls whose results are assigned
+stand apart from output copies, so their assignment spacing does not depend on nearby names
+or the line limit. This applies to all generated sources and both initialization styles;
+consecutive assignments without calls stay together.
+A return statement is separated from a preceding statement or completed block by a blank
+line. A return that is the first statement in its block does not gain a leading blank line.
+Assertion groups are followed by a blank line before the next statement, including loops
+and calls. Consecutive assertions stay together; no blank line is added before a closing brace.
+Enumeration loop indices are declared with the function's other locals, without an extra
+scope around the loop.
 An adjacent local declaration and designated assignment are combined into one initialized
 declaration. Intervening statements or declarations are not reordered.
 Generated initializers never include a trailing comma; clang-format is configured not to add one.
@@ -395,7 +414,7 @@ counterpart in the others. `<Kind>` is `Compute`, `Graphics`, or `Video`.
 | layout | `cvkCreateComputePipelineLayout` (one range, `COMPUTE_BIT`) | `cvkCreateGraphicsPipelineLayout` (one range, `ALL_GRAPHICS`) | — |
 | fixed-function state | — | `cvkInit<Adjective>Pipeline<State>CreateInfo`: the builder with the canonical constants bound (`Empty` vertex input, `TriangleList`/`TriangleStrip`/`PointList`/`LineList` input assembly, `Single` viewport, `Fill` rasterization, `SampleCount` multisample, `Disabled`/`DepthTest` depth stencil, `Opaque`/`AlphaBlend` attachment, `SingleAttachment` color blend). Arrays stay caller-owned: a builder never points into chain storage | picture resources and reference slots: builders only, storage is the caller's |
 | object | `cvkSetupComputePipeline` (module, stage, layout, pipeline) | `cvkSetupGraphicsPipeline` (two modules, two stages, layout, pipeline over caller-provided state) | `cvkSetupVideoSession` (session, then `cvkAllocateVideoSessionMemory`: one allocation and bind per requirement, a protocol), `cvkSetup{Buffer,Image}WithVideoProfileListInfo` |
-| bind | `cvkCmdBindComputePipeline`, `cvkCmdBindComputeDescriptorSets`, `cvkCmdPushComputeConstants`, `cvkCmdBindComputeShader` | `cvkCmdBindGraphicsPipeline`, `cvkCmdBindGraphicsDescriptorSets`, `cvkCmdPushGraphicsConstants`, `cvkCmdSetFirst{Viewport,Scissor}[2D]`, `cvkCmdSetFirstViewportAndScissor2D` | `cvkCmdBeginVideoCoding[With<RateControl>Info]`, `cvkCmdControlVideoCoding`, `cvkCmdControlResetVideoCoding`, `cvkCmdEndVideoCoding` |
+| bind | `cvkCmdBindComputePipeline`, `cvkCmdBindComputeDescriptorSets`, `cvkCmdPushComputeConstants`, `cvkCmdBindComputeShader` | `cvkCmdBindGraphicsPipeline`, `cvkCmdBindGraphicsDescriptorSets`, `cvkCmdPushGraphicsConstants`, `cvkCmdSet{Viewport,Scissor}[2D]`, `cvkCmdSetViewportAndScissor2D` | `cvkCmdBeginVideoCoding[With<RateControl>Info]`, `cvkCmdControlVideoCoding`, `cvkCmdControlResetVideoCoding`, `cvkCmdEndVideoCoding` |
 | work | `cvkCmdDispatchItems`, `cvkCmdDispatchComputeItems` (bind, bind, push, dispatch) and 2D forms | `cvkCmdDrawGraphicsVertices`, `cvkCmdDrawGraphicsIndices` (bind, bind, push, draw) | `cvkCmdDecodeVideo[With<Codec>PictureInfo]`, `cvkCmdEncodeVideo[With<Codec>PictureInfo]` |
 | queries | `cvkCreateTimestampQueryPool` | same | `cvkCreateResultStatusQueryPool`, `cvkGetQueryResultStatus`; `cvkCreateVideoEncode[Bitstream]FeedbackQueryPool`, `cvkGetVideoEncodeBitstreamFeedback` (offset and bytes written, status returned) |
 | resources | `cvkSetup{DeviceLocal,HostVisible}Buffer` | attachments: `cvkCreateWholeImageView2D`, `cvkCreateColorRenderPass`, `cvkCreateSingleAttachmentFramebuffer` | `cvkSetupVideoImage` (2D, one level, one sample, optimal, undefined; the array layers are the pictures) and `cvkSetupVideo{DecodeDpb,DecodeDst,EncodeSrc,EncodeDpb}Image`; `cvkSetupVideo{DecodeSrc,EncodeDst}Buffer`; `cvkCreateLayerImageView2D` (one picture of the DPB array); `cvkAlignDeviceSize` for the bitstream alignments |

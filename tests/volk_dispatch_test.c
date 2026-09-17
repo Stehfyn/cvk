@@ -20,6 +20,29 @@ static unsigned observed;
 static unsigned version = 1;
 static unsigned destroyed;
 static VkDevice expected_device;
+static VkRect2D expected_scissor;
+static VkViewport expected_viewport;
+static unsigned scissor_calls;
+static unsigned viewport_calls;
+
+static VKAPI_ATTR void VKAPI_CALL set_scissor(VkCommandBuffer commandBuffer, uint32_t firstScissor, uint32_t scissorCount, const VkRect2D* scissors)
+{
+    CHECK(commandBuffer == (VkCommandBuffer)(uintptr_t)4);
+    CHECK(firstScissor == 0 && scissorCount == 1 && scissors != NULL);
+    CHECK(scissors[0].offset.x == expected_scissor.offset.x && scissors[0].offset.y == expected_scissor.offset.y);
+    CHECK(scissors[0].extent.width == expected_scissor.extent.width && scissors[0].extent.height == expected_scissor.extent.height);
+    ++scissor_calls;
+}
+
+static VKAPI_ATTR void VKAPI_CALL set_viewport(VkCommandBuffer commandBuffer, uint32_t firstViewport, uint32_t viewportCount, const VkViewport* viewports)
+{
+    CHECK(commandBuffer == (VkCommandBuffer)(uintptr_t)4);
+    CHECK(firstViewport == 0 && viewportCount == 1 && viewports != NULL);
+    CHECK(viewports[0].x == expected_viewport.x && viewports[0].y == expected_viewport.y);
+    CHECK(viewports[0].width == expected_viewport.width && viewports[0].height == expected_viewport.height);
+    CHECK(viewports[0].minDepth == expected_viewport.minDepth && viewports[0].maxDepth == expected_viewport.maxDepth);
+    ++viewport_calls;
+}
 
 static VKAPI_ATTR void VKAPI_CALL release_first(VkDevice device)
 {
@@ -88,6 +111,10 @@ static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL device_proc(VkDevice device, con
         return (PFN_vkVoidFunction)wait_idle;
     if (strcmp(name, "vkCmdDrawMeshTasksEXT") == 0)
         return (PFN_vkVoidFunction)draw_mesh;
+    if (strcmp(name, "vkCmdSetScissor") == 0)
+        return (PFN_vkVoidFunction)set_scissor;
+    if (strcmp(name, "vkCmdSetViewport") == 0)
+        return (PFN_vkVoidFunction)set_viewport;
     if (strcmp(name, "vkCreateBuffer") == 0)
         return (PFN_vkVoidFunction)create_buffer;
     if (strcmp(name, "vkDestroyDevice") == 0)
@@ -131,6 +158,31 @@ int main(void)
     CHECK(observed == 5);
     cvkCreateBuffer(expected_device, NULL, 0, 1024, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, &buffer);
     CHECK(buffer == (VkBuffer)(uintptr_t)6);
+    expected_scissor = (VkRect2D)
+    {
+        .offset = { 13, 17 },
+        .extent = { 640, 480 }
+    };
+    expected_viewport = (VkViewport)
+    {
+        .x = 7.0f,
+        .y = 9.0f,
+        .width = 640.0f,
+        .height = 480.0f,
+        .minDepth = 0.25f,
+        .maxDepth = 0.75f
+    };
+    cvkCmdSetScissor((VkCommandBuffer)(uintptr_t)4, expected_scissor);
+    cvkCmdSetViewport((VkCommandBuffer)(uintptr_t)4, expected_viewport);
+    CHECK(scissor_calls == 1 && viewport_calls == 1);
+    expected_scissor.offset.x = 0;
+    expected_scissor.offset.y = 0;
+    expected_viewport.x = 0.0f;
+    expected_viewport.y = 0.0f;
+    expected_viewport.minDepth = 0.0f;
+    expected_viewport.maxDepth = 1.0f;
+    cvkCmdSetViewportAndScissor2D((VkCommandBuffer)(uintptr_t)4, expected_scissor.extent);
+    CHECK(scissor_calls == 2 && viewport_calls == 2);
     cvkDestroyDevice(expected_device, NULL);
     CHECK(destroyed == 1 && lookups == loaded_lookups);
 

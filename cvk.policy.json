@@ -39,6 +39,28 @@
     "VK_ERROR_SURFACE_LOST_KHR",
     "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT"
   ],
+  "command_forms": {
+    "vkCmdSetScissor": {
+      "brief": "Sets scissor zero.",
+      "bind": {
+        "firstScissor": "0",
+        "scissorCount": "1"
+      },
+      "by_value": {
+        "pScissors": "scissor"
+      }
+    },
+    "vkCmdSetViewport": {
+      "brief": "Sets viewport zero.",
+      "bind": {
+        "firstViewport": "0",
+        "viewportCount": "1"
+      },
+      "by_value": {
+        "pViewports": "viewport"
+      }
+    }
+  },
   "chains": {
     "cvkGetPhysicalDeviceMemoryTypeIndex": {
       "brief": "Returns the physical device's memory type index whose property flags equal the given flags exactly, or VK_INVALID.",
@@ -2811,47 +2833,7 @@
         }
       ]
     },
-    "cvkCmdSetFirstViewport": {
-      "brief": "Sets viewport zero.",
-      "inputs": [
-        {
-          "type": "VkViewport",
-          "name": "viewport",
-          "doc": "The viewport"
-        }
-      ],
-      "steps": [
-        {
-          "call": "cvkCmdSetViewport",
-          "bind": {
-            "firstViewport": "0",
-            "viewportCount": "1",
-            "pViewports": "&viewport"
-          }
-        }
-      ]
-    },
-    "cvkCmdSetFirstScissor": {
-      "brief": "Sets scissor zero.",
-      "inputs": [
-        {
-          "type": "VkRect2D",
-          "name": "scissor",
-          "doc": "The scissor rectangle"
-        }
-      ],
-      "steps": [
-        {
-          "call": "cvkCmdSetScissor",
-          "bind": {
-            "firstScissor": "0",
-            "scissorCount": "1",
-            "pScissors": "&scissor"
-          }
-        }
-      ]
-    },
-    "cvkCmdSetFirstViewport2D": {
+    "cvkCmdSetViewport2D": {
       "brief": "Sets viewport zero to an extent at the origin with the full depth range.",
       "inputs": [
         {
@@ -2876,14 +2858,14 @@
           }
         },
         {
-          "call": "cvkCmdSetFirstViewport",
+          "call": "cvkCmdSetViewport",
           "bind": {
             "viewport": "viewport"
           }
         }
       ]
     },
-    "cvkCmdSetFirstScissor2D": {
+    "cvkCmdSetScissor2D": {
       "brief": "Sets scissor zero to an extent at the origin.",
       "inputs": [
         {
@@ -2914,21 +2896,21 @@
           }
         },
         {
-          "call": "cvkCmdSetFirstScissor",
+          "call": "cvkCmdSetScissor",
           "bind": {
             "scissor": "scissor"
           }
         }
       ]
     },
-    "cvkCmdSetFirstViewportAndScissor2D": {
+    "cvkCmdSetViewportAndScissor2D": {
       "brief": "Sets viewport zero and scissor zero to an extent at the origin.",
       "steps": [
         {
-          "call": "cvkCmdSetFirstViewport2D"
+          "call": "cvkCmdSetViewport2D"
         },
         {
-          "call": "cvkCmdSetFirstScissor2D"
+          "call": "cvkCmdSetScissor2D"
         }
       ]
     },

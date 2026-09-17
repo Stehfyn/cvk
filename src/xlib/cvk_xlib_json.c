@@ -12,8 +12,10 @@ void cvkParseJsonXlibSurfaceCreateInfo(const cvkJsonContext* pContext, const cvk
     const cvkJsonValue* value;
 
     (void)memset(pInfo, 0, sizeof(*pInfo));
+
     pInfo->sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    value        = cvkGetJsonMember(&pContext->document, pObject, "pNext");
+
+    value = cvkGetJsonMember(&pContext->document, pObject, "pNext");
     if (!cvkIsJsonNull(value))
     {
         pInfo->pNext = cvkParseJsonStructureChain(pContext, value);
