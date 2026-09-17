@@ -35,7 +35,7 @@ if(CVK_DEMO_VALIDATION)
     target_compile_definitions(immersive-video PRIVATE CVK_DEMO_VALIDATION)
 endif()
 
-add_executable(ImmersiveWindowDemo WIN32 "${reference_dir}/demo.c" immersive_window.c
+add_executable(ImmersiveWindowDemo WIN32 demo.c immersive_window.c presentation.h
     "${reference_dir}/immersive_window.h" "${reference_dir}/video.h"
     shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag)
 set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag

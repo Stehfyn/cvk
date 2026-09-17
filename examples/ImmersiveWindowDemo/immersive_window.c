@@ -10,6 +10,7 @@
 **   7. the window procedure */
 
 #include "immersive_window.h"
+#include "presentation.h"
 
 #include <windowsx.h>
 #include <dwmapi.h>
@@ -90,6 +91,10 @@ typedef struct tagIMMERSIVEWINDOW
     IDXGISwapChain2*     pDXGISwapChain2;
     IDXGISurface2*       pDXGISurface2;
     HANDLE               hFrameLatencyWaitableObject;
+    ID3D11Texture2D*      pFrameTexture;
+    ID3D11RenderTargetView* pFrameTarget;
+    ID3D11Texture2D*      pBackBuffer;
+    ID3D11Query*          pFrameReady;
 #ifndef NDEBUG
     ID3D11Debug* pD3D11Debug;
 #endif
@@ -135,6 +140,12 @@ typedef struct tagIMMERSIVEWINDOW
     LONGLONG llTargetFrame;
     BOOL     fContentValid;
     BOOL     fInResizePaint;
+    SIZE     szPaint;
+    BOOL     fPreparingResize;
+    BOOL     fFrameCopied;
+    BOOL     fResizePresented;
+    RECT     rcResize;
+    BOOL     fFrameSlotReady;
 } IMMERSIVEWINDOW, *LPIMMERSIVEWINDOW;
 
 /* uxtheme private ordinals and the composition attribute, resolved once */
@@ -351,7 +362,7 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
                                     | D3D11_CREATE_DEVICE_DEBUG
 #endif
         ;
-    static const UINT              swapChainFlags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING | DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+    static const UINT              swapChainFlags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
     static const D3D_FEATURE_LEVEL levels[]       = {D3D_FEATURE_LEVEL_10_0, D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_12_0, D3D_FEATURE_LEVEL_12_1};
     D3D_FEATURE_LEVEL              level;
     DXGI_SAMPLE_DESC               single;
@@ -393,24 +404,34 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
                                               FALSE,
                                               single,
                                               DXGI_USAGE_RENDER_TARGET_OUTPUT,
-                                              5,
+                                              2,
                                               DXGI_SCALING_STRETCH,
-                                              DXGI_SWAP_EFFECT_FLIP_DISCARD,
+                                              DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
                                               DXGI_ALPHA_MODE_PREMULTIPLIED,
                                               swapChainFlags,
                                               NULL,
                                               &swapChain1);
     Check(SUCCEEDED(cdxgiUnknownQueryInterfaceAsSwapChain2((IUnknown*)swapChain1, &pw->pDXGISwapChain2)), "IDXGISwapChain2");
     cdxgiUnknownRelease((IUnknown*)swapChain1);
+    cdxgiSwapChainSetMaximumFrameLatencyOne(pw->pDXGISwapChain2);
     cdxgiFactoryMakeWindowAssociation((IDXGIFactory*)pw->pDXGIFactory2, hWnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_PRINT_SCREEN);
     pw->hFrameLatencyWaitableObject = cdxgiSwapChainGetFrameLatencyWaitableObject(pw->pDXGISwapChain2);
 
-    /* Direct2D over the back buffer */
+    /* Prepare video and caption away from the swap chain. A resize can finish
+    ** this work while the HWND still has its old geometry. */
+    cdx11DeviceCreateTexture2D(pw->pD3D11Device, width, height, 1, 1,
+                               DXGI_FORMAT_B8G8R8A8_UNORM, single, D3D11_USAGE_DEFAULT,
+                               D3D11_BIND_RENDER_TARGET, 0, 0, NULL, &pw->pFrameTexture);
+    cdx11DeviceCreateRenderTargetView(pw->pD3D11Device, (ID3D11Resource*)pw->pFrameTexture, NULL, &pw->pFrameTarget);
+    cdx11DeviceCreateQueryEvent(pw->pD3D11Device, 0, &pw->pFrameReady);
+    cdxgiSwapChainGetBuffer((IDXGISwapChain*)pw->pDXGISwapChain2, 0, &IID_ID3D11Texture2D, (void**)&pw->pBackBuffer);
+
+    /* Direct2D shares the offscreen frame with the Vulkan video copy. */
     options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
     cd2dCreateFactoryAsFactory2(D2D1_FACTORY_TYPE_SINGLE_THREADED, &options, &pw->pD2D1Factory2);
     cd2dFactory2CreateDevice(pw->pD2D1Factory2, (IDXGIDevice*)pw->pDXGIDevice1, &pw->pD2D1Device1);
     cd2dSetupDefaultDeviceContext((ID2D1Device*)pw->pD2D1Device1, &pw->pD2D1DeviceContext);
-    cdxgiSwapChainGetBufferAsSurface2((IDXGISwapChain*)pw->pDXGISwapChain2, 0, &pw->pDXGISurface2);
+    Check(SUCCEEDED(cdxgiUnknownQueryInterfaceAsSurface2((IUnknown*)pw->pFrameTexture, &pw->pDXGISurface2)), "frame surface");
     cd2dDeviceContextCreateTargetBitmapFromSurface(pw->pD2D1DeviceContext, (IDXGISurface*)pw->pDXGISurface2, DXGI_FORMAT_B8G8R8A8_UNORM, &pw->pD2D1TargetBitmap);
     cd2dDeviceContextSetTarget(pw->pD2D1DeviceContext, (ID2D1Image*)pw->pD2D1TargetBitmap);
 
@@ -465,7 +486,16 @@ static void OnShutdownD2D(LPIMMERSIVEWINDOW pw)
     RELEASE(pw->pD2D1Device1);
     RELEASE(pw->pD2D1Factory2);
     RELEASE(pw->pDXGISurface2);
+    RELEASE(pw->pFrameReady);
+    RELEASE(pw->pFrameTarget);
+    RELEASE(pw->pFrameTexture);
+    RELEASE(pw->pBackBuffer);
     RELEASE(pw->pDXGISwapChain2);
+    if (NULL != pw->hFrameLatencyWaitableObject)
+    {
+        CloseHandle(pw->hFrameLatencyWaitableObject);
+        pw->hFrameLatencyWaitableObject = NULL;
+    }
 #ifndef NDEBUG
     if (NULL != pw->pD3D11Debug)
     {
@@ -547,10 +577,13 @@ static BOOL GetCaptionButtonRect(HWND hWnd, LPRECT lprc, CAPTIONBUTTON eButton)
 static BOOL GetWindowContentRect(HWND hWnd, LPRECT lprc)
 {
     RECT rcClient;
-    if (!GetWindowRect(hWnd, lprc) || !GetClientRect(hWnd, &rcClient))
+    POINT origin = {0, 0};
+    if (!GetClientRect(hWnd, &rcClient) || !ClientToScreen(hWnd, &origin))
     {
         return FALSE;
     }
+    lprc->left   = origin.x;
+    lprc->top    = origin.y;
     lprc->right  = lprc->left + RECTWIDTH(rcClient);
     lprc->bottom = lprc->top + RECTHEIGHT(rcClient);
     return TRUE;
@@ -577,14 +610,12 @@ static BOOL ContentTargetsCurrentFrame(LPIMMERSIVEWINDOW pw, LPCRECT lprc)
 
 static BOOL StampPresentedContent(HWND hWnd, LPIMMERSIVEWINDOW pw)
 {
-    RECT rcContent;
-
-    if (!GetWindowContentRect(hWnd, &rcContent) || !ContentRectHasArea(&rcContent))
+    (void)hWnd;
+    if (pw->szPaint.cx <= 0 || pw->szPaint.cy <= 0)
     {
         return FALSE;
     }
-    pw->szContent.cx  = RECTWIDTH(rcContent);
-    pw->szContent.cy  = RECTHEIGHT(rcContent);
+    pw->szContent    = pw->szPaint;
     pw->fContentValid = TRUE;
     if (NULL != pw->pDCompDevice)
     {
@@ -763,15 +794,24 @@ static void OnClose(HWND hWnd)
 
 static void OnPaint(HWND hWnd)
 {
-    /* WS_EX_NOREDIRECTIONBITMAP: the window has no GDI surface, so there is nothing to paint */
-    ValidateRect(hWnd, NULL);
+    PAINTSTRUCT       paint;
+    LPIMMERSIVEWINDOW pw = GetState(hWnd);
+
+    /* A composition window still receives repaint requests after its client
+    ** geometry changes. Validate through BeginPaint, then replace the complete
+    ** video + caption image using that committed geometry. */
+    BeginPaint(hWnd, &paint);
+    if (NULL != pw && !IsIconic(hWnd))
+    {
+        RenderGeometryFrame(hWnd, pw, IMMERSIVE_PAINT_SEQUENCE, IMMERSIVE_PAINT_SYNC_1);
+    }
+    EndPaint(hWnd, &paint);
 }
 
 static BOOL OnEraseBkgnd(HWND hWnd, HDC hDC)
 {
-    RECT rcUpdate;
-    GetUpdateRect(hWnd, &rcUpdate, FALSE);
-    ValidateRect(hWnd, &rcUpdate);
+    /* Suppress GDI erasure without consuming the pending composition repaint. */
+    (void)hWnd;
     (void)hDC;
     return TRUE;
 }
@@ -812,10 +852,6 @@ static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpc
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
     RECT              rcCaption;
-    RECT              rcContent;
-    RECT              rcCurrent;
-    BOOL              fCurrentValid;
-    BOOL              fSizeChanging;
 
     if (!fCalcValidRects)
     {
@@ -823,7 +859,6 @@ static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpc
     }
     Trace("WM_NCCALCSIZE", 0);
     /* keep the client area exactly the window rectangle minus the side and bottom borders */
-    lpcsp->rgrc[1] = lpcsp->rgrc[2];
     if (IsMaximized(hWnd))
     {
         MONITORINFO mi;
@@ -842,21 +877,45 @@ static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpc
         lpcsp->rgrc[0].bottom -= border.cy;
     }
 
-    /* WM_NCCALCSIZE runs before the new geometry is committed: latch a frame at the current
-    ** size so that the compositor never shows future-layout pixels in the old window */
-    rcContent     = lpcsp->rgrc[0];
-    fCurrentValid = GetWindowContentRect(hWnd, &rcCurrent);
-    fSizeChanging = !fCurrentValid || (RECTWIDTH(rcCurrent) != RECTWIDTH(rcContent)) || (RECTHEIGHT(rcCurrent) != RECTHEIGHT(rcContent));
-    if (NULL != pw && ContentRectHasArea(&rcContent) && fSizeChanging)
+    /* Finish the expensive GPU work BEFORE Windows changes the HWND bounds.
+    ** GetClientRect still reports the old size here, so pass the proposed size
+    ** explicitly to both video and caption. Finish the back-buffer copy too;
+    ** leaving it until WINDOWPOSCHANGED lets DWM move the old image first. */
+    if (NULL != pw && NULL != pw->pProc && !pw->fInResizePaint &&
+        ContentRectHasArea(&lpcsp->rgrc[0]) && !ContentSizeMatches(pw, &lpcsp->rgrc[0]))
     {
-        if (!fCurrentValid || !ContentTargetsCurrentFrame(pw, &rcCurrent))
+        HRESULT ready;
+        pw->szPaint.cx = lpcsp->rgrc[0].right - lpcsp->rgrc[0].left;
+        pw->szPaint.cy = lpcsp->rgrc[0].bottom - lpcsp->rgrc[0].top;
+        pw->fInResizePaint = TRUE;
+        pw->fPreparingResize = TRUE;
+        pw->rcResize = lpcsp->rgrc[0];
+        BeginImmersivePaint(hWnd);
+        cdx11DeviceContextCopyResource(pw->pD3D11DeviceContext,
+                                        (ID3D11Resource*)pw->pBackBuffer,
+                                        (ID3D11Resource*)pw->pFrameTexture);
+        pw->fFrameCopied = TRUE;
+        cdx11DeviceContextEnd(pw->pD3D11DeviceContext, (ID3D11Asynchronous*)pw->pFrameReady);
+        cdx11DeviceContextFlush(pw->pD3D11DeviceContext);
+        do
         {
-            RenderGeometryFrame(hWnd, pw, IMMERSIVE_PAINT_RESTART, IMMERSIVE_PAINT_SYNC_0);
-        }
+            ready = cdx11DeviceContextGetData(pw->pD3D11DeviceContext,
+                                              (ID3D11Asynchronous*)pw->pFrameReady,
+                                              NULL, 0, D3D11_ASYNC_GETDATA_DONOTFLUSH);
+            if (S_FALSE == ready)
+                SwitchToThread();
+        } while (S_FALSE == ready);
+        Check(SUCCEEDED(ready), "resize frame completion");
+        /* Cross the composition boundary while the old geometry and old
+        ** presented image still agree. Queue the GPU-complete replacement
+        ** before returning control to the window manager: the next composition
+        ** must not have to wait for WINDOWPOSCHANGED to submit its pixels. */
         DwmFlush();
-        Trace("WM_NCCALCSIZE flushed", 0);
+        pw->fResizePresented = EndImmersivePaint(hWnd, IMMERSIVE_PAINT_RESTART, IMMERSIVE_PAINT_SYNC_0);
+        pw->fPreparingResize = FALSE;
+        pw->fInResizePaint = FALSE;
     }
-    return 0;
+    return WVR_REDRAW;
 }
 
 static UINT OnNCHitTest(HWND hWnd, int x, int y)
@@ -1198,15 +1257,30 @@ static void OnWindowPosChanged(HWND hWnd, const LPWINDOWPOS lpwpos)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
     RECT              rcContent;
-    if (NULL == pw || NULL == lpwpos || ((SWP_NOMOVE | SWP_NOSIZE) == (lpwpos->flags & (SWP_NOMOVE | SWP_NOSIZE))) || !GetWindowContentRect(hWnd, &rcContent) || !ContentRectHasArea(&rcContent))
+    BOOL              fResizeMismatch;
+    if (NULL == pw || NULL == lpwpos || pw->fInResizePaint || IsIconic(hWnd) ||
+        ((SWP_NOMOVE | SWP_NOSIZE) == (lpwpos->flags & (SWP_NOMOVE | SWP_NOSIZE))) || !GetWindowContentRect(hWnd, &rcContent) || !ContentRectHasArea(&rcContent))
     {
         return;
     }
     /* the geometry is committed: a size mismatch needs a frame, a pure move carries the visual */
     Trace("WM_WINDOWPOSCHANGED", 0);
-    if (!ContentSizeMatches(pw, &rcContent))
+    fResizeMismatch = pw->fResizePresented && !EqualRect(&pw->rcResize, &rcContent);
+    if (pw->fResizePresented && !fResizeMismatch)
     {
-        RenderGeometryFrame(hWnd, pw, IMMERSIVE_PAINT_RESTART, IMMERSIVE_PAINT_SYNC_1);
+        /* NCCALCSIZE already submitted the complete image for this exact
+        ** client origin and size. A second paint would add a latency wait. */
+        ValidateRect(hWnd, NULL);
+    }
+    pw->fResizePresented = FALSE;
+    if (fResizeMismatch || !ContentSizeMatches(pw, &rcContent))
+    {
+        if (RenderGeometryFrame(hWnd, pw, IMMERSIVE_PAINT_RESTART, IMMERSIVE_PAINT_SYNC_0))
+        {
+            /* This draw has fulfilled the resize invalidation. Do not queue
+            ** another identical frame from WM_PAINT behind it. */
+            ValidateRect(hWnd, NULL);
+        }
     }
     Trace("WM_WINDOWPOSCHANGED done", 0);
 }
@@ -1264,6 +1338,7 @@ static void PaintCaption(HWND hWnd, LPIMMERSIVEWINDOW pw)
     SIZE                  pad;
 
     GetCaptionRect(hWnd, &rcCaption);
+    rcCaption.right = rcCaption.left + pw->szPaint.cx;
     rcClose = rcMax = rcMin = rcLightDark = rcCaption;
     GetCaptionButtonRectFast(&rcClose, buttonWidth, CB_CLOSEBUTTON);
     GetCaptionButtonRectFast(&rcMax, buttonWidth, CB_MAXBUTTON);
@@ -1359,6 +1434,16 @@ LPVOID WINAPI BeginImmersivePaint(HWND hWnd)
     {
         return NULL;
     }
+    if (!pw->fPreparingResize)
+    {
+        RECT rc;
+        GetClientRect(hWnd, &rc);
+        pw->szPaint.cx = rc.right;
+        pw->szPaint.cy = rc.bottom;
+    }
+    pw->fFrameCopied = FALSE;
+    /* For resizing this wait happens before the HWND geometry changes. */
+    WaitForNextFrameResource(hWnd);
     target = (ID2D1RenderTarget*)pw->pD2D1DeviceContext;
     if (pw->pProc)
     {
@@ -1383,12 +1468,18 @@ BOOL WINAPI EndImmersivePaint(HWND hWnd, BOOL fRestart, BOOL fVsync)
     {
         return FALSE;
     }
-    /* Exactly one successful present for the buffer we painted. FLIP_DISCARD
-    ** does not preserve back-buffer contents for a second presentation. Do not
-    ** drop a geometry frame with DO_NOT_WAIT and then stamp it as current. */
+    /* A resize has already copied and completed this buffer on the GPU before
+    ** the composition boundary. Ordinary paints copy their finished image now. */
+    if (!pw->fFrameCopied)
+    {
+        cdx11DeviceContextCopyResource(pw->pD3D11DeviceContext,
+                                        (ID3D11Resource*)pw->pBackBuffer,
+                                        (ID3D11Resource*)pw->pFrameTexture);
+    }
     sc = (IDXGISwapChain*)pw->pDXGISwapChain2;
-    (void)fVsync;
-    hr = cdxgiSwapChainPresent(sc, 1, fRestart ? DXGI_PRESENT_RESTART : 0);
+    hr = cdxgiSwapChainPresent(sc, fVsync ? 1 : 0, fRestart ? DXGI_PRESENT_RESTART : 0);
+    pw->fFrameSlotReady = FALSE;
+    pw->fFrameCopied = FALSE;
     Trace("present", hr);
     return S_OK == hr ? StampPresentedContent(hWnd, pw) : FALSE;
 }
@@ -1397,6 +1488,24 @@ BOOL SetDevicePreDrawCallback(HWND hWnd, DEVICEDRAWPROC pProc)
 {
     GetState(hWnd)->pPreProc = pProc;
     return TRUE;
+}
+
+BOOL GetImmersivePaintSize(HWND hWnd, SIZE* size)
+{
+    LPIMMERSIVEWINDOW pw = GetState(hWnd);
+    if (NULL == pw || NULL == size)
+        return FALSE;
+    *size = pw->szPaint;
+    return TRUE;
+}
+
+ID3D11RenderTargetView* GetImmersiveFrameTarget(HWND hWnd)
+{
+    LPIMMERSIVEWINDOW pw = GetState(hWnd);
+    if (NULL == pw || NULL == pw->pFrameTarget)
+        return NULL;
+    cdxgiUnknownAddRef((IUnknown*)pw->pFrameTarget);
+    return pw->pFrameTarget;
 }
 
 BOOL SetDeviceDrawCallback(HWND hWnd, DEVICEDRAWPROC pProc)
@@ -1434,9 +1543,12 @@ BOOL GetResizeInfo(HWND hWnd, LPRESIZEINFO lpri)
 VOID WINAPI WaitForNextFrameResource(HWND hWnd)
 {
     LPIMMERSIVEWINDOW pw = GetState(hWnd);
-    if (NULL != pw && NULL != pw->hFrameLatencyWaitableObject)
+    if (NULL != pw && NULL != pw->hFrameLatencyWaitableObject && !pw->fFrameSlotReady)
     {
-        WaitForSingleObject(pw->hFrameLatencyWaitableObject, 0);
+        Check(WAIT_OBJECT_0 == WaitForSingleObject(pw->hFrameLatencyWaitableObject, INFINITE), "frame latency wait");
+        /* More than one NCCALCSIZE may precede the eventual present. Replacing
+        ** an offscreen preparation must not consume another presentation slot. */
+        pw->fFrameSlotReady = TRUE;
     }
 }
 

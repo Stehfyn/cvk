@@ -9,9 +9,23 @@ bindings; this is a Vulkan video renderer with native Windows integration.
 The command line, 1280x720 starting window, caption glyphs, light/dark toggle,
 resize/move handling, Space to pause/resume, Escape to close, and looping playback
 come from the pinned CDX example. As in the reference, playback is video-only.
-`demo.c` and the public headers are reused directly from the submodule. The local
-`immersive_window.c` changes presentation to submit each painted buffer once,
-with vertical synchronization, avoiding the reference's double-present path.
+The original public headers are reused directly from the submodule. Local copies
+of `demo.c` and `immersive_window.c` keep the controls and playback flow. Video
+and caption render into one offscreen frame. During `WM_NCCALCSIZE`, both use the
+proposed client dimensions, and the GPU completes this frame and its copy into
+the swap-chain back buffer while the window still has its old geometry. After
+synchronizing the old image with DWM, the completed replacement is presented
+before returning from `WM_NCCALCSIZE`. No GPU work or presentation is deferred
+until after the HWND changes origin. `WM_WINDOWPOSCHANGED` checks the complete
+client rectangle in screen coordinates, including its origin, against the
+submitted resize frame and repaints only if the committed geometry differs.
+The resize present discards queued frames with outdated dimensions.
+
+The composition chain has two flip-sequential buffers and a one-frame latency
+limit. Client-size changes invalidate the complete image (`WVR_REDRAW`).
+`WM_PAINT` redraws video and caption; background erasure does not discard repaint
+requests. `presentation.h` exposes the shared frame target and drawing dimensions
+to the local demo without changing the upstream API.
 
 Decoded NV12 textures and the BGRA output stay on the GPU. The renderer selects
 the Vulkan device with the same adapter LUID as D3D11 and synchronizes shared
@@ -19,6 +33,11 @@ textures with keyed mutexes and Vulkan external queue ownership barriers. The
 output is allocated at the composition back buffer's desktop size, so dragging a
 window edge does not reallocate it. Conversion is cached per frame; scaling is
 also cached when neither the frame nor the client size changes.
+
+Every presented backing buffer is fully painted. The shader keeps the original
+client-area sampling coordinates and extends edge pixels into the area outside
+the current client rectangle. This prevents a growing window from exposing
+uninitialized or transparent pixels before its new geometry frame arrives.
 
 ## Build and run
 
@@ -45,7 +64,10 @@ argument the app opens `demo.mp4` beside the executable, as the CDX demo does.
 stderr and the debugger. The optional GPU test renders 65 matching decoded frames
 through both implementations, comparing every BGRA channel within a tolerance of
 three values for independent API filtering/rounding. It also redraws cached frames
-at enlarged, reduced, and odd dimensions. A short fixture exercises EOF looping.
+at enlarged, reduced, and odd dimensions. The target is larger than the client
+area and cleared to transparent magenta first; the test checks that every pixel
+of the backing buffer becomes opaque, including the resize margins. A short
+fixture exercises EOF looping.
 
 ```powershell
 ffmpeg -f lavfi -i testsrc2=size=640x360:rate=30 -t 2 -c:v libx264 -pix_fmt yuv420p build/testsrc.mp4
