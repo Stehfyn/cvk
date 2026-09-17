@@ -11,50 +11,68 @@ void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
                                  uint32_t                   signalSemaphoreValuesCount,
                                  const uint64_t*            pSignalSemaphoreValues)
 {
-    pInfo->sType                      = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
-    pInfo->pNext                      = pNext;
-    pInfo->waitSemaphoreValuesCount   = waitSemaphoreValuesCount;
-    pInfo->pWaitSemaphoreValues       = pWaitSemaphoreValues;
-    pInfo->signalSemaphoreValuesCount = signalSemaphoreValuesCount;
-    pInfo->pSignalSemaphoreValues     = pSignalSemaphoreValues;
+    (*pInfo) = (VkD3D12FenceSubmitInfoKHR)
+    {
+        .sType                      = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR,
+        .pNext                      = pNext,
+        .waitSemaphoreValuesCount   = waitSemaphoreValuesCount,
+        .pWaitSemaphoreValues       = pWaitSemaphoreValues,
+        .signalSemaphoreValuesCount = signalSemaphoreValuesCount,
+        .pSignalSemaphoreValues     = pSignalSemaphoreValues
+    };
 }
 void cvkInitExportFenceWin32HandleInfo(VkExportFenceWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
-    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext       = pNext;
-    pInfo->pAttributes = pAttributes;
-    pInfo->dwAccess    = dwAccess;
-    pInfo->name        = name;
+    (*pInfo) = (VkExportFenceWin32HandleInfoKHR)
+    {
+        .sType       = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR,
+        .pNext       = pNext,
+        .pAttributes = pAttributes,
+        .dwAccess    = dwAccess,
+        .name        = name
+    };
 }
 void cvkInitExportMemoryWin32HandleInfo(VkExportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
-    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext       = pNext;
-    pInfo->pAttributes = pAttributes;
-    pInfo->dwAccess    = dwAccess;
-    pInfo->name        = name;
+    (*pInfo) = (VkExportMemoryWin32HandleInfoKHR)
+    {
+        .sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
+        .pNext       = pNext,
+        .pAttributes = pAttributes,
+        .dwAccess    = dwAccess,
+        .name        = name
+    };
 }
 void cvkInitExportMemoryWin32HandleInfoNV(VkExportMemoryWin32HandleInfoNV* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess)
 {
-    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV;
-    pInfo->pNext       = pNext;
-    pInfo->pAttributes = pAttributes;
-    pInfo->dwAccess    = dwAccess;
+    (*pInfo) = (VkExportMemoryWin32HandleInfoNV)
+    {
+        .sType       = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV,
+        .pNext       = pNext,
+        .pAttributes = pAttributes,
+        .dwAccess    = dwAccess
+    };
 }
 void cvkInitExportSemaphoreWin32HandleInfo(VkExportSemaphoreWin32HandleInfoKHR* pInfo, const void* pNext, const SECURITY_ATTRIBUTES* pAttributes, DWORD dwAccess, LPCWSTR name)
 {
-    pInfo->sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext       = pNext;
-    pInfo->pAttributes = pAttributes;
-    pInfo->dwAccess    = dwAccess;
-    pInfo->name        = name;
+    (*pInfo) = (VkExportSemaphoreWin32HandleInfoKHR)
+    {
+        .sType       = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR,
+        .pNext       = pNext,
+        .pAttributes = pAttributes,
+        .dwAccess    = dwAccess,
+        .name        = name
+    };
 }
 void cvkInitFenceGetWin32HandleInfo(VkFenceGetWin32HandleInfoKHR* pInfo, const void* pNext, VkFence fence, VkExternalFenceHandleTypeFlagBits handleType)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->fence      = fence;
-    pInfo->handleType = handleType;
+    (*pInfo) = (VkFenceGetWin32HandleInfoKHR)
+    {
+        .sType      = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR,
+        .pNext      = pNext,
+        .fence      = fence,
+        .handleType = handleType
+    };
 }
 void cvkInitImportFenceWin32HandleInfo(VkImportFenceWin32HandleInfoKHR*  pInfo,
                                        const void*                       pNext,
@@ -64,28 +82,37 @@ void cvkInitImportFenceWin32HandleInfo(VkImportFenceWin32HandleInfoKHR*  pInfo,
                                        HANDLE                            handle,
                                        LPCWSTR                           name)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->fence      = fence;
-    pInfo->flags      = flags;
-    pInfo->handleType = handleType;
-    pInfo->handle     = handle;
-    pInfo->name       = name;
+    (*pInfo) = (VkImportFenceWin32HandleInfoKHR)
+    {
+        .sType      = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR,
+        .pNext      = pNext,
+        .fence      = fence,
+        .flags      = flags,
+        .handleType = handleType,
+        .handle     = handle,
+        .name       = name
+    };
 }
 void cvkInitImportMemoryWin32HandleInfo(VkImportMemoryWin32HandleInfoKHR* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, HANDLE handle, LPCWSTR name)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->handleType = handleType;
-    pInfo->handle     = handle;
-    pInfo->name       = name;
+    (*pInfo) = (VkImportMemoryWin32HandleInfoKHR)
+    {
+        .sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
+        .pNext      = pNext,
+        .handleType = handleType,
+        .handle     = handle,
+        .name       = name
+    };
 }
 void cvkInitImportMemoryWin32HandleInfoNV(VkImportMemoryWin32HandleInfoNV* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagsNV handleType, HANDLE handle)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV;
-    pInfo->pNext      = pNext;
-    pInfo->handleType = handleType;
-    pInfo->handle     = handle;
+    (*pInfo) = (VkImportMemoryWin32HandleInfoNV)
+    {
+        .sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV,
+        .pNext      = pNext,
+        .handleType = handleType,
+        .handle     = handle
+    };
 }
 void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR*  pInfo,
                                            const void*                           pNext,
@@ -95,20 +122,26 @@ void cvkInitImportSemaphoreWin32HandleInfo(VkImportSemaphoreWin32HandleInfoKHR* 
                                            HANDLE                                handle,
                                            LPCWSTR                               name)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->semaphore  = semaphore;
-    pInfo->flags      = flags;
-    pInfo->handleType = handleType;
-    pInfo->handle     = handle;
-    pInfo->name       = name;
+    (*pInfo) = (VkImportSemaphoreWin32HandleInfoKHR)
+    {
+        .sType      = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR,
+        .pNext      = pNext,
+        .semaphore  = semaphore,
+        .flags      = flags,
+        .handleType = handleType,
+        .handle     = handle,
+        .name       = name
+    };
 }
 void cvkInitMemoryGetWin32HandleInfo(VkMemoryGetWin32HandleInfoKHR* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->memory     = memory;
-    pInfo->handleType = handleType;
+    (*pInfo) = (VkMemoryGetWin32HandleInfoKHR)
+    {
+        .sType      = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR,
+        .pNext      = pNext,
+        .memory     = memory,
+        .handleType = handleType
+    };
 }
 void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo, void* pNext)
 {
@@ -117,10 +150,13 @@ void cvkInitMemoryWin32HandleProperties(VkMemoryWin32HandlePropertiesKHR* pInfo,
 }
 void cvkInitSemaphoreGetWin32HandleInfo(VkSemaphoreGetWin32HandleInfoKHR* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType)
 {
-    pInfo->sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-    pInfo->pNext      = pNext;
-    pInfo->semaphore  = semaphore;
-    pInfo->handleType = handleType;
+    (*pInfo) = (VkSemaphoreGetWin32HandleInfoKHR)
+    {
+        .sType      = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR,
+        .pNext      = pNext,
+        .semaphore  = semaphore,
+        .handleType = handleType
+    };
 }
 void cvkInitSurfaceCapabilitiesFullScreenExclusive(VkSurfaceCapabilitiesFullScreenExclusiveEXT* pInfo, void* pNext)
 {
@@ -129,15 +165,21 @@ void cvkInitSurfaceCapabilitiesFullScreenExclusive(VkSurfaceCapabilitiesFullScre
 }
 void cvkInitSurfaceFullScreenExclusiveInfo(VkSurfaceFullScreenExclusiveInfoEXT* pInfo, void* pNext, VkFullScreenExclusiveEXT fullScreenExclusive)
 {
-    pInfo->sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
-    pInfo->pNext               = pNext;
-    pInfo->fullScreenExclusive = fullScreenExclusive;
+    (*pInfo) = (VkSurfaceFullScreenExclusiveInfoEXT)
+    {
+        .sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT,
+        .pNext               = pNext,
+        .fullScreenExclusive = fullScreenExclusive
+    };
 }
 void cvkInitSurfaceFullScreenExclusiveWin32Info(VkSurfaceFullScreenExclusiveWin32InfoEXT* pInfo, const void* pNext, HMONITOR hmonitor)
 {
-    pInfo->sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
-    pInfo->pNext    = pNext;
-    pInfo->hmonitor = hmonitor;
+    (*pInfo) = (VkSurfaceFullScreenExclusiveWin32InfoEXT)
+    {
+        .sType    = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT,
+        .pNext    = pNext,
+        .hmonitor = hmonitor
+    };
 }
 void cvkInitWin32KeyedMutexAcquireReleaseInfo(VkWin32KeyedMutexAcquireReleaseInfoKHR* pInfo,
                                               const void*                             pNext,
@@ -149,15 +191,18 @@ void cvkInitWin32KeyedMutexAcquireReleaseInfo(VkWin32KeyedMutexAcquireReleaseInf
                                               const VkDeviceMemory*                   pReleaseSyncs,
                                               const uint64_t*                         pReleaseKeys)
 {
-    pInfo->sType            = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
-    pInfo->pNext            = pNext;
-    pInfo->acquireCount     = acquireCount;
-    pInfo->pAcquireSyncs    = pAcquireSyncs;
-    pInfo->pAcquireKeys     = pAcquireKeys;
-    pInfo->pAcquireTimeouts = pAcquireTimeouts;
-    pInfo->releaseCount     = releaseCount;
-    pInfo->pReleaseSyncs    = pReleaseSyncs;
-    pInfo->pReleaseKeys     = pReleaseKeys;
+    (*pInfo) = (VkWin32KeyedMutexAcquireReleaseInfoKHR)
+    {
+        .sType            = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR,
+        .pNext            = pNext,
+        .acquireCount     = acquireCount,
+        .pAcquireSyncs    = pAcquireSyncs,
+        .pAcquireKeys     = pAcquireKeys,
+        .pAcquireTimeouts = pAcquireTimeouts,
+        .releaseCount     = releaseCount,
+        .pReleaseSyncs    = pReleaseSyncs,
+        .pReleaseKeys     = pReleaseKeys
+    };
 }
 void cvkInitWin32KeyedMutexAcquireReleaseInfoNV(VkWin32KeyedMutexAcquireReleaseInfoNV* pInfo,
                                                 const void*                            pNext,
@@ -169,23 +214,29 @@ void cvkInitWin32KeyedMutexAcquireReleaseInfoNV(VkWin32KeyedMutexAcquireReleaseI
                                                 const VkDeviceMemory*                  pReleaseSyncs,
                                                 const uint64_t*                        pReleaseKeys)
 {
-    pInfo->sType                       = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
-    pInfo->pNext                       = pNext;
-    pInfo->acquireCount                = acquireCount;
-    pInfo->pAcquireSyncs               = pAcquireSyncs;
-    pInfo->pAcquireKeys                = pAcquireKeys;
-    pInfo->pAcquireTimeoutMilliseconds = pAcquireTimeoutMilliseconds;
-    pInfo->releaseCount                = releaseCount;
-    pInfo->pReleaseSyncs               = pReleaseSyncs;
-    pInfo->pReleaseKeys                = pReleaseKeys;
+    (*pInfo) = (VkWin32KeyedMutexAcquireReleaseInfoNV)
+    {
+        .sType                       = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV,
+        .pNext                       = pNext,
+        .acquireCount                = acquireCount,
+        .pAcquireSyncs               = pAcquireSyncs,
+        .pAcquireKeys                = pAcquireKeys,
+        .pAcquireTimeoutMilliseconds = pAcquireTimeoutMilliseconds,
+        .releaseCount                = releaseCount,
+        .pReleaseSyncs               = pReleaseSyncs,
+        .pReleaseKeys                = pReleaseKeys
+    };
 }
 void cvkInitWin32SurfaceCreateInfo(VkWin32SurfaceCreateInfoKHR* pInfo, const void* pNext, VkWin32SurfaceCreateFlagsKHR flags, HINSTANCE hinstance, HWND hwnd)
 {
-    pInfo->sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    pInfo->pNext     = pNext;
-    pInfo->flags     = flags;
-    pInfo->hinstance = hinstance;
-    pInfo->hwnd      = hwnd;
+    (*pInfo) = (VkWin32SurfaceCreateInfoKHR)
+    {
+        .sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+        .pNext     = pNext,
+        .flags     = flags,
+        .hinstance = hinstance,
+        .hwnd      = hwnd
+    };
 }
 VkResult cvkAcquireFullScreenExclusiveMode(VkDevice device, VkSwapchainKHR swapchain)
 {

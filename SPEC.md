@@ -185,6 +185,17 @@ setting that member: `cvkInitClearValueColor`, `cvkInitClearColorValueFloat32`,
 `cvkInitDeviceOrHostAddressDeviceAddress`, `cvkInitAccelerationStructureGeometryDataTriangles`.
 Chains build union values through them, never through a raw assignment.
 
+**Initialization style.** The boolean policy option `designated_initializers` (default
+true) selects C99 designated initialization in struct and union builders. Scalar and
+pointer members use `(*pInfo) = (VkType)` followed by an Allman-braced initializer.
+The generator restores initializer braces after clang-format, without formatter directives.
+Generated initializers never include a trailing comma; clang-format is configured not to add one.
+Fixed arrays are copied
+into a designated-initialized temporary before assigning it to `*pInfo`, so an array
+argument may refer to the destination's existing storage. Returned-only builders keep
+their `sType`/`pNext` assignments and leave output members untouched. Signatures and
+wrapper composition are unchanged. The SC profile inherits the shared setting.
+
 **Commands with several sType inputs** (`vkCmdBeginRenderPass2` with a render pass begin info
 and a subpass begin info) get a convenience per extender of each input, on that input's own
 `p<Stem>Next` (`cvkCmdBeginRenderPass2WithAttachmentInfo`, `cvkCmdBeginRenderPass2WithSampleLocationsInfo`).

@@ -23,6 +23,7 @@
   "input_asserts": false,
   "doc_comments": false,
   "single_line_prototypes": true,
+  "designated_initializers": true,
   "role_overrides": {
     "vkGetExternalComputeQueueDataNV::params": "I",
     "vkSetGpaDeviceClockModeAMD::pInfo": "I"

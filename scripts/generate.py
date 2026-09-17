@@ -119,6 +119,7 @@ class Generator:
         self.input_asserts: bool = bool(policy.get("input_asserts", False))
         self.doc_comments: bool = bool(policy.get("doc_comments", True))
         self.single_line_prototypes: bool = bool(policy.get("single_line_prototypes", False))
+        self.designated_initializers: bool = bool(policy.get("designated_initializers", True))
         self.used_capacities: Dict[str, int] = {}
         self.names: Dict[str, str] = {}
         self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
@@ -768,14 +769,36 @@ class Generator:
         self.place(plats, decl, defn, json=True)
 
     # ------------------------------------------------------------ builders
+    @staticmethod
+    def designated_initializer(start: str, values: List[Tuple[str, str]]) -> List[str]:
+        width = max(len(name) for name, _ in values)
+        entries = [f"    .{name.ljust(width)} = {value}" for name, value in values]
+        return [start, "{"] + ",\n".join(entries).splitlines() + ["};"]
+
+    def designated_builder_body(self, s: Struct, fields: List[Tuple[str, str]], arrays: List[Param]) -> List[str]:
+        """Initialize the complete value, copying array arguments before writing pInfo."""
+        values = fields + [(m.name, "{0}") for m in arrays]
+        if not arrays:
+            return self.designated_initializer(f"(*pInfo) = ({s.name})", values)
+        # A temporary also preserves array arguments that point inside the destination.
+        local = "initialized_info"
+        while local in {m.name for m in s.members}:
+            local += "_"
+        return (self.designated_initializer(f"{s.name} {local} =", values)
+                + [f"memcpy({local}.{m.name}, {m.name}, sizeof({local}.{m.name}));" for m in arrays]
+                + [f"(*pInfo) = {local};"])
+
     def emit_builder(self, s: Struct) -> None:
         name = self.register("cvkInit" + self.struct_short(s), s.name)
         params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
         body = (["CVK_ASSERT(NULL != pInfo);", ""] if self.input_asserts else [])
+        fields: List[Tuple[str, str]] = []
+        arrays: List[Param] = []
         if s.stype:
             pnext_type = next((m.full_type for m in s.members if m.name == "pNext"), "const void*")
             params.append(EmittedParam(f"{pnext_type} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
             body += [f"pInfo->sType = {s.stype};", "pInfo->pNext = pNext;"]
+            fields += [("sType", s.stype), ("pNext", "pNext")]
         if not s.returnedonly:
             for m in s.members:
                 if m.name in ("sType", "pNext"):
@@ -783,9 +806,15 @@ class Generator:
                 if m.array_len:
                     params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
                     body.append(f"memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
+                    arrays.append(m)
                 else:
                     params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
                     body.append(f"pInfo->{m.name} = {m.name};")
+                    fields.append((m.name, m.name))
+        # Returned-only builders set chain headers without overwriting output members.
+        if self.designated_initializers and not s.returnedonly:
+            body = (["CVK_ASSERT(NULL != pInfo);", ""] if self.input_asserts else [])
+            body += self.designated_builder_body(s, fields, arrays)
         doc = self.doc_block(f"Initializes a {s.name}.", params, "void", None, [])
         sig = self.signature("void", name, params)
         self.sigs[name] = ("void", params)
@@ -806,6 +835,8 @@ class Generator:
             else:
                 params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
                 body = [f"pInfo->{m.name} = {m.name};"]
+            if self.designated_initializers:
+                body = self.designated_builder_body(s, [] if m.array_len else [(m.name, m.name)], [m] if m.array_len else [])
             doc = self.doc_block(f"Initializes a {s.name} holding its {m.name} member.", params, "void", None, [])
             sig = self.signature("void", name, params)
             self.sigs[name] = ("void", params)
@@ -951,7 +982,8 @@ class Generator:
             for i, value in enumerate(values):
                 lines += [f'table[{i}].pName = "{value}";', f"table[{i}].value = (uint64_t){value};"]
             return lines + [""]
-        return ["static const cvkJsonName table[] = {"] + [f'    {{"{v}", (uint64_t){v}}},' for v in values] + ["};", ""]
+        entries = [f'    {{"{v}", (uint64_t){v}}}' for v in values]
+        return ["static const cvkJsonName table[] = {"] + ",\n".join(entries).splitlines() + ["};", ""]
 
     def emit_json_parsers(self) -> None:
         """SPEC.md section 8c: cvkParseJson<Type> for every enumeration, flag set, structure, and
@@ -969,13 +1001,13 @@ class Generator:
                                                 ("cvkParseJsonDouble", "double", "cvkGetJsonDouble", reals, "(double)")):
             name = self.register(fname, "json:" + fname)
             params = [EmittedParam("const cvkJsonValue* pValue", "pValue", "The value: a number, or the name of an API constant", False)]
-            body = ["static const cvkJsonName table[] = {"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in table] + ["};", "uint64_t found;", "",
+            body = self.json_name_table(table, False) + ["uint64_t found;", "",
                     "if ((NULL != pValue) && (CVK_JSON_STRING == pValue->kind) && cvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))",
                     "{", f"    return {cast}found;" if cast != "(double)" else "    return (double)(float)found;", "}",
                     f"return {reader}(pValue);"]
             if cast == "(double)":
                 # float constants are stored as their bit-exact float value: the table holds (uint64_t)(float) which truncates 1000.0F to 1000
-                body = ["static const cvkJsonName table[] = {"] + [f"    {{\"{v}\", (uint64_t){v}}}," for v in table] + ["};", "uint64_t found;", "",
+                body = self.json_name_table(table, False) + ["uint64_t found;", "",
                         "if ((NULL != pValue) && (CVK_JSON_STRING == pValue->kind) && cvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))",
                         "{", "    return (double)found;", "}", f"return {reader}(pValue);"]
             doc = self.doc_block(f"Reads a number from JSON, accepting the name of an API constant.", params, ret, None, [])
@@ -2052,6 +2084,21 @@ class Generator:
     }
     PLATFORM_SOURCE_INCLUDES: Dict[str, List[str]] = {}
 
+    def finish_source(self, text: str) -> str:
+        """Restore multiline Allman initializers after clang-format folds short ones."""
+        if not self.designated_initializers:
+            return text
+        pattern = (r"^([ \t]*)(\(\*pInfo\)[ \t]*=[ \t]*\(\w+\)|"
+                   r"\w+[ \t]+initialized_info_*[ \t]*=)\s*\{(.*?)\};")
+
+        def restore(match: re.Match) -> str:
+            start = re.sub(r"[ \t]+", " ", match[2])
+            fields = [field.strip().split("=", 1) for field in re.split(r",\s*(?=\.)", match[3].strip())]
+            values = [(name.strip()[1:], value.strip()) for name, value in fields]
+            return "\n".join(match[1] + line for line in self.designated_initializer(start, values))
+
+        return re.sub(pattern, restore, text, flags=re.M | re.S)
+
     def finish_header(self, text: str) -> str:
         """Apply the configured layout to function declarations only."""
         if not self.single_line_prototypes:
@@ -2234,7 +2281,7 @@ def main() -> None:
         outputs += [hp, cp]
     if g.dropped:
         print(f"dropped {len(g.dropped)} compositions outside the {g.api} profile")
-    # Final formatting is clang-format's (repository .clang-format); the generator's own alignment is a fallback.
+    # Use clang-format's layout, then restore the requested initializer braces.
     import shutil
     import subprocess
     # clang-format is part of the generator's toolchain: without it the output is not the
@@ -2245,6 +2292,12 @@ def main() -> None:
         sys.exit(1)
     style = os.path.join(REPO_ROOT, ".clang-format")
     subprocess.run([clang_format, "-i", f"--style=file:{style}"] + outputs, check=True, cwd=args.out_dir)
+    for path in outputs:
+        if path.endswith(".c"):
+            with open(path, encoding="utf-8") as f:
+                text = g.finish_source(f.read())
+            with open(path, "w", encoding="utf-8", newline="\n") as f:
+                f.write(text)
     t0 = sum(1 for n in g.names.values() if n.startswith("vk") and "+" not in n)
     builders = sum(1 for n in g.names if n.startswith("cvkInit"))
     conv = sum(1 for n in g.names.values() if "+" in n)

@@ -5,12 +5,10 @@
 
 VkFullScreenExclusiveEXT cvkParseJsonFullScreenExclusive(const cvkJsonValue* pValue)
 {
-    static const cvkJsonName table[] = {
-        {"VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT},
-        {"VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT},
-        {"VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT},
-        {"VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT},
-    };
+    static const cvkJsonName table[] = {{"VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT},
+                                        {"VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT},
+                                        {"VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT},
+                                        {"VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT", (uint64_t)VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT}};
 
     return (VkFullScreenExclusiveEXT)cvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }

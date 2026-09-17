@@ -6,11 +6,14 @@
 
 void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
 {
-    pInfo->sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    pInfo->pNext  = pNext;
-    pInfo->flags  = flags;
-    pInfo->dpy    = dpy;
-    pInfo->window = window;
+    (*pInfo) = (VkXlibSurfaceCreateInfoKHR)
+    {
+        .sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
+        .pNext  = pNext,
+        .flags  = flags,
+        .dpy    = dpy,
+        .window = window
+    };
 }
 void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {

@@ -320,15 +320,30 @@ Generation options live in `cvk.policy.json`, independently of CMake:
 
 ```json
 "doc_comments": false,
-"single_line_prototypes": true
+"single_line_prototypes": true,
+"designated_initializers": true
 ```
 
 These settings omit API doc comments and put each function prototype on exactly one
 line, even when it exceeds clang-format's column limit. Generated declaration sections
 carry clang-format off/on directives so standalone formatting also preserves the policy.
 Function definitions keep their
-normal formatting. `scvk.policy.json` inherits both options. A separate JSON policy can
-use `"extends": "cvk.policy.json"` and override either setting; select it with `--policy`.
+normal formatting. Set `"designated_initializers": true` to make `cvkInit*` builders use
+C99 designated initializers with Allman braces instead of separate member assignments:
+
+```c
+(*pInfo) = (VkExtent2D)
+{
+    .width  = width,
+    .height = height
+};
+```
+
+The generator restores Allman initializer braces after clang-format; running clang-format
+alone may rejoin them. Fixed arrays are copied through a temporary;
+returned-only builders still update only `sType` and `pNext`, preserving output members.
+The default is true; set it to false for separate member assignments. `scvk.policy.json` inherits these options. A separate JSON policy can
+use `"extends": "cvk.policy.json"` and override any setting; select it with `--policy`.
 
 ```sh
 python scripts/generate.py --policy cvk.policy.json

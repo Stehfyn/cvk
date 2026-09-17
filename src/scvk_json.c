@@ -7,28 +7,27 @@
 
 uint64_t scvkParseJsonUint64(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MAX_PHYSICAL_DEVICE_NAME_SIZE", (uint64_t)VK_MAX_PHYSICAL_DEVICE_NAME_SIZE},
-        {"VK_UUID_SIZE", (uint64_t)VK_UUID_SIZE},
-        {"VK_LUID_SIZE", (uint64_t)VK_LUID_SIZE},
-        {"VK_MAX_EXTENSION_NAME_SIZE", (uint64_t)VK_MAX_EXTENSION_NAME_SIZE},
-        {"VK_MAX_DESCRIPTION_SIZE", (uint64_t)VK_MAX_DESCRIPTION_SIZE},
-        {"VK_MAX_MEMORY_TYPES", (uint64_t)VK_MAX_MEMORY_TYPES},
-        {"VK_MAX_MEMORY_HEAPS", (uint64_t)VK_MAX_MEMORY_HEAPS},
-        {"VK_REMAINING_MIP_LEVELS", (uint64_t)VK_REMAINING_MIP_LEVELS},
-        {"VK_REMAINING_ARRAY_LAYERS", (uint64_t)VK_REMAINING_ARRAY_LAYERS},
-        {"VK_WHOLE_SIZE", (uint64_t)VK_WHOLE_SIZE},
-        {"VK_ATTACHMENT_UNUSED", (uint64_t)VK_ATTACHMENT_UNUSED},
-        {"VK_TRUE", (uint64_t)VK_TRUE},
-        {"VK_FALSE", (uint64_t)VK_FALSE},
-        {"VK_QUEUE_FAMILY_IGNORED", (uint64_t)VK_QUEUE_FAMILY_IGNORED},
-        {"VK_QUEUE_FAMILY_EXTERNAL", (uint64_t)VK_QUEUE_FAMILY_EXTERNAL},
-        {"VK_QUEUE_FAMILY_FOREIGN_EXT", (uint64_t)VK_QUEUE_FAMILY_FOREIGN_EXT},
-        {"VK_SUBPASS_EXTERNAL", (uint64_t)VK_SUBPASS_EXTERNAL},
-        {"VK_MAX_DEVICE_GROUP_SIZE", (uint64_t)VK_MAX_DEVICE_GROUP_SIZE},
-        {"VK_MAX_DRIVER_NAME_SIZE", (uint64_t)VK_MAX_DRIVER_NAME_SIZE},
-        {"VK_MAX_DRIVER_INFO_SIZE", (uint64_t)VK_MAX_DRIVER_INFO_SIZE},
-    };
+    static const scvkJsonName table[] = {{"VK_MAX_PHYSICAL_DEVICE_NAME_SIZE", (uint64_t)VK_MAX_PHYSICAL_DEVICE_NAME_SIZE},
+                                         {"VK_UUID_SIZE", (uint64_t)VK_UUID_SIZE},
+                                         {"VK_LUID_SIZE", (uint64_t)VK_LUID_SIZE},
+                                         {"VK_MAX_EXTENSION_NAME_SIZE", (uint64_t)VK_MAX_EXTENSION_NAME_SIZE},
+                                         {"VK_MAX_DESCRIPTION_SIZE", (uint64_t)VK_MAX_DESCRIPTION_SIZE},
+                                         {"VK_MAX_MEMORY_TYPES", (uint64_t)VK_MAX_MEMORY_TYPES},
+                                         {"VK_MAX_MEMORY_HEAPS", (uint64_t)VK_MAX_MEMORY_HEAPS},
+                                         {"VK_REMAINING_MIP_LEVELS", (uint64_t)VK_REMAINING_MIP_LEVELS},
+                                         {"VK_REMAINING_ARRAY_LAYERS", (uint64_t)VK_REMAINING_ARRAY_LAYERS},
+                                         {"VK_WHOLE_SIZE", (uint64_t)VK_WHOLE_SIZE},
+                                         {"VK_ATTACHMENT_UNUSED", (uint64_t)VK_ATTACHMENT_UNUSED},
+                                         {"VK_TRUE", (uint64_t)VK_TRUE},
+                                         {"VK_FALSE", (uint64_t)VK_FALSE},
+                                         {"VK_QUEUE_FAMILY_IGNORED", (uint64_t)VK_QUEUE_FAMILY_IGNORED},
+                                         {"VK_QUEUE_FAMILY_EXTERNAL", (uint64_t)VK_QUEUE_FAMILY_EXTERNAL},
+                                         {"VK_QUEUE_FAMILY_FOREIGN_EXT", (uint64_t)VK_QUEUE_FAMILY_FOREIGN_EXT},
+                                         {"VK_SUBPASS_EXTERNAL", (uint64_t)VK_SUBPASS_EXTERNAL},
+                                         {"VK_MAX_DEVICE_GROUP_SIZE", (uint64_t)VK_MAX_DEVICE_GROUP_SIZE},
+                                         {"VK_MAX_DRIVER_NAME_SIZE", (uint64_t)VK_MAX_DRIVER_NAME_SIZE},
+                                         {"VK_MAX_DRIVER_INFO_SIZE", (uint64_t)VK_MAX_DRIVER_INFO_SIZE}};
+
     uint64_t found;
 
     if ((NULL != pValue) && (SCVK_JSON_STRING == pValue->kind) && scvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))
@@ -39,28 +38,27 @@ uint64_t scvkParseJsonUint64(const scvkJsonValue* pValue)
 }
 int64_t scvkParseJsonInt64(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MAX_PHYSICAL_DEVICE_NAME_SIZE", (uint64_t)VK_MAX_PHYSICAL_DEVICE_NAME_SIZE},
-        {"VK_UUID_SIZE", (uint64_t)VK_UUID_SIZE},
-        {"VK_LUID_SIZE", (uint64_t)VK_LUID_SIZE},
-        {"VK_MAX_EXTENSION_NAME_SIZE", (uint64_t)VK_MAX_EXTENSION_NAME_SIZE},
-        {"VK_MAX_DESCRIPTION_SIZE", (uint64_t)VK_MAX_DESCRIPTION_SIZE},
-        {"VK_MAX_MEMORY_TYPES", (uint64_t)VK_MAX_MEMORY_TYPES},
-        {"VK_MAX_MEMORY_HEAPS", (uint64_t)VK_MAX_MEMORY_HEAPS},
-        {"VK_REMAINING_MIP_LEVELS", (uint64_t)VK_REMAINING_MIP_LEVELS},
-        {"VK_REMAINING_ARRAY_LAYERS", (uint64_t)VK_REMAINING_ARRAY_LAYERS},
-        {"VK_WHOLE_SIZE", (uint64_t)VK_WHOLE_SIZE},
-        {"VK_ATTACHMENT_UNUSED", (uint64_t)VK_ATTACHMENT_UNUSED},
-        {"VK_TRUE", (uint64_t)VK_TRUE},
-        {"VK_FALSE", (uint64_t)VK_FALSE},
-        {"VK_QUEUE_FAMILY_IGNORED", (uint64_t)VK_QUEUE_FAMILY_IGNORED},
-        {"VK_QUEUE_FAMILY_EXTERNAL", (uint64_t)VK_QUEUE_FAMILY_EXTERNAL},
-        {"VK_QUEUE_FAMILY_FOREIGN_EXT", (uint64_t)VK_QUEUE_FAMILY_FOREIGN_EXT},
-        {"VK_SUBPASS_EXTERNAL", (uint64_t)VK_SUBPASS_EXTERNAL},
-        {"VK_MAX_DEVICE_GROUP_SIZE", (uint64_t)VK_MAX_DEVICE_GROUP_SIZE},
-        {"VK_MAX_DRIVER_NAME_SIZE", (uint64_t)VK_MAX_DRIVER_NAME_SIZE},
-        {"VK_MAX_DRIVER_INFO_SIZE", (uint64_t)VK_MAX_DRIVER_INFO_SIZE},
-    };
+    static const scvkJsonName table[] = {{"VK_MAX_PHYSICAL_DEVICE_NAME_SIZE", (uint64_t)VK_MAX_PHYSICAL_DEVICE_NAME_SIZE},
+                                         {"VK_UUID_SIZE", (uint64_t)VK_UUID_SIZE},
+                                         {"VK_LUID_SIZE", (uint64_t)VK_LUID_SIZE},
+                                         {"VK_MAX_EXTENSION_NAME_SIZE", (uint64_t)VK_MAX_EXTENSION_NAME_SIZE},
+                                         {"VK_MAX_DESCRIPTION_SIZE", (uint64_t)VK_MAX_DESCRIPTION_SIZE},
+                                         {"VK_MAX_MEMORY_TYPES", (uint64_t)VK_MAX_MEMORY_TYPES},
+                                         {"VK_MAX_MEMORY_HEAPS", (uint64_t)VK_MAX_MEMORY_HEAPS},
+                                         {"VK_REMAINING_MIP_LEVELS", (uint64_t)VK_REMAINING_MIP_LEVELS},
+                                         {"VK_REMAINING_ARRAY_LAYERS", (uint64_t)VK_REMAINING_ARRAY_LAYERS},
+                                         {"VK_WHOLE_SIZE", (uint64_t)VK_WHOLE_SIZE},
+                                         {"VK_ATTACHMENT_UNUSED", (uint64_t)VK_ATTACHMENT_UNUSED},
+                                         {"VK_TRUE", (uint64_t)VK_TRUE},
+                                         {"VK_FALSE", (uint64_t)VK_FALSE},
+                                         {"VK_QUEUE_FAMILY_IGNORED", (uint64_t)VK_QUEUE_FAMILY_IGNORED},
+                                         {"VK_QUEUE_FAMILY_EXTERNAL", (uint64_t)VK_QUEUE_FAMILY_EXTERNAL},
+                                         {"VK_QUEUE_FAMILY_FOREIGN_EXT", (uint64_t)VK_QUEUE_FAMILY_FOREIGN_EXT},
+                                         {"VK_SUBPASS_EXTERNAL", (uint64_t)VK_SUBPASS_EXTERNAL},
+                                         {"VK_MAX_DEVICE_GROUP_SIZE", (uint64_t)VK_MAX_DEVICE_GROUP_SIZE},
+                                         {"VK_MAX_DRIVER_NAME_SIZE", (uint64_t)VK_MAX_DRIVER_NAME_SIZE},
+                                         {"VK_MAX_DRIVER_INFO_SIZE", (uint64_t)VK_MAX_DRIVER_INFO_SIZE}};
+
     uint64_t found;
 
     if ((NULL != pValue) && (SCVK_JSON_STRING == pValue->kind) && scvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))
@@ -71,9 +69,8 @@ int64_t scvkParseJsonInt64(const scvkJsonValue* pValue)
 }
 double scvkParseJsonDouble(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_LOD_CLAMP_NONE", (uint64_t)VK_LOD_CLAMP_NONE},
-    };
+    static const scvkJsonName table[] = {{"VK_LOD_CLAMP_NONE", (uint64_t)VK_LOD_CLAMP_NONE}};
+
     uint64_t found;
 
     if ((NULL != pValue) && (SCVK_JSON_STRING == pValue->kind) && scvkLookupJsonName(table, (uint32_t)(sizeof(table) / sizeof(table[0])), pValue->pText, pValue->textLength, &found))
@@ -84,28 +81,26 @@ double scvkParseJsonDouble(const scvkJsonValue* pValue)
 }
 VkAccessFlagBits scvkParseJsonAccessFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_ACCESS_INDIRECT_COMMAND_READ_BIT", (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT},
-        {"VK_ACCESS_INDEX_READ_BIT", (uint64_t)VK_ACCESS_INDEX_READ_BIT},
-        {"VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT", (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT},
-        {"VK_ACCESS_UNIFORM_READ_BIT", (uint64_t)VK_ACCESS_UNIFORM_READ_BIT},
-        {"VK_ACCESS_INPUT_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT},
-        {"VK_ACCESS_SHADER_READ_BIT", (uint64_t)VK_ACCESS_SHADER_READ_BIT},
-        {"VK_ACCESS_SHADER_WRITE_BIT", (uint64_t)VK_ACCESS_SHADER_WRITE_BIT},
-        {"VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT},
-        {"VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT},
-        {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT},
-        {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT},
-        {"VK_ACCESS_TRANSFER_READ_BIT", (uint64_t)VK_ACCESS_TRANSFER_READ_BIT},
-        {"VK_ACCESS_TRANSFER_WRITE_BIT", (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT},
-        {"VK_ACCESS_HOST_READ_BIT", (uint64_t)VK_ACCESS_HOST_READ_BIT},
-        {"VK_ACCESS_HOST_WRITE_BIT", (uint64_t)VK_ACCESS_HOST_WRITE_BIT},
-        {"VK_ACCESS_MEMORY_READ_BIT", (uint64_t)VK_ACCESS_MEMORY_READ_BIT},
-        {"VK_ACCESS_MEMORY_WRITE_BIT", (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT},
-        {"VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT},
-        {"VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR", (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR},
-        {"VK_ACCESS_NONE_KHR", (uint64_t)VK_ACCESS_NONE_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_ACCESS_INDIRECT_COMMAND_READ_BIT", (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT},
+                                         {"VK_ACCESS_INDEX_READ_BIT", (uint64_t)VK_ACCESS_INDEX_READ_BIT},
+                                         {"VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT", (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT},
+                                         {"VK_ACCESS_UNIFORM_READ_BIT", (uint64_t)VK_ACCESS_UNIFORM_READ_BIT},
+                                         {"VK_ACCESS_INPUT_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT},
+                                         {"VK_ACCESS_SHADER_READ_BIT", (uint64_t)VK_ACCESS_SHADER_READ_BIT},
+                                         {"VK_ACCESS_SHADER_WRITE_BIT", (uint64_t)VK_ACCESS_SHADER_WRITE_BIT},
+                                         {"VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT},
+                                         {"VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT},
+                                         {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT},
+                                         {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT},
+                                         {"VK_ACCESS_TRANSFER_READ_BIT", (uint64_t)VK_ACCESS_TRANSFER_READ_BIT},
+                                         {"VK_ACCESS_TRANSFER_WRITE_BIT", (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT},
+                                         {"VK_ACCESS_HOST_READ_BIT", (uint64_t)VK_ACCESS_HOST_READ_BIT},
+                                         {"VK_ACCESS_HOST_WRITE_BIT", (uint64_t)VK_ACCESS_HOST_WRITE_BIT},
+                                         {"VK_ACCESS_MEMORY_READ_BIT", (uint64_t)VK_ACCESS_MEMORY_READ_BIT},
+                                         {"VK_ACCESS_MEMORY_WRITE_BIT", (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT},
+                                         {"VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT},
+                                         {"VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR", (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR},
+                                         {"VK_ACCESS_NONE_KHR", (uint64_t)VK_ACCESS_NONE_KHR}};
 
     return (VkAccessFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -115,245 +110,211 @@ VkAcquireProfilingLockFlagBitsKHR scvkParseJsonAcquireProfilingLockFlagBits(cons
 }
 VkAttachmentDescriptionFlagBits scvkParseJsonAttachmentDescriptionFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT", (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT", (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT}};
 
     return (VkAttachmentDescriptionFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkAttachmentLoadOp scvkParseJsonAttachmentLoadOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_ATTACHMENT_LOAD_OP_LOAD", (uint64_t)VK_ATTACHMENT_LOAD_OP_LOAD},
-        {"VK_ATTACHMENT_LOAD_OP_CLEAR", (uint64_t)VK_ATTACHMENT_LOAD_OP_CLEAR},
-        {"VK_ATTACHMENT_LOAD_OP_DONT_CARE", (uint64_t)VK_ATTACHMENT_LOAD_OP_DONT_CARE},
-    };
+    static const scvkJsonName table[] = {{"VK_ATTACHMENT_LOAD_OP_LOAD", (uint64_t)VK_ATTACHMENT_LOAD_OP_LOAD},
+                                         {"VK_ATTACHMENT_LOAD_OP_CLEAR", (uint64_t)VK_ATTACHMENT_LOAD_OP_CLEAR},
+                                         {"VK_ATTACHMENT_LOAD_OP_DONT_CARE", (uint64_t)VK_ATTACHMENT_LOAD_OP_DONT_CARE}};
 
     return (VkAttachmentLoadOp)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkAttachmentStoreOp scvkParseJsonAttachmentStoreOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_ATTACHMENT_STORE_OP_STORE", (uint64_t)VK_ATTACHMENT_STORE_OP_STORE},
-        {"VK_ATTACHMENT_STORE_OP_DONT_CARE", (uint64_t)VK_ATTACHMENT_STORE_OP_DONT_CARE},
-    };
+    static const scvkJsonName table[] = {{"VK_ATTACHMENT_STORE_OP_STORE", (uint64_t)VK_ATTACHMENT_STORE_OP_STORE}, {"VK_ATTACHMENT_STORE_OP_DONT_CARE", (uint64_t)VK_ATTACHMENT_STORE_OP_DONT_CARE}};
 
     return (VkAttachmentStoreOp)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBlendFactor scvkParseJsonBlendFactor(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BLEND_FACTOR_ZERO", (uint64_t)VK_BLEND_FACTOR_ZERO},
-        {"VK_BLEND_FACTOR_ONE", (uint64_t)VK_BLEND_FACTOR_ONE},
-        {"VK_BLEND_FACTOR_SRC_COLOR", (uint64_t)VK_BLEND_FACTOR_SRC_COLOR},
-        {"VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR},
-        {"VK_BLEND_FACTOR_DST_COLOR", (uint64_t)VK_BLEND_FACTOR_DST_COLOR},
-        {"VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR},
-        {"VK_BLEND_FACTOR_SRC_ALPHA", (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA},
-        {"VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA},
-        {"VK_BLEND_FACTOR_DST_ALPHA", (uint64_t)VK_BLEND_FACTOR_DST_ALPHA},
-        {"VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA},
-        {"VK_BLEND_FACTOR_CONSTANT_COLOR", (uint64_t)VK_BLEND_FACTOR_CONSTANT_COLOR},
-        {"VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR},
-        {"VK_BLEND_FACTOR_CONSTANT_ALPHA", (uint64_t)VK_BLEND_FACTOR_CONSTANT_ALPHA},
-        {"VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA},
-        {"VK_BLEND_FACTOR_SRC_ALPHA_SATURATE", (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA_SATURATE},
-        {"VK_BLEND_FACTOR_SRC1_COLOR", (uint64_t)VK_BLEND_FACTOR_SRC1_COLOR},
-        {"VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR},
-        {"VK_BLEND_FACTOR_SRC1_ALPHA", (uint64_t)VK_BLEND_FACTOR_SRC1_ALPHA},
-        {"VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA},
-    };
+    static const scvkJsonName table[] = {{"VK_BLEND_FACTOR_ZERO", (uint64_t)VK_BLEND_FACTOR_ZERO},
+                                         {"VK_BLEND_FACTOR_ONE", (uint64_t)VK_BLEND_FACTOR_ONE},
+                                         {"VK_BLEND_FACTOR_SRC_COLOR", (uint64_t)VK_BLEND_FACTOR_SRC_COLOR},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR},
+                                         {"VK_BLEND_FACTOR_DST_COLOR", (uint64_t)VK_BLEND_FACTOR_DST_COLOR},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR},
+                                         {"VK_BLEND_FACTOR_SRC_ALPHA", (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA},
+                                         {"VK_BLEND_FACTOR_DST_ALPHA", (uint64_t)VK_BLEND_FACTOR_DST_ALPHA},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA},
+                                         {"VK_BLEND_FACTOR_CONSTANT_COLOR", (uint64_t)VK_BLEND_FACTOR_CONSTANT_COLOR},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR},
+                                         {"VK_BLEND_FACTOR_CONSTANT_ALPHA", (uint64_t)VK_BLEND_FACTOR_CONSTANT_ALPHA},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA},
+                                         {"VK_BLEND_FACTOR_SRC_ALPHA_SATURATE", (uint64_t)VK_BLEND_FACTOR_SRC_ALPHA_SATURATE},
+                                         {"VK_BLEND_FACTOR_SRC1_COLOR", (uint64_t)VK_BLEND_FACTOR_SRC1_COLOR},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR},
+                                         {"VK_BLEND_FACTOR_SRC1_ALPHA", (uint64_t)VK_BLEND_FACTOR_SRC1_ALPHA},
+                                         {"VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA", (uint64_t)VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA}};
 
     return (VkBlendFactor)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBlendOp scvkParseJsonBlendOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BLEND_OP_ADD", (uint64_t)VK_BLEND_OP_ADD},
-        {"VK_BLEND_OP_SUBTRACT", (uint64_t)VK_BLEND_OP_SUBTRACT},
-        {"VK_BLEND_OP_REVERSE_SUBTRACT", (uint64_t)VK_BLEND_OP_REVERSE_SUBTRACT},
-        {"VK_BLEND_OP_MIN", (uint64_t)VK_BLEND_OP_MIN},
-        {"VK_BLEND_OP_MAX", (uint64_t)VK_BLEND_OP_MAX},
-        {"VK_BLEND_OP_ZERO_EXT", (uint64_t)VK_BLEND_OP_ZERO_EXT},
-        {"VK_BLEND_OP_SRC_EXT", (uint64_t)VK_BLEND_OP_SRC_EXT},
-        {"VK_BLEND_OP_DST_EXT", (uint64_t)VK_BLEND_OP_DST_EXT},
-        {"VK_BLEND_OP_SRC_OVER_EXT", (uint64_t)VK_BLEND_OP_SRC_OVER_EXT},
-        {"VK_BLEND_OP_DST_OVER_EXT", (uint64_t)VK_BLEND_OP_DST_OVER_EXT},
-        {"VK_BLEND_OP_SRC_IN_EXT", (uint64_t)VK_BLEND_OP_SRC_IN_EXT},
-        {"VK_BLEND_OP_DST_IN_EXT", (uint64_t)VK_BLEND_OP_DST_IN_EXT},
-        {"VK_BLEND_OP_SRC_OUT_EXT", (uint64_t)VK_BLEND_OP_SRC_OUT_EXT},
-        {"VK_BLEND_OP_DST_OUT_EXT", (uint64_t)VK_BLEND_OP_DST_OUT_EXT},
-        {"VK_BLEND_OP_SRC_ATOP_EXT", (uint64_t)VK_BLEND_OP_SRC_ATOP_EXT},
-        {"VK_BLEND_OP_DST_ATOP_EXT", (uint64_t)VK_BLEND_OP_DST_ATOP_EXT},
-        {"VK_BLEND_OP_XOR_EXT", (uint64_t)VK_BLEND_OP_XOR_EXT},
-        {"VK_BLEND_OP_MULTIPLY_EXT", (uint64_t)VK_BLEND_OP_MULTIPLY_EXT},
-        {"VK_BLEND_OP_SCREEN_EXT", (uint64_t)VK_BLEND_OP_SCREEN_EXT},
-        {"VK_BLEND_OP_OVERLAY_EXT", (uint64_t)VK_BLEND_OP_OVERLAY_EXT},
-        {"VK_BLEND_OP_DARKEN_EXT", (uint64_t)VK_BLEND_OP_DARKEN_EXT},
-        {"VK_BLEND_OP_LIGHTEN_EXT", (uint64_t)VK_BLEND_OP_LIGHTEN_EXT},
-        {"VK_BLEND_OP_COLORDODGE_EXT", (uint64_t)VK_BLEND_OP_COLORDODGE_EXT},
-        {"VK_BLEND_OP_COLORBURN_EXT", (uint64_t)VK_BLEND_OP_COLORBURN_EXT},
-        {"VK_BLEND_OP_HARDLIGHT_EXT", (uint64_t)VK_BLEND_OP_HARDLIGHT_EXT},
-        {"VK_BLEND_OP_SOFTLIGHT_EXT", (uint64_t)VK_BLEND_OP_SOFTLIGHT_EXT},
-        {"VK_BLEND_OP_DIFFERENCE_EXT", (uint64_t)VK_BLEND_OP_DIFFERENCE_EXT},
-        {"VK_BLEND_OP_EXCLUSION_EXT", (uint64_t)VK_BLEND_OP_EXCLUSION_EXT},
-        {"VK_BLEND_OP_INVERT_EXT", (uint64_t)VK_BLEND_OP_INVERT_EXT},
-        {"VK_BLEND_OP_INVERT_RGB_EXT", (uint64_t)VK_BLEND_OP_INVERT_RGB_EXT},
-        {"VK_BLEND_OP_LINEARDODGE_EXT", (uint64_t)VK_BLEND_OP_LINEARDODGE_EXT},
-        {"VK_BLEND_OP_LINEARBURN_EXT", (uint64_t)VK_BLEND_OP_LINEARBURN_EXT},
-        {"VK_BLEND_OP_VIVIDLIGHT_EXT", (uint64_t)VK_BLEND_OP_VIVIDLIGHT_EXT},
-        {"VK_BLEND_OP_LINEARLIGHT_EXT", (uint64_t)VK_BLEND_OP_LINEARLIGHT_EXT},
-        {"VK_BLEND_OP_PINLIGHT_EXT", (uint64_t)VK_BLEND_OP_PINLIGHT_EXT},
-        {"VK_BLEND_OP_HARDMIX_EXT", (uint64_t)VK_BLEND_OP_HARDMIX_EXT},
-        {"VK_BLEND_OP_HSL_HUE_EXT", (uint64_t)VK_BLEND_OP_HSL_HUE_EXT},
-        {"VK_BLEND_OP_HSL_SATURATION_EXT", (uint64_t)VK_BLEND_OP_HSL_SATURATION_EXT},
-        {"VK_BLEND_OP_HSL_COLOR_EXT", (uint64_t)VK_BLEND_OP_HSL_COLOR_EXT},
-        {"VK_BLEND_OP_HSL_LUMINOSITY_EXT", (uint64_t)VK_BLEND_OP_HSL_LUMINOSITY_EXT},
-        {"VK_BLEND_OP_PLUS_EXT", (uint64_t)VK_BLEND_OP_PLUS_EXT},
-        {"VK_BLEND_OP_PLUS_CLAMPED_EXT", (uint64_t)VK_BLEND_OP_PLUS_CLAMPED_EXT},
-        {"VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT", (uint64_t)VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT},
-        {"VK_BLEND_OP_PLUS_DARKER_EXT", (uint64_t)VK_BLEND_OP_PLUS_DARKER_EXT},
-        {"VK_BLEND_OP_MINUS_EXT", (uint64_t)VK_BLEND_OP_MINUS_EXT},
-        {"VK_BLEND_OP_MINUS_CLAMPED_EXT", (uint64_t)VK_BLEND_OP_MINUS_CLAMPED_EXT},
-        {"VK_BLEND_OP_CONTRAST_EXT", (uint64_t)VK_BLEND_OP_CONTRAST_EXT},
-        {"VK_BLEND_OP_INVERT_OVG_EXT", (uint64_t)VK_BLEND_OP_INVERT_OVG_EXT},
-        {"VK_BLEND_OP_RED_EXT", (uint64_t)VK_BLEND_OP_RED_EXT},
-        {"VK_BLEND_OP_GREEN_EXT", (uint64_t)VK_BLEND_OP_GREEN_EXT},
-        {"VK_BLEND_OP_BLUE_EXT", (uint64_t)VK_BLEND_OP_BLUE_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_BLEND_OP_ADD", (uint64_t)VK_BLEND_OP_ADD},
+                                         {"VK_BLEND_OP_SUBTRACT", (uint64_t)VK_BLEND_OP_SUBTRACT},
+                                         {"VK_BLEND_OP_REVERSE_SUBTRACT", (uint64_t)VK_BLEND_OP_REVERSE_SUBTRACT},
+                                         {"VK_BLEND_OP_MIN", (uint64_t)VK_BLEND_OP_MIN},
+                                         {"VK_BLEND_OP_MAX", (uint64_t)VK_BLEND_OP_MAX},
+                                         {"VK_BLEND_OP_ZERO_EXT", (uint64_t)VK_BLEND_OP_ZERO_EXT},
+                                         {"VK_BLEND_OP_SRC_EXT", (uint64_t)VK_BLEND_OP_SRC_EXT},
+                                         {"VK_BLEND_OP_DST_EXT", (uint64_t)VK_BLEND_OP_DST_EXT},
+                                         {"VK_BLEND_OP_SRC_OVER_EXT", (uint64_t)VK_BLEND_OP_SRC_OVER_EXT},
+                                         {"VK_BLEND_OP_DST_OVER_EXT", (uint64_t)VK_BLEND_OP_DST_OVER_EXT},
+                                         {"VK_BLEND_OP_SRC_IN_EXT", (uint64_t)VK_BLEND_OP_SRC_IN_EXT},
+                                         {"VK_BLEND_OP_DST_IN_EXT", (uint64_t)VK_BLEND_OP_DST_IN_EXT},
+                                         {"VK_BLEND_OP_SRC_OUT_EXT", (uint64_t)VK_BLEND_OP_SRC_OUT_EXT},
+                                         {"VK_BLEND_OP_DST_OUT_EXT", (uint64_t)VK_BLEND_OP_DST_OUT_EXT},
+                                         {"VK_BLEND_OP_SRC_ATOP_EXT", (uint64_t)VK_BLEND_OP_SRC_ATOP_EXT},
+                                         {"VK_BLEND_OP_DST_ATOP_EXT", (uint64_t)VK_BLEND_OP_DST_ATOP_EXT},
+                                         {"VK_BLEND_OP_XOR_EXT", (uint64_t)VK_BLEND_OP_XOR_EXT},
+                                         {"VK_BLEND_OP_MULTIPLY_EXT", (uint64_t)VK_BLEND_OP_MULTIPLY_EXT},
+                                         {"VK_BLEND_OP_SCREEN_EXT", (uint64_t)VK_BLEND_OP_SCREEN_EXT},
+                                         {"VK_BLEND_OP_OVERLAY_EXT", (uint64_t)VK_BLEND_OP_OVERLAY_EXT},
+                                         {"VK_BLEND_OP_DARKEN_EXT", (uint64_t)VK_BLEND_OP_DARKEN_EXT},
+                                         {"VK_BLEND_OP_LIGHTEN_EXT", (uint64_t)VK_BLEND_OP_LIGHTEN_EXT},
+                                         {"VK_BLEND_OP_COLORDODGE_EXT", (uint64_t)VK_BLEND_OP_COLORDODGE_EXT},
+                                         {"VK_BLEND_OP_COLORBURN_EXT", (uint64_t)VK_BLEND_OP_COLORBURN_EXT},
+                                         {"VK_BLEND_OP_HARDLIGHT_EXT", (uint64_t)VK_BLEND_OP_HARDLIGHT_EXT},
+                                         {"VK_BLEND_OP_SOFTLIGHT_EXT", (uint64_t)VK_BLEND_OP_SOFTLIGHT_EXT},
+                                         {"VK_BLEND_OP_DIFFERENCE_EXT", (uint64_t)VK_BLEND_OP_DIFFERENCE_EXT},
+                                         {"VK_BLEND_OP_EXCLUSION_EXT", (uint64_t)VK_BLEND_OP_EXCLUSION_EXT},
+                                         {"VK_BLEND_OP_INVERT_EXT", (uint64_t)VK_BLEND_OP_INVERT_EXT},
+                                         {"VK_BLEND_OP_INVERT_RGB_EXT", (uint64_t)VK_BLEND_OP_INVERT_RGB_EXT},
+                                         {"VK_BLEND_OP_LINEARDODGE_EXT", (uint64_t)VK_BLEND_OP_LINEARDODGE_EXT},
+                                         {"VK_BLEND_OP_LINEARBURN_EXT", (uint64_t)VK_BLEND_OP_LINEARBURN_EXT},
+                                         {"VK_BLEND_OP_VIVIDLIGHT_EXT", (uint64_t)VK_BLEND_OP_VIVIDLIGHT_EXT},
+                                         {"VK_BLEND_OP_LINEARLIGHT_EXT", (uint64_t)VK_BLEND_OP_LINEARLIGHT_EXT},
+                                         {"VK_BLEND_OP_PINLIGHT_EXT", (uint64_t)VK_BLEND_OP_PINLIGHT_EXT},
+                                         {"VK_BLEND_OP_HARDMIX_EXT", (uint64_t)VK_BLEND_OP_HARDMIX_EXT},
+                                         {"VK_BLEND_OP_HSL_HUE_EXT", (uint64_t)VK_BLEND_OP_HSL_HUE_EXT},
+                                         {"VK_BLEND_OP_HSL_SATURATION_EXT", (uint64_t)VK_BLEND_OP_HSL_SATURATION_EXT},
+                                         {"VK_BLEND_OP_HSL_COLOR_EXT", (uint64_t)VK_BLEND_OP_HSL_COLOR_EXT},
+                                         {"VK_BLEND_OP_HSL_LUMINOSITY_EXT", (uint64_t)VK_BLEND_OP_HSL_LUMINOSITY_EXT},
+                                         {"VK_BLEND_OP_PLUS_EXT", (uint64_t)VK_BLEND_OP_PLUS_EXT},
+                                         {"VK_BLEND_OP_PLUS_CLAMPED_EXT", (uint64_t)VK_BLEND_OP_PLUS_CLAMPED_EXT},
+                                         {"VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT", (uint64_t)VK_BLEND_OP_PLUS_CLAMPED_ALPHA_EXT},
+                                         {"VK_BLEND_OP_PLUS_DARKER_EXT", (uint64_t)VK_BLEND_OP_PLUS_DARKER_EXT},
+                                         {"VK_BLEND_OP_MINUS_EXT", (uint64_t)VK_BLEND_OP_MINUS_EXT},
+                                         {"VK_BLEND_OP_MINUS_CLAMPED_EXT", (uint64_t)VK_BLEND_OP_MINUS_CLAMPED_EXT},
+                                         {"VK_BLEND_OP_CONTRAST_EXT", (uint64_t)VK_BLEND_OP_CONTRAST_EXT},
+                                         {"VK_BLEND_OP_INVERT_OVG_EXT", (uint64_t)VK_BLEND_OP_INVERT_OVG_EXT},
+                                         {"VK_BLEND_OP_RED_EXT", (uint64_t)VK_BLEND_OP_RED_EXT},
+                                         {"VK_BLEND_OP_GREEN_EXT", (uint64_t)VK_BLEND_OP_GREEN_EXT},
+                                         {"VK_BLEND_OP_BLUE_EXT", (uint64_t)VK_BLEND_OP_BLUE_EXT}};
 
     return (VkBlendOp)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBlendOverlapEXT scvkParseJsonBlendOverlap(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BLEND_OVERLAP_UNCORRELATED_EXT", (uint64_t)VK_BLEND_OVERLAP_UNCORRELATED_EXT},
-        {"VK_BLEND_OVERLAP_DISJOINT_EXT", (uint64_t)VK_BLEND_OVERLAP_DISJOINT_EXT},
-        {"VK_BLEND_OVERLAP_CONJOINT_EXT", (uint64_t)VK_BLEND_OVERLAP_CONJOINT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_BLEND_OVERLAP_UNCORRELATED_EXT", (uint64_t)VK_BLEND_OVERLAP_UNCORRELATED_EXT},
+                                         {"VK_BLEND_OVERLAP_DISJOINT_EXT", (uint64_t)VK_BLEND_OVERLAP_DISJOINT_EXT},
+                                         {"VK_BLEND_OVERLAP_CONJOINT_EXT", (uint64_t)VK_BLEND_OVERLAP_CONJOINT_EXT}};
 
     return (VkBlendOverlapEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBorderColor scvkParseJsonBorderColor(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK", (uint64_t)VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK},
-        {"VK_BORDER_COLOR_INT_TRANSPARENT_BLACK", (uint64_t)VK_BORDER_COLOR_INT_TRANSPARENT_BLACK},
-        {"VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK", (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK},
-        {"VK_BORDER_COLOR_INT_OPAQUE_BLACK", (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_BLACK},
-        {"VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE", (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE},
-        {"VK_BORDER_COLOR_INT_OPAQUE_WHITE", (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_WHITE},
-        {"VK_BORDER_COLOR_FLOAT_CUSTOM_EXT", (uint64_t)VK_BORDER_COLOR_FLOAT_CUSTOM_EXT},
-        {"VK_BORDER_COLOR_INT_CUSTOM_EXT", (uint64_t)VK_BORDER_COLOR_INT_CUSTOM_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK", (uint64_t)VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK},
+                                         {"VK_BORDER_COLOR_INT_TRANSPARENT_BLACK", (uint64_t)VK_BORDER_COLOR_INT_TRANSPARENT_BLACK},
+                                         {"VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK", (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK},
+                                         {"VK_BORDER_COLOR_INT_OPAQUE_BLACK", (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_BLACK},
+                                         {"VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE", (uint64_t)VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE},
+                                         {"VK_BORDER_COLOR_INT_OPAQUE_WHITE", (uint64_t)VK_BORDER_COLOR_INT_OPAQUE_WHITE},
+                                         {"VK_BORDER_COLOR_FLOAT_CUSTOM_EXT", (uint64_t)VK_BORDER_COLOR_FLOAT_CUSTOM_EXT},
+                                         {"VK_BORDER_COLOR_INT_CUSTOM_EXT", (uint64_t)VK_BORDER_COLOR_INT_CUSTOM_EXT}};
 
     return (VkBorderColor)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBufferCreateFlagBits scvkParseJsonBufferCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BUFFER_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT},
-        {"VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT},
-        {"VK_BUFFER_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_ALIASED_BIT},
-        {"VK_BUFFER_CREATE_PROTECTED_BIT", (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT},
-        {"VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_BUFFER_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT},
+                                         {"VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT},
+                                         {"VK_BUFFER_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_ALIASED_BIT},
+                                         {"VK_BUFFER_CREATE_PROTECTED_BIT", (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT},
+                                         {"VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT}};
 
     return (VkBufferCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBufferUsageFlagBits scvkParseJsonBufferUsageFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BUFFER_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT},
-        {"VK_BUFFER_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT},
-        {"VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_STORAGE_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_INDEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDEX_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_VERTEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_VERTEX_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT", (uint64_t)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_BUFFER_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT},
+                                         {"VK_BUFFER_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT},
+                                         {"VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_STORAGE_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_INDEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDEX_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_VERTEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_VERTEX_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT", (uint64_t)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT}};
 
     return (VkBufferUsageFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkChromaLocation scvkParseJsonChromaLocation(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_CHROMA_LOCATION_COSITED_EVEN", (uint64_t)VK_CHROMA_LOCATION_COSITED_EVEN},
-        {"VK_CHROMA_LOCATION_MIDPOINT", (uint64_t)VK_CHROMA_LOCATION_MIDPOINT},
-    };
+    static const scvkJsonName table[] = {{"VK_CHROMA_LOCATION_COSITED_EVEN", (uint64_t)VK_CHROMA_LOCATION_COSITED_EVEN}, {"VK_CHROMA_LOCATION_MIDPOINT", (uint64_t)VK_CHROMA_LOCATION_MIDPOINT}};
 
     return (VkChromaLocation)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkColorComponentFlagBits scvkParseJsonColorComponentFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COLOR_COMPONENT_R_BIT", (uint64_t)VK_COLOR_COMPONENT_R_BIT},
-        {"VK_COLOR_COMPONENT_G_BIT", (uint64_t)VK_COLOR_COMPONENT_G_BIT},
-        {"VK_COLOR_COMPONENT_B_BIT", (uint64_t)VK_COLOR_COMPONENT_B_BIT},
-        {"VK_COLOR_COMPONENT_A_BIT", (uint64_t)VK_COLOR_COMPONENT_A_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COLOR_COMPONENT_R_BIT", (uint64_t)VK_COLOR_COMPONENT_R_BIT},
+                                         {"VK_COLOR_COMPONENT_G_BIT", (uint64_t)VK_COLOR_COMPONENT_G_BIT},
+                                         {"VK_COLOR_COMPONENT_B_BIT", (uint64_t)VK_COLOR_COMPONENT_B_BIT},
+                                         {"VK_COLOR_COMPONENT_A_BIT", (uint64_t)VK_COLOR_COMPONENT_A_BIT}};
 
     return (VkColorComponentFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkColorSpaceKHR scvkParseJsonColorSpace(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COLOR_SPACE_SRGB_NONLINEAR_KHR", (uint64_t)VK_COLOR_SPACE_SRGB_NONLINEAR_KHR},
-        {"VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT},
-        {"VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT},
-        {"VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT},
-        {"VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT},
-        {"VK_COLOR_SPACE_BT709_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_BT709_LINEAR_EXT},
-        {"VK_COLOR_SPACE_BT709_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_BT709_NONLINEAR_EXT},
-        {"VK_COLOR_SPACE_BT2020_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_BT2020_LINEAR_EXT},
-        {"VK_COLOR_SPACE_HDR10_ST2084_EXT", (uint64_t)VK_COLOR_SPACE_HDR10_ST2084_EXT},
-        {"VK_COLOR_SPACE_DOLBYVISION_EXT", (uint64_t)VK_COLOR_SPACE_DOLBYVISION_EXT},
-        {"VK_COLOR_SPACE_HDR10_HLG_EXT", (uint64_t)VK_COLOR_SPACE_HDR10_HLG_EXT},
-        {"VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT},
-        {"VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT},
-        {"VK_COLOR_SPACE_PASS_THROUGH_EXT", (uint64_t)VK_COLOR_SPACE_PASS_THROUGH_EXT},
-        {"VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_COLOR_SPACE_SRGB_NONLINEAR_KHR", (uint64_t)VK_COLOR_SPACE_SRGB_NONLINEAR_KHR},
+                                         {"VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT},
+                                         {"VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT},
+                                         {"VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT},
+                                         {"VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT},
+                                         {"VK_COLOR_SPACE_BT709_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_BT709_LINEAR_EXT},
+                                         {"VK_COLOR_SPACE_BT709_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_BT709_NONLINEAR_EXT},
+                                         {"VK_COLOR_SPACE_BT2020_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_BT2020_LINEAR_EXT},
+                                         {"VK_COLOR_SPACE_HDR10_ST2084_EXT", (uint64_t)VK_COLOR_SPACE_HDR10_ST2084_EXT},
+                                         {"VK_COLOR_SPACE_DOLBYVISION_EXT", (uint64_t)VK_COLOR_SPACE_DOLBYVISION_EXT},
+                                         {"VK_COLOR_SPACE_HDR10_HLG_EXT", (uint64_t)VK_COLOR_SPACE_HDR10_HLG_EXT},
+                                         {"VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT", (uint64_t)VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT},
+                                         {"VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT},
+                                         {"VK_COLOR_SPACE_PASS_THROUGH_EXT", (uint64_t)VK_COLOR_SPACE_PASS_THROUGH_EXT},
+                                         {"VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT", (uint64_t)VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT}};
 
     return (VkColorSpaceKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandBufferLevel scvkParseJsonCommandBufferLevel(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_BUFFER_LEVEL_PRIMARY", (uint64_t)VK_COMMAND_BUFFER_LEVEL_PRIMARY},
-        {"VK_COMMAND_BUFFER_LEVEL_SECONDARY", (uint64_t)VK_COMMAND_BUFFER_LEVEL_SECONDARY},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_LEVEL_PRIMARY", (uint64_t)VK_COMMAND_BUFFER_LEVEL_PRIMARY},
+                                         {"VK_COMMAND_BUFFER_LEVEL_SECONDARY", (uint64_t)VK_COMMAND_BUFFER_LEVEL_SECONDARY}};
 
     return (VkCommandBufferLevel)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandBufferResetFlagBits scvkParseJsonCommandBufferResetFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT", (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT", (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT}};
 
     return (VkCommandBufferResetFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandBufferUsageFlagBits scvkParseJsonCommandBufferUsageFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT},
-        {"VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT},
-        {"VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT},
+                                         {"VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT},
+                                         {"VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT}};
 
     return (VkCommandBufferUsageFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandPoolCreateFlagBits scvkParseJsonCommandPoolCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_POOL_CREATE_TRANSIENT_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT},
-        {"VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT},
-        {"VK_COMMAND_POOL_CREATE_PROTECTED_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_POOL_CREATE_TRANSIENT_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT},
+                                         {"VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT},
+                                         {"VK_COMMAND_POOL_CREATE_PROTECTED_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT}};
 
     return (VkCommandPoolCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -363,665 +324,593 @@ VkCommandPoolResetFlagBits scvkParseJsonCommandPoolResetFlagBits(const scvkJsonV
 }
 VkCompareOp scvkParseJsonCompareOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMPARE_OP_NEVER", (uint64_t)VK_COMPARE_OP_NEVER},
-        {"VK_COMPARE_OP_LESS", (uint64_t)VK_COMPARE_OP_LESS},
-        {"VK_COMPARE_OP_EQUAL", (uint64_t)VK_COMPARE_OP_EQUAL},
-        {"VK_COMPARE_OP_LESS_OR_EQUAL", (uint64_t)VK_COMPARE_OP_LESS_OR_EQUAL},
-        {"VK_COMPARE_OP_GREATER", (uint64_t)VK_COMPARE_OP_GREATER},
-        {"VK_COMPARE_OP_NOT_EQUAL", (uint64_t)VK_COMPARE_OP_NOT_EQUAL},
-        {"VK_COMPARE_OP_GREATER_OR_EQUAL", (uint64_t)VK_COMPARE_OP_GREATER_OR_EQUAL},
-        {"VK_COMPARE_OP_ALWAYS", (uint64_t)VK_COMPARE_OP_ALWAYS},
-    };
+    static const scvkJsonName table[] = {{"VK_COMPARE_OP_NEVER", (uint64_t)VK_COMPARE_OP_NEVER},
+                                         {"VK_COMPARE_OP_LESS", (uint64_t)VK_COMPARE_OP_LESS},
+                                         {"VK_COMPARE_OP_EQUAL", (uint64_t)VK_COMPARE_OP_EQUAL},
+                                         {"VK_COMPARE_OP_LESS_OR_EQUAL", (uint64_t)VK_COMPARE_OP_LESS_OR_EQUAL},
+                                         {"VK_COMPARE_OP_GREATER", (uint64_t)VK_COMPARE_OP_GREATER},
+                                         {"VK_COMPARE_OP_NOT_EQUAL", (uint64_t)VK_COMPARE_OP_NOT_EQUAL},
+                                         {"VK_COMPARE_OP_GREATER_OR_EQUAL", (uint64_t)VK_COMPARE_OP_GREATER_OR_EQUAL},
+                                         {"VK_COMPARE_OP_ALWAYS", (uint64_t)VK_COMPARE_OP_ALWAYS}};
 
     return (VkCompareOp)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkComponentSwizzle scvkParseJsonComponentSwizzle(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMPONENT_SWIZZLE_IDENTITY", (uint64_t)VK_COMPONENT_SWIZZLE_IDENTITY},
-        {"VK_COMPONENT_SWIZZLE_ZERO", (uint64_t)VK_COMPONENT_SWIZZLE_ZERO},
-        {"VK_COMPONENT_SWIZZLE_ONE", (uint64_t)VK_COMPONENT_SWIZZLE_ONE},
-        {"VK_COMPONENT_SWIZZLE_R", (uint64_t)VK_COMPONENT_SWIZZLE_R},
-        {"VK_COMPONENT_SWIZZLE_G", (uint64_t)VK_COMPONENT_SWIZZLE_G},
-        {"VK_COMPONENT_SWIZZLE_B", (uint64_t)VK_COMPONENT_SWIZZLE_B},
-        {"VK_COMPONENT_SWIZZLE_A", (uint64_t)VK_COMPONENT_SWIZZLE_A},
-    };
+    static const scvkJsonName table[] = {{"VK_COMPONENT_SWIZZLE_IDENTITY", (uint64_t)VK_COMPONENT_SWIZZLE_IDENTITY},
+                                         {"VK_COMPONENT_SWIZZLE_ZERO", (uint64_t)VK_COMPONENT_SWIZZLE_ZERO},
+                                         {"VK_COMPONENT_SWIZZLE_ONE", (uint64_t)VK_COMPONENT_SWIZZLE_ONE},
+                                         {"VK_COMPONENT_SWIZZLE_R", (uint64_t)VK_COMPONENT_SWIZZLE_R},
+                                         {"VK_COMPONENT_SWIZZLE_G", (uint64_t)VK_COMPONENT_SWIZZLE_G},
+                                         {"VK_COMPONENT_SWIZZLE_B", (uint64_t)VK_COMPONENT_SWIZZLE_B},
+                                         {"VK_COMPONENT_SWIZZLE_A", (uint64_t)VK_COMPONENT_SWIZZLE_A}};
 
     return (VkComponentSwizzle)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCompositeAlphaFlagBitsKHR scvkParseJsonCompositeAlphaFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR},
-        {"VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR},
-        {"VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR},
-        {"VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR},
+                                         {"VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR},
+                                         {"VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR},
+                                         {"VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR}};
 
     return (VkCompositeAlphaFlagBitsKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkConservativeRasterizationModeEXT scvkParseJsonConservativeRasterizationMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT},
-        {"VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT},
-        {"VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT},
+                                         {"VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT},
+                                         {"VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT", (uint64_t)VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT}};
 
     return (VkConservativeRasterizationModeEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCullModeFlagBits scvkParseJsonCullModeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_CULL_MODE_NONE", (uint64_t)VK_CULL_MODE_NONE},
-        {"VK_CULL_MODE_FRONT_BIT", (uint64_t)VK_CULL_MODE_FRONT_BIT},
-        {"VK_CULL_MODE_BACK_BIT", (uint64_t)VK_CULL_MODE_BACK_BIT},
-        {"VK_CULL_MODE_FRONT_AND_BACK", (uint64_t)VK_CULL_MODE_FRONT_AND_BACK},
-    };
+    static const scvkJsonName table[] = {{"VK_CULL_MODE_NONE", (uint64_t)VK_CULL_MODE_NONE},
+                                         {"VK_CULL_MODE_FRONT_BIT", (uint64_t)VK_CULL_MODE_FRONT_BIT},
+                                         {"VK_CULL_MODE_BACK_BIT", (uint64_t)VK_CULL_MODE_BACK_BIT},
+                                         {"VK_CULL_MODE_FRONT_AND_BACK", (uint64_t)VK_CULL_MODE_FRONT_AND_BACK}};
 
     return (VkCullModeFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDebugUtilsMessageSeverityFlagBitsEXT scvkParseJsonDebugUtilsMessageSeverityFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT}};
 
     return (VkDebugUtilsMessageSeverityFlagBitsEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDebugUtilsMessageTypeFlagBitsEXT scvkParseJsonDebugUtilsMessageTypeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT}};
 
     return (VkDebugUtilsMessageTypeFlagBitsEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDependencyFlagBits scvkParseJsonDependencyFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEPENDENCY_BY_REGION_BIT", (uint64_t)VK_DEPENDENCY_BY_REGION_BIT},
-        {"VK_DEPENDENCY_DEVICE_GROUP_BIT", (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT},
-        {"VK_DEPENDENCY_VIEW_LOCAL_BIT", (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEPENDENCY_BY_REGION_BIT", (uint64_t)VK_DEPENDENCY_BY_REGION_BIT},
+                                         {"VK_DEPENDENCY_DEVICE_GROUP_BIT", (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT},
+                                         {"VK_DEPENDENCY_VIEW_LOCAL_BIT", (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT}};
 
     return (VkDependencyFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDescriptorBindingFlagBits scvkParseJsonDescriptorBindingFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT},
-        {"VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT},
-        {"VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT},
-        {"VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT},
+                                         {"VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT},
+                                         {"VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT},
+                                         {"VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT}};
 
     return (VkDescriptorBindingFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDescriptorPoolCreateFlagBits scvkParseJsonDescriptorPoolCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
-        {"VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
+                                         {"VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT}};
 
     return (VkDescriptorPoolCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDescriptorSetLayoutCreateFlagBits scvkParseJsonDescriptorSetLayoutCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT", (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT", (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT}};
 
     return (VkDescriptorSetLayoutCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDescriptorType scvkParseJsonDescriptorType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_TYPE_SAMPLER", (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLER},
-        {"VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER", (uint64_t)VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER},
-        {"VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE", (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE},
-        {"VK_DESCRIPTOR_TYPE_STORAGE_IMAGE", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_IMAGE},
-        {"VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER},
-        {"VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER},
-        {"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER},
-        {"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER},
-        {"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC", (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC},
-        {"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC},
-        {"VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT", (uint64_t)VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_TYPE_SAMPLER", (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLER},
+                                         {"VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER", (uint64_t)VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER},
+                                         {"VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE", (uint64_t)VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE},
+                                         {"VK_DESCRIPTOR_TYPE_STORAGE_IMAGE", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_IMAGE},
+                                         {"VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER},
+                                         {"VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER},
+                                         {"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER},
+                                         {"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER},
+                                         {"VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC", (uint64_t)VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC},
+                                         {"VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC", (uint64_t)VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC},
+                                         {"VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT", (uint64_t)VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT}};
 
     return (VkDescriptorType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDeviceEventTypeEXT scvkParseJsonDeviceEventType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT", (uint64_t)VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT", (uint64_t)VK_DEVICE_EVENT_TYPE_DISPLAY_HOTPLUG_EXT}};
 
     return (VkDeviceEventTypeEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDeviceGroupPresentModeFlagBitsKHR scvkParseJsonDeviceGroupPresentModeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR},
-        {"VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR},
-        {"VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR},
-        {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR},
+                                         {"VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR},
+                                         {"VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR},
+                                         {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR}};
 
     return (VkDeviceGroupPresentModeFlagBitsKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDeviceQueueCreateFlagBits scvkParseJsonDeviceQueueCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT", (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT", (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT}};
 
     return (VkDeviceQueueCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDiscardRectangleModeEXT scvkParseJsonDiscardRectangleMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT", (uint64_t)VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT},
-        {"VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT", (uint64_t)VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT", (uint64_t)VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT},
+                                         {"VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT", (uint64_t)VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT}};
 
     return (VkDiscardRectangleModeEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDisplayEventTypeEXT scvkParseJsonDisplayEventType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT", (uint64_t)VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT", (uint64_t)VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT}};
 
     return (VkDisplayEventTypeEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDisplayPlaneAlphaFlagBitsKHR scvkParseJsonDisplayPlaneAlphaFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR},
-        {"VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR},
-        {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR},
-        {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR},
+                                         {"VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR},
+                                         {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR},
+                                         {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR}};
 
     return (VkDisplayPlaneAlphaFlagBitsKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDisplayPowerStateEXT scvkParseJsonDisplayPowerState(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DISPLAY_POWER_STATE_OFF_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_OFF_EXT},
-        {"VK_DISPLAY_POWER_STATE_SUSPEND_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_SUSPEND_EXT},
-        {"VK_DISPLAY_POWER_STATE_ON_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_ON_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DISPLAY_POWER_STATE_OFF_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_OFF_EXT},
+                                         {"VK_DISPLAY_POWER_STATE_SUSPEND_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_SUSPEND_EXT},
+                                         {"VK_DISPLAY_POWER_STATE_ON_EXT", (uint64_t)VK_DISPLAY_POWER_STATE_ON_EXT}};
 
     return (VkDisplayPowerStateEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDriverId scvkParseJsonDriverId(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DRIVER_ID_AMD_PROPRIETARY", (uint64_t)VK_DRIVER_ID_AMD_PROPRIETARY},
-        {"VK_DRIVER_ID_AMD_OPEN_SOURCE", (uint64_t)VK_DRIVER_ID_AMD_OPEN_SOURCE},
-        {"VK_DRIVER_ID_MESA_RADV", (uint64_t)VK_DRIVER_ID_MESA_RADV},
-        {"VK_DRIVER_ID_NVIDIA_PROPRIETARY", (uint64_t)VK_DRIVER_ID_NVIDIA_PROPRIETARY},
-        {"VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS", (uint64_t)VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS},
-        {"VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA", (uint64_t)VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA},
-        {"VK_DRIVER_ID_IMAGINATION_PROPRIETARY", (uint64_t)VK_DRIVER_ID_IMAGINATION_PROPRIETARY},
-        {"VK_DRIVER_ID_QUALCOMM_PROPRIETARY", (uint64_t)VK_DRIVER_ID_QUALCOMM_PROPRIETARY},
-        {"VK_DRIVER_ID_ARM_PROPRIETARY", (uint64_t)VK_DRIVER_ID_ARM_PROPRIETARY},
-        {"VK_DRIVER_ID_GOOGLE_SWIFTSHADER", (uint64_t)VK_DRIVER_ID_GOOGLE_SWIFTSHADER},
-        {"VK_DRIVER_ID_GGP_PROPRIETARY", (uint64_t)VK_DRIVER_ID_GGP_PROPRIETARY},
-        {"VK_DRIVER_ID_BROADCOM_PROPRIETARY", (uint64_t)VK_DRIVER_ID_BROADCOM_PROPRIETARY},
-        {"VK_DRIVER_ID_MESA_LLVMPIPE", (uint64_t)VK_DRIVER_ID_MESA_LLVMPIPE},
-        {"VK_DRIVER_ID_MOLTENVK", (uint64_t)VK_DRIVER_ID_MOLTENVK},
-        {"VK_DRIVER_ID_COREAVI_PROPRIETARY", (uint64_t)VK_DRIVER_ID_COREAVI_PROPRIETARY},
-        {"VK_DRIVER_ID_JUICE_PROPRIETARY", (uint64_t)VK_DRIVER_ID_JUICE_PROPRIETARY},
-        {"VK_DRIVER_ID_VERISILICON_PROPRIETARY", (uint64_t)VK_DRIVER_ID_VERISILICON_PROPRIETARY},
-        {"VK_DRIVER_ID_MESA_TURNIP", (uint64_t)VK_DRIVER_ID_MESA_TURNIP},
-        {"VK_DRIVER_ID_MESA_V3DV", (uint64_t)VK_DRIVER_ID_MESA_V3DV},
-        {"VK_DRIVER_ID_MESA_PANVK", (uint64_t)VK_DRIVER_ID_MESA_PANVK},
-        {"VK_DRIVER_ID_SAMSUNG_PROPRIETARY", (uint64_t)VK_DRIVER_ID_SAMSUNG_PROPRIETARY},
-        {"VK_DRIVER_ID_MESA_VENUS", (uint64_t)VK_DRIVER_ID_MESA_VENUS},
-        {"VK_DRIVER_ID_MESA_DOZEN", (uint64_t)VK_DRIVER_ID_MESA_DOZEN},
-        {"VK_DRIVER_ID_MESA_NVK", (uint64_t)VK_DRIVER_ID_MESA_NVK},
-        {"VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA", (uint64_t)VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA},
-        {"VK_DRIVER_ID_MESA_HONEYKRISP", (uint64_t)VK_DRIVER_ID_MESA_HONEYKRISP},
-        {"VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN", (uint64_t)VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN},
-        {"VK_DRIVER_ID_MESA_KOSMICKRISP", (uint64_t)VK_DRIVER_ID_MESA_KOSMICKRISP},
-        {"VK_DRIVER_ID_MESA_GFXSTREAM", (uint64_t)VK_DRIVER_ID_MESA_GFXSTREAM},
-        {"VK_DRIVER_ID_APE_SOFT", (uint64_t)VK_DRIVER_ID_APE_SOFT},
-    };
+    static const scvkJsonName table[] = {{"VK_DRIVER_ID_AMD_PROPRIETARY", (uint64_t)VK_DRIVER_ID_AMD_PROPRIETARY},
+                                         {"VK_DRIVER_ID_AMD_OPEN_SOURCE", (uint64_t)VK_DRIVER_ID_AMD_OPEN_SOURCE},
+                                         {"VK_DRIVER_ID_MESA_RADV", (uint64_t)VK_DRIVER_ID_MESA_RADV},
+                                         {"VK_DRIVER_ID_NVIDIA_PROPRIETARY", (uint64_t)VK_DRIVER_ID_NVIDIA_PROPRIETARY},
+                                         {"VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS", (uint64_t)VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS},
+                                         {"VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA", (uint64_t)VK_DRIVER_ID_INTEL_OPEN_SOURCE_MESA},
+                                         {"VK_DRIVER_ID_IMAGINATION_PROPRIETARY", (uint64_t)VK_DRIVER_ID_IMAGINATION_PROPRIETARY},
+                                         {"VK_DRIVER_ID_QUALCOMM_PROPRIETARY", (uint64_t)VK_DRIVER_ID_QUALCOMM_PROPRIETARY},
+                                         {"VK_DRIVER_ID_ARM_PROPRIETARY", (uint64_t)VK_DRIVER_ID_ARM_PROPRIETARY},
+                                         {"VK_DRIVER_ID_GOOGLE_SWIFTSHADER", (uint64_t)VK_DRIVER_ID_GOOGLE_SWIFTSHADER},
+                                         {"VK_DRIVER_ID_GGP_PROPRIETARY", (uint64_t)VK_DRIVER_ID_GGP_PROPRIETARY},
+                                         {"VK_DRIVER_ID_BROADCOM_PROPRIETARY", (uint64_t)VK_DRIVER_ID_BROADCOM_PROPRIETARY},
+                                         {"VK_DRIVER_ID_MESA_LLVMPIPE", (uint64_t)VK_DRIVER_ID_MESA_LLVMPIPE},
+                                         {"VK_DRIVER_ID_MOLTENVK", (uint64_t)VK_DRIVER_ID_MOLTENVK},
+                                         {"VK_DRIVER_ID_COREAVI_PROPRIETARY", (uint64_t)VK_DRIVER_ID_COREAVI_PROPRIETARY},
+                                         {"VK_DRIVER_ID_JUICE_PROPRIETARY", (uint64_t)VK_DRIVER_ID_JUICE_PROPRIETARY},
+                                         {"VK_DRIVER_ID_VERISILICON_PROPRIETARY", (uint64_t)VK_DRIVER_ID_VERISILICON_PROPRIETARY},
+                                         {"VK_DRIVER_ID_MESA_TURNIP", (uint64_t)VK_DRIVER_ID_MESA_TURNIP},
+                                         {"VK_DRIVER_ID_MESA_V3DV", (uint64_t)VK_DRIVER_ID_MESA_V3DV},
+                                         {"VK_DRIVER_ID_MESA_PANVK", (uint64_t)VK_DRIVER_ID_MESA_PANVK},
+                                         {"VK_DRIVER_ID_SAMSUNG_PROPRIETARY", (uint64_t)VK_DRIVER_ID_SAMSUNG_PROPRIETARY},
+                                         {"VK_DRIVER_ID_MESA_VENUS", (uint64_t)VK_DRIVER_ID_MESA_VENUS},
+                                         {"VK_DRIVER_ID_MESA_DOZEN", (uint64_t)VK_DRIVER_ID_MESA_DOZEN},
+                                         {"VK_DRIVER_ID_MESA_NVK", (uint64_t)VK_DRIVER_ID_MESA_NVK},
+                                         {"VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA", (uint64_t)VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA},
+                                         {"VK_DRIVER_ID_MESA_HONEYKRISP", (uint64_t)VK_DRIVER_ID_MESA_HONEYKRISP},
+                                         {"VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN", (uint64_t)VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN},
+                                         {"VK_DRIVER_ID_MESA_KOSMICKRISP", (uint64_t)VK_DRIVER_ID_MESA_KOSMICKRISP},
+                                         {"VK_DRIVER_ID_MESA_GFXSTREAM", (uint64_t)VK_DRIVER_ID_MESA_GFXSTREAM},
+                                         {"VK_DRIVER_ID_APE_SOFT", (uint64_t)VK_DRIVER_ID_APE_SOFT}};
 
     return (VkDriverId)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDynamicState scvkParseJsonDynamicState(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DYNAMIC_STATE_VIEWPORT", (uint64_t)VK_DYNAMIC_STATE_VIEWPORT},
-        {"VK_DYNAMIC_STATE_SCISSOR", (uint64_t)VK_DYNAMIC_STATE_SCISSOR},
-        {"VK_DYNAMIC_STATE_LINE_WIDTH", (uint64_t)VK_DYNAMIC_STATE_LINE_WIDTH},
-        {"VK_DYNAMIC_STATE_DEPTH_BIAS", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS},
-        {"VK_DYNAMIC_STATE_BLEND_CONSTANTS", (uint64_t)VK_DYNAMIC_STATE_BLEND_CONSTANTS},
-        {"VK_DYNAMIC_STATE_DEPTH_BOUNDS", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS},
-        {"VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK", (uint64_t)VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK},
-        {"VK_DYNAMIC_STATE_STENCIL_WRITE_MASK", (uint64_t)VK_DYNAMIC_STATE_STENCIL_WRITE_MASK},
-        {"VK_DYNAMIC_STATE_STENCIL_REFERENCE", (uint64_t)VK_DYNAMIC_STATE_STENCIL_REFERENCE},
-        {"VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT},
-        {"VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_DISCARD_RECTANGLE_MODE_EXT", (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_MODE_EXT},
-        {"VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT", (uint64_t)VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT},
-        {"VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR", (uint64_t)VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR},
-        {"VK_DYNAMIC_STATE_LINE_STIPPLE_EXT", (uint64_t)VK_DYNAMIC_STATE_LINE_STIPPLE_EXT},
-        {"VK_DYNAMIC_STATE_CULL_MODE_EXT", (uint64_t)VK_DYNAMIC_STATE_CULL_MODE_EXT},
-        {"VK_DYNAMIC_STATE_FRONT_FACE_EXT", (uint64_t)VK_DYNAMIC_STATE_FRONT_FACE_EXT},
-        {"VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT", (uint64_t)VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT},
-        {"VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT", (uint64_t)VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT},
-        {"VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT", (uint64_t)VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT},
-        {"VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT", (uint64_t)VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT},
-        {"VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT},
-        {"VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_STENCIL_OP_EXT", (uint64_t)VK_DYNAMIC_STATE_STENCIL_OP_EXT},
-        {"VK_DYNAMIC_STATE_VERTEX_INPUT_EXT", (uint64_t)VK_DYNAMIC_STATE_VERTEX_INPUT_EXT},
-        {"VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT", (uint64_t)VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT},
-        {"VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_LOGIC_OP_EXT", (uint64_t)VK_DYNAMIC_STATE_LOGIC_OP_EXT},
-        {"VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT},
-        {"VK_DYNAMIC_STATE_LINE_STIPPLE_KHR", (uint64_t)VK_DYNAMIC_STATE_LINE_STIPPLE_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_DYNAMIC_STATE_VIEWPORT", (uint64_t)VK_DYNAMIC_STATE_VIEWPORT},
+                                         {"VK_DYNAMIC_STATE_SCISSOR", (uint64_t)VK_DYNAMIC_STATE_SCISSOR},
+                                         {"VK_DYNAMIC_STATE_LINE_WIDTH", (uint64_t)VK_DYNAMIC_STATE_LINE_WIDTH},
+                                         {"VK_DYNAMIC_STATE_DEPTH_BIAS", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS},
+                                         {"VK_DYNAMIC_STATE_BLEND_CONSTANTS", (uint64_t)VK_DYNAMIC_STATE_BLEND_CONSTANTS},
+                                         {"VK_DYNAMIC_STATE_DEPTH_BOUNDS", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS},
+                                         {"VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK", (uint64_t)VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK},
+                                         {"VK_DYNAMIC_STATE_STENCIL_WRITE_MASK", (uint64_t)VK_DYNAMIC_STATE_STENCIL_WRITE_MASK},
+                                         {"VK_DYNAMIC_STATE_STENCIL_REFERENCE", (uint64_t)VK_DYNAMIC_STATE_STENCIL_REFERENCE},
+                                         {"VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT},
+                                         {"VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_DISCARD_RECTANGLE_MODE_EXT", (uint64_t)VK_DYNAMIC_STATE_DISCARD_RECTANGLE_MODE_EXT},
+                                         {"VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT", (uint64_t)VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT},
+                                         {"VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR", (uint64_t)VK_DYNAMIC_STATE_FRAGMENT_SHADING_RATE_KHR},
+                                         {"VK_DYNAMIC_STATE_LINE_STIPPLE_EXT", (uint64_t)VK_DYNAMIC_STATE_LINE_STIPPLE_EXT},
+                                         {"VK_DYNAMIC_STATE_CULL_MODE_EXT", (uint64_t)VK_DYNAMIC_STATE_CULL_MODE_EXT},
+                                         {"VK_DYNAMIC_STATE_FRONT_FACE_EXT", (uint64_t)VK_DYNAMIC_STATE_FRONT_FACE_EXT},
+                                         {"VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT", (uint64_t)VK_DYNAMIC_STATE_PRIMITIVE_TOPOLOGY_EXT},
+                                         {"VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT", (uint64_t)VK_DYNAMIC_STATE_VIEWPORT_WITH_COUNT_EXT},
+                                         {"VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT", (uint64_t)VK_DYNAMIC_STATE_SCISSOR_WITH_COUNT_EXT},
+                                         {"VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT", (uint64_t)VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT},
+                                         {"VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_WRITE_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_COMPARE_OP_EXT},
+                                         {"VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BOUNDS_TEST_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_STENCIL_TEST_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_STENCIL_OP_EXT", (uint64_t)VK_DYNAMIC_STATE_STENCIL_OP_EXT},
+                                         {"VK_DYNAMIC_STATE_VERTEX_INPUT_EXT", (uint64_t)VK_DYNAMIC_STATE_VERTEX_INPUT_EXT},
+                                         {"VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT", (uint64_t)VK_DYNAMIC_STATE_PATCH_CONTROL_POINTS_EXT},
+                                         {"VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_LOGIC_OP_EXT", (uint64_t)VK_DYNAMIC_STATE_LOGIC_OP_EXT},
+                                         {"VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT", (uint64_t)VK_DYNAMIC_STATE_COLOR_WRITE_ENABLE_EXT},
+                                         {"VK_DYNAMIC_STATE_LINE_STIPPLE_KHR", (uint64_t)VK_DYNAMIC_STATE_LINE_STIPPLE_KHR}};
 
     return (VkDynamicState)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkEventCreateFlagBits scvkParseJsonEventCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR", (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR", (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR}};
 
     return (VkEventCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalFenceFeatureFlagBits scvkParseJsonExternalFenceFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT},
-        {"VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT},
+                                         {"VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT}};
 
     return (VkExternalFenceFeatureFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalFenceHandleTypeFlagBits scvkParseJsonExternalFenceHandleTypeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT},
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT},
+                                         {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
+                                         {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
+                                         {"VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT}};
 
     return (VkExternalFenceHandleTypeFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalMemoryFeatureFlagBits scvkParseJsonExternalMemoryFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT},
-        {"VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT},
-        {"VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT},
+                                         {"VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT},
+                                         {"VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT}};
 
     return (VkExternalMemoryFeatureFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalMemoryHandleTypeFlagBits scvkParseJsonExternalMemoryHandleTypeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT}};
 
     return (VkExternalMemoryHandleTypeFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalSemaphoreFeatureFlagBits scvkParseJsonExternalSemaphoreFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT}};
 
     return (VkExternalSemaphoreFeatureFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalSemaphoreHandleTypeFlagBits scvkParseJsonExternalSemaphoreHandleTypeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT}};
 
     return (VkExternalSemaphoreHandleTypeFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFaultLevel scvkParseJsonFaultLevel(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FAULT_LEVEL_UNASSIGNED", (uint64_t)VK_FAULT_LEVEL_UNASSIGNED},
-        {"VK_FAULT_LEVEL_CRITICAL", (uint64_t)VK_FAULT_LEVEL_CRITICAL},
-        {"VK_FAULT_LEVEL_RECOVERABLE", (uint64_t)VK_FAULT_LEVEL_RECOVERABLE},
-        {"VK_FAULT_LEVEL_WARNING", (uint64_t)VK_FAULT_LEVEL_WARNING},
-    };
+    static const scvkJsonName table[] = {{"VK_FAULT_LEVEL_UNASSIGNED", (uint64_t)VK_FAULT_LEVEL_UNASSIGNED},
+                                         {"VK_FAULT_LEVEL_CRITICAL", (uint64_t)VK_FAULT_LEVEL_CRITICAL},
+                                         {"VK_FAULT_LEVEL_RECOVERABLE", (uint64_t)VK_FAULT_LEVEL_RECOVERABLE},
+                                         {"VK_FAULT_LEVEL_WARNING", (uint64_t)VK_FAULT_LEVEL_WARNING}};
 
     return (VkFaultLevel)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFaultQueryBehavior scvkParseJsonFaultQueryBehavior(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS", (uint64_t)VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS},
-    };
+    static const scvkJsonName table[] = {{"VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS", (uint64_t)VK_FAULT_QUERY_BEHAVIOR_GET_AND_CLEAR_ALL_FAULTS}};
 
     return (VkFaultQueryBehavior)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFaultType scvkParseJsonFaultType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FAULT_TYPE_INVALID", (uint64_t)VK_FAULT_TYPE_INVALID},
-        {"VK_FAULT_TYPE_UNASSIGNED", (uint64_t)VK_FAULT_TYPE_UNASSIGNED},
-        {"VK_FAULT_TYPE_IMPLEMENTATION", (uint64_t)VK_FAULT_TYPE_IMPLEMENTATION},
-        {"VK_FAULT_TYPE_SYSTEM", (uint64_t)VK_FAULT_TYPE_SYSTEM},
-        {"VK_FAULT_TYPE_PHYSICAL_DEVICE", (uint64_t)VK_FAULT_TYPE_PHYSICAL_DEVICE},
-        {"VK_FAULT_TYPE_COMMAND_BUFFER_FULL", (uint64_t)VK_FAULT_TYPE_COMMAND_BUFFER_FULL},
-        {"VK_FAULT_TYPE_INVALID_API_USAGE", (uint64_t)VK_FAULT_TYPE_INVALID_API_USAGE},
-    };
+    static const scvkJsonName table[] = {{"VK_FAULT_TYPE_INVALID", (uint64_t)VK_FAULT_TYPE_INVALID},
+                                         {"VK_FAULT_TYPE_UNASSIGNED", (uint64_t)VK_FAULT_TYPE_UNASSIGNED},
+                                         {"VK_FAULT_TYPE_IMPLEMENTATION", (uint64_t)VK_FAULT_TYPE_IMPLEMENTATION},
+                                         {"VK_FAULT_TYPE_SYSTEM", (uint64_t)VK_FAULT_TYPE_SYSTEM},
+                                         {"VK_FAULT_TYPE_PHYSICAL_DEVICE", (uint64_t)VK_FAULT_TYPE_PHYSICAL_DEVICE},
+                                         {"VK_FAULT_TYPE_COMMAND_BUFFER_FULL", (uint64_t)VK_FAULT_TYPE_COMMAND_BUFFER_FULL},
+                                         {"VK_FAULT_TYPE_INVALID_API_USAGE", (uint64_t)VK_FAULT_TYPE_INVALID_API_USAGE}};
 
     return (VkFaultType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFenceCreateFlagBits scvkParseJsonFenceCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FENCE_CREATE_SIGNALED_BIT", (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_FENCE_CREATE_SIGNALED_BIT", (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT}};
 
     return (VkFenceCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFenceImportFlagBits scvkParseJsonFenceImportFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FENCE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_FENCE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT}};
 
     return (VkFenceImportFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFilter scvkParseJsonFilter(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FILTER_NEAREST", (uint64_t)VK_FILTER_NEAREST},
-        {"VK_FILTER_LINEAR", (uint64_t)VK_FILTER_LINEAR},
-        {"VK_FILTER_CUBIC_EXT", (uint64_t)VK_FILTER_CUBIC_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_FILTER_NEAREST", (uint64_t)VK_FILTER_NEAREST}, {"VK_FILTER_LINEAR", (uint64_t)VK_FILTER_LINEAR}, {"VK_FILTER_CUBIC_EXT", (uint64_t)VK_FILTER_CUBIC_EXT}};
 
     return (VkFilter)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFormat scvkParseJsonFormat(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FORMAT_UNDEFINED", (uint64_t)VK_FORMAT_UNDEFINED},
-        {"VK_FORMAT_R4G4_UNORM_PACK8", (uint64_t)VK_FORMAT_R4G4_UNORM_PACK8},
-        {"VK_FORMAT_R4G4B4A4_UNORM_PACK16", (uint64_t)VK_FORMAT_R4G4B4A4_UNORM_PACK16},
-        {"VK_FORMAT_B4G4R4A4_UNORM_PACK16", (uint64_t)VK_FORMAT_B4G4R4A4_UNORM_PACK16},
-        {"VK_FORMAT_R5G6B5_UNORM_PACK16", (uint64_t)VK_FORMAT_R5G6B5_UNORM_PACK16},
-        {"VK_FORMAT_B5G6R5_UNORM_PACK16", (uint64_t)VK_FORMAT_B5G6R5_UNORM_PACK16},
-        {"VK_FORMAT_R5G5B5A1_UNORM_PACK16", (uint64_t)VK_FORMAT_R5G5B5A1_UNORM_PACK16},
-        {"VK_FORMAT_B5G5R5A1_UNORM_PACK16", (uint64_t)VK_FORMAT_B5G5R5A1_UNORM_PACK16},
-        {"VK_FORMAT_A1R5G5B5_UNORM_PACK16", (uint64_t)VK_FORMAT_A1R5G5B5_UNORM_PACK16},
-        {"VK_FORMAT_R8_UNORM", (uint64_t)VK_FORMAT_R8_UNORM},
-        {"VK_FORMAT_R8_SNORM", (uint64_t)VK_FORMAT_R8_SNORM},
-        {"VK_FORMAT_R8_USCALED", (uint64_t)VK_FORMAT_R8_USCALED},
-        {"VK_FORMAT_R8_SSCALED", (uint64_t)VK_FORMAT_R8_SSCALED},
-        {"VK_FORMAT_R8_UINT", (uint64_t)VK_FORMAT_R8_UINT},
-        {"VK_FORMAT_R8_SINT", (uint64_t)VK_FORMAT_R8_SINT},
-        {"VK_FORMAT_R8_SRGB", (uint64_t)VK_FORMAT_R8_SRGB},
-        {"VK_FORMAT_R8G8_UNORM", (uint64_t)VK_FORMAT_R8G8_UNORM},
-        {"VK_FORMAT_R8G8_SNORM", (uint64_t)VK_FORMAT_R8G8_SNORM},
-        {"VK_FORMAT_R8G8_USCALED", (uint64_t)VK_FORMAT_R8G8_USCALED},
-        {"VK_FORMAT_R8G8_SSCALED", (uint64_t)VK_FORMAT_R8G8_SSCALED},
-        {"VK_FORMAT_R8G8_UINT", (uint64_t)VK_FORMAT_R8G8_UINT},
-        {"VK_FORMAT_R8G8_SINT", (uint64_t)VK_FORMAT_R8G8_SINT},
-        {"VK_FORMAT_R8G8_SRGB", (uint64_t)VK_FORMAT_R8G8_SRGB},
-        {"VK_FORMAT_R8G8B8_UNORM", (uint64_t)VK_FORMAT_R8G8B8_UNORM},
-        {"VK_FORMAT_R8G8B8_SNORM", (uint64_t)VK_FORMAT_R8G8B8_SNORM},
-        {"VK_FORMAT_R8G8B8_USCALED", (uint64_t)VK_FORMAT_R8G8B8_USCALED},
-        {"VK_FORMAT_R8G8B8_SSCALED", (uint64_t)VK_FORMAT_R8G8B8_SSCALED},
-        {"VK_FORMAT_R8G8B8_UINT", (uint64_t)VK_FORMAT_R8G8B8_UINT},
-        {"VK_FORMAT_R8G8B8_SINT", (uint64_t)VK_FORMAT_R8G8B8_SINT},
-        {"VK_FORMAT_R8G8B8_SRGB", (uint64_t)VK_FORMAT_R8G8B8_SRGB},
-        {"VK_FORMAT_B8G8R8_UNORM", (uint64_t)VK_FORMAT_B8G8R8_UNORM},
-        {"VK_FORMAT_B8G8R8_SNORM", (uint64_t)VK_FORMAT_B8G8R8_SNORM},
-        {"VK_FORMAT_B8G8R8_USCALED", (uint64_t)VK_FORMAT_B8G8R8_USCALED},
-        {"VK_FORMAT_B8G8R8_SSCALED", (uint64_t)VK_FORMAT_B8G8R8_SSCALED},
-        {"VK_FORMAT_B8G8R8_UINT", (uint64_t)VK_FORMAT_B8G8R8_UINT},
-        {"VK_FORMAT_B8G8R8_SINT", (uint64_t)VK_FORMAT_B8G8R8_SINT},
-        {"VK_FORMAT_B8G8R8_SRGB", (uint64_t)VK_FORMAT_B8G8R8_SRGB},
-        {"VK_FORMAT_R8G8B8A8_UNORM", (uint64_t)VK_FORMAT_R8G8B8A8_UNORM},
-        {"VK_FORMAT_R8G8B8A8_SNORM", (uint64_t)VK_FORMAT_R8G8B8A8_SNORM},
-        {"VK_FORMAT_R8G8B8A8_USCALED", (uint64_t)VK_FORMAT_R8G8B8A8_USCALED},
-        {"VK_FORMAT_R8G8B8A8_SSCALED", (uint64_t)VK_FORMAT_R8G8B8A8_SSCALED},
-        {"VK_FORMAT_R8G8B8A8_UINT", (uint64_t)VK_FORMAT_R8G8B8A8_UINT},
-        {"VK_FORMAT_R8G8B8A8_SINT", (uint64_t)VK_FORMAT_R8G8B8A8_SINT},
-        {"VK_FORMAT_R8G8B8A8_SRGB", (uint64_t)VK_FORMAT_R8G8B8A8_SRGB},
-        {"VK_FORMAT_B8G8R8A8_UNORM", (uint64_t)VK_FORMAT_B8G8R8A8_UNORM},
-        {"VK_FORMAT_B8G8R8A8_SNORM", (uint64_t)VK_FORMAT_B8G8R8A8_SNORM},
-        {"VK_FORMAT_B8G8R8A8_USCALED", (uint64_t)VK_FORMAT_B8G8R8A8_USCALED},
-        {"VK_FORMAT_B8G8R8A8_SSCALED", (uint64_t)VK_FORMAT_B8G8R8A8_SSCALED},
-        {"VK_FORMAT_B8G8R8A8_UINT", (uint64_t)VK_FORMAT_B8G8R8A8_UINT},
-        {"VK_FORMAT_B8G8R8A8_SINT", (uint64_t)VK_FORMAT_B8G8R8A8_SINT},
-        {"VK_FORMAT_B8G8R8A8_SRGB", (uint64_t)VK_FORMAT_B8G8R8A8_SRGB},
-        {"VK_FORMAT_A8B8G8R8_UNORM_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_UNORM_PACK32},
-        {"VK_FORMAT_A8B8G8R8_SNORM_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SNORM_PACK32},
-        {"VK_FORMAT_A8B8G8R8_USCALED_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_USCALED_PACK32},
-        {"VK_FORMAT_A8B8G8R8_SSCALED_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SSCALED_PACK32},
-        {"VK_FORMAT_A8B8G8R8_UINT_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_UINT_PACK32},
-        {"VK_FORMAT_A8B8G8R8_SINT_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SINT_PACK32},
-        {"VK_FORMAT_A8B8G8R8_SRGB_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SRGB_PACK32},
-        {"VK_FORMAT_A2R10G10B10_UNORM_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_UNORM_PACK32},
-        {"VK_FORMAT_A2R10G10B10_SNORM_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_SNORM_PACK32},
-        {"VK_FORMAT_A2R10G10B10_USCALED_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_USCALED_PACK32},
-        {"VK_FORMAT_A2R10G10B10_SSCALED_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_SSCALED_PACK32},
-        {"VK_FORMAT_A2R10G10B10_UINT_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_UINT_PACK32},
-        {"VK_FORMAT_A2R10G10B10_SINT_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_SINT_PACK32},
-        {"VK_FORMAT_A2B10G10R10_UNORM_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_UNORM_PACK32},
-        {"VK_FORMAT_A2B10G10R10_SNORM_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_SNORM_PACK32},
-        {"VK_FORMAT_A2B10G10R10_USCALED_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_USCALED_PACK32},
-        {"VK_FORMAT_A2B10G10R10_SSCALED_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_SSCALED_PACK32},
-        {"VK_FORMAT_A2B10G10R10_UINT_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_UINT_PACK32},
-        {"VK_FORMAT_A2B10G10R10_SINT_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_SINT_PACK32},
-        {"VK_FORMAT_R16_UNORM", (uint64_t)VK_FORMAT_R16_UNORM},
-        {"VK_FORMAT_R16_SNORM", (uint64_t)VK_FORMAT_R16_SNORM},
-        {"VK_FORMAT_R16_USCALED", (uint64_t)VK_FORMAT_R16_USCALED},
-        {"VK_FORMAT_R16_SSCALED", (uint64_t)VK_FORMAT_R16_SSCALED},
-        {"VK_FORMAT_R16_UINT", (uint64_t)VK_FORMAT_R16_UINT},
-        {"VK_FORMAT_R16_SINT", (uint64_t)VK_FORMAT_R16_SINT},
-        {"VK_FORMAT_R16_SFLOAT", (uint64_t)VK_FORMAT_R16_SFLOAT},
-        {"VK_FORMAT_R16G16_UNORM", (uint64_t)VK_FORMAT_R16G16_UNORM},
-        {"VK_FORMAT_R16G16_SNORM", (uint64_t)VK_FORMAT_R16G16_SNORM},
-        {"VK_FORMAT_R16G16_USCALED", (uint64_t)VK_FORMAT_R16G16_USCALED},
-        {"VK_FORMAT_R16G16_SSCALED", (uint64_t)VK_FORMAT_R16G16_SSCALED},
-        {"VK_FORMAT_R16G16_UINT", (uint64_t)VK_FORMAT_R16G16_UINT},
-        {"VK_FORMAT_R16G16_SINT", (uint64_t)VK_FORMAT_R16G16_SINT},
-        {"VK_FORMAT_R16G16_SFLOAT", (uint64_t)VK_FORMAT_R16G16_SFLOAT},
-        {"VK_FORMAT_R16G16B16_UNORM", (uint64_t)VK_FORMAT_R16G16B16_UNORM},
-        {"VK_FORMAT_R16G16B16_SNORM", (uint64_t)VK_FORMAT_R16G16B16_SNORM},
-        {"VK_FORMAT_R16G16B16_USCALED", (uint64_t)VK_FORMAT_R16G16B16_USCALED},
-        {"VK_FORMAT_R16G16B16_SSCALED", (uint64_t)VK_FORMAT_R16G16B16_SSCALED},
-        {"VK_FORMAT_R16G16B16_UINT", (uint64_t)VK_FORMAT_R16G16B16_UINT},
-        {"VK_FORMAT_R16G16B16_SINT", (uint64_t)VK_FORMAT_R16G16B16_SINT},
-        {"VK_FORMAT_R16G16B16_SFLOAT", (uint64_t)VK_FORMAT_R16G16B16_SFLOAT},
-        {"VK_FORMAT_R16G16B16A16_UNORM", (uint64_t)VK_FORMAT_R16G16B16A16_UNORM},
-        {"VK_FORMAT_R16G16B16A16_SNORM", (uint64_t)VK_FORMAT_R16G16B16A16_SNORM},
-        {"VK_FORMAT_R16G16B16A16_USCALED", (uint64_t)VK_FORMAT_R16G16B16A16_USCALED},
-        {"VK_FORMAT_R16G16B16A16_SSCALED", (uint64_t)VK_FORMAT_R16G16B16A16_SSCALED},
-        {"VK_FORMAT_R16G16B16A16_UINT", (uint64_t)VK_FORMAT_R16G16B16A16_UINT},
-        {"VK_FORMAT_R16G16B16A16_SINT", (uint64_t)VK_FORMAT_R16G16B16A16_SINT},
-        {"VK_FORMAT_R16G16B16A16_SFLOAT", (uint64_t)VK_FORMAT_R16G16B16A16_SFLOAT},
-        {"VK_FORMAT_R32_UINT", (uint64_t)VK_FORMAT_R32_UINT},
-        {"VK_FORMAT_R32_SINT", (uint64_t)VK_FORMAT_R32_SINT},
-        {"VK_FORMAT_R32_SFLOAT", (uint64_t)VK_FORMAT_R32_SFLOAT},
-        {"VK_FORMAT_R32G32_UINT", (uint64_t)VK_FORMAT_R32G32_UINT},
-        {"VK_FORMAT_R32G32_SINT", (uint64_t)VK_FORMAT_R32G32_SINT},
-        {"VK_FORMAT_R32G32_SFLOAT", (uint64_t)VK_FORMAT_R32G32_SFLOAT},
-        {"VK_FORMAT_R32G32B32_UINT", (uint64_t)VK_FORMAT_R32G32B32_UINT},
-        {"VK_FORMAT_R32G32B32_SINT", (uint64_t)VK_FORMAT_R32G32B32_SINT},
-        {"VK_FORMAT_R32G32B32_SFLOAT", (uint64_t)VK_FORMAT_R32G32B32_SFLOAT},
-        {"VK_FORMAT_R32G32B32A32_UINT", (uint64_t)VK_FORMAT_R32G32B32A32_UINT},
-        {"VK_FORMAT_R32G32B32A32_SINT", (uint64_t)VK_FORMAT_R32G32B32A32_SINT},
-        {"VK_FORMAT_R32G32B32A32_SFLOAT", (uint64_t)VK_FORMAT_R32G32B32A32_SFLOAT},
-        {"VK_FORMAT_R64_UINT", (uint64_t)VK_FORMAT_R64_UINT},
-        {"VK_FORMAT_R64_SINT", (uint64_t)VK_FORMAT_R64_SINT},
-        {"VK_FORMAT_R64_SFLOAT", (uint64_t)VK_FORMAT_R64_SFLOAT},
-        {"VK_FORMAT_R64G64_UINT", (uint64_t)VK_FORMAT_R64G64_UINT},
-        {"VK_FORMAT_R64G64_SINT", (uint64_t)VK_FORMAT_R64G64_SINT},
-        {"VK_FORMAT_R64G64_SFLOAT", (uint64_t)VK_FORMAT_R64G64_SFLOAT},
-        {"VK_FORMAT_R64G64B64_UINT", (uint64_t)VK_FORMAT_R64G64B64_UINT},
-        {"VK_FORMAT_R64G64B64_SINT", (uint64_t)VK_FORMAT_R64G64B64_SINT},
-        {"VK_FORMAT_R64G64B64_SFLOAT", (uint64_t)VK_FORMAT_R64G64B64_SFLOAT},
-        {"VK_FORMAT_R64G64B64A64_UINT", (uint64_t)VK_FORMAT_R64G64B64A64_UINT},
-        {"VK_FORMAT_R64G64B64A64_SINT", (uint64_t)VK_FORMAT_R64G64B64A64_SINT},
-        {"VK_FORMAT_R64G64B64A64_SFLOAT", (uint64_t)VK_FORMAT_R64G64B64A64_SFLOAT},
-        {"VK_FORMAT_B10G11R11_UFLOAT_PACK32", (uint64_t)VK_FORMAT_B10G11R11_UFLOAT_PACK32},
-        {"VK_FORMAT_E5B9G9R9_UFLOAT_PACK32", (uint64_t)VK_FORMAT_E5B9G9R9_UFLOAT_PACK32},
-        {"VK_FORMAT_D16_UNORM", (uint64_t)VK_FORMAT_D16_UNORM},
-        {"VK_FORMAT_X8_D24_UNORM_PACK32", (uint64_t)VK_FORMAT_X8_D24_UNORM_PACK32},
-        {"VK_FORMAT_D32_SFLOAT", (uint64_t)VK_FORMAT_D32_SFLOAT},
-        {"VK_FORMAT_S8_UINT", (uint64_t)VK_FORMAT_S8_UINT},
-        {"VK_FORMAT_D16_UNORM_S8_UINT", (uint64_t)VK_FORMAT_D16_UNORM_S8_UINT},
-        {"VK_FORMAT_D24_UNORM_S8_UINT", (uint64_t)VK_FORMAT_D24_UNORM_S8_UINT},
-        {"VK_FORMAT_D32_SFLOAT_S8_UINT", (uint64_t)VK_FORMAT_D32_SFLOAT_S8_UINT},
-        {"VK_FORMAT_BC1_RGB_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC1_RGB_UNORM_BLOCK},
-        {"VK_FORMAT_BC1_RGB_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC1_RGB_SRGB_BLOCK},
-        {"VK_FORMAT_BC1_RGBA_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC1_RGBA_UNORM_BLOCK},
-        {"VK_FORMAT_BC1_RGBA_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC1_RGBA_SRGB_BLOCK},
-        {"VK_FORMAT_BC2_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC2_UNORM_BLOCK},
-        {"VK_FORMAT_BC2_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC2_SRGB_BLOCK},
-        {"VK_FORMAT_BC3_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC3_UNORM_BLOCK},
-        {"VK_FORMAT_BC3_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC3_SRGB_BLOCK},
-        {"VK_FORMAT_BC4_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC4_UNORM_BLOCK},
-        {"VK_FORMAT_BC4_SNORM_BLOCK", (uint64_t)VK_FORMAT_BC4_SNORM_BLOCK},
-        {"VK_FORMAT_BC5_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC5_UNORM_BLOCK},
-        {"VK_FORMAT_BC5_SNORM_BLOCK", (uint64_t)VK_FORMAT_BC5_SNORM_BLOCK},
-        {"VK_FORMAT_BC6H_UFLOAT_BLOCK", (uint64_t)VK_FORMAT_BC6H_UFLOAT_BLOCK},
-        {"VK_FORMAT_BC6H_SFLOAT_BLOCK", (uint64_t)VK_FORMAT_BC6H_SFLOAT_BLOCK},
-        {"VK_FORMAT_BC7_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC7_UNORM_BLOCK},
-        {"VK_FORMAT_BC7_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC7_SRGB_BLOCK},
-        {"VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK},
-        {"VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK},
-        {"VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK},
-        {"VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK},
-        {"VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK},
-        {"VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK},
-        {"VK_FORMAT_EAC_R11_UNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11_UNORM_BLOCK},
-        {"VK_FORMAT_EAC_R11_SNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11_SNORM_BLOCK},
-        {"VK_FORMAT_EAC_R11G11_UNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11G11_UNORM_BLOCK},
-        {"VK_FORMAT_EAC_R11G11_SNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11G11_SNORM_BLOCK},
-        {"VK_FORMAT_ASTC_4x4_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_4x4_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_4x4_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_4x4_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_5x4_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x4_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_5x4_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x4_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_5x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x5_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_5x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x5_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_6x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x5_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_6x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x5_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_6x6_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x6_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_6x6_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x6_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_8x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x5_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_8x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x5_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_8x6_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x6_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_8x6_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x6_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_8x8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x8_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_8x8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x8_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_10x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x5_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_10x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x5_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_10x6_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x6_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_10x6_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x6_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_10x8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x8_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_10x8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x8_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_10x10_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x10_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_10x10_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x10_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_12x10_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x10_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_12x10_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x10_SRGB_BLOCK},
-        {"VK_FORMAT_ASTC_12x12_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x12_UNORM_BLOCK},
-        {"VK_FORMAT_ASTC_12x12_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x12_SRGB_BLOCK},
-        {"VK_FORMAT_G8B8G8R8_422_UNORM", (uint64_t)VK_FORMAT_G8B8G8R8_422_UNORM},
-        {"VK_FORMAT_B8G8R8G8_422_UNORM", (uint64_t)VK_FORMAT_B8G8R8G8_422_UNORM},
-        {"VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM", (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM},
-        {"VK_FORMAT_G8_B8R8_2PLANE_420_UNORM", (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_420_UNORM},
-        {"VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM", (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM},
-        {"VK_FORMAT_G8_B8R8_2PLANE_422_UNORM", (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_422_UNORM},
-        {"VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM", (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM},
-        {"VK_FORMAT_R10X6_UNORM_PACK16", (uint64_t)VK_FORMAT_R10X6_UNORM_PACK16},
-        {"VK_FORMAT_R10X6G10X6_UNORM_2PACK16", (uint64_t)VK_FORMAT_R10X6G10X6_UNORM_2PACK16},
-        {"VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16", (uint64_t)VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16},
-        {"VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16},
-        {"VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16},
-        {"VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16},
-        {"VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16},
-        {"VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16},
-        {"VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16},
-        {"VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16},
-        {"VK_FORMAT_R12X4_UNORM_PACK16", (uint64_t)VK_FORMAT_R12X4_UNORM_PACK16},
-        {"VK_FORMAT_R12X4G12X4_UNORM_2PACK16", (uint64_t)VK_FORMAT_R12X4G12X4_UNORM_2PACK16},
-        {"VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16", (uint64_t)VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16},
-        {"VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16},
-        {"VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16},
-        {"VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16},
-        {"VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16},
-        {"VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16},
-        {"VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16},
-        {"VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16},
-        {"VK_FORMAT_G16B16G16R16_422_UNORM", (uint64_t)VK_FORMAT_G16B16G16R16_422_UNORM},
-        {"VK_FORMAT_B16G16R16G16_422_UNORM", (uint64_t)VK_FORMAT_B16G16R16G16_422_UNORM},
-        {"VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM", (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM},
-        {"VK_FORMAT_G16_B16R16_2PLANE_420_UNORM", (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_420_UNORM},
-        {"VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM", (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM},
-        {"VK_FORMAT_G16_B16R16_2PLANE_422_UNORM", (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_422_UNORM},
-        {"VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM", (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM},
-        {"VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT},
-        {"VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT", (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT},
-        {"VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT", (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT},
-        {"VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT", (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT},
-        {"VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT", (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT},
-        {"VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT", (uint64_t)VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT},
-        {"VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT", (uint64_t)VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_FORMAT_UNDEFINED", (uint64_t)VK_FORMAT_UNDEFINED},
+                                         {"VK_FORMAT_R4G4_UNORM_PACK8", (uint64_t)VK_FORMAT_R4G4_UNORM_PACK8},
+                                         {"VK_FORMAT_R4G4B4A4_UNORM_PACK16", (uint64_t)VK_FORMAT_R4G4B4A4_UNORM_PACK16},
+                                         {"VK_FORMAT_B4G4R4A4_UNORM_PACK16", (uint64_t)VK_FORMAT_B4G4R4A4_UNORM_PACK16},
+                                         {"VK_FORMAT_R5G6B5_UNORM_PACK16", (uint64_t)VK_FORMAT_R5G6B5_UNORM_PACK16},
+                                         {"VK_FORMAT_B5G6R5_UNORM_PACK16", (uint64_t)VK_FORMAT_B5G6R5_UNORM_PACK16},
+                                         {"VK_FORMAT_R5G5B5A1_UNORM_PACK16", (uint64_t)VK_FORMAT_R5G5B5A1_UNORM_PACK16},
+                                         {"VK_FORMAT_B5G5R5A1_UNORM_PACK16", (uint64_t)VK_FORMAT_B5G5R5A1_UNORM_PACK16},
+                                         {"VK_FORMAT_A1R5G5B5_UNORM_PACK16", (uint64_t)VK_FORMAT_A1R5G5B5_UNORM_PACK16},
+                                         {"VK_FORMAT_R8_UNORM", (uint64_t)VK_FORMAT_R8_UNORM},
+                                         {"VK_FORMAT_R8_SNORM", (uint64_t)VK_FORMAT_R8_SNORM},
+                                         {"VK_FORMAT_R8_USCALED", (uint64_t)VK_FORMAT_R8_USCALED},
+                                         {"VK_FORMAT_R8_SSCALED", (uint64_t)VK_FORMAT_R8_SSCALED},
+                                         {"VK_FORMAT_R8_UINT", (uint64_t)VK_FORMAT_R8_UINT},
+                                         {"VK_FORMAT_R8_SINT", (uint64_t)VK_FORMAT_R8_SINT},
+                                         {"VK_FORMAT_R8_SRGB", (uint64_t)VK_FORMAT_R8_SRGB},
+                                         {"VK_FORMAT_R8G8_UNORM", (uint64_t)VK_FORMAT_R8G8_UNORM},
+                                         {"VK_FORMAT_R8G8_SNORM", (uint64_t)VK_FORMAT_R8G8_SNORM},
+                                         {"VK_FORMAT_R8G8_USCALED", (uint64_t)VK_FORMAT_R8G8_USCALED},
+                                         {"VK_FORMAT_R8G8_SSCALED", (uint64_t)VK_FORMAT_R8G8_SSCALED},
+                                         {"VK_FORMAT_R8G8_UINT", (uint64_t)VK_FORMAT_R8G8_UINT},
+                                         {"VK_FORMAT_R8G8_SINT", (uint64_t)VK_FORMAT_R8G8_SINT},
+                                         {"VK_FORMAT_R8G8_SRGB", (uint64_t)VK_FORMAT_R8G8_SRGB},
+                                         {"VK_FORMAT_R8G8B8_UNORM", (uint64_t)VK_FORMAT_R8G8B8_UNORM},
+                                         {"VK_FORMAT_R8G8B8_SNORM", (uint64_t)VK_FORMAT_R8G8B8_SNORM},
+                                         {"VK_FORMAT_R8G8B8_USCALED", (uint64_t)VK_FORMAT_R8G8B8_USCALED},
+                                         {"VK_FORMAT_R8G8B8_SSCALED", (uint64_t)VK_FORMAT_R8G8B8_SSCALED},
+                                         {"VK_FORMAT_R8G8B8_UINT", (uint64_t)VK_FORMAT_R8G8B8_UINT},
+                                         {"VK_FORMAT_R8G8B8_SINT", (uint64_t)VK_FORMAT_R8G8B8_SINT},
+                                         {"VK_FORMAT_R8G8B8_SRGB", (uint64_t)VK_FORMAT_R8G8B8_SRGB},
+                                         {"VK_FORMAT_B8G8R8_UNORM", (uint64_t)VK_FORMAT_B8G8R8_UNORM},
+                                         {"VK_FORMAT_B8G8R8_SNORM", (uint64_t)VK_FORMAT_B8G8R8_SNORM},
+                                         {"VK_FORMAT_B8G8R8_USCALED", (uint64_t)VK_FORMAT_B8G8R8_USCALED},
+                                         {"VK_FORMAT_B8G8R8_SSCALED", (uint64_t)VK_FORMAT_B8G8R8_SSCALED},
+                                         {"VK_FORMAT_B8G8R8_UINT", (uint64_t)VK_FORMAT_B8G8R8_UINT},
+                                         {"VK_FORMAT_B8G8R8_SINT", (uint64_t)VK_FORMAT_B8G8R8_SINT},
+                                         {"VK_FORMAT_B8G8R8_SRGB", (uint64_t)VK_FORMAT_B8G8R8_SRGB},
+                                         {"VK_FORMAT_R8G8B8A8_UNORM", (uint64_t)VK_FORMAT_R8G8B8A8_UNORM},
+                                         {"VK_FORMAT_R8G8B8A8_SNORM", (uint64_t)VK_FORMAT_R8G8B8A8_SNORM},
+                                         {"VK_FORMAT_R8G8B8A8_USCALED", (uint64_t)VK_FORMAT_R8G8B8A8_USCALED},
+                                         {"VK_FORMAT_R8G8B8A8_SSCALED", (uint64_t)VK_FORMAT_R8G8B8A8_SSCALED},
+                                         {"VK_FORMAT_R8G8B8A8_UINT", (uint64_t)VK_FORMAT_R8G8B8A8_UINT},
+                                         {"VK_FORMAT_R8G8B8A8_SINT", (uint64_t)VK_FORMAT_R8G8B8A8_SINT},
+                                         {"VK_FORMAT_R8G8B8A8_SRGB", (uint64_t)VK_FORMAT_R8G8B8A8_SRGB},
+                                         {"VK_FORMAT_B8G8R8A8_UNORM", (uint64_t)VK_FORMAT_B8G8R8A8_UNORM},
+                                         {"VK_FORMAT_B8G8R8A8_SNORM", (uint64_t)VK_FORMAT_B8G8R8A8_SNORM},
+                                         {"VK_FORMAT_B8G8R8A8_USCALED", (uint64_t)VK_FORMAT_B8G8R8A8_USCALED},
+                                         {"VK_FORMAT_B8G8R8A8_SSCALED", (uint64_t)VK_FORMAT_B8G8R8A8_SSCALED},
+                                         {"VK_FORMAT_B8G8R8A8_UINT", (uint64_t)VK_FORMAT_B8G8R8A8_UINT},
+                                         {"VK_FORMAT_B8G8R8A8_SINT", (uint64_t)VK_FORMAT_B8G8R8A8_SINT},
+                                         {"VK_FORMAT_B8G8R8A8_SRGB", (uint64_t)VK_FORMAT_B8G8R8A8_SRGB},
+                                         {"VK_FORMAT_A8B8G8R8_UNORM_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_UNORM_PACK32},
+                                         {"VK_FORMAT_A8B8G8R8_SNORM_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SNORM_PACK32},
+                                         {"VK_FORMAT_A8B8G8R8_USCALED_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_USCALED_PACK32},
+                                         {"VK_FORMAT_A8B8G8R8_SSCALED_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SSCALED_PACK32},
+                                         {"VK_FORMAT_A8B8G8R8_UINT_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_UINT_PACK32},
+                                         {"VK_FORMAT_A8B8G8R8_SINT_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SINT_PACK32},
+                                         {"VK_FORMAT_A8B8G8R8_SRGB_PACK32", (uint64_t)VK_FORMAT_A8B8G8R8_SRGB_PACK32},
+                                         {"VK_FORMAT_A2R10G10B10_UNORM_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_UNORM_PACK32},
+                                         {"VK_FORMAT_A2R10G10B10_SNORM_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_SNORM_PACK32},
+                                         {"VK_FORMAT_A2R10G10B10_USCALED_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_USCALED_PACK32},
+                                         {"VK_FORMAT_A2R10G10B10_SSCALED_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_SSCALED_PACK32},
+                                         {"VK_FORMAT_A2R10G10B10_UINT_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_UINT_PACK32},
+                                         {"VK_FORMAT_A2R10G10B10_SINT_PACK32", (uint64_t)VK_FORMAT_A2R10G10B10_SINT_PACK32},
+                                         {"VK_FORMAT_A2B10G10R10_UNORM_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_UNORM_PACK32},
+                                         {"VK_FORMAT_A2B10G10R10_SNORM_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_SNORM_PACK32},
+                                         {"VK_FORMAT_A2B10G10R10_USCALED_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_USCALED_PACK32},
+                                         {"VK_FORMAT_A2B10G10R10_SSCALED_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_SSCALED_PACK32},
+                                         {"VK_FORMAT_A2B10G10R10_UINT_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_UINT_PACK32},
+                                         {"VK_FORMAT_A2B10G10R10_SINT_PACK32", (uint64_t)VK_FORMAT_A2B10G10R10_SINT_PACK32},
+                                         {"VK_FORMAT_R16_UNORM", (uint64_t)VK_FORMAT_R16_UNORM},
+                                         {"VK_FORMAT_R16_SNORM", (uint64_t)VK_FORMAT_R16_SNORM},
+                                         {"VK_FORMAT_R16_USCALED", (uint64_t)VK_FORMAT_R16_USCALED},
+                                         {"VK_FORMAT_R16_SSCALED", (uint64_t)VK_FORMAT_R16_SSCALED},
+                                         {"VK_FORMAT_R16_UINT", (uint64_t)VK_FORMAT_R16_UINT},
+                                         {"VK_FORMAT_R16_SINT", (uint64_t)VK_FORMAT_R16_SINT},
+                                         {"VK_FORMAT_R16_SFLOAT", (uint64_t)VK_FORMAT_R16_SFLOAT},
+                                         {"VK_FORMAT_R16G16_UNORM", (uint64_t)VK_FORMAT_R16G16_UNORM},
+                                         {"VK_FORMAT_R16G16_SNORM", (uint64_t)VK_FORMAT_R16G16_SNORM},
+                                         {"VK_FORMAT_R16G16_USCALED", (uint64_t)VK_FORMAT_R16G16_USCALED},
+                                         {"VK_FORMAT_R16G16_SSCALED", (uint64_t)VK_FORMAT_R16G16_SSCALED},
+                                         {"VK_FORMAT_R16G16_UINT", (uint64_t)VK_FORMAT_R16G16_UINT},
+                                         {"VK_FORMAT_R16G16_SINT", (uint64_t)VK_FORMAT_R16G16_SINT},
+                                         {"VK_FORMAT_R16G16_SFLOAT", (uint64_t)VK_FORMAT_R16G16_SFLOAT},
+                                         {"VK_FORMAT_R16G16B16_UNORM", (uint64_t)VK_FORMAT_R16G16B16_UNORM},
+                                         {"VK_FORMAT_R16G16B16_SNORM", (uint64_t)VK_FORMAT_R16G16B16_SNORM},
+                                         {"VK_FORMAT_R16G16B16_USCALED", (uint64_t)VK_FORMAT_R16G16B16_USCALED},
+                                         {"VK_FORMAT_R16G16B16_SSCALED", (uint64_t)VK_FORMAT_R16G16B16_SSCALED},
+                                         {"VK_FORMAT_R16G16B16_UINT", (uint64_t)VK_FORMAT_R16G16B16_UINT},
+                                         {"VK_FORMAT_R16G16B16_SINT", (uint64_t)VK_FORMAT_R16G16B16_SINT},
+                                         {"VK_FORMAT_R16G16B16_SFLOAT", (uint64_t)VK_FORMAT_R16G16B16_SFLOAT},
+                                         {"VK_FORMAT_R16G16B16A16_UNORM", (uint64_t)VK_FORMAT_R16G16B16A16_UNORM},
+                                         {"VK_FORMAT_R16G16B16A16_SNORM", (uint64_t)VK_FORMAT_R16G16B16A16_SNORM},
+                                         {"VK_FORMAT_R16G16B16A16_USCALED", (uint64_t)VK_FORMAT_R16G16B16A16_USCALED},
+                                         {"VK_FORMAT_R16G16B16A16_SSCALED", (uint64_t)VK_FORMAT_R16G16B16A16_SSCALED},
+                                         {"VK_FORMAT_R16G16B16A16_UINT", (uint64_t)VK_FORMAT_R16G16B16A16_UINT},
+                                         {"VK_FORMAT_R16G16B16A16_SINT", (uint64_t)VK_FORMAT_R16G16B16A16_SINT},
+                                         {"VK_FORMAT_R16G16B16A16_SFLOAT", (uint64_t)VK_FORMAT_R16G16B16A16_SFLOAT},
+                                         {"VK_FORMAT_R32_UINT", (uint64_t)VK_FORMAT_R32_UINT},
+                                         {"VK_FORMAT_R32_SINT", (uint64_t)VK_FORMAT_R32_SINT},
+                                         {"VK_FORMAT_R32_SFLOAT", (uint64_t)VK_FORMAT_R32_SFLOAT},
+                                         {"VK_FORMAT_R32G32_UINT", (uint64_t)VK_FORMAT_R32G32_UINT},
+                                         {"VK_FORMAT_R32G32_SINT", (uint64_t)VK_FORMAT_R32G32_SINT},
+                                         {"VK_FORMAT_R32G32_SFLOAT", (uint64_t)VK_FORMAT_R32G32_SFLOAT},
+                                         {"VK_FORMAT_R32G32B32_UINT", (uint64_t)VK_FORMAT_R32G32B32_UINT},
+                                         {"VK_FORMAT_R32G32B32_SINT", (uint64_t)VK_FORMAT_R32G32B32_SINT},
+                                         {"VK_FORMAT_R32G32B32_SFLOAT", (uint64_t)VK_FORMAT_R32G32B32_SFLOAT},
+                                         {"VK_FORMAT_R32G32B32A32_UINT", (uint64_t)VK_FORMAT_R32G32B32A32_UINT},
+                                         {"VK_FORMAT_R32G32B32A32_SINT", (uint64_t)VK_FORMAT_R32G32B32A32_SINT},
+                                         {"VK_FORMAT_R32G32B32A32_SFLOAT", (uint64_t)VK_FORMAT_R32G32B32A32_SFLOAT},
+                                         {"VK_FORMAT_R64_UINT", (uint64_t)VK_FORMAT_R64_UINT},
+                                         {"VK_FORMAT_R64_SINT", (uint64_t)VK_FORMAT_R64_SINT},
+                                         {"VK_FORMAT_R64_SFLOAT", (uint64_t)VK_FORMAT_R64_SFLOAT},
+                                         {"VK_FORMAT_R64G64_UINT", (uint64_t)VK_FORMAT_R64G64_UINT},
+                                         {"VK_FORMAT_R64G64_SINT", (uint64_t)VK_FORMAT_R64G64_SINT},
+                                         {"VK_FORMAT_R64G64_SFLOAT", (uint64_t)VK_FORMAT_R64G64_SFLOAT},
+                                         {"VK_FORMAT_R64G64B64_UINT", (uint64_t)VK_FORMAT_R64G64B64_UINT},
+                                         {"VK_FORMAT_R64G64B64_SINT", (uint64_t)VK_FORMAT_R64G64B64_SINT},
+                                         {"VK_FORMAT_R64G64B64_SFLOAT", (uint64_t)VK_FORMAT_R64G64B64_SFLOAT},
+                                         {"VK_FORMAT_R64G64B64A64_UINT", (uint64_t)VK_FORMAT_R64G64B64A64_UINT},
+                                         {"VK_FORMAT_R64G64B64A64_SINT", (uint64_t)VK_FORMAT_R64G64B64A64_SINT},
+                                         {"VK_FORMAT_R64G64B64A64_SFLOAT", (uint64_t)VK_FORMAT_R64G64B64A64_SFLOAT},
+                                         {"VK_FORMAT_B10G11R11_UFLOAT_PACK32", (uint64_t)VK_FORMAT_B10G11R11_UFLOAT_PACK32},
+                                         {"VK_FORMAT_E5B9G9R9_UFLOAT_PACK32", (uint64_t)VK_FORMAT_E5B9G9R9_UFLOAT_PACK32},
+                                         {"VK_FORMAT_D16_UNORM", (uint64_t)VK_FORMAT_D16_UNORM},
+                                         {"VK_FORMAT_X8_D24_UNORM_PACK32", (uint64_t)VK_FORMAT_X8_D24_UNORM_PACK32},
+                                         {"VK_FORMAT_D32_SFLOAT", (uint64_t)VK_FORMAT_D32_SFLOAT},
+                                         {"VK_FORMAT_S8_UINT", (uint64_t)VK_FORMAT_S8_UINT},
+                                         {"VK_FORMAT_D16_UNORM_S8_UINT", (uint64_t)VK_FORMAT_D16_UNORM_S8_UINT},
+                                         {"VK_FORMAT_D24_UNORM_S8_UINT", (uint64_t)VK_FORMAT_D24_UNORM_S8_UINT},
+                                         {"VK_FORMAT_D32_SFLOAT_S8_UINT", (uint64_t)VK_FORMAT_D32_SFLOAT_S8_UINT},
+                                         {"VK_FORMAT_BC1_RGB_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC1_RGB_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC1_RGB_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC1_RGB_SRGB_BLOCK},
+                                         {"VK_FORMAT_BC1_RGBA_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC1_RGBA_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC1_RGBA_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC1_RGBA_SRGB_BLOCK},
+                                         {"VK_FORMAT_BC2_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC2_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC2_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC2_SRGB_BLOCK},
+                                         {"VK_FORMAT_BC3_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC3_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC3_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC3_SRGB_BLOCK},
+                                         {"VK_FORMAT_BC4_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC4_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC4_SNORM_BLOCK", (uint64_t)VK_FORMAT_BC4_SNORM_BLOCK},
+                                         {"VK_FORMAT_BC5_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC5_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC5_SNORM_BLOCK", (uint64_t)VK_FORMAT_BC5_SNORM_BLOCK},
+                                         {"VK_FORMAT_BC6H_UFLOAT_BLOCK", (uint64_t)VK_FORMAT_BC6H_UFLOAT_BLOCK},
+                                         {"VK_FORMAT_BC6H_SFLOAT_BLOCK", (uint64_t)VK_FORMAT_BC6H_SFLOAT_BLOCK},
+                                         {"VK_FORMAT_BC7_UNORM_BLOCK", (uint64_t)VK_FORMAT_BC7_UNORM_BLOCK},
+                                         {"VK_FORMAT_BC7_SRGB_BLOCK", (uint64_t)VK_FORMAT_BC7_SRGB_BLOCK},
+                                         {"VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK},
+                                         {"VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK},
+                                         {"VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK},
+                                         {"VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK},
+                                         {"VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK},
+                                         {"VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK},
+                                         {"VK_FORMAT_EAC_R11_UNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11_UNORM_BLOCK},
+                                         {"VK_FORMAT_EAC_R11_SNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11_SNORM_BLOCK},
+                                         {"VK_FORMAT_EAC_R11G11_UNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11G11_UNORM_BLOCK},
+                                         {"VK_FORMAT_EAC_R11G11_SNORM_BLOCK", (uint64_t)VK_FORMAT_EAC_R11G11_SNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_4x4_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_4x4_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_4x4_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_4x4_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_5x4_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x4_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_5x4_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x4_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_5x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x5_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_5x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_5x5_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_6x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x5_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_6x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x5_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_6x6_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x6_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_6x6_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_6x6_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_8x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x5_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_8x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x5_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_8x6_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x6_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_8x6_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x6_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_8x8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x8_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_8x8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_8x8_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x5_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x5_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x5_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x5_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x6_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x6_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x6_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x6_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x8_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x8_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x8_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x8_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x10_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x10_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_10x10_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_10x10_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_12x10_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x10_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_12x10_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x10_SRGB_BLOCK},
+                                         {"VK_FORMAT_ASTC_12x12_UNORM_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x12_UNORM_BLOCK},
+                                         {"VK_FORMAT_ASTC_12x12_SRGB_BLOCK", (uint64_t)VK_FORMAT_ASTC_12x12_SRGB_BLOCK},
+                                         {"VK_FORMAT_G8B8G8R8_422_UNORM", (uint64_t)VK_FORMAT_G8B8G8R8_422_UNORM},
+                                         {"VK_FORMAT_B8G8R8G8_422_UNORM", (uint64_t)VK_FORMAT_B8G8R8G8_422_UNORM},
+                                         {"VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM", (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM},
+                                         {"VK_FORMAT_G8_B8R8_2PLANE_420_UNORM", (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_420_UNORM},
+                                         {"VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM", (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM},
+                                         {"VK_FORMAT_G8_B8R8_2PLANE_422_UNORM", (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_422_UNORM},
+                                         {"VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM", (uint64_t)VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM},
+                                         {"VK_FORMAT_R10X6_UNORM_PACK16", (uint64_t)VK_FORMAT_R10X6_UNORM_PACK16},
+                                         {"VK_FORMAT_R10X6G10X6_UNORM_2PACK16", (uint64_t)VK_FORMAT_R10X6G10X6_UNORM_2PACK16},
+                                         {"VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16", (uint64_t)VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16},
+                                         {"VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16},
+                                         {"VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16},
+                                         {"VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16},
+                                         {"VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16},
+                                         {"VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16},
+                                         {"VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16},
+                                         {"VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16", (uint64_t)VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16},
+                                         {"VK_FORMAT_R12X4_UNORM_PACK16", (uint64_t)VK_FORMAT_R12X4_UNORM_PACK16},
+                                         {"VK_FORMAT_R12X4G12X4_UNORM_2PACK16", (uint64_t)VK_FORMAT_R12X4G12X4_UNORM_2PACK16},
+                                         {"VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16", (uint64_t)VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16},
+                                         {"VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16},
+                                         {"VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16", (uint64_t)VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16},
+                                         {"VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16},
+                                         {"VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16},
+                                         {"VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16},
+                                         {"VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16},
+                                         {"VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16", (uint64_t)VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16},
+                                         {"VK_FORMAT_G16B16G16R16_422_UNORM", (uint64_t)VK_FORMAT_G16B16G16R16_422_UNORM},
+                                         {"VK_FORMAT_B16G16R16G16_422_UNORM", (uint64_t)VK_FORMAT_B16G16R16G16_422_UNORM},
+                                         {"VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM", (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM},
+                                         {"VK_FORMAT_G16_B16R16_2PLANE_420_UNORM", (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_420_UNORM},
+                                         {"VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM", (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM},
+                                         {"VK_FORMAT_G16_B16R16_2PLANE_422_UNORM", (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_422_UNORM},
+                                         {"VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM", (uint64_t)VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM},
+                                         {"VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT", (uint64_t)VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT},
+                                         {"VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT", (uint64_t)VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT},
+                                         {"VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT", (uint64_t)VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT},
+                                         {"VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT", (uint64_t)VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT},
+                                         {"VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT", (uint64_t)VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT},
+                                         {"VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT", (uint64_t)VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT},
+                                         {"VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT", (uint64_t)VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT}};
 
     return (VkFormat)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1053,138 +942,116 @@ VkFormatFeatureFlagBits scvkParseJsonFormatFeatureFlagBits(const scvkJsonValue* 
         {"VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT", (uint64_t)VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT},
         {"VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT", (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT},
         {"VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT", (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT},
-        {"VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-    };
+        {"VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR}};
 
     return (VkFormatFeatureFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFragmentShadingRateCombinerOpKHR scvkParseJsonFragmentShadingRateCombinerOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR},
-        {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR},
-        {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR},
-        {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR},
-        {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR},
+                                         {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_KHR},
+                                         {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_KHR},
+                                         {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_KHR},
+                                         {"VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR", (uint64_t)VK_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_KHR}};
 
     return (VkFragmentShadingRateCombinerOpKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFramebufferCreateFlagBits scvkParseJsonFramebufferCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT", (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT", (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT}};
 
     return (VkFramebufferCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFrontFace scvkParseJsonFrontFace(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FRONT_FACE_COUNTER_CLOCKWISE", (uint64_t)VK_FRONT_FACE_COUNTER_CLOCKWISE},
-        {"VK_FRONT_FACE_CLOCKWISE", (uint64_t)VK_FRONT_FACE_CLOCKWISE},
-    };
+    static const scvkJsonName table[] = {{"VK_FRONT_FACE_COUNTER_CLOCKWISE", (uint64_t)VK_FRONT_FACE_COUNTER_CLOCKWISE}, {"VK_FRONT_FACE_CLOCKWISE", (uint64_t)VK_FRONT_FACE_CLOCKWISE}};
 
     return (VkFrontFace)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageAspectFlagBits scvkParseJsonImageAspectFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_ASPECT_COLOR_BIT", (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT},
-        {"VK_IMAGE_ASPECT_DEPTH_BIT", (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT},
-        {"VK_IMAGE_ASPECT_STENCIL_BIT", (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT},
-        {"VK_IMAGE_ASPECT_METADATA_BIT", (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT},
-        {"VK_IMAGE_ASPECT_PLANE_0_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT},
-        {"VK_IMAGE_ASPECT_PLANE_1_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT},
-        {"VK_IMAGE_ASPECT_PLANE_2_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_ASPECT_COLOR_BIT", (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT},
+                                         {"VK_IMAGE_ASPECT_DEPTH_BIT", (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT},
+                                         {"VK_IMAGE_ASPECT_STENCIL_BIT", (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT},
+                                         {"VK_IMAGE_ASPECT_METADATA_BIT", (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT},
+                                         {"VK_IMAGE_ASPECT_PLANE_0_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT},
+                                         {"VK_IMAGE_ASPECT_PLANE_1_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT},
+                                         {"VK_IMAGE_ASPECT_PLANE_2_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT}};
 
     return (VkImageAspectFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageCreateFlagBits scvkParseJsonImageCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT},
-        {"VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT},
-        {"VK_IMAGE_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_ALIASED_BIT},
-        {"VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT", (uint64_t)VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT},
-        {"VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT},
-        {"VK_IMAGE_CREATE_ALIAS_BIT", (uint64_t)VK_IMAGE_CREATE_ALIAS_BIT},
-        {"VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT", (uint64_t)VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT},
-        {"VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT},
-        {"VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT},
-        {"VK_IMAGE_CREATE_EXTENDED_USAGE_BIT", (uint64_t)VK_IMAGE_CREATE_EXTENDED_USAGE_BIT},
-        {"VK_IMAGE_CREATE_PROTECTED_BIT", (uint64_t)VK_IMAGE_CREATE_PROTECTED_BIT},
-        {"VK_IMAGE_CREATE_DISJOINT_BIT", (uint64_t)VK_IMAGE_CREATE_DISJOINT_BIT},
-        {"VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT", (uint64_t)VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT},
+                                         {"VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT},
+                                         {"VK_IMAGE_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_ALIASED_BIT},
+                                         {"VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT", (uint64_t)VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT},
+                                         {"VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT},
+                                         {"VK_IMAGE_CREATE_ALIAS_BIT", (uint64_t)VK_IMAGE_CREATE_ALIAS_BIT},
+                                         {"VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT", (uint64_t)VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT},
+                                         {"VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT},
+                                         {"VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT},
+                                         {"VK_IMAGE_CREATE_EXTENDED_USAGE_BIT", (uint64_t)VK_IMAGE_CREATE_EXTENDED_USAGE_BIT},
+                                         {"VK_IMAGE_CREATE_PROTECTED_BIT", (uint64_t)VK_IMAGE_CREATE_PROTECTED_BIT},
+                                         {"VK_IMAGE_CREATE_DISJOINT_BIT", (uint64_t)VK_IMAGE_CREATE_DISJOINT_BIT},
+                                         {"VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT", (uint64_t)VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT}};
 
     return (VkImageCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageLayout scvkParseJsonImageLayout(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_LAYOUT_UNDEFINED", (uint64_t)VK_IMAGE_LAYOUT_UNDEFINED},
-        {"VK_IMAGE_LAYOUT_GENERAL", (uint64_t)VK_IMAGE_LAYOUT_GENERAL},
-        {"VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_PREINITIALIZED", (uint64_t)VK_IMAGE_LAYOUT_PREINITIALIZED},
-        {"VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL},
-        {"VK_IMAGE_LAYOUT_PRESENT_SRC_KHR", (uint64_t)VK_IMAGE_LAYOUT_PRESENT_SRC_KHR},
-        {"VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR", (uint64_t)VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR},
-        {"VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR},
-        {"VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR},
-        {"VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_LAYOUT_UNDEFINED", (uint64_t)VK_IMAGE_LAYOUT_UNDEFINED},
+                                         {"VK_IMAGE_LAYOUT_GENERAL", (uint64_t)VK_IMAGE_LAYOUT_GENERAL},
+                                         {"VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_PREINITIALIZED", (uint64_t)VK_IMAGE_LAYOUT_PREINITIALIZED},
+                                         {"VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL", (uint64_t)VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL},
+                                         {"VK_IMAGE_LAYOUT_PRESENT_SRC_KHR", (uint64_t)VK_IMAGE_LAYOUT_PRESENT_SRC_KHR},
+                                         {"VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR", (uint64_t)VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR},
+                                         {"VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR},
+                                         {"VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR},
+                                         {"VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR", (uint64_t)VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR}};
 
     return (VkImageLayout)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageTiling scvkParseJsonImageTiling(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_TILING_OPTIMAL", (uint64_t)VK_IMAGE_TILING_OPTIMAL},
-        {"VK_IMAGE_TILING_LINEAR", (uint64_t)VK_IMAGE_TILING_LINEAR},
-        {"VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT", (uint64_t)VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_TILING_OPTIMAL", (uint64_t)VK_IMAGE_TILING_OPTIMAL},
+                                         {"VK_IMAGE_TILING_LINEAR", (uint64_t)VK_IMAGE_TILING_LINEAR},
+                                         {"VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT", (uint64_t)VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT}};
 
     return (VkImageTiling)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageType scvkParseJsonImageType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_TYPE_1D", (uint64_t)VK_IMAGE_TYPE_1D},
-        {"VK_IMAGE_TYPE_2D", (uint64_t)VK_IMAGE_TYPE_2D},
-        {"VK_IMAGE_TYPE_3D", (uint64_t)VK_IMAGE_TYPE_3D},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_TYPE_1D", (uint64_t)VK_IMAGE_TYPE_1D}, {"VK_IMAGE_TYPE_2D", (uint64_t)VK_IMAGE_TYPE_2D}, {"VK_IMAGE_TYPE_3D", (uint64_t)VK_IMAGE_TYPE_3D}};
 
     return (VkImageType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageUsageFlagBits scvkParseJsonImageUsageFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT},
-        {"VK_IMAGE_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT},
-        {"VK_IMAGE_USAGE_SAMPLED_BIT", (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT},
-        {"VK_IMAGE_USAGE_STORAGE_BIT", (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT},
-        {"VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT},
+                                         {"VK_IMAGE_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT},
+                                         {"VK_IMAGE_USAGE_SAMPLED_BIT", (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT},
+                                         {"VK_IMAGE_USAGE_STORAGE_BIT", (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT},
+                                         {"VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR}};
 
     return (VkImageUsageFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1194,26 +1061,22 @@ VkImageViewCreateFlagBits scvkParseJsonImageViewCreateFlagBits(const scvkJsonVal
 }
 VkImageViewType scvkParseJsonImageViewType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_VIEW_TYPE_1D", (uint64_t)VK_IMAGE_VIEW_TYPE_1D},
-        {"VK_IMAGE_VIEW_TYPE_2D", (uint64_t)VK_IMAGE_VIEW_TYPE_2D},
-        {"VK_IMAGE_VIEW_TYPE_3D", (uint64_t)VK_IMAGE_VIEW_TYPE_3D},
-        {"VK_IMAGE_VIEW_TYPE_CUBE", (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE},
-        {"VK_IMAGE_VIEW_TYPE_1D_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_1D_ARRAY},
-        {"VK_IMAGE_VIEW_TYPE_2D_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_2D_ARRAY},
-        {"VK_IMAGE_VIEW_TYPE_CUBE_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE_ARRAY},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_VIEW_TYPE_1D", (uint64_t)VK_IMAGE_VIEW_TYPE_1D},
+                                         {"VK_IMAGE_VIEW_TYPE_2D", (uint64_t)VK_IMAGE_VIEW_TYPE_2D},
+                                         {"VK_IMAGE_VIEW_TYPE_3D", (uint64_t)VK_IMAGE_VIEW_TYPE_3D},
+                                         {"VK_IMAGE_VIEW_TYPE_CUBE", (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE},
+                                         {"VK_IMAGE_VIEW_TYPE_1D_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_1D_ARRAY},
+                                         {"VK_IMAGE_VIEW_TYPE_2D_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_2D_ARRAY},
+                                         {"VK_IMAGE_VIEW_TYPE_CUBE_ARRAY", (uint64_t)VK_IMAGE_VIEW_TYPE_CUBE_ARRAY}};
 
     return (VkImageViewType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkIndexType scvkParseJsonIndexType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_INDEX_TYPE_UINT16", (uint64_t)VK_INDEX_TYPE_UINT16},
-        {"VK_INDEX_TYPE_UINT32", (uint64_t)VK_INDEX_TYPE_UINT32},
-        {"VK_INDEX_TYPE_UINT8_EXT", (uint64_t)VK_INDEX_TYPE_UINT8_EXT},
-        {"VK_INDEX_TYPE_UINT8_KHR", (uint64_t)VK_INDEX_TYPE_UINT8_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_INDEX_TYPE_UINT16", (uint64_t)VK_INDEX_TYPE_UINT16},
+                                         {"VK_INDEX_TYPE_UINT32", (uint64_t)VK_INDEX_TYPE_UINT32},
+                                         {"VK_INDEX_TYPE_UINT8_EXT", (uint64_t)VK_INDEX_TYPE_UINT8_EXT},
+                                         {"VK_INDEX_TYPE_UINT8_KHR", (uint64_t)VK_INDEX_TYPE_UINT8_KHR}};
 
     return (VkIndexType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1223,67 +1086,57 @@ VkInstanceCreateFlagBits scvkParseJsonInstanceCreateFlagBits(const scvkJsonValue
 }
 VkInternalAllocationType scvkParseJsonInternalAllocationType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE", (uint64_t)VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE},
-    };
+    static const scvkJsonName table[] = {{"VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE", (uint64_t)VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE}};
 
     return (VkInternalAllocationType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkLayerSettingTypeEXT scvkParseJsonLayerSettingType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_LAYER_SETTING_TYPE_BOOL32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_BOOL32_EXT},
-        {"VK_LAYER_SETTING_TYPE_INT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_INT32_EXT},
-        {"VK_LAYER_SETTING_TYPE_INT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_INT64_EXT},
-        {"VK_LAYER_SETTING_TYPE_UINT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_UINT32_EXT},
-        {"VK_LAYER_SETTING_TYPE_UINT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_UINT64_EXT},
-        {"VK_LAYER_SETTING_TYPE_FLOAT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT32_EXT},
-        {"VK_LAYER_SETTING_TYPE_FLOAT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT64_EXT},
-        {"VK_LAYER_SETTING_TYPE_STRING_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_STRING_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_LAYER_SETTING_TYPE_BOOL32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_BOOL32_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_INT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_INT32_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_INT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_INT64_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_UINT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_UINT32_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_UINT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_UINT64_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_FLOAT32_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT32_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_FLOAT64_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_FLOAT64_EXT},
+                                         {"VK_LAYER_SETTING_TYPE_STRING_EXT", (uint64_t)VK_LAYER_SETTING_TYPE_STRING_EXT}};
 
     return (VkLayerSettingTypeEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkLogicOp scvkParseJsonLogicOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_LOGIC_OP_CLEAR", (uint64_t)VK_LOGIC_OP_CLEAR},
-        {"VK_LOGIC_OP_AND", (uint64_t)VK_LOGIC_OP_AND},
-        {"VK_LOGIC_OP_AND_REVERSE", (uint64_t)VK_LOGIC_OP_AND_REVERSE},
-        {"VK_LOGIC_OP_COPY", (uint64_t)VK_LOGIC_OP_COPY},
-        {"VK_LOGIC_OP_AND_INVERTED", (uint64_t)VK_LOGIC_OP_AND_INVERTED},
-        {"VK_LOGIC_OP_NO_OP", (uint64_t)VK_LOGIC_OP_NO_OP},
-        {"VK_LOGIC_OP_XOR", (uint64_t)VK_LOGIC_OP_XOR},
-        {"VK_LOGIC_OP_OR", (uint64_t)VK_LOGIC_OP_OR},
-        {"VK_LOGIC_OP_NOR", (uint64_t)VK_LOGIC_OP_NOR},
-        {"VK_LOGIC_OP_EQUIVALENT", (uint64_t)VK_LOGIC_OP_EQUIVALENT},
-        {"VK_LOGIC_OP_INVERT", (uint64_t)VK_LOGIC_OP_INVERT},
-        {"VK_LOGIC_OP_OR_REVERSE", (uint64_t)VK_LOGIC_OP_OR_REVERSE},
-        {"VK_LOGIC_OP_COPY_INVERTED", (uint64_t)VK_LOGIC_OP_COPY_INVERTED},
-        {"VK_LOGIC_OP_OR_INVERTED", (uint64_t)VK_LOGIC_OP_OR_INVERTED},
-        {"VK_LOGIC_OP_NAND", (uint64_t)VK_LOGIC_OP_NAND},
-        {"VK_LOGIC_OP_SET", (uint64_t)VK_LOGIC_OP_SET},
-    };
+    static const scvkJsonName table[] = {{"VK_LOGIC_OP_CLEAR", (uint64_t)VK_LOGIC_OP_CLEAR},
+                                         {"VK_LOGIC_OP_AND", (uint64_t)VK_LOGIC_OP_AND},
+                                         {"VK_LOGIC_OP_AND_REVERSE", (uint64_t)VK_LOGIC_OP_AND_REVERSE},
+                                         {"VK_LOGIC_OP_COPY", (uint64_t)VK_LOGIC_OP_COPY},
+                                         {"VK_LOGIC_OP_AND_INVERTED", (uint64_t)VK_LOGIC_OP_AND_INVERTED},
+                                         {"VK_LOGIC_OP_NO_OP", (uint64_t)VK_LOGIC_OP_NO_OP},
+                                         {"VK_LOGIC_OP_XOR", (uint64_t)VK_LOGIC_OP_XOR},
+                                         {"VK_LOGIC_OP_OR", (uint64_t)VK_LOGIC_OP_OR},
+                                         {"VK_LOGIC_OP_NOR", (uint64_t)VK_LOGIC_OP_NOR},
+                                         {"VK_LOGIC_OP_EQUIVALENT", (uint64_t)VK_LOGIC_OP_EQUIVALENT},
+                                         {"VK_LOGIC_OP_INVERT", (uint64_t)VK_LOGIC_OP_INVERT},
+                                         {"VK_LOGIC_OP_OR_REVERSE", (uint64_t)VK_LOGIC_OP_OR_REVERSE},
+                                         {"VK_LOGIC_OP_COPY_INVERTED", (uint64_t)VK_LOGIC_OP_COPY_INVERTED},
+                                         {"VK_LOGIC_OP_OR_INVERTED", (uint64_t)VK_LOGIC_OP_OR_INVERTED},
+                                         {"VK_LOGIC_OP_NAND", (uint64_t)VK_LOGIC_OP_NAND},
+                                         {"VK_LOGIC_OP_SET", (uint64_t)VK_LOGIC_OP_SET}};
 
     return (VkLogicOp)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkMemoryAllocateFlagBits scvkParseJsonMemoryAllocateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT},
-        {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT},
-        {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT},
+                                         {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT},
+                                         {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT}};
 
     return (VkMemoryAllocateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkMemoryHeapFlagBits scvkParseJsonMemoryHeapFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MEMORY_HEAP_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT},
-        {"VK_MEMORY_HEAP_MULTI_INSTANCE_BIT", (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT},
-        {"VK_MEMORY_HEAP_SEU_SAFE_BIT", (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_MEMORY_HEAP_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT},
+                                         {"VK_MEMORY_HEAP_MULTI_INSTANCE_BIT", (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT},
+                                         {"VK_MEMORY_HEAP_SEU_SAFE_BIT", (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT}};
 
     return (VkMemoryHeapFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1293,166 +1146,141 @@ VkMemoryMapFlagBits scvkParseJsonMemoryMapFlagBits(const scvkJsonValue* pValue)
 }
 VkMemoryPropertyFlagBits scvkParseJsonMemoryPropertyFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT},
-        {"VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
-        {"VK_MEMORY_PROPERTY_HOST_COHERENT_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
-        {"VK_MEMORY_PROPERTY_HOST_CACHED_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_CACHED_BIT},
-        {"VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT", (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT},
-        {"VK_MEMORY_PROPERTY_PROTECTED_BIT", (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT},
+                                         {"VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
+                                         {"VK_MEMORY_PROPERTY_HOST_COHERENT_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
+                                         {"VK_MEMORY_PROPERTY_HOST_CACHED_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_CACHED_BIT},
+                                         {"VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT", (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT},
+                                         {"VK_MEMORY_PROPERTY_PROTECTED_BIT", (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT}};
 
     return (VkMemoryPropertyFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkObjectType scvkParseJsonObjectType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_OBJECT_TYPE_UNKNOWN", (uint64_t)VK_OBJECT_TYPE_UNKNOWN},
-        {"VK_OBJECT_TYPE_INSTANCE", (uint64_t)VK_OBJECT_TYPE_INSTANCE},
-        {"VK_OBJECT_TYPE_PHYSICAL_DEVICE", (uint64_t)VK_OBJECT_TYPE_PHYSICAL_DEVICE},
-        {"VK_OBJECT_TYPE_DEVICE", (uint64_t)VK_OBJECT_TYPE_DEVICE},
-        {"VK_OBJECT_TYPE_QUEUE", (uint64_t)VK_OBJECT_TYPE_QUEUE},
-        {"VK_OBJECT_TYPE_SEMAPHORE", (uint64_t)VK_OBJECT_TYPE_SEMAPHORE},
-        {"VK_OBJECT_TYPE_COMMAND_BUFFER", (uint64_t)VK_OBJECT_TYPE_COMMAND_BUFFER},
-        {"VK_OBJECT_TYPE_FENCE", (uint64_t)VK_OBJECT_TYPE_FENCE},
-        {"VK_OBJECT_TYPE_DEVICE_MEMORY", (uint64_t)VK_OBJECT_TYPE_DEVICE_MEMORY},
-        {"VK_OBJECT_TYPE_BUFFER", (uint64_t)VK_OBJECT_TYPE_BUFFER},
-        {"VK_OBJECT_TYPE_IMAGE", (uint64_t)VK_OBJECT_TYPE_IMAGE},
-        {"VK_OBJECT_TYPE_EVENT", (uint64_t)VK_OBJECT_TYPE_EVENT},
-        {"VK_OBJECT_TYPE_QUERY_POOL", (uint64_t)VK_OBJECT_TYPE_QUERY_POOL},
-        {"VK_OBJECT_TYPE_BUFFER_VIEW", (uint64_t)VK_OBJECT_TYPE_BUFFER_VIEW},
-        {"VK_OBJECT_TYPE_IMAGE_VIEW", (uint64_t)VK_OBJECT_TYPE_IMAGE_VIEW},
-        {"VK_OBJECT_TYPE_SHADER_MODULE", (uint64_t)VK_OBJECT_TYPE_SHADER_MODULE},
-        {"VK_OBJECT_TYPE_PIPELINE_CACHE", (uint64_t)VK_OBJECT_TYPE_PIPELINE_CACHE},
-        {"VK_OBJECT_TYPE_PIPELINE_LAYOUT", (uint64_t)VK_OBJECT_TYPE_PIPELINE_LAYOUT},
-        {"VK_OBJECT_TYPE_RENDER_PASS", (uint64_t)VK_OBJECT_TYPE_RENDER_PASS},
-        {"VK_OBJECT_TYPE_PIPELINE", (uint64_t)VK_OBJECT_TYPE_PIPELINE},
-        {"VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT", (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT},
-        {"VK_OBJECT_TYPE_SAMPLER", (uint64_t)VK_OBJECT_TYPE_SAMPLER},
-        {"VK_OBJECT_TYPE_DESCRIPTOR_POOL", (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_POOL},
-        {"VK_OBJECT_TYPE_DESCRIPTOR_SET", (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_SET},
-        {"VK_OBJECT_TYPE_FRAMEBUFFER", (uint64_t)VK_OBJECT_TYPE_FRAMEBUFFER},
-        {"VK_OBJECT_TYPE_COMMAND_POOL", (uint64_t)VK_OBJECT_TYPE_COMMAND_POOL},
-        {"VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION", (uint64_t)VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION},
-        {"VK_OBJECT_TYPE_SURFACE_KHR", (uint64_t)VK_OBJECT_TYPE_SURFACE_KHR},
-        {"VK_OBJECT_TYPE_SWAPCHAIN_KHR", (uint64_t)VK_OBJECT_TYPE_SWAPCHAIN_KHR},
-        {"VK_OBJECT_TYPE_DISPLAY_KHR", (uint64_t)VK_OBJECT_TYPE_DISPLAY_KHR},
-        {"VK_OBJECT_TYPE_DISPLAY_MODE_KHR", (uint64_t)VK_OBJECT_TYPE_DISPLAY_MODE_KHR},
-        {"VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT", (uint64_t)VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_OBJECT_TYPE_UNKNOWN", (uint64_t)VK_OBJECT_TYPE_UNKNOWN},
+                                         {"VK_OBJECT_TYPE_INSTANCE", (uint64_t)VK_OBJECT_TYPE_INSTANCE},
+                                         {"VK_OBJECT_TYPE_PHYSICAL_DEVICE", (uint64_t)VK_OBJECT_TYPE_PHYSICAL_DEVICE},
+                                         {"VK_OBJECT_TYPE_DEVICE", (uint64_t)VK_OBJECT_TYPE_DEVICE},
+                                         {"VK_OBJECT_TYPE_QUEUE", (uint64_t)VK_OBJECT_TYPE_QUEUE},
+                                         {"VK_OBJECT_TYPE_SEMAPHORE", (uint64_t)VK_OBJECT_TYPE_SEMAPHORE},
+                                         {"VK_OBJECT_TYPE_COMMAND_BUFFER", (uint64_t)VK_OBJECT_TYPE_COMMAND_BUFFER},
+                                         {"VK_OBJECT_TYPE_FENCE", (uint64_t)VK_OBJECT_TYPE_FENCE},
+                                         {"VK_OBJECT_TYPE_DEVICE_MEMORY", (uint64_t)VK_OBJECT_TYPE_DEVICE_MEMORY},
+                                         {"VK_OBJECT_TYPE_BUFFER", (uint64_t)VK_OBJECT_TYPE_BUFFER},
+                                         {"VK_OBJECT_TYPE_IMAGE", (uint64_t)VK_OBJECT_TYPE_IMAGE},
+                                         {"VK_OBJECT_TYPE_EVENT", (uint64_t)VK_OBJECT_TYPE_EVENT},
+                                         {"VK_OBJECT_TYPE_QUERY_POOL", (uint64_t)VK_OBJECT_TYPE_QUERY_POOL},
+                                         {"VK_OBJECT_TYPE_BUFFER_VIEW", (uint64_t)VK_OBJECT_TYPE_BUFFER_VIEW},
+                                         {"VK_OBJECT_TYPE_IMAGE_VIEW", (uint64_t)VK_OBJECT_TYPE_IMAGE_VIEW},
+                                         {"VK_OBJECT_TYPE_SHADER_MODULE", (uint64_t)VK_OBJECT_TYPE_SHADER_MODULE},
+                                         {"VK_OBJECT_TYPE_PIPELINE_CACHE", (uint64_t)VK_OBJECT_TYPE_PIPELINE_CACHE},
+                                         {"VK_OBJECT_TYPE_PIPELINE_LAYOUT", (uint64_t)VK_OBJECT_TYPE_PIPELINE_LAYOUT},
+                                         {"VK_OBJECT_TYPE_RENDER_PASS", (uint64_t)VK_OBJECT_TYPE_RENDER_PASS},
+                                         {"VK_OBJECT_TYPE_PIPELINE", (uint64_t)VK_OBJECT_TYPE_PIPELINE},
+                                         {"VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT", (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT},
+                                         {"VK_OBJECT_TYPE_SAMPLER", (uint64_t)VK_OBJECT_TYPE_SAMPLER},
+                                         {"VK_OBJECT_TYPE_DESCRIPTOR_POOL", (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_POOL},
+                                         {"VK_OBJECT_TYPE_DESCRIPTOR_SET", (uint64_t)VK_OBJECT_TYPE_DESCRIPTOR_SET},
+                                         {"VK_OBJECT_TYPE_FRAMEBUFFER", (uint64_t)VK_OBJECT_TYPE_FRAMEBUFFER},
+                                         {"VK_OBJECT_TYPE_COMMAND_POOL", (uint64_t)VK_OBJECT_TYPE_COMMAND_POOL},
+                                         {"VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION", (uint64_t)VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION},
+                                         {"VK_OBJECT_TYPE_SURFACE_KHR", (uint64_t)VK_OBJECT_TYPE_SURFACE_KHR},
+                                         {"VK_OBJECT_TYPE_SWAPCHAIN_KHR", (uint64_t)VK_OBJECT_TYPE_SWAPCHAIN_KHR},
+                                         {"VK_OBJECT_TYPE_DISPLAY_KHR", (uint64_t)VK_OBJECT_TYPE_DISPLAY_KHR},
+                                         {"VK_OBJECT_TYPE_DISPLAY_MODE_KHR", (uint64_t)VK_OBJECT_TYPE_DISPLAY_MODE_KHR},
+                                         {"VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT", (uint64_t)VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT}};
 
     return (VkObjectType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPeerMemoryFeatureFlagBits scvkParseJsonPeerMemoryFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT},
-        {"VK_PEER_MEMORY_FEATURE_COPY_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT},
-        {"VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT},
-        {"VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT},
+                                         {"VK_PEER_MEMORY_FEATURE_COPY_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT},
+                                         {"VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT},
+                                         {"VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT}};
 
     return (VkPeerMemoryFeatureFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPerformanceCounterDescriptionFlagBitsKHR scvkParseJsonPerformanceCounterDescriptionFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR},
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR},
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR},
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR}};
 
     return (VkPerformanceCounterDescriptionFlagBitsKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPerformanceCounterScopeKHR scvkParseJsonPerformanceCounterScope(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR},
-        {"VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR},
-        {"VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR},
-        {"VK_QUERY_SCOPE_COMMAND_BUFFER_KHR", (uint64_t)VK_QUERY_SCOPE_COMMAND_BUFFER_KHR},
-        {"VK_QUERY_SCOPE_RENDER_PASS_KHR", (uint64_t)VK_QUERY_SCOPE_RENDER_PASS_KHR},
-        {"VK_QUERY_SCOPE_COMMAND_KHR", (uint64_t)VK_QUERY_SCOPE_COMMAND_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR},
+                                         {"VK_QUERY_SCOPE_COMMAND_BUFFER_KHR", (uint64_t)VK_QUERY_SCOPE_COMMAND_BUFFER_KHR},
+                                         {"VK_QUERY_SCOPE_RENDER_PASS_KHR", (uint64_t)VK_QUERY_SCOPE_RENDER_PASS_KHR},
+                                         {"VK_QUERY_SCOPE_COMMAND_KHR", (uint64_t)VK_QUERY_SCOPE_COMMAND_KHR}};
 
     return (VkPerformanceCounterScopeKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPerformanceCounterStorageKHR scvkParseJsonPerformanceCounterStorage(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR},
-        {"VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR},
-        {"VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR},
-        {"VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR},
-        {"VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR},
-        {"VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT32_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_INT64_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT32_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_UINT64_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT32_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_STORAGE_FLOAT64_KHR}};
 
     return (VkPerformanceCounterStorageKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPerformanceCounterUnitKHR scvkParseJsonPerformanceCounterUnit(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_AMPS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_AMPS_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR},
-        {"VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_GENERIC_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_PERCENTAGE_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_NANOSECONDS_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_BYTES_PER_SECOND_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_KELVIN_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_WATTS_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_VOLTS_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_AMPS_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_AMPS_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_HERTZ_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_UNIT_CYCLES_KHR}};
 
     return (VkPerformanceCounterUnitKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPhysicalDeviceType scvkParseJsonPhysicalDeviceType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PHYSICAL_DEVICE_TYPE_OTHER", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_OTHER},
-        {"VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU},
-        {"VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU},
-        {"VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU},
-        {"VK_PHYSICAL_DEVICE_TYPE_CPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_CPU},
-    };
+    static const scvkJsonName table[] = {{"VK_PHYSICAL_DEVICE_TYPE_OTHER", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_OTHER},
+                                         {"VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU},
+                                         {"VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU},
+                                         {"VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU},
+                                         {"VK_PHYSICAL_DEVICE_TYPE_CPU", (uint64_t)VK_PHYSICAL_DEVICE_TYPE_CPU}};
 
     return (VkPhysicalDeviceType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineBindPoint scvkParseJsonPipelineBindPoint(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_BIND_POINT_GRAPHICS", (uint64_t)VK_PIPELINE_BIND_POINT_GRAPHICS},
-        {"VK_PIPELINE_BIND_POINT_COMPUTE", (uint64_t)VK_PIPELINE_BIND_POINT_COMPUTE},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_BIND_POINT_GRAPHICS", (uint64_t)VK_PIPELINE_BIND_POINT_GRAPHICS}, {"VK_PIPELINE_BIND_POINT_COMPUTE", (uint64_t)VK_PIPELINE_BIND_POINT_COMPUTE}};
 
     return (VkPipelineBindPoint)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineCacheCreateFlagBits scvkParseJsonPipelineCacheCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT},
-        {"VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT},
+                                         {"VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT}};
 
     return (VkPipelineCacheCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineCacheHeaderVersion scvkParseJsonPipelineCacheHeaderVersion(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_CACHE_HEADER_VERSION_ONE", (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_ONE},
-        {"VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE", (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_HEADER_VERSION_ONE", (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_ONE},
+                                         {"VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE", (uint64_t)VK_PIPELINE_CACHE_HEADER_VERSION_SAFETY_CRITICAL_ONE}};
 
     return (VkPipelineCacheHeaderVersion)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineCacheValidationVersion scvkParseJsonPipelineCacheValidationVersion(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE", (uint64_t)VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE", (uint64_t)VK_PIPELINE_CACHE_VALIDATION_VERSION_SAFETY_CRITICAL_ONE}};
 
     return (VkPipelineCacheValidationVersion)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1462,12 +1290,10 @@ VkPipelineColorBlendStateCreateFlagBits scvkParseJsonPipelineColorBlendStateCrea
 }
 VkPipelineCreateFlagBits scvkParseJsonPipelineCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT", (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT},
-        {"VK_PIPELINE_CREATE_DISPATCH_BASE_BIT", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT},
-        {"VK_PIPELINE_CREATE_DISPATCH_BASE", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE},
-        {"VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT", (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT", (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT},
+                                         {"VK_PIPELINE_CREATE_DISPATCH_BASE_BIT", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT},
+                                         {"VK_PIPELINE_CREATE_DISPATCH_BASE", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE},
+                                         {"VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT", (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT}};
 
     return (VkPipelineCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1481,102 +1307,86 @@ VkPipelineLayoutCreateFlagBits scvkParseJsonPipelineLayoutCreateFlagBits(const s
 }
 VkPipelineMatchControl scvkParseJsonPipelineMatchControl(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH", (uint64_t)VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH", (uint64_t)VK_PIPELINE_MATCH_CONTROL_APPLICATION_UUID_EXACT_MATCH}};
 
     return (VkPipelineMatchControl)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineShaderStageCreateFlagBits scvkParseJsonPipelineShaderStageCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT},
-        {"VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT},
+                                         {"VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT}};
 
     return (VkPipelineShaderStageCreateFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineStageFlagBits scvkParseJsonPipelineStageFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
-        {"VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT", (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT},
-        {"VK_PIPELINE_STAGE_VERTEX_INPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT},
-        {"VK_PIPELINE_STAGE_VERTEX_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
-        {"VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT},
-        {"VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
-        {"VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_TRANSFER_BIT", (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT},
-        {"VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT},
-        {"VK_PIPELINE_STAGE_HOST_BIT", (uint64_t)VK_PIPELINE_STAGE_HOST_BIT},
-        {"VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT},
-        {"VK_PIPELINE_STAGE_ALL_COMMANDS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT},
-        {"VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-        {"VK_PIPELINE_STAGE_NONE_KHR", (uint64_t)VK_PIPELINE_STAGE_NONE_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
+                                         {"VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT", (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT},
+                                         {"VK_PIPELINE_STAGE_VERTEX_INPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT},
+                                         {"VK_PIPELINE_STAGE_VERTEX_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
+                                         {"VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT},
+                                         {"VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
+                                         {"VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_TRANSFER_BIT", (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT},
+                                         {"VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT},
+                                         {"VK_PIPELINE_STAGE_HOST_BIT", (uint64_t)VK_PIPELINE_STAGE_HOST_BIT},
+                                         {"VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT},
+                                         {"VK_PIPELINE_STAGE_ALL_COMMANDS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT},
+                                         {"VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
+                                         {"VK_PIPELINE_STAGE_NONE_KHR", (uint64_t)VK_PIPELINE_STAGE_NONE_KHR}};
 
     return (VkPipelineStageFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPointClippingBehavior scvkParseJsonPointClippingBehavior(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES", (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES},
-        {"VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY", (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY},
-    };
+    static const scvkJsonName table[] = {{"VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES", (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES},
+                                         {"VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY", (uint64_t)VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY}};
 
     return (VkPointClippingBehavior)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPolygonMode scvkParseJsonPolygonMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_POLYGON_MODE_FILL", (uint64_t)VK_POLYGON_MODE_FILL},
-        {"VK_POLYGON_MODE_LINE", (uint64_t)VK_POLYGON_MODE_LINE},
-        {"VK_POLYGON_MODE_POINT", (uint64_t)VK_POLYGON_MODE_POINT},
-    };
+    static const scvkJsonName table[] = {{"VK_POLYGON_MODE_FILL", (uint64_t)VK_POLYGON_MODE_FILL},
+                                         {"VK_POLYGON_MODE_LINE", (uint64_t)VK_POLYGON_MODE_LINE},
+                                         {"VK_POLYGON_MODE_POINT", (uint64_t)VK_POLYGON_MODE_POINT}};
 
     return (VkPolygonMode)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPresentModeKHR scvkParseJsonPresentMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PRESENT_MODE_IMMEDIATE_KHR", (uint64_t)VK_PRESENT_MODE_IMMEDIATE_KHR},
-        {"VK_PRESENT_MODE_MAILBOX_KHR", (uint64_t)VK_PRESENT_MODE_MAILBOX_KHR},
-        {"VK_PRESENT_MODE_FIFO_KHR", (uint64_t)VK_PRESENT_MODE_FIFO_KHR},
-        {"VK_PRESENT_MODE_FIFO_RELAXED_KHR", (uint64_t)VK_PRESENT_MODE_FIFO_RELAXED_KHR},
-        {"VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR", (uint64_t)VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR},
-        {"VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR", (uint64_t)VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PRESENT_MODE_IMMEDIATE_KHR", (uint64_t)VK_PRESENT_MODE_IMMEDIATE_KHR},
+                                         {"VK_PRESENT_MODE_MAILBOX_KHR", (uint64_t)VK_PRESENT_MODE_MAILBOX_KHR},
+                                         {"VK_PRESENT_MODE_FIFO_KHR", (uint64_t)VK_PRESENT_MODE_FIFO_KHR},
+                                         {"VK_PRESENT_MODE_FIFO_RELAXED_KHR", (uint64_t)VK_PRESENT_MODE_FIFO_RELAXED_KHR},
+                                         {"VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR", (uint64_t)VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR},
+                                         {"VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR", (uint64_t)VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR}};
 
     return (VkPresentModeKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPrimitiveTopology scvkParseJsonPrimitiveTopology(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PRIMITIVE_TOPOLOGY_POINT_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_POINT_LIST},
-        {"VK_PRIMITIVE_TOPOLOGY_LINE_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST},
-        {"VK_PRIMITIVE_TOPOLOGY_LINE_STRIP", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP},
-        {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST},
-        {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP},
-        {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN},
-        {"VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY},
-        {"VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY},
-        {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY},
-        {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY},
-        {"VK_PRIMITIVE_TOPOLOGY_PATCH_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_PATCH_LIST},
-    };
+    static const scvkJsonName table[] = {{"VK_PRIMITIVE_TOPOLOGY_POINT_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_POINT_LIST},
+                                         {"VK_PRIMITIVE_TOPOLOGY_LINE_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST},
+                                         {"VK_PRIMITIVE_TOPOLOGY_LINE_STRIP", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP},
+                                         {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST},
+                                         {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP},
+                                         {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN},
+                                         {"VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY},
+                                         {"VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY},
+                                         {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY},
+                                         {"VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY", (uint64_t)VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY},
+                                         {"VK_PRIMITIVE_TOPOLOGY_PATCH_LIST", (uint64_t)VK_PRIMITIVE_TOPOLOGY_PATCH_LIST}};
 
     return (VkPrimitiveTopology)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkQueryControlFlagBits scvkParseJsonQueryControlFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUERY_CONTROL_PRECISE_BIT", (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_QUERY_CONTROL_PRECISE_BIT", (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT}};
 
     return (VkQueryControlFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1593,8 +1403,7 @@ VkQueryPipelineStatisticFlagBits scvkParseJsonQueryPipelineStatisticFlagBits(con
         {"VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT},
         {"VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT},
         {"VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT},
-        {"VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT},
-    };
+        {"VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT}};
 
     return (VkQueryPipelineStatisticFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1604,34 +1413,28 @@ VkQueryPoolCreateFlagBits scvkParseJsonQueryPoolCreateFlagBits(const scvkJsonVal
 }
 VkQueryResultFlagBits scvkParseJsonQueryResultFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUERY_RESULT_64_BIT", (uint64_t)VK_QUERY_RESULT_64_BIT},
-        {"VK_QUERY_RESULT_WAIT_BIT", (uint64_t)VK_QUERY_RESULT_WAIT_BIT},
-        {"VK_QUERY_RESULT_WITH_AVAILABILITY_BIT", (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT},
-        {"VK_QUERY_RESULT_PARTIAL_BIT", (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_QUERY_RESULT_64_BIT", (uint64_t)VK_QUERY_RESULT_64_BIT},
+                                         {"VK_QUERY_RESULT_WAIT_BIT", (uint64_t)VK_QUERY_RESULT_WAIT_BIT},
+                                         {"VK_QUERY_RESULT_WITH_AVAILABILITY_BIT", (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT},
+                                         {"VK_QUERY_RESULT_PARTIAL_BIT", (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT}};
 
     return (VkQueryResultFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkQueryType scvkParseJsonQueryType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUERY_TYPE_OCCLUSION", (uint64_t)VK_QUERY_TYPE_OCCLUSION},
-        {"VK_QUERY_TYPE_PIPELINE_STATISTICS", (uint64_t)VK_QUERY_TYPE_PIPELINE_STATISTICS},
-        {"VK_QUERY_TYPE_TIMESTAMP", (uint64_t)VK_QUERY_TYPE_TIMESTAMP},
-        {"VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR", (uint64_t)VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_QUERY_TYPE_OCCLUSION", (uint64_t)VK_QUERY_TYPE_OCCLUSION},
+                                         {"VK_QUERY_TYPE_PIPELINE_STATISTICS", (uint64_t)VK_QUERY_TYPE_PIPELINE_STATISTICS},
+                                         {"VK_QUERY_TYPE_TIMESTAMP", (uint64_t)VK_QUERY_TYPE_TIMESTAMP},
+                                         {"VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR", (uint64_t)VK_QUERY_TYPE_PERFORMANCE_QUERY_KHR}};
 
     return (VkQueryType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkQueueFlagBits scvkParseJsonQueueFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUEUE_GRAPHICS_BIT", (uint64_t)VK_QUEUE_GRAPHICS_BIT},
-        {"VK_QUEUE_COMPUTE_BIT", (uint64_t)VK_QUEUE_COMPUTE_BIT},
-        {"VK_QUEUE_TRANSFER_BIT", (uint64_t)VK_QUEUE_TRANSFER_BIT},
-        {"VK_QUEUE_PROTECTED_BIT", (uint64_t)VK_QUEUE_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_QUEUE_GRAPHICS_BIT", (uint64_t)VK_QUEUE_GRAPHICS_BIT},
+                                         {"VK_QUEUE_COMPUTE_BIT", (uint64_t)VK_QUEUE_COMPUTE_BIT},
+                                         {"VK_QUEUE_TRANSFER_BIT", (uint64_t)VK_QUEUE_TRANSFER_BIT},
+                                         {"VK_QUEUE_PROTECTED_BIT", (uint64_t)VK_QUEUE_PROTECTED_BIT}};
 
     return (VkQueueFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1645,79 +1448,71 @@ VkRenderPassCreateFlagBits scvkParseJsonRenderPassCreateFlagBits(const scvkJsonV
 }
 VkResolveModeFlagBits scvkParseJsonResolveModeFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_RESOLVE_MODE_NONE", (uint64_t)VK_RESOLVE_MODE_NONE},
-        {"VK_RESOLVE_MODE_SAMPLE_ZERO_BIT", (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT},
-        {"VK_RESOLVE_MODE_AVERAGE_BIT", (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT},
-        {"VK_RESOLVE_MODE_MIN_BIT", (uint64_t)VK_RESOLVE_MODE_MIN_BIT},
-        {"VK_RESOLVE_MODE_MAX_BIT", (uint64_t)VK_RESOLVE_MODE_MAX_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_RESOLVE_MODE_NONE", (uint64_t)VK_RESOLVE_MODE_NONE},
+                                         {"VK_RESOLVE_MODE_SAMPLE_ZERO_BIT", (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT},
+                                         {"VK_RESOLVE_MODE_AVERAGE_BIT", (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT},
+                                         {"VK_RESOLVE_MODE_MIN_BIT", (uint64_t)VK_RESOLVE_MODE_MIN_BIT},
+                                         {"VK_RESOLVE_MODE_MAX_BIT", (uint64_t)VK_RESOLVE_MODE_MAX_BIT}};
 
     return (VkResolveModeFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkResult scvkParseJsonResult(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SUCCESS", (uint64_t)VK_SUCCESS},
-        {"VK_NOT_READY", (uint64_t)VK_NOT_READY},
-        {"VK_TIMEOUT", (uint64_t)VK_TIMEOUT},
-        {"VK_EVENT_SET", (uint64_t)VK_EVENT_SET},
-        {"VK_EVENT_RESET", (uint64_t)VK_EVENT_RESET},
-        {"VK_INCOMPLETE", (uint64_t)VK_INCOMPLETE},
-        {"VK_ERROR_OUT_OF_HOST_MEMORY", (uint64_t)VK_ERROR_OUT_OF_HOST_MEMORY},
-        {"VK_ERROR_OUT_OF_DEVICE_MEMORY", (uint64_t)VK_ERROR_OUT_OF_DEVICE_MEMORY},
-        {"VK_ERROR_INITIALIZATION_FAILED", (uint64_t)VK_ERROR_INITIALIZATION_FAILED},
-        {"VK_ERROR_DEVICE_LOST", (uint64_t)VK_ERROR_DEVICE_LOST},
-        {"VK_ERROR_MEMORY_MAP_FAILED", (uint64_t)VK_ERROR_MEMORY_MAP_FAILED},
-        {"VK_ERROR_LAYER_NOT_PRESENT", (uint64_t)VK_ERROR_LAYER_NOT_PRESENT},
-        {"VK_ERROR_EXTENSION_NOT_PRESENT", (uint64_t)VK_ERROR_EXTENSION_NOT_PRESENT},
-        {"VK_ERROR_FEATURE_NOT_PRESENT", (uint64_t)VK_ERROR_FEATURE_NOT_PRESENT},
-        {"VK_ERROR_INCOMPATIBLE_DRIVER", (uint64_t)VK_ERROR_INCOMPATIBLE_DRIVER},
-        {"VK_ERROR_TOO_MANY_OBJECTS", (uint64_t)VK_ERROR_TOO_MANY_OBJECTS},
-        {"VK_ERROR_FORMAT_NOT_SUPPORTED", (uint64_t)VK_ERROR_FORMAT_NOT_SUPPORTED},
-        {"VK_ERROR_FRAGMENTED_POOL", (uint64_t)VK_ERROR_FRAGMENTED_POOL},
-        {"VK_ERROR_UNKNOWN", (uint64_t)VK_ERROR_UNKNOWN},
-        {"VK_ERROR_VALIDATION_FAILED", (uint64_t)VK_ERROR_VALIDATION_FAILED},
-        {"VK_ERROR_OUT_OF_POOL_MEMORY", (uint64_t)VK_ERROR_OUT_OF_POOL_MEMORY},
-        {"VK_ERROR_INVALID_EXTERNAL_HANDLE", (uint64_t)VK_ERROR_INVALID_EXTERNAL_HANDLE},
-        {"VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS", (uint64_t)VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS},
-        {"VK_ERROR_FRAGMENTATION", (uint64_t)VK_ERROR_FRAGMENTATION},
-        {"VK_ERROR_INVALID_PIPELINE_CACHE_DATA", (uint64_t)VK_ERROR_INVALID_PIPELINE_CACHE_DATA},
-        {"VK_ERROR_NO_PIPELINE_MATCH", (uint64_t)VK_ERROR_NO_PIPELINE_MATCH},
-        {"VK_ERROR_SURFACE_LOST_KHR", (uint64_t)VK_ERROR_SURFACE_LOST_KHR},
-        {"VK_ERROR_NATIVE_WINDOW_IN_USE_KHR", (uint64_t)VK_ERROR_NATIVE_WINDOW_IN_USE_KHR},
-        {"VK_SUBOPTIMAL_KHR", (uint64_t)VK_SUBOPTIMAL_KHR},
-        {"VK_ERROR_OUT_OF_DATE_KHR", (uint64_t)VK_ERROR_OUT_OF_DATE_KHR},
-        {"VK_ERROR_INCOMPATIBLE_DISPLAY_KHR", (uint64_t)VK_ERROR_INCOMPATIBLE_DISPLAY_KHR},
-        {"VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT", (uint64_t)VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT},
-        {"VK_ERROR_NOT_PERMITTED_KHR", (uint64_t)VK_ERROR_NOT_PERMITTED_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_SUCCESS", (uint64_t)VK_SUCCESS},
+                                         {"VK_NOT_READY", (uint64_t)VK_NOT_READY},
+                                         {"VK_TIMEOUT", (uint64_t)VK_TIMEOUT},
+                                         {"VK_EVENT_SET", (uint64_t)VK_EVENT_SET},
+                                         {"VK_EVENT_RESET", (uint64_t)VK_EVENT_RESET},
+                                         {"VK_INCOMPLETE", (uint64_t)VK_INCOMPLETE},
+                                         {"VK_ERROR_OUT_OF_HOST_MEMORY", (uint64_t)VK_ERROR_OUT_OF_HOST_MEMORY},
+                                         {"VK_ERROR_OUT_OF_DEVICE_MEMORY", (uint64_t)VK_ERROR_OUT_OF_DEVICE_MEMORY},
+                                         {"VK_ERROR_INITIALIZATION_FAILED", (uint64_t)VK_ERROR_INITIALIZATION_FAILED},
+                                         {"VK_ERROR_DEVICE_LOST", (uint64_t)VK_ERROR_DEVICE_LOST},
+                                         {"VK_ERROR_MEMORY_MAP_FAILED", (uint64_t)VK_ERROR_MEMORY_MAP_FAILED},
+                                         {"VK_ERROR_LAYER_NOT_PRESENT", (uint64_t)VK_ERROR_LAYER_NOT_PRESENT},
+                                         {"VK_ERROR_EXTENSION_NOT_PRESENT", (uint64_t)VK_ERROR_EXTENSION_NOT_PRESENT},
+                                         {"VK_ERROR_FEATURE_NOT_PRESENT", (uint64_t)VK_ERROR_FEATURE_NOT_PRESENT},
+                                         {"VK_ERROR_INCOMPATIBLE_DRIVER", (uint64_t)VK_ERROR_INCOMPATIBLE_DRIVER},
+                                         {"VK_ERROR_TOO_MANY_OBJECTS", (uint64_t)VK_ERROR_TOO_MANY_OBJECTS},
+                                         {"VK_ERROR_FORMAT_NOT_SUPPORTED", (uint64_t)VK_ERROR_FORMAT_NOT_SUPPORTED},
+                                         {"VK_ERROR_FRAGMENTED_POOL", (uint64_t)VK_ERROR_FRAGMENTED_POOL},
+                                         {"VK_ERROR_UNKNOWN", (uint64_t)VK_ERROR_UNKNOWN},
+                                         {"VK_ERROR_VALIDATION_FAILED", (uint64_t)VK_ERROR_VALIDATION_FAILED},
+                                         {"VK_ERROR_OUT_OF_POOL_MEMORY", (uint64_t)VK_ERROR_OUT_OF_POOL_MEMORY},
+                                         {"VK_ERROR_INVALID_EXTERNAL_HANDLE", (uint64_t)VK_ERROR_INVALID_EXTERNAL_HANDLE},
+                                         {"VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS", (uint64_t)VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS},
+                                         {"VK_ERROR_FRAGMENTATION", (uint64_t)VK_ERROR_FRAGMENTATION},
+                                         {"VK_ERROR_INVALID_PIPELINE_CACHE_DATA", (uint64_t)VK_ERROR_INVALID_PIPELINE_CACHE_DATA},
+                                         {"VK_ERROR_NO_PIPELINE_MATCH", (uint64_t)VK_ERROR_NO_PIPELINE_MATCH},
+                                         {"VK_ERROR_SURFACE_LOST_KHR", (uint64_t)VK_ERROR_SURFACE_LOST_KHR},
+                                         {"VK_ERROR_NATIVE_WINDOW_IN_USE_KHR", (uint64_t)VK_ERROR_NATIVE_WINDOW_IN_USE_KHR},
+                                         {"VK_SUBOPTIMAL_KHR", (uint64_t)VK_SUBOPTIMAL_KHR},
+                                         {"VK_ERROR_OUT_OF_DATE_KHR", (uint64_t)VK_ERROR_OUT_OF_DATE_KHR},
+                                         {"VK_ERROR_INCOMPATIBLE_DISPLAY_KHR", (uint64_t)VK_ERROR_INCOMPATIBLE_DISPLAY_KHR},
+                                         {"VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT", (uint64_t)VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT},
+                                         {"VK_ERROR_NOT_PERMITTED_KHR", (uint64_t)VK_ERROR_NOT_PERMITTED_KHR}};
 
     return (VkResult)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSampleCountFlagBits scvkParseJsonSampleCountFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLE_COUNT_1_BIT", (uint64_t)VK_SAMPLE_COUNT_1_BIT},
-        {"VK_SAMPLE_COUNT_2_BIT", (uint64_t)VK_SAMPLE_COUNT_2_BIT},
-        {"VK_SAMPLE_COUNT_4_BIT", (uint64_t)VK_SAMPLE_COUNT_4_BIT},
-        {"VK_SAMPLE_COUNT_8_BIT", (uint64_t)VK_SAMPLE_COUNT_8_BIT},
-        {"VK_SAMPLE_COUNT_16_BIT", (uint64_t)VK_SAMPLE_COUNT_16_BIT},
-        {"VK_SAMPLE_COUNT_32_BIT", (uint64_t)VK_SAMPLE_COUNT_32_BIT},
-        {"VK_SAMPLE_COUNT_64_BIT", (uint64_t)VK_SAMPLE_COUNT_64_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLE_COUNT_1_BIT", (uint64_t)VK_SAMPLE_COUNT_1_BIT},
+                                         {"VK_SAMPLE_COUNT_2_BIT", (uint64_t)VK_SAMPLE_COUNT_2_BIT},
+                                         {"VK_SAMPLE_COUNT_4_BIT", (uint64_t)VK_SAMPLE_COUNT_4_BIT},
+                                         {"VK_SAMPLE_COUNT_8_BIT", (uint64_t)VK_SAMPLE_COUNT_8_BIT},
+                                         {"VK_SAMPLE_COUNT_16_BIT", (uint64_t)VK_SAMPLE_COUNT_16_BIT},
+                                         {"VK_SAMPLE_COUNT_32_BIT", (uint64_t)VK_SAMPLE_COUNT_32_BIT},
+                                         {"VK_SAMPLE_COUNT_64_BIT", (uint64_t)VK_SAMPLE_COUNT_64_BIT}};
 
     return (VkSampleCountFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSamplerAddressMode scvkParseJsonSamplerAddressMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLER_ADDRESS_MODE_REPEAT", (uint64_t)VK_SAMPLER_ADDRESS_MODE_REPEAT},
-        {"VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT", (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT},
-        {"VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE", (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE},
-        {"VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER", (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER},
-        {"VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE", (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLER_ADDRESS_MODE_REPEAT", (uint64_t)VK_SAMPLER_ADDRESS_MODE_REPEAT},
+                                         {"VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT", (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT},
+                                         {"VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE", (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE},
+                                         {"VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER", (uint64_t)VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER},
+                                         {"VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE", (uint64_t)VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE}};
 
     return (VkSamplerAddressMode)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -1727,125 +1522,98 @@ VkSamplerCreateFlagBits scvkParseJsonSamplerCreateFlagBits(const scvkJsonValue* 
 }
 VkSamplerMipmapMode scvkParseJsonSamplerMipmapMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLER_MIPMAP_MODE_NEAREST", (uint64_t)VK_SAMPLER_MIPMAP_MODE_NEAREST},
-        {"VK_SAMPLER_MIPMAP_MODE_LINEAR", (uint64_t)VK_SAMPLER_MIPMAP_MODE_LINEAR},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLER_MIPMAP_MODE_NEAREST", (uint64_t)VK_SAMPLER_MIPMAP_MODE_NEAREST}, {"VK_SAMPLER_MIPMAP_MODE_LINEAR", (uint64_t)VK_SAMPLER_MIPMAP_MODE_LINEAR}};
 
     return (VkSamplerMipmapMode)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSamplerReductionMode scvkParseJsonSamplerReductionMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE", (uint64_t)VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE},
-        {"VK_SAMPLER_REDUCTION_MODE_MIN", (uint64_t)VK_SAMPLER_REDUCTION_MODE_MIN},
-        {"VK_SAMPLER_REDUCTION_MODE_MAX", (uint64_t)VK_SAMPLER_REDUCTION_MODE_MAX},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE", (uint64_t)VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE},
+                                         {"VK_SAMPLER_REDUCTION_MODE_MIN", (uint64_t)VK_SAMPLER_REDUCTION_MODE_MIN},
+                                         {"VK_SAMPLER_REDUCTION_MODE_MAX", (uint64_t)VK_SAMPLER_REDUCTION_MODE_MAX}};
 
     return (VkSamplerReductionMode)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSamplerYcbcrModelConversion scvkParseJsonSamplerYcbcrModelConversion(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY},
-        {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY},
-        {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709},
-        {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601},
-        {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY},
+                                         {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY},
+                                         {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709},
+                                         {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601},
+                                         {"VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020", (uint64_t)VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020}};
 
     return (VkSamplerYcbcrModelConversion)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSamplerYcbcrRange scvkParseJsonSamplerYcbcrRange(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLER_YCBCR_RANGE_ITU_FULL", (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_FULL},
-        {"VK_SAMPLER_YCBCR_RANGE_ITU_NARROW", (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_NARROW},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLER_YCBCR_RANGE_ITU_FULL", (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_FULL},
+                                         {"VK_SAMPLER_YCBCR_RANGE_ITU_NARROW", (uint64_t)VK_SAMPLER_YCBCR_RANGE_ITU_NARROW}};
 
     return (VkSamplerYcbcrRange)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSemaphoreImportFlagBits scvkParseJsonSemaphoreImportFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SEMAPHORE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SEMAPHORE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT}};
 
     return (VkSemaphoreImportFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSemaphoreType scvkParseJsonSemaphoreType(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SEMAPHORE_TYPE_BINARY", (uint64_t)VK_SEMAPHORE_TYPE_BINARY},
-        {"VK_SEMAPHORE_TYPE_TIMELINE", (uint64_t)VK_SEMAPHORE_TYPE_TIMELINE},
-    };
+    static const scvkJsonName table[] = {{"VK_SEMAPHORE_TYPE_BINARY", (uint64_t)VK_SEMAPHORE_TYPE_BINARY}, {"VK_SEMAPHORE_TYPE_TIMELINE", (uint64_t)VK_SEMAPHORE_TYPE_TIMELINE}};
 
     return (VkSemaphoreType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSemaphoreWaitFlagBits scvkParseJsonSemaphoreWaitFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SEMAPHORE_WAIT_ANY_BIT", (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SEMAPHORE_WAIT_ANY_BIT", (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT}};
 
     return (VkSemaphoreWaitFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkShaderFloatControlsIndependence scvkParseJsonShaderFloatControlsIndependence(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY},
-        {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL},
-        {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE},
-    };
+    static const scvkJsonName table[] = {{"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_32_BIT_ONLY},
+                                         {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_ALL},
+                                         {"VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE", (uint64_t)VK_SHADER_FLOAT_CONTROLS_INDEPENDENCE_NONE}};
 
     return (VkShaderFloatControlsIndependence)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkShaderStageFlagBits scvkParseJsonShaderStageFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SHADER_STAGE_VERTEX_BIT", (uint64_t)VK_SHADER_STAGE_VERTEX_BIT},
-        {"VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
-        {"VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
-        {"VK_SHADER_STAGE_GEOMETRY_BIT", (uint64_t)VK_SHADER_STAGE_GEOMETRY_BIT},
-        {"VK_SHADER_STAGE_FRAGMENT_BIT", (uint64_t)VK_SHADER_STAGE_FRAGMENT_BIT},
-        {"VK_SHADER_STAGE_COMPUTE_BIT", (uint64_t)VK_SHADER_STAGE_COMPUTE_BIT},
-        {"VK_SHADER_STAGE_ALL_GRAPHICS", (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS},
-        {"VK_SHADER_STAGE_ALL", (uint64_t)VK_SHADER_STAGE_ALL},
-    };
+    static const scvkJsonName table[] = {{"VK_SHADER_STAGE_VERTEX_BIT", (uint64_t)VK_SHADER_STAGE_VERTEX_BIT},
+                                         {"VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
+                                         {"VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
+                                         {"VK_SHADER_STAGE_GEOMETRY_BIT", (uint64_t)VK_SHADER_STAGE_GEOMETRY_BIT},
+                                         {"VK_SHADER_STAGE_FRAGMENT_BIT", (uint64_t)VK_SHADER_STAGE_FRAGMENT_BIT},
+                                         {"VK_SHADER_STAGE_COMPUTE_BIT", (uint64_t)VK_SHADER_STAGE_COMPUTE_BIT},
+                                         {"VK_SHADER_STAGE_ALL_GRAPHICS", (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS},
+                                         {"VK_SHADER_STAGE_ALL", (uint64_t)VK_SHADER_STAGE_ALL}};
 
     return (VkShaderStageFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSharingMode scvkParseJsonSharingMode(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SHARING_MODE_EXCLUSIVE", (uint64_t)VK_SHARING_MODE_EXCLUSIVE},
-        {"VK_SHARING_MODE_CONCURRENT", (uint64_t)VK_SHARING_MODE_CONCURRENT},
-    };
+    static const scvkJsonName table[] = {{"VK_SHARING_MODE_EXCLUSIVE", (uint64_t)VK_SHARING_MODE_EXCLUSIVE}, {"VK_SHARING_MODE_CONCURRENT", (uint64_t)VK_SHARING_MODE_CONCURRENT}};
 
     return (VkSharingMode)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkStencilFaceFlagBits scvkParseJsonStencilFaceFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_STENCIL_FACE_FRONT_BIT", (uint64_t)VK_STENCIL_FACE_FRONT_BIT},
-        {"VK_STENCIL_FACE_BACK_BIT", (uint64_t)VK_STENCIL_FACE_BACK_BIT},
-        {"VK_STENCIL_FACE_FRONT_AND_BACK", (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK},
-    };
+    static const scvkJsonName table[] = {{"VK_STENCIL_FACE_FRONT_BIT", (uint64_t)VK_STENCIL_FACE_FRONT_BIT},
+                                         {"VK_STENCIL_FACE_BACK_BIT", (uint64_t)VK_STENCIL_FACE_BACK_BIT},
+                                         {"VK_STENCIL_FACE_FRONT_AND_BACK", (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK}};
 
     return (VkStencilFaceFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkStencilOp scvkParseJsonStencilOp(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_STENCIL_OP_KEEP", (uint64_t)VK_STENCIL_OP_KEEP},
-        {"VK_STENCIL_OP_ZERO", (uint64_t)VK_STENCIL_OP_ZERO},
-        {"VK_STENCIL_OP_REPLACE", (uint64_t)VK_STENCIL_OP_REPLACE},
-        {"VK_STENCIL_OP_INCREMENT_AND_CLAMP", (uint64_t)VK_STENCIL_OP_INCREMENT_AND_CLAMP},
-        {"VK_STENCIL_OP_DECREMENT_AND_CLAMP", (uint64_t)VK_STENCIL_OP_DECREMENT_AND_CLAMP},
-        {"VK_STENCIL_OP_INVERT", (uint64_t)VK_STENCIL_OP_INVERT},
-        {"VK_STENCIL_OP_INCREMENT_AND_WRAP", (uint64_t)VK_STENCIL_OP_INCREMENT_AND_WRAP},
-        {"VK_STENCIL_OP_DECREMENT_AND_WRAP", (uint64_t)VK_STENCIL_OP_DECREMENT_AND_WRAP},
-    };
+    static const scvkJsonName table[] = {{"VK_STENCIL_OP_KEEP", (uint64_t)VK_STENCIL_OP_KEEP},
+                                         {"VK_STENCIL_OP_ZERO", (uint64_t)VK_STENCIL_OP_ZERO},
+                                         {"VK_STENCIL_OP_REPLACE", (uint64_t)VK_STENCIL_OP_REPLACE},
+                                         {"VK_STENCIL_OP_INCREMENT_AND_CLAMP", (uint64_t)VK_STENCIL_OP_INCREMENT_AND_CLAMP},
+                                         {"VK_STENCIL_OP_DECREMENT_AND_CLAMP", (uint64_t)VK_STENCIL_OP_DECREMENT_AND_CLAMP},
+                                         {"VK_STENCIL_OP_INVERT", (uint64_t)VK_STENCIL_OP_INVERT},
+                                         {"VK_STENCIL_OP_INCREMENT_AND_WRAP", (uint64_t)VK_STENCIL_OP_INCREMENT_AND_WRAP},
+                                         {"VK_STENCIL_OP_DECREMENT_AND_WRAP", (uint64_t)VK_STENCIL_OP_DECREMENT_AND_WRAP}};
 
     return (VkStencilOp)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2164,32 +1932,27 @@ VkStructureType scvkParseJsonStructureType(const scvkJsonValue* pValue)
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR", (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR},
         {"VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR", (uint64_t)VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR},
         {"VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR", (uint64_t)VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR},
-        {"VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR", (uint64_t)VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR},
-    };
+        {"VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR", (uint64_t)VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR}};
 
     return (VkStructureType)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSubgroupFeatureFlagBits scvkParseJsonSubgroupFeatureFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SUBGROUP_FEATURE_BASIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT},
-        {"VK_SUBGROUP_FEATURE_VOTE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT},
-        {"VK_SUBGROUP_FEATURE_ARITHMETIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT},
-        {"VK_SUBGROUP_FEATURE_BALLOT_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT},
-        {"VK_SUBGROUP_FEATURE_SHUFFLE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT},
-        {"VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT},
-        {"VK_SUBGROUP_FEATURE_CLUSTERED_BIT", (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT},
-        {"VK_SUBGROUP_FEATURE_QUAD_BIT", (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SUBGROUP_FEATURE_BASIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT},
+                                         {"VK_SUBGROUP_FEATURE_VOTE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT},
+                                         {"VK_SUBGROUP_FEATURE_ARITHMETIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT},
+                                         {"VK_SUBGROUP_FEATURE_BALLOT_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT},
+                                         {"VK_SUBGROUP_FEATURE_SHUFFLE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT},
+                                         {"VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT},
+                                         {"VK_SUBGROUP_FEATURE_CLUSTERED_BIT", (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT},
+                                         {"VK_SUBGROUP_FEATURE_QUAD_BIT", (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT}};
 
     return (VkSubgroupFeatureFlagBits)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSubpassContents scvkParseJsonSubpassContents(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SUBPASS_CONTENTS_INLINE", (uint64_t)VK_SUBPASS_CONTENTS_INLINE},
-        {"VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS", (uint64_t)VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS},
-    };
+    static const scvkJsonName table[] = {{"VK_SUBPASS_CONTENTS_INLINE", (uint64_t)VK_SUBPASS_CONTENTS_INLINE},
+                                         {"VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS", (uint64_t)VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS}};
 
     return (VkSubpassContents)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2199,147 +1962,124 @@ VkSubpassDescriptionFlagBits scvkParseJsonSubpassDescriptionFlagBits(const scvkJ
 }
 VkSurfaceCounterFlagBitsEXT scvkParseJsonSurfaceCounterFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SURFACE_COUNTER_VBLANK_BIT_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT},
-        {"VK_SURFACE_COUNTER_VBLANK_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_SURFACE_COUNTER_VBLANK_BIT_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT},
+                                         {"VK_SURFACE_COUNTER_VBLANK_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_EXT}};
 
     return (VkSurfaceCounterFlagBitsEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSurfaceTransformFlagBitsKHR scvkParseJsonSurfaceTransformFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR}};
 
     return (VkSurfaceTransformFlagBitsKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSwapchainCreateFlagBitsKHR scvkParseJsonSwapchainCreateFlagBits(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR},
-        {"VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR},
-        {"VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR},
+                                         {"VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR},
+                                         {"VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR}};
 
     return (VkSwapchainCreateFlagBitsKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSystemAllocationScope scvkParseJsonSystemAllocationScope(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SYSTEM_ALLOCATION_SCOPE_COMMAND", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_COMMAND},
-        {"VK_SYSTEM_ALLOCATION_SCOPE_OBJECT", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_OBJECT},
-        {"VK_SYSTEM_ALLOCATION_SCOPE_CACHE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_CACHE},
-        {"VK_SYSTEM_ALLOCATION_SCOPE_DEVICE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_DEVICE},
-        {"VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE},
-    };
+    static const scvkJsonName table[] = {{"VK_SYSTEM_ALLOCATION_SCOPE_COMMAND", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_COMMAND},
+                                         {"VK_SYSTEM_ALLOCATION_SCOPE_OBJECT", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_OBJECT},
+                                         {"VK_SYSTEM_ALLOCATION_SCOPE_CACHE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_CACHE},
+                                         {"VK_SYSTEM_ALLOCATION_SCOPE_DEVICE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_DEVICE},
+                                         {"VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE", (uint64_t)VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE}};
 
     return (VkSystemAllocationScope)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkTessellationDomainOrigin scvkParseJsonTessellationDomainOrigin(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT", (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT},
-        {"VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT", (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT},
-    };
+    static const scvkJsonName table[] = {{"VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT", (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT},
+                                         {"VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT", (uint64_t)VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT}};
 
     return (VkTessellationDomainOrigin)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkTimeDomainKHR scvkParseJsonTimeDomain(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_TIME_DOMAIN_DEVICE_KHR", (uint64_t)VK_TIME_DOMAIN_DEVICE_KHR},
-        {"VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR", (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR},
-        {"VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR", (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR},
-        {"VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR", (uint64_t)VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_TIME_DOMAIN_DEVICE_KHR", (uint64_t)VK_TIME_DOMAIN_DEVICE_KHR},
+                                         {"VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR", (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_KHR},
+                                         {"VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR", (uint64_t)VK_TIME_DOMAIN_CLOCK_MONOTONIC_RAW_KHR},
+                                         {"VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR", (uint64_t)VK_TIME_DOMAIN_QUERY_PERFORMANCE_COUNTER_KHR}};
 
     return (VkTimeDomainKHR)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkValidationFeatureDisableEXT scvkParseJsonValidationFeatureDisable(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_VALIDATION_FEATURE_DISABLE_ALL_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_ALL_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT},
-        {"VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_VALIDATION_FEATURE_DISABLE_ALL_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_ALL_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADERS_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_THREAD_SAFETY_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_API_PARAMETERS_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_OBJECT_LIFETIMES_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_CORE_CHECKS_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_UNIQUE_HANDLES_EXT},
+                                         {"VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT", (uint64_t)VK_VALIDATION_FEATURE_DISABLE_SHADER_VALIDATION_CACHE_EXT}};
 
     return (VkValidationFeatureDisableEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkValidationFeatureEnableEXT scvkParseJsonValidationFeatureEnable(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT},
-        {"VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT},
-        {"VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT},
-        {"VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT},
-        {"VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT},
+                                         {"VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT},
+                                         {"VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT},
+                                         {"VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT},
+                                         {"VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT", (uint64_t)VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT}};
 
     return (VkValidationFeatureEnableEXT)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkVendorId scvkParseJsonVendorId(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_VENDOR_ID_KHRONOS", (uint64_t)VK_VENDOR_ID_KHRONOS},
-        {"VK_VENDOR_ID_VIV", (uint64_t)VK_VENDOR_ID_VIV},
-        {"VK_VENDOR_ID_VSI", (uint64_t)VK_VENDOR_ID_VSI},
-        {"VK_VENDOR_ID_KAZAN", (uint64_t)VK_VENDOR_ID_KAZAN},
-        {"VK_VENDOR_ID_CODEPLAY", (uint64_t)VK_VENDOR_ID_CODEPLAY},
-        {"VK_VENDOR_ID_MESA", (uint64_t)VK_VENDOR_ID_MESA},
-        {"VK_VENDOR_ID_POCL", (uint64_t)VK_VENDOR_ID_POCL},
-        {"VK_VENDOR_ID_MOBILEYE", (uint64_t)VK_VENDOR_ID_MOBILEYE},
-        {"VK_VENDOR_ID_APE", (uint64_t)VK_VENDOR_ID_APE},
-    };
+    static const scvkJsonName table[] = {{"VK_VENDOR_ID_KHRONOS", (uint64_t)VK_VENDOR_ID_KHRONOS},
+                                         {"VK_VENDOR_ID_VIV", (uint64_t)VK_VENDOR_ID_VIV},
+                                         {"VK_VENDOR_ID_VSI", (uint64_t)VK_VENDOR_ID_VSI},
+                                         {"VK_VENDOR_ID_KAZAN", (uint64_t)VK_VENDOR_ID_KAZAN},
+                                         {"VK_VENDOR_ID_CODEPLAY", (uint64_t)VK_VENDOR_ID_CODEPLAY},
+                                         {"VK_VENDOR_ID_MESA", (uint64_t)VK_VENDOR_ID_MESA},
+                                         {"VK_VENDOR_ID_POCL", (uint64_t)VK_VENDOR_ID_POCL},
+                                         {"VK_VENDOR_ID_MOBILEYE", (uint64_t)VK_VENDOR_ID_MOBILEYE},
+                                         {"VK_VENDOR_ID_APE", (uint64_t)VK_VENDOR_ID_APE}};
 
     return (VkVendorId)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkVertexInputRate scvkParseJsonVertexInputRate(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_VERTEX_INPUT_RATE_VERTEX", (uint64_t)VK_VERTEX_INPUT_RATE_VERTEX},
-        {"VK_VERTEX_INPUT_RATE_INSTANCE", (uint64_t)VK_VERTEX_INPUT_RATE_INSTANCE},
-    };
+    static const scvkJsonName table[] = {{"VK_VERTEX_INPUT_RATE_VERTEX", (uint64_t)VK_VERTEX_INPUT_RATE_VERTEX}, {"VK_VERTEX_INPUT_RATE_INSTANCE", (uint64_t)VK_VERTEX_INPUT_RATE_INSTANCE}};
 
     return (VkVertexInputRate)scvkParseJsonEnumerant(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkAccessFlags scvkParseJsonAccessFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_ACCESS_INDIRECT_COMMAND_READ_BIT", (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT},
-        {"VK_ACCESS_INDEX_READ_BIT", (uint64_t)VK_ACCESS_INDEX_READ_BIT},
-        {"VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT", (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT},
-        {"VK_ACCESS_UNIFORM_READ_BIT", (uint64_t)VK_ACCESS_UNIFORM_READ_BIT},
-        {"VK_ACCESS_INPUT_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT},
-        {"VK_ACCESS_SHADER_READ_BIT", (uint64_t)VK_ACCESS_SHADER_READ_BIT},
-        {"VK_ACCESS_SHADER_WRITE_BIT", (uint64_t)VK_ACCESS_SHADER_WRITE_BIT},
-        {"VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT},
-        {"VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT},
-        {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT},
-        {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT},
-        {"VK_ACCESS_TRANSFER_READ_BIT", (uint64_t)VK_ACCESS_TRANSFER_READ_BIT},
-        {"VK_ACCESS_TRANSFER_WRITE_BIT", (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT},
-        {"VK_ACCESS_HOST_READ_BIT", (uint64_t)VK_ACCESS_HOST_READ_BIT},
-        {"VK_ACCESS_HOST_WRITE_BIT", (uint64_t)VK_ACCESS_HOST_WRITE_BIT},
-        {"VK_ACCESS_MEMORY_READ_BIT", (uint64_t)VK_ACCESS_MEMORY_READ_BIT},
-        {"VK_ACCESS_MEMORY_WRITE_BIT", (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT},
-        {"VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT},
-        {"VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR", (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR},
-        {"VK_ACCESS_NONE_KHR", (uint64_t)VK_ACCESS_NONE_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_ACCESS_INDIRECT_COMMAND_READ_BIT", (uint64_t)VK_ACCESS_INDIRECT_COMMAND_READ_BIT},
+                                         {"VK_ACCESS_INDEX_READ_BIT", (uint64_t)VK_ACCESS_INDEX_READ_BIT},
+                                         {"VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT", (uint64_t)VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT},
+                                         {"VK_ACCESS_UNIFORM_READ_BIT", (uint64_t)VK_ACCESS_UNIFORM_READ_BIT},
+                                         {"VK_ACCESS_INPUT_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_INPUT_ATTACHMENT_READ_BIT},
+                                         {"VK_ACCESS_SHADER_READ_BIT", (uint64_t)VK_ACCESS_SHADER_READ_BIT},
+                                         {"VK_ACCESS_SHADER_WRITE_BIT", (uint64_t)VK_ACCESS_SHADER_WRITE_BIT},
+                                         {"VK_ACCESS_COLOR_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_BIT},
+                                         {"VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT},
+                                         {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT},
+                                         {"VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT", (uint64_t)VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT},
+                                         {"VK_ACCESS_TRANSFER_READ_BIT", (uint64_t)VK_ACCESS_TRANSFER_READ_BIT},
+                                         {"VK_ACCESS_TRANSFER_WRITE_BIT", (uint64_t)VK_ACCESS_TRANSFER_WRITE_BIT},
+                                         {"VK_ACCESS_HOST_READ_BIT", (uint64_t)VK_ACCESS_HOST_READ_BIT},
+                                         {"VK_ACCESS_HOST_WRITE_BIT", (uint64_t)VK_ACCESS_HOST_WRITE_BIT},
+                                         {"VK_ACCESS_MEMORY_READ_BIT", (uint64_t)VK_ACCESS_MEMORY_READ_BIT},
+                                         {"VK_ACCESS_MEMORY_WRITE_BIT", (uint64_t)VK_ACCESS_MEMORY_WRITE_BIT},
+                                         {"VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT", (uint64_t)VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT},
+                                         {"VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR", (uint64_t)VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR},
+                                         {"VK_ACCESS_NONE_KHR", (uint64_t)VK_ACCESS_NONE_KHR}};
 
     return (VkAccessFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2349,38 +2089,32 @@ VkAcquireProfilingLockFlagsKHR scvkParseJsonAcquireProfilingLockFlags(const scvk
 }
 VkAttachmentDescriptionFlags scvkParseJsonAttachmentDescriptionFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT", (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT", (uint64_t)VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT}};
 
     return (VkAttachmentDescriptionFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBufferCreateFlags scvkParseJsonBufferCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BUFFER_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT},
-        {"VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT},
-        {"VK_BUFFER_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_ALIASED_BIT},
-        {"VK_BUFFER_CREATE_PROTECTED_BIT", (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT},
-        {"VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_BUFFER_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_BINDING_BIT},
+                                         {"VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT},
+                                         {"VK_BUFFER_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_BUFFER_CREATE_SPARSE_ALIASED_BIT},
+                                         {"VK_BUFFER_CREATE_PROTECTED_BIT", (uint64_t)VK_BUFFER_CREATE_PROTECTED_BIT},
+                                         {"VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_BUFFER_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT}};
 
     return (VkBufferCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkBufferUsageFlags scvkParseJsonBufferUsageFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_BUFFER_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT},
-        {"VK_BUFFER_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT},
-        {"VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_STORAGE_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_INDEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDEX_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_VERTEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_VERTEX_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT},
-        {"VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT", (uint64_t)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_BUFFER_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_SRC_BIT},
+                                         {"VK_BUFFER_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_BUFFER_USAGE_TRANSFER_DST_BIT},
+                                         {"VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_STORAGE_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_INDEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDEX_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_VERTEX_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_VERTEX_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT", (uint64_t)VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT},
+                                         {"VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT", (uint64_t)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT}};
 
     return (VkBufferUsageFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2390,40 +2124,32 @@ VkBufferViewCreateFlags scvkParseJsonBufferViewCreateFlags(const scvkJsonValue* 
 }
 VkColorComponentFlags scvkParseJsonColorComponentFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COLOR_COMPONENT_R_BIT", (uint64_t)VK_COLOR_COMPONENT_R_BIT},
-        {"VK_COLOR_COMPONENT_G_BIT", (uint64_t)VK_COLOR_COMPONENT_G_BIT},
-        {"VK_COLOR_COMPONENT_B_BIT", (uint64_t)VK_COLOR_COMPONENT_B_BIT},
-        {"VK_COLOR_COMPONENT_A_BIT", (uint64_t)VK_COLOR_COMPONENT_A_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COLOR_COMPONENT_R_BIT", (uint64_t)VK_COLOR_COMPONENT_R_BIT},
+                                         {"VK_COLOR_COMPONENT_G_BIT", (uint64_t)VK_COLOR_COMPONENT_G_BIT},
+                                         {"VK_COLOR_COMPONENT_B_BIT", (uint64_t)VK_COLOR_COMPONENT_B_BIT},
+                                         {"VK_COLOR_COMPONENT_A_BIT", (uint64_t)VK_COLOR_COMPONENT_A_BIT}};
 
     return (VkColorComponentFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandBufferResetFlags scvkParseJsonCommandBufferResetFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT", (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT", (uint64_t)VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT}};
 
     return (VkCommandBufferResetFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandBufferUsageFlags scvkParseJsonCommandBufferUsageFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT},
-        {"VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT},
-        {"VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT},
+                                         {"VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT},
+                                         {"VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT", (uint64_t)VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT}};
 
     return (VkCommandBufferUsageFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCommandPoolCreateFlags scvkParseJsonCommandPoolCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMMAND_POOL_CREATE_TRANSIENT_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT},
-        {"VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT},
-        {"VK_COMMAND_POOL_CREATE_PROTECTED_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_COMMAND_POOL_CREATE_TRANSIENT_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT},
+                                         {"VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT},
+                                         {"VK_COMMAND_POOL_CREATE_PROTECTED_BIT", (uint64_t)VK_COMMAND_POOL_CREATE_PROTECTED_BIT}};
 
     return (VkCommandPoolCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2433,44 +2159,36 @@ VkCommandPoolResetFlags scvkParseJsonCommandPoolResetFlags(const scvkJsonValue* 
 }
 VkCompositeAlphaFlagsKHR scvkParseJsonCompositeAlphaFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR},
-        {"VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR},
-        {"VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR},
-        {"VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR},
+                                         {"VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR},
+                                         {"VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR},
+                                         {"VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR", (uint64_t)VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR}};
 
     return (VkCompositeAlphaFlagsKHR)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkCullModeFlags scvkParseJsonCullModeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_CULL_MODE_NONE", (uint64_t)VK_CULL_MODE_NONE},
-        {"VK_CULL_MODE_FRONT_BIT", (uint64_t)VK_CULL_MODE_FRONT_BIT},
-        {"VK_CULL_MODE_BACK_BIT", (uint64_t)VK_CULL_MODE_BACK_BIT},
-        {"VK_CULL_MODE_FRONT_AND_BACK", (uint64_t)VK_CULL_MODE_FRONT_AND_BACK},
-    };
+    static const scvkJsonName table[] = {{"VK_CULL_MODE_NONE", (uint64_t)VK_CULL_MODE_NONE},
+                                         {"VK_CULL_MODE_FRONT_BIT", (uint64_t)VK_CULL_MODE_FRONT_BIT},
+                                         {"VK_CULL_MODE_BACK_BIT", (uint64_t)VK_CULL_MODE_BACK_BIT},
+                                         {"VK_CULL_MODE_FRONT_AND_BACK", (uint64_t)VK_CULL_MODE_FRONT_AND_BACK}};
 
     return (VkCullModeFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDebugUtilsMessageSeverityFlagsEXT scvkParseJsonDebugUtilsMessageSeverityFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT}};
 
     return (VkDebugUtilsMessageSeverityFlagsEXT)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDebugUtilsMessageTypeFlagsEXT scvkParseJsonDebugUtilsMessageTypeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT},
-        {"VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT},
+                                         {"VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT", (uint64_t)VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT}};
 
     return (VkDebugUtilsMessageTypeFlagsEXT)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2484,31 +2202,25 @@ VkDebugUtilsMessengerCreateFlagsEXT scvkParseJsonDebugUtilsMessengerCreateFlags(
 }
 VkDependencyFlags scvkParseJsonDependencyFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEPENDENCY_BY_REGION_BIT", (uint64_t)VK_DEPENDENCY_BY_REGION_BIT},
-        {"VK_DEPENDENCY_DEVICE_GROUP_BIT", (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT},
-        {"VK_DEPENDENCY_VIEW_LOCAL_BIT", (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEPENDENCY_BY_REGION_BIT", (uint64_t)VK_DEPENDENCY_BY_REGION_BIT},
+                                         {"VK_DEPENDENCY_DEVICE_GROUP_BIT", (uint64_t)VK_DEPENDENCY_DEVICE_GROUP_BIT},
+                                         {"VK_DEPENDENCY_VIEW_LOCAL_BIT", (uint64_t)VK_DEPENDENCY_VIEW_LOCAL_BIT}};
 
     return (VkDependencyFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDescriptorBindingFlags scvkParseJsonDescriptorBindingFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT},
-        {"VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT},
-        {"VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT},
-        {"VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT},
+                                         {"VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT},
+                                         {"VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT},
+                                         {"VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT", (uint64_t)VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT}};
 
     return (VkDescriptorBindingFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDescriptorPoolCreateFlags scvkParseJsonDescriptorPoolCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
-        {"VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT},
+                                         {"VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT", (uint64_t)VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT}};
 
     return (VkDescriptorPoolCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2518,9 +2230,7 @@ VkDescriptorPoolResetFlags scvkParseJsonDescriptorPoolResetFlags(const scvkJsonV
 }
 VkDescriptorSetLayoutCreateFlags scvkParseJsonDescriptorSetLayoutCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT", (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT", (uint64_t)VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT}};
 
     return (VkDescriptorSetLayoutCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2530,20 +2240,16 @@ VkDeviceCreateFlags scvkParseJsonDeviceCreateFlags(const scvkJsonValue* pValue)
 }
 VkDeviceGroupPresentModeFlagsKHR scvkParseJsonDeviceGroupPresentModeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR},
-        {"VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR},
-        {"VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR},
-        {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR},
+                                         {"VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR},
+                                         {"VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR},
+                                         {"VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR", (uint64_t)VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR}};
 
     return (VkDeviceGroupPresentModeFlagsKHR)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkDeviceQueueCreateFlags scvkParseJsonDeviceQueueCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT", (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT", (uint64_t)VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT}};
 
     return (VkDeviceQueueCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2553,12 +2259,10 @@ VkDisplayModeCreateFlagsKHR scvkParseJsonDisplayModeCreateFlags(const scvkJsonVa
 }
 VkDisplayPlaneAlphaFlagsKHR scvkParseJsonDisplayPlaneAlphaFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR},
-        {"VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR},
-        {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR},
-        {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR},
+                                         {"VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR},
+                                         {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR},
+                                         {"VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR", (uint64_t)VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR}};
 
     return (VkDisplayPlaneAlphaFlagsKHR)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2568,94 +2272,76 @@ VkDisplaySurfaceCreateFlagsKHR scvkParseJsonDisplaySurfaceCreateFlags(const scvk
 }
 VkEventCreateFlags scvkParseJsonEventCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR", (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR", (uint64_t)VK_EVENT_CREATE_DEVICE_ONLY_BIT_KHR}};
 
     return (VkEventCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalFenceFeatureFlags scvkParseJsonExternalFenceFeatureFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT},
-        {"VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT},
+                                         {"VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT}};
 
     return (VkExternalFenceFeatureFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalFenceHandleTypeFlags scvkParseJsonExternalFenceHandleTypeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT},
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
-        {"VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT},
+                                         {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
+                                         {"VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
+                                         {"VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT}};
 
     return (VkExternalFenceHandleTypeFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalMemoryFeatureFlags scvkParseJsonExternalMemoryFeatureFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT},
-        {"VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT},
-        {"VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT},
+                                         {"VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT},
+                                         {"VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT}};
 
     return (VkExternalMemoryFeatureFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalMemoryHandleTypeFlags scvkParseJsonExternalMemoryHandleTypeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT},
-        {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT},
+                                         {"VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT", (uint64_t)VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT}};
 
     return (VkExternalMemoryHandleTypeFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalSemaphoreFeatureFlags scvkParseJsonExternalSemaphoreFeatureFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT}};
 
     return (VkExternalSemaphoreFeatureFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkExternalSemaphoreHandleTypeFlags scvkParseJsonExternalSemaphoreHandleTypeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT},
-        {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT},
+                                         {"VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT", (uint64_t)VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT}};
 
     return (VkExternalSemaphoreHandleTypeFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFenceCreateFlags scvkParseJsonFenceCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FENCE_CREATE_SIGNALED_BIT", (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_FENCE_CREATE_SIGNALED_BIT", (uint64_t)VK_FENCE_CREATE_SIGNALED_BIT}};
 
     return (VkFenceCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFenceImportFlags scvkParseJsonFenceImportFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FENCE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_FENCE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_FENCE_IMPORT_TEMPORARY_BIT}};
 
     return (VkFenceImportFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2687,16 +2373,13 @@ VkFormatFeatureFlags scvkParseJsonFormatFeatureFlags(const scvkJsonValue* pValue
         {"VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT", (uint64_t)VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT},
         {"VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT", (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT},
         {"VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT", (uint64_t)VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT},
-        {"VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-    };
+        {"VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_FORMAT_FEATURE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR}};
 
     return (VkFormatFeatureFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkFramebufferCreateFlags scvkParseJsonFramebufferCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT", (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT", (uint64_t)VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT}};
 
     return (VkFramebufferCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2706,55 +2389,49 @@ VkHeadlessSurfaceCreateFlagsEXT scvkParseJsonHeadlessSurfaceCreateFlags(const sc
 }
 VkImageAspectFlags scvkParseJsonImageAspectFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_ASPECT_COLOR_BIT", (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT},
-        {"VK_IMAGE_ASPECT_DEPTH_BIT", (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT},
-        {"VK_IMAGE_ASPECT_STENCIL_BIT", (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT},
-        {"VK_IMAGE_ASPECT_METADATA_BIT", (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT},
-        {"VK_IMAGE_ASPECT_PLANE_0_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT},
-        {"VK_IMAGE_ASPECT_PLANE_1_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT},
-        {"VK_IMAGE_ASPECT_PLANE_2_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT},
-        {"VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_ASPECT_COLOR_BIT", (uint64_t)VK_IMAGE_ASPECT_COLOR_BIT},
+                                         {"VK_IMAGE_ASPECT_DEPTH_BIT", (uint64_t)VK_IMAGE_ASPECT_DEPTH_BIT},
+                                         {"VK_IMAGE_ASPECT_STENCIL_BIT", (uint64_t)VK_IMAGE_ASPECT_STENCIL_BIT},
+                                         {"VK_IMAGE_ASPECT_METADATA_BIT", (uint64_t)VK_IMAGE_ASPECT_METADATA_BIT},
+                                         {"VK_IMAGE_ASPECT_PLANE_0_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_0_BIT},
+                                         {"VK_IMAGE_ASPECT_PLANE_1_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_1_BIT},
+                                         {"VK_IMAGE_ASPECT_PLANE_2_BIT", (uint64_t)VK_IMAGE_ASPECT_PLANE_2_BIT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT},
+                                         {"VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT", (uint64_t)VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT}};
 
     return (VkImageAspectFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageCreateFlags scvkParseJsonImageCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT},
-        {"VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT},
-        {"VK_IMAGE_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_ALIASED_BIT},
-        {"VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT", (uint64_t)VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT},
-        {"VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT},
-        {"VK_IMAGE_CREATE_ALIAS_BIT", (uint64_t)VK_IMAGE_CREATE_ALIAS_BIT},
-        {"VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT", (uint64_t)VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT},
-        {"VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT},
-        {"VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT},
-        {"VK_IMAGE_CREATE_EXTENDED_USAGE_BIT", (uint64_t)VK_IMAGE_CREATE_EXTENDED_USAGE_BIT},
-        {"VK_IMAGE_CREATE_PROTECTED_BIT", (uint64_t)VK_IMAGE_CREATE_PROTECTED_BIT},
-        {"VK_IMAGE_CREATE_DISJOINT_BIT", (uint64_t)VK_IMAGE_CREATE_DISJOINT_BIT},
-        {"VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT", (uint64_t)VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_CREATE_SPARSE_BINDING_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_BINDING_BIT},
+                                         {"VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT},
+                                         {"VK_IMAGE_CREATE_SPARSE_ALIASED_BIT", (uint64_t)VK_IMAGE_CREATE_SPARSE_ALIASED_BIT},
+                                         {"VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT", (uint64_t)VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT},
+                                         {"VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT},
+                                         {"VK_IMAGE_CREATE_ALIAS_BIT", (uint64_t)VK_IMAGE_CREATE_ALIAS_BIT},
+                                         {"VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT", (uint64_t)VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT},
+                                         {"VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT},
+                                         {"VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT", (uint64_t)VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT},
+                                         {"VK_IMAGE_CREATE_EXTENDED_USAGE_BIT", (uint64_t)VK_IMAGE_CREATE_EXTENDED_USAGE_BIT},
+                                         {"VK_IMAGE_CREATE_PROTECTED_BIT", (uint64_t)VK_IMAGE_CREATE_PROTECTED_BIT},
+                                         {"VK_IMAGE_CREATE_DISJOINT_BIT", (uint64_t)VK_IMAGE_CREATE_DISJOINT_BIT},
+                                         {"VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT", (uint64_t)VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT}};
 
     return (VkImageCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkImageUsageFlags scvkParseJsonImageUsageFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_IMAGE_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT},
-        {"VK_IMAGE_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT},
-        {"VK_IMAGE_USAGE_SAMPLED_BIT", (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT},
-        {"VK_IMAGE_USAGE_STORAGE_BIT", (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT},
-        {"VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT},
-        {"VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_IMAGE_USAGE_TRANSFER_SRC_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_SRC_BIT},
+                                         {"VK_IMAGE_USAGE_TRANSFER_DST_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSFER_DST_BIT},
+                                         {"VK_IMAGE_USAGE_SAMPLED_BIT", (uint64_t)VK_IMAGE_USAGE_SAMPLED_BIT},
+                                         {"VK_IMAGE_USAGE_STORAGE_BIT", (uint64_t)VK_IMAGE_USAGE_STORAGE_BIT},
+                                         {"VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT", (uint64_t)VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT},
+                                         {"VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR}};
 
     return (VkImageUsageFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2768,21 +2445,17 @@ VkInstanceCreateFlags scvkParseJsonInstanceCreateFlags(const scvkJsonValue* pVal
 }
 VkMemoryAllocateFlags scvkParseJsonMemoryAllocateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT},
-        {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT},
-        {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT},
+                                         {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT},
+                                         {"VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT", (uint64_t)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT}};
 
     return (VkMemoryAllocateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkMemoryHeapFlags scvkParseJsonMemoryHeapFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MEMORY_HEAP_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT},
-        {"VK_MEMORY_HEAP_MULTI_INSTANCE_BIT", (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT},
-        {"VK_MEMORY_HEAP_SEU_SAFE_BIT", (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_MEMORY_HEAP_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_HEAP_DEVICE_LOCAL_BIT},
+                                         {"VK_MEMORY_HEAP_MULTI_INSTANCE_BIT", (uint64_t)VK_MEMORY_HEAP_MULTI_INSTANCE_BIT},
+                                         {"VK_MEMORY_HEAP_SEU_SAFE_BIT", (uint64_t)VK_MEMORY_HEAP_SEU_SAFE_BIT}};
 
     return (VkMemoryHeapFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2792,45 +2465,37 @@ VkMemoryMapFlags scvkParseJsonMemoryMapFlags(const scvkJsonValue* pValue)
 }
 VkMemoryPropertyFlags scvkParseJsonMemoryPropertyFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT},
-        {"VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
-        {"VK_MEMORY_PROPERTY_HOST_COHERENT_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
-        {"VK_MEMORY_PROPERTY_HOST_CACHED_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_CACHED_BIT},
-        {"VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT", (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT},
-        {"VK_MEMORY_PROPERTY_PROTECTED_BIT", (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT", (uint64_t)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT},
+                                         {"VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT},
+                                         {"VK_MEMORY_PROPERTY_HOST_COHERENT_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT},
+                                         {"VK_MEMORY_PROPERTY_HOST_CACHED_BIT", (uint64_t)VK_MEMORY_PROPERTY_HOST_CACHED_BIT},
+                                         {"VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT", (uint64_t)VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT},
+                                         {"VK_MEMORY_PROPERTY_PROTECTED_BIT", (uint64_t)VK_MEMORY_PROPERTY_PROTECTED_BIT}};
 
     return (VkMemoryPropertyFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPeerMemoryFeatureFlags scvkParseJsonPeerMemoryFeatureFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT},
-        {"VK_PEER_MEMORY_FEATURE_COPY_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT},
-        {"VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT},
-        {"VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_SRC_BIT},
+                                         {"VK_PEER_MEMORY_FEATURE_COPY_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_COPY_DST_BIT},
+                                         {"VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_SRC_BIT},
+                                         {"VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT", (uint64_t)VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT}};
 
     return (VkPeerMemoryFeatureFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPerformanceCounterDescriptionFlagsKHR scvkParseJsonPerformanceCounterDescriptionFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR},
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR},
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR},
-        {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_BIT_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_BIT_KHR},
+                                         {"VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR", (uint64_t)VK_PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR}};
 
     return (VkPerformanceCounterDescriptionFlagsKHR)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineCacheCreateFlags scvkParseJsonPipelineCacheCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT},
-        {"VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_READ_ONLY_BIT},
+                                         {"VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT", (uint64_t)VK_PIPELINE_CACHE_CREATE_USE_APPLICATION_STORAGE_BIT}};
 
     return (VkPipelineCacheCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2840,12 +2505,10 @@ VkPipelineColorBlendStateCreateFlags scvkParseJsonPipelineColorBlendStateCreateF
 }
 VkPipelineCreateFlags scvkParseJsonPipelineCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT", (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT},
-        {"VK_PIPELINE_CREATE_DISPATCH_BASE_BIT", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT},
-        {"VK_PIPELINE_CREATE_DISPATCH_BASE", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE},
-        {"VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT", (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT", (uint64_t)VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT},
+                                         {"VK_PIPELINE_CREATE_DISPATCH_BASE_BIT", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE_BIT},
+                                         {"VK_PIPELINE_CREATE_DISPATCH_BASE", (uint64_t)VK_PIPELINE_CREATE_DISPATCH_BASE},
+                                         {"VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT", (uint64_t)VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT}};
 
     return (VkPipelineCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2887,36 +2550,32 @@ VkPipelineRasterizationStateCreateFlags scvkParseJsonPipelineRasterizationStateC
 }
 VkPipelineShaderStageCreateFlags scvkParseJsonPipelineShaderStageCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT},
-        {"VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT},
+                                         {"VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT", (uint64_t)VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT}};
 
     return (VkPipelineShaderStageCreateFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkPipelineStageFlags scvkParseJsonPipelineStageFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
-        {"VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT", (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT},
-        {"VK_PIPELINE_STAGE_VERTEX_INPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT},
-        {"VK_PIPELINE_STAGE_VERTEX_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
-        {"VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT},
-        {"VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
-        {"VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT},
-        {"VK_PIPELINE_STAGE_TRANSFER_BIT", (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT},
-        {"VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT},
-        {"VK_PIPELINE_STAGE_HOST_BIT", (uint64_t)VK_PIPELINE_STAGE_HOST_BIT},
-        {"VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT},
-        {"VK_PIPELINE_STAGE_ALL_COMMANDS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT},
-        {"VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-        {"VK_PIPELINE_STAGE_NONE_KHR", (uint64_t)VK_PIPELINE_STAGE_NONE_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
+                                         {"VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT", (uint64_t)VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT},
+                                         {"VK_PIPELINE_STAGE_VERTEX_INPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_INPUT_BIT},
+                                         {"VK_PIPELINE_STAGE_VERTEX_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_VERTEX_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
+                                         {"VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT", (uint64_t)VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT},
+                                         {"VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT", (uint64_t)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
+                                         {"VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT", (uint64_t)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT},
+                                         {"VK_PIPELINE_STAGE_TRANSFER_BIT", (uint64_t)VK_PIPELINE_STAGE_TRANSFER_BIT},
+                                         {"VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT", (uint64_t)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT},
+                                         {"VK_PIPELINE_STAGE_HOST_BIT", (uint64_t)VK_PIPELINE_STAGE_HOST_BIT},
+                                         {"VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT},
+                                         {"VK_PIPELINE_STAGE_ALL_COMMANDS_BIT", (uint64_t)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT},
+                                         {"VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR", (uint64_t)VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
+                                         {"VK_PIPELINE_STAGE_NONE_KHR", (uint64_t)VK_PIPELINE_STAGE_NONE_KHR}};
 
     return (VkPipelineStageFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2934,9 +2593,7 @@ VkPipelineViewportStateCreateFlags scvkParseJsonPipelineViewportStateCreateFlags
 }
 VkQueryControlFlags scvkParseJsonQueryControlFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUERY_CONTROL_PRECISE_BIT", (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_QUERY_CONTROL_PRECISE_BIT", (uint64_t)VK_QUERY_CONTROL_PRECISE_BIT}};
 
     return (VkQueryControlFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2953,8 +2610,7 @@ VkQueryPipelineStatisticFlags scvkParseJsonQueryPipelineStatisticFlags(const scv
         {"VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT},
         {"VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT},
         {"VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT},
-        {"VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT},
-    };
+        {"VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT", (uint64_t)VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT}};
 
     return (VkQueryPipelineStatisticFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2964,23 +2620,19 @@ VkQueryPoolCreateFlags scvkParseJsonQueryPoolCreateFlags(const scvkJsonValue* pV
 }
 VkQueryResultFlags scvkParseJsonQueryResultFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUERY_RESULT_64_BIT", (uint64_t)VK_QUERY_RESULT_64_BIT},
-        {"VK_QUERY_RESULT_WAIT_BIT", (uint64_t)VK_QUERY_RESULT_WAIT_BIT},
-        {"VK_QUERY_RESULT_WITH_AVAILABILITY_BIT", (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT},
-        {"VK_QUERY_RESULT_PARTIAL_BIT", (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_QUERY_RESULT_64_BIT", (uint64_t)VK_QUERY_RESULT_64_BIT},
+                                         {"VK_QUERY_RESULT_WAIT_BIT", (uint64_t)VK_QUERY_RESULT_WAIT_BIT},
+                                         {"VK_QUERY_RESULT_WITH_AVAILABILITY_BIT", (uint64_t)VK_QUERY_RESULT_WITH_AVAILABILITY_BIT},
+                                         {"VK_QUERY_RESULT_PARTIAL_BIT", (uint64_t)VK_QUERY_RESULT_PARTIAL_BIT}};
 
     return (VkQueryResultFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkQueueFlags scvkParseJsonQueueFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_QUEUE_GRAPHICS_BIT", (uint64_t)VK_QUEUE_GRAPHICS_BIT},
-        {"VK_QUEUE_COMPUTE_BIT", (uint64_t)VK_QUEUE_COMPUTE_BIT},
-        {"VK_QUEUE_TRANSFER_BIT", (uint64_t)VK_QUEUE_TRANSFER_BIT},
-        {"VK_QUEUE_PROTECTED_BIT", (uint64_t)VK_QUEUE_PROTECTED_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_QUEUE_GRAPHICS_BIT", (uint64_t)VK_QUEUE_GRAPHICS_BIT},
+                                         {"VK_QUEUE_COMPUTE_BIT", (uint64_t)VK_QUEUE_COMPUTE_BIT},
+                                         {"VK_QUEUE_TRANSFER_BIT", (uint64_t)VK_QUEUE_TRANSFER_BIT},
+                                         {"VK_QUEUE_PROTECTED_BIT", (uint64_t)VK_QUEUE_PROTECTED_BIT}};
 
     return (VkQueueFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -2994,27 +2646,23 @@ VkRenderPassCreateFlags scvkParseJsonRenderPassCreateFlags(const scvkJsonValue* 
 }
 VkResolveModeFlags scvkParseJsonResolveModeFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_RESOLVE_MODE_NONE", (uint64_t)VK_RESOLVE_MODE_NONE},
-        {"VK_RESOLVE_MODE_SAMPLE_ZERO_BIT", (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT},
-        {"VK_RESOLVE_MODE_AVERAGE_BIT", (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT},
-        {"VK_RESOLVE_MODE_MIN_BIT", (uint64_t)VK_RESOLVE_MODE_MIN_BIT},
-        {"VK_RESOLVE_MODE_MAX_BIT", (uint64_t)VK_RESOLVE_MODE_MAX_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_RESOLVE_MODE_NONE", (uint64_t)VK_RESOLVE_MODE_NONE},
+                                         {"VK_RESOLVE_MODE_SAMPLE_ZERO_BIT", (uint64_t)VK_RESOLVE_MODE_SAMPLE_ZERO_BIT},
+                                         {"VK_RESOLVE_MODE_AVERAGE_BIT", (uint64_t)VK_RESOLVE_MODE_AVERAGE_BIT},
+                                         {"VK_RESOLVE_MODE_MIN_BIT", (uint64_t)VK_RESOLVE_MODE_MIN_BIT},
+                                         {"VK_RESOLVE_MODE_MAX_BIT", (uint64_t)VK_RESOLVE_MODE_MAX_BIT}};
 
     return (VkResolveModeFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSampleCountFlags scvkParseJsonSampleCountFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SAMPLE_COUNT_1_BIT", (uint64_t)VK_SAMPLE_COUNT_1_BIT},
-        {"VK_SAMPLE_COUNT_2_BIT", (uint64_t)VK_SAMPLE_COUNT_2_BIT},
-        {"VK_SAMPLE_COUNT_4_BIT", (uint64_t)VK_SAMPLE_COUNT_4_BIT},
-        {"VK_SAMPLE_COUNT_8_BIT", (uint64_t)VK_SAMPLE_COUNT_8_BIT},
-        {"VK_SAMPLE_COUNT_16_BIT", (uint64_t)VK_SAMPLE_COUNT_16_BIT},
-        {"VK_SAMPLE_COUNT_32_BIT", (uint64_t)VK_SAMPLE_COUNT_32_BIT},
-        {"VK_SAMPLE_COUNT_64_BIT", (uint64_t)VK_SAMPLE_COUNT_64_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SAMPLE_COUNT_1_BIT", (uint64_t)VK_SAMPLE_COUNT_1_BIT},
+                                         {"VK_SAMPLE_COUNT_2_BIT", (uint64_t)VK_SAMPLE_COUNT_2_BIT},
+                                         {"VK_SAMPLE_COUNT_4_BIT", (uint64_t)VK_SAMPLE_COUNT_4_BIT},
+                                         {"VK_SAMPLE_COUNT_8_BIT", (uint64_t)VK_SAMPLE_COUNT_8_BIT},
+                                         {"VK_SAMPLE_COUNT_16_BIT", (uint64_t)VK_SAMPLE_COUNT_16_BIT},
+                                         {"VK_SAMPLE_COUNT_32_BIT", (uint64_t)VK_SAMPLE_COUNT_32_BIT},
+                                         {"VK_SAMPLE_COUNT_64_BIT", (uint64_t)VK_SAMPLE_COUNT_64_BIT}};
 
     return (VkSampleCountFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -3028,57 +2676,47 @@ VkSemaphoreCreateFlags scvkParseJsonSemaphoreCreateFlags(const scvkJsonValue* pV
 }
 VkSemaphoreImportFlags scvkParseJsonSemaphoreImportFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SEMAPHORE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SEMAPHORE_IMPORT_TEMPORARY_BIT", (uint64_t)VK_SEMAPHORE_IMPORT_TEMPORARY_BIT}};
 
     return (VkSemaphoreImportFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSemaphoreWaitFlags scvkParseJsonSemaphoreWaitFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SEMAPHORE_WAIT_ANY_BIT", (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SEMAPHORE_WAIT_ANY_BIT", (uint64_t)VK_SEMAPHORE_WAIT_ANY_BIT}};
 
     return (VkSemaphoreWaitFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkShaderStageFlags scvkParseJsonShaderStageFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SHADER_STAGE_VERTEX_BIT", (uint64_t)VK_SHADER_STAGE_VERTEX_BIT},
-        {"VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
-        {"VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
-        {"VK_SHADER_STAGE_GEOMETRY_BIT", (uint64_t)VK_SHADER_STAGE_GEOMETRY_BIT},
-        {"VK_SHADER_STAGE_FRAGMENT_BIT", (uint64_t)VK_SHADER_STAGE_FRAGMENT_BIT},
-        {"VK_SHADER_STAGE_COMPUTE_BIT", (uint64_t)VK_SHADER_STAGE_COMPUTE_BIT},
-        {"VK_SHADER_STAGE_ALL_GRAPHICS", (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS},
-        {"VK_SHADER_STAGE_ALL", (uint64_t)VK_SHADER_STAGE_ALL},
-    };
+    static const scvkJsonName table[] = {{"VK_SHADER_STAGE_VERTEX_BIT", (uint64_t)VK_SHADER_STAGE_VERTEX_BIT},
+                                         {"VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
+                                         {"VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT", (uint64_t)VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
+                                         {"VK_SHADER_STAGE_GEOMETRY_BIT", (uint64_t)VK_SHADER_STAGE_GEOMETRY_BIT},
+                                         {"VK_SHADER_STAGE_FRAGMENT_BIT", (uint64_t)VK_SHADER_STAGE_FRAGMENT_BIT},
+                                         {"VK_SHADER_STAGE_COMPUTE_BIT", (uint64_t)VK_SHADER_STAGE_COMPUTE_BIT},
+                                         {"VK_SHADER_STAGE_ALL_GRAPHICS", (uint64_t)VK_SHADER_STAGE_ALL_GRAPHICS},
+                                         {"VK_SHADER_STAGE_ALL", (uint64_t)VK_SHADER_STAGE_ALL}};
 
     return (VkShaderStageFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkStencilFaceFlags scvkParseJsonStencilFaceFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_STENCIL_FACE_FRONT_BIT", (uint64_t)VK_STENCIL_FACE_FRONT_BIT},
-        {"VK_STENCIL_FACE_BACK_BIT", (uint64_t)VK_STENCIL_FACE_BACK_BIT},
-        {"VK_STENCIL_FACE_FRONT_AND_BACK", (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK},
-    };
+    static const scvkJsonName table[] = {{"VK_STENCIL_FACE_FRONT_BIT", (uint64_t)VK_STENCIL_FACE_FRONT_BIT},
+                                         {"VK_STENCIL_FACE_BACK_BIT", (uint64_t)VK_STENCIL_FACE_BACK_BIT},
+                                         {"VK_STENCIL_FACE_FRONT_AND_BACK", (uint64_t)VK_STENCIL_FACE_FRONT_AND_BACK}};
 
     return (VkStencilFaceFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSubgroupFeatureFlags scvkParseJsonSubgroupFeatureFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SUBGROUP_FEATURE_BASIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT},
-        {"VK_SUBGROUP_FEATURE_VOTE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT},
-        {"VK_SUBGROUP_FEATURE_ARITHMETIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT},
-        {"VK_SUBGROUP_FEATURE_BALLOT_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT},
-        {"VK_SUBGROUP_FEATURE_SHUFFLE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT},
-        {"VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT},
-        {"VK_SUBGROUP_FEATURE_CLUSTERED_BIT", (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT},
-        {"VK_SUBGROUP_FEATURE_QUAD_BIT", (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT},
-    };
+    static const scvkJsonName table[] = {{"VK_SUBGROUP_FEATURE_BASIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BASIC_BIT},
+                                         {"VK_SUBGROUP_FEATURE_VOTE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_VOTE_BIT},
+                                         {"VK_SUBGROUP_FEATURE_ARITHMETIC_BIT", (uint64_t)VK_SUBGROUP_FEATURE_ARITHMETIC_BIT},
+                                         {"VK_SUBGROUP_FEATURE_BALLOT_BIT", (uint64_t)VK_SUBGROUP_FEATURE_BALLOT_BIT},
+                                         {"VK_SUBGROUP_FEATURE_SHUFFLE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_BIT},
+                                         {"VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT", (uint64_t)VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT},
+                                         {"VK_SUBGROUP_FEATURE_CLUSTERED_BIT", (uint64_t)VK_SUBGROUP_FEATURE_CLUSTERED_BIT},
+                                         {"VK_SUBGROUP_FEATURE_QUAD_BIT", (uint64_t)VK_SUBGROUP_FEATURE_QUAD_BIT}};
 
     return (VkSubgroupFeatureFlags)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
@@ -3088,36 +2726,30 @@ VkSubpassDescriptionFlags scvkParseJsonSubpassDescriptionFlags(const scvkJsonVal
 }
 VkSurfaceCounterFlagsEXT scvkParseJsonSurfaceCounterFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SURFACE_COUNTER_VBLANK_BIT_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT},
-        {"VK_SURFACE_COUNTER_VBLANK_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_EXT},
-    };
+    static const scvkJsonName table[] = {{"VK_SURFACE_COUNTER_VBLANK_BIT_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_BIT_EXT},
+                                         {"VK_SURFACE_COUNTER_VBLANK_EXT", (uint64_t)VK_SURFACE_COUNTER_VBLANK_EXT}};
 
     return (VkSurfaceCounterFlagsEXT)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSurfaceTransformFlagsKHR scvkParseJsonSurfaceTransformFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR},
-        {"VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR},
+                                         {"VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR", (uint64_t)VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR}};
 
     return (VkSurfaceTransformFlagsKHR)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
 VkSwapchainCreateFlagsKHR scvkParseJsonSwapchainCreateFlags(const scvkJsonValue* pValue)
 {
-    static const scvkJsonName table[] = {
-        {"VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR},
-        {"VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR},
-        {"VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR},
-    };
+    static const scvkJsonName table[] = {{"VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR},
+                                         {"VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR},
+                                         {"VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR", (uint64_t)VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR}};
 
     return (VkSwapchainCreateFlagsKHR)scvkParseJsonFlags(pValue, table, (uint32_t)(sizeof(table) / sizeof(table[0])));
 }
