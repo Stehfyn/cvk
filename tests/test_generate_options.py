@@ -71,6 +71,12 @@ class GeneratorOptionsTests(unittest.TestCase):
         self.assertEqual(gen.sigs["cvkCmdDrawMeshTasks"][1][0].name, "commandBuffer")
         self.assertEqual(gen.sigs["cvkAcquireDrmDisplay"][1][0].name, "physicalDevice")
 
+    def test_bound_color_mask_has_explicit_flag_types(self):
+        gen = self.variants[False]
+        source = next(d for d in gen.defs[""] if d.startswith("void cvkInitOpaquePipelineColorBlendAttachmentState("))
+        self.assertIn("(VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | "
+                      "(VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT)", source)
+
     def test_every_wrapper_calls_its_vk_entry_point(self):
         gen = self.variants[False]
         source = gen.source()

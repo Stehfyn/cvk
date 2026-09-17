@@ -326,6 +326,11 @@ policy file. **The chain's signature is computed from its steps' signatures**, n
 - parameter order: dispatch handles by level, then inputs in order of first appearance, then
   `pAllocator`, then outputs.
 
+Flag constants in bound mask arguments are cast to the registry's underlying `VkFlags` or
+`VkFlags64` type before bitwise operations; the result is cast to the parameter's flags
+typedef. This also applies to single flag constants and preserves aliases in the destination
+cast. Ordinary enum arguments and already-typed mask variables pass through unchanged.
+
 The one piece of logic the registry cannot supply, memory type selection
 (`cvkGetCompatibleMemoryTypeIndex`: first type in the mask whose property flags **cover** the
 required flags; `cvkGetMemoryTypeIndex`: first type in the mask whose property flags **equal**

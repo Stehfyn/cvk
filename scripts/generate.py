@@ -1830,6 +1830,23 @@ class Generator:
     # ---------------------------------------------------------------- chains
     LEVELS = ["instance", "physicalDevice", "device", "queue", "commandBuffer"]
 
+    def typed_flags(self, ctype: str, expression: str) -> str:
+        """Evaluate flag bits in their unsigned storage type, then convert to the destination mask."""
+        canonical = ctype
+        while canonical in self.reg.type_aliases:
+            canonical = self.reg.type_aliases[canonical]
+        base = self.reg.bitmask_bases.get(canonical)
+        if base is None:
+            return expression
+        enum = self.reg.bitmasks[canonical]
+        while enum in self.reg.type_aliases:
+            enum = self.reg.type_aliases[enum]
+        bits = set(self.reg.enums.get(enum, []) + self.reg.enum_extends.get(enum, []))
+        typed = re.sub(r"\bVK_\w+\b", lambda m: f"({base}){m[0]}" if m[0] in bits else m[0], expression)
+        if typed != expression or re.search(r"(?<![|&])[|&](?![|&])|[~^]", expression):
+            return f"({ctype})({typed})"
+        return expression
+
     def emit_chain(self, name: str, spec: dict) -> None:
         """SPEC.md section 8: compose a straight-line chain from a step table.
 
@@ -1907,7 +1924,7 @@ class Generator:
                 if p.name in bind:
                     if bind[p.name] in declared_outputs:
                         outputs.setdefault(bind[p.name], declared_outputs[bind[p.name]])
-                    args.append(bind[p.name])
+                    args.append(self.typed_flags(ptype, bind[p.name]))
                 elif p.name in local:
                     var = local[p.name]
                     elem = re.fullmatch(r"(\w+)\[(\d+)\]", var)

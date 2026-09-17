@@ -151,6 +151,7 @@ class Registry:
     removed: Set[str] = field(default_factory=set)                        # names an API variant's <remove> blocks drop
     enums64: Set[str] = field(default_factory=set)                        # 64-bit flag bit enumerations (values are static const objects, not enumerators)
     constants: Dict[str, str] = field(default_factory=dict)               # API constant name -> C type (VK_SUBPASS_EXTERNAL -> uint32_t)
+    bitmask_bases: Dict[str, str] = field(default_factory=dict)           # canonical flags type -> VkFlags or VkFlags64
 
     def feature_closure(self, name: str) -> Set[str]:
         """Every public version a version includes: VK_VERSION_1_4 -> 1_0..1_4,
@@ -199,6 +200,7 @@ class Registry:
         structs: Dict[str, Struct] = {}
         enums: Dict[str, List[str]] = {}
         bitmasks: Dict[str, Optional[str]] = {}
+        bitmask_bases: Dict[str, str] = {}
 
         for t in root.findall("types/type"):
             if not api_ok(t):
@@ -242,6 +244,8 @@ class Registry:
                 if t.get("alias"):
                     type_aliases[name] = t.get("alias")
                 bitmasks[name] = t.get("requires") or t.get("bitvalues")
+                if t.findtext("type"):
+                    bitmask_bases[name] = t.findtext("type")
             elif cat == "enum" and t.get("alias"):
                 type_aliases[t.get("name")] = t.get("alias")
 
@@ -432,7 +436,7 @@ class Registry:
             bitmasks=bitmasks, path=path, feature_depends=feature_depends, api=api,
             enum_provenance=enum_provenance, type_provenance=type_provenance, enum_extends=enum_extends,
             type_aliases=type_aliases, type_feature=type_feature, removed=removed_types | removed_enums | removed_commands,
-            enums64=enums64, constants=constants,
+            enums64=enums64, constants=constants, bitmask_bases=bitmask_bases,
         )
 
     @staticmethod

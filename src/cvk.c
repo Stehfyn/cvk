@@ -43050,7 +43050,7 @@ void cvkCmdBindComputeDescriptorSets(VkCommandBuffer        commandBuffer,
 }
 void cvkCmdPushComputeConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues)
 {
-    cvkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_COMPUTE_BIT, offset, size, pValues);
+    cvkCmdPushConstants(commandBuffer, layout, (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_COMPUTE_BIT), offset, size, pValues);
 }
 void cvkCmdImageQueueOwnershipBarrier(VkCommandBuffer         commandBuffer,
                                       const void*             pNext,
@@ -43118,7 +43118,7 @@ void cvkCmdAcquireImageFromExternal(VkCommandBuffer         commandBuffer,
                                      dstQueueFamilyIndex,
                                      image,
                                      subresourceRange,
-                                     VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                     (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT),
                                      dstStageMask,
                                      dependencyFlags);
 }
@@ -43144,7 +43144,7 @@ void cvkCmdReleaseImageToExternal(VkCommandBuffer         commandBuffer,
                                      image,
                                      subresourceRange,
                                      srcStageMask,
-                                     VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                     (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT),
                                      dependencyFlags);
 }
 void cvkCmdBufferQueueOwnershipBarrier(VkCommandBuffer      commandBuffer,
@@ -43208,7 +43208,7 @@ void cvkCmdAcquireBufferFromExternal(VkCommandBuffer      commandBuffer,
                                       buffer,
                                       offset,
                                       size,
-                                      VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                      (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT),
                                       dstStageMask,
                                       dependencyFlags);
 }
@@ -43232,7 +43232,7 @@ void cvkCmdReleaseBufferToExternal(VkCommandBuffer      commandBuffer,
                                       offset,
                                       size,
                                       srcStageMask,
-                                      VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                      (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT),
                                       dependencyFlags);
 }
 void cvkQueueSubmitCommandBuffer(VkQueue                     queue,
@@ -43277,7 +43277,7 @@ void cvkCreateComputePipelineLayout(VkDevice                     device,
 {
     VkPushConstantRange push_constant_range;
 
-    cvkInitPushConstantRange(&push_constant_range, VK_SHADER_STAGE_COMPUTE_BIT, pushConstantOffset, pushConstantSize);
+    cvkInitPushConstantRange(&push_constant_range, (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_COMPUTE_BIT), pushConstantOffset, pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
 }
 VkResult cvkSetupComputePipeline(VkDevice                         device,
@@ -43364,7 +43364,14 @@ void cvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, Vk
 }
 VkResult cvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults)
 {
-    return cvkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, (size_t)queryCount * sizeof(uint64_t), pResults, sizeof(uint64_t), flags | VK_QUERY_RESULT_64_BIT);
+    return cvkGetQueryPoolResults(device,
+                                  queryPool,
+                                  firstQuery,
+                                  queryCount,
+                                  (size_t)queryCount * sizeof(uint64_t),
+                                  pResults,
+                                  sizeof(uint64_t),
+                                  (VkQueryResultFlags)(flags | (VkFlags)VK_QUERY_RESULT_64_BIT));
 }
 void cvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
 {
@@ -43443,7 +43450,7 @@ void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
 }
 void cvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
-    cvkCreateFence(device, pFenceNext, VK_FENCE_CREATE_SIGNALED_BIT, pAllocator, pFence);
+    cvkCreateFence(device, pFenceNext, (VkFenceCreateFlags)((VkFlags)VK_FENCE_CREATE_SIGNALED_BIT), pAllocator, pFence);
 }
 VkResult cvkWaitForFenceIndefinitely(VkDevice device, VkFence fence)
 {
@@ -43471,7 +43478,7 @@ VkResult cvkWaitSemaphoreIndefinitely(VkDevice device, const void* pNext, VkSema
 }
 void cvkBeginOneTimeCommandBuffer(VkCommandBuffer commandBuffer, const void* pNext)
 {
-    cvkBeginCommandBuffer(commandBuffer, pNext, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+    cvkBeginCommandBuffer(commandBuffer, pNext, (VkCommandBufferUsageFlags)((VkFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT), NULL);
 }
 void cvkAllocatePrimaryCommandBuffers(VkDevice device, const void* pCommandBuffersNext, VkCommandPool commandPool, uint32_t commandBufferCount, VkCommandBuffer* pCommandBuffers)
 {
@@ -43495,11 +43502,11 @@ void cvkAllocateSecondaryCommandBuffer(VkDevice device, const void* pCommandBuff
 }
 void cvkCreateResettableCommandPool(VkDevice device, const void* pCommandPoolNext, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
 {
-    cvkCreateCommandPool(device, pCommandPoolNext, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, queueFamilyIndex, pAllocator, pCommandPool);
+    cvkCreateCommandPool(device, pCommandPoolNext, (VkCommandPoolCreateFlags)((VkFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT), queueFamilyIndex, pAllocator, pCommandPool);
 }
 void cvkCreateTransientCommandPool(VkDevice device, const void* pCommandPoolNext, uint32_t queueFamilyIndex, const VkAllocationCallbacks* pAllocator, VkCommandPool* pCommandPool)
 {
-    cvkCreateCommandPool(device, pCommandPoolNext, VK_COMMAND_POOL_CREATE_TRANSIENT_BIT, queueFamilyIndex, pAllocator, pCommandPool);
+    cvkCreateCommandPool(device, pCommandPoolNext, (VkCommandPoolCreateFlags)((VkFlags)VK_COMMAND_POOL_CREATE_TRANSIENT_BIT), queueFamilyIndex, pAllocator, pCommandPool);
 }
 void cvkSetupPrimaryCommandPool(VkDevice                     device,
                                 const void*                  pCommandPoolNext,
@@ -43540,15 +43547,21 @@ void cvkInvalidateWholeMappedMemory(VkDevice device, const void* pNext, VkDevice
 }
 void cvkAllocateDeviceLocalImageMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkImage image, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
-    cvkAllocateImageMemory(physicalDevice, device, image, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, pMemoryNext, pAllocator, pMemory);
+    cvkAllocateImageMemory(physicalDevice, device, image, (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), pMemoryNext, pAllocator, pMemory);
 }
 void cvkAllocateDeviceLocalBufferMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkBuffer buffer, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
-    cvkAllocateBufferMemory(physicalDevice, device, buffer, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, pMemoryNext, pAllocator, pMemory);
+    cvkAllocateBufferMemory(physicalDevice, device, buffer, (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT), pMemoryNext, pAllocator, pMemory);
 }
 void cvkAllocateHostVisibleBufferMemory(VkPhysicalDevice physicalDevice, VkDevice device, VkBuffer buffer, const void* pMemoryNext, const VkAllocationCallbacks* pAllocator, VkDeviceMemory* pMemory)
 {
-    cvkAllocateBufferMemory(physicalDevice, device, buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, pMemoryNext, pAllocator, pMemory);
+    cvkAllocateBufferMemory(physicalDevice,
+                            device,
+                            buffer,
+                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                            pMemoryNext,
+                            pAllocator,
+                            pMemory);
 }
 void cvkSetupDeviceLocalImage(VkPhysicalDevice             physicalDevice,
                               VkDevice                     device,
@@ -43587,7 +43600,7 @@ void cvkSetupDeviceLocalImage(VkPhysicalDevice             physicalDevice,
                   queueFamilyIndexCount,
                   pQueueFamilyIndices,
                   initialLayout,
-                  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                  (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
                   pMemoryNext,
                   pAllocator,
                   pImage,
@@ -43616,7 +43629,7 @@ void cvkSetupDeviceLocalBuffer(VkPhysicalDevice             physicalDevice,
                    sharingMode,
                    queueFamilyIndexCount,
                    pQueueFamilyIndices,
-                   VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                   (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
                    pMemoryNext,
                    pAllocator,
                    pBuffer,
@@ -43645,7 +43658,7 @@ void cvkSetupHostVisibleBuffer(VkPhysicalDevice             physicalDevice,
                    sharingMode,
                    queueFamilyIndexCount,
                    pQueueFamilyIndices,
-                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                   (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                    pMemoryNext,
                    pAllocator,
                    pBuffer,
@@ -43769,7 +43782,7 @@ void cvkSetupDeviceLocalImage2D(VkPhysicalDevice             physicalDevice,
                     queueFamilyIndexCount,
                     pQueueFamilyIndices,
                     initialLayout,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                    (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
                     extent2D,
                     pMemoryNext,
                     pAllocator,
@@ -43836,7 +43849,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByIndex(VkInstance instance, uint32_t physi
 }
 uint32_t cvkGetPhysicalDeviceComputeQueueFamilyIndex(VkPhysicalDevice physicalDevice)
 {
-    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_COMPUTE_BIT);
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, (VkQueueFlags)((VkFlags)VK_QUEUE_COMPUTE_BIT));
 }
 void cvkSetupComputeDeviceQueue(VkPhysicalDevice                physicalDevice,
                                 const void*                     pDeviceNext,
@@ -43875,7 +43888,7 @@ void cvkSetupComputeDeviceQueue(VkPhysicalDevice                physicalDevice,
 }
 uint32_t cvkGetPhysicalDeviceGraphicsQueueFamilyIndex(VkPhysicalDevice physicalDevice)
 {
-    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_GRAPHICS_BIT);
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, (VkQueueFlags)((VkFlags)VK_QUEUE_GRAPHICS_BIT));
 }
 void cvkSetupGraphicsDeviceQueue(VkPhysicalDevice                physicalDevice,
                                  const void*                     pDeviceNext,
@@ -43914,7 +43927,7 @@ void cvkSetupGraphicsDeviceQueue(VkPhysicalDevice                physicalDevice,
 }
 uint32_t cvkGetPhysicalDeviceTransferQueueFamilyIndex(VkPhysicalDevice physicalDevice)
 {
-    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_TRANSFER_BIT);
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, (VkQueueFlags)((VkFlags)VK_QUEUE_TRANSFER_BIT));
 }
 void cvkSetupTransferDeviceQueue(VkPhysicalDevice                physicalDevice,
                                  const void*                     pDeviceNext,
@@ -44187,8 +44200,8 @@ void cvkCmdAcquireImageFromExternal2(VkCommandBuffer         commandBuffer,
 {
     cvkCmdImageQueueOwnershipBarrier2(commandBuffer,
                                       pNext,
-                                      VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
-                                      VK_ACCESS_2_NONE,
+                                      (VkPipelineStageFlags2)((VkFlags64)VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT),
+                                      (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_NONE),
                                       dstStageMask,
                                       dstAccessMask,
                                       oldLayout,
@@ -44216,8 +44229,8 @@ void cvkCmdReleaseImageToExternal2(VkCommandBuffer         commandBuffer,
                                       pNext,
                                       srcStageMask,
                                       srcAccessMask,
-                                      VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT,
-                                      VK_ACCESS_2_NONE,
+                                      (VkPipelineStageFlags2)((VkFlags64)VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT),
+                                      (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_NONE),
                                       oldLayout,
                                       newLayout,
                                       srcQueueFamilyIndex,
@@ -44240,8 +44253,8 @@ void cvkCmdAcquireBufferFromExternal2(VkCommandBuffer       commandBuffer,
 {
     cvkCmdBufferQueueOwnershipBarrier2(commandBuffer,
                                        pNext,
-                                       VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
-                                       VK_ACCESS_2_NONE,
+                                       (VkPipelineStageFlags2)((VkFlags64)VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT),
+                                       (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_NONE),
                                        dstStageMask,
                                        dstAccessMask,
                                        VK_QUEUE_FAMILY_EXTERNAL,
@@ -44267,8 +44280,8 @@ void cvkCmdReleaseBufferToExternal2(VkCommandBuffer       commandBuffer,
                                        pNext,
                                        srcStageMask,
                                        srcAccessMask,
-                                       VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT,
-                                       VK_ACCESS_2_NONE,
+                                       (VkPipelineStageFlags2)((VkFlags64)VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT),
+                                       (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_NONE),
                                        srcQueueFamilyIndex,
                                        VK_QUEUE_FAMILY_EXTERNAL,
                                        buffer,
@@ -44375,7 +44388,7 @@ void cvkCmdBindGraphicsDescriptorSets(VkCommandBuffer        commandBuffer,
 }
 void cvkCmdPushGraphicsConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues)
 {
-    cvkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_ALL_GRAPHICS, offset, size, pValues);
+    cvkCmdPushConstants(commandBuffer, layout, (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_ALL_GRAPHICS), offset, size, pValues);
 }
 void cvkCreateGraphicsPipelineLayout(VkDevice                     device,
                                      const void*                  pPipelineLayoutNext,
@@ -44389,7 +44402,7 @@ void cvkCreateGraphicsPipelineLayout(VkDevice                     device,
 {
     VkPushConstantRange push_constant_range;
 
-    cvkInitPushConstantRange(&push_constant_range, VK_SHADER_STAGE_ALL_GRAPHICS, pushConstantOffset, pushConstantSize);
+    cvkInitPushConstantRange(&push_constant_range, (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_ALL_GRAPHICS), pushConstantOffset, pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
 }
 void cvkInitEmptyPipelineVertexInputStateCreateInfo(VkPipelineVertexInputStateCreateInfo* pInfo, const void* pNext, VkPipelineVertexInputStateCreateFlags flags)
@@ -44455,27 +44468,29 @@ void cvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilS
 }
 void cvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo)
 {
-    cvkInitPipelineColorBlendAttachmentState(pInfo,
-                                             VK_FALSE,
-                                             VK_BLEND_FACTOR_ONE,
-                                             VK_BLEND_FACTOR_ZERO,
-                                             VK_BLEND_OP_ADD,
-                                             VK_BLEND_FACTOR_ONE,
-                                             VK_BLEND_FACTOR_ZERO,
-                                             VK_BLEND_OP_ADD,
-                                             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
+    cvkInitPipelineColorBlendAttachmentState(
+        pInfo,
+        VK_FALSE,
+        VK_BLEND_FACTOR_ONE,
+        VK_BLEND_FACTOR_ZERO,
+        VK_BLEND_OP_ADD,
+        VK_BLEND_FACTOR_ONE,
+        VK_BLEND_FACTOR_ZERO,
+        VK_BLEND_OP_ADD,
+        (VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | (VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT));
 }
 void cvkInitAlphaBlendPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo)
 {
-    cvkInitPipelineColorBlendAttachmentState(pInfo,
-                                             VK_TRUE,
-                                             VK_BLEND_FACTOR_SRC_ALPHA,
-                                             VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-                                             VK_BLEND_OP_ADD,
-                                             VK_BLEND_FACTOR_ONE,
-                                             VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
-                                             VK_BLEND_OP_ADD,
-                                             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
+    cvkInitPipelineColorBlendAttachmentState(
+        pInfo,
+        VK_TRUE,
+        VK_BLEND_FACTOR_SRC_ALPHA,
+        VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        VK_BLEND_OP_ADD,
+        VK_BLEND_FACTOR_ONE,
+        VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        VK_BLEND_OP_ADD,
+        (VkColorComponentFlags)((VkFlags)VK_COLOR_COMPONENT_R_BIT | (VkFlags)VK_COLOR_COMPONENT_G_BIT | (VkFlags)VK_COLOR_COMPONENT_B_BIT | (VkFlags)VK_COLOR_COMPONENT_A_BIT));
 }
 void cvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo*       pInfo,
                                                               const void*                                pNext,
@@ -44775,11 +44790,11 @@ void cvkSetupVideoDeviceQueue(VkPhysicalDevice                physicalDevice,
 }
 uint32_t cvkGetPhysicalDeviceVideoDecodeQueueFamilyIndex(VkPhysicalDevice physicalDevice)
 {
-    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_VIDEO_DECODE_BIT_KHR);
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, (VkQueueFlags)((VkFlags)VK_QUEUE_VIDEO_DECODE_BIT_KHR));
 }
 uint32_t cvkGetPhysicalDeviceVideoEncodeQueueFamilyIndex(VkPhysicalDevice physicalDevice)
 {
-    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, VK_QUEUE_VIDEO_ENCODE_BIT_KHR);
+    return cvkGetPhysicalDeviceQueueFamilyIndex(physicalDevice, (VkQueueFlags)((VkFlags)VK_QUEUE_VIDEO_ENCODE_BIT_KHR));
 }
 VkBool32 cvkGetPhysicalDeviceVideoProfileSupport(VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile)
 {
@@ -44885,7 +44900,7 @@ void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkPhysicalDevice          
 }
 void cvkCmdResetVideoCoding(VkCommandBuffer commandBuffer, const void* pNext)
 {
-    cvkCmdControlVideoCoding(commandBuffer, pNext, VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR);
+    cvkCmdControlVideoCoding(commandBuffer, pNext, (VkVideoCodingControlFlagsKHR)((VkFlags)VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR));
 }
 void cvkCmdSetVideoEncodeRateControl(VkCommandBuffer                             commandBuffer,
                                      const void*                                 pNext,
@@ -44904,11 +44919,11 @@ void cvkCmdSetVideoEncodeRateControl(VkCommandBuffer                            
                                                pLayers,
                                                virtualBufferSizeInMs,
                                                initialVirtualBufferSizeInMs,
-                                               VK_VIDEO_CODING_CONTROL_ENCODE_RATE_CONTROL_BIT_KHR);
+                                               (VkVideoCodingControlFlagsKHR)((VkFlags)VK_VIDEO_CODING_CONTROL_ENCODE_RATE_CONTROL_BIT_KHR));
 }
 void cvkCmdSetVideoEncodeQualityLevel(VkCommandBuffer commandBuffer, const void* pNext, uint32_t qualityLevel)
 {
-    cvkCmdControlVideoCodingWithEncodeQualityLevelInfo(commandBuffer, pNext, qualityLevel, VK_VIDEO_CODING_CONTROL_ENCODE_QUALITY_LEVEL_BIT_KHR);
+    cvkCmdControlVideoCodingWithEncodeQualityLevelInfo(commandBuffer, pNext, qualityLevel, (VkVideoCodingControlFlagsKHR)((VkFlags)VK_VIDEO_CODING_CONTROL_ENCODE_QUALITY_LEVEL_BIT_KHR));
 }
 void cvkCreateLayerImageView2D(VkDevice                     device,
                                VkImageAspectFlags           aspectMask,
@@ -45008,7 +45023,7 @@ void cvkSetupVideoDecodeDpbImage(VkPhysicalDevice             physicalDevice,
                        flags,
                        format,
                        arrayLayers,
-                       VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
+                       (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR),
                        sharingMode,
                        queueFamilyIndexCount,
                        pQueueFamilyIndices,
@@ -45045,7 +45060,7 @@ void cvkSetupVideoDecodeDstImage(VkPhysicalDevice             physicalDevice,
                        flags,
                        format,
                        arrayLayers,
-                       VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR,
+                       (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR),
                        sharingMode,
                        queueFamilyIndexCount,
                        pQueueFamilyIndices,
@@ -45082,7 +45097,7 @@ void cvkSetupVideoEncodeSrcImage(VkPhysicalDevice             physicalDevice,
                        flags,
                        format,
                        arrayLayers,
-                       VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR,
+                       (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR),
                        sharingMode,
                        queueFamilyIndexCount,
                        pQueueFamilyIndices,
@@ -45119,7 +45134,7 @@ void cvkSetupVideoEncodeDpbImage(VkPhysicalDevice             physicalDevice,
                        flags,
                        format,
                        arrayLayers,
-                       VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
+                       (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR),
                        sharingMode,
                        queueFamilyIndexCount,
                        pQueueFamilyIndices,
@@ -45153,7 +45168,7 @@ void cvkSetupVideoDecodeSrcBuffer(VkPhysicalDevice             physicalDevice,
                                            pProfiles,
                                            flags,
                                            size,
-                                           VK_BUFFER_USAGE_VIDEO_DECODE_SRC_BIT_KHR,
+                                           (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_VIDEO_DECODE_SRC_BIT_KHR),
                                            sharingMode,
                                            queueFamilyIndexCount,
                                            pQueueFamilyIndices,
@@ -45186,7 +45201,7 @@ void cvkSetupVideoEncodeDstBuffer(VkPhysicalDevice             physicalDevice,
                                            pProfiles,
                                            flags,
                                            size,
-                                           VK_BUFFER_USAGE_VIDEO_ENCODE_DST_BIT_KHR,
+                                           (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_VIDEO_ENCODE_DST_BIT_KHR),
                                            sharingMode,
                                            queueFamilyIndexCount,
                                            pQueueFamilyIndices,
@@ -45313,7 +45328,14 @@ VkQueryResultStatusKHR cvkGetQueryResultStatus(VkDevice device, VkQueryPool quer
     VkResult result;
     int32_t  status;
 
-    result = cvkGetQueryPoolResults(device, queryPool, query, 1, sizeof(status), &status, sizeof(status), VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT);
+    result = cvkGetQueryPoolResults(device,
+                                    queryPool,
+                                    query,
+                                    1,
+                                    sizeof(status),
+                                    &status,
+                                    sizeof(status),
+                                    (VkQueryResultFlags)((VkFlags)VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | (VkFlags)VK_QUERY_RESULT_WAIT_BIT));
     CVK_ASSERT(VK_SUCCESS == result);
     return (VkQueryResultStatusKHR)status;
 }
@@ -45324,20 +45346,28 @@ void cvkCreateVideoEncodeBitstreamFeedbackQueryPool(VkDevice                    
                                                     const VkAllocationCallbacks* pAllocator,
                                                     VkQueryPool*                 pQueryPool)
 {
-    cvkCreateVideoEncodeFeedbackQueryPool(device,
-                                          pQueryPoolNext,
-                                          VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR | VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR,
-                                          flags,
-                                          queryCount,
-                                          pAllocator,
-                                          pQueryPool);
+    cvkCreateVideoEncodeFeedbackQueryPool(
+        device,
+        pQueryPoolNext,
+        (VkVideoEncodeFeedbackFlagsKHR)((VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR | (VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR),
+        flags,
+        queryCount,
+        pAllocator,
+        pQueryPool);
 }
 VkQueryResultStatusKHR cvkGetVideoEncodeBitstreamFeedback(VkDevice device, VkQueryPool queryPool, uint32_t query, uint32_t* pBitstreamBufferOffset, uint32_t* pBitstreamBytesWritten)
 {
     VkResult result;
     uint32_t feedback[3];
 
-    result = cvkGetQueryPoolResults(device, queryPool, query, 1, sizeof(feedback), feedback, sizeof(feedback), VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | VK_QUERY_RESULT_WAIT_BIT);
+    result = cvkGetQueryPoolResults(device,
+                                    queryPool,
+                                    query,
+                                    1,
+                                    sizeof(feedback),
+                                    feedback,
+                                    sizeof(feedback),
+                                    (VkQueryResultFlags)((VkFlags)VK_QUERY_RESULT_WITH_STATUS_BIT_KHR | (VkFlags)VK_QUERY_RESULT_WAIT_BIT));
     CVK_ASSERT(VK_SUCCESS == result);
     (*pBitstreamBufferOffset) = feedback[0];
     (*pBitstreamBytesWritten) = feedback[1];
@@ -45369,7 +45399,7 @@ VkResult cvkCreateGraphicsPipelineLibrary(VkDevice                              
                                                                     pipelineCache,
                                                                     pPipelineNext,
                                                                     flagsGraphicsLibrary,
-                                                                    flags | VK_PIPELINE_CREATE_LIBRARY_BIT_KHR,
+                                                                    (VkPipelineCreateFlags)(flags | (VkFlags)VK_PIPELINE_CREATE_LIBRARY_BIT_KHR),
                                                                     stageCount,
                                                                     pStages,
                                                                     pVertexInputState,
@@ -45402,7 +45432,7 @@ VkResult cvkCreateVertexInputInterfaceGraphicsPipelineLibrary(VkDevice          
     return cvkCreateGraphicsPipelineLibrary(device,
                                             pipelineCache,
                                             pPipelineNext,
-                                            VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT,
+                                            (VkGraphicsPipelineLibraryFlagsEXT)((VkFlags)VK_GRAPHICS_PIPELINE_LIBRARY_VERTEX_INPUT_INTERFACE_BIT_EXT),
                                             0,
                                             NULL,
                                             pVertexInputState,
@@ -45440,7 +45470,7 @@ VkResult cvkCreatePreRasterizationShadersGraphicsPipelineLibrary(VkDevice       
     return cvkCreateGraphicsPipelineLibrary(device,
                                             pipelineCache,
                                             pPipelineNext,
-                                            VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT,
+                                            (VkGraphicsPipelineLibraryFlagsEXT)((VkFlags)VK_GRAPHICS_PIPELINE_LIBRARY_PRE_RASTERIZATION_SHADERS_BIT_EXT),
                                             stageCount,
                                             pStages,
                                             NULL,
@@ -45477,7 +45507,7 @@ VkResult cvkCreateFragmentShaderGraphicsPipelineLibrary(VkDevice                
     return cvkCreateGraphicsPipelineLibrary(device,
                                             pipelineCache,
                                             pPipelineNext,
-                                            VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT,
+                                            (VkGraphicsPipelineLibraryFlagsEXT)((VkFlags)VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_SHADER_BIT_EXT),
                                             stageCount,
                                             pStages,
                                             NULL,
@@ -45511,7 +45541,7 @@ VkResult cvkCreateFragmentOutputInterfaceGraphicsPipelineLibrary(VkDevice       
     return cvkCreateGraphicsPipelineLibrary(device,
                                             pipelineCache,
                                             pPipelineNext,
-                                            VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT,
+                                            (VkGraphicsPipelineLibraryFlagsEXT)((VkFlags)VK_GRAPHICS_PIPELINE_LIBRARY_FRAGMENT_OUTPUT_INTERFACE_BIT_EXT),
                                             0,
                                             NULL,
                                             NULL,
@@ -45669,13 +45699,13 @@ void cvkSetupDeviceAddressBuffer(VkPhysicalDevice             physicalDevice,
 {
     VkMemoryAllocateFlagsInfo memory_allocate_flags_info;
 
-    cvkInitMemoryAllocateFlagsInfo(&memory_allocate_flags_info, pMemoryNext, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, 0);
+    cvkInitMemoryAllocateFlagsInfo(&memory_allocate_flags_info, pMemoryNext, (VkMemoryAllocateFlags)((VkFlags)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT), 0);
     cvkSetupDeviceLocalBuffer(physicalDevice,
                               device,
                               pBufferNext,
                               flags,
                               size,
-                              usage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+                              (VkBufferUsageFlags)(usage | (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
                               sharingMode,
                               queueFamilyIndexCount,
                               pQueueFamilyIndices,
@@ -45700,13 +45730,13 @@ void cvkSetupHostVisibleDeviceAddressBuffer(VkPhysicalDevice             physica
 {
     VkMemoryAllocateFlagsInfo memory_allocate_flags_info;
 
-    cvkInitMemoryAllocateFlagsInfo(&memory_allocate_flags_info, pMemoryNext, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, 0);
+    cvkInitMemoryAllocateFlagsInfo(&memory_allocate_flags_info, pMemoryNext, (VkMemoryAllocateFlags)((VkFlags)VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT), 0);
     cvkSetupHostVisibleBuffer(physicalDevice,
                               device,
                               pBufferNext,
                               flags,
                               size,
-                              usage | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+                              (VkBufferUsageFlags)(usage | (VkFlags)VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT),
                               sharingMode,
                               queueFamilyIndexCount,
                               pQueueFamilyIndices,
@@ -45736,7 +45766,7 @@ void cvkSetupAccelerationStructureBuffer(VkPhysicalDevice             physicalDe
                                 sharingMode,
                                 queueFamilyIndexCount,
                                 pQueueFamilyIndices,
-                                VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+                                (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR),
                                 pMemoryNext,
                                 pAllocator,
                                 pBuffer,
@@ -45763,7 +45793,7 @@ void cvkSetupScratchBuffer(VkPhysicalDevice             physicalDevice,
                                 sharingMode,
                                 queueFamilyIndexCount,
                                 pQueueFamilyIndices,
-                                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT),
                                 pMemoryNext,
                                 pAllocator,
                                 pBuffer,
@@ -45790,7 +45820,7 @@ void cvkSetupShaderBindingTableBuffer(VkPhysicalDevice             physicalDevic
                                            sharingMode,
                                            queueFamilyIndexCount,
                                            pQueueFamilyIndices,
-                                           VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR,
+                                           (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR),
                                            pMemoryNext,
                                            pAllocator,
                                            pBuffer,
@@ -45817,7 +45847,7 @@ void cvkSetupAccelerationStructureBuildInputBuffer(VkPhysicalDevice             
                                            sharingMode,
                                            queueFamilyIndexCount,
                                            pQueueFamilyIndices,
-                                           VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+                                           (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR),
                                            pMemoryNext,
                                            pAllocator,
                                            pBuffer,
@@ -45995,10 +46025,10 @@ void cvkCmdAccelerationStructureBuildBarrier(VkCommandBuffer commandBuffer)
 {
     cvkCmdMemoryBarrier(commandBuffer,
                         NULL,
-                        VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
-                        VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR | VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
-                        VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-                        VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR | VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
+                        (VkAccessFlags)((VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR),
+                        (VkAccessFlags)((VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR | (VkFlags)VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR),
+                        (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR),
+                        (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR | (VkFlags)VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR),
                         0);
 }
 void cvkUpdateAccelerationStructureDescriptorSet(VkDevice                   device,
@@ -46031,8 +46061,8 @@ void cvkCmdPushRayTracingConstants(VkCommandBuffer commandBuffer, VkPipelineLayo
 {
     cvkCmdPushConstants(commandBuffer,
                         layout,
-                        VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR |
-                            VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+                        (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_RAYGEN_BIT_KHR | (VkFlags)VK_SHADER_STAGE_ANY_HIT_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR |
+                                             (VkFlags)VK_SHADER_STAGE_MISS_BIT_KHR | (VkFlags)VK_SHADER_STAGE_INTERSECTION_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CALLABLE_BIT_KHR),
                         offset,
                         size,
                         pValues);
@@ -46050,8 +46080,8 @@ void cvkCreateRayTracingPipelineLayout(VkDevice                     device,
     VkPushConstantRange push_constant_range;
 
     cvkInitPushConstantRange(&push_constant_range,
-                             VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_ANY_HIT_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR |
-                                 VK_SHADER_STAGE_INTERSECTION_BIT_KHR | VK_SHADER_STAGE_CALLABLE_BIT_KHR,
+                             (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_RAYGEN_BIT_KHR | (VkFlags)VK_SHADER_STAGE_ANY_HIT_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR |
+                                                  (VkFlags)VK_SHADER_STAGE_MISS_BIT_KHR | (VkFlags)VK_SHADER_STAGE_INTERSECTION_BIT_KHR | (VkFlags)VK_SHADER_STAGE_CALLABLE_BIT_KHR),
                              pushConstantOffset,
                              pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
@@ -46222,7 +46252,12 @@ void cvkCmdTraceRayTracingRays2D(VkCommandBuffer                        commandB
 }
 void cvkCmdPushMeshShadingConstants(VkCommandBuffer commandBuffer, VkPipelineLayout layout, uint32_t offset, uint32_t size, const void* pValues)
 {
-    cvkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT, offset, size, pValues);
+    cvkCmdPushConstants(commandBuffer,
+                        layout,
+                        (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_TASK_BIT_EXT | (VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT | (VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
+                        offset,
+                        size,
+                        pValues);
 }
 void cvkCreateMeshShadingPipelineLayout(VkDevice                     device,
                                         const void*                  pPipelineLayoutNext,
@@ -46236,7 +46271,10 @@ void cvkCreateMeshShadingPipelineLayout(VkDevice                     device,
 {
     VkPushConstantRange push_constant_range;
 
-    cvkInitPushConstantRange(&push_constant_range, VK_SHADER_STAGE_TASK_BIT_EXT | VK_SHADER_STAGE_MESH_BIT_EXT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstantOffset, pushConstantSize);
+    cvkInitPushConstantRange(&push_constant_range,
+                             (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_TASK_BIT_EXT | (VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT | (VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
+                             pushConstantOffset,
+                             pushConstantSize);
     cvkCreatePipelineLayout(device, pPipelineLayoutNext, flags, setLayoutCount, pSetLayouts, (0 != pushConstantSize) ? 1u : 0u, &push_constant_range, pAllocator, pPipelineLayout);
 }
 VkResult cvkSetupMeshShadingPipeline(VkDevice                                      device,
@@ -46477,7 +46515,7 @@ VkResult cvkCreateTaskShader(VkDevice                     device,
                            pShaderNext,
                            flags,
                            VK_SHADER_STAGE_TASK_BIT_EXT,
-                           VK_SHADER_STAGE_MESH_BIT_EXT,
+                           (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_MESH_BIT_EXT),
                            VK_SHADER_CODE_TYPE_SPIRV_EXT,
                            codeSize,
                            pCode,
@@ -46508,7 +46546,7 @@ VkResult cvkCreateMeshShader(VkDevice                     device,
                            pShaderNext,
                            flags,
                            VK_SHADER_STAGE_MESH_BIT_EXT,
-                           VK_SHADER_STAGE_FRAGMENT_BIT,
+                           (VkShaderStageFlags)((VkFlags)VK_SHADER_STAGE_FRAGMENT_BIT),
                            VK_SHADER_CODE_TYPE_SPIRV_EXT,
                            codeSize,
                            pCode,
@@ -47472,13 +47510,13 @@ void cvkCmdTransferBufferToExternalImage(VkCommandBuffer          commandBuffer,
                                               imageExtent,
                                               imageSubresource,
                                               pImageAcquireBarrierNext,
-                                              VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                              (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT),
                                               0,
                                               initialImageLayout,
                                               VK_QUEUE_FAMILY_EXTERNAL,
                                               queueFamilyIndex,
                                               pImageBarrierNext,
-                                              VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                                              (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT),
                                               0,
                                               finalImageLayout,
                                               queueFamilyIndex,
@@ -47505,8 +47543,8 @@ void cvkCmdTransferComputeBufferToExternalImage(VkCommandBuffer          command
     cvkCmdTransferBufferToExternalImage(commandBuffer,
                                         dependencyFlags,
                                         pBufferBarrierNext,
-                                        VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                        VK_ACCESS_SHADER_WRITE_BIT,
+                                        (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT),
+                                        (VkAccessFlags)((VkFlags)VK_ACCESS_SHADER_WRITE_BIT),
                                         buffer,
                                         bufferOffset,
                                         bufferRowAlignment,
