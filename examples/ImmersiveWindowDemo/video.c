@@ -1,6 +1,6 @@
 /* Media Foundation decoder and mapped byte stream from the pinned cdx demo.
 ** The two-slot decode ring feeds shared NV12 textures; renderer.c performs both
-** video passes with cvk. Window behavior and frame scheduling remain upstream's. */
+** video passes with cvk. Playback scheduling remains upstream's. */
 
 #include "video.h"
 
@@ -13,7 +13,7 @@
 
 
 
-#define VIDEO_RING      2                /* the frame on screen and the next one, decoded one ahead */
+#define VIDEO_RING      VIDEO_RENDERER_FRAMES /* the frame on screen and the next one, decoded one ahead */
 #define VIDEO_LOW_WATER (VIDEO_RING - 1) /* refill as soon as a slot is free */
 
 struct VideoStream

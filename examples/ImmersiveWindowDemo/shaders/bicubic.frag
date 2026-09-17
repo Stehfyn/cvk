@@ -5,6 +5,7 @@ layout(push_constant) uniform Constants
     vec2 texelSize;
     float sharpness;
     float padding;
+    vec2 sampleScale;
 };
 layout(location = 0) in vec2 texcoord;
 layout(location = 0) out vec4 color;
@@ -31,7 +32,8 @@ void main()
 {
     vec3 bicubicColor = vec3(0.0);
     float totalWeight = 0.0;
-    vec2 baseCoord = texcoord - texelSize * 0.5;
+    vec2 coord = texcoord * sampleScale;
+    vec2 baseCoord = coord - texelSize * 0.5;
     for (int j = -1; j <= 2; ++j)
     {
         for (int i = -1; i <= 2; ++i)
@@ -42,6 +44,6 @@ void main()
         }
     }
     bicubicColor /= totalWeight;
-    vec3 originalColor = texture(inputImage, texcoord).rgb;
+    vec3 originalColor = texture(inputImage, coord).rgb;
     color = vec4(mix(bicubicColor, originalColor, sharpness), 1.0);
 }

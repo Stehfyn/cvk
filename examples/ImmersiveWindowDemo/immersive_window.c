@@ -1383,10 +1383,9 @@ BOOL WINAPI EndImmersivePaint(HWND hWnd, BOOL fRestart, BOOL fVsync)
     {
         return FALSE;
     }
-    /* Exactly one present for the buffer we painted. Presenting twice advances
-    ** a flip-discard chain to an unpainted buffer; DO_NOT_SEQUENCE does not make
-    ** that second buffer contain the first buffer's pixels. Do not drop a
-    ** geometry frame with DO_NOT_WAIT and then stamp it as current. */
+    /* Exactly one successful present for the buffer we painted. FLIP_DISCARD
+    ** does not preserve back-buffer contents for a second presentation. Do not
+    ** drop a geometry frame with DO_NOT_WAIT and then stamp it as current. */
     sc = (IDXGISwapChain*)pw->pDXGISwapChain2;
     (void)fVsync;
     hr = cdxgiSwapChainPresent(sc, 1, fRestart ? DXGI_PRESENT_RESTART : 0);
