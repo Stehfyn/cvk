@@ -112,8 +112,8 @@ void CastMessage_Set(CastMessage* pMessage, const char* pSource, const char* pDe
 
 size_t CastMessage_Encode(const CastMessage* pMessage, uint8_t* pOut, size_t capacity)
 {
-    const size_t body = 2 + StringFieldSize(pMessage->sourceLength) + StringFieldSize(pMessage->destinationLength) + StringFieldSize(pMessage->namespaceLength) + 2 +
-                        StringFieldSize(pMessage->payloadLength);
+    const size_t body =
+        2 + StringFieldSize(pMessage->sourceLength) + StringFieldSize(pMessage->destinationLength) + StringFieldSize(pMessage->namespaceLength) + 2 + StringFieldSize(pMessage->payloadLength);
     size_t size;
 
     if (pMessage->binary || body > CAST_MESSAGE_MAX_BODY || capacity < 4 + body)

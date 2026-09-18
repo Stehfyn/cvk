@@ -2,6 +2,7 @@
 #include "cast_message.h"
 #include "cvk_json.h"
 #include "media_server.h"
+#include "mp4_index.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -66,8 +67,7 @@ static int TestDecodeSkipsUnknownFields(void)
 {
     /* protocol_version, source, destination, unknown fixed64 (field 9), unknown fixed32 (field 10),
     ** namespace, payload_type BINARY, payload_binary */
-    static const uint8_t body[] = {0x08, 0x00, 0x12, 0x01, 'a',  0x1A, 0x01, 'b',  0x49, 1,    2,    3,   4,    5,    6,    7, 8,
-                                   0x55, 1,    2,    3,    4,    0x22, 0x01, 'n',  0x28, 0x01, 0x3A, 0x02, 0xFF, 0x00};
+    static const uint8_t body[] = {0x08, 0x00, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x49, 1, 2, 3, 4, 5, 6, 7, 8, 0x55, 1, 2, 3, 4, 0x22, 0x01, 'n', 0x28, 0x01, 0x3A, 0x02, 0xFF, 0x00};
     CastMessage          decoded;
 
     CHECK(CastMessage_Decode(body, sizeof(body), &decoded));
@@ -142,9 +142,24 @@ static int TestReceiverStatusJson(void)
     return 0;
 }
 
+static int TestKeyframeSnap(void)
+{
+    static const double keyframes[] = {0.0, 8.333, 16.667, 25.0};
+
+    CHECK(0.0 == Mp4Index_SnapToKeyframe(keyframes, 4, 0.0));
+    CHECK(0.0 == Mp4Index_SnapToKeyframe(keyframes, 4, 8.3));
+    CHECK(8.333 == Mp4Index_SnapToKeyframe(keyframes, 4, 8.333));
+    CHECK(16.667 == Mp4Index_SnapToKeyframe(keyframes, 4, 24.9));
+    CHECK(25.0 == Mp4Index_SnapToKeyframe(keyframes, 4, 500.0));
+    CHECK(-1.0 == Mp4Index_SnapToKeyframe(keyframes, 4, -1.0)); /* before the first keyframe: unchanged */
+    CHECK(12.5 == Mp4Index_SnapToKeyframe(keyframes, 0, 12.5)); /* no index: unchanged */
+    CHECK(0 == Mp4Index_ReadKeyframes(L"C:\\does\\not\\exist.mp4", NULL, 0));
+    return 0;
+}
+
 int main(void)
 {
-    if (TestEncodeKnownBytes() || TestRoundTripLongPayload() || TestDecodeSkipsUnknownFields() || TestRanges() || TestReceiverStatusJson())
+    if (TestEncodeKnownBytes() || TestRoundTripLongPayload() || TestDecodeSkipsUnknownFields() || TestRanges() || TestReceiverStatusJson() || TestKeyframeSnap())
     {
         return 1;
     }

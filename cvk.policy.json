@@ -107,9 +107,9 @@
         {
           "call": "cvkEnumerateInstanceExtensionProperties",
           "local": {
+            "pPropertyCount": "property_count",
             "pProperties": "properties"
-          },
-          "into": "property_count"
+          }
         },
         {
           "call": "cvkGetExtensionsSupport",
@@ -128,9 +128,9 @@
         {
           "call": "cvkEnumerateDeviceExtensionProperties",
           "local": {
+            "pPropertyCount": "property_count",
             "pProperties": "properties"
-          },
-          "into": "property_count"
+          }
         },
         {
           "call": "cvkGetExtensionsSupport",
@@ -149,9 +149,9 @@
         {
           "call": "cvkGetPhysicalDeviceQueueFamilyProperties",
           "local": {
+            "pQueueFamilyPropertyCount": "queue_family_property_count",
             "pQueueFamilyProperties": "queue_family_properties"
-          },
-          "into": "queue_family_property_count"
+          }
         },
         {
           "call": "cvkGetQueueFamilyIndex",

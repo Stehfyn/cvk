@@ -130,7 +130,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t p
     uint32_t                     physical_device_count;
     uint32_t                     physical_device_index;
 
-    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    cvkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
     for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
     {
         cvkGetPhysicalDeviceIDProperties(physical_devices[physical_device_index], NULL, &physical_device_id_properties);
@@ -164,7 +164,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t 
     uint32_t                                physical_device_count;
     uint32_t                                physical_device_index;
 
-    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    cvkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
     for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
     {
         if (cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, (const char* const[]){ VK_EXT_PCI_BUS_INFO_EXTENSION_NAME }))
@@ -212,7 +212,7 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
     uint32_t                            requirement_index;
     uint32_t                            memory_type_index;
 
-    memory_requirements_count = cvkGetVideoSessionMemoryRequirements(device, videoSession, memory_requirements);
+    cvkGetVideoSessionMemoryRequirements(device, videoSession, &memory_requirements_count, memory_requirements);
     for (requirement_index = 0; requirement_index < memory_requirements_count; ++requirement_index)
     {
         memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements[requirement_index].memoryRequirements.memoryTypeBits, requiredProperties);

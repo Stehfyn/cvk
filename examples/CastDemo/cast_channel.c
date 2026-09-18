@@ -96,6 +96,10 @@ static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, s
         }
         if (0 == connect(s, pAddress->ai_addr, (int)pAddress->ai_addrlen))
         {
+            const BOOL noDelay = TRUE;
+
+            /* Control messages are tiny; never let Nagle hold a SEEK behind an unacknowledged PING. */
+            setsockopt(s, IPPROTO_TCP, TCP_NODELAY, (const char*)&noDelay, sizeof(noDelay));
             break;
         }
         closesocket(s);
@@ -111,8 +115,8 @@ static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, s
 
 static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, size_t errorCapacity)
 {
-    const DWORD     requested = ISC_REQ_SEQUENCE_DETECT | ISC_REQ_REPLAY_DETECT | ISC_REQ_CONFIDENTIALITY | ISC_REQ_ALLOCATE_MEMORY | ISC_REQ_STREAM |
-                            ISC_REQ_MANUAL_CRED_VALIDATION | ISC_REQ_USE_SUPPLIED_CREDS;
+    const DWORD requested =
+        ISC_REQ_SEQUENCE_DETECT | ISC_REQ_REPLAY_DETECT | ISC_REQ_CONFIDENTIALITY | ISC_REQ_ALLOCATE_MEMORY | ISC_REQ_STREAM | ISC_REQ_MANUAL_CRED_VALIDATION | ISC_REQ_USE_SUPPLIED_CREDS;
     SCHANNEL_CRED   credentials;
     TimeStamp       expiry;
     SECURITY_STATUS status;
@@ -126,7 +130,7 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
     credentials.dwVersion             = SCHANNEL_CRED_VERSION;
     credentials.grbitEnabledProtocols = SP_PROT_TLS1_2_CLIENT;
     credentials.dwFlags               = SCH_CRED_MANUAL_CRED_VALIDATION | SCH_CRED_NO_DEFAULT_CREDS | SCH_CRED_NO_SERVERNAME_CHECK | SCH_USE_STRONG_CRYPTO;
-    status = AcquireCredentialsHandleW(NULL, UNISP_NAME_W, SECPKG_CRED_OUTBOUND, NULL, &credentials, NULL, NULL, &pChannel->credentials, &expiry);
+    status                            = AcquireCredentialsHandleW(NULL, UNISP_NAME_W, SECPKG_CRED_OUTBOUND, NULL, &credentials, NULL, NULL, &pChannel->credentials, &expiry);
     if (SEC_E_OK != status)
     {
         SetError(pError, errorCapacity, "AcquireCredentialsHandle failed", (unsigned long)status);
@@ -144,7 +148,7 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
     outDesc.ulVersion    = SECBUFFER_VERSION;
     outDesc.cBuffers     = 1;
     outDesc.pBuffers     = &outBuffer;
-    status = InitializeSecurityContextW(&pChannel->credentials, NULL, host, requested, 0, 0, NULL, 0, &pChannel->context, &outDesc, &granted, NULL);
+    status               = InitializeSecurityContextW(&pChannel->credentials, NULL, host, requested, 0, 0, NULL, 0, &pChannel->context, &outDesc, &granted, NULL);
     if (SEC_I_CONTINUE_NEEDED != status)
     {
         SetError(pError, errorCapacity, "InitializeSecurityContext failed to start", (unsigned long)status);
@@ -193,7 +197,7 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
             outBuffer.cbBuffer      = 0;
             outBuffer.BufferType    = SECBUFFER_TOKEN;
             outBuffer.pvBuffer      = NULL;
-            status = InitializeSecurityContextW(&pChannel->credentials, &pChannel->context, NULL, requested, 0, 0, &inDesc, 0, NULL, &outDesc, &granted, NULL);
+            status                  = InitializeSecurityContextW(&pChannel->credentials, &pChannel->context, NULL, requested, 0, 0, &inDesc, 0, NULL, &outDesc, &granted, NULL);
             if (SEC_E_INCOMPLETE_MESSAGE == status)
             {
                 break; /* the record is not complete: receive more */

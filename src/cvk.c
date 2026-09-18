@@ -19801,176 +19801,150 @@ void cvkEndCommandBuffer(VkCommandBuffer commandBuffer)
 {
     CVK_CHECK(vkEndCommandBuffer(commandBuffer));
 }
-uint32_t cvkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
+void cvkEnumerateDeviceExtensionProperties(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, pPropertyCount, pProperties));
 }
-uint32_t cvkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, VkLayerProperties pProperties[CVK_MAX_PROPERTIES])
+void cvkEnumerateDeviceLayerProperties(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkLayerProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkEnumerateDeviceLayerProperties(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkEnumerateInstanceExtensionProperties(const char* pLayerName, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
+void cvkEnumerateInstanceExtensionProperties(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties));
 }
-uint32_t cvkEnumerateInstanceLayerProperties(VkLayerProperties pProperties[CVK_MAX_PROPERTIES])
+void cvkEnumerateInstanceLayerProperties(uint32_t* pPropertyCount, VkLayerProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkEnumerateInstanceLayerProperties(pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkEnumerateInstanceLayerProperties(&property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkEnumerateInstanceLayerProperties(&property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkEnumerateInstanceLayerProperties(pPropertyCount, pProperties));
 }
 void cvkEnumerateInstanceVersion(uint32_t* pApiVersion)
 {
     CVK_CHECK(vkEnumerateInstanceVersion(pApiVersion));
 }
-uint32_t cvkEnumeratePhysicalDeviceGroups(VkInstance instance, VkPhysicalDeviceGroupProperties pPhysicalDeviceGroupProperties[CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES])
+void cvkEnumeratePhysicalDeviceGroups(VkInstance                      instance,
+                                      uint32_t*                       pPhysicalDeviceGroupCount,
+                                      VkPhysicalDeviceGroupProperties pPhysicalDeviceGroupProperties[CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES])
 {
-    uint32_t physical_device_group_count;
     uint32_t index;
 
-    physical_device_group_count = 0;
+    (*pPhysicalDeviceGroupCount) = 0;
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, &physical_device_group_count, NULL));
-    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES >= physical_device_group_count);
+    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, pPhysicalDeviceGroupCount, NULL));
+    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICE_GROUP_PROPERTIES >= (*pPhysicalDeviceGroupCount));
 
-    for (index = 0; index < physical_device_group_count; ++index)
+    for (index = 0; index < (*pPhysicalDeviceGroupCount); ++index)
     {
         pPhysicalDeviceGroupProperties[index].sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
         pPhysicalDeviceGroupProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, &physical_device_group_count, pPhysicalDeviceGroupProperties));
-
-    return physical_device_group_count;
+    CVK_CHECK(vkEnumeratePhysicalDeviceGroups(instance, pPhysicalDeviceGroupCount, pPhysicalDeviceGroupProperties));
 }
-uint32_t cvkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(VkPhysicalDevice                   physicalDevice,
-                                                                             uint32_t                           queueFamilyIndex,
-                                                                             VkPerformanceCounterARM            pCounters[CVK_MAX_COUNTERS],
-                                                                             VkPerformanceCounterDescriptionARM pCounterDescriptions[CVK_MAX_COUNTER_DESCRIPTIONS])
+void cvkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(VkPhysicalDevice                   physicalDevice,
+                                                                         uint32_t                           queueFamilyIndex,
+                                                                         uint32_t*                          pCounterCount,
+                                                                         VkPerformanceCounterARM            pCounters[CVK_MAX_COUNTERS],
+                                                                         VkPerformanceCounterDescriptionARM pCounterDescriptions[CVK_MAX_COUNTER_DESCRIPTIONS])
 {
-    uint32_t counter_count;
     uint32_t index;
 
-    counter_count = 0;
+    (*pCounterCount) = 0;
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, &counter_count, NULL, NULL));
-    CVK_ASSERT(CVK_MAX_COUNTERS >= counter_count);
+    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, pCounterCount, NULL, NULL));
+    CVK_ASSERT(CVK_MAX_COUNTERS >= (*pCounterCount));
 
-    for (index = 0; index < counter_count; ++index)
+    for (index = 0; index < (*pCounterCount); ++index)
     {
         pCounters[index].sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_ARM;
         pCounters[index].pNext = NULL;
     }
 
-    CVK_ASSERT(CVK_MAX_COUNTER_DESCRIPTIONS >= counter_count);
+    CVK_ASSERT(CVK_MAX_COUNTER_DESCRIPTIONS >= (*pCounterCount));
 
-    for (index = 0; index < counter_count; ++index)
+    for (index = 0; index < (*pCounterCount); ++index)
     {
         pCounterDescriptions[index].sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_ARM;
         pCounterDescriptions[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, &counter_count, pCounters, pCounterDescriptions));
-
-    return counter_count;
+    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceCountersByRegionARM(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions));
 }
-uint32_t cvkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCounters(VkPhysicalDevice                   physicalDevice,
-                                                                       uint32_t                           queueFamilyIndex,
-                                                                       VkPerformanceCounterKHR            pCounters[CVK_MAX_COUNTERS],
-                                                                       VkPerformanceCounterDescriptionKHR pCounterDescriptions[CVK_MAX_COUNTER_DESCRIPTIONS])
+void cvkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCounters(VkPhysicalDevice                   physicalDevice,
+                                                                   uint32_t                           queueFamilyIndex,
+                                                                   uint32_t*                          pCounterCount,
+                                                                   VkPerformanceCounterKHR            pCounters[CVK_MAX_COUNTERS],
+                                                                   VkPerformanceCounterDescriptionKHR pCounterDescriptions[CVK_MAX_COUNTER_DESCRIPTIONS])
 {
-    uint32_t counter_count;
     uint32_t index;
 
-    counter_count = 0;
+    (*pCounterCount) = 0;
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, &counter_count, NULL, NULL));
-    CVK_ASSERT(CVK_MAX_COUNTERS >= counter_count);
+    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, pCounterCount, NULL, NULL));
+    CVK_ASSERT(CVK_MAX_COUNTERS >= (*pCounterCount));
 
-    for (index = 0; index < counter_count; ++index)
+    for (index = 0; index < (*pCounterCount); ++index)
     {
         pCounters[index].sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_KHR;
         pCounters[index].pNext = NULL;
     }
 
-    CVK_ASSERT(CVK_MAX_COUNTER_DESCRIPTIONS >= counter_count);
+    CVK_ASSERT(CVK_MAX_COUNTER_DESCRIPTIONS >= (*pCounterCount));
 
-    for (index = 0; index < counter_count; ++index)
+    for (index = 0; index < (*pCounterCount); ++index)
     {
         pCounterDescriptions[index].sType = VK_STRUCTURE_TYPE_PERFORMANCE_COUNTER_DESCRIPTION_KHR;
         pCounterDescriptions[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, &counter_count, pCounters, pCounterDescriptions));
-
-    return counter_count;
+    CVK_CHECK(vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, pCounterCount, pCounters, pCounterDescriptions));
 }
-uint32_t cvkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(VkPhysicalDevice physicalDevice, VkShaderInstrumentationMetricDescriptionARM pDescriptions[CVK_MAX_DESCRIPTIONS])
+void cvkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(VkPhysicalDevice                            physicalDevice,
+                                                               uint32_t*                                   pDescriptionCount,
+                                                               VkShaderInstrumentationMetricDescriptionARM pDescriptions[CVK_MAX_DESCRIPTIONS])
 {
-    uint32_t description_count;
     uint32_t index;
 
-    description_count = 0;
+    (*pDescriptionCount) = 0;
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(physicalDevice, &description_count, NULL));
-    CVK_ASSERT(CVK_MAX_DESCRIPTIONS >= description_count);
+    CVK_CHECK(vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(physicalDevice, pDescriptionCount, NULL));
+    CVK_ASSERT(CVK_MAX_DESCRIPTIONS >= (*pDescriptionCount));
 
-    for (index = 0; index < description_count; ++index)
+    for (index = 0; index < (*pDescriptionCount); ++index)
     {
         pDescriptions[index].sType = VK_STRUCTURE_TYPE_SHADER_INSTRUMENTATION_METRIC_DESCRIPTION_ARM;
         pDescriptions[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(physicalDevice, &description_count, pDescriptions));
-
-    return description_count;
+    CVK_CHECK(vkEnumeratePhysicalDeviceShaderInstrumentationMetricsARM(physicalDevice, pDescriptionCount, pDescriptions));
 }
-uint32_t cvkEnumeratePhysicalDevices(VkInstance instance, VkPhysicalDevice pPhysicalDevices[CVK_MAX_PHYSICAL_DEVICES])
+void cvkEnumeratePhysicalDevices(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice pPhysicalDevices[CVK_MAX_PHYSICAL_DEVICES])
 {
-    uint32_t physical_device_count;
+    (*pPhysicalDeviceCount) = 0;
 
-    physical_device_count = 0;
+    CVK_CHECK(vkEnumeratePhysicalDevices(instance, pPhysicalDeviceCount, NULL));
+    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICES >= (*pPhysicalDeviceCount));
 
-    CVK_CHECK(vkEnumeratePhysicalDevices(instance, &physical_device_count, NULL));
-    CVK_ASSERT(CVK_MAX_PHYSICAL_DEVICES >= physical_device_count);
-
-    CVK_CHECK(vkEnumeratePhysicalDevices(instance, &physical_device_count, pPhysicalDevices));
-
-    return physical_device_count;
+    CVK_CHECK(vkEnumeratePhysicalDevices(instance, pPhysicalDeviceCount, pPhysicalDevices));
 }
 void cvkFlushMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges)
 {
@@ -20151,26 +20125,25 @@ void cvkGetClusterAccelerationStructureBuildSizesNV(VkDevice                    
 
     (*pSizeInfo) = size_info;
 }
-uint32_t cvkGetDataGraphPipelineAvailablePropertiesARM(VkDevice device, const void* pNext, VkPipeline dataGraphPipeline, VkDataGraphPipelinePropertyARM pProperties[CVK_MAX_PROPERTIES])
+void cvkGetDataGraphPipelineAvailablePropertiesARM(VkDevice                       device,
+                                                   const void*                    pNext,
+                                                   VkPipeline                     dataGraphPipeline,
+                                                   uint32_t*                      pPropertiesCount,
+                                                   VkDataGraphPipelinePropertyARM pProperties[CVK_MAX_PROPERTIES])
 {
-    VkDataGraphPipelineInfoARM pipeline_info;
-    uint32_t                   properties_count;
-
-    pipeline_info = (VkDataGraphPipelineInfoARM)
+    VkDataGraphPipelineInfoARM pipeline_info =
     {
         .sType             = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_INFO_ARM,
         .pNext             = pNext,
         .dataGraphPipeline = dataGraphPipeline
     };
 
-    properties_count = 0;
+    (*pPropertiesCount) = 0;
 
-    CVK_CHECK(vkGetDataGraphPipelineAvailablePropertiesARM(device, &pipeline_info, &properties_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= properties_count);
+    CVK_CHECK(vkGetDataGraphPipelineAvailablePropertiesARM(device, &pipeline_info, pPropertiesCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertiesCount));
 
-    CVK_CHECK(vkGetDataGraphPipelineAvailablePropertiesARM(device, &pipeline_info, &properties_count, pProperties));
-
-    return properties_count;
+    CVK_CHECK(vkGetDataGraphPipelineAvailablePropertiesARM(device, &pipeline_info, pPropertiesCount, pProperties));
 }
 VkResult cvkGetDataGraphPipelinePropertiesARM(VkDevice device, const void* pNext, VkPipeline dataGraphPipeline, uint32_t propertiesCount, VkDataGraphPipelinePropertyQueryResultARM* pProperties)
 {
@@ -20189,13 +20162,13 @@ VkResult cvkGetDataGraphPipelinePropertiesARM(VkDevice device, const void* pNext
 
     return result;
 }
-uint32_t cvkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice                                          device,
-                                                                const void*                                       pNext,
-                                                                VkDataGraphPipelineSessionARM                     session,
-                                                                VkDataGraphPipelineSessionBindPointRequirementARM pBindPointRequirements[CVK_MAX_BIND_POINT_REQUIREMENTS])
+void cvkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice                                          device,
+                                                            const void*                                       pNext,
+                                                            VkDataGraphPipelineSessionARM                     session,
+                                                            uint32_t*                                         pBindPointRequirementCount,
+                                                            VkDataGraphPipelineSessionBindPointRequirementARM pBindPointRequirements[CVK_MAX_BIND_POINT_REQUIREMENTS])
 {
     VkDataGraphPipelineSessionBindPointRequirementsInfoARM info;
-    uint32_t                                               bind_point_requirement_count;
     uint32_t                                               index;
 
     info = (VkDataGraphPipelineSessionBindPointRequirementsInfoARM)
@@ -20205,20 +20178,18 @@ uint32_t cvkGetDataGraphPipelineSessionBindPointRequirementsARM(VkDevice        
         .session = session
     };
 
-    bind_point_requirement_count = 0;
+    (*pBindPointRequirementCount) = 0;
 
-    CVK_CHECK(vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, &info, &bind_point_requirement_count, NULL));
-    CVK_ASSERT(CVK_MAX_BIND_POINT_REQUIREMENTS >= bind_point_requirement_count);
+    CVK_CHECK(vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, &info, pBindPointRequirementCount, NULL));
+    CVK_ASSERT(CVK_MAX_BIND_POINT_REQUIREMENTS >= (*pBindPointRequirementCount));
 
-    for (index = 0; index < bind_point_requirement_count; ++index)
+    for (index = 0; index < (*pBindPointRequirementCount); ++index)
     {
         pBindPointRequirements[index].sType = VK_STRUCTURE_TYPE_DATA_GRAPH_PIPELINE_SESSION_BIND_POINT_REQUIREMENT_ARM;
         pBindPointRequirements[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, &info, &bind_point_requirement_count, pBindPointRequirements));
-
-    return bind_point_requirement_count;
+    CVK_CHECK(vkGetDataGraphPipelineSessionBindPointRequirementsARM(device, &info, pBindPointRequirementCount, pBindPointRequirements));
 }
 void cvkGetDataGraphPipelineSessionMemoryRequirementsARM(VkDevice                               device,
                                                          const void*                            pInfoNext,
@@ -20426,25 +20397,22 @@ VkResult cvkGetDeviceFaultInfo(VkDevice device, void* pFaultCountsNext, VkDevice
 
     return result;
 }
-uint32_t cvkGetDeviceFaultReports(VkDevice device, uint64_t timeout, VkDeviceFaultInfoKHR pFaultInfo[CVK_MAX_FAULT_INFO])
+void cvkGetDeviceFaultReports(VkDevice device, uint64_t timeout, uint32_t* pFaultCounts, VkDeviceFaultInfoKHR pFaultInfo[CVK_MAX_FAULT_INFO])
 {
-    uint32_t fault_counts;
     uint32_t index;
 
-    fault_counts = 0;
+    (*pFaultCounts) = 0;
 
-    CVK_CHECK(vkGetDeviceFaultReportsKHR(device, timeout, &fault_counts, NULL));
-    CVK_ASSERT(CVK_MAX_FAULT_INFO >= fault_counts);
+    CVK_CHECK(vkGetDeviceFaultReportsKHR(device, timeout, pFaultCounts, NULL));
+    CVK_ASSERT(CVK_MAX_FAULT_INFO >= (*pFaultCounts));
 
-    for (index = 0; index < fault_counts; ++index)
+    for (index = 0; index < (*pFaultCounts); ++index)
     {
         pFaultInfo[index].sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_KHR;
         pFaultInfo[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetDeviceFaultReportsKHR(device, timeout, &fault_counts, pFaultInfo));
-
-    return fault_counts;
+    CVK_CHECK(vkGetDeviceFaultReportsKHR(device, timeout, pFaultCounts, pFaultInfo));
 }
 void cvkGetDeviceGroupPeerMemoryFeatures(VkDevice device, uint32_t heapIndex, uint32_t localDeviceIndex, uint32_t remoteDeviceIndex, VkPeerMemoryFeatureFlags* pPeerMemoryFeatures)
 {
@@ -20499,14 +20467,14 @@ void cvkGetDeviceImageMemoryRequirements(VkDevice                 device,
 
     (*pMemoryRequirements) = memory_requirements;
 }
-uint32_t cvkGetDeviceImageSparseMemoryRequirements(VkDevice                         device,
-                                                   const void*                      pNext,
-                                                   const VkImageCreateInfo*         pCreateInfo,
-                                                   VkImageAspectFlagBits            planeAspect,
-                                                   VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
+void cvkGetDeviceImageSparseMemoryRequirements(VkDevice                         device,
+                                               const void*                      pNext,
+                                               const VkImageCreateInfo*         pCreateInfo,
+                                               VkImageAspectFlagBits            planeAspect,
+                                               uint32_t*                        pSparseMemoryRequirementCount,
+                                               VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
 {
     VkDeviceImageMemoryRequirements info;
-    uint32_t                        sparse_memory_requirement_count;
     uint32_t                        index;
 
     info = (VkDeviceImageMemoryRequirements)
@@ -20517,20 +20485,18 @@ uint32_t cvkGetDeviceImageSparseMemoryRequirements(VkDevice                     
         .planeAspect = planeAspect
     };
 
-    sparse_memory_requirement_count = 0;
+    (*pSparseMemoryRequirementCount) = 0;
 
-    vkGetDeviceImageSparseMemoryRequirements(device, &info, &sparse_memory_requirement_count, NULL);
-    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= sparse_memory_requirement_count);
+    vkGetDeviceImageSparseMemoryRequirements(device, &info, pSparseMemoryRequirementCount, NULL);
+    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= (*pSparseMemoryRequirementCount));
 
-    for (index = 0; index < sparse_memory_requirement_count; ++index)
+    for (index = 0; index < (*pSparseMemoryRequirementCount); ++index)
     {
         pSparseMemoryRequirements[index].sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
         pSparseMemoryRequirements[index].pNext = NULL;
     }
 
-    vkGetDeviceImageSparseMemoryRequirements(device, &info, &sparse_memory_requirement_count, pSparseMemoryRequirements);
-
-    return sparse_memory_requirement_count;
+    vkGetDeviceImageSparseMemoryRequirements(device, &info, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 void cvkGetDeviceImageSubresourceLayout(VkDevice device, const VkDeviceImageSubresourceInfo* pInfo, void* pNext, VkSubresourceLayout2* pLayout)
 {
@@ -20633,38 +20599,31 @@ void cvkGetDeviceTensorMemoryRequirementsARM(VkDevice                     device
 
     (*pMemoryRequirements) = memory_requirements;
 }
-uint32_t cvkGetDisplayModeProperties2(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModeProperties2KHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetDisplayModeProperties2(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModeProperties2KHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_PROPERTIES_2_KHR;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, pProperties));
 }
-uint32_t cvkGetDisplayModeProperties(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetDisplayModeProperties(VkPhysicalDevice physicalDevice, VkDisplayKHR display, uint32_t* pPropertyCount, VkDisplayModePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetDisplayModePropertiesKHR(physicalDevice, display, pPropertyCount, pProperties));
 }
 void cvkGetDisplayPlaneCapabilities2(VkPhysicalDevice physicalDevice, const VkDisplayPlaneInfo2KHR* pDisplayPlaneInfo, void* pNext, VkDisplayPlaneCapabilities2KHR* pCapabilities)
 {
@@ -20682,18 +20641,14 @@ void cvkGetDisplayPlaneCapabilities(VkPhysicalDevice physicalDevice, VkDisplayMo
 {
     CVK_CHECK(vkGetDisplayPlaneCapabilitiesKHR(physicalDevice, mode, planeIndex, pCapabilities));
 }
-uint32_t cvkGetDisplayPlaneSupportedDisplays(VkPhysicalDevice physicalDevice, uint32_t planeIndex, VkDisplayKHR pDisplays[CVK_MAX_DISPLAYS])
+void cvkGetDisplayPlaneSupportedDisplays(VkPhysicalDevice physicalDevice, uint32_t planeIndex, uint32_t* pDisplayCount, VkDisplayKHR pDisplays[CVK_MAX_DISPLAYS])
 {
-    uint32_t display_count;
+    (*pDisplayCount) = 0;
 
-    display_count = 0;
+    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, pDisplayCount, NULL));
+    CVK_ASSERT(CVK_MAX_DISPLAYS >= (*pDisplayCount));
 
-    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &display_count, NULL));
-    CVK_ASSERT(CVK_MAX_DISPLAYS >= display_count);
-
-    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &display_count, pDisplays));
-
-    return display_count;
+    CVK_CHECK(vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, pDisplayCount, pDisplays));
 }
 void cvkGetDrmDisplay(VkPhysicalDevice physicalDevice, int32_t drmFd, uint32_t connectorId, VkDisplayKHR* display)
 {
@@ -20776,25 +20731,22 @@ VkResult cvkGetFenceStatus(VkDevice device, VkFence fence)
 
     return result;
 }
-uint32_t cvkGetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer, VkTilePropertiesQCOM pProperties[CVK_MAX_PROPERTIES])
+void cvkGetFramebufferTilePropertiesQCOM(VkDevice device, VkFramebuffer framebuffer, uint32_t* pPropertiesCount, VkTilePropertiesQCOM pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t properties_count;
     uint32_t index;
 
-    properties_count = 0;
+    (*pPropertiesCount) = 0;
 
-    CVK_CHECK(vkGetFramebufferTilePropertiesQCOM(device, framebuffer, &properties_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= properties_count);
+    CVK_CHECK(vkGetFramebufferTilePropertiesQCOM(device, framebuffer, pPropertiesCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertiesCount));
 
-    for (index = 0; index < properties_count; ++index)
+    for (index = 0; index < (*pPropertiesCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_TILE_PROPERTIES_QCOM;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetFramebufferTilePropertiesQCOM(device, framebuffer, &properties_count, pProperties));
-
-    return properties_count;
+    CVK_CHECK(vkGetFramebufferTilePropertiesQCOM(device, framebuffer, pPropertiesCount, pProperties));
 }
 void cvkGetGeneratedCommandsMemoryRequirements(VkDevice device, const VkGeneratedCommandsMemoryRequirementsInfoEXT* pInfo, void* pNext, VkMemoryRequirements2* pMemoryRequirements)
 {
@@ -20903,40 +20855,37 @@ void cvkGetImageOpaqueCaptureDescriptorData(VkDevice device, const void* pNext, 
 
     CVK_CHECK(vkGetImageOpaqueCaptureDescriptorDataEXT(device, &info, pData));
 }
-uint32_t cvkGetImageSparseMemoryRequirements(VkDevice device, VkImage image, VkSparseImageMemoryRequirements pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
+void cvkGetImageSparseMemoryRequirements(VkDevice                        device,
+                                         VkImage                         image,
+                                         uint32_t*                       pSparseMemoryRequirementCount,
+                                         VkSparseImageMemoryRequirements pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
 {
-    uint32_t sparse_memory_requirement_count;
+    (*pSparseMemoryRequirementCount) = 0;
 
-    sparse_memory_requirement_count = 0;
+    vkGetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, NULL);
+    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= (*pSparseMemoryRequirementCount));
 
-    vkGetImageSparseMemoryRequirements(device, image, &sparse_memory_requirement_count, NULL);
-    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= sparse_memory_requirement_count);
-
-    vkGetImageSparseMemoryRequirements(device, image, &sparse_memory_requirement_count, pSparseMemoryRequirements);
-
-    return sparse_memory_requirement_count;
+    vkGetImageSparseMemoryRequirements(device, image, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
-uint32_t cvkGetImageSparseMemoryRequirements2(VkDevice                                    device,
-                                              const VkImageSparseMemoryRequirementsInfo2* pInfo,
-                                              VkSparseImageMemoryRequirements2            pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
+void cvkGetImageSparseMemoryRequirements2(VkDevice                                    device,
+                                          const VkImageSparseMemoryRequirementsInfo2* pInfo,
+                                          uint32_t*                                   pSparseMemoryRequirementCount,
+                                          VkSparseImageMemoryRequirements2            pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
 {
-    uint32_t sparse_memory_requirement_count;
     uint32_t index;
 
-    sparse_memory_requirement_count = 0;
+    (*pSparseMemoryRequirementCount) = 0;
 
-    vkGetImageSparseMemoryRequirements2(device, pInfo, &sparse_memory_requirement_count, NULL);
-    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= sparse_memory_requirement_count);
+    vkGetImageSparseMemoryRequirements2(device, pInfo, pSparseMemoryRequirementCount, NULL);
+    CVK_ASSERT(CVK_MAX_SPARSE_MEMORY_REQUIREMENTS >= (*pSparseMemoryRequirementCount));
 
-    for (index = 0; index < sparse_memory_requirement_count; ++index)
+    for (index = 0; index < (*pSparseMemoryRequirementCount); ++index)
     {
         pSparseMemoryRequirements[index].sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2;
         pSparseMemoryRequirements[index].pNext = NULL;
     }
 
-    vkGetImageSparseMemoryRequirements2(device, pInfo, &sparse_memory_requirement_count, pSparseMemoryRequirements);
-
-    return sparse_memory_requirement_count;
+    vkGetImageSparseMemoryRequirements2(device, pInfo, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 void cvkGetImageSubresourceLayout(VkDevice device, VkImage image, const VkImageSubresource* pSubresource, VkSubresourceLayout* pLayout)
 {
@@ -21160,207 +21109,176 @@ VkResult cvkGetPastPresentationTiming(VkDevice                               dev
 
     return result;
 }
-uint32_t cvkGetPastPresentationTimingGOOGLE(VkDevice device, VkSwapchainKHR swapchain, VkPastPresentationTimingGOOGLE pPresentationTimings[CVK_MAX_PRESENTATION_TIMINGS])
+void cvkGetPastPresentationTimingGOOGLE(VkDevice                       device,
+                                        VkSwapchainKHR                 swapchain,
+                                        uint32_t*                      pPresentationTimingCount,
+                                        VkPastPresentationTimingGOOGLE pPresentationTimings[CVK_MAX_PRESENTATION_TIMINGS])
 {
-    uint32_t presentation_timing_count;
+    (*pPresentationTimingCount) = 0;
 
-    presentation_timing_count = 0;
+    CVK_CHECK(vkGetPastPresentationTimingGOOGLE(device, swapchain, pPresentationTimingCount, NULL));
+    CVK_ASSERT(CVK_MAX_PRESENTATION_TIMINGS >= (*pPresentationTimingCount));
 
-    CVK_CHECK(vkGetPastPresentationTimingGOOGLE(device, swapchain, &presentation_timing_count, NULL));
-    CVK_ASSERT(CVK_MAX_PRESENTATION_TIMINGS >= presentation_timing_count);
-
-    CVK_CHECK(vkGetPastPresentationTimingGOOGLE(device, swapchain, &presentation_timing_count, pPresentationTimings));
-
-    return presentation_timing_count;
+    CVK_CHECK(vkGetPastPresentationTimingGOOGLE(device, swapchain, pPresentationTimingCount, pPresentationTimings));
 }
 void cvkGetPerformanceParameterINTEL(VkDevice device, VkPerformanceParameterTypeINTEL parameter, VkPerformanceValueINTEL* pValue)
 {
     CVK_CHECK(vkGetPerformanceParameterINTEL(device, parameter, pValue));
 }
-uint32_t cvkGetPhysicalDeviceCalibrateableTimeDomains(VkPhysicalDevice physicalDevice, VkTimeDomainKHR pTimeDomains[CVK_MAX_TIME_DOMAINS])
+void cvkGetPhysicalDeviceCalibrateableTimeDomains(VkPhysicalDevice physicalDevice, uint32_t* pTimeDomainCount, VkTimeDomainKHR pTimeDomains[CVK_MAX_TIME_DOMAINS])
 {
-    uint32_t time_domain_count;
+    (*pTimeDomainCount) = 0;
 
-    time_domain_count = 0;
+    CVK_CHECK(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, pTimeDomainCount, NULL));
+    CVK_ASSERT(CVK_MAX_TIME_DOMAINS >= (*pTimeDomainCount));
 
-    CVK_CHECK(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, &time_domain_count, NULL));
-    CVK_ASSERT(CVK_MAX_TIME_DOMAINS >= time_domain_count);
-
-    CVK_CHECK(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, &time_domain_count, pTimeDomains));
-
-    return time_domain_count;
+    CVK_CHECK(vkGetPhysicalDeviceCalibrateableTimeDomainsKHR(physicalDevice, pTimeDomainCount, pTimeDomains));
 }
-uint32_t cvkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(VkPhysicalDevice physicalDevice, VkCooperativeMatrixFlexibleDimensionsPropertiesNV pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(VkPhysicalDevice                                  physicalDevice,
+                                                                         uint32_t*                                         pPropertyCount,
+                                                                         VkCooperativeMatrixFlexibleDimensionsPropertiesNV pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceCooperativeMatrixProperties2(VkPhysicalDevice                                 physicalDevice,
-                                                          const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
-                                                          VkCooperativeMatrixProperties2EXT                pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceCooperativeMatrixProperties2(VkPhysicalDevice                                 physicalDevice,
+                                                      const VkPhysicalDeviceCooperativeMatrixInfo2EXT* pCooperativeMatrixInfo,
+                                                      uint32_t*                                        pPropertyCount,
+                                                      VkCooperativeMatrixProperties2EXT                pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(physicalDevice, pCooperativeMatrixInfo, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(physicalDevice, pCooperativeMatrixInfo, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_2_EXT;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(physicalDevice, pCooperativeMatrixInfo, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixProperties2EXT(physicalDevice, pCooperativeMatrixInfo, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceCooperativeMatrixProperties(VkPhysicalDevice physicalDevice, VkCooperativeMatrixPropertiesKHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceCooperativeMatrixProperties(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceCooperativeMatrixPropertiesNV(VkPhysicalDevice physicalDevice, VkCooperativeMatrixPropertiesNV pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceCooperativeMatrixPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeMatrixPropertiesNV pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_NV;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceCooperativeVectorPropertiesNV(VkPhysicalDevice physicalDevice, VkCooperativeVectorPropertiesNV pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceCooperativeVectorPropertiesNV(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkCooperativeVectorPropertiesNV pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_COOPERATIVE_VECTOR_PROPERTIES_NV;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceCooperativeVectorPropertiesNV(physicalDevice, pPropertyCount, pProperties));
 }
 VkDeviceSize cvkGetPhysicalDeviceDescriptorSize(VkPhysicalDevice physicalDevice, VkDescriptorType descriptorType)
 {
     return vkGetPhysicalDeviceDescriptorSizeEXT(physicalDevice, descriptorType);
 }
-uint32_t cvkGetPhysicalDeviceDisplayPlaneProperties2(VkPhysicalDevice physicalDevice, VkDisplayPlaneProperties2KHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceDisplayPlaneProperties2(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlaneProperties2KHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_PROPERTIES_2_KHR;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceDisplayPlaneProperties(VkPhysicalDevice physicalDevice, VkDisplayPlanePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceDisplayPlaneProperties(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPlanePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceDisplayProperties2(VkPhysicalDevice physicalDevice, VkDisplayProperties2KHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceDisplayProperties2(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayProperties2KHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_DISPLAY_PROPERTIES_2_KHR;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, pPropertyCount, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceDisplayProperties(VkPhysicalDevice physicalDevice, VkDisplayPropertiesKHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceDisplayProperties(VkPhysicalDevice physicalDevice, uint32_t* pPropertyCount, VkDisplayPropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &property_count, pProperties));
-
-    return property_count;
+    CVK_CHECK(vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, pPropertyCount, pProperties));
 }
 void cvkGetPhysicalDeviceExternalBufferProperties(VkPhysicalDevice                          physicalDevice,
                                                   const VkPhysicalDeviceExternalBufferInfo* pExternalBufferInfo,
@@ -21485,25 +21403,24 @@ void cvkGetPhysicalDeviceFormatProperties2(VkPhysicalDevice physicalDevice, VkFo
 
     (*pFormatProperties) = format_properties;
 }
-uint32_t cvkGetPhysicalDeviceFragmentShadingRates(VkPhysicalDevice physicalDevice, VkPhysicalDeviceFragmentShadingRateKHR pFragmentShadingRates[CVK_MAX_FRAGMENT_SHADING_RATES])
+void cvkGetPhysicalDeviceFragmentShadingRates(VkPhysicalDevice                       physicalDevice,
+                                              uint32_t*                              pFragmentShadingRateCount,
+                                              VkPhysicalDeviceFragmentShadingRateKHR pFragmentShadingRates[CVK_MAX_FRAGMENT_SHADING_RATES])
 {
-    uint32_t fragment_shading_rate_count;
     uint32_t index;
 
-    fragment_shading_rate_count = 0;
+    (*pFragmentShadingRateCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, &fragment_shading_rate_count, NULL));
-    CVK_ASSERT(CVK_MAX_FRAGMENT_SHADING_RATES >= fragment_shading_rate_count);
+    CVK_CHECK(vkGetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, pFragmentShadingRateCount, NULL));
+    CVK_ASSERT(CVK_MAX_FRAGMENT_SHADING_RATES >= (*pFragmentShadingRateCount));
 
-    for (index = 0; index < fragment_shading_rate_count; ++index)
+    for (index = 0; index < (*pFragmentShadingRateCount); ++index)
     {
         pFragmentShadingRates[index].sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR;
         pFragmentShadingRates[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, &fragment_shading_rate_count, pFragmentShadingRates));
-
-    return fragment_shading_rate_count;
+    CVK_CHECK(vkGetPhysicalDeviceFragmentShadingRatesKHR(physicalDevice, pFragmentShadingRateCount, pFragmentShadingRates));
 }
 VkResult cvkGetPhysicalDeviceImageFormatProperties(VkPhysicalDevice         physicalDevice,
                                                    VkFormat                 format,
@@ -21574,13 +21491,13 @@ void cvkGetPhysicalDeviceMultisampleProperties(VkPhysicalDevice physicalDevice, 
 
     (*pMultisampleProperties) = multisample_properties;
 }
-uint32_t cvkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkPhysicalDevice                     physicalDevice,
-                                                       const void*                          pNext,
-                                                       VkOpticalFlowUsageFlagsNV            usage,
-                                                       VkOpticalFlowImageFormatPropertiesNV pImageFormatProperties[CVK_MAX_IMAGE_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkPhysicalDevice                     physicalDevice,
+                                                   const void*                          pNext,
+                                                   VkOpticalFlowUsageFlagsNV            usage,
+                                                   uint32_t*                            pFormatCount,
+                                                   VkOpticalFlowImageFormatPropertiesNV pImageFormatProperties[CVK_MAX_IMAGE_FORMAT_PROPERTIES])
 {
     VkOpticalFlowImageFormatInfoNV optical_flow_image_format_info;
-    uint32_t                       format_count;
     uint32_t                       index;
 
     optical_flow_image_format_info = (VkOpticalFlowImageFormatInfoNV)
@@ -21590,33 +21507,27 @@ uint32_t cvkGetPhysicalDeviceOpticalFlowImageFormatsNV(VkPhysicalDevice         
         .usage = usage
     };
 
-    format_count = 0;
+    (*pFormatCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, &optical_flow_image_format_info, &format_count, NULL));
-    CVK_ASSERT(CVK_MAX_IMAGE_FORMAT_PROPERTIES >= format_count);
+    CVK_CHECK(vkGetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, &optical_flow_image_format_info, pFormatCount, NULL));
+    CVK_ASSERT(CVK_MAX_IMAGE_FORMAT_PROPERTIES >= (*pFormatCount));
 
-    for (index = 0; index < format_count; ++index)
+    for (index = 0; index < (*pFormatCount); ++index)
     {
         pImageFormatProperties[index].sType = VK_STRUCTURE_TYPE_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_NV;
         pImageFormatProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, &optical_flow_image_format_info, &format_count, pImageFormatProperties));
-
-    return format_count;
+    CVK_CHECK(vkGetPhysicalDeviceOpticalFlowImageFormatsNV(physicalDevice, &optical_flow_image_format_info, pFormatCount, pImageFormatProperties));
 }
-uint32_t cvkGetPhysicalDevicePresentRectangles(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkRect2D pRects[CVK_MAX_RECTS])
+void cvkGetPhysicalDevicePresentRectangles(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pRectCount, VkRect2D pRects[CVK_MAX_RECTS])
 {
-    uint32_t rect_count;
+    (*pRectCount) = 0;
 
-    rect_count = 0;
+    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, NULL));
+    CVK_ASSERT(CVK_MAX_RECTS >= (*pRectCount));
 
-    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &rect_count, NULL));
-    CVK_ASSERT(CVK_MAX_RECTS >= rect_count);
-
-    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &rect_count, pRects));
-
-    return rect_count;
+    CVK_CHECK(vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, pRectCount, pRects));
 }
 void cvkGetPhysicalDeviceProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceProperties* pProperties)
 {
@@ -21651,18 +21562,18 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(VkPhys
 
     CVK_CHECK(vkGetPhysicalDeviceQueueFamilyDataGraphEngineOperationPropertiesARM(physicalDevice, queueFamilyIndex, &queue_family_data_graph_properties, pProperties));
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkPhysicalDevice                               physicalDevice,
-                                                                            uint32_t                                       queueFamilyIndex,
-                                                                            void*                                          pQueueFamilyDataGraphPropertiesNext,
-                                                                            VkPhysicalDeviceDataGraphProcessingEngineARM   engine,
-                                                                            VkPhysicalDeviceDataGraphOperationSupportARM   operation,
-                                                                            const void*                                    pOpticalFlowImageFormatInfoNext,
-                                                                            VkDataGraphOpticalFlowImageUsageFlagsARM       usage,
-                                                                            VkDataGraphOpticalFlowImageFormatPropertiesARM pImageFormatProperties[CVK_MAX_IMAGE_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkPhysicalDevice                               physicalDevice,
+                                                                        uint32_t                                       queueFamilyIndex,
+                                                                        void*                                          pQueueFamilyDataGraphPropertiesNext,
+                                                                        VkPhysicalDeviceDataGraphProcessingEngineARM   engine,
+                                                                        VkPhysicalDeviceDataGraphOperationSupportARM   operation,
+                                                                        const void*                                    pOpticalFlowImageFormatInfoNext,
+                                                                        VkDataGraphOpticalFlowImageUsageFlagsARM       usage,
+                                                                        uint32_t*                                      pFormatCount,
+                                                                        VkDataGraphOpticalFlowImageFormatPropertiesARM pImageFormatProperties[CVK_MAX_IMAGE_FORMAT_PROPERTIES])
 {
     VkQueueFamilyDataGraphPropertiesARM      queue_family_data_graph_properties;
     VkDataGraphOpticalFlowImageFormatInfoARM optical_flow_image_format_info;
-    uint32_t                                 format_count;
     uint32_t                                 index;
 
     queue_family_data_graph_properties = (VkQueueFamilyDataGraphPropertiesARM)
@@ -21680,13 +21591,13 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkPh
         .usage = usage
     };
 
-    format_count = 0;
+    (*pFormatCount) = 0;
 
     CVK_CHECK(
-        vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(physicalDevice, queueFamilyIndex, &queue_family_data_graph_properties, &optical_flow_image_format_info, &format_count, NULL));
-    CVK_ASSERT(CVK_MAX_IMAGE_FORMAT_PROPERTIES >= format_count);
+        vkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(physicalDevice, queueFamilyIndex, &queue_family_data_graph_properties, &optical_flow_image_format_info, pFormatCount, NULL));
+    CVK_ASSERT(CVK_MAX_IMAGE_FORMAT_PROPERTIES >= (*pFormatCount));
 
-    for (index = 0; index < format_count; ++index)
+    for (index = 0; index < (*pFormatCount); ++index)
     {
         pImageFormatProperties[index].sType = VK_STRUCTURE_TYPE_DATA_GRAPH_OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_ARM;
         pImageFormatProperties[index].pNext = NULL;
@@ -21696,10 +21607,8 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphOpticalFlowImageFormatsARM(VkPh
                                                                                 queueFamilyIndex,
                                                                                 &queue_family_data_graph_properties,
                                                                                 &optical_flow_image_format_info,
-                                                                                &format_count,
+                                                                                pFormatCount,
                                                                                 pImageFormatProperties));
-
-    return format_count;
 }
 void cvkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(VkPhysicalDevice                                     physicalDevice,
                                                                            const void*                                          pQueueFamilyDataGraphProcessingEngineInfoNext,
@@ -21729,27 +21638,25 @@ void cvkGetPhysicalDeviceQueueFamilyDataGraphProcessingEnginePropertiesARM(VkPhy
 
     (*pQueueFamilyDataGraphProcessingEngineProperties) = queue_family_data_graph_processing_engine_properties;
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(VkPhysicalDevice                    physicalDevice,
-                                                               uint32_t                            queueFamilyIndex,
-                                                               VkQueueFamilyDataGraphPropertiesARM pQueueFamilyDataGraphProperties[CVK_MAX_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(VkPhysicalDevice                    physicalDevice,
+                                                           uint32_t                            queueFamilyIndex,
+                                                           uint32_t*                           pQueueFamilyDataGraphPropertyCount,
+                                                           VkQueueFamilyDataGraphPropertiesARM pQueueFamilyDataGraphProperties[CVK_MAX_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES])
 {
-    uint32_t queue_family_data_graph_property_count;
     uint32_t index;
 
-    queue_family_data_graph_property_count = 0;
+    (*pQueueFamilyDataGraphPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, &queue_family_data_graph_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES >= queue_family_data_graph_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES >= (*pQueueFamilyDataGraphPropertyCount));
 
-    for (index = 0; index < queue_family_data_graph_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyDataGraphPropertyCount); ++index)
     {
         pQueueFamilyDataGraphProperties[index].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_DATA_GRAPH_PROPERTIES_ARM;
         pQueueFamilyDataGraphProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, &queue_family_data_graph_property_count, pQueueFamilyDataGraphProperties));
-
-    return queue_family_data_graph_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceQueueFamilyDataGraphPropertiesARM(physicalDevice, queueFamilyIndex, pQueueFamilyDataGraphPropertyCount, pQueueFamilyDataGraphProperties));
 }
 void cvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkPhysicalDevice physicalDevice,
                                                            const void*      pNext,
@@ -21769,99 +21676,86 @@ void cvkGetPhysicalDeviceQueueFamilyPerformanceQueryPasses(VkPhysicalDevice phys
 
     vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice, &performance_query_create_info, pNumPasses);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyProperties pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t queue_family_property_count;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    queue_family_property_count = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
-
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queue_family_property_count, pQueueFamilyProperties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, VkQueueFamilyProperties2 pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyProperties2(VkPhysicalDevice physicalDevice, uint32_t* pQueueFamilyPropertyCount, VkQueueFamilyProperties2 pQueueFamilyProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t queue_family_property_count;
     uint32_t index;
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         pQueueFamilyProperties[index].sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
         pQueueFamilyProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, pQueueFamilyProperties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, pQueueFamilyProperties);
 }
-uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice              physicalDevice,
-                                                         VkFormat                      format,
-                                                         VkImageType                   type,
-                                                         VkSampleCountFlagBits         samples,
-                                                         VkImageUsageFlags             usage,
-                                                         VkImageTiling                 tiling,
-                                                         VkSparseImageFormatProperties pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceSparseImageFormatProperties(VkPhysicalDevice              physicalDevice,
+                                                     VkFormat                      format,
+                                                     VkImageType                   type,
+                                                     VkSampleCountFlagBits         samples,
+                                                     VkImageUsageFlags             usage,
+                                                     VkImageTiling                 tiling,
+                                                     uint32_t*                     pPropertyCount,
+                                                     VkSparseImageFormatProperties pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
+    (*pPropertyCount) = 0;
 
-    property_count = 0;
+    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, &property_count, NULL);
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
-
-    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, &property_count, pProperties);
-
-    return property_count;
+    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, type, samples, usage, tiling, pPropertyCount, pProperties);
 }
-uint32_t cvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice                              physicalDevice,
-                                                          const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
-                                                          VkSparseImageFormatProperties2                pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceSparseImageFormatProperties2(VkPhysicalDevice                              physicalDevice,
+                                                      const VkPhysicalDeviceSparseImageFormatInfo2* pFormatInfo,
+                                                      uint32_t*                                     pPropertyCount,
+                                                      VkSparseImageFormatProperties2                pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t property_count;
     uint32_t index;
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, &property_count, NULL);
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
         pProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, &property_count, pProperties);
-
-    return property_count;
+    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, pFormatInfo, pPropertyCount, pProperties);
 }
-uint32_t cvkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkPhysicalDevice physicalDevice, VkFramebufferMixedSamplesCombinationNV pCombinations[CVK_MAX_COMBINATIONS])
+void cvkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(VkPhysicalDevice                       physicalDevice,
+                                                                        uint32_t*                              pCombinationCount,
+                                                                        VkFramebufferMixedSamplesCombinationNV pCombinations[CVK_MAX_COMBINATIONS])
 {
-    uint32_t combination_count;
     uint32_t index;
 
-    combination_count = 0;
+    (*pCombinationCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, &combination_count, NULL));
-    CVK_ASSERT(CVK_MAX_COMBINATIONS >= combination_count);
+    CVK_CHECK(vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, pCombinationCount, NULL));
+    CVK_ASSERT(CVK_MAX_COMBINATIONS >= (*pCombinationCount));
 
-    for (index = 0; index < combination_count; ++index)
+    for (index = 0; index < (*pCombinationCount); ++index)
     {
         pCombinations[index].sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_MIXED_SAMPLES_COMBINATION_NV;
         pCombinations[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, &combination_count, pCombinations));
-
-    return combination_count;
+    CVK_CHECK(vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, pCombinationCount, pCombinations));
 }
 VkResult cvkGetPhysicalDeviceSurfaceCapabilities2EXT(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, void* pNext, VkSurfaceCapabilities2EXT* pSurfaceCapabilities)
 {
@@ -21914,51 +21808,43 @@ VkResult cvkGetPhysicalDeviceSurfaceCapabilities(VkPhysicalDevice physicalDevice
 
     return result;
 }
-uint32_t cvkGetPhysicalDeviceSurfaceFormats2(VkPhysicalDevice physicalDevice, const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo, VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
+void cvkGetPhysicalDeviceSurfaceFormats2(VkPhysicalDevice                       physicalDevice,
+                                         const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+                                         uint32_t*                              pSurfaceFormatCount,
+                                         VkSurfaceFormat2KHR                    pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
-    uint32_t surface_format_count;
     uint32_t index;
 
-    surface_format_count = 0;
+    (*pSurfaceFormatCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, &surface_format_count, NULL));
-    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= surface_format_count);
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, NULL));
+    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= (*pSurfaceFormatCount));
 
-    for (index = 0; index < surface_format_count; ++index)
+    for (index = 0; index < (*pSurfaceFormatCount); ++index)
     {
         pSurfaceFormats[index].sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
         pSurfaceFormats[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, &surface_format_count, pSurfaceFormats));
-
-    return surface_format_count;
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, pSurfaceFormats));
 }
-uint32_t cvkGetPhysicalDeviceSurfaceFormats(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkSurfaceFormatKHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
+void cvkGetPhysicalDeviceSurfaceFormats(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pSurfaceFormatCount, VkSurfaceFormatKHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
-    uint32_t surface_format_count;
+    (*pSurfaceFormatCount) = 0;
 
-    surface_format_count = 0;
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, NULL));
+    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= (*pSurfaceFormatCount));
 
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surface_format_count, NULL));
-    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= surface_format_count);
-
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surface_format_count, pSurfaceFormats));
-
-    return surface_format_count;
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pSurfaceFormatCount, pSurfaceFormats));
 }
-uint32_t cvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
+void cvkGetPhysicalDeviceSurfacePresentModes(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, uint32_t* pPresentModeCount, VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
 {
-    uint32_t present_mode_count;
+    (*pPresentModeCount) = 0;
 
-    present_mode_count = 0;
+    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, NULL));
+    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= (*pPresentModeCount));
 
-    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &present_mode_count, NULL));
-    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= present_mode_count);
-
-    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &present_mode_count, pPresentModes));
-
-    return present_mode_count;
+    CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pPresentModeCount, pPresentModes));
 }
 VkResult cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, VkSurfaceKHR surface, VkBool32* pSupported)
 {
@@ -21969,25 +21855,22 @@ VkResult cvkGetPhysicalDeviceSurfaceSupport(VkPhysicalDevice physicalDevice, uin
 
     return result;
 }
-uint32_t cvkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, VkPhysicalDeviceToolProperties pToolProperties[CVK_MAX_TOOL_PROPERTIES])
+void cvkGetPhysicalDeviceToolProperties(VkPhysicalDevice physicalDevice, uint32_t* pToolCount, VkPhysicalDeviceToolProperties pToolProperties[CVK_MAX_TOOL_PROPERTIES])
 {
-    uint32_t tool_count;
     uint32_t index;
 
-    tool_count = 0;
+    (*pToolCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceToolProperties(physicalDevice, &tool_count, NULL));
-    CVK_ASSERT(CVK_MAX_TOOL_PROPERTIES >= tool_count);
+    CVK_CHECK(vkGetPhysicalDeviceToolProperties(physicalDevice, pToolCount, NULL));
+    CVK_ASSERT(CVK_MAX_TOOL_PROPERTIES >= (*pToolCount));
 
-    for (index = 0; index < tool_count; ++index)
+    for (index = 0; index < (*pToolCount); ++index)
     {
         pToolProperties[index].sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TOOL_PROPERTIES;
         pToolProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceToolProperties(physicalDevice, &tool_count, pToolProperties));
-
-    return tool_count;
+    CVK_CHECK(vkGetPhysicalDeviceToolProperties(physicalDevice, pToolCount, pToolProperties));
 }
 VkResult cvkGetPhysicalDeviceVideoCapabilities(VkPhysicalDevice physicalDevice, const VkVideoProfileInfoKHR* pVideoProfile, void* pNext, VkVideoCapabilitiesKHR* pCapabilities)
 {
@@ -22036,27 +21919,25 @@ VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(VkPhysicalDevice 
 
     return result;
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatProperties(VkPhysicalDevice                          physicalDevice,
-                                                   const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
-                                                   VkVideoFormatPropertiesKHR                pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoFormatProperties(VkPhysicalDevice                          physicalDevice,
+                                               const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                               uint32_t*                                 pVideoFormatPropertyCount,
+                                               VkVideoFormatPropertiesKHR                pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
-    uint32_t video_format_property_count;
     uint32_t index;
 
-    video_format_property_count = 0;
+    (*pVideoFormatPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= (*pVideoFormatPropertyCount));
 
-    for (index = 0; index < video_format_property_count; ++index)
+    for (index = 0; index < (*pVideoFormatPropertyCount); ++index)
     {
         pVideoFormatProperties[index].sType = VK_STRUCTURE_TYPE_VIDEO_FORMAT_PROPERTIES_KHR;
         pVideoFormatProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, pVideoFormatProperties));
-
-    return video_format_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, pVideoFormatProperties));
 }
 void cvkGetPipelineBinaryData(VkDevice                           device,
                               const VkPipelineBinaryDataInfoKHR* pInfo,
@@ -22084,67 +21965,62 @@ VkResult cvkGetPipelineCacheData(VkDevice device, VkPipelineCache pipelineCache,
 
     return result;
 }
-uint32_t cvkGetPipelineExecutableInternalRepresentations(VkDevice                                      device,
-                                                         const VkPipelineExecutableInfoKHR*            pExecutableInfo,
-                                                         VkPipelineExecutableInternalRepresentationKHR pInternalRepresentations[CVK_MAX_INTERNAL_REPRESENTATIONS])
+void cvkGetPipelineExecutableInternalRepresentations(VkDevice                                      device,
+                                                     const VkPipelineExecutableInfoKHR*            pExecutableInfo,
+                                                     uint32_t*                                     pInternalRepresentationCount,
+                                                     VkPipelineExecutableInternalRepresentationKHR pInternalRepresentations[CVK_MAX_INTERNAL_REPRESENTATIONS])
 {
-    uint32_t internal_representation_count;
     uint32_t index;
 
-    internal_representation_count = 0;
+    (*pInternalRepresentationCount) = 0;
 
-    CVK_CHECK(vkGetPipelineExecutableInternalRepresentationsKHR(device, pExecutableInfo, &internal_representation_count, NULL));
-    CVK_ASSERT(CVK_MAX_INTERNAL_REPRESENTATIONS >= internal_representation_count);
+    CVK_CHECK(vkGetPipelineExecutableInternalRepresentationsKHR(device, pExecutableInfo, pInternalRepresentationCount, NULL));
+    CVK_ASSERT(CVK_MAX_INTERNAL_REPRESENTATIONS >= (*pInternalRepresentationCount));
 
-    for (index = 0; index < internal_representation_count; ++index)
+    for (index = 0; index < (*pInternalRepresentationCount); ++index)
     {
         pInternalRepresentations[index].sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR;
         pInternalRepresentations[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPipelineExecutableInternalRepresentationsKHR(device, pExecutableInfo, &internal_representation_count, pInternalRepresentations));
-
-    return internal_representation_count;
+    CVK_CHECK(vkGetPipelineExecutableInternalRepresentationsKHR(device, pExecutableInfo, pInternalRepresentationCount, pInternalRepresentations));
 }
-uint32_t cvkGetPipelineExecutableProperties(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, VkPipelineExecutablePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPipelineExecutableProperties(VkDevice device, const VkPipelineInfoKHR* pPipelineInfo, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
-    uint32_t executable_count;
     uint32_t index;
 
-    executable_count = 0;
+    (*pExecutableCount) = 0;
 
-    CVK_CHECK(vkGetPipelineExecutablePropertiesKHR(device, pPipelineInfo, &executable_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= executable_count);
+    CVK_CHECK(vkGetPipelineExecutablePropertiesKHR(device, pPipelineInfo, pExecutableCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pExecutableCount));
 
-    for (index = 0; index < executable_count; ++index)
+    for (index = 0; index < (*pExecutableCount); ++index)
     {
         pProperties[index].sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_PROPERTIES_KHR;
         pProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPipelineExecutablePropertiesKHR(device, pPipelineInfo, &executable_count, pProperties));
-
-    return executable_count;
+    CVK_CHECK(vkGetPipelineExecutablePropertiesKHR(device, pPipelineInfo, pExecutableCount, pProperties));
 }
-uint32_t cvkGetPipelineExecutableStatistics(VkDevice device, const VkPipelineExecutableInfoKHR* pExecutableInfo, VkPipelineExecutableStatisticKHR pStatistics[CVK_MAX_STATISTICS])
+void cvkGetPipelineExecutableStatistics(VkDevice                           device,
+                                        const VkPipelineExecutableInfoKHR* pExecutableInfo,
+                                        uint32_t*                          pStatisticCount,
+                                        VkPipelineExecutableStatisticKHR   pStatistics[CVK_MAX_STATISTICS])
 {
-    uint32_t statistic_count;
     uint32_t index;
 
-    statistic_count = 0;
+    (*pStatisticCount) = 0;
 
-    CVK_CHECK(vkGetPipelineExecutableStatisticsKHR(device, pExecutableInfo, &statistic_count, NULL));
-    CVK_ASSERT(CVK_MAX_STATISTICS >= statistic_count);
+    CVK_CHECK(vkGetPipelineExecutableStatisticsKHR(device, pExecutableInfo, pStatisticCount, NULL));
+    CVK_ASSERT(CVK_MAX_STATISTICS >= (*pStatisticCount));
 
-    for (index = 0; index < statistic_count; ++index)
+    for (index = 0; index < (*pStatisticCount); ++index)
     {
         pStatistics[index].sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_STATISTIC_KHR;
         pStatistics[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPipelineExecutableStatisticsKHR(device, pExecutableInfo, &statistic_count, pStatistics));
-
-    return statistic_count;
+    CVK_CHECK(vkGetPipelineExecutableStatisticsKHR(device, pExecutableInfo, pStatisticCount, pStatistics));
 }
 VkDeviceAddress cvkGetPipelineIndirectDeviceAddressNV(VkDevice device, const void* pNext, VkPipelineBindPoint pipelineBindPoint, VkPipeline pipeline)
 {
@@ -22237,45 +22113,39 @@ VkResult cvkGetQueryPoolResults(VkDevice device, VkQueryPool queryPool, uint32_t
 
     return result;
 }
-uint32_t cvkGetQueueCheckpointData2NV(VkQueue queue, VkCheckpointData2NV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
+void cvkGetQueueCheckpointData2NV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointData2NV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
 {
-    uint32_t checkpoint_data_count;
     uint32_t index;
 
-    checkpoint_data_count = 0;
+    (*pCheckpointDataCount) = 0;
 
-    vkGetQueueCheckpointData2NV(queue, &checkpoint_data_count, NULL);
-    CVK_ASSERT(CVK_MAX_CHECKPOINT_DATA >= checkpoint_data_count);
+    vkGetQueueCheckpointData2NV(queue, pCheckpointDataCount, NULL);
+    CVK_ASSERT(CVK_MAX_CHECKPOINT_DATA >= (*pCheckpointDataCount));
 
-    for (index = 0; index < checkpoint_data_count; ++index)
+    for (index = 0; index < (*pCheckpointDataCount); ++index)
     {
         pCheckpointData[index].sType = VK_STRUCTURE_TYPE_CHECKPOINT_DATA_2_NV;
         pCheckpointData[index].pNext = NULL;
     }
 
-    vkGetQueueCheckpointData2NV(queue, &checkpoint_data_count, pCheckpointData);
-
-    return checkpoint_data_count;
+    vkGetQueueCheckpointData2NV(queue, pCheckpointDataCount, pCheckpointData);
 }
-uint32_t cvkGetQueueCheckpointDataNV(VkQueue queue, VkCheckpointDataNV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
+void cvkGetQueueCheckpointDataNV(VkQueue queue, uint32_t* pCheckpointDataCount, VkCheckpointDataNV pCheckpointData[CVK_MAX_CHECKPOINT_DATA])
 {
-    uint32_t checkpoint_data_count;
     uint32_t index;
 
-    checkpoint_data_count = 0;
+    (*pCheckpointDataCount) = 0;
 
-    vkGetQueueCheckpointDataNV(queue, &checkpoint_data_count, NULL);
-    CVK_ASSERT(CVK_MAX_CHECKPOINT_DATA >= checkpoint_data_count);
+    vkGetQueueCheckpointDataNV(queue, pCheckpointDataCount, NULL);
+    CVK_ASSERT(CVK_MAX_CHECKPOINT_DATA >= (*pCheckpointDataCount));
 
-    for (index = 0; index < checkpoint_data_count; ++index)
+    for (index = 0; index < (*pCheckpointDataCount); ++index)
     {
         pCheckpointData[index].sType = VK_STRUCTURE_TYPE_CHECKPOINT_DATA_NV;
         pCheckpointData[index].pNext = NULL;
     }
 
-    vkGetQueueCheckpointDataNV(queue, &checkpoint_data_count, pCheckpointData);
-
-    return checkpoint_data_count;
+    vkGetQueueCheckpointDataNV(queue, pCheckpointDataCount, pCheckpointData);
 }
 void cvkGetRayTracingCaptureReplayShaderGroupHandles(VkDevice device, VkPipeline pipeline, uint32_t firstGroup, uint32_t groupCount, size_t dataSize, void* pData)
 {
@@ -22437,18 +22307,14 @@ VkResult cvkGetSwapchainCounter(VkDevice device, VkSwapchainKHR swapchain, VkSur
 
     return result;
 }
-uint32_t cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, VkImage pSwapchainImages[CVK_MAX_SWAPCHAIN_IMAGES])
+void cvkGetSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, uint32_t* pSwapchainImageCount, VkImage pSwapchainImages[CVK_MAX_SWAPCHAIN_IMAGES])
 {
-    uint32_t swapchain_image_count;
+    (*pSwapchainImageCount) = 0;
 
-    swapchain_image_count = 0;
+    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, NULL));
+    CVK_ASSERT(CVK_MAX_SWAPCHAIN_IMAGES >= (*pSwapchainImageCount));
 
-    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, NULL));
-    CVK_ASSERT(CVK_MAX_SWAPCHAIN_IMAGES >= swapchain_image_count);
-
-    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, pSwapchainImages));
-
-    return swapchain_image_count;
+    CVK_CHECK(vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages));
 }
 VkResult cvkGetSwapchainStatus(VkDevice device, VkSwapchainKHR swapchain)
 {
@@ -22562,25 +22428,25 @@ VkResult cvkGetValidationCacheData(VkDevice device, VkValidationCacheEXT validat
 
     return result;
 }
-uint32_t cvkGetVideoSessionMemoryRequirements(VkDevice device, VkVideoSessionKHR videoSession, VkVideoSessionMemoryRequirementsKHR pMemoryRequirements[CVK_MAX_MEMORY_REQUIREMENTS])
+void cvkGetVideoSessionMemoryRequirements(VkDevice                            device,
+                                          VkVideoSessionKHR                   videoSession,
+                                          uint32_t*                           pMemoryRequirementsCount,
+                                          VkVideoSessionMemoryRequirementsKHR pMemoryRequirements[CVK_MAX_MEMORY_REQUIREMENTS])
 {
-    uint32_t memory_requirements_count;
     uint32_t index;
 
-    memory_requirements_count = 0;
+    (*pMemoryRequirementsCount) = 0;
 
-    CVK_CHECK(vkGetVideoSessionMemoryRequirementsKHR(device, videoSession, &memory_requirements_count, NULL));
-    CVK_ASSERT(CVK_MAX_MEMORY_REQUIREMENTS >= memory_requirements_count);
+    CVK_CHECK(vkGetVideoSessionMemoryRequirementsKHR(device, videoSession, pMemoryRequirementsCount, NULL));
+    CVK_ASSERT(CVK_MAX_MEMORY_REQUIREMENTS >= (*pMemoryRequirementsCount));
 
-    for (index = 0; index < memory_requirements_count; ++index)
+    for (index = 0; index < (*pMemoryRequirementsCount); ++index)
     {
         pMemoryRequirements[index].sType = VK_STRUCTURE_TYPE_VIDEO_SESSION_MEMORY_REQUIREMENTS_KHR;
         pMemoryRequirements[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetVideoSessionMemoryRequirementsKHR(device, videoSession, &memory_requirements_count, pMemoryRequirements));
-
-    return memory_requirements_count;
+    CVK_CHECK(vkGetVideoSessionMemoryRequirementsKHR(device, videoSession, pMemoryRequirementsCount, pMemoryRequirements));
 }
 void cvkImportFenceFd(VkDevice device, const void* pNext, VkFence fence, VkFenceImportFlags flags, VkExternalFenceHandleTypeFlagBits handleType, int fd)
 {
@@ -23330,7 +23196,11 @@ void cvkGetImageMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, 
 
     cvkGetImageMemoryRequirements2(device, &info, pMemoryRequirementsNext, pMemoryRequirements);
 }
-uint32_t cvkGetImageSparseMemoryRequirementsInfo2(VkDevice device, const void* pNext, VkImage image, VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
+void cvkGetImageSparseMemoryRequirementsInfo2(VkDevice                         device,
+                                              const void*                      pNext,
+                                              VkImage                          image,
+                                              uint32_t*                        pSparseMemoryRequirementCount,
+                                              VkSparseImageMemoryRequirements2 pSparseMemoryRequirements[CVK_MAX_SPARSE_MEMORY_REQUIREMENTS])
 {
     VkImageSparseMemoryRequirementsInfo2 info =
     {
@@ -23339,7 +23209,7 @@ uint32_t cvkGetImageSparseMemoryRequirementsInfo2(VkDevice device, const void* p
         .image = image
     };
 
-    return cvkGetImageSparseMemoryRequirements2(device, &info, pSparseMemoryRequirements);
+    cvkGetImageSparseMemoryRequirements2(device, &info, pSparseMemoryRequirementCount, pSparseMemoryRequirements);
 }
 void cvkGetMicromapBuildInfo(VkDevice                            device,
                              VkAccelerationStructureBuildTypeKHR buildType,
@@ -23394,13 +23264,14 @@ VkResult cvkGetPastPresentationTimingInfo(VkDevice                              
 
     return cvkGetPastPresentationTiming(device, &past_presentation_timing_info, pPastPresentationTimingPropertiesNext, pPastPresentationTimingProperties);
 }
-uint32_t cvkGetPhysicalDeviceCooperativeMatrixInfo2(VkPhysicalDevice                  physicalDevice,
-                                                    const void*                       pNext,
-                                                    VkScopeKHR                        scope,
-                                                    uint32_t                          invocations,
-                                                    uint32_t                          subgroupSize,
-                                                    VkCooperativeMatrixFlagsEXT       flags,
-                                                    VkCooperativeMatrixProperties2EXT pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceCooperativeMatrixInfo2(VkPhysicalDevice                  physicalDevice,
+                                                const void*                       pNext,
+                                                VkScopeKHR                        scope,
+                                                uint32_t                          invocations,
+                                                uint32_t                          subgroupSize,
+                                                VkCooperativeMatrixFlagsEXT       flags,
+                                                uint32_t*                         pPropertyCount,
+                                                VkCooperativeMatrixProperties2EXT pProperties[CVK_MAX_PROPERTIES])
 {
     VkPhysicalDeviceCooperativeMatrixInfo2EXT cooperative_matrix_info =
     {
@@ -23412,7 +23283,7 @@ uint32_t cvkGetPhysicalDeviceCooperativeMatrixInfo2(VkPhysicalDevice            
         .flags        = flags
     };
 
-    return cvkGetPhysicalDeviceCooperativeMatrixProperties2(physicalDevice, &cooperative_matrix_info, pProperties);
+    cvkGetPhysicalDeviceCooperativeMatrixProperties2(physicalDevice, &cooperative_matrix_info, pPropertyCount, pProperties);
 }
 void cvkGetPhysicalDeviceExternalBufferInfo(VkPhysicalDevice                   physicalDevice,
                                             const void*                        pExternalBufferInfoNext,
@@ -23486,14 +23357,15 @@ VkResult cvkGetPhysicalDeviceImageFormatInfo2(VkPhysicalDevice          physical
 
     return cvkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &image_format_info, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice               physicalDevice,
-                                                    const void*                    pNext,
-                                                    VkFormat                       format,
-                                                    VkImageType                    type,
-                                                    VkSampleCountFlagBits          samples,
-                                                    VkImageUsageFlags              usage,
-                                                    VkImageTiling                  tiling,
-                                                    VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice               physicalDevice,
+                                                const void*                    pNext,
+                                                VkFormat                       format,
+                                                VkImageType                    type,
+                                                VkSampleCountFlagBits          samples,
+                                                VkImageUsageFlags              usage,
+                                                VkImageTiling                  tiling,
+                                                uint32_t*                      pPropertyCount,
+                                                VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
 {
     VkPhysicalDeviceSparseImageFormatInfo2 format_info =
     {
@@ -23506,7 +23378,7 @@ uint32_t cvkGetPhysicalDeviceSparseImageFormatInfo2(VkPhysicalDevice            
         .tiling  = tiling
     };
 
-    return cvkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, pProperties);
+    cvkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &format_info, pPropertyCount, pProperties);
 }
 VkResult cvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice           physicalDevice,
                                                       const void*                pSurfaceInfoNext,
@@ -23523,7 +23395,11 @@ VkResult cvkGetPhysicalDeviceSurfaceCapabilities2Info(VkPhysicalDevice          
 
     return cvkGetPhysicalDeviceSurfaceCapabilities2(physicalDevice, &surface_info, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
-uint32_t cvkGetPhysicalDeviceSurfaceFormats2Info(VkPhysicalDevice physicalDevice, const void* pNext, VkSurfaceKHR surface, VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
+void cvkGetPhysicalDeviceSurfaceFormats2Info(VkPhysicalDevice    physicalDevice,
+                                             const void*         pNext,
+                                             VkSurfaceKHR        surface,
+                                             uint32_t*           pSurfaceFormatCount,
+                                             VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
     VkPhysicalDeviceSurfaceInfo2KHR surface_info =
     {
@@ -23532,7 +23408,7 @@ uint32_t cvkGetPhysicalDeviceSurfaceFormats2Info(VkPhysicalDevice physicalDevice
         .surface = surface
     };
 
-    return cvkGetPhysicalDeviceSurfaceFormats2(physicalDevice, &surface_info, pSurfaceFormats);
+    cvkGetPhysicalDeviceSurfaceFormats2(physicalDevice, &surface_info, pSurfaceFormatCount, pSurfaceFormats);
 }
 VkResult cvkGetVideoProfileInfo(VkPhysicalDevice                 physicalDevice,
                                 const void*                      pVideoProfileNext,
@@ -23572,10 +23448,11 @@ VkResult cvkGetPhysicalDeviceVideoEncodeQualityLevelInfo(VkPhysicalDevice       
 
     return cvkGetPhysicalDeviceVideoEncodeQualityLevelProperties(physicalDevice, &quality_level_info, pQualityLevelPropertiesNext, pQualityLevelProperties);
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatInfo(VkPhysicalDevice           physicalDevice,
-                                             const void*                pNext,
-                                             VkImageUsageFlags          imageUsage,
-                                             VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoFormatInfo(VkPhysicalDevice           physicalDevice,
+                                         const void*                pNext,
+                                         VkImageUsageFlags          imageUsage,
+                                         uint32_t*                  pVideoFormatPropertyCount,
+                                         VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
     VkPhysicalDeviceVideoFormatInfoKHR video_format_info =
     {
@@ -23584,7 +23461,7 @@ uint32_t cvkGetPhysicalDeviceVideoFormatInfo(VkPhysicalDevice           physical
         .imageUsage = imageUsage
     };
 
-    return cvkGetPhysicalDeviceVideoFormatProperties(physicalDevice, &video_format_info, pVideoFormatProperties);
+    cvkGetPhysicalDeviceVideoFormatProperties(physicalDevice, &video_format_info, pVideoFormatPropertyCount, pVideoFormatProperties);
 }
 void cvkGetPipelineBinaryDataInfo(VkDevice                device,
                                   void*                   pInfoNext,
@@ -23603,11 +23480,12 @@ void cvkGetPipelineBinaryDataInfo(VkDevice                device,
 
     cvkGetPipelineBinaryData(device, &info, pPipelineBinaryKeyNext, pPipelineBinaryKey, pPipelineBinaryDataSize, pPipelineBinaryData);
 }
-uint32_t cvkGetPipelineExecutableInternalRepresentationsInfo(VkDevice                                      device,
-                                                             const void*                                   pNext,
-                                                             VkPipeline                                    pipeline,
-                                                             uint32_t                                      executableIndex,
-                                                             VkPipelineExecutableInternalRepresentationKHR pInternalRepresentations[CVK_MAX_INTERNAL_REPRESENTATIONS])
+void cvkGetPipelineExecutableInternalRepresentationsInfo(VkDevice                                      device,
+                                                         const void*                                   pNext,
+                                                         VkPipeline                                    pipeline,
+                                                         uint32_t                                      executableIndex,
+                                                         uint32_t*                                     pInternalRepresentationCount,
+                                                         VkPipelineExecutableInternalRepresentationKHR pInternalRepresentations[CVK_MAX_INTERNAL_REPRESENTATIONS])
 {
     VkPipelineExecutableInfoKHR executable_info =
     {
@@ -23617,9 +23495,9 @@ uint32_t cvkGetPipelineExecutableInternalRepresentationsInfo(VkDevice           
         .executableIndex = executableIndex
     };
 
-    return cvkGetPipelineExecutableInternalRepresentations(device, &executable_info, pInternalRepresentations);
+    cvkGetPipelineExecutableInternalRepresentations(device, &executable_info, pInternalRepresentationCount, pInternalRepresentations);
 }
-uint32_t cvkGetPipelineInfo(VkDevice device, const void* pNext, VkPipeline pipeline, VkPipelineExecutablePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPipelineInfo(VkDevice device, const void* pNext, VkPipeline pipeline, uint32_t* pExecutableCount, VkPipelineExecutablePropertiesKHR pProperties[CVK_MAX_PROPERTIES])
 {
     VkPipelineInfoKHR pipeline_info =
     {
@@ -23628,9 +23506,14 @@ uint32_t cvkGetPipelineInfo(VkDevice device, const void* pNext, VkPipeline pipel
         .pipeline = pipeline
     };
 
-    return cvkGetPipelineExecutableProperties(device, &pipeline_info, pProperties);
+    cvkGetPipelineExecutableProperties(device, &pipeline_info, pExecutableCount, pProperties);
 }
-uint32_t cvkGetPipelineExecutableStatisticsInfo(VkDevice device, const void* pNext, VkPipeline pipeline, uint32_t executableIndex, VkPipelineExecutableStatisticKHR pStatistics[CVK_MAX_STATISTICS])
+void cvkGetPipelineExecutableStatisticsInfo(VkDevice                         device,
+                                            const void*                      pNext,
+                                            VkPipeline                       pipeline,
+                                            uint32_t                         executableIndex,
+                                            uint32_t*                        pStatisticCount,
+                                            VkPipelineExecutableStatisticKHR pStatistics[CVK_MAX_STATISTICS])
 {
     VkPipelineExecutableInfoKHR executable_info =
     {
@@ -23640,7 +23523,7 @@ uint32_t cvkGetPipelineExecutableStatisticsInfo(VkDevice device, const void* pNe
         .executableIndex = executableIndex
     };
 
-    return cvkGetPipelineExecutableStatistics(device, &executable_info, pStatistics);
+    cvkGetPipelineExecutableStatistics(device, &executable_info, pStatisticCount, pStatistics);
 }
 void cvkBindAccelerationStructureMemoryInfoNV(VkDevice                  device,
                                               const void*               pNext,
@@ -31435,15 +31318,16 @@ VkResult cvkGetPhysicalDeviceImageFormatVideoProfileListProperties(VkPhysicalDev
 
     return cvkGetPhysicalDeviceImageFormatInfo2(physicalDevice, &list_info, format, type, tiling, usage, flags, pImageFormatPropertiesNext, pImageFormatProperties);
 }
-uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2PropertiesKHR(VkPhysicalDevice               physicalDevice,
-                                                                       void*                          pNext,
-                                                                       VkImageUsageFlags2KHR          usage2,
-                                                                       VkFormat                       format,
-                                                                       VkImageType                    type,
-                                                                       VkSampleCountFlagBits          samples,
-                                                                       VkImageUsageFlags              usage,
-                                                                       VkImageTiling                  tiling,
-                                                                       VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
+void cvkGetPhysicalDeviceSparseImageUsageFormatFlags2PropertiesKHR(VkPhysicalDevice               physicalDevice,
+                                                                   void*                          pNext,
+                                                                   VkImageUsageFlags2KHR          usage2,
+                                                                   VkFormat                       format,
+                                                                   VkImageType                    type,
+                                                                   VkSampleCountFlagBits          samples,
+                                                                   VkImageUsageFlags              usage,
+                                                                   VkImageTiling                  tiling,
+                                                                   uint32_t*                      pPropertyCount,
+                                                                   VkSparseImageFormatProperties2 pProperties[CVK_MAX_PROPERTIES])
 {
     VkImageUsageFlags2CreateInfoKHR create_info =
     {
@@ -31452,7 +31336,7 @@ uint32_t cvkGetPhysicalDeviceSparseImageUsageFormatFlags2PropertiesKHR(VkPhysica
         .usage = usage2
     };
 
-    return cvkGetPhysicalDeviceSparseImageFormatInfo2(physicalDevice, &create_info, format, type, samples, usage, tiling, pProperties);
+    cvkGetPhysicalDeviceSparseImageFormatInfo2(physicalDevice, &create_info, format, type, samples, usage, tiling, pPropertyCount, pProperties);
 }
 VkResult cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice           physicalDevice,
                                                             void*                      pSurfaceInfoNext,
@@ -31470,11 +31354,12 @@ VkResult cvkGetPhysicalDeviceSurfacePresentModeCapabilities(VkPhysicalDevice    
 
     return cvkGetPhysicalDeviceSurfaceCapabilities2Info(physicalDevice, &surface_present_mode, surface, pSurfaceCapabilitiesNext, pSurfaceCapabilities);
 }
-uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physicalDevice,
-                                                       void*               pNext,
-                                                       VkPresentModeKHR    presentMode,
-                                                       VkSurfaceKHR        surface,
-                                                       VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
+void cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physicalDevice,
+                                                   void*               pNext,
+                                                   VkPresentModeKHR    presentMode,
+                                                   VkSurfaceKHR        surface,
+                                                   uint32_t*           pSurfaceFormatCount,
+                                                   VkSurfaceFormat2KHR pSurfaceFormats[CVK_MAX_SURFACE_FORMATS])
 {
     VkSurfacePresentModeKHR surface_present_mode =
     {
@@ -31483,7 +31368,7 @@ uint32_t cvkGetPhysicalDeviceSurfacePresentModeFormats(VkPhysicalDevice    physi
         .presentMode = presentMode
     };
 
-    return cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &surface_present_mode, surface, pSurfaceFormats);
+    cvkGetPhysicalDeviceSurfaceFormats2Info(physicalDevice, &surface_present_mode, surface, pSurfaceFormatCount, pSurfaceFormats);
 }
 VkResult cvkGetVideoDecodeAV1ProfileInfo(VkPhysicalDevice                 physicalDevice,
                                          const void*                      pVideoProfileNext,
@@ -31683,11 +31568,12 @@ VkResult cvkGetPhysicalDeviceVideoCapabilitiesWithEncodeUsageInfo(VkPhysicalDevi
 
     return cvkGetVideoProfileInfo(physicalDevice, &usage_info, videoCodecOperation, chromaSubsampling, lumaBitDepth, chromaBitDepth, pCapabilitiesNext, pCapabilities);
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2PropertiesKHR(VkPhysicalDevice           physicalDevice,
-                                                                      void*                      pNext,
-                                                                      VkImageUsageFlags2KHR      usage,
-                                                                      VkImageUsageFlags          imageUsage,
-                                                                      VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoFormatImageUsageFlags2PropertiesKHR(VkPhysicalDevice           physicalDevice,
+                                                                  void*                      pNext,
+                                                                  VkImageUsageFlags2KHR      usage,
+                                                                  VkImageUsageFlags          imageUsage,
+                                                                  uint32_t*                  pVideoFormatPropertyCount,
+                                                                  VkVideoFormatPropertiesKHR pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
     VkImageUsageFlags2CreateInfoKHR create_info =
     {
@@ -31696,14 +31582,15 @@ uint32_t cvkGetPhysicalDeviceVideoFormatImageUsageFlags2PropertiesKHR(VkPhysical
         .usage = usage
     };
 
-    return cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, &create_info, imageUsage, pVideoFormatProperties);
+    cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, &create_info, imageUsage, pVideoFormatPropertyCount, pVideoFormatProperties);
 }
-uint32_t cvkGetPhysicalDeviceVideoProfileFormatListProperties(VkPhysicalDevice             physicalDevice,
-                                                              const void*                  pNext,
-                                                              uint32_t                     profileCount,
-                                                              const VkVideoProfileInfoKHR* pProfiles,
-                                                              VkImageUsageFlags            imageUsage,
-                                                              VkVideoFormatPropertiesKHR   pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoProfileFormatListProperties(VkPhysicalDevice             physicalDevice,
+                                                          const void*                  pNext,
+                                                          uint32_t                     profileCount,
+                                                          const VkVideoProfileInfoKHR* pProfiles,
+                                                          VkImageUsageFlags            imageUsage,
+                                                          uint32_t*                    pVideoFormatPropertyCount,
+                                                          VkVideoFormatPropertiesKHR   pVideoFormatProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
     VkVideoProfileListInfoKHR list_info =
     {
@@ -31713,7 +31600,7 @@ uint32_t cvkGetPhysicalDeviceVideoProfileFormatListProperties(VkPhysicalDevice  
         .pProfiles    = pProfiles
     };
 
-    return cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, &list_info, imageUsage, pVideoFormatProperties);
+    cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, &list_info, imageUsage, pVideoFormatPropertyCount, pVideoFormatProperties);
 }
 void cvkGetPipelineIndirectMemoryRequirementsWithIndirectBufferInfoNVNV(VkDevice                        device,
                                                                         const void*                     pCreateInfoNext,
@@ -44090,18 +43977,20 @@ void cvkGetTensorMemoryRequirementsWithTileRequirementsARMQCOM(VkDevice         
 
     (*pTileMemoryRequirementsQCOM) = requirements;
 }
-uint32_t cvkGetDisplayModeStereoPropertiesNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display, VkDisplayModeStereoPropertiesNV pDisplayModeStereoPropertiesNV[CVK_MAX_PROPERTIES])
+void cvkGetDisplayModeStereoPropertiesNV(VkPhysicalDevice                physicalDevice,
+                                         VkDisplayKHR                    display,
+                                         uint32_t*                       pPropertyCount,
+                                         VkDisplayModeStereoPropertiesNV pDisplayModeStereoPropertiesNV[CVK_MAX_PROPERTIES])
 {
-    uint32_t                    property_count;
     uint32_t                    index;
     VkDisplayModeProperties2KHR properties[CVK_MAX_PROPERTIES];
 
-    property_count = 0;
+    (*pPropertyCount) = 0;
 
-    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, &property_count, NULL));
-    CVK_ASSERT(CVK_MAX_PROPERTIES >= property_count);
+    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_PROPERTIES >= (*pPropertyCount));
 
-    for (index = 0; index < property_count; ++index)
+    for (index = 0; index < (*pPropertyCount); ++index)
     {
         properties[index] = (VkDisplayModeProperties2KHR)
         {
@@ -44112,23 +44001,21 @@ uint32_t cvkGetDisplayModeStereoPropertiesNV(VkPhysicalDevice physicalDevice, Vk
         pDisplayModeStereoPropertiesNV[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, &property_count, properties));
-
-    return property_count;
+    CVK_CHECK(vkGetDisplayModeProperties2KHR(physicalDevice, display, pPropertyCount, properties));
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyCheckpointProperties2NV(VkPhysicalDevice                     physicalDevice,
-                                                                VkQueueFamilyCheckpointProperties2NV pQueueFamilyCheckpointProperties2NV[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyCheckpointProperties2NV(VkPhysicalDevice                     physicalDevice,
+                                                            uint32_t*                            pQueueFamilyPropertyCount,
+                                                            VkQueueFamilyCheckpointProperties2NV pQueueFamilyCheckpointProperties2NV[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44139,22 +44026,21 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyCheckpointProperties2NV(VkPhysicalDevice
         pQueueFamilyCheckpointProperties2NV[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyCheckpointPropertiesNV(VkPhysicalDevice physicalDevice, VkQueueFamilyCheckpointPropertiesNV pQueueFamilyCheckpointPropertiesNV[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyCheckpointPropertiesNV(VkPhysicalDevice                    physicalDevice,
+                                                           uint32_t*                           pQueueFamilyPropertyCount,
+                                                           VkQueueFamilyCheckpointPropertiesNV pQueueFamilyCheckpointPropertiesNV[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44165,23 +44051,21 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyCheckpointPropertiesNV(VkPhysicalDevice 
         pQueueFamilyCheckpointPropertiesNV[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyGlobalPriorityProperties(VkPhysicalDevice                      physicalDevice,
-                                                                 VkQueueFamilyGlobalPriorityProperties pQueueFamilyGlobalPriorityProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyGlobalPriorityProperties(VkPhysicalDevice                      physicalDevice,
+                                                             uint32_t*                             pQueueFamilyPropertyCount,
+                                                             VkQueueFamilyGlobalPriorityProperties pQueueFamilyGlobalPriorityProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44192,24 +44076,22 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyGlobalPriorityProperties(VkPhysicalDevic
         pQueueFamilyGlobalPriorityProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyOptimalImageTransferGranularityProperties(
+void cvkGetPhysicalDeviceQueueFamilyOptimalImageTransferGranularityProperties(
     VkPhysicalDevice                                          physicalDevice,
+    uint32_t*                                                 pQueueFamilyPropertyCount,
     VkQueueFamilyOptimalImageTransferGranularityPropertiesKHR pQueueFamilyOptimalImageTransferGranularityProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44220,23 +44102,21 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyOptimalImageTransferGranularityPropertie
         pQueueFamilyOptimalImageTransferGranularityProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyOwnershipTransferProperties(VkPhysicalDevice                            physicalDevice,
-                                                                    VkQueueFamilyOwnershipTransferPropertiesKHR pQueueFamilyOwnershipTransferProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyOwnershipTransferProperties(VkPhysicalDevice                            physicalDevice,
+                                                                uint32_t*                                   pQueueFamilyPropertyCount,
+                                                                VkQueueFamilyOwnershipTransferPropertiesKHR pQueueFamilyOwnershipTransferProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44247,23 +44127,21 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyOwnershipTransferProperties(VkPhysicalDe
         pQueueFamilyOwnershipTransferProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyQueryResultStatusProperties(VkPhysicalDevice                            physicalDevice,
-                                                                    VkQueueFamilyQueryResultStatusPropertiesKHR pQueueFamilyQueryResultStatusProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyQueryResultStatusProperties(VkPhysicalDevice                            physicalDevice,
+                                                                uint32_t*                                   pQueueFamilyPropertyCount,
+                                                                VkQueueFamilyQueryResultStatusPropertiesKHR pQueueFamilyQueryResultStatusProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44274,22 +44152,21 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyQueryResultStatusProperties(VkPhysicalDe
         pQueueFamilyQueryResultStatusProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceQueueFamilyVideoProperties(VkPhysicalDevice physicalDevice, VkQueueFamilyVideoPropertiesKHR pQueueFamilyVideoProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
+void cvkGetPhysicalDeviceQueueFamilyVideoProperties(VkPhysicalDevice                physicalDevice,
+                                                    uint32_t*                       pQueueFamilyPropertyCount,
+                                                    VkQueueFamilyVideoPropertiesKHR pQueueFamilyVideoProperties[CVK_MAX_QUEUE_FAMILY_PROPERTIES])
 {
-    uint32_t                 queue_family_property_count;
     uint32_t                 index;
     VkQueueFamilyProperties2 queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = 0;
+    (*pQueueFamilyPropertyCount) = 0;
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, NULL);
-    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= queue_family_property_count);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, NULL);
+    CVK_ASSERT(CVK_MAX_QUEUE_FAMILY_PROPERTIES >= (*pQueueFamilyPropertyCount));
 
-    for (index = 0; index < queue_family_property_count; ++index)
+    for (index = 0; index < (*pQueueFamilyPropertyCount); ++index)
     {
         queue_family_properties[index] = (VkQueueFamilyProperties2)
         {
@@ -44300,24 +44177,22 @@ uint32_t cvkGetPhysicalDeviceQueueFamilyVideoProperties(VkPhysicalDevice physica
         pQueueFamilyVideoProperties[index].pNext = NULL;
     }
 
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queue_family_property_count, queue_family_properties);
-
-    return queue_family_property_count;
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, pQueueFamilyPropertyCount, queue_family_properties);
 }
-uint32_t cvkGetPhysicalDeviceSurfaceFormats2WithImageCompressionProperties(VkPhysicalDevice                       physicalDevice,
-                                                                           const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
-                                                                           VkImageCompressionPropertiesEXT        pImageCompressionProperties[CVK_MAX_SURFACE_FORMATS])
+void cvkGetPhysicalDeviceSurfaceFormats2WithImageCompressionProperties(VkPhysicalDevice                       physicalDevice,
+                                                                       const VkPhysicalDeviceSurfaceInfo2KHR* pSurfaceInfo,
+                                                                       uint32_t*                              pSurfaceFormatCount,
+                                                                       VkImageCompressionPropertiesEXT        pImageCompressionProperties[CVK_MAX_SURFACE_FORMATS])
 {
-    uint32_t            surface_format_count;
     uint32_t            index;
     VkSurfaceFormat2KHR surface_formats[CVK_MAX_SURFACE_FORMATS];
 
-    surface_format_count = 0;
+    (*pSurfaceFormatCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, &surface_format_count, NULL));
-    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= surface_format_count);
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, NULL));
+    CVK_ASSERT(CVK_MAX_SURFACE_FORMATS >= (*pSurfaceFormatCount));
 
-    for (index = 0; index < surface_format_count; ++index)
+    for (index = 0; index < (*pSurfaceFormatCount); ++index)
     {
         surface_formats[index] = (VkSurfaceFormat2KHR)
         {
@@ -44328,24 +44203,22 @@ uint32_t cvkGetPhysicalDeviceSurfaceFormats2WithImageCompressionProperties(VkPhy
         pImageCompressionProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, &surface_format_count, surface_formats));
-
-    return surface_format_count;
+    CVK_CHECK(vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, pSurfaceInfo, pSurfaceFormatCount, surface_formats));
 }
-uint32_t cvkGetPhysicalDeviceImageCreateFlags2CreateInfo(VkPhysicalDevice                          physicalDevice,
-                                                         const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
-                                                         VkImageCreateFlags2CreateInfoKHR          pImageCreateFlags2CreateInfo[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceImageCreateFlags2CreateInfo(VkPhysicalDevice                          physicalDevice,
+                                                     const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                                     uint32_t*                                 pVideoFormatPropertyCount,
+                                                     VkImageCreateFlags2CreateInfoKHR          pImageCreateFlags2CreateInfo[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
-    uint32_t                   video_format_property_count;
     uint32_t                   index;
     VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    video_format_property_count = 0;
+    (*pVideoFormatPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= (*pVideoFormatPropertyCount));
 
-    for (index = 0; index < video_format_property_count; ++index)
+    for (index = 0; index < (*pVideoFormatPropertyCount); ++index)
     {
         video_format_properties[index] = (VkVideoFormatPropertiesKHR)
         {
@@ -44356,24 +44229,22 @@ uint32_t cvkGetPhysicalDeviceImageCreateFlags2CreateInfo(VkPhysicalDevice       
         pImageCreateFlags2CreateInfo[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, video_format_properties));
-
-    return video_format_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, video_format_properties));
 }
-uint32_t cvkGetPhysicalDeviceImageUsageFlags2CreateInfoKHR(VkPhysicalDevice                          physicalDevice,
-                                                           const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
-                                                           VkImageUsageFlags2CreateInfoKHR           pImageUsageFlags2CreateInfoKHR[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceImageUsageFlags2CreateInfoKHR(VkPhysicalDevice                          physicalDevice,
+                                                       const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                                       uint32_t*                                 pVideoFormatPropertyCount,
+                                                       VkImageUsageFlags2CreateInfoKHR           pImageUsageFlags2CreateInfoKHR[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
-    uint32_t                   video_format_property_count;
     uint32_t                   index;
     VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    video_format_property_count = 0;
+    (*pVideoFormatPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= (*pVideoFormatPropertyCount));
 
-    for (index = 0; index < video_format_property_count; ++index)
+    for (index = 0; index < (*pVideoFormatPropertyCount); ++index)
     {
         video_format_properties[index] = (VkVideoFormatPropertiesKHR)
         {
@@ -44384,24 +44255,22 @@ uint32_t cvkGetPhysicalDeviceImageUsageFlags2CreateInfoKHR(VkPhysicalDevice     
         pImageUsageFlags2CreateInfoKHR[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, video_format_properties));
-
-    return video_format_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, video_format_properties));
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatAV1QuantizationMapProperties(VkPhysicalDevice                             physicalDevice,
-                                                                     const VkPhysicalDeviceVideoFormatInfoKHR*    pVideoFormatInfo,
-                                                                     VkVideoFormatAV1QuantizationMapPropertiesKHR pVideoFormatAV1QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoFormatAV1QuantizationMapProperties(VkPhysicalDevice                             physicalDevice,
+                                                                 const VkPhysicalDeviceVideoFormatInfoKHR*    pVideoFormatInfo,
+                                                                 uint32_t*                                    pVideoFormatPropertyCount,
+                                                                 VkVideoFormatAV1QuantizationMapPropertiesKHR pVideoFormatAV1QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
-    uint32_t                   video_format_property_count;
     uint32_t                   index;
     VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    video_format_property_count = 0;
+    (*pVideoFormatPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= (*pVideoFormatPropertyCount));
 
-    for (index = 0; index < video_format_property_count; ++index)
+    for (index = 0; index < (*pVideoFormatPropertyCount); ++index)
     {
         video_format_properties[index] = (VkVideoFormatPropertiesKHR)
         {
@@ -44412,24 +44281,22 @@ uint32_t cvkGetPhysicalDeviceVideoFormatAV1QuantizationMapProperties(VkPhysicalD
         pVideoFormatAV1QuantizationMapProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, video_format_properties));
-
-    return video_format_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, video_format_properties));
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatH265QuantizationMapProperties(VkPhysicalDevice                              physicalDevice,
-                                                                      const VkPhysicalDeviceVideoFormatInfoKHR*     pVideoFormatInfo,
-                                                                      VkVideoFormatH265QuantizationMapPropertiesKHR pVideoFormatH265QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoFormatH265QuantizationMapProperties(VkPhysicalDevice                              physicalDevice,
+                                                                  const VkPhysicalDeviceVideoFormatInfoKHR*     pVideoFormatInfo,
+                                                                  uint32_t*                                     pVideoFormatPropertyCount,
+                                                                  VkVideoFormatH265QuantizationMapPropertiesKHR pVideoFormatH265QuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
-    uint32_t                   video_format_property_count;
     uint32_t                   index;
     VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    video_format_property_count = 0;
+    (*pVideoFormatPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= (*pVideoFormatPropertyCount));
 
-    for (index = 0; index < video_format_property_count; ++index)
+    for (index = 0; index < (*pVideoFormatPropertyCount); ++index)
     {
         video_format_properties[index] = (VkVideoFormatPropertiesKHR)
         {
@@ -44440,24 +44307,22 @@ uint32_t cvkGetPhysicalDeviceVideoFormatH265QuantizationMapProperties(VkPhysical
         pVideoFormatH265QuantizationMapProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, video_format_properties));
-
-    return video_format_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, video_format_properties));
 }
-uint32_t cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkPhysicalDevice                          physicalDevice,
-                                                                  const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
-                                                                  VkVideoFormatQuantizationMapPropertiesKHR pVideoFormatQuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
+void cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkPhysicalDevice                          physicalDevice,
+                                                              const VkPhysicalDeviceVideoFormatInfoKHR* pVideoFormatInfo,
+                                                              uint32_t*                                 pVideoFormatPropertyCount,
+                                                              VkVideoFormatQuantizationMapPropertiesKHR pVideoFormatQuantizationMapProperties[CVK_MAX_VIDEO_FORMAT_PROPERTIES])
 {
-    uint32_t                   video_format_property_count;
     uint32_t                   index;
     VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    video_format_property_count = 0;
+    (*pVideoFormatPropertyCount) = 0;
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, NULL));
-    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= video_format_property_count);
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, NULL));
+    CVK_ASSERT(CVK_MAX_VIDEO_FORMAT_PROPERTIES >= (*pVideoFormatPropertyCount));
 
-    for (index = 0; index < video_format_property_count; ++index)
+    for (index = 0; index < (*pVideoFormatPropertyCount); ++index)
     {
         video_format_properties[index] = (VkVideoFormatPropertiesKHR)
         {
@@ -44468,9 +44333,7 @@ uint32_t cvkGetPhysicalDeviceVideoFormatQuantizationMapProperties(VkPhysicalDevi
         pVideoFormatQuantizationMapProperties[index].pNext = NULL;
     }
 
-    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, &video_format_property_count, video_format_properties));
-
-    return video_format_property_count;
+    CVK_CHECK(vkGetPhysicalDeviceVideoFormatPropertiesKHR(physicalDevice, pVideoFormatInfo, pVideoFormatPropertyCount, video_format_properties));
 }
 uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMemoryTypes, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties)
 {
@@ -44594,28 +44457,28 @@ uint32_t cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(VkPhysicalDevice physical
 }
 VkBool32 cvkGetInstanceExtensionSupport(const char* pLayerName, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames)
 {
-    VkExtensionProperties properties[CVK_MAX_PROPERTIES];
     uint32_t              property_count;
+    VkExtensionProperties properties[CVK_MAX_PROPERTIES];
 
-    property_count = cvkEnumerateInstanceExtensionProperties(pLayerName, properties);
+    cvkEnumerateInstanceExtensionProperties(pLayerName, &property_count, properties);
 
     return cvkGetExtensionsSupport(property_count, properties, requiredExtensionCount, ppRequiredExtensionNames);
 }
 VkBool32 cvkGetPhysicalDeviceExtensionSupport(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t requiredExtensionCount, const char* const* ppRequiredExtensionNames)
 {
-    VkExtensionProperties properties[CVK_MAX_PROPERTIES];
     uint32_t              property_count;
+    VkExtensionProperties properties[CVK_MAX_PROPERTIES];
 
-    property_count = cvkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, properties);
+    cvkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &property_count, properties);
 
     return cvkGetExtensionsSupport(property_count, properties, requiredExtensionCount, ppRequiredExtensionNames);
 }
 uint32_t cvkGetPhysicalDeviceQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkQueueFlags requiredFlags)
 {
-    VkQueueFamilyProperties queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
     uint32_t                queue_family_property_count;
+    VkQueueFamilyProperties queue_family_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = cvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, queue_family_properties);
+    cvkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queue_family_property_count, queue_family_properties);
 
     return cvkGetQueueFamilyIndex(queue_family_property_count, queue_family_properties, requiredFlags);
 }
@@ -45623,10 +45486,10 @@ uint32_t cvkGetPhysicalDeviceApiVersion(VkPhysicalDevice physicalDevice)
 }
 VkPhysicalDevice cvkGetPhysicalDeviceByIndex(VkInstance instance, uint32_t physicalDeviceIndex)
 {
-    VkPhysicalDevice physical_devices[CVK_MAX_PHYSICAL_DEVICES];
     uint32_t         physical_device_count;
+    VkPhysicalDevice physical_devices[CVK_MAX_PHYSICAL_DEVICES];
 
-    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    cvkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
     CVK_ASSERT(physical_device_count > physicalDeviceIndex);
 
     return physical_devices[physicalDeviceIndex];
@@ -46547,10 +46410,10 @@ void cvkCmdBindComputeShader(VkCommandBuffer commandBuffer, VkShaderEXT shader)
 }
 uint32_t cvkGetPhysicalDeviceVideoQueueFamilyIndex(VkPhysicalDevice physicalDevice, VkVideoCodecOperationFlagsKHR requiredOperations)
 {
-    VkQueueFamilyVideoPropertiesKHR queue_family_video_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
     uint32_t                        queue_family_property_count;
+    VkQueueFamilyVideoPropertiesKHR queue_family_video_properties[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
 
-    queue_family_property_count = cvkGetPhysicalDeviceQueueFamilyVideoProperties(physicalDevice, queue_family_video_properties);
+    cvkGetPhysicalDeviceQueueFamilyVideoProperties(physicalDevice, &queue_family_property_count, queue_family_video_properties);
 
     return cvkGetVideoQueueFamilyIndex(queue_family_property_count, queue_family_video_properties, requiredOperations);
 }
@@ -46703,10 +46566,10 @@ void cvkGetPhysicalDeviceVideoFormatPropertiesByIndex(VkPhysicalDevice          
                                                       uint32_t                    videoFormatPropertyIndex,
                                                       VkVideoFormatPropertiesKHR* pVideoFormatProperties)
 {
-    VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
     uint32_t                   video_format_property_count;
+    VkVideoFormatPropertiesKHR video_format_properties[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
 
-    video_format_property_count = cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, pNext, imageUsage, video_format_properties);
+    cvkGetPhysicalDeviceVideoFormatInfo(physicalDevice, pNext, imageUsage, &video_format_property_count, video_format_properties);
     CVK_ASSERT(video_format_property_count > videoFormatPropertyIndex);
 
     (*pVideoFormatProperties) = video_format_properties[videoFormatPropertyIndex];
@@ -48515,7 +48378,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t p
     uint32_t                     physical_device_count;
     uint32_t                     physical_device_index;
 
-    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    cvkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
     for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
     {
         cvkGetPhysicalDeviceIDProperties(physical_devices[physical_device_index], NULL, &physical_device_id_properties);
@@ -48534,7 +48397,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t 
     uint32_t                                physical_device_count;
     uint32_t                                physical_device_index;
 
-    physical_device_count = cvkEnumeratePhysicalDevices(instance, physical_devices);
+    cvkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
     for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
     {
         if (cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, (const char* const[]){VK_EXT_PCI_BUS_INFO_EXTENSION_NAME}))
@@ -48564,7 +48427,7 @@ uint32_t cvkAllocateVideoSessionMemory(VkPhysicalDevice             physicalDevi
     uint32_t                            requirement_index;
     uint32_t                            memory_type_index;
 
-    memory_requirements_count = cvkGetVideoSessionMemoryRequirements(device, videoSession, memory_requirements);
+    cvkGetVideoSessionMemoryRequirements(device, videoSession, &memory_requirements_count, memory_requirements);
     for (requirement_index = 0; requirement_index < memory_requirements_count; ++requirement_index)
     {
         memory_type_index = cvkGetPhysicalDeviceCompatibleMemoryTypeIndex(physicalDevice, memory_requirements[requirement_index].memoryRequirements.memoryTypeBits, requiredProperties);

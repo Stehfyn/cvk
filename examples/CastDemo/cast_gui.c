@@ -11,7 +11,9 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <objbase.h>
 #include <shellapi.h>
+#include <windowsx.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,16 +23,19 @@
 #include "cast_channel.h"
 #include "cast_session.h"
 #include "media_server.h"
+#include "mp4_index.h"
+#include "proxy.h"
 #include "ssdp.h"
 
 #if defined(_MSC_VER)
 #pragma comment(linker, "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-#define WM_APP_DISCOVERED (WM_APP + 1) /* lParam: DiscoveryResult* on the heap */
-#define WM_APP_LOG        (WM_APP + 2) /* lParam: WCHAR* on the heap */
-#define WM_APP_STATUS     (WM_APP + 3) /* lParam: CastStatus* on the heap */
-#define WM_APP_ENDED      (WM_APP + 4) /* lParam: WCHAR* on the heap, or NULL */
+#define WM_APP_DISCOVERED   (WM_APP + 1) /* lParam: DiscoveryResult* on the heap */
+#define WM_APP_LOG          (WM_APP + 2) /* lParam: WCHAR* on the heap */
+#define WM_APP_STATUS       (WM_APP + 3) /* lParam: CastStatus* on the heap */
+#define WM_APP_ENDED        (WM_APP + 4) /* lParam: WCHAR* on the heap, or NULL */
+#define WM_APP_PREVIEW_DONE (WM_APP + 5) /* lParam: PreviewResult* on the heap */
 
 #define PREFERRED_DEVICE    "XGIMI"
 #define DEFAULT_SERVER_PORT (8642)
@@ -52,7 +57,19 @@ enum ControlId
     ID_STOP,
     ID_SEEK,
     ID_TIME,
-    ID_STATUS
+    ID_STATUS,
+    ID_CFG_LABEL,
+    ID_RES_SLIDER,
+    ID_RES_VALUE,
+    ID_QP_SLIDER,
+    ID_QP_VALUE,
+    ID_GOP_SLIDER,
+    ID_GOP_VALUE,
+    ID_MOTION_CHECK,
+    ID_MOTION_SLIDER,
+    ID_MOTION_VALUE,
+    ID_PREVIEW,
+    ID_CFG_READOUT
 };
 
 typedef struct DiscoveryResult
@@ -60,6 +77,31 @@ typedef struct DiscoveryResult
     unsigned   count;
     CastDevice devices[CAST_MAX_DEVICES];
 } DiscoveryResult;
+
+/* A quality-preview transcode job and its result. One preview runs at a time, so both live in the
+** App with fixed capacity rather than being allocated per click. */
+typedef struct PreviewResult
+{
+    int      ok;
+    unsigned width;
+    unsigned height;
+    unsigned frames;
+    unsigned kbps;
+    int      motionPercent;
+    WCHAR    path[MAX_PATH];
+} PreviewResult;
+
+typedef struct PreviewJob
+{
+    HWND               hWnd;
+    PreviewResult*     pResult;
+    volatile LONG*     pCancel;
+    GpuTranscodeConfig config;
+    unsigned           startFrame;
+    unsigned           frames;
+    WCHAR              source[MAX_PATH];
+    WCHAR              dest[MAX_PATH];
+} PreviewJob;
 
 typedef struct App
 {
@@ -79,21 +121,50 @@ typedef struct App
     HWND      hSeek;
     HWND      hTime;
     HWND      hStatus;
+    HWND      hCfgLabel;
+    HWND      hResSlider;
+    HWND      hResValue;
+    HWND      hQpSlider;
+    HWND      hQpValue;
+    HWND      hGopSlider;
+    HWND      hGopValue;
+    HWND      hMotionCheck;
+    HWND      hMotionSlider;
+    HWND      hMotionValue;
+    HWND      hPreview;
+    HWND      hCfgReadout;
     HFONT     hFont;
     UINT      dpi;
     /* receivers */
     DiscoveryResult devices;
     int             discovering;
     /* the active session */
-    CastSession* pSession;
-    HANDLE       hSessionThread;
-    MediaServer* pServer;
-    CastStatus   status;
-    int          seeking; /* the user is dragging the slider */
-    int          stopping;
+    CastSession*   pSession;
+    HANDLE         hSessionThread;
+    MediaServer*   pServer;
+    Proxy*         pProxy; /* background low-latency scrub proxy */
+    WCHAR          proxySource[MAX_PATH];
+    char           proxyLocal[64];
+    unsigned short proxyPort;
+    GpuTranscodeConfig transcode; /* live transcoder settings from the config sliders */
+    double*        pKeyframes; /* the local file's keyframe times, for scrub snapping */
+    CastStatus     status;
+    ULONGLONG      statusTick; /* when status.currentTime was reported, for interpolation */
+    int            seeking;    /* the user is dragging the slider */
+    int            stopping;
+    HANDLE         hPreviewThread;  /* the quality-preview transcode worker */
+    volatile LONG  previewCancel;
+    int            previewBusy;
+    PreviewJob     previewJob;    /* fixed storage for the running preview, no per-click alloc */
+    PreviewResult  previewResult;
 } App;
 
+#define POSITION_TIMER   (1)
+#define POSITION_TICK_MS (50)
+
 static App g_app;
+
+static LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
 
 static int Scale(const App* pApp, int dips)
 {
@@ -192,21 +263,25 @@ static void ApplyFont(App* pApp)
 static void Layout(App* pApp)
 {
     RECT      client;
-    const int margin   = Scale(pApp, 12);
-    const int gap      = Scale(pApp, 8);
-    const int rowH     = Scale(pApp, 24);
-    const int buttonW  = Scale(pApp, 96);
-    const int smallW   = Scale(pApp, 72);
-    const int labelH   = Scale(pApp, 18);
-    const int timeW    = Scale(pApp, 150);
+    const int margin  = Scale(pApp, 12);
+    const int gap     = Scale(pApp, 8);
+    const int rowH    = Scale(pApp, 24);
+    const int buttonW = Scale(pApp, 96);
+    const int smallW  = Scale(pApp, 72);
+    const int labelH  = Scale(pApp, 18);
+    const int timeW   = Scale(pApp, 150);
+    const int valueW  = Scale(pApp, 108);
+    const int cfgH    = labelH + gap + 5 * (rowH + gap); /* label + res + qp + gop + motion + actions */
     int       width;
+    int       sliderX;
     int       y;
     int       listH;
 
     GetClientRect(pApp->hWnd, &client);
-    width = client.right - 2 * margin;
-    /* bottom-up: status, toolbar, hint, cast, file; the list takes the rest */
-    listH = client.bottom - (margin + labelH + gap) - (gap + rowH) - (gap + rowH) - (gap + rowH) - (gap + labelH) - margin;
+    width   = client.right - 2 * margin;
+    sliderX = margin + valueW + gap;
+    /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
+    listH = client.bottom - (margin + labelH + gap) - (gap + rowH) - (gap + rowH) - (gap + rowH) - (gap + labelH) - (gap + cfgH) - margin;
     if (listH < Scale(pApp, 60))
     {
         listH = Scale(pApp, 60);
@@ -231,6 +306,25 @@ static void Layout(App* pApp)
     MoveWindow(pApp->hTime, client.right - margin - timeW, y + Scale(pApp, 4), timeW, labelH, TRUE);
     y += rowH + gap;
     MoveWindow(pApp->hStatus, margin, y, width, labelH, TRUE);
+    y += labelH + gap;
+    /* The transcoder configuration panel. */
+    MoveWindow(pApp->hCfgLabel, margin, y, width, labelH, TRUE);
+    y += labelH + gap;
+    MoveWindow(pApp->hResValue, margin, y + Scale(pApp, 4), valueW, labelH, TRUE);
+    MoveWindow(pApp->hResSlider, sliderX, y, width - valueW - gap, rowH, TRUE);
+    y += rowH + gap;
+    MoveWindow(pApp->hQpValue, margin, y + Scale(pApp, 4), valueW, labelH, TRUE);
+    MoveWindow(pApp->hQpSlider, sliderX, y, width - valueW - gap, rowH, TRUE);
+    y += rowH + gap;
+    MoveWindow(pApp->hGopValue, margin, y + Scale(pApp, 4), valueW, labelH, TRUE);
+    MoveWindow(pApp->hGopSlider, sliderX, y, width - valueW - gap, rowH, TRUE);
+    y += rowH + gap;
+    MoveWindow(pApp->hMotionCheck, margin, y + Scale(pApp, 2), valueW, rowH, TRUE);
+    MoveWindow(pApp->hMotionSlider, sliderX, y, width - valueW - gap - Scale(pApp, 52), rowH, TRUE);
+    MoveWindow(pApp->hMotionValue, client.right - margin - Scale(pApp, 48), y + Scale(pApp, 4), Scale(pApp, 48), labelH, TRUE);
+    y += rowH + gap;
+    MoveWindow(pApp->hPreview, margin, y, buttonW, rowH, TRUE);
+    MoveWindow(pApp->hCfgReadout, margin + buttonW + gap, y + Scale(pApp, 4), width - buttonW - gap, labelH, TRUE);
     ListView_SetColumnWidth(pApp->hList, 0, width - Scale(pApp, 120) - Scale(pApp, 90) - Scale(pApp, 24));
     ListView_SetColumnWidth(pApp->hList, 1, Scale(pApp, 120));
     ListView_SetColumnWidth(pApp->hList, 2, Scale(pApp, 90));
@@ -249,6 +343,45 @@ static void UpdateControls(App* pApp)
     EnableWindow(pApp->hPlayPause, haveSession && pApp->status.hasMedia);
     EnableWindow(pApp->hSeek, haveSession && pApp->status.hasMedia && pApp->status.duration > 0);
     SetWindowTextW(pApp->hPlayPause, playing ? L"Pause" : L"Play");
+}
+
+/* Rewrites the slider value captions from the current transcoder config. */
+static void UpdateConfigLabels(App* pApp)
+{
+    WCHAR text[96];
+
+    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"Width  %u px", pApp->transcode.width);
+    SetWindowTextW(pApp->hResValue, text);
+    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"Quality  QP %d", pApp->transcode.qpInter);
+    SetWindowTextW(pApp->hQpValue, text);
+    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"Keyframe  %uf", pApp->transcode.gopLength);
+    SetWindowTextW(pApp->hGopValue, text);
+    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"%d%%", pApp->transcode.motionStrength);
+    SetWindowTextW(pApp->hMotionValue, text);
+}
+
+/* Reads the sliders and checkbox into the transcoder config, snapping where needed, then refreshes
+** the captions. Called whenever a control changes so pApp->transcode always mirrors the panel. */
+static void ReadConfigFromSliders(App* pApp)
+{
+    int width;
+    int qp;
+
+    width = (int)SendMessageW(pApp->hResSlider, TBM_GETPOS, 0, 0);
+    width = ((width + 8) / 16) * 16; /* proxy width is a multiple of 16 */
+    if (width < 240)
+    {
+        width = 240;
+    }
+    pApp->transcode.width       = (unsigned)width;
+    qp                          = (int)SendMessageW(pApp->hQpSlider, TBM_GETPOS, 0, 0);
+    pApp->transcode.qpInter     = qp;
+    pApp->transcode.qpIntra     = (qp - 4 > 1) ? qp - 4 : 1; /* keyframes a little sharper */
+    pApp->transcode.gopLength   = (unsigned)SendMessageW(pApp->hGopSlider, TBM_GETPOS, 0, 0);
+    pApp->transcode.motionStrength = (int)SendMessageW(pApp->hMotionSlider, TBM_GETPOS, 0, 0);
+    pApp->transcode.motionAdaptive = (BST_CHECKED == SendMessageW(pApp->hMotionCheck, BM_GETCHECK, 0, 0)) ? 1 : 0;
+    EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
+    UpdateConfigLabels(pApp);
 }
 
 static void CreateControls(App* pApp)
@@ -270,6 +403,31 @@ static void CreateControls(App* pApp)
     pApp->hTime        = CreateChild(pApp, L"STATIC", L"", SS_RIGHT, 0, ID_TIME);
     pApp->hStatus      = CreateChild(pApp, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 0, ID_STATUS);
 
+    /* Transcoder (proxy) configuration panel: sliders whose settings drive the GPU proxy encode. */
+    GpuTranscode_DefaultConfig(&pApp->transcode);
+    pApp->hCfgLabel     = CreateChild(pApp, L"STATIC", L"Proxy transcoder \x2014 adjust, then Preview to test quality on the receiver", SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_LABEL);
+    pApp->hResValue     = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_RES_VALUE);
+    pApp->hResSlider    = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_RES_SLIDER);
+    pApp->hQpValue      = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_QP_VALUE);
+    pApp->hQpSlider     = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_QP_SLIDER);
+    pApp->hGopValue     = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_GOP_VALUE);
+    pApp->hGopSlider    = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GOP_SLIDER);
+    pApp->hMotionCheck  = CreateChild(pApp, L"BUTTON", L"Optical flow", BS_AUTOCHECKBOX | WS_TABSTOP, 0, ID_MOTION_CHECK);
+    pApp->hMotionSlider = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_MOTION_SLIDER);
+    pApp->hMotionValue  = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_MOTION_VALUE);
+    pApp->hPreview      = CreateChild(pApp, L"BUTTON", L"Preview", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PREVIEW);
+    pApp->hCfgReadout   = CreateChild(pApp, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_READOUT);
+
+    SendMessageW(pApp->hResSlider, TBM_SETRANGE, TRUE, MAKELPARAM(320, 1920));
+    SendMessageW(pApp->hResSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.width);
+    SendMessageW(pApp->hQpSlider, TBM_SETRANGE, TRUE, MAKELPARAM(18, 40));
+    SendMessageW(pApp->hQpSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.qpInter);
+    SendMessageW(pApp->hGopSlider, TBM_SETRANGE, TRUE, MAKELPARAM(6, 90));
+    SendMessageW(pApp->hGopSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.gopLength);
+    SendMessageW(pApp->hMotionSlider, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+    SendMessageW(pApp->hMotionSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.motionStrength);
+    SendMessageW(pApp->hMotionCheck, BM_SETCHECK, pApp->transcode.motionAdaptive ? BST_CHECKED : BST_UNCHECKED, 0);
+
     ListView_SetExtendedListViewStyle(pApp->hList, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
     ZeroMemory(&column, sizeof(column));
     column.mask    = LVCF_TEXT | LVCF_WIDTH;
@@ -281,8 +439,12 @@ static void CreateControls(App* pApp)
     column.pszText = L"Model";
     ListView_InsertColumn(pApp->hList, 2, &column);
     SendMessageW(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
+    /* A click on the channel should jump to the cursor and scrub, not page toward it. */
+    SetWindowSubclass(pApp->hSeek, SeekBarProc, 1, (DWORD_PTR)pApp);
     ApplyFont(pApp);
     Layout(pApp);
+    UpdateConfigLabels(pApp);
+    EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
     UpdateControls(pApp);
 }
 
@@ -413,7 +575,10 @@ static DWORD WINAPI SessionThread(LPVOID pParameter)
     return 0;
 }
 
-static void StartCast(App* pApp)
+/* Starts a session that plays pSourceIn on the selected receiver. buildProxy adds the background
+** scrub proxy (for normal casting); the quality preview passes 0 because the clip it plays is
+** already the transcoded output. */
+static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
 {
     const int         selected = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
     const CastDevice* pDevice;
@@ -426,7 +591,7 @@ static void StartCast(App* pApp)
         return;
     }
     pDevice = &pApp->devices.devices[selected];
-    GetWindowTextW(pApp->hFile, source, (int)(sizeof(source) / sizeof(source[0])));
+    wcscpy_s(source, sizeof(source) / sizeof(source[0]), pSourceIn);
     if (0 == source[0])
     {
         return;
@@ -441,8 +606,7 @@ static void StartCast(App* pApp)
 
         ToUtf8(source, config.contentUrl, sizeof(config.contentUrl));
         ToUtf8(source, config.title, sizeof(config.title));
-        (void)snprintf(config.contentType, sizeof(config.contentType), "%s",
-                       (NULL != pExtension && NULL == wcschr(pExtension, L'/')) ? MediaServer_ContentTypeForExtension(pExtension) : "video/mp4");
+        (void)snprintf(config.contentType, sizeof(config.contentType), "%s", (NULL != pExtension && NULL == wcschr(pExtension, L'/')) ? MediaServer_ContentTypeForExtension(pExtension) : "video/mp4");
     }
     else
     {
@@ -475,6 +639,17 @@ static void StartCast(App* pApp)
             return;
         }
         (void)snprintf(config.contentUrl, sizeof(config.contentUrl), "http://%s:%u/media%s", localAddress, (unsigned)MediaServer_GetPort(pApp->pServer), extension);
+        /* Scrub previews snap to keyframes so the receiver paints them after a one-frame decode. */
+        free(pApp->pKeyframes);
+        pApp->pKeyframes = (double*)malloc(MP4_INDEX_MAX_KEYFRAMES * sizeof(double));
+        if (NULL != pApp->pKeyframes)
+        {
+            config.keyframeCount = Mp4Index_ReadKeyframes(source, pApp->pKeyframes, MP4_INDEX_MAX_KEYFRAMES);
+            config.pKeyframes    = pApp->pKeyframes;
+        }
+        wcscpy_s(pApp->proxySource, MAX_PATH, source);
+        (void)snprintf(pApp->proxyLocal, sizeof(pApp->proxyLocal), "%s", localAddress);
+        pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
     }
     pApp->pSession = CastSession_Create(&config);
     if (NULL != pApp->pSession)
@@ -490,9 +665,143 @@ static void StartCast(App* pApp)
         SetStatus(pApp, L"Cannot start the Cast session.");
         return;
     }
+    if (buildProxy && pApp->proxyLocal[0])
+    {
+        pApp->pProxy = Proxy_Start(pApp->proxySource, &pApp->transcode, pApp->proxyLocal, pApp->proxyPort, pApp->pSession);
+    }
+    else
+    {
+        pApp->proxyLocal[0] = 0;
+    }
     ZeroMemory(&pApp->status, sizeof(pApp->status));
     pApp->stopping = 0;
     UpdateControls(pApp);
+}
+
+/* The Cast button: play the chosen file with the background scrub proxy. */
+static void StartCast(App* pApp)
+{
+    WCHAR source[1024];
+
+    GetWindowTextW(pApp->hFile, source, (int)(sizeof(source) / sizeof(source[0])));
+    StartCastSource(pApp, source, 1);
+}
+
+/* A short transcode of the source at the current settings, run on a worker thread so the sliders
+** stay responsive. On completion it posts the App's PreviewResult to the window thread. */
+static DWORD WINAPI PreviewThread(LPVOID pParameter)
+{
+    PreviewJob*    pJob    = (PreviewJob*)pParameter;
+    PreviewResult* pResult = pJob->pResult;
+    char           report[1800];
+    const char*    pMarker;
+
+    ZeroMemory(pResult, sizeof(*pResult));
+    wcscpy_s(pResult->path, MAX_PATH, pJob->dest);
+    pResult->ok = GpuTranscode_ToMp4(pJob->source, pJob->dest, &pJob->config, pJob->startFrame, pJob->frames, pJob->pCancel, report, sizeof(report));
+    if (pResult->ok)
+    {
+        HANDLE        hFile;
+        unsigned      produced;
+        double        motion;
+        LARGE_INTEGER size;
+
+        produced = 0;
+        motion   = 0.0;
+        /* The report ends with "... (N video frames from S)"; pull the frame count and motion. */
+        pMarker = strstr(report, "video frames from");
+        if (NULL != pMarker)
+        {
+            const char* pDigits = pMarker;
+
+            while (pDigits > report && (pDigits[-1] < '0' || pDigits[-1] > '9'))
+            {
+                --pDigits;
+            }
+            while (pDigits > report && pDigits[-1] >= '0' && pDigits[-1] <= '9')
+            {
+                --pDigits;
+            }
+            produced = (unsigned)atoi(pDigits);
+        }
+        pMarker = strstr(report, "avg motion ");
+        if (NULL != pMarker)
+        {
+            motion = atof(pMarker + 11) / 100.0;
+        }
+        pResult->width         = pJob->config.width;
+        pResult->frames        = produced;
+        pResult->motionPercent = (int)(motion * 100.0 + 0.5);
+        size.QuadPart          = 0;
+        hFile                  = CreateFileW(pJob->dest, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (INVALID_HANDLE_VALUE != hFile)
+        {
+            double seconds;
+
+            GetFileSizeEx(hFile, &size);
+            CloseHandle(hFile);
+            seconds       = (produced > 0) ? (double)produced / 24.0 : 1.0; /* nominal frame rate for the readout */
+            pResult->kbps = (unsigned)((double)size.QuadPart * 8.0 / 1000.0 / (seconds > 0.1 ? seconds : 0.1));
+        }
+    }
+    PostMessageW(pJob->hWnd, WM_APP_PREVIEW_DONE, 0, (LPARAM)pResult);
+    return 0;
+}
+
+static void StartPreview(App* pApp)
+{
+    PreviewJob* pJob;
+    WCHAR       source[MAX_PATH];
+    WCHAR       temp[MAX_PATH];
+    DWORD       length;
+    double      ratio;
+    int         position;
+
+    if (pApp->previewBusy)
+    {
+        return;
+    }
+    GetWindowTextW(pApp->hFile, source, MAX_PATH);
+    if (0 == source[0] || 0 == _wcsnicmp(source, L"http", 4))
+    {
+        SetWindowTextW(pApp->hCfgReadout, L"Preview needs a local video file.");
+        return;
+    }
+    ReadConfigFromSliders(pApp);
+    length = GetTempPathW(MAX_PATH, temp);
+    if (0 == length || length > MAX_PATH - 40)
+    {
+        return;
+    }
+    pJob = &pApp->previewJob;
+    wcscpy_s(pJob->source, MAX_PATH, source);
+    (void)_snwprintf_s(temp + length, MAX_PATH - length, _TRUNCATE, L"cvkcast_preview_%lu.mp4", GetCurrentProcessId());
+    wcscpy_s(pJob->dest, MAX_PATH, temp);
+    pJob->config        = pApp->transcode;
+    pJob->hWnd          = pApp->hWnd;
+    pJob->pResult       = &pApp->previewResult;
+    pApp->previewCancel = 0;
+    pJob->pCancel       = &pApp->previewCancel;
+    /* Start the clip near the current playback position (or a quarter in), snapped to a keyframe. */
+    position         = (int)SendMessageW(pApp->hSeek, TBM_GETPOS, 0, 0);
+    ratio            = (pApp->status.duration > 0 && position > 0) ? (double)position / SEEK_RANGE : 0.25;
+    pJob->startFrame = (unsigned)(ratio * 24.0 * (pApp->status.duration > 0 ? pApp->status.duration : 600.0));
+    pJob->frames     = 8u * 24u; /* about eight seconds at ~24 fps */
+
+    pApp->previewBusy = 1;
+    EnableWindow(pApp->hPreview, FALSE);
+    SetWindowTextW(pApp->hCfgReadout, L"Building preview\x2026");
+    if (NULL != pApp->hPreviewThread)
+    {
+        CloseHandle(pApp->hPreviewThread);
+        pApp->hPreviewThread = NULL;
+    }
+    pApp->hPreviewThread = CreateThread(NULL, 0, PreviewThread, pJob, 0, NULL);
+    if (NULL == pApp->hPreviewThread)
+    {
+        pApp->previewBusy = 0;
+        EnableWindow(pApp->hPreview, TRUE);
+    }
 }
 
 static void StopCast(App* pApp)
@@ -505,29 +814,32 @@ static void StopCast(App* pApp)
     }
 }
 
-static void OnStatus(App* pApp, CastStatus* pStatus)
+/* Moves the slider and the readout to a position, unless the user holds the slider. */
+static void ShowPosition(App* pApp, double seconds)
 {
     WCHAR position[32];
     WCHAR duration[32];
     WCHAR text[128];
 
-    if (NULL == pStatus)
+    if (pApp->seeking)
     {
         return;
     }
-    pApp->status = *pStatus;
-    free(pStatus);
-    if (!pApp->seeking && pApp->status.duration > 0)
+    if (pApp->status.duration > 0)
     {
-        SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(pApp->status.currentTime / pApp->status.duration * SEEK_RANGE + 0.5));
+        if (seconds > pApp->status.duration)
+        {
+            seconds = pApp->status.duration;
+        }
+        SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(seconds / pApp->status.duration * SEEK_RANGE + 0.5));
     }
-    else if (!pApp->seeking)
+    else
     {
         SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, 0);
     }
     if (pApp->status.hasMedia)
     {
-        FormatTime(pApp->status.currentTime, position, sizeof(position) / sizeof(position[0]));
+        FormatTime(seconds, position, sizeof(position) / sizeof(position[0]));
         FormatTime(pApp->status.duration, duration, sizeof(duration) / sizeof(duration[0]));
         (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"%hs  %ls / %ls", pApp->status.stateName, position, duration);
     }
@@ -536,7 +848,28 @@ static void OnStatus(App* pApp, CastStatus* pStatus)
         (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"%hs", pApp->status.stateName);
     }
     SetWindowTextW(pApp->hTime, text);
+}
+
+static void OnStatus(App* pApp, CastStatus* pStatus)
+{
+    if (NULL == pStatus)
+    {
+        return;
+    }
+    pApp->status     = *pStatus;
+    pApp->statusTick = GetTickCount64();
+    free(pStatus);
+    ShowPosition(pApp, pApp->status.currentTime);
     UpdateControls(pApp);
+}
+
+/* Between the receiver's reports, advance the display at playback rate. */
+static void OnPositionTimer(App* pApp)
+{
+    if (NULL != pApp->pSession && CAST_STATE_PLAYING == pApp->status.state && pApp->status.hasMedia && !pApp->seeking)
+    {
+        ShowPosition(pApp, pApp->status.currentTime + (double)(GetTickCount64() - pApp->statusTick) / 1000.0);
+    }
 }
 
 /* Reaps the session thread; safe to call when no session exists. */
@@ -548,11 +881,16 @@ static void FinishSession(App* pApp, const WCHAR* pReason)
         CloseHandle(pApp->hSessionThread);
         pApp->hSessionThread = NULL;
     }
+    Proxy_Stop(pApp->pProxy);
+    pApp->pProxy        = NULL;
+    pApp->proxyLocal[0] = 0;
     CastSession_Destroy(pApp->pSession);
     pApp->pSession = NULL;
     MediaServer_Stop(pApp->pServer);
-    pApp->pServer  = NULL;
-    pApp->stopping = 0;
+    pApp->pServer = NULL;
+    free(pApp->pKeyframes);
+    pApp->pKeyframes = NULL;
+    pApp->stopping   = 0;
     ZeroMemory(&pApp->status, sizeof(pApp->status));
     SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, 0);
     SetWindowTextW(pApp->hTime, L"");
@@ -563,50 +901,107 @@ static void FinishSession(App* pApp, const WCHAR* pReason)
     UpdateControls(pApp);
 }
 
-static void OnSeekScroll(App* pApp, int code)
+/* Moves to a fraction of the duration. final: the drag ended, so seek exactly and resume;
+** otherwise a live scrub preview (paused, keyframe-snapped in the session). */
+static void SeekToRatio(App* pApp, double ratio, int final)
 {
-    const int position = (int)SendMessageW(pApp->hSeek, TBM_GETPOS, 0, 0);
-    double    seconds;
+    double seconds;
 
     if (NULL == pApp->pSession || pApp->status.duration <= 0)
     {
         return;
     }
-    seconds = pApp->status.duration * position / SEEK_RANGE;
-    switch (code)
+    if (ratio < 0.0)
     {
-    case TB_THUMBTRACK:
+        ratio = 0.0;
+    }
+    if (ratio > 1.0)
+    {
+        ratio = 1.0;
+    }
+    seconds = pApp->status.duration * ratio;
+    SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(ratio * SEEK_RANGE + 0.5));
+    if (final)
+    {
+        pApp->seeking = 0;
+        CastSession_Post(pApp->pSession, CAST_COMMAND_SEEK, seconds);
+        pApp->status.currentTime = seconds;
+        pApp->statusTick         = GetTickCount64();
+        ShowPosition(pApp, seconds);
+    }
+    else
     {
         WCHAR preview[32];
         WCHAR duration[32];
         WCHAR text[96];
 
         pApp->seeking = 1;
+        CastSession_Post(pApp->pSession, CAST_COMMAND_SCRUB, seconds);
         FormatTime(seconds, preview, sizeof(preview) / sizeof(preview[0]));
         FormatTime(pApp->status.duration, duration, sizeof(duration) / sizeof(duration[0]));
         (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"SEEK  %ls / %ls", preview, duration);
         SetWindowTextW(pApp->hTime, text);
-        break;
     }
-    case TB_THUMBPOSITION:
-    case TB_ENDTRACK:
-        if (pApp->seeking)
+}
+
+/* The click position as a fraction of the channel: how far along the media the cursor points. */
+static double RatioFromClick(HWND hSeek, LPARAM lParam)
+{
+    RECT      channel;
+    const int x = GET_X_LPARAM(lParam);
+    int       span;
+
+    SendMessageW(hSeek, TBM_GETCHANNELRECT, 0, (LPARAM)&channel);
+    span = channel.right - channel.left;
+    return (span > 0) ? (double)(x - channel.left) / span : 0.0;
+}
+
+/* Subclass: a channel click jumps to the cursor and scrubs; release seeks there exactly. */
+static LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+{
+    App* pApp = (App*)refData;
+
+    switch (message)
+    {
+    case WM_LBUTTONDOWN:
+        SetFocus(hWnd);
+        SetCapture(hWnd);
+        SeekToRatio(pApp, RatioFromClick(hWnd, lParam), 0);
+        return 0;
+    case WM_MOUSEMOVE:
+        if (GetCapture() == hWnd && (MK_LBUTTON & wParam))
         {
-            pApp->seeking = 0;
-            CastSession_Post(pApp->pSession, CAST_COMMAND_SEEK, seconds);
+            SeekToRatio(pApp, RatioFromClick(hWnd, lParam), 0);
+        }
+        return 0;
+    case WM_LBUTTONUP:
+        if (GetCapture() == hWnd)
+        {
+            ReleaseCapture();
+            SeekToRatio(pApp, RatioFromClick(hWnd, lParam), 1);
+            return 0;
         }
         break;
-    case TB_LINEUP:
-    case TB_LINEDOWN:
-    case TB_PAGEUP:
-    case TB_PAGEDOWN:
-    case TB_TOP:
-    case TB_BOTTOM:
-        CastSession_Post(pApp->pSession, CAST_COMMAND_SEEK, seconds);
+    case WM_NCDESTROY:
+        RemoveWindowSubclass(hWnd, SeekBarProc, idSubclass);
         break;
     default:
         break;
     }
+    return DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
+/* Keyboard (arrows, page keys) still scrolls the slider through the default proc; seek to
+** wherever it lands, exactly. */
+static void OnSeekScroll(App* pApp, int code)
+{
+    const int position = (int)SendMessageW(pApp->hSeek, TBM_GETPOS, 0, 0);
+
+    if (NULL == pApp->pSession || pApp->status.duration <= 0 || TB_THUMBTRACK == code)
+    {
+        return; /* mouse tracking is handled by the subclass */
+    }
+    CastSession_Post(pApp->pSession, CAST_COMMAND_SEEK, pApp->status.duration * position / SEEK_RANGE);
 }
 
 static void Browse(App* pApp)
@@ -655,13 +1050,20 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         pApp->dpi  = GetDpiForWindow(hWnd);
         CreateControls(pApp);
         StartDiscovery(pApp);
+        SetTimer(hWnd, POSITION_TIMER, POSITION_TICK_MS, NULL);
+        return 0;
+    case WM_TIMER:
+        if (POSITION_TIMER == wParam)
+        {
+            OnPositionTimer(pApp);
+        }
         return 0;
     case WM_SIZE:
         Layout(pApp);
         return 0;
     case WM_GETMINMAXINFO:
         ((MINMAXINFO*)lParam)->ptMinTrackSize.x = Scale(pApp, 520);
-        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = Scale(pApp, 320);
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = Scale(pApp, 520);
         return 0;
     case WM_DPICHANGED:
     {
@@ -703,6 +1105,12 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
                 UpdateControls(pApp);
             }
             return 0;
+        case ID_MOTION_CHECK:
+            ReadConfigFromSliders(pApp);
+            return 0;
+        case ID_PREVIEW:
+            StartPreview(pApp);
+            return 0;
         default:
             break;
         }
@@ -728,6 +1136,10 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         if ((HWND)lParam == pApp->hSeek)
         {
             OnSeekScroll(pApp, LOWORD(wParam));
+        }
+        else if ((HWND)lParam == pApp->hResSlider || (HWND)lParam == pApp->hQpSlider || (HWND)lParam == pApp->hGopSlider || (HWND)lParam == pApp->hMotionSlider)
+        {
+            ReadConfigFromSliders(pApp);
         }
         return 0;
     case WM_APP_DISCOVERED:
@@ -755,7 +1167,45 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         free(pReason);
         return 0;
     }
+    case WM_APP_PREVIEW_DONE:
+    {
+        PreviewResult* pResult = (PreviewResult*)lParam;
+
+        pApp->previewBusy = 0;
+        EnableWindow(pApp->hPreview, TRUE);
+        if (NULL != pResult && pResult->ok && pResult->frames > 0)
+        {
+            WCHAR text[192];
+
+            (void)swprintf(text,
+                           sizeof(text) / sizeof(text[0]),
+                           L"%u px, QP %d, ~%u kbps, motion %d%% \x2014 playing on the receiver",
+                           pResult->width,
+                           pApp->transcode.qpInter,
+                           pResult->kbps,
+                           pResult->motionPercent);
+            SetWindowTextW(pApp->hCfgReadout, text);
+            /* Show the transcoded clip on the receiver: no proxy, since the clip is the output. */
+            if (NULL == pApp->pSession)
+            {
+                StartCastSource(pApp, pResult->path, 0);
+            }
+        }
+        else
+        {
+            SetWindowTextW(pApp->hCfgReadout, L"Preview failed (need a local AVC MP4 with an H.264 track).");
+        }
+        (void)pResult; /* App-owned storage; nothing to free */
+        return 0;
+    }
     case WM_CLOSE:
+        if (NULL != pApp->hPreviewThread)
+        {
+            InterlockedExchange(&pApp->previewCancel, 1);
+            WaitForSingleObject(pApp->hPreviewThread, INFINITE);
+            CloseHandle(pApp->hPreviewThread);
+            pApp->hPreviewThread = NULL;
+        }
         if (NULL != pApp->pSession)
         {
             CastSession_Post(pApp->pSession, CAST_COMMAND_STOP, 0);
@@ -786,6 +1236,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     (void)hPrevInstance;
     (void)lpCmdLine;
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+    /* The common file dialog is shell-backed and needs this thread in a single-threaded OLE
+    ** apartment; without it GetOpenFileName fails. This does not depend on how the app started. */
+    OleInitialize(NULL);
     if (0 != WSAStartup(MAKEWORD(2, 2), &wsaData))
     {
         MessageBoxW(NULL, L"WSAStartup failed.", L"CastDemo", MB_ICONERROR);
@@ -810,8 +1263,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     }
     g_app.hInstance = hInstance;
     g_app.dpi       = GetDpiForSystem();
-    hWnd            = CreateWindowExW(0, kClass, L"CastDemo", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, Scale(&g_app, 640), Scale(&g_app, 400), NULL, NULL,
-                                      hInstance, NULL);
+    hWnd            = CreateWindowExW(0, kClass, L"CastDemo", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, Scale(&g_app, 660), Scale(&g_app, 620), NULL, NULL, hInstance, NULL);
     if (NULL == hWnd)
     {
         WSACleanup();
@@ -841,5 +1293,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
         DeleteObject(g_app.hFont);
     }
     WSACleanup();
+    OleUninitialize();
     return (int)msg.wParam;
 }

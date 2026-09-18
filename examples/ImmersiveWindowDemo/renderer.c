@@ -132,7 +132,7 @@ static void CreateDevice(VideoRenderer* r)
     cdxgiAdapterGetDesc(adapter, &desc);
     cdxgiUnknownRelease((IUnknown*)adapter);
     cdxgiUnknownRelease((IUnknown*)dxgi);
-    count = cvkEnumeratePhysicalDevices(r->instance, devices);
+    cvkEnumeratePhysicalDevices(r->instance, &count, devices);
     for (i = 0; i < count; ++i)
     {
         VkPhysicalDeviceIDProperties id;
@@ -149,7 +149,7 @@ static void CreateDevice(VideoRenderer* r)
 #ifdef CVK_DEMO_VALIDATION
     fprintf(stderr, "video: Vulkan adapter %s (vendor 0x%X), matched to D3D11 LUID\n", properties.properties.deviceName, properties.properties.vendorID);
 #endif
-    extensionCount = cvkEnumerateDeviceExtensionProperties(r->physical, NULL, extensions);
+    cvkEnumerateDeviceExtensionProperties(r->physical, NULL, &extensionCount, extensions);
     for (i = 0; i < VK_COUNT_OF(required); ++i)
     {
         for (j = 0; j < extensionCount; ++j)
@@ -158,7 +158,7 @@ static void CreateDevice(VideoRenderer* r)
         if (j == extensionCount)
             Fail(required[i]);
     }
-    count = cvkGetPhysicalDeviceQueueFamilyProperties(r->physical, families);
+    cvkGetPhysicalDeviceQueueFamilyProperties(r->physical, &count, families);
     for (i = 0; i < count; ++i)
         if (families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
             break;

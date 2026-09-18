@@ -48,6 +48,59 @@ log: TLS connection, application launch, the URL being loaded, and any error the
 receiver reports. Closing the window stops playback and returns the projector to its
 home screen.
 
+### Adaptive quality with hysteresis
+
+The projector is a Chromecast built-in receiver, and its post-seek rebuffer is the real
+latency floor: on the full-quality stream a seek takes one to three seconds to show smooth
+motion, because the weak decoder must fetch, buffer and decode a heavy bitstream from the
+new keyframe. Measurements (`--bounce N`, which times seek-to-actual-motion) show a light
+bitstream clears that rebuffer far faster and never underruns.
+
+So CastDemo serves two streams of the same content on one timeline:
+
+- **Full quality** is the original file, served as-is with its original audio. Used for
+  settled playback.
+- **A scrub proxy** is a background `ffmpeg` transcode: 480-wide, ~600 kbps with a real VBV
+  buffer, GOP 12, no B-frames, plus synced stereo AAC so audio plays while scrubbing. It is
+  cheap for the receiver to buffer and decode, so seeks into it land in tens to a few hundred
+  milliseconds.
+
+A sustained drag drops to the proxy for instant response; a single click does not, so
+quality never flickers on a lone seek. When you stop scrubbing, hysteresis waits about 1.4 s
+of quiet and then upgrades back to full quality at the current position, preserving play or
+pause state. Audio is present and synchronized in both streams. Building the proxy needs
+`ffmpeg` on `PATH`; without it, scrubbing simply uses the full stream. The proxy transcodes
+in the background, so a long movie scrubs on the full stream until the proxy is ready.
+
+Scrubbing is live. While the slider is held, every movement posts a *scrub*: a `SEEK`
+with `resumeState PLAYBACK_PAUSE`, snapped to the keyframe before the target. A paused
+seek to a keyframe is a one-frame decode, so the projector paints the preview at once
+instead of decoding a whole group of pictures and refilling its playback buffer for every
+intermediate position. Releasing the slider posts the exact position with
+`PLAYBACK_START` when it was playing before. The keyframe times come from the file's own
+`stss`/`stts` tables (`mp4_index.c`); a file without them scrubs to exact positions.
+
+The session coalesces queued scrubs and sends the newest every 60 ms, polls for commands
+every 5 ms, polls status every 100 ms while a seek settles, and sets `TCP_NODELAY` on the
+Cast channel so a seek never queues behind an unacknowledged heartbeat. The HTTP server
+sets `TCP_NODELAY`, uses a 1 MB send buffer and keeps connections alive, so the range the
+receiver fetches after a seek needs no new TCP handshake. The session reports the seek
+target as the current position until the receiver confirms it, which stops stale reports
+from snapping the slider back, and the window advances the position at playback rate
+between reports.
+
+Measured against the Horizon S on Wi-Fi with a 60 s 720p clip (`CastDemoCli --scrub 40`
+and `--seek 40` print these):
+
+| Step | 250-frame GOP (x264 default) | 15-frame GOP |
+|---|---|---|
+| Scrub preview painted (paused, keyframe-snapped) | 63 ms | 63 ms |
+| Exact seek confirmed by the receiver | 47 to 109 ms | 47 ms |
+| Playing again after an exact seek | about 2.6 s | under 100 ms |
+
+The last row is the receiver decoding from the previous keyframe; only the media's
+keyframe interval changes it (`ffmpeg -g 15` when you encode the file yourself).
+
 ## The console tool
 
 ```
@@ -58,6 +111,9 @@ CastDemoCli [file.mp4] [options]     default: demo.mp4 beside the executable
   --port N         HTTP port for the local file (default 8642)
   --bind ADDRESS   local IPv4 address to serve from (default: the one facing the receiver)
   --seconds N      stop after N seconds of playback
+  --seek T         seek to T seconds three seconds into playback and report the round trip
+  --scrub T        preview T (paused, keyframe-snapped) at three seconds, release to it at five
+  --bounce N       simulate N drags across the timeline, timing seek-to-actual-motion each
   --loop           restart the file when it finishes
   --list           discover receivers and exit
   --verbose        print every Cast message sent and received
@@ -72,7 +128,8 @@ receiver objects to.
 ## Build and run
 
 Requires Windows and a Windows SDK/C compiler. Enable `CVK_BUILD_EXAMPLES` (on by
-default on Windows).
+default on Windows). The responsive scrub proxy needs `ffmpeg` on `PATH` at runtime; without
+it, playback and scrubbing still work on the full-quality stream.
 
 ```powershell
 cmake -S . -B build/windows-msvc-2026 -G "Visual Studio 18 2026" -A x64 -DCVK_BUILD_EXAMPLES=ON

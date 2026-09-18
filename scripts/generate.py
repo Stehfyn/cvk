@@ -658,7 +658,9 @@ class Generator:
                 call_args.append(f"&{var}")
                 post.append(f"(*{p.name}) = {var};")
             elif p is enum_count:
-                call_args.append("&" + snake(p.name))
+                params.append(EmittedParam(f"{p.full_type} {p.name}", p.name, "Receives the number of entries written", True))
+                pre.append(f"CVK_ASSERT(NULL != {p.name});")
+                call_args.append(p.name)
             elif any(p is q for q, _ in enum_arrays):
                 cap = dict((id(q), c) for q, c in enum_arrays)[id(p)]
                 elem = p.full_type.rstrip("*").strip()
@@ -698,23 +700,23 @@ class Generator:
         ret = "void"
         body: List[str] = list(locals_)
         if enum_count:
-            ret = "uint32_t"
-            count_var = snake(enum_count.name)
+            # The count is an out-parameter (listed before the array in the signature); the wrapper
+            # runs the two-call sequence and writes the entry count through it, returning void.
+            count_ref = f"(*{enum_count.name})"
             first = f"{fn}({', '.join('NULL' if a in enum_args else a for a in call_args)})"
-            body.insert(0, f"uint32_t {count_var};")
-            body += ["", f"{count_var} = 0;", ""]
+            body += ["", f"{count_ref} = 0;", ""]
             if cmd.return_type == "VkResult":
                 body.append(f"CVK_CHECK({first});")
             else:
                 body.append(f"{first};")
             for q, cap in enum_arrays:
-                body.append(f"CVK_ASSERT({cap} >= {count_var});")
+                body.append(f"CVK_ASSERT({cap} >= {count_ref});")
                 s = reg.struct_of(q.type)
                 if s and s.stype:
                     arr = snake(q.name) if q.name in ext_arrays else q.name
                     if "uint32_t index;" not in body:
                         body.insert(0, "uint32_t index;")
-                    body.append(f"for (index = 0; index < {count_var}; ++index)")
+                    body.append(f"for (index = 0; index < {count_ref}; ++index)")
                     body.append("{")
                     if q.name in ext_arrays:
                         ext_param = ext_arrays[q.name]
@@ -732,7 +734,6 @@ class Generator:
             else:
                 body.append(f"{call};")
             body += post
-            body.append(f"return {count_var};")
         elif cmd.return_type == "VkResult" and (informational or recoverable):
             # Result policy: an informational success code or a recoverable error (policy list:
             # a support query's NOT_SUPPORTED, a swapchain's OUT_OF_DATE) is the caller's to read.
@@ -2043,6 +2044,7 @@ class Generator:
             # (pCommandBuffers bound to pCommandBuffer -> pCommandBufferNext).
             product = next((stem(bind.get(p.name, p.name)) for p in sparams if p.is_out and p.text.split()[0].rstrip("*") in self.reg.handles), None)
             args = []
+            enum_into = None  # set when a void two-call enumerate's count is captured into 'into'
             for p in sparams:
                 ptype = p.text.rsplit(" ", 1)[0]
                 if p.name in bind:
@@ -2067,6 +2069,13 @@ class Generator:
                         locals_[var] = ptype.rstrip("*").strip()
                         available[stem(p.name)] = var
                         args.append(f"&{var}")
+                elif p.is_out and sret == "void" and "into" in step and ptype.rstrip("*").strip() == "uint32_t":
+                    # A two-call enumerate now returns void and writes its entry count through this
+                    # out-parameter; keep the count internal under the step's 'into' name.
+                    enum_into = step["into"]
+                    locals_[enum_into] = "uint32_t"
+                    available[stem(p.name)] = enum_into
+                    args.append(f"&{enum_into}")
                 elif p.is_out:
                     outputs.setdefault(p.name, p)
                     available[stem(p.name)] = f"(*{p.name})"
@@ -2085,7 +2094,9 @@ class Generator:
                         self.errors.append(f"chain {name}: input {pname} is {inputs[pname].text} and {ptype} {pname} for {fn}; bind one of them")
                     args.append(pname)
             call = f"{fn}({', '.join(args)})"
-            if step.get("check"):
+            if enum_into is not None:
+                body.append(f"{call};") # the count was captured through the out-parameter above
+            elif step.get("check"):
                 if sret != "VkResult" or any(key in step for key in ("return", "store", "into")):
                     self.errors.append(f"chain {name}: check requires an otherwise unconsumed VkResult from {fn}")
                 body.append(f"CVK_CHECK({call});")

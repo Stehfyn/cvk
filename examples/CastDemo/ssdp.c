@@ -192,7 +192,7 @@ static int Describe(const char* pLocation, CastDevice* pDevice)
 /* One UDP socket per IPv4 interface, so the multicast search leaves every network. */
 static unsigned OpenSearchSockets(SOCKET* pSockets, unsigned capacity)
 {
-    ULONG                 size     = 0;
+    ULONG                 size = 0;
     IP_ADAPTER_ADDRESSES* pAdapters;
     IP_ADAPTER_ADDRESSES* pAdapter;
     unsigned              count = 0;
