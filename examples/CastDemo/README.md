@@ -48,7 +48,7 @@ log: TLS connection, application launch, the URL being loaded, and any error the
 receiver reports. Closing the window stops playback and returns the projector to its
 home screen.
 
-### Adaptive quality with hysteresis
+### Adaptive quality: the full stream, then a GPU proxy
 
 The projector is a Chromecast built-in receiver, and its post-seek rebuffer is the real
 latency floor: on the full-quality stream a seek takes one to three seconds to show smooth
@@ -58,19 +58,29 @@ bitstream clears that rebuffer far faster and never underruns.
 
 So CastDemo serves two streams of the same content on one timeline:
 
-- **Full quality** is the original file, served as-is with its original audio. Used for
-  settled playback.
-- **A scrub proxy** is a background `ffmpeg` transcode: 480-wide, ~600 kbps with a real VBV
-  buffer, GOP 12, no B-frames, plus synced stereo AAC so audio plays while scrubbing. It is
-  cheap for the receiver to buffer and decode, so seeks into it land in tens to a few hundred
-  milliseconds.
+- **Full quality** is the original file, served as-is with its original audio. It plays
+  immediately, shows the full movie duration, and seeks natively (the receiver rebuffers).
+- **A scrub proxy** is an in-process GPU transcode — no external tools. cvk's Vulkan Video
+  wrappers decode the source on the AMD GPU, downscale, and re-encode H.264 into a fragmented
+  MP4, with the source AAC passed straight through. A short GOP keeps seeks cheap, so once the
+  session is on the proxy every seek is a cheap in-stream `SEEK` with no reload or audio reset.
 
-A sustained drag drops to the proxy for instant response; a single click does not, so
-quality never flickers on a lone seek. When you stop scrubbing, hysteresis waits about 1.4 s
-of quiet and then upgrades back to full quality at the current position, preserving play or
-pause state. Audio is present and synchronized in both streams. Building the proxy needs
-`ffmpeg` on `PATH`; without it, scrubbing simply uses the full stream. The proxy transcodes
-in the background, so a long movie scrubs on the full stream until the proxy is ready.
+The proxy's transcode settings are `GpuTranscode_DefaultConfig` (overridable live from the
+GUI sliders): **1280 wide, GOP 12** (~0.5 s between keyframes at 24 fps), **QP 20 intra / 23
+inter**, constant-QP (rate control disabled), with **motion-adaptive QP** on at strength 30 —
+a gentle bit-saver on still frames driven by block-SAD optical-flow estimation, which also
+forces a keyframe on a scene cut. `bitrateKbps` (4000) is informational only under constant QP.
+
+The session plays the full stream immediately and switches to the proxy **once the proxy has
+finished transcoding**, at the current position, and stays there. The switch waits for
+completion on purpose: a Cast receiver only treats an HTTP source as a fixed-duration,
+seekable VOD — honoring the container's full duration and not chasing a live edge — when the
+response carries a real `Content-Length`, and under constant-QP the final size is known only
+once the encode is done. The proxy is loaded as `BUFFERED` (not `LIVE`) so the receiver honors
+that duration. Serving the still-growing file instead made the receiver show only the few
+seconds transcoded so far and bounce around the timeline. A long movie therefore plays and
+seeks on the full stream until its proxy is ready, then gains instant in-stream seeks; the
+transcode runs well above real time on the GPU, so the wait is a fraction of the runtime.
 
 Scrubbing is live. While the slider is held, every movement posts a *scrub*: a `SEEK`
 with `resumeState PLAYBACK_PAUSE`, snapped to the keyframe before the target. A paused
@@ -128,8 +138,9 @@ receiver objects to.
 ## Build and run
 
 Requires Windows and a Windows SDK/C compiler. Enable `CVK_BUILD_EXAMPLES` (on by
-default on Windows). The responsive scrub proxy needs `ffmpeg` on `PATH` at runtime; without
-it, playback and scrubbing still work on the full-quality stream.
+default on Windows). The scrub proxy transcodes in-process on the GPU through cvk's Vulkan
+Video wrappers — no external tools are needed at runtime. A GPU without H.264 encode+decode
+in Vulkan simply plays on the full-quality stream without a proxy.
 
 ```powershell
 cmake -S . -B build/windows-msvc-2026 -G "Visual Studio 18 2026" -A x64 -DCVK_BUILD_EXAMPLES=ON

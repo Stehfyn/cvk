@@ -14,6 +14,17 @@ typedef struct MediaServer MediaServer;
 ** (0 chooses one). WSAStartup must have been called. NULL and pError on failure. */
 MediaServer* MediaServer_Start(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity);
 
+/* Like MediaServer_Start, but for a file still being written (the proxy transcode appends to it):
+** each request re-reads the current length and streams to the live end, blocking for more bytes as
+** the file grows, so a fragmented MP4 plays progressively while it is produced. The body length is
+** unknown up front, so responses close the connection at end of stream. Call MediaServer_MarkComplete
+** once the file has stopped growing so streaming connections finish cleanly instead of waiting. */
+MediaServer* MediaServer_StartGrowing(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity);
+
+/* Signals that a growing server's file is complete (fully written); streaming connections end once
+** they have sent the final bytes. No-op for a non-growing server. */
+void MediaServer_MarkComplete(MediaServer* pServer);
+
 unsigned short MediaServer_GetPort(const MediaServer* pServer);
 
 /* Stops accepting; connections in flight finish on their own. */

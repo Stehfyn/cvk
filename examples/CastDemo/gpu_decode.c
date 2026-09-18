@@ -18,6 +18,7 @@
 #define MAX_SESSION_MEMORY 8
 #define MAX_DPB_SLOTS      17
 #define BITSTREAM_CAPACITY (4u * 1024u * 1024u)
+#define MAX_IMAGE_PLANES   3
 
 typedef struct DpbSlot
 {
@@ -25,6 +26,7 @@ typedef struct DpbSlot
     int                             frameNum;
     int                             frameNumWrap;
     int                             poc;
+    unsigned                        age;    /* decode-order stamp: smallest = oldest reference */
     StdVideoDecodeH264ReferenceInfo refInfo;
 } DpbSlot;
 
@@ -86,32 +88,8 @@ struct GpuDecoder
     int          prevPocLsb;
     int          firstFrame;
     int          lumaStride;
-
-    /* Output format description, so read-back and downscale never assume one pixel layout. */
-    unsigned chromaPlaneCount; /* 1 = interleaved Cb/Cr (NV12), 2 = planar Cb + Cr (I420) */
-    unsigned chromaShiftW;
-    unsigned chromaShiftH;
-    unsigned chromaTexelBytes; /* per addressed texel of a chroma plane */
+    unsigned     decodeOrder; /* increments per stored reference, to stamp DpbSlot.age */
 };
-
-/* Describes the chroma layout of a decoded YCbCr output format. Returns 0 for a format the pipeline
-** does not know how to read back. Covers the 8-bit 4:2:0 / 4:2:2 formats an H.264 decoder emits. */
-static int DecodeChromaLayout(VkFormat format, unsigned* pChromaPlaneCount, unsigned* pShiftW, unsigned* pShiftH, unsigned* pTexelBytes)
-{
-    switch (format)
-    {
-        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
-            *pChromaPlaneCount = 1; *pShiftW = 1; *pShiftH = 1; *pTexelBytes = 2; return 1;
-        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
-            *pChromaPlaneCount = 1; *pShiftW = 1; *pShiftH = 0; *pTexelBytes = 2; return 1;
-        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
-            *pChromaPlaneCount = 2; *pShiftW = 1; *pShiftH = 1; *pTexelBytes = 1; return 1;
-        case VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM:
-            *pChromaPlaneCount = 2; *pShiftW = 1; *pShiftH = 0; *pTexelBytes = 1; return 1;
-        default:
-            *pChromaPlaneCount = 1; *pShiftW = 1; *pShiftH = 1; *pTexelBytes = 2; return 0;
-    }
-}
 
 static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 {
@@ -243,7 +221,6 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
         return NULL;
     }
     pDecoder->pictureFormat = formats[0].format;
-    (void)DecodeChromaLayout(pDecoder->pictureFormat, &pDecoder->chromaPlaneCount, &pDecoder->chromaShiftW, &pDecoder->chromaShiftH, &pDecoder->chromaTexelBytes);
     pDecoder->dpbFormat     = formats[0].format;
     if (!coincide)
     {
@@ -331,9 +308,9 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     cvkMapMemory(pDecoder->device, pDecoder->bitstreamMemory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, &pDecoder->bitstreamMapped);
 
     pDecoder->lumaStride = (int)pDecoder->codedExtent.width;
-    /* Luma plane followed by the interleaved half-resolution chroma plane (NV12 layout). */
-    readback_size = (VkDeviceSize)pDecoder->codedExtent.width * pDecoder->codedExtent.height +
-                    (VkDeviceSize)pDecoder->chromaPlaneCount * (pDecoder->codedExtent.width >> pDecoder->chromaShiftW) * (pDecoder->codedExtent.height >> pDecoder->chromaShiftH) * pDecoder->chromaTexelBytes;
+    /* Size the readback buffer from the output pixel format itself (plane count, subsampling and
+    ** per-texel bytes all derived by vku), so no bit depth or chroma layout is assumed here. */
+    readback_size = cvkGetFormatSize(pDecoder->pictureFormat, pDecoder->codedExtent.width, pDecoder->codedExtent.height);
     cvkCreateBuffer(pDecoder->device, NULL, (VkBufferCreateFlags)0, readback_size, (VkBufferUsageFlags)VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, &pDecoder->readback);
     /* HOST_CACHED, not just HOST_COHERENT: the CPU reads this buffer back (downscale, luma stats),
     ** and reads from write-combined coherent memory run at a few MB/s, which dominated the frame. */
@@ -423,6 +400,9 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
     uint32_t                        i;
     int                             poc;
     int                             current_slot;
+    int                             oldest_slot;
+    unsigned                        active_refs;
+    unsigned                        max_refs;
     uint32_t                        begin_count;
     uint32_t                        decode_ref_count;
     VkVideoPictureResourceInfoKHR   ref_resource[MAX_DPB_SLOTS];
@@ -439,20 +419,13 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
     VkVideoPictureResourceInfoKHR   dst_resource;
     VkDeviceSize                    aligned_range;
     VkSubmitInfo                    submit;
-    VkImageSubresourceLayers        luma;
-    VkExtent3D                      luma_extent;
     VkOffset3D                      zero_offset;
-    VkBufferImageCopy               region;
-    VkImageSubresourceLayers        chroma;
-    VkExtent3D                      chroma_extent;
-    VkBufferImageCopy               chroma_region;
-    VkBufferImageCopy               copy_regions[3];
-    unsigned                        region_count;
-    unsigned                        chroma_plane;
-    unsigned                        chroma_w;
-    unsigned                        chroma_h;
-    VkDeviceSize                    luma_bytes;
-    VkDeviceSize                    chroma_bytes;
+    VkExtent3D                      display_extent;
+    VkImageSubresourceLayers        base_layers;
+    VkBufferImageCopy               copy_regions[MAX_IMAGE_PLANES];
+    VkDeviceSize                    transfer_bytes;
+    VkImageAspectFlags              aspect_mask;
+    uint32_t                        region_count;
     VkPipelineStageFlags            wait_stage;
     DpbSlot*                        p_slot;
 
@@ -524,7 +497,9 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
     }
     poc = ComputePoc(pDecoder, &header, max_poc_lsb);
 
-    /* Pick a free DPB slot for the reconstructed picture. */
+    /* Pick a free DPB slot for the reconstructed picture. Sliding-window marking below keeps the
+    ** active reference count at most max_num_ref_frames, and the DPB has max_num_ref_frames + 2
+    ** slots, so a free slot for the current picture always exists. */
     current_slot = -1;
     for (i = 0; i < pDecoder->maxDpbSlots; ++i)
     {
@@ -661,10 +636,9 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
     cvkResetFences(pDecoder->device, 1, &pDecoder->decodeFence);
     cvkQueueSubmit(pDecoder->decodeQueue, 1, &submit, pDecoder->decodeFence);
 
-    /* Transfer queue: acquire the output image and copy the luma plane into the readback buffer. */
-    cvkInitImageSubresourceLayers(&luma, (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_0_BIT, 0, 0, 1);
-    cvkInitExtent3D(&luma_extent, pDecoder->displayWidth, pDecoder->displayHeight, 1);
+    /* Transfer queue: acquire the output image and copy every plane into the readback buffer. */
     cvkInitOffset3D(&zero_offset, 0, 0, 0);
+    cvkInitExtent3D(&display_extent, pDecoder->displayWidth, pDecoder->displayHeight, 1);
     cvkBeginOneTimeCommandBuffer(pDecoder->transferCmd, NULL);
     cvkCmdImageQueueOwnershipBarrier2(pDecoder->transferCmd,
                                       NULL,
@@ -680,21 +654,11 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
                                       color,
                                       (VkDependencyFlags)0,
                                       NULL);
-    cvkInitBufferImageCopy(&region, VK_NO_OFFSET, 0, 0, luma, zero_offset, luma_extent);
-    copy_regions[0] = region;
-    /* Copy every chroma plane the decoder's format has (one interleaved plane, or two planar). */
-    luma_bytes   = (VkDeviceSize)pDecoder->displayWidth * pDecoder->displayHeight;
-    chroma_w     = (pDecoder->displayWidth + ((1u << pDecoder->chromaShiftW) - 1u)) >> pDecoder->chromaShiftW;
-    chroma_h     = (pDecoder->displayHeight + ((1u << pDecoder->chromaShiftH) - 1u)) >> pDecoder->chromaShiftH;
-    chroma_bytes = (VkDeviceSize)chroma_w * chroma_h * pDecoder->chromaTexelBytes;
-    region_count = 1;
-    for (chroma_plane = 0; chroma_plane < pDecoder->chromaPlaneCount; ++chroma_plane)
-    {
-        cvkInitImageSubresourceLayers(&chroma, (VkImageAspectFlags)(VK_IMAGE_ASPECT_PLANE_0_BIT << (1u + chroma_plane)), 0, 0, 1);
-        cvkInitExtent3D(&chroma_extent, chroma_w, chroma_h, 1);
-        cvkInitBufferImageCopy(&chroma_region, luma_bytes + (VkDeviceSize)chroma_plane * chroma_bytes, 0, 0, chroma, zero_offset, chroma_extent);
-        copy_regions[region_count++] = chroma_region;
-    }
+    /* Build one buffer->image copy per plane straight from the pixel format: vku derives each
+    ** plane's aspect, subsampled extent, row stride and per-texel bytes, so a tightly packed
+    ** readback works for any decoder output format without assuming NV12 or a bit depth. */
+    base_layers  = cvkGetFormatBaseSubresourceLayers(pDecoder->pictureFormat);
+    region_count = cvkGetBufferImageCopyRegions(VK_NO_OFFSET, 1, pDecoder->pictureFormat, zero_offset, display_extent, base_layers, copy_regions, &transfer_bytes, &aspect_mask);
     cvkCmdCopyImageToBuffer(pDecoder->transferCmd, pDecoder->outputImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, pDecoder->readback, region_count, copy_regions);
     cvkEndCommandBuffer(pDecoder->transferCmd);
 
@@ -711,6 +675,39 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
         p_slot->active   = 1;
         p_slot->frameNum = (int)header.frameNum;
         p_slot->poc      = poc;
+        p_slot->age      = ++pDecoder->decodeOrder;
+
+        /* Sliding-window reference marking (H.264 8.2.5.3), applied after the picture is stored:
+        ** a stream keeps at most max_num_ref_frames short-term references, so retire the oldest
+        ** (smallest decode-order age) until the count is within that bound. Without this the DPB
+        ** filled and later frames referenced stale pictures instead of the most recent one, which
+        ** corrupted decode a few frames into every GOP. */
+        max_refs = pDecoder->sps.max_num_ref_frames ? pDecoder->sps.max_num_ref_frames : 1u;
+        for (;;)
+        {
+            active_refs = 0;
+            for (i = 0; i < pDecoder->maxDpbSlots; ++i)
+            {
+                active_refs += pDecoder->dpb[i].active ? 1u : 0u;
+            }
+            if (active_refs <= max_refs)
+            {
+                break;
+            }
+            oldest_slot = -1;
+            for (i = 0; i < pDecoder->maxDpbSlots; ++i)
+            {
+                if (pDecoder->dpb[i].active && (oldest_slot < 0 || pDecoder->dpb[i].age < pDecoder->dpb[oldest_slot].age))
+                {
+                    oldest_slot = (int)i;
+                }
+            }
+            if (oldest_slot < 0)
+            {
+                break;
+            }
+            pDecoder->dpb[oldest_slot].active = 0;
+        }
         memset(&p_slot->refInfo, 0, sizeof(p_slot->refInfo));
         p_slot->refInfo.FrameNum       = (uint16_t)header.frameNum;
         p_slot->refInfo.PicOrderCnt[0] = poc;
@@ -721,44 +718,57 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
 
 const uint8_t* GpuDecode_Luma(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pStride)
 {
+    VkDeviceSize plane_offsets[MAX_IMAGE_PLANES];
+    uint32_t     plane_strides[MAX_IMAGE_PLANES];
+    VkExtent3D   plane_extents[MAX_IMAGE_PLANES];
+    VkDeviceSize size;
+
+    (void)cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat, pDecoder->displayWidth, pDecoder->displayHeight, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
     *pWidth  = pDecoder->displayWidth;
     *pHeight = pDecoder->displayHeight;
-    *pStride = pDecoder->displayWidth; /* the copy is tightly packed to display width */
-    return (const uint8_t*)pDecoder->readbackMapped;
+    *pStride = plane_strides[0]; /* row bytes of the luma plane as the format defines it */
+    return (const uint8_t*)pDecoder->readbackMapped + plane_offsets[0];
 }
 
 const uint8_t* GpuDecode_Nv12(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pLumaStride, const uint8_t** ppChroma, unsigned* pChromaStride)
 {
-    unsigned luma_bytes;
+    VkDeviceSize plane_offsets[MAX_IMAGE_PLANES];
+    uint32_t     plane_strides[MAX_IMAGE_PLANES];
+    VkExtent3D   plane_extents[MAX_IMAGE_PLANES];
+    VkDeviceSize size;
 
-    luma_bytes     = pDecoder->displayWidth * pDecoder->displayHeight;
+    (void)cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat, pDecoder->displayWidth, pDecoder->displayHeight, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
     *pWidth        = pDecoder->displayWidth;
     *pHeight       = pDecoder->displayHeight;
-    *pLumaStride   = pDecoder->displayWidth;
-    *pChromaStride = ((pDecoder->displayWidth + 1u) / 2u) * 2u; /* interleaved Cb/Cr, tightly packed */
-    *ppChroma      = (const uint8_t*)pDecoder->readbackMapped + luma_bytes;
-    return (const uint8_t*)pDecoder->readbackMapped;
+    *pLumaStride   = plane_strides[0];
+    *pChromaStride = plane_strides[1];
+    *ppChroma      = (const uint8_t*)pDecoder->readbackMapped + plane_offsets[1];
+    return (const uint8_t*)pDecoder->readbackMapped + plane_offsets[0];
 }
 
 void GpuDecode_Frame(const GpuDecoder* pDecoder, DecodedFrame* pFrame)
 {
     const uint8_t* base;
-    unsigned       luma_bytes;
-    unsigned       chroma_bytes;
+    VkDeviceSize   plane_offsets[MAX_IMAGE_PLANES];
+    uint32_t       plane_strides[MAX_IMAGE_PLANES];
+    VkExtent3D     plane_extents[MAX_IMAGE_PLANES];
+    VkDeviceSize   size;
+    uint32_t       plane_count;
 
-    base                     = (const uint8_t*)pDecoder->readbackMapped;
-    luma_bytes               = pDecoder->displayWidth * pDecoder->displayHeight;
-    pFrame->width            = pDecoder->displayWidth;
-    pFrame->height           = pDecoder->displayHeight;
-    pFrame->lumaStride       = pDecoder->displayWidth;
-    pFrame->chromaWidth      = (pDecoder->displayWidth + ((1u << pDecoder->chromaShiftW) - 1u)) >> pDecoder->chromaShiftW;
-    pFrame->chromaHeight     = (pDecoder->displayHeight + ((1u << pDecoder->chromaShiftH) - 1u)) >> pDecoder->chromaShiftH;
-    pFrame->chromaStride     = pFrame->chromaWidth * pDecoder->chromaTexelBytes;
-    pFrame->chromaInterleaved = (pDecoder->chromaPlaneCount == 1) ? 1 : 0;
-    pFrame->pLuma            = base;
-    pFrame->pCb              = base + luma_bytes;
-    chroma_bytes             = pFrame->chromaWidth * pFrame->chromaHeight * pDecoder->chromaTexelBytes;
-    pFrame->pCr              = (pDecoder->chromaPlaneCount == 2) ? (base + luma_bytes + chroma_bytes) : NULL;
+    /* Read back the frame in whatever layout the pixel format defines: vku gives each plane's
+    ** offset, row stride and subsampled extent, so no bit depth or chroma shape is hard-coded. */
+    base                      = (const uint8_t*)pDecoder->readbackMapped;
+    plane_count               = cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat, pDecoder->displayWidth, pDecoder->displayHeight, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
+    pFrame->width             = pDecoder->displayWidth;
+    pFrame->height            = pDecoder->displayHeight;
+    pFrame->lumaStride        = plane_strides[0];
+    pFrame->chromaWidth       = plane_extents[1].width;
+    pFrame->chromaHeight      = plane_extents[1].height;
+    pFrame->chromaStride      = plane_strides[1];
+    pFrame->chromaInterleaved = (plane_count == 2) ? 1 : 0;
+    pFrame->pLuma             = base + plane_offsets[0];
+    pFrame->pCb               = base + plane_offsets[1];
+    pFrame->pCr               = (plane_count == 3) ? (base + plane_offsets[2]) : NULL;
 }
 
 void GpuDecode_Destroy(GpuDecoder* pDecoder)

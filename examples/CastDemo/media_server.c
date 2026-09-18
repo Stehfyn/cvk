@@ -15,6 +15,31 @@
 #define TRANSMIT_MAX     (60u * 1024u * 1024u) /* one TransmitFile call; larger ranges loop */
 #define SEND_BUFFER_SIZE (1024 * 1024)         /* keeps a Wi-Fi link full after a seek despite its round trips */
 
+/* Shared, refcounted state for a growing file, so a streaming connection can read the live
+** completion flag after MediaServer_Stop has freed the server. The server holds one reference; each
+** connection to a growing server holds one for its lifetime; the last release frees it. */
+typedef struct LiveState
+{
+    volatile LONG refcount;
+    volatile LONG complete;
+} LiveState;
+
+static void LiveState_AddRef(LiveState* pLive)
+{
+    if (NULL != pLive)
+    {
+        InterlockedIncrement(&pLive->refcount);
+    }
+}
+
+static void LiveState_Release(LiveState* pLive)
+{
+    if (NULL != pLive && 0 == InterlockedDecrement(&pLive->refcount))
+    {
+        free(pLive);
+    }
+}
+
 struct MediaServer
 {
     SOCKET         listener;
@@ -24,16 +49,18 @@ struct MediaServer
     char           contentType[64];
     unsigned short port;
     uint64_t       size;
+    LiveState*     live; /* non-NULL when the file is still being written (growing proxy) */
 };
 
 /* Everything a request thread needs, copied so the server may be freed while it streams. */
 typedef struct Connection
 {
-    SOCKET   socket;
-    HANDLE   hFile; /* opened once, reused for every keep-alive range on this connection */
-    WCHAR    file[MAX_PATH];
-    char     contentType[64];
-    uint64_t size;
+    SOCKET     socket;
+    HANDLE     hFile; /* opened once, reused for every keep-alive range on this connection */
+    WCHAR      file[MAX_PATH];
+    char       contentType[64];
+    uint64_t   size;
+    LiveState* live; /* non-NULL for a growing file: stream to the live end, not a fixed size */
 } Connection;
 
 static int ParseUint64(const char* pText, size_t length, uint64_t* pValue)
@@ -273,6 +300,123 @@ static uint64_t StreamFile(const Connection* pConnection, uint64_t first, uint64
     return sent;
 }
 
+/* Milliseconds a streaming connection waits for the growing file to gain more bytes before
+** re-checking, and the longest it will sit with no growth and no completion before giving up. */
+#define GROW_POLL_MS  8u
+#define GROW_IDLE_MAX 60000u
+
+/* Streams a growing file from byte offset first to its live end and keeps going as it grows,
+** blocking on GROW_POLL_MS polls until the file is marked complete and fully sent, the client
+** disconnects (a send fails), or the file stalls for GROW_IDLE_MAX with no completion. */
+static uint64_t StreamGrowingFile(const Connection* pConnection, uint64_t first)
+{
+    uint64_t sent      = 0;
+    unsigned idleWaits = 0;
+
+    if (INVALID_HANDLE_VALUE == pConnection->hFile)
+    {
+        return 0;
+    }
+    for (;;)
+    {
+        LARGE_INTEGER fileSize;
+        uint64_t      available;
+
+        if (!GetFileSizeEx(pConnection->hFile, &fileSize))
+        {
+            return sent;
+        }
+        available = (uint64_t)fileSize.QuadPart;
+        if (first + sent < available)
+        {
+            LARGE_INTEGER  offset;
+            const uint64_t remaining = available - (first + sent);
+            const DWORD    want      = (remaining < TRANSMIT_MAX) ? (DWORD)remaining : TRANSMIT_MAX;
+
+            offset.QuadPart = (LONGLONG)(first + sent);
+            if (!SetFilePointerEx(pConnection->hFile, offset, NULL, FILE_BEGIN) || !TransmitFile(pConnection->socket, pConnection->hFile, want, 0, NULL, NULL, 0))
+            {
+                return sent; /* the receiver closed the connection */
+            }
+            sent += want;
+            idleWaits = 0;
+            continue;
+        }
+        /* Caught up with what has been written so far. */
+        if (NULL == pConnection->live || 0 != pConnection->live->complete)
+        {
+            return sent; /* the file is done growing and fully sent */
+        }
+        if (idleWaits * GROW_POLL_MS >= GROW_IDLE_MAX)
+        {
+            return sent; /* the writer stalled without completing; do not hang forever */
+        }
+        ++idleWaits;
+        Sleep(GROW_POLL_MS);
+    }
+}
+
+/* Answers one request for a growing file: the total length is unknown, so the response carries no
+** Content-Length and closes the connection at end of stream (RFC 7230 3.3.3). Playback is
+** progressive from the fragmented-MP4 init segment, so a byte offset from a Range header is honored
+** but the body always runs to the live end. Always returns 0 (the connection does not persist). */
+static int HandleGrowingRequest(const Connection* pConnection, const char* pRequest)
+{
+    char     header[1024];
+    char     range[128];
+    char     target[256];
+    int      head;
+    uint64_t first = 0;
+    uint64_t last  = 0;
+
+    head = (0 == strncmp(pRequest, "HEAD ", 5));
+    if (!head && 0 != strncmp(pRequest, "GET ", 4))
+    {
+        static const char kNotAllowed[] = "HTTP/1.1 405 Method Not Allowed\r\nAllow: GET, HEAD\r\nContent-Length: 0\r\nConnection: close\r\n\r\n";
+
+        SendAll(pConnection->socket, kNotAllowed, sizeof(kNotAllowed) - 1);
+        return 0;
+    }
+    (void)snprintf(target, sizeof(target), "%.*s", (int)strcspn(pRequest + (head ? 5 : 4), " \r\n"), pRequest + (head ? 5 : 4));
+    if (FindHeader(pRequest, "Range", range, sizeof(range)) && 0 == _strnicmp(range, "bytes=", 6))
+    {
+        LARGE_INTEGER fileSize;
+        uint64_t      current = 0;
+
+        if (GetFileSizeEx(pConnection->hFile, &fileSize))
+        {
+            current = (uint64_t)fileSize.QuadPart;
+        }
+        if (MediaServer_ParseRange(range, current > 0 ? current : ~(uint64_t)0, &first, &last) < 0)
+        {
+            first = 0;
+        }
+    }
+    (void)snprintf(header,
+                   sizeof(header),
+                   "HTTP/1.1 200 OK\r\n"
+                   "Content-Type: %s\r\n"
+                   "Accept-Ranges: none\r\n"
+                   "Access-Control-Allow-Origin: *\r\n"
+                   "Connection: close\r\n\r\n",
+                   pConnection->contentType);
+    if (!SendAll(pConnection->socket, header, strlen(header)))
+    {
+        return 0;
+    }
+    if (head)
+    {
+        (void)fprintf(stderr, "server: %s %s -> 200 growing (header only)\n", "HEAD", target);
+        return 0;
+    }
+    {
+        const uint64_t sent = StreamGrowingFile(pConnection, first);
+
+        (void)fprintf(stderr, "server: GET %s -> 200 growing, sent %.2f MB from offset %llu\n", target, (double)sent / (1024.0 * 1024.0), (unsigned long long)first);
+    }
+    return 0;
+}
+
 /* Answers one request. Returns 1 when the connection may carry another (HTTP/1.1 keep-alive),
 ** which spares the receiver a TCP handshake on every range it fetches after a seek. */
 static int HandleRequest(const Connection* pConnection, const char* pRequest)
@@ -394,7 +538,9 @@ static DWORD WINAPI ServeConnection(LPVOID pParameter)
     /* Headers and the first body chunk leave in separate sends; never let Nagle pair them with a delayed ACK. */
     setsockopt(pConnection->socket, IPPROTO_TCP, TCP_NODELAY, (const char*)&noDelay, sizeof(noDelay));
     setsockopt(pConnection->socket, SOL_SOCKET, SO_SNDBUF, (const char*)&sendBuffer, sizeof(sendBuffer));
-    pConnection->hFile = CreateFileW(pConnection->file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    /* Share read AND write: a growing proxy file is still held open for writing by the muxer, so
+    ** without FILE_SHARE_WRITE this open would fail with a sharing violation. */
+    pConnection->hFile = CreateFileW(pConnection->file, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
     request[0]         = 0;
     for (;;)
     {
@@ -418,6 +564,11 @@ static DWORD WINAPI ServeConnection(LPVOID pParameter)
             request[used] = 0;
         }
         requestLength = (int)(pEnd + 4 - request);
+        if (NULL != pConnection->live)
+        {
+            (void)HandleGrowingRequest(pConnection, request);
+            break; /* a growing response streams to end of file, then closes */
+        }
         if (!HandleRequest(pConnection, request))
         {
             break;
@@ -434,6 +585,7 @@ done:
     }
     shutdown(pConnection->socket, SD_SEND);
     closesocket(pConnection->socket);
+    LiveState_Release(pConnection->live);
     free(pConnection);
     return 0;
 }
@@ -464,12 +616,15 @@ static DWORD WINAPI AcceptLoop(LPVOID pParameter)
         }
         pConnection->socket = s;
         pConnection->size   = pServer->size;
+        pConnection->live   = pServer->live;
+        LiveState_AddRef(pConnection->live);
         memcpy(pConnection->file, pServer->file, sizeof(pConnection->file));
         memcpy(pConnection->contentType, pServer->contentType, sizeof(pConnection->contentType));
         hThread = CreateThread(NULL, 0, ServeConnection, pConnection, 0, NULL);
         if (NULL == hThread)
         {
             closesocket(s);
+            LiveState_Release(pConnection->live);
             free(pConnection);
             continue;
         }
@@ -478,7 +633,7 @@ static DWORD WINAPI AcceptLoop(LPVOID pParameter)
     return 0;
 }
 
-MediaServer* MediaServer_Start(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity)
+static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, int growing, char* pError, size_t errorCapacity)
 {
     WIN32_FILE_ATTRIBUTE_DATA attributes;
     MediaServer*              pServer;
@@ -530,16 +685,47 @@ MediaServer* MediaServer_Start(const wchar_t* pFile, const char* pBindAddress, u
         free(pServer);
         return NULL;
     }
-    pServer->port   = ntohs(address.sin_port);
+    pServer->port = ntohs(address.sin_port);
+    if (growing)
+    {
+        pServer->live = (LiveState*)calloc(1, sizeof(*pServer->live));
+        if (NULL == pServer->live)
+        {
+            (void)snprintf(pError, errorCapacity, "out of memory");
+            closesocket(pServer->listener);
+            free(pServer);
+            return NULL;
+        }
+        pServer->live->refcount = 1; /* the server's own reference */
+    }
     pServer->thread = CreateThread(NULL, 0, AcceptLoop, pServer, 0, NULL);
     if (NULL == pServer->thread)
     {
         (void)snprintf(pError, errorCapacity, "CreateThread failed (%lu)", GetLastError());
         closesocket(pServer->listener);
+        LiveState_Release(pServer->live);
         free(pServer);
         return NULL;
     }
     return pServer;
+}
+
+MediaServer* MediaServer_Start(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity)
+{
+    return StartInternal(pFile, pBindAddress, port, pContentType, 0, pError, errorCapacity);
+}
+
+MediaServer* MediaServer_StartGrowing(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity)
+{
+    return StartInternal(pFile, pBindAddress, port, pContentType, 1, pError, errorCapacity);
+}
+
+void MediaServer_MarkComplete(MediaServer* pServer)
+{
+    if (NULL != pServer && NULL != pServer->live)
+    {
+        InterlockedExchange(&pServer->live->complete, 1);
+    }
 }
 
 unsigned short MediaServer_GetPort(const MediaServer* pServer)
@@ -554,8 +740,13 @@ void MediaServer_Stop(MediaServer* pServer)
         return;
     }
     InterlockedExchange(&pServer->stopping, 1);
+    if (NULL != pServer->live)
+    {
+        InterlockedExchange(&pServer->live->complete, 1); /* let streaming connections finish */
+    }
     closesocket(pServer->listener); /* unblocks accept */
     WaitForSingleObject(pServer->thread, 2000);
     CloseHandle(pServer->thread);
+    LiveState_Release(pServer->live); /* connections in flight keep their own reference */
     free(pServer);
 }

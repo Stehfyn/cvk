@@ -4,6 +4,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <share.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -225,7 +226,7 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
     {
         return NULL;
     }
-    pMux->file = _wfopen(pPath, L"wb");
+    pMux->file = _wfsopen(pPath, L"wb", _SH_DENYWR); /* shared read so the media server can stream the file while it is still being written */
     if (NULL == pMux->file)
     {
         free(pMux);
@@ -1152,7 +1153,7 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
     {
         return NULL;
     }
-    pMux->file = _wfopen(pPath, L"wb");
+    pMux->file = _wfsopen(pPath, L"wb", _SH_DENYWR); /* shared read so the media server can stream the file while it is still being written */
     if (NULL == pMux->file)
     {
         free(pMux);

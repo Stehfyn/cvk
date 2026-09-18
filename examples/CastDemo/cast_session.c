@@ -820,10 +820,13 @@ int CastSession_Run(CastSession* pSession)
             pReason = CastChannel_GetError(pSession->pChannel);
             goto done;
         }
-        /* Once the proxy is ready, move onto it a single time and stay there. It is the shallow
-        ** LIVE, short-GOP stream, so from here every seek is a cheap in-stream SEEK: no LOAD, no
-        ** re-buffer, and no audio reset. The full stream only plays until the proxy exists. There is
-        ** no switch back to the deep BUFFERED stream, which is what used to stall and drop audio. */
+        /* Once the proxy is ready, move onto it a single time and stay there. It is a short-GOP
+        ** stream, so from here every seek is a cheap in-stream SEEK: no LOAD, no audio reset. The
+        ** proxy is loaded as BUFFERED, not LIVE: its fragmented init segment carries the full movie
+        ** duration, and only BUFFERED makes the receiver honor that duration and play the timeline
+        ** linearly. LIVE made the receiver ignore the duration (the trackbar showed only the few
+        ** seconds transcoded so far) and continuously chase the growing live edge, which is what
+        ** made the picture bounce all over the timeline. */
         if (proxyReady && !pSession->onProxy && !pSession->switchedToProxy && !pSession->awaitingLoad && !pSession->scrubbing && !pSession->seekPending && 0 != pSession->mediaSessionId &&
             (CAST_STATE_PLAYING == pSession->status.state || CAST_STATE_PAUSED == pSession->status.state))
         {
@@ -839,7 +842,7 @@ int CastSession_Run(CastSession* pSession)
             pSession->onProxy         = 1;
             pSession->switchedToProxy = 1;
             pSession->playingWanted   = wasPlaying;
-            if (!LoadMedia(pSession, proxyUrl, proxyType, pSession->status.currentTime, wasPlaying, "LIVE"))
+            if (!LoadMedia(pSession, proxyUrl, proxyType, pSession->status.currentTime, wasPlaying, "BUFFERED"))
             {
                 pReason = CastChannel_GetError(pSession->pChannel);
                 goto done;

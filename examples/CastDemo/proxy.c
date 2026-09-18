@@ -25,37 +25,32 @@ struct Proxy
     unsigned short     port;
 };
 
-/* Called from the transcode once the first fragment is on disk: start serving the growing file and
-** hand its URL to the session so playback can switch over within a fraction of a second, while the
-** rest of the proxy keeps transcoding and appending fragments in the background. */
-static void OnProxyReady(void* pUser)
-{
-    Proxy* pProxy = (Proxy*)pUser;
-    char   error[256];
-    char   url[1300];
-
-    if (NULL != pProxy->pServer || 0 != pProxy->stopping)
-    {
-        return; /* already serving, or shutting down */
-    }
-    pProxy->pServer = MediaServer_Start(pProxy->output, pProxy->localAddress[0] ? pProxy->localAddress : NULL, pProxy->port, "video/mp4", error, sizeof(error));
-    if (NULL == pProxy->pServer)
-    {
-        return;
-    }
-    (void)snprintf(url, sizeof(url), "http://%s:%u/proxy.mp4", pProxy->localAddress, (unsigned)MediaServer_GetPort(pProxy->pServer));
-    CastSession_SetProxy(pProxy->pSession, url, "video/mp4");
-}
-
-/* The proxy encode: 480-wide GPU H.264 with a short GOP for fast seeks and the source AAC passed
-** straight through, written as a fragmented MP4 so it is playable within a fraction of a second and
-** grows in the background. Runs entirely on the GPU through cvk's Vulkan Video wrappers. */
+/* The proxy encode: a GPU H.264 re-encode with a short GOP for fast seeks and the source AAC passed
+** straight through, written as a fragmented MP4. Runs entirely on the GPU through cvk's Vulkan Video
+** wrappers. The whole file is transcoded first, then served as a complete file: a receiver only
+** treats an HTTP source as a fixed-duration, seekable VOD (honoring the container's full duration
+** and not chasing a live edge) when the response carries a real Content-Length, which is knowable
+** only once the constant-QP encode has finished and the final size is fixed. The original stream
+** plays meanwhile, so playback still starts immediately; the switch happens when the proxy is
+** ready. */
 static DWORD WINAPI ProxyThread(LPVOID pParameter)
 {
     Proxy* pProxy = (Proxy*)pParameter;
     char   report[1800];
+    char   error[256];
+    char   url[1300];
 
-    (void)GpuTranscode_ToFragmentedMp4(pProxy->source, pProxy->output, &pProxy->config, 0, OnProxyReady, pProxy, &pProxy->stopping, report, sizeof(report));
+    if (!GpuTranscode_ToFragmentedMp4(pProxy->source, pProxy->output, &pProxy->config, 0, NULL, NULL, &pProxy->stopping, report, sizeof(report)) || 0 != pProxy->stopping)
+    {
+        return 0; /* transcode failed or was cancelled: keep playing the full stream */
+    }
+    pProxy->pServer = MediaServer_Start(pProxy->output, pProxy->localAddress[0] ? pProxy->localAddress : NULL, pProxy->port, "video/mp4", error, sizeof(error));
+    if (NULL == pProxy->pServer)
+    {
+        return 0;
+    }
+    (void)snprintf(url, sizeof(url), "http://%s:%u/proxy.mp4", pProxy->localAddress, (unsigned)MediaServer_GetPort(pProxy->pServer));
+    CastSession_SetProxy(pProxy->pSession, url, "video/mp4");
     return 0;
 }
 

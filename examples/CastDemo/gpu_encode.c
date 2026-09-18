@@ -22,16 +22,6 @@
 #define MAX_PLANES         3
 #define BITSTREAM_CAPACITY (4u * 1024u * 1024u)
 
-/* One plane of the encode input format: its aspect, dimensions relative to the luma plane, and the
-** bytes per addressable texel block. Filled from the queried input VkFormat. */
-typedef struct PlaneLayout
-{
-    VkImageAspectFlags aspect;
-    unsigned           widthShift;  /* chroma subsampling: log2 of the horizontal divisor */
-    unsigned           heightShift; /* log2 of the vertical divisor */
-    unsigned           texelBytes;
-} PlaneLayout;
-
 struct GpuEncoder
 {
     VkPhysicalDevice physical;
@@ -56,9 +46,6 @@ struct GpuEncoder
     VkExtent2D                  codedExtent;
     unsigned                    width;
     unsigned                    height;
-
-    PlaneLayout planes[MAX_PLANES];
-    uint32_t    planeCount;
 
     /* Encode input picture, the reconstructed-picture DPB, and their views. */
     VkImage        inputImage;
@@ -117,58 +104,6 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
     va_start(arguments, pFormat);
     (void)vsnprintf(pReport + used, capacity - used, pFormat, arguments);
     va_end(arguments);
-}
-
-/* Describes the planes of a YCbCr encode input format so the per-frame upload works for whatever
-** the driver advertises, rather than assuming a single pixel format. Returns 0 for a format this
-** module does not know how to pack a frame into. */
-static int DescribeFormat(VkFormat format, PlaneLayout* pPlanes, uint32_t* pCount)
-{
-    switch (format)
-    {
-        case VK_FORMAT_G8_B8R8_2PLANE_420_UNORM:
-        case VK_FORMAT_G8_B8R8_2PLANE_422_UNORM:
-            pPlanes[0].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_0_BIT;
-            pPlanes[0].widthShift  = 0;
-            pPlanes[0].heightShift = 0;
-            pPlanes[0].texelBytes  = 1;
-            pPlanes[1].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_1_BIT;
-            pPlanes[1].widthShift  = 1;
-            pPlanes[1].heightShift = (format == VK_FORMAT_G8_B8R8_2PLANE_420_UNORM) ? 1u : 0u;
-            pPlanes[1].texelBytes  = 2;
-            *pCount                = 2;
-            return 1;
-        case VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM:
-            pPlanes[0].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_0_BIT;
-            pPlanes[0].widthShift  = 0;
-            pPlanes[0].heightShift = 0;
-            pPlanes[0].texelBytes  = 1;
-            pPlanes[1].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_1_BIT;
-            pPlanes[1].widthShift  = 1;
-            pPlanes[1].heightShift = 1;
-            pPlanes[1].texelBytes  = 1;
-            pPlanes[2].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_2_BIT;
-            pPlanes[2].widthShift  = 1;
-            pPlanes[2].heightShift = 1;
-            pPlanes[2].texelBytes  = 1;
-            *pCount                = 3;
-            return 1;
-        case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16:
-        case VK_FORMAT_G16_B16R16_2PLANE_420_UNORM:
-            pPlanes[0].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_0_BIT;
-            pPlanes[0].widthShift  = 0;
-            pPlanes[0].heightShift = 0;
-            pPlanes[0].texelBytes  = 2;
-            pPlanes[1].aspect      = (VkImageAspectFlags)VK_IMAGE_ASPECT_PLANE_1_BIT;
-            pPlanes[1].widthShift  = 1;
-            pPlanes[1].heightShift = 1;
-            pPlanes[1].texelBytes  = 4;
-            *pCount                = 2;
-            return 1;
-        default:
-            *pCount = 0;
-            return 0;
-    }
 }
 
 /* Creates a video image (input picture or DPB) with the given number of array layers, bound to
@@ -329,12 +264,6 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
         return NULL;
     }
     pEncoder->inputFormat = formats[0].format;
-    if (!DescribeFormat(pEncoder->inputFormat, pEncoder->planes, &pEncoder->planeCount))
-    {
-        Report(pReport, reportCapacity, "unsupported encode input format %d\n", (int)pEncoder->inputFormat);
-        GpuEncode_Destroy(pEncoder);
-        return NULL;
-    }
     cvkInitPhysicalDeviceVideoFormatInfo(&format_info, &profile_list, (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR);
     cvkGetPhysicalDeviceVideoFormatProperties(pEncoder->physical, &format_info, &format_count, formats);
     if (0 == format_count)
@@ -413,16 +342,9 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
         CreateLayerView(pEncoder, pEncoder->dpbImage, pEncoder->dpbFormat, i, &pEncoder->dpbView[i]);
     }
 
-    pEncoder->stagingSize = 0;
-    for (i = 0; i < pEncoder->planeCount; ++i)
-    {
-        VkDeviceSize plane_width;
-        VkDeviceSize plane_height;
-
-        plane_width  = pEncoder->codedExtent.width >> pEncoder->planes[i].widthShift;
-        plane_height = pEncoder->codedExtent.height >> pEncoder->planes[i].heightShift;
-        pEncoder->stagingSize += plane_width * plane_height * pEncoder->planes[i].texelBytes;
-    }
+    /* Size the upload staging buffer straight from the input pixel format (tightly packed): vku
+    ** knows every plane's subsampled extent and per-texel bytes, so no bit depth is assumed. */
+    pEncoder->stagingSize = cvkGetFormatSize(pEncoder->inputFormat, pEncoder->codedExtent.width, pEncoder->codedExtent.height);
     cvkCreateBuffer(pEncoder->device, NULL, (VkBufferCreateFlags)0, pEncoder->stagingSize, (VkBufferUsageFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, &pEncoder->staging);
     cvkAllocateBufferMemory(pEncoder->physical,
                             pEncoder->device,
@@ -480,7 +402,7 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
            pEncoder->codedExtent.width,
            pEncoder->codedExtent.height,
            (int)pEncoder->inputFormat,
-           pEncoder->planeCount,
+           cvkGetFormatPlaneCount(pEncoder->inputFormat),
            pEncoder->headerSize,
            pEncoder->sessionMemoryCount);
     return pEncoder;
@@ -499,66 +421,63 @@ static VkVideoPictureResourceInfoKHR PictureResource(const GpuEncoder* pEncoder,
     return resource;
 }
 
-/* Packs one downscaled NV12-style frame (a luma plane plus interleaved chroma) into the staging
-** buffer using the input format's plane layout, replicating the last row and column into the
-** macroblock-aligned border so the coded picture has no undefined samples. */
+/* Packs one downscaled frame (a luma plane plus interleaved chroma) into the staging buffer using
+** the input pixel format's own plane layout, replicating the last row and column into the
+** macroblock-aligned border so the coded picture has no undefined samples. Every plane's offset,
+** row stride, subsampling divisor and per-texel byte count come from vku, so nothing about the
+** bit depth or chroma shape of the encode input format is assumed here. */
 static void PackFrame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsigned lumaStride, const uint8_t* pChroma, unsigned chromaStride)
 {
     uint8_t*     p_dst;
-    VkDeviceSize offset;
+    VkDeviceSize plane_offsets[MAX_PLANES];
+    uint32_t     plane_strides[MAX_PLANES];
+    VkExtent3D   plane_extents[MAX_PLANES];
+    VkDeviceSize staging_size;
+    uint32_t     plane_count;
     uint32_t     plane;
-    unsigned     coded_width;
-    unsigned     coded_height;
 
-    p_dst        = (uint8_t*)pEncoder->stagingMapped;
-    offset       = 0;
-    coded_width  = pEncoder->codedExtent.width;
-    coded_height = pEncoder->codedExtent.height;
-    for (plane = 0; plane < pEncoder->planeCount; ++plane)
+    p_dst       = (uint8_t*)pEncoder->stagingMapped;
+    plane_count = cvkCalculateFormatPlaneLayouts(pEncoder->inputFormat, pEncoder->codedExtent.width, pEncoder->codedExtent.height, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &staging_size);
+    for (plane = 0; plane < plane_count; ++plane)
     {
-        unsigned plane_width;
-        unsigned plane_height;
-        unsigned texel;
-        unsigned y;
+        const uint8_t* p_src;
+        unsigned       src_stride;
+        unsigned       texel;
+        unsigned       div_w;
+        unsigned       div_h;
+        unsigned       src_valid_w;
+        unsigned       src_valid_h;
+        unsigned       plane_width;
+        unsigned       plane_height;
+        unsigned       y;
 
-        plane_width  = coded_width >> pEncoder->planes[plane].widthShift;
-        plane_height = coded_height >> pEncoder->planes[plane].heightShift;
-        texel        = pEncoder->planes[plane].texelBytes;
+        plane_width  = plane_extents[plane].width;
+        plane_height = plane_extents[plane].height;
+        texel        = plane_strides[plane] / plane_width; /* bytes per texel, from the stride */
+        div_w        = pEncoder->codedExtent.width / plane_width;
+        div_h        = pEncoder->codedExtent.height / plane_height;
+        src_valid_w  = (pEncoder->width + div_w - 1u) / div_w;
+        src_valid_h  = (pEncoder->height + div_h - 1u) / div_h;
+        p_src        = (0 == plane) ? pLuma : pChroma;
+        src_stride   = (0 == plane) ? lumaStride : chromaStride;
         for (y = 0; y < plane_height; ++y)
         {
+            unsigned src_y;
             unsigned x;
 
+            src_y = (y < src_valid_h) ? y : src_valid_h - 1u;
             for (x = 0; x < plane_width; ++x)
             {
-                if (0 == plane)
-                {
-                    unsigned src_x;
-                    unsigned src_y;
+                unsigned src_x;
+                unsigned b;
 
-                    src_x                               = x < pEncoder->width ? x : pEncoder->width - 1u;
-                    src_y                               = y < pEncoder->height ? y : pEncoder->height - 1u;
-                    p_dst[offset + (VkDeviceSize)y * plane_width + x] = pLuma[(size_t)src_y * lumaStride + src_x];
-                }
-                else
+                src_x = (x < src_valid_w) ? x : src_valid_w - 1u;
+                for (b = 0; b < texel; ++b)
                 {
-                    unsigned chroma_w;
-                    unsigned chroma_h;
-                    unsigned src_x;
-                    unsigned src_y;
-                    unsigned b;
-
-                    chroma_w = (pEncoder->width + 1u) >> 1;
-                    chroma_h = (pEncoder->height + 1u) >> 1;
-                    src_x    = x < chroma_w ? x : chroma_w - 1u;
-                    src_y    = y < chroma_h ? y : chroma_h - 1u;
-                    for (b = 0; b < texel; ++b)
-                    {
-                        p_dst[offset + ((VkDeviceSize)y * plane_width + x) * texel + b] = pChroma[(size_t)src_y * chromaStride + src_x * texel + b];
-                    }
+                    p_dst[plane_offsets[plane] + (VkDeviceSize)y * plane_strides[plane] + (VkDeviceSize)x * texel + b] = p_src[(size_t)src_y * src_stride + (size_t)src_x * texel + b];
                 }
             }
         }
-        offset += (VkDeviceSize)plane_width * plane_height * texel;
     }
 }
 
@@ -571,8 +490,13 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     int                                  qp;
     VkImageSubresourceRange              color;
     VkBufferImageCopy                    regions[MAX_PLANES];
-    VkDeviceSize                         plane_offset;
-    uint32_t                             plane;
+    VkImageSubresourceLayers             base_layers;
+    VkOffset3D                           zero_offset;
+    VkExtent3D                           coded_extent;
+    VkDeviceSize                         transfer_bytes;
+    VkImageAspectFlags                   aspect_mask;
+    uint32_t                             region_count;
+    uint32_t                             slot;
     VkVideoEncodeRateControlInfoKHR      rate_control;
     VkVideoPictureResourceInfoKHR        input_resource;
     VkVideoPictureResourceInfoKHR        setup_resource;
@@ -608,23 +532,13 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     /* Upload the frame into the input picture on the transfer queue, then hand it to the encoder. */
     cvkInitImageSubresourceRange(&color, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
     PackFrame(pEncoder, pLuma, lumaStride, pChroma, chromaStride);
-    plane_offset = 0;
-    for (plane = 0; plane < pEncoder->planeCount; ++plane)
-    {
-        VkImageSubresourceLayers subresource;
-        VkOffset3D               zero_offset;
-        VkExtent3D               plane_extent;
-        unsigned                 plane_width;
-        unsigned                 plane_height;
-
-        plane_width  = pEncoder->codedExtent.width >> pEncoder->planes[plane].widthShift;
-        plane_height = pEncoder->codedExtent.height >> pEncoder->planes[plane].heightShift;
-        cvkInitImageSubresourceLayers(&subresource, pEncoder->planes[plane].aspect, 0, 0, 1);
-        cvkInitOffset3D(&zero_offset, 0, 0, 0);
-        cvkInitExtent3D(&plane_extent, plane_width, plane_height, 1);
-        cvkInitBufferImageCopy(&regions[plane], plane_offset, 0, 0, subresource, zero_offset, plane_extent);
-        plane_offset += (VkDeviceSize)plane_width * plane_height * pEncoder->planes[plane].texelBytes;
-    }
+    /* One buffer->image copy per plane, built from the input pixel format: vku gives each plane's
+    ** aspect, subsampled extent and tightly-packed offset matching how PackFrame laid the staging
+    ** buffer out, so the upload is correct for any input format without a hand-coded plane table. */
+    cvkInitOffset3D(&zero_offset, 0, 0, 0);
+    cvkInitExtent3D(&coded_extent, pEncoder->codedExtent.width, pEncoder->codedExtent.height, 1);
+    base_layers  = cvkGetFormatBaseSubresourceLayers(pEncoder->inputFormat);
+    region_count = cvkGetBufferImageCopyRegions(0, 1, pEncoder->inputFormat, zero_offset, coded_extent, base_layers, regions, &transfer_bytes, &aspect_mask);
 
     cvkBeginOneTimeCommandBuffer(pEncoder->transferCmd, NULL);
     cvkCmdImageBarrier2(pEncoder->transferCmd,
@@ -639,7 +553,7 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
                         color,
                         (VkDependencyFlags)0,
                         NULL);
-    cvkCmdCopyBufferToImage(pEncoder->transferCmd, pEncoder->staging, pEncoder->inputImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, pEncoder->planeCount, regions);
+    cvkCmdCopyBufferToImage(pEncoder->transferCmd, pEncoder->staging, pEncoder->inputImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, region_count, regions);
     cvkCmdImageQueueOwnershipBarrier2(pEncoder->transferCmd,
                                       NULL,
                                       VK_PIPELINE_STAGE_2_COPY_BIT,
@@ -705,18 +619,18 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
                                       color,
                                       (VkDependencyFlags)0,
                                       NULL);
-    for (plane = 0; plane < ENCODE_DPB_SLOTS; ++plane)
+    for (slot = 0; slot < ENCODE_DPB_SLOTS; ++slot)
     {
         VkImageSubresourceRange layer;
 
-        cvkInitImageSubresourceRange(&layer, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, plane, 1);
+        cvkInitImageSubresourceRange(&layer, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, slot, 1);
         cvkCmdImageBarrier2(pEncoder->encodeCmd,
                             NULL,
                             VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
                             (VkAccessFlags2)0,
                             VK_PIPELINE_STAGE_2_VIDEO_ENCODE_BIT_KHR,
                             (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_VIDEO_ENCODE_WRITE_BIT_KHR | (VkFlags64)VK_ACCESS_2_VIDEO_ENCODE_READ_BIT_KHR),
-                            pEncoder->dpbValid[plane] ? VK_IMAGE_LAYOUT_VIDEO_ENCODE_DPB_KHR : VK_IMAGE_LAYOUT_UNDEFINED,
+                            pEncoder->dpbValid[slot] ? VK_IMAGE_LAYOUT_VIDEO_ENCODE_DPB_KHR : VK_IMAGE_LAYOUT_UNDEFINED,
                             VK_IMAGE_LAYOUT_VIDEO_ENCODE_DPB_KHR,
                             pEncoder->dpbImage,
                             layer,
