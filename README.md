@@ -2,8 +2,10 @@
 
 Windows example: [ImmersiveWindowDemo](examples/ImmersiveWindowDemo/README.md)
 ports the CDX demo's video renderer to Vulkan through CVK, retaining its native
-caption and playback controls. Enable `CVK_BUILD_EXAMPLES` and regenerate CMake
-to include it in the Visual Studio solution.
+caption and playback controls. [CastDemo](examples/CastDemo/README.md) plays a
+video on a Google Cast receiver such as the XGIMI Horizon S over the network, reading
+the receiver's JSON replies with the cvk JSON reader. Enable `CVK_BUILD_EXAMPLES` and
+regenerate CMake to include both in the Visual Studio solution.
 
 `cvk` is a procedural generator for a **hierarchical-compositional C wrapper** around the
 Vulkan core and extension APIs. The wrapper it emits is a flat, fatal-on-error, assertion-heavy
