@@ -14,8 +14,9 @@ Checks: >
   readability-*
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
-SystemHeaders: true
-# The user permits only compiler-inserted padding diagnostics to be suppressed.
+SystemHeaders: false
+# The user excludes external-library headers. Owned code retains every configured
+# check; compiler-introduced padding is its only per-diagnostic exemption.
 ExtraArgs: ['-Wno-padded']
 FormatStyle: file
 ...

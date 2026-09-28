@@ -14,12 +14,16 @@ substitute for reviewing the complete program.
 
 ## Build enforcement
 
-- Production C, tests and linked C dependencies receive the shared policy in
+- Owned production C, tests, the copied gfxlib and CVK receive the shared policy in
   [BuildPolicy.cmake](BuildPolicy.cmake).
 - MSVC uses `/Wall /WX` and native `AllRules.ruleset` analysis. C clang-tidy uses
   the complete configured general-purpose C analysis families, with findings
-  treated as errors and included-header diagnostics visible.
-- The sole permitted diagnostic exception is compiler-inserted padding:
+  treated as errors and owned-header diagnostics visible.
+- The user subsequently directed that warnings from external libraries be ignored.
+  Volk is a pinned external target; dependency and SDK headers are system/external
+  includes. Their warnings and clang-tidy findings are excluded. This does not
+  establish dependency MISRA, allocation or lifecycle compliance.
+- The sole permitted owned-code diagnostic exception is compiler-inserted padding:
   MSVC C4820 and Clang's corresponding `-Wpadded` diagnostic. No other diagnostic
   exclusions, `/QSpectre`, `NO_INLINE` barriers or analysis bypasses are permitted.
 - [`.clang-tidy`](.clang-tidy) is the effective check configuration. Generated

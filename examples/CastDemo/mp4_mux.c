@@ -122,13 +122,13 @@ struct Mp4Mux
 typedef struct FragmentLayout_s
 {
     Utl_Mpeg4_TrackFragment_t tracks[FRAGMENT_TRACK_CAPACITY]; ///< Initialized video and audio tracks.
-    Utl_Mpeg4_TrackRun_t runs[FRAGMENT_TRACK_CAPACITY]; ///< Runs borrowing retained sample arrays.
-    Utl_Mpeg4_MovieFragment_t fragment; ///< Selected nonempty tracks, referencing this layout.
-    Utl_Mpeg4_BoxHeader_t media; ///< Complete following media-data box extent.
-    uint64_t videoTime; ///< Next video decode time; published only after native flush succeeds.
-    uint64_t audioTime; ///< Next audio decode time; published only after native flush succeeds.
-    uint32_t metadataByteCount; ///< Validated movie-fragment extent.
-    uint32_t headerByteCount; ///< Validated media-data header extent.
+    Utl_Mpeg4_TrackRun_t      runs[FRAGMENT_TRACK_CAPACITY];   ///< Runs borrowing retained sample arrays.
+    Utl_Mpeg4_MovieFragment_t fragment;                        ///< Selected nonempty tracks, referencing this layout.
+    Utl_Mpeg4_BoxHeader_t     media;                           ///< Complete following media-data box extent.
+    uint64_t                  videoTime;                       ///< Next video decode time; published only after native flush succeeds.
+    uint64_t                  audioTime;                       ///< Next audio decode time; published only after native flush succeeds.
+    uint32_t                  metadataByteCount;               ///< Validated movie-fragment extent.
+    uint32_t                  headerByteCount;                 ///< Validated media-data header extent.
 } FragmentLayout_t;
 
 /*=================================================================================================
@@ -428,7 +428,7 @@ static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t b
  *  - 002 The layout shall remain at a stable address through serialization; its interior pointers shall not outlive it.
  *
  * \param[out] layout   Required worker-local storage
- * \param[in] mux   Required stable mux owner
+ * \param[in]  mux      Required stable mux owner
  *
  * \retval None Every selected model and derived-output slot initialized.
  */
@@ -444,7 +444,7 @@ static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, cons
  *  - 003 Every total shall fit before addition or narrowing; failed payload buffers shall be rejected.
  *
  * \param[in,out] layout   Initialized scratch layout
- * \param[in] mux   Stable retained samples and current sequence
+ * \param[in]     mux      Stable retained samples and current sequence
  *
  * \retval TRUE Next sequence and decode times derived.
  * \retval FALSE Payload, time or sequence validation failed.
@@ -461,7 +461,7 @@ static FORCE_INLINE bool_t GetFragmentTimeline(FragmentLayout_t* layout, const M
  *  - 003 Signed run offsets and fixed output capacity shall be checked before publication into scratch.
  *
  * \param[in,out] layout   Initialized scratch layout
- * \param[in] mux   Required retained sample and payload owner
+ * \param[in]     mux      Required retained sample and payload owner
  *
  * \retval TRUE Complete writable layout derived.
  * \retval FALSE Invalid timeline, metadata, capacity or offset; scratch is not publishable.
@@ -478,8 +478,8 @@ static FORCE_INLINE bool_t GetFragmentLayout(FragmentLayout_t* layout, const Mp4
  *  - 003 A native partial write or flush failure cannot be rolled back; the caller shall latch terminal mux failure.
  *  - 004 This operation shall not advance sequence, times or pending sample counts.
  *
- * \param[in,out] mux   Required exclusive native stream and scratch owner
- * \param[in] layout   Required prevalidated layout
+ * \param[in,out] mux      Required exclusive native stream and scratch owner
+ * \param[in]     layout   Required prevalidated layout
  *
  * \retval TRUE All bytes and the native flush succeeded.
  * \retval FALSE Serialization or native publication failed.
@@ -494,8 +494,8 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
  *  - 001 The caller shall have completed WriteFragmentLayout successfully.
  *  - 002 All new sequence and time values shall have been prevalidated before native output.
  *
- * \param[in,out] mux   Required exclusive mux owner
- * \param[in] layout   Successfully published layout
+ * \param[in,out] mux      Required exclusive mux owner
+ * \param[in]     layout   Successfully published layout
  *
  * \retval None Progress advanced and pending counts cleared without allocation.
  */
@@ -1759,29 +1759,29 @@ static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t b
  */
 static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux)
 {
-    bool_t has_video;
-    bool_t has_audio;
-    bool_t has_samples;
-    bool_t has_both;
+    bool_t   has_video;
+    bool_t   has_audio;
+    bool_t   has_samples;
+    bool_t   has_both;
     uint32_t track_count;
 
     LOGASSERT(NULL != layout);
     LOGASSERT(NULL != mux);
-    has_video = (0 < mux->fragVideoCount);
-    has_audio = (0 < mux->fragAudioCount);
+    has_video   = (0 < mux->fragVideoCount);
+    has_audio   = (0 < mux->fragAudioCount);
     has_samples = has_video || has_audio;
-    has_both = has_video && has_audio;
+    has_both    = has_video && has_audio;
     LOGASSERT(has_samples);
     InitializeFragmentTrack(&layout->tracks[0], &layout->runs[0], 1);
     layout->tracks[0].decodeTime = mux->videoBaseTime;
-    layout->runs[0].flags |= UTL_MPEG4_TRUN_FLAGS;
-    layout->runs[0].samples = mux->fragVideo;
-    layout->runs[0].sampleCount = mux->fragVideoCount;
+    layout->runs[0].flags        |= UTL_MPEG4_TRUN_FLAGS;
+    layout->runs[0].samples      = mux->fragVideo;
+    layout->runs[0].sampleCount  = mux->fragVideoCount;
     InitializeFragmentTrack(&layout->tracks[1], &layout->runs[1], 2);
     layout->tracks[1].decodeTime = mux->audioBaseTime;
-    layout->runs[1].samples = mux->fragAudio;
-    layout->runs[1].sampleCount = mux->fragAudioCount;
-    track_count = 1;
+    layout->runs[1].samples      = mux->fragAudio;
+    layout->runs[1].sampleCount  = mux->fragAudioCount;
+    track_count                  = 1;
     if (has_both)
     {
         track_count = FRAGMENT_TRACK_CAPACITY;
@@ -1792,10 +1792,10 @@ static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, cons
         layout->fragment.tracks = &layout->tracks[1];
     }
     Utl_Mpeg4_InitializeBoxHeader(&layout->media, UTL_MPEG4_BOX_MDAT);
-    layout->videoTime = mux->videoBaseTime;
-    layout->audioTime = mux->audioBaseTime;
+    layout->videoTime         = mux->videoBaseTime;
+    layout->audioTime         = mux->audioBaseTime;
     layout->metadataByteCount = 0;
-    layout->headerByteCount = 0;
+    layout->headerByteCount   = 0;
 }
 
 /*************************************************************************************************/
@@ -1807,35 +1807,35 @@ static FORCE_INLINE bool_t GetFragmentTimeline(FragmentLayout_t* layout, const M
 {
     uint64_t video_ticks;
     uint64_t audio_ticks;
-    bool_t video_valid;
-    bool_t audio_valid;
-    bool_t video_fits;
-    bool_t audio_fits;
-    bool_t sequence_fits;
-    bool_t video_buffer_valid;
-    bool_t audio_buffer_valid;
-    bool_t metadata_valid;
-    bool_t valid;
+    bool_t   video_valid;
+    bool_t   audio_valid;
+    bool_t   video_fits;
+    bool_t   audio_fits;
+    bool_t   sequence_fits;
+    bool_t   video_buffer_valid;
+    bool_t   audio_buffer_valid;
+    bool_t   metadata_valid;
+    bool_t   valid;
 
     LOGASSERT(NULL != layout);
     LOGASSERT(NULL != mux);
-    video_ticks = 0;
-    audio_ticks = 0;
-    video_valid = GetFragmentDuration(&video_ticks, mux->fragVideo, mux->fragVideoCount, mux->fragVideoData.size);
-    audio_valid = GetFragmentDuration(&audio_ticks, mux->fragAudio, mux->fragAudioCount, mux->fragAudioData.size);
-    video_fits = (video_ticks <= UINT64_MAX - mux->videoBaseTime);
-    audio_fits = (audio_ticks <= UINT64_MAX - mux->audioBaseTime);
-    sequence_fits = (mux->sequenceNumber < UINT32_MAX);
+    video_ticks        = 0;
+    audio_ticks        = 0;
+    video_valid        = GetFragmentDuration(&video_ticks, mux->fragVideo, mux->fragVideoCount, mux->fragVideoData.size);
+    audio_valid        = GetFragmentDuration(&audio_ticks, mux->fragAudio, mux->fragAudioCount, mux->fragAudioData.size);
+    video_fits         = (video_ticks <= UINT64_MAX - mux->videoBaseTime);
+    audio_fits         = (audio_ticks <= UINT64_MAX - mux->audioBaseTime);
+    sequence_fits      = (mux->sequenceNumber < UINT32_MAX);
     video_buffer_valid = !mux->fragVideoData.failed;
     audio_buffer_valid = !mux->fragAudioData.failed;
-    metadata_valid = !mux->fragMoof.failed;
-    valid = video_valid && audio_valid && video_fits && audio_fits && sequence_fits;
-    valid = valid && video_buffer_valid && audio_buffer_valid && metadata_valid;
+    metadata_valid     = !mux->fragMoof.failed;
+    valid              = video_valid && audio_valid && video_fits && audio_fits && sequence_fits;
+    valid              = valid && video_buffer_valid && audio_buffer_valid && metadata_valid;
     if (valid)
     {
         layout->fragment.sequenceNumber = mux->sequenceNumber + 1;
-        layout->videoTime = mux->videoBaseTime + video_ticks;
-        layout->audioTime = mux->audioBaseTime + audio_ticks;
+        layout->videoTime               = mux->videoBaseTime + video_ticks;
+        layout->audioTime               = mux->audioBaseTime + audio_ticks;
     }
     return valid;
 }
@@ -1847,38 +1847,38 @@ static FORCE_INLINE bool_t GetFragmentTimeline(FragmentLayout_t* layout, const M
  */
 static FORCE_INLINE bool_t GetFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux)
 {
-    bool_t valid;
+    bool_t   valid;
     uint64_t payload_bytes;
-    bool_t header_valid;
-    bool_t metadata_valid;
-    bool_t metadata_fits;
+    bool_t   header_valid;
+    bool_t   metadata_valid;
+    bool_t   metadata_fits;
     uint64_t video_offset;
     uint64_t audio_offset;
-    bool_t video_fits;
-    bool_t audio_fits;
+    bool_t   video_fits;
+    bool_t   audio_fits;
 
     LOGASSERT(NULL != layout);
     LOGASSERT(NULL != mux);
     valid = GetFragmentTimeline(layout, mux);
     if (valid)
     {
-        payload_bytes = (uint64_t)mux->fragVideoData.size + mux->fragAudioData.size;
+        payload_bytes           = (uint64_t)mux->fragVideoData.size + mux->fragAudioData.size;
         layout->media.byteCount = UTL_MPEG4_BOX_HEADER_BYTES + payload_bytes;
         if (UINT32_MAX < layout->media.byteCount)
         {
             layout->media.hasLargeSize = TRUE;
-            layout->media.byteCount = UTL_MPEG4_LARGE_BOX_HEADER_BYTES + payload_bytes;
+            layout->media.byteCount    = UTL_MPEG4_LARGE_BOX_HEADER_BYTES + payload_bytes;
         }
-        layout->headerByteCount = Utl_Mpeg4_GetBoxHeaderByteCount(&layout->media);
+        layout->headerByteCount   = Utl_Mpeg4_GetBoxHeaderByteCount(&layout->media);
         layout->metadataByteCount = Utl_Mpeg4_GetMovieFragmentByteCount(&layout->fragment);
-        header_valid = (0 < layout->headerByteCount);
-        metadata_valid = (0 < layout->metadataByteCount);
-        metadata_fits = (layout->metadataByteCount <= sizeof(mux->fragmentMetadata));
-        valid = header_valid && metadata_valid && metadata_fits;
-        video_offset = (uint64_t)layout->metadataByteCount + layout->headerByteCount;
-        audio_offset = video_offset + mux->fragVideoData.size;
-        video_fits = (video_offset <= INT32_MAX);
-        audio_fits = TRUE;
+        header_valid              = (0 < layout->headerByteCount);
+        metadata_valid            = (0 < layout->metadataByteCount);
+        metadata_fits             = (layout->metadataByteCount <= sizeof(mux->fragmentMetadata));
+        valid                     = header_valid && metadata_valid && metadata_fits;
+        video_offset              = (uint64_t)layout->metadataByteCount + layout->headerByteCount;
+        audio_offset              = video_offset + mux->fragVideoData.size;
+        video_fits                = (video_offset <= INT32_MAX);
+        audio_fits                = TRUE;
         if (0 < mux->fragAudioCount)
         {
             audio_fits = (audio_offset <= INT32_MAX);
@@ -1904,14 +1904,14 @@ static FORCE_INLINE bool_t GetFragmentLayout(FragmentLayout_t* layout, const Mp4
 static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout_t* layout)
 {
     uint32_t written;
-    bool_t valid;
-    byte_t header[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
-    int flushed;
+    bool_t   valid;
+    byte_t   header[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
+    int      flushed;
 
     LOGASSERT(NULL != mux);
     LOGASSERT(NULL != layout);
     written = Utl_Mpeg4_WriteMovieFragment(&layout->fragment, mux->fragmentMetadata, sizeof(mux->fragmentMetadata));
-    valid = (layout->metadataByteCount == written);
+    valid   = (layout->metadataByteCount == written);
     if (valid)
     {
         written = Utl_Mpeg4_WriteBoxHeader(&layout->media, header, sizeof(header));
@@ -1933,7 +1933,7 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
     if (valid)
     {
         flushed = fflush(mux->file);
-        valid = (0 == flushed);
+        valid   = (0 == flushed);
     }
     return valid;
 }
@@ -1947,11 +1947,11 @@ static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* lay
 {
     LOGASSERT(NULL != mux);
     LOGASSERT(NULL != layout);
-    mux->sequenceNumber = layout->fragment.sequenceNumber;
-    mux->videoBaseTime = layout->videoTime;
-    mux->audioBaseTime = layout->audioTime;
-    mux->fragVideoCount = 0;
-    mux->fragAudioCount = 0;
+    mux->sequenceNumber     = layout->fragment.sequenceNumber;
+    mux->videoBaseTime      = layout->videoTime;
+    mux->audioBaseTime      = layout->audioTime;
+    mux->fragVideoCount     = 0;
+    mux->fragAudioCount     = 0;
     mux->fragVideoData.size = 0;
     mux->fragAudioData.size = 0;
 }
@@ -2106,23 +2106,23 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
  */
 int Mp4Mux_FlushFragment(Mp4Mux* pMux)
 {
-    bool_t has_video;
-    bool_t has_audio;
-    bool_t has_samples;
-    bool_t healthy;
-    bool_t fragmented;
-    bool_t active;
-    bool_t valid;
+    bool_t           has_video;
+    bool_t           has_audio;
+    bool_t           has_samples;
+    bool_t           healthy;
+    bool_t           fragmented;
+    bool_t           active;
+    bool_t           valid;
     FragmentLayout_t layout;
 
     LOGASSERT(NULL != pMux);
-    has_video = (0 < pMux->fragVideoCount);
-    has_audio = (0 < pMux->fragAudioCount);
+    has_video   = (0 < pMux->fragVideoCount);
+    has_audio   = (0 < pMux->fragAudioCount);
     has_samples = has_video || has_audio;
-    healthy = !pMux->failed;
-    fragmented = pMux->fragmented;
-    active = healthy && fragmented && has_samples;
-    valid = FALSE;
+    healthy     = !pMux->failed;
+    fragmented  = pMux->fragmented;
+    active      = healthy && fragmented && has_samples;
+    valid       = FALSE;
     if (active)
     {
         InitializeFragmentLayout(&layout, pMux);

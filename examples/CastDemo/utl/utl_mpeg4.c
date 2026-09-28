@@ -41,16 +41,18 @@
 #define PRINTABLE_FIRST     (0x20)
 #define PRINTABLE_LAST      (0x7E)
 
-#define FRAGMENT_FULLBOX_BYTES     (UTL_MPEG4_BOX_HEADER_BYTES + UTL_MPEG4_FULLBOX_FIELDS_BYTES)
-#define FRAGMENT_COUNTED_BOX_BYTES (FRAGMENT_FULLBOX_BYTES + INTEGER32_BYTES)
-#define TFHD_KNOWN_FLAGS           (0x03003B)
-#define TRUN_KNOWN_FLAGS           (0x000F05)
-#define SAMPLE_RESERVED_MASK       (0xF0000000)
-#define SAMPLE_DEPENDS_SHIFT       (24)
-#define SAMPLE_DEPENDED_SHIFT      (22)
-#define SAMPLE_REDUNDANCY_SHIFT    (20)
-#define SAMPLE_DEPENDENCY_MASK     (3)
-#define SAMPLE_DEPENDENCY_RESERVED (3)
+#define FRAGMENT_FULLBOX_BYTES        (UTL_MPEG4_BOX_HEADER_BYTES + UTL_MPEG4_FULLBOX_FIELDS_BYTES)
+#define FRAGMENT_COUNTED_BOX_BYTES    (FRAGMENT_FULLBOX_BYTES + INTEGER32_BYTES)
+#define TFHD_KNOWN_FLAGS              (0x03003B)
+#define TRUN_KNOWN_FLAGS              (0x000F05)
+#define SAMPLE_RESERVED_MASK          (0xF0000000)
+#define SAMPLE_DEPENDS_SHIFT          (24)
+#define SAMPLE_DEPENDED_SHIFT         (22)
+#define SAMPLE_REDUNDANCY_SHIFT       (20)
+#define SAMPLE_DEPENDENCY_MASK        (3)
+#define SAMPLE_DEPENDENCY_RESERVED    (3)
+#define SAMPLE_DEPENDENCY_INDEPENDENT (2)
+#define SAMPLE_LEADING_FLAG           (0x04000000) ///< Low is_leading bit selects either leading-sample form.
 
 /*=================================================================================================
 ** 3.2 Types

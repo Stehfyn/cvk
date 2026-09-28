@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vulkan/vulkan_core.h>
 #include <vulkan/utility/vk_format_utils.h>
 
 void cvkFatal(const char* pExpression, const char* pFile, int line)

@@ -1,0 +1,27 @@
+#version 450
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+layout(rgba8, set = 0, binding = 0) uniform writeonly image2D renderTarget;
+
+layout(push_constant) uniform RenderPushConstants
+{
+    uint frameIndex;
+} renderState;
+
+void main()
+{
+    uvec2 coordinate = gl_GlobalInvocationID.xy;
+    uvec2 extent     = uvec2(imageSize(renderTarget));
+    uvec4 color;
+
+    if (any(greaterThanEqual(coordinate, extent)))
+    {
+        return;
+    }
+    color.r = coordinate.x * 255u / (extent.x - 1u);
+    color.g = coordinate.y * 255u / (extent.y - 1u);
+    color.b = ((coordinate.x / 8u) + (coordinate.y / 8u) + (renderState.frameIndex * 7u)) & 255u;
+    color.a = 255u;
+    imageStore(renderTarget, ivec2(coordinate), vec4(color) / 255.0);
+}

@@ -285,19 +285,19 @@ if(MSVC)
         "/MAP:$<TARGET_FILE_DIR:cvk-cast-queue-test>/cvk-cast-queue-test.map")
     add_test(NAME cvk-cast-queues COMMAND cvk-cast-queue-test)
 
-    add_executable(cvk-cast-format-test "${PROJECT_SOURCE_DIR}/tests/cast_format_test.c")
+    add_executable(cvk-cast-format-test "${PROJECT_SOURCE_DIR}/tests/cast_format_test.c" os/win32/os_entry.c)
     target_link_libraries(cvk-cast-format-test PRIVATE cast-no-crt)
     target_link_options(cvk-cast-format-test PRIVATE
         "/MAP:$<TARGET_FILE_DIR:cvk-cast-format-test>/cvk-cast-format-test.map")
     add_test(NAME cvk-cast-formats COMMAND cvk-cast-format-test)
 
-    add_executable(cvk-cast-protocol-test "${PROJECT_SOURCE_DIR}/tests/cast_protocol_test.c")
+    add_executable(cvk-cast-protocol-test "${PROJECT_SOURCE_DIR}/tests/cast_protocol_test.c" os/win32/os_entry.c)
     target_link_libraries(cvk-cast-protocol-test PRIVATE cast-no-crt)
     target_link_options(cvk-cast-protocol-test PRIVATE
         "/MAP:$<TARGET_FILE_DIR:cvk-cast-protocol-test>/cvk-cast-protocol-test.map")
     add_test(NAME cvk-cast-protocols COMMAND cvk-cast-protocol-test)
 
-    add_executable(cvk-cast-http-test "${PROJECT_SOURCE_DIR}/tests/cast_http_test.c")
+    add_executable(cvk-cast-http-test "${PROJECT_SOURCE_DIR}/tests/cast_http_test.c" os/win32/os_entry.c)
     target_link_libraries(cvk-cast-http-test PRIVATE cast-no-crt)
     target_link_options(cvk-cast-http-test PRIVATE
         "/MAP:$<TARGET_FILE_DIR:cvk-cast-http-test>/cvk-cast-http-test.map")
@@ -332,9 +332,9 @@ foreach(target cast-session CastDemo CastDemoCli cvk-cast-message-test cvk-cast-
     endif()
 endforeach()
 
-# Include every CastDemo target, its test programs, and linked C dependencies.
+# Include every owned CastDemo target, its test programs and CVK.
+# Volk and other external libraries use the user's separate external warning policy.
 # Visual Studio uses its native analysis integration; Ninja/Make use C_CLANG_TIDY.
 include(BuildPolicy.cmake)
 cast_apply_directory_policy("${CMAKE_CURRENT_SOURCE_DIR}")
 cast_apply_build_policy(cvk)
-cast_apply_build_policy(volk)

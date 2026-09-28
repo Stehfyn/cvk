@@ -14,7 +14,10 @@
 #include "utl/utl_decimal.h"
 #include "utl/utl_http.h"
 
-#include <windows.h>
+#include "os/os_assert.h"
+#include "os/os_process.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -47,39 +50,39 @@ typedef struct UnicodeVector_s
 ** 3.4 Static global variables
 **===============================================================================================*/
 
-static const UnicodeVector_t c_unicode[]         = {{0, {0, 0, 0, 0}, 1, {0, 0}, 1},
-                                                    {0x7F, {0x7F, 0, 0, 0}, 1, {0x7F, 0}, 1},
-                                                    {0x80, {0xC2, 0x80, 0, 0}, 2, {0x80, 0}, 1},
-                                                    {0x7FF, {0xDF, 0xBF, 0, 0}, 2, {0x7FF, 0}, 1},
-                                                    {0x800, {0xE0, 0xA0, 0x80, 0}, 3, {0x800, 0}, 1},
-                                                    {0xD7FF, {0xED, 0x9F, 0xBF, 0}, 3, {0xD7FF, 0}, 1},
-                                                    {0xE000, {0xEE, 0x80, 0x80, 0}, 3, {0xE000, 0}, 1},
-                                                    {0xFEFF, {0xEF, 0xBB, 0xBF, 0}, 3, {0xFEFF, 0}, 1},
-                                                    {0xFFFF, {0xEF, 0xBF, 0xBF, 0}, 3, {0xFFFF, 0}, 1},
-                                                    {0x10000, {0xF0, 0x90, 0x80, 0x80}, 4, {0xD800, 0xDC00}, 2},
-                                                    {0x1F600, {0xF0, 0x9F, 0x98, 0x80}, 4, {0xD83D, 0xDE00}, 2},
-                                                    {0x10FFFF, {0xF4, 0x8F, 0xBF, 0xBF}, 4, {0xDBFF, 0xDFFF}, 2}};
-static const byte_t          c_badUtf8[][4]      = {{0x80, 0, 0, 0},
-                                                    {0xBF, 0, 0, 0},
-                                                    {0xC0, 0x80, 0, 0},
-                                                    {0xC1, 0xBF, 0, 0},
-                                                    {0xC2, 0x7F, 0, 0},
-                                                    {0xDF, 0xC0, 0, 0},
-                                                    {0xE0, 0x9F, 0xBF, 0},
-                                                    {0xED, 0xA0, 0x80, 0},
-                                                    {0xED, 0xBF, 0xBF, 0},
-                                                    {0xF0, 0x8F, 0xBF, 0xBF},
-                                                    {0xF4, 0x90, 0x80, 0x80},
-                                                    {0xF5, 0x80, 0x80, 0x80},
-                                                    {0xFF, 0, 0, 0}};
-static const byte_t          c_frame[]           = {0, 0, 0, 17, 0x08, 0, 0x12, 1, 's', 0x1A, 1, 'd', 0x22, 1, 'n', 0x28, 0, 0x32, 2, '{', '}'};
-static const byte_t          c_requiredOffsets[] = {0, 2, 5, 8, 11};
-static const byte_t          c_requiredWidths[]  = {2, 3, 3, 3, 2};
-static const byte_t          c_unknownFields[]   = {0x40, 1, 0x49, 1, 2, 3, 4, 5, 6, 7, 8, 0x52, 2, 0xFF, 0xFE, 0x5D, 1, 2, 3, 4, 0x63, 0x68, 1, 0x64};
-static const char_t          c_success[]         = "Cast protocol and Unicode checks passed (CRT-free).\r\n";
-static const char_t          c_failure[]         = "Cast protocol check failed; exit code is the source line.\r\n";
-static byte_t                s_payload[UTL_CASTV2_MAX_BODY];
-static byte_t                s_frame[UTL_CASTV2_MAX_FRAME];
+static const UnicodeVector_t c_unicode[]    = {{0, {0, 0, 0, 0}, 1, {0, 0}, 1},
+                                               {0x7F, {0x7F, 0, 0, 0}, 1, {0x7F, 0}, 1},
+                                               {0x80, {0xC2, 0x80, 0, 0}, 2, {0x80, 0}, 1},
+                                               {0x7FF, {0xDF, 0xBF, 0, 0}, 2, {0x7FF, 0}, 1},
+                                               {0x800, {0xE0, 0xA0, 0x80, 0}, 3, {0x800, 0}, 1},
+                                               {0xD7FF, {0xED, 0x9F, 0xBF, 0}, 3, {0xD7FF, 0}, 1},
+                                               {0xE000, {0xEE, 0x80, 0x80, 0}, 3, {0xE000, 0}, 1},
+                                               {0xFEFF, {0xEF, 0xBB, 0xBF, 0}, 3, {0xFEFF, 0}, 1},
+                                               {0xFFFF, {0xEF, 0xBF, 0xBF, 0}, 3, {0xFFFF, 0}, 1},
+                                               {0x10000, {0xF0, 0x90, 0x80, 0x80}, 4, {0xD800, 0xDC00}, 2},
+                                               {0x1F600, {0xF0, 0x9F, 0x98, 0x80}, 4, {0xD83D, 0xDE00}, 2},
+                                               {0x10FFFF, {0xF4, 0x8F, 0xBF, 0xBF}, 4, {0xDBFF, 0xDFFF}, 2}};
+static const byte_t          c_badUtf8[][4] = {{0x80, 0, 0, 0},
+                                               {0xBF, 0, 0, 0},
+                                               {0xC0, 0x80, 0, 0},
+                                               {0xC1, 0xBF, 0, 0},
+                                               {0xC2, 0x7F, 0, 0},
+                                               {0xDF, 0xC0, 0, 0},
+                                               {0xE0, 0x9F, 0xBF, 0},
+                                               {0xED, 0xA0, 0x80, 0},
+                                               {0xED, 0xBF, 0xBF, 0},
+                                               {0xF0, 0x8F, 0xBF, 0xBF},
+                                               {0xF4, 0x90, 0x80, 0x80},
+                                               {0xF5, 0x80, 0x80, 0x80},
+                                               {0xFF, 0, 0, 0}};
+static const byte_t          c_frame[] =
+    {0, 0, 0, 17, 0x08, 0, 0x12, 1, 's', 0x1A, 1, 'd', 0x22, 1, 'n', 0x28, 0, 0x32, 2, '{', '}'};
+static const byte_t c_requiredOffsets[] = {0, 2, 5, 8, 11};
+static const byte_t c_requiredWidths[]  = {2, 3, 3, 3, 2};
+static const byte_t c_unknownFields[] =
+    {0x40, 1, 0x49, 1, 2, 3, 4, 5, 6, 7, 8, 0x52, 2, 0xFF, 0xFE, 0x5D, 1, 2, 3, 4, 0x63, 0x68, 1, 0x64};
+static byte_t         s_payload[UTL_CASTV2_MAX_BODY];
+static byte_t         s_frame[UTL_CASTV2_MAX_FRAME];
 
 static const char_t   c_decimalMax[]       = "18446744073709551615";
 static const char_t   c_decimalOverflow[]  = "18446744073709551616";
@@ -130,7 +133,7 @@ static const uint32_t c_badContentBytes[]  = {9, 13, 12, 11, 15, 11, 12, 12, 12,
  *  \param[in] line     Source line reported as process status
  *  \retval None
  */
-static void Check(bool_t passed, uint32_t line);
+static FORCE_INLINE void Check(bool_t passed, uint32_t line);
 
 /*************************************************************************************************/
 /** \brief Compares two counted byte spans.
@@ -187,14 +190,12 @@ static void CheckHttpRanges(void);
  * \par Details:
  *  Checks remain active in optimized builds and need no CRT assertion facility.
  */
-static void Check(bool_t passed, uint32_t line)
+static FORCE_INLINE void Check(bool_t passed, uint32_t line)
 {
-    DWORD written;
 
     if (!passed)
     {
-        (void)WriteFile(GetStdHandle(STD_ERROR_HANDLE), c_failure, sizeof(c_failure) - 1, &written, NULL);
-        ExitProcess(line);
+        OS_AssertFailure("fixture check", __FILE__, line);
     }
 }
 
@@ -371,13 +372,13 @@ static void CheckCastFrames(void)
     count = Utl_CastV2_WriteFrame(&message, buffer, sizeof(buffer));
     Check(sizeof(c_frame) == count, __LINE__);
     Check(Equal(buffer, c_frame, count), __LINE__);
-    payload[0] = c_frame[sizeof(c_frame) - 2];
-    payload[1] = c_frame[sizeof(c_frame) - 1];
-    payload[2] = 0xFF;
-    payload[3] = 0;
-    message.payload.data = payload;
+    payload[0]                = c_frame[sizeof(c_frame) - 2];
+    payload[1]                = c_frame[sizeof(c_frame) - 1];
+    payload[2]                = 0xFF;
+    payload[3]                = 0;
+    message.payload.data      = payload;
     message.payload.byteCount = 2;
-    count = Utl_CastV2_WriteFrame(&message, buffer, sizeof(buffer));
+    count                     = Utl_CastV2_WriteFrame(&message, buffer, sizeof(buffer));
     Check(sizeof(c_frame) == count, __LINE__);
     Check(Equal(buffer, c_frame, count), __LINE__);
     Check(Utl_CastV2_ReadMessage(&decoded, &buffer[4], count - 4), __LINE__);
@@ -553,7 +554,8 @@ static void CheckDecimal(void)
 
     value    = 7;
     consumed = 7;
-    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalOverflow, sizeof(c_decimalOverflow) - 1), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalOverflow, sizeof(c_decimalOverflow) - 1),
+          __LINE__);
     Check((7 == value) && (7 == consumed), __LINE__);
     Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"-1", 2), __LINE__);
     Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"+1", 2), __LINE__);
@@ -581,7 +583,8 @@ static void CheckDecimal(void)
     Check(20 == Utl_Decimal_WriteUint64(value, output, 20), __LINE__);
     Check(Equal((const byte_t*)c_decimalMax, (const byte_t*)output, 20), __LINE__);
     Check('u' == output[20], __LINE__);
-    Check(Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalPrefix, sizeof(c_decimalPrefix) - 1), __LINE__);
+    Check(Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalPrefix, sizeof(c_decimalPrefix) - 1),
+          __LINE__);
     Check((42 == value) && (32 == consumed), __LINE__);
     Check(Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"0rest", 5), __LINE__);
     Check((0 == value) && (1 == consumed), __LINE__);
@@ -640,7 +643,8 @@ static void CheckHttpRanges(void)
             Check((char_t)('A' + (index % 26)) == output[index], __LINE__);
         }
     }
-    Check((sizeof(c_rangeCanonical) - 1) == Utl_Http_WriteRange(&request, output, sizeof(c_rangeCanonical) - 1), __LINE__);
+    Check((sizeof(c_rangeCanonical) - 1) == Utl_Http_WriteRange(&request, output, sizeof(c_rangeCanonical) - 1),
+          __LINE__);
     Check(Equal((const byte_t*)c_rangeCanonical, (const byte_t*)output, sizeof(c_rangeCanonical) - 1), __LINE__);
     request.capacity = 2;
     Check(!Utl_Http_ReadRange(&request, (const byte_t*)c_rangeInput, sizeof(c_rangeInput) - 1), __LINE__);
@@ -696,12 +700,16 @@ static void CheckHttpRanges(void)
             Check((char_t)('A' + (index % 26)) == output[index], __LINE__);
         }
     }
-    Check((sizeof(c_contentCanonical) - 1) == Utl_Http_WriteContentRange(&content, output, sizeof(c_contentCanonical) - 1), __LINE__);
+    Check((sizeof(c_contentCanonical) - 1) ==
+              Utl_Http_WriteContentRange(&content, output, sizeof(c_contentCanonical) - 1),
+          __LINE__);
     Check(Equal((const byte_t*)c_contentCanonical, (const byte_t*)output, sizeof(c_contentCanonical) - 1), __LINE__);
     for (index = 0; index < (sizeof(c_badContents) / sizeof(c_badContents[0])); ++index)
     {
-        Check(!Utl_Http_ReadContentRange(&content, (const byte_t*)c_badContents[index], c_badContentBytes[index]), __LINE__);
-        Check(content.hasRange && content.hasCompleteLength && (9 == content.last) && (10 == content.completeLength), __LINE__);
+        Check(!Utl_Http_ReadContentRange(&content, (const byte_t*)c_badContents[index], c_badContentBytes[index]),
+              __LINE__);
+        Check(content.hasRange && content.hasCompleteLength && (9 == content.last) && (10 == content.completeLength),
+              __LINE__);
     }
     Check(Utl_Http_ReadContentRange(&content, (const byte_t*)c_unknownLength, sizeof(c_unknownLength) - 1), __LINE__);
     Check(content.hasRange && !content.hasCompleteLength && (1 == content.first) && (9 == content.last), __LINE__);
@@ -721,11 +729,10 @@ static void CheckHttpRanges(void)
 /**
  * \brief Runs protocol checks with a CRT-free executable entry point.
  * \par Details:
- *  Kernel32 provides only output and process termination; tests never allocate.
+ *  The selected platform entry owns startup; the fixture itself never allocates.
  */
-void WinMainStartup(void)
+uint32_t OS_Application_Main(void)
 {
-    DWORD written;
 
     CheckUnicodeVectors();
     CheckUnicodeDomain();
@@ -733,6 +740,5 @@ void WinMainStartup(void)
     CheckCastSchema();
     CheckDecimal();
     CheckHttpRanges();
-    (void)WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), c_success, sizeof(c_success) - 1, &written, NULL);
-    ExitProcess(0);
+    return 0;
 }

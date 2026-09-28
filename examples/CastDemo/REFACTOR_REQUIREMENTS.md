@@ -11,13 +11,27 @@ of tests does not establish completion.
 The scope is the complete goal. User corrections identify missed requirements;
 they do not replace the rest of the goal or reduce the scope to one issue.
 
+Source-count snapshots later in this document predate the gfxlib import and Linux
+diagnostic backends. They are historical observations, not a current whole-tree
+audit or proof that the new files satisfy the goal. The user removed historical
+build artifacts to reclaim disk space; regenerate only evidence needed for current
+work and reuse existing build directories.
+
 ## Explicit clarifications that must not be lost
 
 The user's final compiler and analysis requirement (2026-09-28) is mandatory:
 
-- Compile the complete CastDemo build with MSVC `/Wall /WX`.
+- Compile the owned CastDemo build, gfxlib and CVK with MSVC `/Wall /WX`.
 - Only warnings about compiler-introduced padding may be suppressed. No other
-  warning may be disabled, filtered out, downgraded or circumvented.
+  owned-code warning may be disabled, filtered out, downgraded or circumvented.
+  The user's later explicit exception is to ignore warnings from external libraries.
+  Keep Volk as a pinned external library and mark dependency/SDK headers as external.
+  This explicitly includes Vulkan core, utility, video and SC header families.
+  Consume the user's pinned `external/cdx` submodule for applicable DirectX work
+  inside gfxlib, using the existing GitHub Desktop/Git Credential Manager credentials.
+  The exception does not include the copied gfxlib, whose internals are now owned
+  refactor work, or CVK. Allocation/lifecycle and functional requirements still apply
+  at dependency boundaries; external-warning exclusion is not conformance evidence.
 - Do not use `/QSpectre` to remove Spectre diagnostics. Resolve C5045 by correcting
   the dataflow and load ordering. Every evaluated address must be valid by
   construction; hoisting an unchecked access before a bounds check is not a fix.
@@ -32,12 +46,22 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   and evidence gaps are recorded in [MISRA_REVIEW.md](MISRA_REVIEW.md).
 - Every applicable MISRA guideline remains required even if no installed check
   implements it. Missing analysis support is an open requirement, not an
-  exemption. This applies across production code, tests and dependencies.
+  exemption. This applies across production code, tests and dependencies; the later
+  external-warning exception changes diagnostic reporting, not required behavior.
 - Read the XML/ARINC control-flow precedent and remove inappropriate early
   returns throughout the changed tree. Use named conditions, staged work and a
   final result; retain explicit resource cleanup and output-publication semantics.
 
 These are acceptance requirements, not a claim that the current build passes.
+
+The user additionally requires Valgrind checks and fully sanitized validation.
+Provide reproducible sanitizer and Valgrind build/run configurations, preserving
+the strict compiler and analysis requirements. Cover production code, fixtures,
+malformed inputs, repeated lifecycle operations and dependency boundaries. Report
+the exact tools, enabled checks, instrumented binaries and executed scenarios;
+unsupported platform/tool combinations and unexecuted paths remain open gaps.
+Passing portable-library tests alone does not establish coverage of the Windows
+GUI, transport, Media Foundation or CVK/Vulkan application.
 
 The user reiterated these two requirements verbatim:
 
@@ -84,6 +108,27 @@ The user's other explicit instructions remain in force:
   implementation, independent-vector and production-consumer traceability. The
   acceptance criterion is in [SPECIFICATION_MODULES.md](SPECIFICATION_MODULES.md).
 - Use canonical `windowsx.h` message handling with `HANDLE_MSG`.
+- Abstract GUI dependencies into `gfxlib`, using the `Gfx_` prefix. Start from
+  `C:/dev/vulkan-va-zero-copy`'s display/native-window, surface and platform
+  implementations; preserve application behavior while adapting their ownership,
+  event processing and CVK usage to this goal. [GFX_MODULES.md](GFX_MODULES.md)
+  records the inspected interfaces and required migration evidence.
+- Copy the existing gfx library and refactor its internals. Preserve the existing
+  public function signatures exactly; the user states they were heavily thought
+  out. Extend the interface through enums instead of redesigning those signatures.
+  This explicit API-preservation requirement also applies where an existing public
+  signature uses types that would otherwise be changed by the earlier convention
+  rules; it does not exempt internal implementation from those rules.
+- The copied gfxlib must use CVK internally. Replace raw Vulkan effects and its
+  duplicate construction/validation wrappers with CVK prerequisite queries and
+  construction APIs. Do not perform an operation first and infer its support from
+  its return value. Preserve the `Gfx_` public API while making this migration.
+- CastDemo must consume gfxlib canonically: link the library and use its public
+  `Gfx_` interfaces for the responsibilities it owns. Move native display/window,
+  surface and graphics implementation behind that boundary. Do not retain a
+  parallel application implementation, include gfxlib private headers in CastDemo,
+  or treat an unused library target as integration. Keep application/media/UI
+  policy in CastDemo and native/Vulkan mechanics inside gfxlib's selected backends.
 - Use character-set-agnostic Win32 operations. Generic API names, `TCHAR`,
   `LPTSTR`/`LPCTSTR`, generic structures and `TEXT(...)` must agree throughout the
   platform-facing path. A Unicode-only build does not establish this requirement.

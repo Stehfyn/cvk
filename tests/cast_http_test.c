@@ -9,7 +9,10 @@
 **===============================================================================================*/
 
 #include "utl/utl_http.h"
-#include <windows.h>
+#include "os/os_assert.h"
+#include "os/os_process.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -48,37 +51,289 @@ typedef struct FramingVector_s
 static const FramingVector_t c_framing[] = {
     {"GET / HTTP/1.1\r\nHost: x\r\n\r\n", 27, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
     {"GET / HTTP/1.1\r\n\r\n", 18, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nHost: y\r\n\r\n", 36, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\nContent-Length: 005\r\n\r\n", 67, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_LENGTH, 5, TRUE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5, 005\r\n\r\n", 51, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_LENGTH, 5, TRUE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\nContent-Length: 6\r\n\r\n", 65, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5junk\r\n\r\n", 50, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 18446744073709551616\r\n\r\n", 65, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked\r\n\r\n", 55, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_CHUNKED, 0, TRUE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: custom;p=\"a,b\", chunked\r\n\r\n", 71, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_CHUNKED, 0, TRUE, TRUE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: gzip\r\nTransfer-Encoding: Chunked\r\n\r\n", 80, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_CHUNKED, 0, TRUE, TRUE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked, gzip\r\n\r\n", 61, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked, chunked\r\n\r\n", 64, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked;p=x\r\n\r\n", 59, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: gzip\r\n\r\n", 52, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked\r\nContent-Length: 0\r\n\r\n", 74, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.0\r\nTransfer-Encoding: chunked\r\n\r\n", 46, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nConnection: Upgrade, CLOSE\r\n\r\n", 55, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"GET / HTTP/1.1\r\nHost: x\r\nConnection: disclosure\r\n\r\n", 51, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
-    {"GET / HTTP/1.0\r\nConnection: Keep-Alive\r\n\r\n", 42, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
-    {"GET / HTTP/1.0\r\nConnection: keep-alive\r\nConnection: close\r\n\r\n", 61, UTL_HTTP_REQUEST, "", 0, TRUE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nHost: y\r\n\r\n",
+     36,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\nContent-Length: 005\r\n\r\n",
+     67,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_LENGTH,
+     5,
+     TRUE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5, 005\r\n\r\n",
+     51,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_LENGTH,
+     5,
+     TRUE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\nContent-Length: 6\r\n\r\n",
+     65,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 5junk\r\n\r\n",
+     50,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nContent-Length: 18446744073709551616\r\n\r\n",
+     65,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked\r\n\r\n",
+     55,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_CHUNKED,
+     0,
+     TRUE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: custom;p=\"a,b\", chunked\r\n\r\n",
+     71,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_CHUNKED,
+     0,
+     TRUE,
+     TRUE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: gzip\r\nTransfer-Encoding: Chunked\r\n\r\n",
+     80,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_CHUNKED,
+     0,
+     TRUE,
+     TRUE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked, gzip\r\n\r\n",
+     61,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked, chunked\r\n\r\n",
+     64,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked;p=x\r\n\r\n",
+     59,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: gzip\r\n\r\n",
+     52,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nTransfer-Encoding: chunked\r\nContent-Length: 0\r\n\r\n",
+     74,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.0\r\nTransfer-Encoding: chunked\r\n\r\n",
+     46,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     FALSE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nConnection: Upgrade, CLOSE\r\n\r\n",
+     55,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
+    {"GET / HTTP/1.1\r\nHost: x\r\nConnection: disclosure\r\n\r\n",
+     51,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     TRUE,
+     FALSE},
+    {"GET / HTTP/1.0\r\nConnection: Keep-Alive\r\n\r\n",
+     42,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     TRUE,
+     FALSE},
+    {"GET / HTTP/1.0\r\nConnection: keep-alive\r\nConnection: close\r\n\r\n",
+     61,
+     UTL_HTTP_REQUEST,
+     "",
+     0,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     FALSE,
+     FALSE},
     {"GET / HTTP/2.0\r\nHost: x\r\n\r\n", 27, UTL_HTTP_REQUEST, "", 0, FALSE, UTL_HTTP_BODY_NONE, 0, FALSE, FALSE},
-    {"HTTP/1.1 200 OK\r\nContent-Length: 10\r\n\r\n", 39, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_LENGTH, 10, TRUE, FALSE},
+    {"HTTP/1.1 200 OK\r\nContent-Length: 10\r\n\r\n",
+     39,
+     UTL_HTTP_RESPONSE,
+     "GET",
+     3,
+     TRUE,
+     UTL_HTTP_BODY_LENGTH,
+     10,
+     TRUE,
+     FALSE},
     {"HTTP/1.1 200 OK\r\n\r\n", 19, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_CLOSE, 0, FALSE, FALSE},
-    {"HTTP/1.0 200 OK\r\nConnection: keep-alive\r\n\r\n", 43, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_CLOSE, 0, FALSE, FALSE},
-    {"HTTP/1.1 200 OK\r\nTransfer-Encoding: gzip\r\n\r\n", 44, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_CLOSE, 0, FALSE, TRUE},
-    {"HTTP/1.1 200 OK\r\nTransfer-Encoding: gzip,chunked\r\n\r\n", 52, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_CHUNKED, 0, TRUE, TRUE},
-    {"HTTP/1.1 200 OK\r\nContent-Length: 10\r\n\r\n", 39, UTL_HTTP_RESPONSE, "HEAD", 4, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
-    {"HTTP/1.1 204 No Content\r\nContent-Length: invalid\r\n\r\n", 52, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
-    {"HTTP/1.1 304 Not Modified\r\nTransfer-Encoding: gzip\r\n\r\n", 54, UTL_HTTP_RESPONSE, "GET", 3, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
+    {"HTTP/1.0 200 OK\r\nConnection: keep-alive\r\n\r\n",
+     43,
+     UTL_HTTP_RESPONSE,
+     "GET",
+     3,
+     TRUE,
+     UTL_HTTP_BODY_CLOSE,
+     0,
+     FALSE,
+     FALSE},
+    {"HTTP/1.1 200 OK\r\nTransfer-Encoding: gzip\r\n\r\n",
+     44,
+     UTL_HTTP_RESPONSE,
+     "GET",
+     3,
+     TRUE,
+     UTL_HTTP_BODY_CLOSE,
+     0,
+     FALSE,
+     TRUE},
+    {"HTTP/1.1 200 OK\r\nTransfer-Encoding: gzip,chunked\r\n\r\n",
+     52,
+     UTL_HTTP_RESPONSE,
+     "GET",
+     3,
+     TRUE,
+     UTL_HTTP_BODY_CHUNKED,
+     0,
+     TRUE,
+     TRUE},
+    {"HTTP/1.1 200 OK\r\nContent-Length: 10\r\n\r\n",
+     39,
+     UTL_HTTP_RESPONSE,
+     "HEAD",
+     4,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     TRUE,
+     FALSE},
+    {"HTTP/1.1 204 No Content\r\nContent-Length: invalid\r\n\r\n",
+     52,
+     UTL_HTTP_RESPONSE,
+     "GET",
+     3,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     TRUE,
+     FALSE},
+    {"HTTP/1.1 304 Not Modified\r\nTransfer-Encoding: gzip\r\n\r\n",
+     54,
+     UTL_HTTP_RESPONSE,
+     "GET",
+     3,
+     TRUE,
+     UTL_HTTP_BODY_NONE,
+     0,
+     TRUE,
+     FALSE},
     {"HTTP/1.1 100 Continue\r\n\r\n", 25, UTL_HTTP_RESPONSE, "POST", 4, TRUE, UTL_HTTP_BODY_NONE, 0, TRUE, FALSE},
-    {"HTTP/1.1 200 Connection Established\r\nContent-Length: invalid\r\nTransfer-Encoding: invalid\r\n\r\n", 92, UTL_HTTP_RESPONSE, "CONNECT", 7, TRUE, UTL_HTTP_BODY_TUNNEL, 0, FALSE, FALSE},
-    {"HTTP/1.1 407 Proxy Authentication Required\r\nContent-Length: 0\r\n\r\n", 65, UTL_HTTP_RESPONSE, "CONNECT", 7, TRUE, UTL_HTTP_BODY_LENGTH, 0, TRUE, FALSE}};
+    {"HTTP/1.1 200 Connection Established\r\nContent-Length: invalid\r\nTransfer-Encoding: invalid\r\n\r\n",
+     92,
+     UTL_HTTP_RESPONSE,
+     "CONNECT",
+     7,
+     TRUE,
+     UTL_HTTP_BODY_TUNNEL,
+     0,
+     FALSE,
+     FALSE},
+    {"HTTP/1.1 407 Proxy Authentication Required\r\nContent-Length: 0\r\n\r\n",
+     65,
+     UTL_HTTP_RESPONSE,
+     "CONNECT",
+     7,
+     TRUE,
+     UTL_HTTP_BODY_LENGTH,
+     0,
+     TRUE,
+     FALSE}};
 static const char_t   c_badHeads[][96]     = {"GET / HTTP/1.1\n\n",
                                               "GET / HTTP/1.1\rX",
                                               "GET  / HTTP/1.1\r\n\r\n",
@@ -99,21 +354,26 @@ static const char_t   c_badResponses[][40] = {"HTTP/1.1 099 Low\r\n\r\n",
                                               "HTTP/1.1\t200 Bad\r\n\r\n",
                                               "HTTP/1.1 200 Bad\177\r\n\r\n"};
 static const uint32_t c_badResponseBytes[] = {20, 21, 20, 21, 20, 20, 21};
-static const char_t   c_input[]            = "\r\nGET /media.mp4 HTTP/1.1\r\nHost:\tx \t\r\nRange: bytes=0-9\r\nConnection: close\r\n\r\nTAIL";
-static const char_t   c_canonical[]        = "GET /media.mp4 HTTP/1.1\r\nHost: x\r\nRange: bytes=0-9\r\nConnection: close\r\n\r\n";
-static const char_t   c_success[]          = "HTTP head, framing and capacity checks passed (CRT-free).\r\n";
-static const char_t   c_failure[]          = "HTTP check failed; exit code is the source line.\r\n";
+static const char_t   c_input[] =
+    "\r\nGET /media.mp4 HTTP/1.1\r\nHost:\tx \t\r\nRange: bytes=0-9\r\nConnection: close\r\n\r\nTAIL";
+static const char_t c_canonical[] =
+    "GET /media.mp4 HTTP/1.1\r\nHost: x\r\nRange: bytes=0-9\r\nConnection: close\r\n\r\n";
 
 /** Independent calendar and protocol date vectors, including leap-century boundaries. */
-static const Utl_Http_Date_t c_dates[] =
-    {{1994, 11, 6, 8, 49, 37}, {2000, 2, 29, 0, 0, 0}, {1900, 3, 1, 23, 59, 59}, {1970, 1, 1, 0, 0, 0}, {2026, 9, 27, 12, 34, 56}, {9999, 12, 31, 23, 59, 59}, {2016, 12, 31, 23, 59, 60}};
-static const char_t c_dateText[][UTL_HTTP_DATE_BYTE_COUNT + 1] = {"Sun, 06 Nov 1994 08:49:37 GMT",
-                                                                  "Tue, 29 Feb 2000 00:00:00 GMT",
-                                                                  "Thu, 01 Mar 1900 23:59:59 GMT",
-                                                                  "Thu, 01 Jan 1970 00:00:00 GMT",
-                                                                  "Sun, 27 Sep 2026 12:34:56 GMT",
-                                                                  "Fri, 31 Dec 9999 23:59:59 GMT",
-                                                                  "Sat, 31 Dec 2016 23:59:60 GMT"};
+static const Utl_Http_Date_t c_dates[]                                  = {{1994, 11, 6, 8, 49, 37},
+                                                                           {2000, 2, 29, 0, 0, 0},
+                                                                           {1900, 3, 1, 23, 59, 59},
+                                                                           {1970, 1, 1, 0, 0, 0},
+                                                                           {2026, 9, 27, 12, 34, 56},
+                                                                           {9999, 12, 31, 23, 59, 59},
+                                                                           {2016, 12, 31, 23, 59, 60}};
+static const char_t          c_dateText[][UTL_HTTP_DATE_BYTE_COUNT + 1] = {"Sun, 06 Nov 1994 08:49:37 GMT",
+                                                                           "Tue, 29 Feb 2000 00:00:00 GMT",
+                                                                           "Thu, 01 Mar 1900 23:59:59 GMT",
+                                                                           "Thu, 01 Jan 1970 00:00:00 GMT",
+                                                                           "Sun, 27 Sep 2026 12:34:56 GMT",
+                                                                           "Fri, 31 Dec 9999 23:59:59 GMT",
+                                                                           "Sat, 31 Dec 2016 23:59:60 GMT"};
 
 /*=================================================================================================
 ** 3.5 Static function prototypes
@@ -128,7 +388,7 @@ static const char_t c_dateText[][UTL_HTTP_DATE_BYTE_COUNT + 1] = {"Sun, 06 Nov 1
  *
  * \retval    None
  */
-static void Check(bool_t passed, uint32_t line);
+static FORCE_INLINE void Check(bool_t passed, uint32_t line);
 
 /*************************************************************************************************/
 /**
@@ -171,16 +431,14 @@ static void CheckIncremental(void);
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Only Kernel32 output and termination are used.
+ *  Failures preserve source context through the selected OS assertion backend.
  */
-static void Check(bool_t passed, uint32_t line)
+static FORCE_INLINE void Check(bool_t passed, uint32_t line)
 {
-    DWORD written;
 
     if (!passed)
     {
-        (void)WriteFile(GetStdHandle(STD_ERROR_HANDLE), c_failure, sizeof(c_failure) - 1, &written, NULL);
-        ExitProcess(line);
+        OS_AssertFailure("fixture check", __FILE__, line);
     }
 }
 
@@ -238,17 +496,24 @@ static void CheckHeads(void)
     }
     Check((char_t)('a' + (count % 26)) == output[count], __LINE__);
     head.fieldCapacity = 2;
-    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
+    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1),
+          __LINE__);
     Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     head.fieldCapacity = 8;
     for (index = 0; index < (sizeof(c_badHeads) / sizeof(c_badHeads[0])); ++index)
     {
-        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_badHeads[index], c_badHeadBytes[index]), __LINE__);
+        Check(UTL_HTTP_INVALID ==
+                  Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_badHeads[index], c_badHeadBytes[index]),
+              __LINE__);
         Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     }
     for (index = 0; index < (sizeof(c_badResponses) / sizeof(c_badResponses[0])); ++index)
     {
-        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head, UTL_HTTP_RESPONSE, (const byte_t*)c_badResponses[index], c_badResponseBytes[index]), __LINE__);
+        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head,
+                                                    UTL_HTTP_RESPONSE,
+                                                    (const byte_t*)c_badResponses[index],
+                                                    c_badResponseBytes[index]),
+              __LINE__);
         Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     }
     Check(UTL_HTTP_INCOMPLETE == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, NULL, 0), __LINE__);
@@ -276,7 +541,9 @@ static void CheckFraming(void)
         vector             = &c_framing[index];
         head.fields        = fields;
         head.fieldCapacity = 8;
-        Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&head, vector->kind, (const byte_t*)vector->text, vector->byteCount), __LINE__);
+        Check(UTL_HTTP_COMPLETE ==
+                  Utl_Http_ReadHead(&head, vector->kind, (const byte_t*)vector->text, vector->byteCount),
+              __LINE__);
         method.data                    = (const byte_t*)vector->method;
         method.byteCount               = vector->methodBytes;
         framing.kind                   = UTL_HTTP_BODY_TUNNEL;
@@ -333,7 +600,8 @@ static void CheckDates(void)
                 Check('?' == output[byte_index], __LINE__);
             }
         }
-        Check(UTL_HTTP_DATE_BYTE_COUNT == Utl_Http_WriteDate(&c_dates[index], output, UTL_HTTP_DATE_BYTE_COUNT), __LINE__);
+        Check(UTL_HTTP_DATE_BYTE_COUNT == Utl_Http_WriteDate(&c_dates[index], output, UTL_HTTP_DATE_BYTE_COUNT),
+              __LINE__);
         for (byte_index = 0; byte_index < UTL_HTTP_DATE_BYTE_COUNT; ++byte_index)
         {
             Check(c_dateText[index][byte_index] == output[byte_index], __LINE__);
@@ -391,7 +659,8 @@ static void CheckIncremental(void)
         Check(prefix == reader.scan, __LINE__);
         Check(0 == reader.head.byteCount, __LINE__);
     }
-    Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
+    Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1),
+          __LINE__);
     Check((boundary == reader.scan) && (boundary == reader.head.byteCount), __LINE__);
     Check(3 == reader.head.fieldCount, __LINE__);
     Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHeadIncremental(&reader, NULL, 0), __LINE__);
@@ -409,11 +678,13 @@ static void CheckIncremental(void)
             }
         }
         Check(UTL_HTTP_INVALID == result, __LINE__);
-        Check(UTL_HTTP_INVALID == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
+        Check(UTL_HTTP_INVALID == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1),
+              __LINE__);
         Check((0 == reader.head.fieldCount) && (0 == reader.head.byteCount), __LINE__);
     }
     Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 2);
-    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
+    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1),
+          __LINE__);
     Check((0 == reader.head.fieldCount) && (0 == reader.head.byteCount), __LINE__);
 }
 
@@ -426,14 +697,12 @@ static void CheckIncremental(void)
  * \par Details:
  *  Runs HTTP checks without CRT startup or runtime dependencies.
  */
-void WinMainStartup(void)
+uint32_t OS_Application_Main(void)
 {
-    DWORD written;
 
     CheckHeads();
     CheckFraming();
     CheckDates();
     CheckIncremental();
-    (void)WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), c_success, sizeof(c_success) - 1, &written, NULL);
-    ExitProcess(0);
+    return 0;
 }

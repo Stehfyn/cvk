@@ -6,9 +6,23 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 # Pinned Vulkan headers and registry (git submodules).
-add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL)
-# Dependency headers participate in the same diagnostic policy as their consumers.
-set_target_properties(Vulkan-Headers PROPERTIES SYSTEM FALSE)
+include(cmake/ExternalLibraries.cmake)
+add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL SYSTEM)
+
+# These header families are external even when included directly by owned code.
+# Vulkan::Headers also supplies vk_video/ from the same system include root.
+add_library(cvk-vulkan-utility-headers INTERFACE)
+target_include_directories(cvk-vulkan-utility-headers SYSTEM INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include")
+add_library(cvk-vulkan-sc-headers INTERFACE)
+target_include_directories(cvk-vulkan-sc-headers SYSTEM INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}/external/VulkanSC-Headers/include")
+
+if(WIN32)
+    set(CDX_BUILD_EXAMPLES OFF)
+    add_subdirectory(external/cdx EXCLUDE_FROM_ALL SYSTEM)
+    cvk_external_directory("${CMAKE_CURRENT_SOURCE_DIR}/external/cdx")
+endif()
 
 # Generate every platform, but compile only those selected for the target SDK.
 set(cvk_default_platforms "")
@@ -57,8 +71,11 @@ endforeach()
 # Volk and cvk use the same pinned headers and platform entry points.
 set(VOLK_PULL_IN_VULKAN OFF)
 set(VOLK_STATIC_DEFINES ${cvk_platform_defines})
-add_subdirectory(external/volk EXCLUDE_FROM_ALL)
-set_target_properties(volk PROPERTIES SYSTEM FALSE C_EXTENSIONS ON)
+add_subdirectory(external/volk EXCLUDE_FROM_ALL SYSTEM)
+# External libraries retain their upstream sources and do not receive project warnings.
+# SYSTEM marks their public headers for consumers; the private options cover their own C files.
+set_target_properties(volk PROPERTIES C_EXTENSIONS ON)
+cvk_external_target(volk)
 target_link_libraries(volk PUBLIC Vulkan::Headers)
 target_compile_definitions(volk PUBLIC VK_NO_PROTOTYPES)
 if("ubm" IN_LIST CVK_PLATFORMS)
@@ -130,8 +147,7 @@ set(CVK_SOURCES src/cvk.c src/cvk_json.c ${cvk_platform_sources})
 add_library(cvk STATIC ${CVK_SOURCES})
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Only the header-only format utilities are needed; keep their C++ libraries out of the build.
-target_include_directories(cvk PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include)
-target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk)
+target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk cvk-vulkan-utility-headers)
 target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
 
 if(MSVC)
@@ -164,7 +180,7 @@ set(SCVK_SOURCES src/scvk.c src/scvk_json.c ${scvk_platform_sources})
 add_library(scvk STATIC ${SCVK_SOURCES})
 target_compile_definitions(scvk PRIVATE ${scvk_platform_defines})
 target_include_directories(scvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(scvk SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/VulkanSC-Headers/include)
+target_link_libraries(scvk PUBLIC cvk-vulkan-sc-headers)
 if(MSVC)
     target_compile_options(scvk PRIVATE /W4)
 else()

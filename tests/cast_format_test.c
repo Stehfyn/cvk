@@ -12,7 +12,10 @@
 #include "utl/utl_matroska.h"
 #include "utl/utl_protobuf.h"
 
-#include <windows.h>
+#include "os/os_assert.h"
+#include "os/os_process.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -43,8 +46,6 @@ static const byte_t   c_matroskaUnknown[] = {0x1F, 0x43, 0xB6, 0x75, 0x01, 0xFF,
 static const uint32_t c_validIds[]        = {0x80, 0xFE, 0x407F, 0x7FFE, 0x203FFF, 0x3FFFFE, 0x101FFFFF, 0x1FFFFFFE};
 static const uint32_t c_invalidIds[] =
     {0, 0x7F, 0xFF, 0x4000, 0x407E, 0x7FFF, 0x200000, 0x203FFE, 0x3FFFFF, 0x101FFFFE, 0x1FFFFFFF};
-static const char_t   c_failure[] = "Cast format checks failed; exit code identifies the check.\r\n";
-static const char_t   c_success[] = "Cast format checks passed (CRT-free entry).\r\n";
 
 static const uint64_t c_protoIntegers[]  = {0, 1, 127, 128, 150, 16384, UINT32_MAX, UINT64_MAX};
 static const byte_t   c_protoGroups[]    = {0x43, 0x48, 0x96, 0x01, 0x53, 0x58, 0x01, 0x54, 0x44};
@@ -62,7 +63,7 @@ static const byte_t   c_protoBytes[]     = {0x12, 3, 'a', 'b', 'c'};
  * \param[in] passed   Predicate being checked
  * \param[in] code     Failure identifier
  */
-static void Check(bool_t passed, uint32_t code);
+static FORCE_INLINE void Check(bool_t passed, uint32_t code);
 
 /*************************************************************************************************/
 /**
@@ -91,7 +92,7 @@ static void CheckMatroska(void);
 /** \brief Checks protobuf integer overflow, all wire forms and nested group matching. */
 static void CheckProtobuf(void);
 
-void WinMainStartup(void);
+uint32_t OS_Application_Main(void);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -99,14 +100,12 @@ void WinMainStartup(void);
 
 /*************************************************************************************************/
 /** \par Details: Only Win32 output and process termination are needed on failure. */
-static void Check(bool_t passed, uint32_t code)
+static FORCE_INLINE void Check(bool_t passed, uint32_t code)
 {
-    DWORD written;
 
     if (!passed)
     {
-        WriteFile(GetStdHandle(STD_ERROR_HANDLE), c_failure, sizeof(c_failure) - 1, &written, NULL);
-        ExitProcess(code);
+        OS_AssertFailure("fixture check", __FILE__, code);
     }
 }
 
@@ -133,15 +132,15 @@ static bool_t EqualBytes(const byte_t* first, const byte_t* second, uint32_t byt
 /** \par Details: Partial headers must preserve every published output field. */
 static void CheckMp4(void)
 {
-    Utl_Mpeg4_Span_t bytes;
+    Utl_Mpeg4_Span_t      bytes;
     Utl_Mpeg4_BoxHeader_t header;
     Utl_Mpeg4_BoxHeader_t saved;
-    byte_t              output[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
-    uint64_t            large_size;
-    uint32_t            width;
-    uint32_t            index;
-    bool_t              accepted;
-    bool_t              equal;
+    byte_t                output[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
+    uint64_t              large_size;
+    uint32_t              width;
+    uint32_t              index;
+    bool_t                accepted;
+    bool_t                equal;
 
     bytes.data = c_mp4Ordinary;
 
@@ -157,19 +156,19 @@ static void CheckMp4(void)
     Check(sizeof(c_mp4Ordinary) == width, 106);
     equal = EqualBytes(output, c_mp4Ordinary, width);
     Check(equal, 107);
-    bytes.data = c_mp4ToEnd;
+    bytes.data      = c_mp4ToEnd;
     bytes.byteCount = sizeof(c_mp4ToEnd);
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, UINT64_MAX, UINT64_MAX);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, UINT64_MAX, UINT64_MAX);
     Check(accepted && header.extendsToEnd, 108);
     Check(UINT64_MAX == header.byteCount, 109);
     width = Utl_Mpeg4_WriteBoxHeader(&header, output, sizeof(output));
     equal = EqualBytes(output, c_mp4ToEnd, sizeof(c_mp4ToEnd));
     Check((sizeof(c_mp4ToEnd) == width) && equal, 110);
 
-    large_size = ((uint64_t)1 << 32) + 32;
-    bytes.data = c_mp4LargeUuid;
+    large_size      = ((uint64_t)1 << 32) + 32;
+    bytes.data      = c_mp4LargeUuid;
     bytes.byteCount = sizeof(c_mp4LargeUuid);
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size, large_size);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size, large_size);
     Check(accepted, 111);
     Check(large_size == header.byteCount, 112);
     Check(32 == Utl_Mpeg4_GetBoxHeaderByteCount(&header), 113);
@@ -181,9 +180,9 @@ static void CheckMp4(void)
     index = 0;
     for (;;)
     {
-        bytes.data = c_mp4LargeUuid;
+        bytes.data      = c_mp4LargeUuid;
         bytes.byteCount = index;
-        accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size, large_size);
+        accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size, large_size);
         Check(!accepted, 116);
         Check(saved.byteCount == header.byteCount, 117);
         Check(saved.type == header.type, 118);
@@ -196,17 +195,17 @@ static void CheckMp4(void)
             break;
         }
     }
-    bytes.data = c_mp4LargeUuid;
+    bytes.data      = c_mp4LargeUuid;
     bytes.byteCount = sizeof(c_mp4LargeUuid);
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size - 1, large_size - 1);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size - 1, large_size - 1);
     Check(!accepted, 121);
-    bytes.data = c_mp4Ordinary;
+    bytes.data      = c_mp4Ordinary;
     bytes.byteCount = sizeof(c_mp4Ordinary);
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 15, 15);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 15, 15);
     Check(!accepted, 122);
-    bytes.data = c_mp4ToEnd;
+    bytes.data      = c_mp4ToEnd;
     bytes.byteCount = sizeof(c_mp4ToEnd);
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 7, 7);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 7, 7);
     Check(!accepted, 123);
 
     index = 0;
@@ -250,13 +249,13 @@ static void CheckMp4(void)
             break;
         }
     }
-    bytes.data = NULL;
+    bytes.data      = NULL;
     bytes.byteCount = 0;
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 16, 16);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 16, 16);
     Check(!accepted, 129);
-    bytes.data = c_mp4Ordinary;
+    bytes.data      = c_mp4Ordinary;
     bytes.byteCount = sizeof(c_mp4Ordinary);
-    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 17, 16);
+    accepted        = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 17, 16);
     Check(!accepted, 130);
 }
 
@@ -624,16 +623,15 @@ static void CheckProtobuf(void)
 /*************************************************************************************************/
 /**
  * \brief Runs wire-format checks using a linker-selected entry without CRT startup.
- * \par Details: Returning is deliberately avoided; ExitProcess owns process termination.
+ * \par Details:
+ *  The platform entry receives the fixture result.
  */
-void WinMainStartup(void)
+uint32_t OS_Application_Main(void)
 {
-    DWORD written;
 
     CheckMp4();
     CheckVints();
     CheckMatroska();
     CheckProtobuf();
-    WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), c_success, sizeof(c_success) - 1, &written, NULL);
-    ExitProcess(0);
+    return 0;
 }
