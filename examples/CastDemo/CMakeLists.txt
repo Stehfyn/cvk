@@ -3,6 +3,7 @@
 add_library(cast-session STATIC cast_session.c cast_session.h cast_channel.c cast_channel.h
     cast_message.c cast_message.h media_server.c media_server.h mp4_index.c mp4_index.h
     subtitles.c subtitles.h audio_gain.c audio_gain.h
+    mkv_subtitles.c mkv_subtitles.h
     proxy.c proxy.h gpu_transcode.c gpu_transcode.h mp4_demux.c mp4_demux.h
     mp4_mux.c mp4_mux.h h264_params.c h264_params.h gpu_device.c gpu_device.h
     gpu_decode.c gpu_decode.h gpu_encode.c gpu_encode.h ssdp.c ssdp.h)
@@ -21,7 +22,11 @@ add_executable(cvk-cast-message-test "${PROJECT_SOURCE_DIR}/tests/cast_message_t
 target_link_libraries(cvk-cast-message-test PRIVATE cast-session)
 add_test(NAME cvk-cast-messages COMMAND cvk-cast-message-test)
 
-foreach(target cast-session CastDemo CastDemoCli cvk-cast-message-test)
+add_executable(cvk-cast-subtitle-test "${PROJECT_SOURCE_DIR}/tests/cast_subtitle_test.c")
+target_link_libraries(cvk-cast-subtitle-test PRIVATE cast-session)
+add_test(NAME cvk-cast-subtitles COMMAND cvk-cast-subtitle-test)
+
+foreach(target cast-session CastDemo CastDemoCli cvk-cast-message-test cvk-cast-subtitle-test)
     if(MSVC)
         target_compile_options(${target} PRIVATE /W4)
     else()

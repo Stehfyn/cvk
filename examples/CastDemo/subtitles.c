@@ -6,6 +6,7 @@
 #include <string.h>
 #include "subtitles.h"
 #include "mp4_demux.h"
+#include "mkv_subtitles.h"
 
 #define MAX_SUBTITLE_BYTES (16u * 1024u * 1024u)
 typedef struct Text { char* data; size_t size, capacity; } Text;
@@ -182,7 +183,10 @@ unsigned Subtitles_Find(const wchar_t* media, SubtitleTrack tracks[SUBTITLE_MAX_
     wchar_t* slash;
     wchar_t* dot;
     unsigned count = 0, i;
-    if (!media || !*media || !GetFullPathNameW(media, 260, directory, NULL) || wcslen(media) >= 260) return 0;
+    DWORD pathLength;
+    if (!media || !*media || wcslen(media) >= 260) return 0;
+    pathLength = GetFullPathNameW(media, 260, directory, NULL);
+    if (!pathLength || pathLength >= 260) return 0;
     slash = wcsrchr(directory, L'\\');
     if (!slash) return 0;
     wcscpy_s(stem, 260, slash + 1); slash[1] = 0;
@@ -199,7 +203,48 @@ unsigned Subtitles_Find(const wchar_t* media, SubtitleTrack tracks[SUBTITLE_MAX_
         _snwprintf_s(tracks[count].label, 320, _TRUNCATE, L"Embedded %u (%hs)", i + 1, language);
         ++count;
     }
+    {
+        MkvSubtitleTrack mkv[SUBTITLE_MAX_TRACKS];
+        unsigned total = MkvSubtitles_Find(media, mkv, SUBTITLE_MAX_TRACKS - count);
+        for (i = 0; i < total; ++i)
+        {
+            wchar_t name[256] = {0};
+            Subtitles_FileTrack(media, &tracks[count]);
+            tracks[count].matroskaTrack = mkv[i].number;
+            strcpy_s(tracks[count].language, 16, mkv[i].language);
+            MultiByteToWideChar(CP_UTF8, 0, mkv[i].name, -1, name, 256);
+            _snwprintf_s(tracks[count].label, 320, _TRUNCATE, L"MKV track %llu (%hs)%ls%ls", (unsigned long long)mkv[i].number,
+                         mkv[i].language, name[0] ? L" - " : L"", name);
+            ++count;
+        }
+    }
     return count;
+}
+
+static int MatroskaCue(void* user, double start, double end, const uint8_t* data, size_t size)
+{
+    Text* out = (Text*)user;
+    char timing[100];
+    char* text = Utf8(data, size);
+    uint64_t a = (uint64_t)(start * 1000 + .5), b = (uint64_t)(end * 1000 + .5);
+    int previousNewline = 1;
+    if (!text) return 0;
+    if (b <= a) { free(text); return 1; }
+    snprintf(timing, sizeof(timing), "%02llu:%02llu:%02llu.%03llu --> %02llu:%02llu:%02llu.%03llu\n",
+             a/3600000, a/60000%60, a/1000%60, a%1000, b/3600000, b/60000%60, b/1000%60, b%1000);
+    if (!Append(out, timing, strlen(timing))) { free(text); return 0; }
+    /* Matroska SubRip stores just UTF-8 cue text. Preserve its inline markup and
+    ** normalize line endings; blank payload lines must not terminate a WebVTT cue. */
+    for (char* p = text; *p; ++p)
+    {
+        char c = *p;
+        if (c == '\r') { if (p[1] == '\n') ++p; c = '\n'; }
+        if (c == '\n' && previousNewline && !Append(out, " ", 1)) { free(text); return 0; }
+        if (!Append(out, &c, 1)) { free(text); return 0; }
+        previousNewline = c == '\n';
+    }
+    free(text);
+    return Append(out, previousNewline ? "\n" : "\n\n", previousNewline ? 1 : 2);
 }
 
 static int TextSample(void* user, double start, double end, const uint8_t* data, uint32_t size)
@@ -234,7 +279,14 @@ char* Subtitles_Load(const SubtitleTrack* track, size_t* size, char* error, size
 {
     char* result = NULL;
     *size = 0;
-    if (track->embedded >= 0)
+    if (track->matroskaTrack)
+    {
+        Text out = {0};
+        if (Append(&out, "WEBVTT\n\n", 8) && MkvSubtitles_Read(track->path, track->matroskaTrack, MatroskaCue, &out))
+        { *size = out.size; result = out.data; }
+        else free(out.data);
+    }
+    else if (track->embedded >= 0)
     {
         Text out = {0};
         char language[4];
@@ -258,6 +310,6 @@ char* Subtitles_Load(const SubtitleTrack* track, size_t* size, char* error, size
             fclose(file);
         }
     }
-    if (!result) snprintf(error, errorCapacity, "Cannot read subtitles: use UTF-8/UTF-16 SRT or WebVTT, or an MP4 tx3g text track.");
+    if (!result) snprintf(error, errorCapacity, "Cannot read subtitles: use UTF-8/UTF-16 SRT or WebVTT, an MP4 tx3g track, or an MKV UTF-8/SubRip text track.");
     return result;
 }

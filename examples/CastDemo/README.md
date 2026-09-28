@@ -50,6 +50,23 @@ home screen.
 
 ### Adaptive quality: the full stream, then a GPU proxy
 
+### Subtitles
+
+The **Subtitles** selector discovers SRT/WebVTT files beside the video or in its
+`Subs` directory, MP4 `tx3g` text tracks, and embedded MKV UTF-8/SubRip text tracks.
+MKV entries show their track number, language (including regional language tags),
+and title when present. **Automatic** uses the first supported track; choose another
+entry for a different language, **Browse...** for a separate subtitle file, or **Off**.
+Choose subtitles before pressing **Cast**.
+
+The sender converts the selected track to WebVTT and serves it to the receiver on
+the media server's port. Cue times remain on the original movie timeline through
+seeks, proxy switches and audio-gain switches. MKV extraction reads the container
+directly and requires no external tools. Image subtitles such as PGS/VobSub and
+compressed or encrypted subtitle tracks are not listed.
+
+### Adaptive quality: the full stream, then a GPU proxy
+
 The projector is a Chromecast built-in receiver, and its post-seek rebuffer is the real
 latency floor: on the full-quality stream a seek takes one to three seconds to show smooth
 motion, because the weak decoder must fetch, buffer and decode a heavy bitstream from the
