@@ -14,6 +14,8 @@
 #include <objbase.h>
 #include <shellapi.h>
 #include <windowsx.h>
+#include <uxtheme.h>
+#include <dwmapi.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +28,8 @@
 #include "mp4_index.h"
 #include "proxy.h"
 #include "ssdp.h"
+#include "subtitles.h"
+#include "audio_gain.h"
 
 #if defined(_MSC_VER)
 #pragma comment(linker, "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -36,6 +40,7 @@
 #define WM_APP_STATUS       (WM_APP + 3) /* lParam: CastStatus* on the heap */
 #define WM_APP_ENDED        (WM_APP + 4) /* lParam: WCHAR* on the heap, or NULL */
 #define WM_APP_PREVIEW_DONE (WM_APP + 5) /* lParam: PreviewResult* on the heap */
+#define WM_APP_GAIN_DONE    (WM_APP + 6)
 
 #define PREFERRED_DEVICE    "XGIMI"
 #define DEFAULT_SERVER_PORT (8642)
@@ -51,6 +56,12 @@ enum ControlId
     ID_FILE_LABEL,
     ID_FILE,
     ID_BROWSE,
+    ID_SUBTITLE_LABEL,
+    ID_SUBTITLE,
+    ID_SUBTITLE_BROWSE,
+    ID_GAIN_LABEL,
+    ID_GAIN,
+    ID_GAIN_STATE,
     ID_CAST,
     ID_HINT,
     ID_PLAY_PAUSE,
@@ -114,6 +125,21 @@ typedef struct App
     HWND      hFileLabel;
     HWND      hFile;
     HWND      hBrowse;
+    HWND      hSubtitleLabel, hSubtitle, hSubtitleBrowse;
+    HWND      hGainLabel, hGain, hGainState;
+    HBRUSH    backgroundBrush, fieldBrush;
+    SubtitleTrack subtitles[SUBTITLE_MAX_TRACKS];
+    unsigned subtitleCount;
+    WCHAR subtitleSource[1024];
+    WCHAR originalSource[MAX_PATH];
+    char originalUrl[1200], originalType[64];
+    HANDLE hGainThread;
+    volatile LONG gainCancel, gainProgress;
+    unsigned gainPercent, gainSerial;
+    int gainOk;
+    char gainError[256];
+    WCHAR gainOutput[MAX_PATH];
+    struct GainVariant* gainVariants;
     HWND      hCast;
     HWND      hHint;
     HWND      hPlayPause;
@@ -161,10 +187,27 @@ typedef struct App
 
 #define POSITION_TIMER   (1)
 #define POSITION_TICK_MS (50)
+#define SUBTITLE_TIMER (2)
+#define GAIN_TIMER (3)
+
+#define DARK_BACKGROUND RGB(24, 26, 31)
+#define DARK_FIELD RGB(36, 39, 46)
+#define DARK_TEXT RGB(232, 235, 240)
+#define DARK_MUTED RGB(151, 160, 174)
+#define DARK_ACCENT RGB(82, 156, 245)
+
+typedef struct GainVariant
+{
+    struct GainVariant* next;
+    MediaServer* server;
+    WCHAR path[MAX_PATH];
+} GainVariant;
 
 static App g_app;
 
 static LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
+static void RefreshSubtitles(App* pApp);
+static void ScheduleGain(App* pApp);
 
 static int Scale(const App* pApp, int dips)
 {
@@ -232,7 +275,12 @@ static void FormatTime(double seconds, WCHAR* pOut, size_t capacity)
 
 static HWND CreateChild(App* pApp, const WCHAR* pClass, const WCHAR* pText, DWORD style, DWORD exStyle, int id)
 {
-    return CreateWindowExW(exStyle, pClass, pText, WS_CHILD | WS_VISIBLE | style, 0, 0, 10, 10, pApp->hWnd, (HMENU)(INT_PTR)id, pApp->hInstance, NULL);
+    HWND child;
+    if (!wcscmp(pClass, L"BUTTON") && (style & BS_TYPEMASK) != BS_AUTOCHECKBOX)
+        style = (style & ~BS_TYPEMASK) | BS_OWNERDRAW;
+    child = CreateWindowExW(exStyle, pClass, pText, WS_CHILD | WS_VISIBLE | style, 0, 0, 10, 10, pApp->hWnd, (HMENU)(INT_PTR)id, pApp->hInstance, NULL);
+    SetWindowTheme(child, L"DarkMode_Explorer", NULL);
+    return child;
 }
 
 static void ApplyFont(App* pApp)
@@ -281,7 +329,7 @@ static void Layout(App* pApp)
     width   = client.right - 2 * margin;
     sliderX = margin + valueW + gap;
     /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
-    listH = client.bottom - (margin + labelH + gap) - (gap + rowH) - (gap + rowH) - (gap + rowH) - (gap + labelH) - (gap + cfgH) - margin;
+    listH = client.bottom - (margin + labelH + gap) - 5 * (gap + rowH) - (gap + labelH) - (gap + cfgH) - margin;
     if (listH < Scale(pApp, 60))
     {
         listH = Scale(pApp, 60);
@@ -296,6 +344,14 @@ static void Layout(App* pApp)
     MoveWindow(pApp->hFileLabel, margin, y + Scale(pApp, 4), Scale(pApp, 40), labelH, TRUE);
     MoveWindow(pApp->hFile, margin + Scale(pApp, 44), y, width - Scale(pApp, 44) - gap - buttonW, rowH, TRUE);
     MoveWindow(pApp->hBrowse, client.right - margin - buttonW, y, buttonW, rowH, TRUE);
+    y += rowH + gap;
+    MoveWindow(pApp->hSubtitleLabel, margin, y + Scale(pApp, 4), Scale(pApp, 64), labelH, TRUE);
+    MoveWindow(pApp->hSubtitle, margin + Scale(pApp, 68), y, width - Scale(pApp, 68) - gap - buttonW, Scale(pApp, 220), TRUE);
+    MoveWindow(pApp->hSubtitleBrowse, client.right - margin - buttonW, y, buttonW, rowH, TRUE);
+    y += rowH + gap;
+    MoveWindow(pApp->hGainLabel, margin, y + Scale(pApp, 4), Scale(pApp, 108), labelH, TRUE);
+    MoveWindow(pApp->hGain, margin + Scale(pApp, 112), y, width - Scale(pApp, 300), rowH, TRUE);
+    MoveWindow(pApp->hGainState, client.right - margin - Scale(pApp, 180), y + Scale(pApp, 4), Scale(pApp, 180), labelH, TRUE);
     y += rowH + gap;
     MoveWindow(pApp->hCast, margin, y, buttonW, rowH, TRUE);
     MoveWindow(pApp->hHint, margin + buttonW + gap, y + Scale(pApp, 4), width - buttonW - gap, labelH, TRUE);
@@ -342,6 +398,9 @@ static void UpdateControls(App* pApp)
     EnableWindow(pApp->hStop, haveSession && !pApp->stopping);
     EnableWindow(pApp->hPlayPause, haveSession && pApp->status.hasMedia);
     EnableWindow(pApp->hSeek, haveSession && pApp->status.hasMedia && pApp->status.duration > 0);
+    EnableWindow(pApp->hSubtitle, !haveSession);
+    EnableWindow(pApp->hSubtitleBrowse, !haveSession);
+    EnableWindow(pApp->hGain, !haveSession || pApp->originalSource[0]);
     SetWindowTextW(pApp->hPlayPause, playing ? L"Pause" : L"Play");
 }
 
@@ -395,6 +454,18 @@ static void CreateControls(App* pApp)
     pApp->hFileLabel   = CreateChild(pApp, L"STATIC", L"Video", SS_LEFT, 0, ID_FILE_LABEL);
     pApp->hFile        = CreateChild(pApp, L"EDIT", L"", ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE, ID_FILE);
     pApp->hBrowse      = CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_BROWSE);
+    pApp->hSubtitleLabel = CreateChild(pApp, L"STATIC", L"Subtitles", SS_LEFT, 0, ID_SUBTITLE_LABEL);
+    pApp->hSubtitle = CreateChild(pApp, L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, 0, ID_SUBTITLE);
+    pApp->hSubtitleBrowse = CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE);
+    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Automatic");
+    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
+    SendMessageW(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
+    pApp->hGainLabel = CreateChild(pApp, L"STATIC", L"Audio gain 100%", SS_LEFT, 0, ID_GAIN_LABEL);
+    pApp->hGain = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GAIN);
+    SendMessageW(pApp->hGain, TBM_SETRANGE, TRUE, MAKELPARAM(0, 400));
+    SendMessageW(pApp->hGain, TBM_SETPOS, TRUE, 100);
+    SendMessageW(pApp->hGain, TBM_SETPAGESIZE, 0, 25);
+    pApp->hGainState = CreateChild(pApp, L"STATIC", L"Original audio", SS_RIGHT | SS_ENDELLIPSIS, 0, ID_GAIN_STATE);
     pApp->hCast        = CreateChild(pApp, L"BUTTON", L"Cast", BS_DEFPUSHBUTTON | WS_TABSTOP, 0, ID_CAST);
     pApp->hHint        = CreateChild(pApp, L"STATIC", L"A file is served to the receiver over HTTP from this PC; an http(s) URL is sent as is.", SS_LEFT | SS_ENDELLIPSIS, 0, ID_HINT);
     pApp->hPlayPause   = CreateChild(pApp, L"BUTTON", L"Play", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PLAY_PAUSE);
@@ -402,6 +473,9 @@ static void CreateControls(App* pApp)
     pApp->hSeek        = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | TBS_BOTH | WS_TABSTOP, 0, ID_SEEK);
     pApp->hTime        = CreateChild(pApp, L"STATIC", L"", SS_RIGHT, 0, ID_TIME);
     pApp->hStatus      = CreateChild(pApp, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 0, ID_STATUS);
+    ListView_SetBkColor(pApp->hList, DARK_FIELD);
+    ListView_SetTextBkColor(pApp->hList, DARK_FIELD);
+    ListView_SetTextColor(pApp->hList, DARK_TEXT);
 
     /* Transcoder (proxy) configuration panel: sliders whose settings drive the GPU proxy encode. */
     GpuTranscode_DefaultConfig(&pApp->transcode);
@@ -578,6 +652,117 @@ static DWORD WINAPI SessionThread(LPVOID pParameter)
 /* Starts a session that plays pSourceIn on the selected receiver. buildProxy adds the background
 ** scrub proxy (for normal casting); the quality preview passes 0 because the clip it plays is
 ** already the transcoded output. */
+static void RefreshSubtitles(App* pApp)
+{
+    WCHAR source[1024], automatic[380];
+    GetWindowTextW(pApp->hFile, source, 1024);
+    if (!wcscmp(source, pApp->subtitleSource)) return;
+    wcscpy_s(pApp->subtitleSource, 1024, source);
+    pApp->subtitleCount = _wcsnicmp(source, L"http", 4) ? Subtitles_Find(source, pApp->subtitles) : 0;
+    SendMessageW(pApp->hSubtitle, CB_RESETCONTENT, 0, 0);
+    _snwprintf_s(automatic, 380, _TRUNCATE, L"Automatic - %ls", pApp->subtitleCount ? pApp->subtitles[0].label : L"no supported subtitles found");
+    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)automatic);
+    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
+    for (unsigned i = 0; i < pApp->subtitleCount; ++i)
+        SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)pApp->subtitles[i].label);
+    SendMessageW(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
+}
+
+static void BrowseSubtitles(App* pApp)
+{
+    OPENFILENAMEW dialog = {0};
+    WCHAR path[MAX_PATH] = {0};
+    RefreshSubtitles(pApp);
+    dialog.lStructSize = sizeof(dialog); dialog.hwndOwner = pApp->hWnd;
+    dialog.lpstrFilter = L"Subtitles\0*.srt;*.vtt\0";
+    dialog.lpstrFile = path; dialog.nMaxFile = MAX_PATH;
+    dialog.lpstrTitle = L"Choose subtitles";
+    dialog.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+    if (GetOpenFileNameW(&dialog) && pApp->subtitleCount < SUBTITLE_MAX_TRACKS)
+    {
+        Subtitles_FileTrack(path, &pApp->subtitles[pApp->subtitleCount]);
+        SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)pApp->subtitles[pApp->subtitleCount++].label);
+        SendMessageW(pApp->hSubtitle, CB_SETCURSEL, pApp->subtitleCount + 1, 0);
+    }
+}
+
+static DWORD WINAPI GainThread(LPVOID parameter)
+{
+    App* app = (App*)parameter;
+    unsigned serial = app->gainSerial;
+    app->gainOk = AudioGain_Convert(app->originalSource, app->gainOutput, app->gainPercent,
+                                    &app->gainCancel, &app->gainProgress, app->gainError, sizeof(app->gainError));
+    PostMessageW(app->hWnd, WM_APP_GAIN_DONE, serial, 0);
+    return 0;
+}
+
+static void CancelGain(App* app)
+{
+    KillTimer(app->hWnd, GAIN_TIMER);
+    ++app->gainSerial;
+    if (app->hGainThread)
+    {
+        InterlockedExchange(&app->gainCancel, 1);
+        WaitForSingleObject(app->hGainThread, INFINITE);
+        CloseHandle(app->hGainThread); app->hGainThread = NULL;
+    }
+    if (app->gainOutput[0]) { DeleteFileW(app->gainOutput); app->gainOutput[0] = 0; }
+}
+
+static void ScheduleGain(App* app)
+{
+    unsigned percent = (unsigned)SendMessageW(app->hGain, TBM_GETPOS, 0, 0);
+    WCHAR directory[MAX_PATH];
+    DWORD length;
+    CancelGain(app);
+    if (!app->pSession || !app->originalSource[0]) return;
+    if (percent == 100)
+    {
+        CastSession_ReplaceMedia(app->pSession, app->originalUrl, app->originalType);
+        SetWindowTextW(app->hGainState, L"Original audio");
+        return;
+    }
+    length = GetTempPathW(MAX_PATH, directory);
+    if (!length || length >= MAX_PATH || _snwprintf_s(app->gainOutput, MAX_PATH, _TRUNCATE,
+        L"%lscvkcast_gain_%lu_%u.mp4", directory, GetCurrentProcessId(), app->gainSerial) < 0)
+    {
+        SetWindowTextW(app->hGainState, L"Cannot create gain file"); return;
+    }
+    app->gainPercent = percent;
+    InterlockedExchange(&app->gainCancel, 0);
+    InterlockedExchange(&app->gainProgress, 0);
+    app->hGainThread = CreateThread(NULL, 0, GainThread, app, 0, NULL);
+    SetWindowTextW(app->hGainState, app->hGainThread ? L"Preparing gain..." : L"Cannot start audio worker");
+}
+
+static void FinishGain(App* app, unsigned serial)
+{
+    GainVariant* variant;
+    char local[64], error[256], url[1200];
+    if (serial != app->gainSerial || !app->hGainThread) return;
+    WaitForSingleObject(app->hGainThread, INFINITE);
+    CloseHandle(app->hGainThread); app->hGainThread = NULL;
+    if (!app->pSession || !app->gainOk)
+    {
+        WCHAR* message = DupUtf8ToWide(app->gainError);
+        SetWindowTextW(app->hGainState, L"Gain failed - audio unchanged");
+        if (message) { SetStatus(app, message); free(message); }
+        CancelGain(app); return;
+    }
+    variant = (GainVariant*)calloc(1, sizeof(*variant));
+    /* Use the same reachable local address selected for the original file. */
+    if (!variant || sscanf(app->originalUrl, "http://%63[^:]", local) != 1)
+    { free(variant); CancelGain(app); SetWindowTextW(app->hGainState, L"Cannot serve audio gain"); return; }
+    variant->server = MediaServer_Start(app->gainOutput, NULL, 0, "video/mp4", error, sizeof(error));
+    if (!variant->server)
+    { free(variant); CancelGain(app); SetWindowTextW(app->hGainState, L"Cannot serve audio gain"); return; }
+    wcscpy_s(variant->path, MAX_PATH, app->gainOutput); app->gainOutput[0] = 0;
+    variant->next = app->gainVariants; app->gainVariants = variant;
+    snprintf(url, sizeof(url), "http://%s:%u/gain.mp4", local, (unsigned)MediaServer_GetPort(variant->server));
+    CastSession_ReplaceMedia(app->pSession, url, "video/mp4");
+    SetWindowTextW(app->hGainState, L"Gain ready - switching");
+}
+
 static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
 {
     const int         selected = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
@@ -585,6 +770,10 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
     CastSessionConfig config;
     WCHAR             source[1024];
     char              error[256];
+    char              localAddress[64];
+    char*             vtt = NULL;
+    size_t            vttSize = 0;
+    const SubtitleTrack* subtitle = NULL;
 
     if (NULL != pApp->pSession || selected < 0 || (unsigned)selected >= pApp->devices.count)
     {
@@ -600,6 +789,24 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
     (void)snprintf(config.host, sizeof(config.host), "%s", pDevice->host);
     config.callback = OnSessionEvent;
     config.pUser    = pApp->hWnd;
+    if (buildProxy)
+    {
+        int choice;
+        RefreshSubtitles(pApp);
+        choice = (int)SendMessageW(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
+        if (choice == 0 && pApp->subtitleCount) subtitle = &pApp->subtitles[0];
+        else if (choice >= 2 && (unsigned)(choice - 2) < pApp->subtitleCount) subtitle = &pApp->subtitles[choice - 2];
+        if (subtitle)
+        {
+            vtt = Subtitles_Load(subtitle, &vttSize, error, sizeof(error));
+            if (!vtt)
+            {
+                WCHAR* message = DupUtf8ToWide(error);
+                SetStatus(pApp, message ? message : L"Cannot read subtitles."); free(message); return;
+            }
+        }
+    }
+    pApp->originalSource[0] = 0;
     if (0 == _wcsnicmp(source, L"http://", 7) || 0 == _wcsnicmp(source, L"https://", 8))
     {
         const wchar_t* pExtension = wcsrchr(source, L'.');
@@ -612,7 +819,6 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
     {
         const wchar_t* pName      = wcsrchr(source, L'\\');
         const wchar_t* pExtension = wcsrchr(source, L'.');
-        char           localAddress[64];
         char           extension[16];
 
         pName = (NULL != pName) ? pName + 1 : source;
@@ -627,15 +833,17 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
         if (!MediaServer_LocalAddressToward(pDevice->host, localAddress, sizeof(localAddress)))
         {
             SetStatus(pApp, L"Cannot determine the local address facing the receiver.");
+            free(vtt);
             return;
         }
-        pApp->pServer = MediaServer_Start(source, NULL, DEFAULT_SERVER_PORT, config.contentType, error, sizeof(error));
+        pApp->pServer = MediaServer_StartWithSubtitles(source, NULL, DEFAULT_SERVER_PORT, config.contentType, vtt, vttSize, error, sizeof(error));
         if (NULL == pApp->pServer)
         {
             WCHAR* pError = DupUtf8ToWide(error);
 
             SetStatus(pApp, pError ? pError : L"Cannot start the media server.");
             free(pError);
+            free(vtt);
             return;
         }
         (void)snprintf(config.contentUrl, sizeof(config.contentUrl), "http://%s:%u/media%s", localAddress, (unsigned)MediaServer_GetPort(pApp->pServer), extension);
@@ -650,7 +858,22 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
         wcscpy_s(pApp->proxySource, MAX_PATH, source);
         (void)snprintf(pApp->proxyLocal, sizeof(pApp->proxyLocal), "%s", localAddress);
         pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
+        wcscpy_s(pApp->originalSource, MAX_PATH, source);
     }
+    if (vtt && !pApp->pServer)
+    {
+        if (MediaServer_LocalAddressToward(pDevice->host, localAddress, sizeof(localAddress)))
+            pApp->pServer = MediaServer_StartWithSubtitles(NULL, NULL, DEFAULT_SERVER_PORT, "video/mp4", vtt, vttSize, error, sizeof(error));
+        if (!pApp->pServer) { free(vtt); SetStatus(pApp, L"Cannot serve subtitles to the receiver."); return; }
+    }
+    if (vtt)
+    {
+        snprintf(config.subtitleUrl, sizeof(config.subtitleUrl), "http://%s:%u/subtitles.vtt", localAddress, (unsigned)MediaServer_GetPort(pApp->pServer));
+        snprintf(config.subtitleLanguage, sizeof(config.subtitleLanguage), "%s", subtitle->language);
+    }
+    free(vtt);
+    snprintf(pApp->originalUrl, sizeof(pApp->originalUrl), "%s", config.contentUrl);
+    snprintf(pApp->originalType, sizeof(pApp->originalType), "%s", config.contentType);
     pApp->pSession = CastSession_Create(&config);
     if (NULL != pApp->pSession)
     {
@@ -676,6 +899,7 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
     ZeroMemory(&pApp->status, sizeof(pApp->status));
     pApp->stopping = 0;
     UpdateControls(pApp);
+    if (buildProxy && SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0) != 100) ScheduleGain(pApp);
 }
 
 /* The Cast button: play the chosen file with the background scrub proxy. */
@@ -875,6 +1099,7 @@ static void OnPositionTimer(App* pApp)
 /* Reaps the session thread; safe to call when no session exists. */
 static void FinishSession(App* pApp, const WCHAR* pReason)
 {
+    CancelGain(pApp);
     if (NULL != pApp->hSessionThread)
     {
         WaitForSingleObject(pApp->hSessionThread, 3000);
@@ -888,6 +1113,15 @@ static void FinishSession(App* pApp, const WCHAR* pReason)
     pApp->pSession = NULL;
     MediaServer_Stop(pApp->pServer);
     pApp->pServer = NULL;
+    while (pApp->gainVariants)
+    {
+        GainVariant* variant = pApp->gainVariants;
+        pApp->gainVariants = variant->next;
+        MediaServer_Stop(variant->server);
+        DeleteFileW(variant->path);
+        free(variant);
+    }
+    pApp->originalSource[0] = 0;
     free(pApp->pKeyframes);
     pApp->pKeyframes = NULL;
     pApp->stopping   = 0;
@@ -1046,24 +1280,72 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
     switch (message)
     {
     case WM_CREATE:
+    {
+        const BOOL dark = TRUE;
         pApp->hWnd = hWnd;
         pApp->dpi  = GetDpiForWindow(hWnd);
+        pApp->backgroundBrush = CreateSolidBrush(DARK_BACKGROUND);
+        pApp->fieldBrush = CreateSolidBrush(DARK_FIELD);
+        DwmSetWindowAttribute(hWnd, 20 /* DWMWA_USE_IMMERSIVE_DARK_MODE */, &dark, sizeof(dark));
         CreateControls(pApp);
         StartDiscovery(pApp);
         SetTimer(hWnd, POSITION_TIMER, POSITION_TICK_MS, NULL);
         return 0;
+    }
+    case WM_ERASEBKGND:
+    {
+        RECT rect; GetClientRect(hWnd, &rect);
+        FillRect((HDC)wParam, &rect, pApp->backgroundBrush);
+        return 1;
+    }
+    case WM_CTLCOLORSTATIC:
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORLISTBOX:
+    {
+        int field = message == WM_CTLCOLOREDIT || message == WM_CTLCOLORLISTBOX || (HWND)lParam == pApp->hSubtitle;
+        SetTextColor((HDC)wParam, IsWindowEnabled((HWND)lParam) ? DARK_TEXT : DARK_MUTED);
+        SetBkColor((HDC)wParam, field ? DARK_FIELD : DARK_BACKGROUND);
+        return (LRESULT)(field ? pApp->fieldBrush : pApp->backgroundBrush);
+    }
+    case WM_DRAWITEM:
+    {
+        const DRAWITEMSTRUCT* item = (const DRAWITEMSTRUCT*)lParam;
+        WCHAR label[128];
+        HBRUSH fill;
+        if (item->CtlType != ODT_BUTTON) break;
+        fill = CreateSolidBrush((item->itemState & ODS_SELECTED) ? RGB(48, 91, 146) : DARK_FIELD);
+        FillRect(item->hDC, &item->rcItem, fill); DeleteObject(fill);
+        SetBkMode(item->hDC, TRANSPARENT);
+        SetTextColor(item->hDC, (item->itemState & ODS_DISABLED) ? DARK_MUTED : DARK_TEXT);
+        GetWindowTextW(item->hwndItem, label, 128);
+        {
+            RECT rect = item->rcItem;
+            DrawTextW(item->hDC, label, -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            if (item->itemState & ODS_FOCUS) { InflateRect(&rect, -3, -3); DrawFocusRect(item->hDC, &rect); }
+        }
+        return TRUE;
+    }
     case WM_TIMER:
         if (POSITION_TIMER == wParam)
         {
             OnPositionTimer(pApp);
+            if (pApp->hGainThread)
+            {
+                WCHAR progress[100];
+                _snwprintf_s(progress, 100, _TRUNCATE, L"Preparing %u%% gain: %ld%%", pApp->gainPercent, InterlockedCompareExchange(&pApp->gainProgress, 0, 0));
+                SetWindowTextW(pApp->hGainState, progress);
+            }
         }
+        else if (wParam == SUBTITLE_TIMER) { KillTimer(hWnd, SUBTITLE_TIMER); if (!pApp->pSession) RefreshSubtitles(pApp); }
+        else if (wParam == GAIN_TIMER) { KillTimer(hWnd, GAIN_TIMER); ScheduleGain(pApp); }
         return 0;
     case WM_SIZE:
         Layout(pApp);
         return 0;
     case WM_GETMINMAXINFO:
-        ((MINMAXINFO*)lParam)->ptMinTrackSize.x = Scale(pApp, 520);
-        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = Scale(pApp, 520);
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.x = Scale(pApp, 620);
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = Scale(pApp, 584);
         return 0;
     case WM_DPICHANGED:
     {
@@ -1087,6 +1369,9 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         case ID_BROWSE:
             Browse(pApp);
             return 0;
+        case ID_SUBTITLE_BROWSE:
+            BrowseSubtitles(pApp);
+            return 0;
         case ID_CAST:
             StartCast(pApp);
             return 0;
@@ -1103,6 +1388,7 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             if (EN_CHANGE == HIWORD(wParam))
             {
                 UpdateControls(pApp);
+                SetTimer(hWnd, SUBTITLE_TIMER, 350, NULL);
             }
             return 0;
         case ID_MOTION_CHECK:
@@ -1119,6 +1405,35 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
     {
         const NMHDR* pHeader = (const NMHDR*)lParam;
 
+        if (NM_CUSTOMDRAW == pHeader->code)
+        {
+            NMCUSTOMDRAW* draw = (NMCUSTOMDRAW*)lParam;
+            int slider = pHeader->hwndFrom == pApp->hGain || pHeader->hwndFrom == pApp->hSeek || pHeader->hwndFrom == pApp->hResSlider ||
+                         pHeader->hwndFrom == pApp->hQpSlider || pHeader->hwndFrom == pApp->hGopSlider || pHeader->hwndFrom == pApp->hMotionSlider;
+            if (slider || pHeader->hwndFrom == ListView_GetHeader(pApp->hList))
+            {
+                if (draw->dwDrawStage == CDDS_PREPAINT) return CDRF_NOTIFYITEMDRAW;
+                if (draw->dwDrawStage == CDDS_ITEMPREPAINT && slider)
+                {
+                    HBRUSH brush = CreateSolidBrush(draw->dwItemSpec == TBCD_THUMB ? (IsWindowEnabled(pHeader->hwndFrom) ? DARK_ACCENT : DARK_MUTED) : DARK_FIELD);
+                    FillRect(draw->hdc, &draw->rc, brush); DeleteObject(brush);
+                    return CDRF_SKIPDEFAULT;
+                }
+                if (draw->dwDrawStage == CDDS_ITEMPREPAINT)
+                {
+                    WCHAR text[128];
+                    HDITEMW item = {0}; RECT rect = draw->rc;
+                    item.mask = HDI_TEXT; item.pszText = text; item.cchTextMax = 128;
+                    Header_GetItem(pHeader->hwndFrom, (int)draw->dwItemSpec, &item);
+                    FillRect(draw->hdc, &rect, pApp->fieldBrush);
+                    SetBkMode(draw->hdc, TRANSPARENT); SetTextColor(draw->hdc, DARK_MUTED);
+                    rect.left += Scale(pApp, 6);
+                    DrawTextW(draw->hdc, text, -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+                    return CDRF_SKIPDEFAULT;
+                }
+            }
+        }
+
         if (pHeader->hwndFrom == pApp->hList)
         {
             if (LVN_ITEMCHANGED == pHeader->code)
@@ -1133,7 +1448,16 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         return 0;
     }
     case WM_HSCROLL:
-        if ((HWND)lParam == pApp->hSeek)
+        if ((HWND)lParam == pApp->hGain)
+        {
+            WCHAR text[64];
+            unsigned percent = (unsigned)SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0);
+            _snwprintf_s(text, 64, _TRUNCATE, L"Audio gain %u%%", percent);
+            SetWindowTextW(pApp->hGainLabel, text);
+            if (pApp->pSession) SetTimer(hWnd, GAIN_TIMER, 500, NULL);
+            else SetWindowTextW(pApp->hGainState, percent == 100 ? L"Original audio" : L"Applies during playback");
+        }
+        else if ((HWND)lParam == pApp->hSeek)
         {
             OnSeekScroll(pApp, LOWORD(wParam));
         }
@@ -1198,7 +1522,11 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         (void)pResult; /* App-owned storage; nothing to free */
         return 0;
     }
+    case WM_APP_GAIN_DONE:
+        FinishGain(pApp, (unsigned)wParam);
+        return 0;
     case WM_CLOSE:
+        CancelGain(pApp);
         if (NULL != pApp->hPreviewThread)
         {
             InterlockedExchange(&pApp->previewCancel, 1);
@@ -1214,6 +1542,8 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         DestroyWindow(hWnd);
         return 0;
     case WM_DESTROY:
+        DeleteObject(pApp->backgroundBrush);
+        DeleteObject(pApp->fieldBrush);
         PostQuitMessage(0);
         return 0;
     default:
@@ -1253,7 +1583,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     wc.lpfnWndProc   = WindowProc;
     wc.hInstance     = hInstance;
     wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+    wc.hbrBackground = NULL;
     wc.lpszClassName = kClass;
     wc.hIcon         = LoadIconW(NULL, IDI_APPLICATION);
     if (0 == RegisterClassExW(&wc))
@@ -1263,7 +1593,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
     }
     g_app.hInstance = hInstance;
     g_app.dpi       = GetDpiForSystem();
-    hWnd            = CreateWindowExW(0, kClass, L"CastDemo", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, Scale(&g_app, 660), Scale(&g_app, 620), NULL, NULL, hInstance, NULL);
+    hWnd            = CreateWindowExW(0, kClass, L"CastDemo", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, Scale(&g_app, 720), Scale(&g_app, 700), NULL, NULL, hInstance, NULL);
     if (NULL == hWnd)
     {
         WSACleanup();

@@ -7,6 +7,7 @@
 #define CAST_SESSION_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 typedef enum CastPlayerState
 {
@@ -44,6 +45,8 @@ typedef struct CastSessionConfig
     char          contentUrl[1200]; /* full-quality stream: what the receiver fetches when settled */
     char          contentType[64];  /* media type of the full-quality content */
     char          title[512];       /* shown on the receiver's screen */
+    char          subtitleUrl[1200]; /* optional WebVTT, kept across loop/proxy LOADs */
+    char          subtitleLanguage[16];
     int           loop;             /* reload when the media finishes */
     int           verbose;          /* log every message sent and received */
     int           servingLocally;   /* add the firewall hint to a LOAD failure */
@@ -68,10 +71,19 @@ typedef struct CastSession CastSession;
 /* Copies the configuration. WSAStartup must have been called. */
 CastSession* CastSession_Create(const CastSessionConfig* pConfig);
 
+/* Shared LOAD encoder; returns 0 instead of sending truncated JSON. */
+size_t CastSession_FormatLoad(const CastSessionConfig* config, const char* sessionId, int requestId,
+                             const char* url, const char* type, double start, int autoplay, const char* streamType,
+                             char* output, size_t capacity);
+
 /* Supplies the low-latency scrub proxy once it has been generated (a low-resolution transcode of
 ** the same content, same timeline, with synced audio). Until this is set, scrubbing uses the
 ** full-quality stream. Thread-safe: call from the transcode thread when the proxy is ready. */
 void CastSession_SetProxy(CastSession* pSession, const char* pUrl, const char* pContentType);
+
+/* Thread-safe: switch to a prepared gain variant at the current position, preserving
+** pause state and subtitles. Supersedes the scrub proxy and becomes the loop source. */
+void CastSession_ReplaceMedia(CastSession* session, const char* url, const char* contentType);
 
 /* Blocks until the media finishes, the receiver leaves, a STOP arrives or the channel fails.
 ** Returns 0 when playback completed or was stopped on request, 1 on failure. */

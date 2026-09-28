@@ -14,6 +14,7 @@ typedef struct Mp4Sample
 {
     uint64_t offset;          /* byte offset of the sample in the file */
     uint32_t size;            /* sample size in bytes */
+    uint32_t duration;        /* in track timescale units, including the final sample */
     int64_t  decodeTime;      /* in track timescale units */
     int64_t  compositionTime; /* decodeTime + ctts offset */
     int      keyframe;        /* a sync sample (IDR) */
@@ -59,5 +60,11 @@ const Mp4Sample* Mp4Demux_AudioSample(const Mp4Demux* pDemux, unsigned index);
 uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity);
 
 void Mp4Demux_Close(Mp4Demux* pDemux);
+
+/* Reads a local MP4/MOV tx3g (mov_text) track independently of the video codec.
+** index is zero-based among supported text tracks. A NULL callback only probes metadata.
+** Sample bytes begin with a big-endian text length; modifier boxes follow the text. */
+typedef int (*Mp4TextProc)(void* pUser, double start, double end, const uint8_t* pData, uint32_t size);
+int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser);
 
 #endif

@@ -1,0 +1,150 @@
+#define COBJMACROS
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <mfapi.h>
+#include <mfidl.h>
+#include <mfreadwrite.h>
+#include <mferror.h>
+#include <propvarutil.h>
+#include <stdio.h>
+#include "audio_gain.h"
+
+void AudioGain_Apply(int16_t* samples, size_t count, unsigned percent)
+{
+    size_t i;
+    if (percent > 400) percent = 400;
+    for (i = 0; i < count; ++i)
+    {
+        int value = (int)samples[i] * (int)percent / 100;
+        samples[i] = (int16_t)(value > 32767 ? 32767 : value < -32768 ? -32768 : value);
+    }
+}
+
+#define TRY(call) do { hr = (call); if (FAILED(hr)) goto done; } while (0)
+#define RELEASE(type, value) do { if (value) { type##_Release(value); value = NULL; } } while (0)
+
+int AudioGain_Convert(const wchar_t* source, const wchar_t* dest, unsigned percent,
+                      volatile long* cancel, volatile long* progress, char* error, size_t errorCapacity)
+{
+    IMFSourceReader* reader = NULL;
+    IMFSinkWriter* writer = NULL;
+    IMFMediaType *video = NULL, *nativeAudio = NULL, *pcm = NULL, *aac = NULL;
+    IMFAttributes* attributes = NULL;
+    IMFSample* sample = NULL;
+    IMFMediaBuffer* buffer = NULL;
+    HRESULT hr, com = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    int started = 0, ok = 0;
+    DWORD videoIn = 0, audioIn = 0, videoOut = 0, audioOut = 0;
+    UINT32 channels = 0, rate = 0;
+    LONGLONG duration = 0;
+    int videoEnd = 0, audioEnd = 0;
+    if (errorCapacity) error[0] = 0;
+    if (FAILED(com)) { hr = com; goto done; }
+    TRY(MFStartup(MF_VERSION, MFSTARTUP_FULL)); started = 1;
+    TRY(MFCreateSourceReaderFromURL(source, NULL, &reader));
+    TRY(IMFSourceReader_SetStreamSelection(reader, MF_SOURCE_READER_ALL_STREAMS, FALSE));
+    /* Find the actual stream indexes; ANY_STREAM returns these rather than the sentinel IDs. */
+    for (DWORD i = 0; ; ++i)
+    {
+        IMFMediaType* type = NULL;
+        GUID major;
+        hr = IMFSourceReader_GetNativeMediaType(reader, i, 0, &type);
+        if (hr == MF_E_INVALIDSTREAMNUMBER) break;
+        if (FAILED(hr)) goto done;
+        hr = IMFMediaType_GetGUID(type, &MF_MT_MAJOR_TYPE, &major);
+        if (SUCCEEDED(hr) && IsEqualGUID(&major, &MFMediaType_Video) && !video) { video = type; videoIn = i; }
+        else if (SUCCEEDED(hr) && IsEqualGUID(&major, &MFMediaType_Audio) && !nativeAudio) { nativeAudio = type; audioIn = i; }
+        else IMFMediaType_Release(type);
+    }
+    if (!video || !nativeAudio) { hr = MF_E_INVALIDMEDIATYPE; goto done; }
+    TRY(IMFMediaType_GetUINT32(nativeAudio, &MF_MT_AUDIO_NUM_CHANNELS, &channels));
+    TRY(IMFMediaType_GetUINT32(nativeAudio, &MF_MT_AUDIO_SAMPLES_PER_SECOND, &rate));
+    if ((channels != 1 && channels != 2 && channels != 6) || (rate != 44100 && rate != 48000)) { hr = MF_E_INVALIDMEDIATYPE; goto done; }
+    TRY(IMFSourceReader_SetCurrentMediaType(reader, videoIn, NULL, video));
+    TRY(IMFSourceReader_SetStreamSelection(reader, videoIn, TRUE));
+    TRY(IMFSourceReader_SetStreamSelection(reader, audioIn, TRUE));
+    TRY(MFCreateMediaType(&pcm));
+    TRY(IMFMediaType_SetGUID(pcm, &MF_MT_MAJOR_TYPE, &MFMediaType_Audio));
+    TRY(IMFMediaType_SetGUID(pcm, &MF_MT_SUBTYPE, &MFAudioFormat_PCM));
+    TRY(IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_NUM_CHANNELS, channels));
+    TRY(IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_SAMPLES_PER_SECOND, rate));
+    TRY(IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_BITS_PER_SAMPLE, 16));
+    TRY(IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_BLOCK_ALIGNMENT, channels * 2));
+    TRY(IMFMediaType_SetUINT32(pcm, &MF_MT_AUDIO_AVG_BYTES_PER_SECOND, rate * channels * 2));
+    TRY(IMFSourceReader_SetCurrentMediaType(reader, audioIn, NULL, pcm));
+    RELEASE(IMFMediaType, pcm);
+    TRY(IMFSourceReader_GetCurrentMediaType(reader, audioIn, &pcm));
+    TRY(MFCreateMediaType(&aac));
+    TRY(IMFMediaType_SetGUID(aac, &MF_MT_MAJOR_TYPE, &MFMediaType_Audio));
+    TRY(IMFMediaType_SetGUID(aac, &MF_MT_SUBTYPE, &MFAudioFormat_AAC));
+    TRY(IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_NUM_CHANNELS, channels));
+    TRY(IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_SAMPLES_PER_SECOND, rate));
+    TRY(IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_BITS_PER_SAMPLE, 16));
+    TRY(IMFMediaType_SetUINT32(aac, &MF_MT_AUDIO_AVG_BYTES_PER_SECOND, channels == 6 ? 72000 : 24000));
+    if (channels == 6) TRY(IMFMediaType_SetUINT32(aac, &MF_MT_AAC_AUDIO_PROFILE_LEVEL_INDICATION, 0x2a));
+    TRY(IMFMediaType_SetUINT32(aac, &MF_MT_AAC_PAYLOAD_TYPE, 0));
+    TRY(MFCreateAttributes(&attributes, 2));
+    TRY(IMFAttributes_SetUINT32(attributes, &MF_SINK_WRITER_DISABLE_THROTTLING, TRUE));
+    TRY(MFCreateSinkWriterFromURL(dest, NULL, attributes, &writer));
+    TRY(IMFSinkWriter_AddStream(writer, video, &videoOut));
+    TRY(IMFSinkWriter_SetInputMediaType(writer, videoOut, video, NULL));
+    TRY(IMFSinkWriter_AddStream(writer, aac, &audioOut));
+    TRY(IMFSinkWriter_SetInputMediaType(writer, audioOut, pcm, NULL));
+    TRY(IMFSinkWriter_BeginWriting(writer));
+    {
+        PROPVARIANT value;
+        PropVariantInit(&value);
+        if (SUCCEEDED(IMFSourceReader_GetPresentationAttribute(reader, MF_SOURCE_READER_MEDIASOURCE, &MF_PD_DURATION, &value)) && value.vt == VT_UI8)
+            duration = (LONGLONG)value.uhVal.QuadPart;
+        PropVariantClear(&value);
+    }
+    while (!videoEnd || !audioEnd)
+    {
+        DWORD stream, flags;
+        LONGLONG time;
+        if (cancel && InterlockedCompareExchange(cancel, 0, 0)) { hr = E_ABORT; goto done; }
+        TRY(IMFSourceReader_ReadSample(reader, MF_SOURCE_READER_ANY_STREAM, 0, &stream, &flags, &time, &sample));
+        if (flags & MF_SOURCE_READERF_ERROR) { hr = E_FAIL; goto done; }
+        if (flags & MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED) { hr = MF_E_INVALIDMEDIATYPE; goto done; }
+        if (sample)
+        {
+            if (stream == audioIn)
+            {
+                BYTE* bytes;
+                DWORD length;
+                TRY(IMFSample_ConvertToContiguousBuffer(sample, &buffer));
+                TRY(IMFMediaBuffer_Lock(buffer, &bytes, NULL, &length));
+                AudioGain_Apply((int16_t*)bytes, length / sizeof(int16_t), percent);
+                hr = IMFMediaBuffer_Unlock(buffer);
+                RELEASE(IMFMediaBuffer, buffer);
+                if (FAILED(hr)) goto done;
+            }
+            TRY(IMFSinkWriter_WriteSample(writer, stream == audioIn ? audioOut : videoOut, sample));
+            RELEASE(IMFSample, sample);
+        }
+        else if (flags & MF_SOURCE_READERF_STREAMTICK)
+            TRY(IMFSinkWriter_SendStreamTick(writer, stream == audioIn ? audioOut : videoOut, time));
+        if (flags & MF_SOURCE_READERF_ENDOFSTREAM)
+        {
+            if (stream == videoIn) videoEnd = 1;
+            if (stream == audioIn) audioEnd = 1;
+            TRY(IMFSourceReader_SetStreamSelection(reader, stream, FALSE));
+        }
+        if (progress && duration > 0 && time >= 0)
+            InterlockedExchange(progress, (LONG)(time >= duration ? 99 : time * 100 / duration));
+    }
+    TRY(IMFSinkWriter_Finalize(writer));
+    if (cancel && InterlockedCompareExchange(cancel, 0, 0)) { hr = E_ABORT; goto done; }
+    if (progress) InterlockedExchange(progress, 100);
+    ok = 1;
+done:
+    if (!ok) snprintf(error, errorCapacity, hr == E_ABORT ? "Audio gain cancelled." : "Audio gain failed (0x%08lX). Requires Windows-supported video with 44.1/48 kHz mono, stereo or 5.1 audio.", (unsigned long)hr);
+    RELEASE(IMFMediaBuffer, buffer); RELEASE(IMFSample, sample);
+    RELEASE(IMFSinkWriter, writer); RELEASE(IMFSourceReader, reader);
+    RELEASE(IMFMediaType, video); RELEASE(IMFMediaType, nativeAudio);
+    RELEASE(IMFMediaType, pcm); RELEASE(IMFMediaType, aac); RELEASE(IMFAttributes, attributes);
+    if (started) MFShutdown();
+    if (SUCCEEDED(com)) CoUninitialize();
+    if (!ok) DeleteFileW(dest);
+    return ok;
+}

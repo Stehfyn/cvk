@@ -24,6 +24,8 @@ elseif(UNIX)
     set(cvk_default_platforms xlib posix)
 endif()
 
+option(CVK_BUILD_PYTHON "Generate and build Python bindings" OFF)
+
 
 set(CVK_PLATFORMS "${cvk_default_platforms}" CACHE STRING "Generated platform pairs to compile (semicolon-separated; empty for core only)")
 file(STRINGS external/Vulkan-Headers/registry/vk.xml cvk_platform_registry REGEX "<platform name=")
@@ -170,6 +172,10 @@ else()
 endif()
 
 option(CVK_BUILD_EXAMPLES "Build the Windows example applications" ${WIN32})
+if(CVK_BUILD_PYTHON)
+    add_subdirectory(python)
+endif()
+
 if(CVK_BUILD_EXAMPLES AND WIN32)
     if(NOT "win32" IN_LIST CVK_PLATFORMS)
         message(FATAL_ERROR "The Windows examples require win32 in CVK_PLATFORMS")

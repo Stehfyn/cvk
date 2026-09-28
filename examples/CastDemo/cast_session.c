@@ -51,6 +51,8 @@ typedef struct QueuedCommand
 
 struct CastSession
 {
+    char              replacementUrl[1200];
+    char              replacementType[64];
     CastSessionConfig config;
     CastChannel*      pChannel;
     int               requestId;
@@ -169,29 +171,41 @@ static void EscapeJson(const char* pText, char* pOut, size_t capacity)
 /* streamType selects the receiver's buffering profile: BUFFERED is the deep smooth-VOD buffer
 ** (slow to fill after a seek), LIVE is the shallow low-latency buffer (fills fast, ideal for the
 ** scrub proxy). We control it, so we pick per stream. */
+size_t CastSession_FormatLoad(const CastSessionConfig* config, const char* sessionId, int requestId,
+                             const char* url, const char* type, double start, int autoplay, const char* streamType,
+                             char* output, size_t capacity)
+{
+    char title[3079], content[7207], subtitles[7207], language[103], track[7800];
+    int length;
+    EscapeJson(config->title, title, sizeof(title));
+    EscapeJson(url, content, sizeof(content));
+    EscapeJson(config->subtitleUrl, subtitles, sizeof(subtitles));
+    EscapeJson(config->subtitleLanguage[0] ? config->subtitleLanguage : "und", language, sizeof(language));
+    track[0] = 0;
+    if (config->subtitleUrl[0])
+        snprintf(track, sizeof(track), ",\"tracks\":[{\"trackId\":1,\"type\":\"TEXT\",\"subtype\":\"SUBTITLES\","
+                 "\"name\":\"Subtitles\",\"language\":\"%s\",\"trackContentId\":\"%s\",\"trackContentType\":\"text/vtt\"}],"
+                 "\"textTrackStyle\":{\"foregroundColor\":\"#FFFFFFFF\",\"backgroundColor\":\"#00000000\",\"edgeType\":\"OUTLINE\",\"edgeColor\":\"#000000FF\",\"fontScale\":1.0}", language, subtitles);
+    length = snprintf(output, capacity,
+                      "{\"type\":\"LOAD\",\"requestId\":%d,\"sessionId\":\"%s\",\"autoplay\":%s,\"currentTime\":%.3f,%s"
+                      "\"media\":{\"contentId\":\"%s\",\"contentType\":\"%s\",\"streamType\":\"%s\","
+                      "\"metadata\":{\"metadataType\":0,\"title\":\"%s\"}%s}}",
+                      requestId, sessionId, autoplay ? "true" : "false", start < 0 ? 0 : start,
+                      config->subtitleUrl[0] ? "\"activeTrackIds\":[1]," : "", content, type, streamType, title, track);
+    return length > 0 && (size_t)length < capacity ? (size_t)length : 0;
+}
+
 static int LoadMedia(CastSession* pSession, const char* pUrl, const char* pType, double startSeconds, int autoplay, const char* pStreamType)
 {
-    char payload[3000];
-    char title[1100];
+    char payload[20000];
 
     if (startSeconds < 0)
     {
         startSeconds = 0;
     }
-    EscapeJson(pSession->config.title, title, sizeof(title));
-    (void)snprintf(payload,
-                   sizeof(payload),
-                   "{\"type\":\"LOAD\",\"requestId\":%d,\"sessionId\":\"%s\",\"autoplay\":%s,\"currentTime\":%.3f,"
-                   "\"media\":{\"contentId\":\"%s\",\"contentType\":\"%s\",\"streamType\":\"%s\","
-                   "\"metadata\":{\"metadataType\":0,\"title\":\"%s\"}}}",
-                   ++pSession->requestId,
-                   pSession->sessionId,
-                   autoplay ? "true" : "false",
-                   startSeconds,
-                   pUrl,
-                   pType,
-                   pStreamType,
-                   title);
+    if (!CastSession_FormatLoad(&pSession->config, pSession->sessionId, ++pSession->requestId,
+                               pUrl, pType, startSeconds, autoplay, pStreamType, payload, sizeof(payload)))
+        return 0;
     SetPhase(pSession, CAST_STATE_LOADING, "LOADING");
     pSession->playingWanted    = autoplay;
     pSession->awaitingLoad     = 1; /* the media session id changes; hold seeks until the new one lands */
@@ -206,6 +220,14 @@ static int Load(CastSession* pSession)
     pSession->onProxy       = 0;
     pSession->settlePending = 0;
     return LoadMedia(pSession, pSession->config.contentUrl, pSession->config.contentType, 0, 1, "BUFFERED");
+}
+
+void CastSession_ReplaceMedia(CastSession* session, const char* url, const char* contentType)
+{
+    EnterCriticalSection(&session->lock);
+    snprintf(session->replacementUrl, sizeof(session->replacementUrl), "%s", url);
+    snprintf(session->replacementType, sizeof(session->replacementType), "%s", contentType);
+    LeaveCriticalSection(&session->lock);
 }
 
 void CastSession_SetProxy(CastSession* pSession, const char* pUrl, const char* pContentType)
@@ -819,6 +841,31 @@ int CastSession_Run(CastSession* pSession)
         {
             pReason = CastChannel_GetError(pSession->pChannel);
             goto done;
+        }
+        if (!pSession->awaitingLoad && !pSession->scrubbing && !pSession->seekPending && pSession->mediaSessionId &&
+            (pSession->status.state == CAST_STATE_PLAYING || pSession->status.state == CAST_STATE_PAUSED))
+        {
+            int replace = 0;
+            EnterCriticalSection(&pSession->lock);
+            if (pSession->replacementUrl[0])
+            {
+                snprintf(pSession->config.contentUrl, sizeof(pSession->config.contentUrl), "%s", pSession->replacementUrl);
+                snprintf(pSession->config.contentType, sizeof(pSession->config.contentType), "%s", pSession->replacementType);
+                pSession->replacementUrl[0] = 0;
+                pSession->haveProxy = 0;
+                replace = 1;
+            }
+            LeaveCriticalSection(&pSession->lock);
+            if (replace)
+            {
+                pSession->onProxy = 0;
+                pSession->switchedToProxy = 1;
+                proxyReady = 0;
+                Log(pSession, "applying audio gain at %.1f s", pSession->status.currentTime);
+                if (!LoadMedia(pSession, pSession->config.contentUrl, pSession->config.contentType,
+                               pSession->status.currentTime, pSession->status.state == CAST_STATE_PLAYING, "BUFFERED"))
+                    goto done;
+            }
         }
         /* Once the proxy is ready, move onto it a single time and stay there. It is a short-GOP
         ** stream, so from here every seek is a cheap in-stream SEEK: no LOAD, no audio reset. The

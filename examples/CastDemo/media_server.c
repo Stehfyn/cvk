@@ -24,6 +24,22 @@ typedef struct LiveState
     volatile LONG complete;
 } LiveState;
 
+typedef struct SubtitleData
+{
+    volatile LONG refcount;
+    size_t size;
+    char data[1];
+} SubtitleData;
+
+static void SubtitleData_Release(SubtitleData* subtitles)
+{
+    if (subtitles && !InterlockedDecrement(&subtitles->refcount)) free(subtitles);
+}
+
+#define CORS_HEADERS "Access-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, HEAD, OPTIONS\r\n" \
+                     "Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Range\r\n" \
+                     "Access-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges\r\n"
+
 static void LiveState_AddRef(LiveState* pLive)
 {
     if (NULL != pLive)
@@ -50,6 +66,7 @@ struct MediaServer
     unsigned short port;
     uint64_t       size;
     LiveState*     live; /* non-NULL when the file is still being written (growing proxy) */
+    SubtitleData*  subtitles;
 };
 
 /* Everything a request thread needs, copied so the server may be freed while it streams. */
@@ -61,6 +78,7 @@ typedef struct Connection
     char       contentType[64];
     uint64_t   size;
     LiveState* live; /* non-NULL for a growing file: stream to the live end, not a fixed size */
+    SubtitleData* subtitles;
 } Connection;
 
 static int ParseUint64(const char* pText, size_t length, uint64_t* pValue)
@@ -397,7 +415,7 @@ static int HandleGrowingRequest(const Connection* pConnection, const char* pRequ
                    "HTTP/1.1 200 OK\r\n"
                    "Content-Type: %s\r\n"
                    "Accept-Ranges: none\r\n"
-                   "Access-Control-Allow-Origin: *\r\n"
+                   CORS_HEADERS
                    "Connection: close\r\n\r\n",
                    pConnection->contentType);
     if (!SendAll(pConnection->socket, header, strlen(header)))
@@ -475,7 +493,7 @@ static int HandleRequest(const Connection* pConnection, const char* pRequest)
                    "Content-Type: %s\r\n"
                    "Content-Length: %llu\r\n"
                    "Accept-Ranges: bytes\r\n"
-                   "Access-Control-Allow-Origin: *\r\n"
+                   CORS_HEADERS
                    "Connection: %s\r\n",
                    status,
                    (200 == status) ? "OK" : "Partial Content",
@@ -527,6 +545,30 @@ static int HandleRequest(const Connection* pConnection, const char* pRequest)
     }
 }
 
+static int HandleSubtitleRequest(const Connection* connection, const char* request)
+{
+    char header[1024], range[128];
+    uint64_t first = 0, last = 0, length;
+    int status = 200, ranged = 0;
+    const SubtitleData* subtitles = connection->subtitles;
+    if (!subtitles)
+        return SendAll(connection->socket, "HTTP/1.1 404 Not Found\r\n" CORS_HEADERS "Content-Length: 0\r\nConnection: close\r\n\r\n",
+                       sizeof("HTTP/1.1 404 Not Found\r\n" CORS_HEADERS "Content-Length: 0\r\nConnection: close\r\n\r\n") - 1), 0;
+    length = subtitles->size;
+    if (FindHeader(request, "Range", range, sizeof(range))) ranged = MediaServer_ParseRange(range, length, &first, &last);
+    if (ranged < 0)
+    {
+        snprintf(header, sizeof(header), "HTTP/1.1 416 Range Not Satisfiable\r\n" CORS_HEADERS "Content-Range: bytes */%zu\r\nContent-Length: 0\r\nConnection: close\r\n\r\n", subtitles->size);
+        SendAll(connection->socket, header, strlen(header)); return 0;
+    }
+    if (ranged) { length = last - first + 1; status = 206; }
+    snprintf(header, sizeof(header), "HTTP/1.1 %d %s\r\nContent-Type: text/vtt; charset=utf-8\r\n" CORS_HEADERS
+             "Content-Length: %llu\r\nAccept-Ranges: bytes\r\nConnection: keep-alive\r\n", status, ranged ? "Partial Content" : "OK", (unsigned long long)length);
+    if (ranged) snprintf(header + strlen(header), sizeof(header) - strlen(header), "Content-Range: bytes %llu-%llu/%zu\r\n", (unsigned long long)first, (unsigned long long)last, subtitles->size);
+    strcat_s(header, sizeof(header), "\r\n");
+    return SendAll(connection->socket, header, strlen(header)) && (!strncmp(request, "HEAD ", 5) || SendAll(connection->socket, subtitles->data + first, (size_t)length));
+}
+
 static DWORD WINAPI ServeConnection(LPVOID pParameter)
 {
     Connection* pConnection = (Connection*)pParameter;
@@ -540,7 +582,7 @@ static DWORD WINAPI ServeConnection(LPVOID pParameter)
     setsockopt(pConnection->socket, SOL_SOCKET, SO_SNDBUF, (const char*)&sendBuffer, sizeof(sendBuffer));
     /* Share read AND write: a growing proxy file is still held open for writing by the muxer, so
     ** without FILE_SHARE_WRITE this open would fail with a sharing violation. */
-    pConnection->hFile = CreateFileW(pConnection->file, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    pConnection->hFile = CreateFileW(pConnection->file, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
     request[0]         = 0;
     for (;;)
     {
@@ -564,12 +606,26 @@ static DWORD WINAPI ServeConnection(LPVOID pParameter)
             request[used] = 0;
         }
         requestLength = (int)(pEnd + 4 - request);
-        if (NULL != pConnection->live)
+        if (!strncmp(request, "OPTIONS ", 8))
+        {
+            static const char response[] = "HTTP/1.1 204 No Content\r\n" CORS_HEADERS "Content-Length: 0\r\nConnection: keep-alive\r\n\r\n";
+            if (!SendAll(pConnection->socket, response, sizeof(response) - 1)) break;
+        }
+        else if (!strncmp(request, "GET /subtitles.vtt ", 19) || !strncmp(request, "HEAD /subtitles.vtt ", 20))
+        {
+            if (!HandleSubtitleRequest(pConnection, request)) break;
+        }
+        else if (!pConnection->file[0])
+        {
+            static const char response[] = "HTTP/1.1 404 Not Found\r\n" CORS_HEADERS "Content-Length: 0\r\nConnection: close\r\n\r\n";
+            SendAll(pConnection->socket, response, sizeof(response)-1); break;
+        }
+        else if (NULL != pConnection->live)
         {
             (void)HandleGrowingRequest(pConnection, request);
             break; /* a growing response streams to end of file, then closes */
         }
-        if (!HandleRequest(pConnection, request))
+        else if (!HandleRequest(pConnection, request))
         {
             break;
         }
@@ -586,6 +642,7 @@ done:
     shutdown(pConnection->socket, SD_SEND);
     closesocket(pConnection->socket);
     LiveState_Release(pConnection->live);
+    SubtitleData_Release(pConnection->subtitles);
     free(pConnection);
     return 0;
 }
@@ -617,6 +674,8 @@ static DWORD WINAPI AcceptLoop(LPVOID pParameter)
         pConnection->socket = s;
         pConnection->size   = pServer->size;
         pConnection->live   = pServer->live;
+        pConnection->subtitles = pServer->subtitles;
+        if (pConnection->subtitles) InterlockedIncrement(&pConnection->subtitles->refcount);
         LiveState_AddRef(pConnection->live);
         memcpy(pConnection->file, pServer->file, sizeof(pConnection->file));
         memcpy(pConnection->contentType, pServer->contentType, sizeof(pConnection->contentType));
@@ -625,6 +684,7 @@ static DWORD WINAPI AcceptLoop(LPVOID pParameter)
         {
             closesocket(s);
             LiveState_Release(pConnection->live);
+            SubtitleData_Release(pConnection->subtitles);
             free(pConnection);
             continue;
         }
@@ -633,7 +693,7 @@ static DWORD WINAPI AcceptLoop(LPVOID pParameter)
     return 0;
 }
 
-static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, int growing, char* pError, size_t errorCapacity)
+static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, int growing, const char* pVtt, size_t vttSize, char* pError, size_t errorCapacity)
 {
     WIN32_FILE_ATTRIBUTE_DATA attributes;
     MediaServer*              pServer;
@@ -641,7 +701,8 @@ static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress
     int                       addressLength = sizeof(address);
     const BOOL                exclusive     = TRUE;
 
-    if (!GetFileAttributesExW(pFile, GetFileExInfoStandard, &attributes) || (FILE_ATTRIBUTE_DIRECTORY & attributes.dwFileAttributes))
+    ZeroMemory(&attributes, sizeof(attributes));
+    if (pFile && (!GetFileAttributesExW(pFile, GetFileExInfoStandard, &attributes) || (FILE_ATTRIBUTE_DIRECTORY & attributes.dwFileAttributes)))
     {
         (void)snprintf(pError, errorCapacity, "cannot open the media file");
         return NULL;
@@ -654,13 +715,13 @@ static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress
     }
     pServer->size = ((uint64_t)attributes.nFileSizeHigh << 32) | attributes.nFileSizeLow;
     (void)snprintf(pServer->contentType, sizeof(pServer->contentType), "%s", pContentType);
-    if (wcslen(pFile) >= MAX_PATH)
+    if (pFile && wcslen(pFile) >= MAX_PATH)
     {
         (void)snprintf(pError, errorCapacity, "the media path is too long");
         free(pServer);
         return NULL;
     }
-    wcscpy_s(pServer->file, MAX_PATH, pFile);
+    if (pFile) wcscpy_s(pServer->file, MAX_PATH, pFile);
 
     pServer->listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (INVALID_SOCKET == pServer->listener)
@@ -698,12 +759,25 @@ static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress
         }
         pServer->live->refcount = 1; /* the server's own reference */
     }
+    if (pVtt && vttSize)
+    {
+        pServer->subtitles = (SubtitleData*)malloc(sizeof(SubtitleData) + vttSize);
+        if (!pServer->subtitles)
+        {
+            snprintf(pError, errorCapacity, "out of memory");
+            closesocket(pServer->listener); LiveState_Release(pServer->live); free(pServer); return NULL;
+        }
+        pServer->subtitles->refcount = 1;
+        pServer->subtitles->size = vttSize;
+        memcpy(pServer->subtitles->data, pVtt, vttSize);
+    }
     pServer->thread = CreateThread(NULL, 0, AcceptLoop, pServer, 0, NULL);
     if (NULL == pServer->thread)
     {
         (void)snprintf(pError, errorCapacity, "CreateThread failed (%lu)", GetLastError());
         closesocket(pServer->listener);
         LiveState_Release(pServer->live);
+        SubtitleData_Release(pServer->subtitles);
         free(pServer);
         return NULL;
     }
@@ -712,12 +786,18 @@ static MediaServer* StartInternal(const wchar_t* pFile, const char* pBindAddress
 
 MediaServer* MediaServer_Start(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity)
 {
-    return StartInternal(pFile, pBindAddress, port, pContentType, 0, pError, errorCapacity);
+    return StartInternal(pFile, pBindAddress, port, pContentType, 0, NULL, 0, pError, errorCapacity);
+}
+
+MediaServer* MediaServer_StartWithSubtitles(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType,
+                                          const char* pVtt, size_t vttSize, char* pError, size_t errorCapacity)
+{
+    return StartInternal(pFile, pBindAddress, port, pContentType, 0, pVtt, vttSize, pError, errorCapacity);
 }
 
 MediaServer* MediaServer_StartGrowing(const wchar_t* pFile, const char* pBindAddress, unsigned short port, const char* pContentType, char* pError, size_t errorCapacity)
 {
-    return StartInternal(pFile, pBindAddress, port, pContentType, 1, pError, errorCapacity);
+    return StartInternal(pFile, pBindAddress, port, pContentType, 1, NULL, 0, pError, errorCapacity);
 }
 
 void MediaServer_MarkComplete(MediaServer* pServer)
@@ -748,5 +828,6 @@ void MediaServer_Stop(MediaServer* pServer)
     WaitForSingleObject(pServer->thread, 2000);
     CloseHandle(pServer->thread);
     LiveState_Release(pServer->live); /* connections in flight keep their own reference */
+    SubtitleData_Release(pServer->subtitles);
     free(pServer);
 }

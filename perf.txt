@@ -1,8 +1,8 @@
-vkCreateInstance (validation)  136.62 ms
-vkCreateWin32SurfaceKHR        0.47 ms
-PhysicalDevice selection       0.96 ms
-findQueueFamily                0.75 ms
-cvkCreateDevice                58.57 ms
-cvkCreateSwapchain             176.92 ms
-ImageViews + Framebuffers      0.07 ms
-Shaders + Pipeline             17.20 ms
+vkCreateInstance (validation)  116.82 ms
+vkCreateWin32SurfaceKHR        0.04 ms
+PhysicalDevice selection       0.66 ms
+findQueueFamily                0.02 ms
+cvkCreateDevice                27.42 ms
+cvkCreateSwapchain             78.46 ms
+ImageViews + Framebuffers      0.09 ms
+Shaders + Pipeline             1.28 ms

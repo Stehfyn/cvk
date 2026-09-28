@@ -852,6 +852,48 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
 
 #include "mp4_mux.h"
 
+/* Never replace a source with a proxy that silently drops its audio. */
+static int CanPreserveAudio(const Mp4Demux* pDemux)
+{
+    uint32_t config_size;
+
+    if (MP4_AUDIO_NONE == Mp4Demux_AudioCodec(pDemux))
+    {
+        return 1;
+    }
+    (void)Mp4Demux_AudioConfig(pDemux, &config_size);
+    return MP4_AUDIO_AAC == Mp4Demux_AudioCodec(pDemux) && config_size > 0 &&
+           Mp4Demux_AudioSampleCount(pDemux) > 0 && Mp4Demux_AudioTimescale(pDemux) > 0 &&
+           Mp4Demux_AudioSampleRate(pDemux) > 0 && Mp4Demux_AudioChannels(pDemux) > 0;
+}
+
+/* Copy every audio sample starting before this video's end, including the last frame.
+** A failed read/write must fail the proxy, so the session keeps the original stream. */
+static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex,
+                          uint8_t* pBuffer, double endSeconds)
+{
+    const unsigned timescale = Mp4Demux_AudioTimescale(pDemux);
+    const unsigned count = Mp4Demux_AudioSampleCount(pDemux);
+
+    while (*pIndex < count)
+    {
+        const Mp4Sample* pSample = Mp4Demux_AudioSample(pDemux, *pIndex);
+        uint32_t bytes;
+
+        if ((double)pSample->decodeTime / timescale >= endSeconds)
+        {
+            break;
+        }
+        bytes = Mp4Demux_ReadAudioSample(pDemux, *pIndex, pBuffer, 64u * 1024u);
+        if (0 == bytes || 0 == pSample->duration || !Mp4Mux_AddAudio(pMux, pBuffer, bytes, pSample->duration))
+        {
+            return 0;
+        }
+        ++*pIndex;
+    }
+    return 1;
+}
+
 /* Points pp/pLen at the first NAL of the given type inside an Annex-B buffer (start code stripped). */
 static void FindNalOfType(const uint8_t* pData, uint32_t size, int nalType, const uint8_t** pp, uint32_t* pLen)
 {
@@ -954,6 +996,14 @@ int GpuTranscode_ToMp4(const wchar_t* pSource, const wchar_t* pDest, const GpuTr
     asc             = Mp4Demux_AudioConfig(pTiming, &asc_size);
     has_audio       = (MP4_AUDIO_AAC == Mp4Demux_AudioCodec(pTiming) && audio_samples > 0 && asc_size > 0);
 
+    if (!CanPreserveAudio(pTiming))
+    {
+        Report(pReport, reportCapacity, "source audio cannot be preserved; keeping the original stream\n");
+        Mp4Demux_Close(pTiming);
+        GpuTranscode_Close(pTranscoder);
+        return 0;
+    }
+
     pMux = Mp4Mux_Create(pDest,
                          GpuTranscode_OutWidth(pTranscoder),
                          GpuTranscode_OutHeight(pTranscoder),
@@ -980,7 +1030,7 @@ int GpuTranscode_ToMp4(const wchar_t* pSource, const wchar_t* pDest, const GpuTr
     audio_index  = 0;
     produced     = 0;
     motion_accum = 0.0;
-    ok           = 1;
+    ok           = !has_audio || NULL != audio_buffer;
 
     /* Skip audio that precedes the (possibly seeked) start so the clip's tracks begin together. */
     if (has_audio && video_timescale > 0 && audio_timescale > 0 && start_index > 0)
@@ -1003,13 +1053,12 @@ int GpuTranscode_ToMp4(const wchar_t* pSource, const wchar_t* pDest, const GpuTr
         }
     }
 
-    for (frame = start_index; frame < end_index; ++frame)
+    for (frame = start_index; ok && frame < end_index; ++frame)
     {
         const uint8_t*   coded;
         uint32_t         coded_size;
         int              keyframe;
         const Mp4Sample* p_video;
-        const Mp4Sample* p_next;
         uint32_t         duration;
 
         if (NULL != pCancel && 0 != *pCancel)
@@ -1020,11 +1069,11 @@ int GpuTranscode_ToMp4(const wchar_t* pSource, const wchar_t* pDest, const GpuTr
         coded = GpuTranscode_NextFrame(pTranscoder, &coded_size, &keyframe);
         if (NULL == coded)
         {
+            ok = 0;
             break;
         }
         p_video  = Mp4Demux_Sample(pTiming, frame);
-        p_next   = Mp4Demux_Sample(pTiming, frame + 1u);
-        duration = (NULL != p_video && NULL != p_next) ? (uint32_t)(p_next->decodeTime - p_video->decodeTime) : (video_timescale ? video_timescale / 30u : 3000u);
+        duration = p_video->duration;
         if (!Mp4Mux_AddVideo(pMux, coded, coded_size, duration, keyframe))
         {
             ok = 0;
@@ -1034,29 +1083,10 @@ int GpuTranscode_ToMp4(const wchar_t* pSource, const wchar_t* pDest, const GpuTr
         motion_accum += GpuTranscode_LastMotion(pTranscoder);
 
         /* Interleave audio up to this frame's end time (absolute), so the mdat stays in play order. */
-        if (has_audio && video_timescale > 0 && audio_timescale > 0 && NULL != p_next)
+        if (has_audio)
         {
-            while (audio_index < audio_samples)
-            {
-                const Mp4Sample* p_audio;
-                const Mp4Sample* p_audio_next;
-                uint32_t         audio_bytes;
-                uint32_t         audio_duration;
-
-                p_audio = Mp4Demux_AudioSample(pTiming, audio_index);
-                if (NULL == p_audio || (double)p_audio->decodeTime / audio_timescale > (double)p_next->decodeTime / video_timescale)
-                {
-                    break;
-                }
-                audio_bytes    = Mp4Demux_ReadAudioSample(pTiming, audio_index, audio_buffer, 64u * 1024u);
-                p_audio_next   = Mp4Demux_AudioSample(pTiming, audio_index + 1u);
-                audio_duration = (NULL != p_audio_next) ? (uint32_t)(p_audio_next->decodeTime - p_audio->decodeTime) : 1024u;
-                if (audio_bytes > 0)
-                {
-                    (void)Mp4Mux_AddAudio(pMux, audio_buffer, audio_bytes, audio_duration);
-                }
-                ++audio_index;
-            }
+            ok = CopyAudioUntil(pTiming, pMux, &audio_index, audio_buffer,
+                                (double)(p_video->decodeTime + duration) / video_timescale);
         }
     }
 
@@ -1132,8 +1162,15 @@ int GpuTranscode_ToFragmentedMp4(const wchar_t* pSource, const wchar_t* pDest, c
     audio_timescale = Mp4Demux_AudioTimescale(pTiming);
     asc             = Mp4Demux_AudioConfig(pTiming, &asc_size);
     has_audio       = (MP4_AUDIO_AAC == Mp4Demux_AudioCodec(pTiming) && audio_samples > 0 && asc_size > 0);
+    if (!CanPreserveAudio(pTiming))
+    {
+        Report(pReport, reportCapacity, "source audio cannot be preserved; keeping the original stream\n");
+        Mp4Demux_Close(pTiming);
+        GpuTranscode_Close(pTranscoder);
+        return 0;
+    }
     p_last          = (total_samples > 0) ? Mp4Demux_Sample(pTiming, total_samples - 1u) : NULL;
-    full_duration   = (NULL != p_last && video_timescale > 0) ? (double)p_last->decodeTime / video_timescale : 0.0;
+    full_duration   = (NULL != p_last && video_timescale > 0) ? (double)(p_last->decodeTime + p_last->duration) / video_timescale : 0.0;
 
     pMux = Mp4Mux_CreateFragmented(pDest,
                                    GpuTranscode_OutWidth(pTranscoder),
@@ -1164,23 +1201,24 @@ int GpuTranscode_ToFragmentedMp4(const wchar_t* pSource, const wchar_t* pDest, c
     fragments           = 0;
     first_fragment_sent = 0;
     head_ticks          = 0;
-    ok                  = 1;
-    for (frame = 0; frame < total_samples && (0 == maxFrames || frame < maxFrames); ++frame)
+    ok                  = !has_audio || NULL != audio_buffer;
+    for (frame = 0; ok && frame < total_samples && (0 == maxFrames || frame < maxFrames); ++frame)
     {
         const uint8_t*   coded;
         uint32_t         coded_size;
         int              keyframe;
         const Mp4Sample* p_video;
-        const Mp4Sample* p_next;
         uint32_t         duration;
 
         if (NULL != pCancel && 0 != *pCancel)
         {
+            ok = 0;
             break;
         }
         coded = GpuTranscode_NextFrame(pTranscoder, &coded_size, &keyframe);
         if (NULL == coded)
         {
+            ok = 0;
             break;
         }
         /* Each fragment starts on a keyframe: close the previous one first so it is self-seekable. */
@@ -1200,8 +1238,7 @@ int GpuTranscode_ToFragmentedMp4(const wchar_t* pSource, const wchar_t* pDest, c
             }
         }
         p_video  = Mp4Demux_Sample(pTiming, frame);
-        p_next   = Mp4Demux_Sample(pTiming, frame + 1u);
-        duration = (NULL != p_video && NULL != p_next) ? (uint32_t)(p_next->decodeTime - p_video->decodeTime) : (video_timescale ? video_timescale / 30u : 3000u);
+        duration = p_video->duration;
         if (!Mp4Mux_AddVideo(pMux, coded, coded_size, duration, keyframe))
         {
             ok = 0;
@@ -1210,29 +1247,10 @@ int GpuTranscode_ToFragmentedMp4(const wchar_t* pSource, const wchar_t* pDest, c
         ++produced;
         head_ticks += duration;
 
-        if (has_audio && video_timescale > 0 && audio_timescale > 0 && NULL != p_next)
+        if (has_audio)
         {
-            while (audio_index < audio_samples)
-            {
-                const Mp4Sample* p_audio;
-                const Mp4Sample* p_audio_next;
-                uint32_t         audio_bytes;
-                uint32_t         audio_duration;
-
-                p_audio = Mp4Demux_AudioSample(pTiming, audio_index);
-                if (NULL == p_audio || (double)p_audio->decodeTime / audio_timescale > (double)p_next->decodeTime / video_timescale)
-                {
-                    break;
-                }
-                audio_bytes    = Mp4Demux_ReadAudioSample(pTiming, audio_index, audio_buffer, 64u * 1024u);
-                p_audio_next   = Mp4Demux_AudioSample(pTiming, audio_index + 1u);
-                audio_duration = (NULL != p_audio_next) ? (uint32_t)(p_audio_next->decodeTime - p_audio->decodeTime) : 1024u;
-                if (audio_bytes > 0)
-                {
-                    (void)Mp4Mux_AddAudio(pMux, audio_buffer, audio_bytes, audio_duration);
-                }
-                ++audio_index;
-            }
+            ok = CopyAudioUntil(pTiming, pMux, &audio_index, audio_buffer,
+                                (double)(p_video->decodeTime + duration) / video_timescale);
         }
     }
 

@@ -310,7 +310,9 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     {
         pCtts = ReadPayload(hFile, &ctts, &cttsSize);
     }
-    if (NULL == pStsz || NULL == pStsc || NULL == pStco || NULL == pStts)
+    if (NULL == pStsz || NULL == pStsc || NULL == pStco || NULL == pStts ||
+        stszSize < 12 || stscSize < 8 || stcoSize < 8 || sttsSize < 8 ||
+        (NULL != pCtts && cttsSize < 8) || (NULL != pStss && stssSize < 8))
     {
         goto cleanup;
     }
@@ -318,7 +320,7 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     sampleCount     = Be32(pStsz + 8);
     chunkCount      = Be32(pStco + 4);
     stscCount       = Be32(pStsc + 4);
-    if (0 == sampleCount || (uint64_t)stscCount * 12 + 8 > stscSize || (uint64_t)chunkCount * (is64 ? 8u : 4u) + 8 > stcoSize)
+    if (0 == sampleCount || sampleCount > MAX_TABLE_BYTES / sizeof(Mp4Sample) || (uint64_t)stscCount * 12 + 8 > stscSize || (uint64_t)chunkCount * (is64 ? 8u : 4u) + 8 > stcoSize)
     {
         goto cleanup;
     }
@@ -390,9 +392,14 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
             {
                 samples[sample].decodeTime      = time;
                 samples[sample].compositionTime = time;
+                samples[sample].duration        = delta;
                 time += delta;
                 ++sample;
             }
+        }
+        if (sample != sampleCount)
+        {
+            goto cleanup;
         }
     }
 
@@ -761,6 +768,112 @@ uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBu
         return 0;
     }
     return ReadAt(pDemux->hFile, pSample->offset, pBuffer, pSample->size) ? pSample->size : 0;
+}
+
+int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser)
+{
+    HANDLE file = CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+    LARGE_INTEGER size;
+    Box root, moov, trak, mvhd;
+    uint64_t offset;
+    Mp4Sample* samples = NULL;
+    uint32_t count = 0, i;
+    uint8_t* data = NULL;
+    int ok = 0;
+    if (INVALID_HANDLE_VALUE == file)
+        return 0;
+    if (!GetFileSizeEx(file, &size))
+        goto done;
+    root.payload = 0;
+    root.end = (uint64_t)size.QuadPart;
+    if (!FindChild(file, &root, FOURCC('m','o','o','v'), &moov))
+        goto done;
+    for (offset = moov.payload; ReadBox(file, offset, moov.end, &trak); offset = trak.end)
+    {
+        Box mdia, minf, stbl, stsd, entry, mdhd, edts, elst;
+        uint8_t header[36];
+        unsigned timescale;
+        double shift = 0, limit = -1;
+        if (trak.type != FOURCC('t','r','a','k') ||
+            !FindChild(file, &trak, FOURCC('m','d','i','a'), &mdia) ||
+            !FindChild(file, &mdia, FOURCC('m','i','n','f'), &minf) ||
+            !FindChild(file, &minf, FOURCC('s','t','b','l'), &stbl) ||
+            !FindChild(file, &stbl, FOURCC('s','t','s','d'), &stsd) ||
+            !ReadBox(file, stsd.payload + 8, stsd.end, &entry) || entry.type != FOURCC('t','x','3','g'))
+            continue;
+        if (index-- > 0)
+            continue;
+        if (!FindChild(file, &mdia, FOURCC('m','d','h','d'), &mdhd) || mdhd.end - mdhd.payload < 24 ||
+            !ReadAt(file, mdhd.payload, header, 24))
+            goto done;
+        if (header[0] == 1 && (mdhd.end - mdhd.payload < 36 || !ReadAt(file, mdhd.payload, header, 36)))
+            goto done;
+        timescale = Be32(header + (header[0] == 1 ? 20 : 12));
+        if (0 == timescale)
+            goto done;
+        {
+            unsigned lang = Be16(header + (header[0] == 1 ? 32 : 20));
+            for (i = 0; i < 3; ++i)
+                language[i] = (char)(((lang >> (10 - 5 * i)) & 31) + 0x60);
+            language[3] = 0;
+            if (language[0] < 'a' || language[0] > 'z' || language[1] < 'a' || language[1] > 'z' || language[2] < 'a' || language[2] > 'z')
+                memcpy(language, "und", 4);
+        }
+        if (NULL == callback) { ok = 1; goto done; }
+        /* Common edit list: optional empty lead-in followed by one rate-1 media edit. */
+        if (FindChild(file, &trak, FOURCC('e','d','t','s'), &edts) && FindChild(file, &edts, FOURCC('e','l','s','t'), &elst))
+        {
+            size_t editSize = 0;
+            uint8_t* edits = ReadPayload(file, &elst, &editSize);
+            unsigned movieScale = 0, n, stride;
+            double lead = 0;
+            int haveMedia = 0;
+            if (FindChild(file, &moov, FOURCC('m','v','h','d'), &mvhd) && ReadAt(file, mvhd.payload, header, 24))
+                movieScale = Be32(header + (header[0] == 1 ? 20 : 12));
+            if (!edits || editSize < 8 || !movieScale) { free(edits); goto done; }
+            n = Be32(edits + 4);
+            stride = edits[0] == 1 ? 20 : 12;
+            if (n > 2 || (uint64_t)n * stride + 8 > editSize) { free(edits); goto done; }
+            for (i = 0; i < n; ++i)
+            {
+                const uint8_t* e = edits + 8 + i * stride;
+                uint64_t duration = stride == 20 ? Be64(e) : Be32(e);
+                int64_t mediaTime = stride == 20 ? (int64_t)Be64(e + 8) : (int32_t)Be32(e + 4);
+                if (Be32(e + stride - 4) != 0x00010000 || haveMedia || mediaTime < -1) { free(edits); goto done; }
+                if (mediaTime == -1) lead += (double)duration / movieScale;
+                else
+                {
+                    shift = lead - (double)mediaTime / timescale;
+                    limit = lead + (double)duration / movieScale;
+                    haveMedia = 1;
+                }
+            }
+            free(edits);
+        }
+        if (!BuildSampleTable(file, &stbl, &samples, &count))
+            goto done;
+        data = (uint8_t*)malloc(1024 * 1024);
+        if (!data) goto done;
+        for (i = 0; i < count; ++i)
+        {
+            double start = (double)samples[i].compositionTime / timescale + shift;
+            double end = start + (double)samples[i].duration / timescale;
+            if (samples[i].size > 1024 * 1024 || samples[i].offset > root.end || samples[i].size > root.end - samples[i].offset ||
+                !ReadAt(file, samples[i].offset, data, samples[i].size))
+                goto done;
+            if (limit >= 0 && end > limit) end = limit;
+            if (start < 0) start = 0;
+            if (end > start && !callback(pUser, start, end, data, samples[i].size))
+                goto done;
+        }
+        ok = 1;
+        break;
+    }
+done:
+    free(samples);
+    free(data);
+    CloseHandle(file);
+    return ok;
 }
 
 void Mp4Demux_Close(Mp4Demux* pDemux)

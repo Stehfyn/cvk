@@ -73,6 +73,15 @@ wrong by definition.
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
 - `doc_comments` controls emitted Doxygen blocks (section 9); the shared policy disables them.
 
+Python bindings are generated separately by `scripts/generate_python.py` from the
+emitted C headers with libclang. CMake's optional `CVK_BUILD_PYTHON` target emits
+`_generated.py` and C adapters into the build tree; Python outputs are never edited
+by hand. The generator preserves every core and JSON function and the selected
+platform declarations, verifies native record layouts at import, and passes
+by-value records through pointer-taking C adapters. CVK's parameter metadata drives
+Python output returns, argument defaults, and array lengths. The initial Python target requires
+a native 64-bit build and excludes the separate Vulkan SC profile.
+
 ## 3. Names (derived)
 
 | Thing | Name |

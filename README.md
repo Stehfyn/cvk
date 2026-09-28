@@ -1,5 +1,9 @@
 # cvk
 
+**Python:** [generated procedural bindings](python/README.md).
+Run `python -m pip install .`, then `python examples/python/fill_buffer.py`.
+CVK output pointers become Python return values; boilerplate arguments have defaults.
+
 Windows example: [ImmersiveWindowDemo](examples/ImmersiveWindowDemo/README.md)
 ports the CDX demo's video renderer to Vulkan through CVK, retaining its native
 caption and playback controls. [CastDemo](examples/CastDemo/README.md) plays a
