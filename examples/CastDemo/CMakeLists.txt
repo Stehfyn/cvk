@@ -26,7 +26,11 @@ add_executable(cvk-cast-subtitle-test "${PROJECT_SOURCE_DIR}/tests/cast_subtitle
 target_link_libraries(cvk-cast-subtitle-test PRIVATE cast-session)
 add_test(NAME cvk-cast-subtitles COMMAND cvk-cast-subtitle-test)
 
-foreach(target cast-session CastDemo CastDemoCli cvk-cast-message-test cvk-cast-subtitle-test)
+add_executable(cvk-cast-audio-test "${PROJECT_SOURCE_DIR}/tests/cast_audio_test.c")
+target_link_libraries(cvk-cast-audio-test PRIVATE cast-session)
+add_test(NAME cvk-cast-audio COMMAND cvk-cast-audio-test)
+
+foreach(target cast-session CastDemo CastDemoCli cvk-cast-message-test cvk-cast-subtitle-test cvk-cast-audio-test)
     if(MSVC)
         target_compile_options(${target} PRIVATE /W4)
     else()

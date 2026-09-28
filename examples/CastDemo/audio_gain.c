@@ -20,8 +20,35 @@ void AudioGain_Apply(int16_t* samples, size_t count, unsigned percent)
     }
 }
 
-#define TRY(call) do { hr = (call); if (FAILED(hr)) goto done; } while (0)
+#define TRY(call) do { step = #call; hr = (call); if (FAILED(hr)) goto done; } while (0)
 #define RELEASE(type, value) do { if (value) { type##_Release(value); value = NULL; } } while (0)
+
+int AudioGain_NeedsConversion(const wchar_t* source, char* error, size_t errorCapacity)
+{
+    IMFSourceReader* reader = NULL;
+    IMFMediaType* type = NULL;
+    HRESULT com = CoInitializeEx(NULL, COINIT_MULTITHREADED), hr = com;
+    const char* step = "CoInitializeEx";
+    int started = 0, result = -1;
+    if (errorCapacity) error[0] = 0;
+    if (FAILED(com) && com != RPC_E_CHANGED_MODE) goto done;
+    TRY(MFStartup(MF_VERSION, MFSTARTUP_FULL)); started = 1;
+    TRY(MFCreateSourceReaderFromURL(source, NULL, &reader));
+    hr = IMFSourceReader_GetNativeMediaType(reader, (DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, 0, &type);
+    if (hr == MF_E_INVALIDSTREAMNUMBER) { result = 0; goto done; }
+    if (FAILED(hr)) { step = "GetNativeMediaType(audio)"; goto done; }
+    {
+        GUID subtype;
+        TRY(IMFMediaType_GetGUID(type, &MF_MT_SUBTYPE, &subtype));
+        result = !IsEqualGUID(&subtype, &MFAudioFormat_AAC) && !IsEqualGUID(&subtype, &MFAudioFormat_MP3);
+    }
+done:
+    if (result < 0) snprintf(error, errorCapacity, "Cannot inspect audio (0x%08lX) at %s.", (unsigned long)hr, step);
+    RELEASE(IMFMediaType, type); RELEASE(IMFSourceReader, reader);
+    if (started) MFShutdown();
+    if (SUCCEEDED(com)) CoUninitialize();
+    return result;
+}
 
 int AudioGain_Convert(const wchar_t* source, const wchar_t* dest, unsigned percent,
                       volatile long* cancel, volatile long* progress, char* error, size_t errorCapacity)
@@ -33,16 +60,19 @@ int AudioGain_Convert(const wchar_t* source, const wchar_t* dest, unsigned perce
     IMFSample* sample = NULL;
     IMFMediaBuffer* buffer = NULL;
     HRESULT hr, com = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    const char* step = "CoInitializeEx";
     int started = 0, ok = 0;
     DWORD videoIn = 0, audioIn = 0, videoOut = 0, audioOut = 0;
     UINT32 channels = 0, rate = 0;
     LONGLONG duration = 0;
     int videoEnd = 0, audioEnd = 0;
+    LONGLONG nextVideoDecodeTime = 0;
+    int haveVideoDecodeTime = 0;
     if (errorCapacity) error[0] = 0;
     if (FAILED(com)) { hr = com; goto done; }
     TRY(MFStartup(MF_VERSION, MFSTARTUP_FULL)); started = 1;
     TRY(MFCreateSourceReaderFromURL(source, NULL, &reader));
-    TRY(IMFSourceReader_SetStreamSelection(reader, MF_SOURCE_READER_ALL_STREAMS, FALSE));
+    TRY(IMFSourceReader_SetStreamSelection(reader, (DWORD)MF_SOURCE_READER_ALL_STREAMS, FALSE));
     /* Find the actual stream indexes; ANY_STREAM returns these rather than the sentinel IDs. */
     for (DWORD i = 0; ; ++i)
     {
@@ -94,7 +124,7 @@ int AudioGain_Convert(const wchar_t* source, const wchar_t* dest, unsigned perce
     {
         PROPVARIANT value;
         PropVariantInit(&value);
-        if (SUCCEEDED(IMFSourceReader_GetPresentationAttribute(reader, MF_SOURCE_READER_MEDIASOURCE, &MF_PD_DURATION, &value)) && value.vt == VT_UI8)
+        if (SUCCEEDED(IMFSourceReader_GetPresentationAttribute(reader, (DWORD)MF_SOURCE_READER_MEDIASOURCE, &MF_PD_DURATION, &value)) && value.vt == VT_UI8)
             duration = (LONGLONG)value.uhVal.QuadPart;
         PropVariantClear(&value);
     }
@@ -103,11 +133,29 @@ int AudioGain_Convert(const wchar_t* source, const wchar_t* dest, unsigned perce
         DWORD stream, flags;
         LONGLONG time;
         if (cancel && InterlockedCompareExchange(cancel, 0, 0)) { hr = E_ABORT; goto done; }
-        TRY(IMFSourceReader_ReadSample(reader, MF_SOURCE_READER_ANY_STREAM, 0, &stream, &flags, &time, &sample));
+        TRY(IMFSourceReader_ReadSample(reader, (DWORD)MF_SOURCE_READER_ANY_STREAM, 0, &stream, &flags, &time, &sample));
         if (flags & MF_SOURCE_READERF_ERROR) { hr = E_FAIL; goto done; }
         if (flags & MF_SOURCE_READERF_CURRENTMEDIATYPECHANGED) { hr = MF_E_INVALIDMEDIATYPE; goto done; }
         if (sample)
         {
+            if (stream == videoIn)
+            {
+                UINT64 decode = 0;
+                LONGLONG sampleDuration = 0;
+                /* MKV exposes presentation timestamps but often omits DTS. The MP4
+                ** sink drops B-frames if timestamps go backwards without DTS.
+                ** Samples arrive in decode order, so advance DTS by frame duration;
+                ** keep presentation times intact for audio/subtitle sync. */
+                if (FAILED(IMFSample_GetUINT64(sample, &MFSampleExtension_DecodeTimestamp, &decode)))
+                {
+                    TRY(IMFSample_GetSampleDuration(sample, &sampleDuration));
+                    if (sampleDuration <= 0 || sampleDuration > 100000000) { hr = MF_E_INVALIDMEDIATYPE; goto done; }
+                    if (!haveVideoDecodeTime) nextVideoDecodeTime = time;
+                    TRY(IMFSample_SetUINT64(sample, &MFSampleExtension_DecodeTimestamp, (UINT64)nextVideoDecodeTime));
+                    nextVideoDecodeTime += sampleDuration;
+                    haveVideoDecodeTime = 1;
+                }
+            }
             if (stream == audioIn)
             {
                 BYTE* bytes;
@@ -138,7 +186,11 @@ int AudioGain_Convert(const wchar_t* source, const wchar_t* dest, unsigned perce
     if (progress) InterlockedExchange(progress, 100);
     ok = 1;
 done:
-    if (!ok) snprintf(error, errorCapacity, hr == E_ABORT ? "Audio gain cancelled." : "Audio gain failed (0x%08lX). Requires Windows-supported video with 44.1/48 kHz mono, stereo or 5.1 audio.", (unsigned long)hr);
+    if (!ok)
+    {
+        if (hr == E_ABORT) snprintf(error, errorCapacity, "Audio conversion cancelled.");
+        else snprintf(error, errorCapacity, "Audio conversion failed (0x%08lX) at %.140s.", (unsigned long)hr, step);
+    }
     RELEASE(IMFMediaBuffer, buffer); RELEASE(IMFSample, sample);
     RELEASE(IMFSinkWriter, writer); RELEASE(IMFSourceReader, reader);
     RELEASE(IMFMediaType, video); RELEASE(IMFMediaType, nativeAudio);

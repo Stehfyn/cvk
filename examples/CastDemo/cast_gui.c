@@ -137,6 +137,8 @@ typedef struct App
     volatile LONG gainCancel, gainProgress;
     unsigned gainPercent, gainSerial;
     int gainOk;
+    int preparingAudio, audioNeedsConversion;
+    CastSessionConfig pendingConfig;
     char gainError[256];
     WCHAR gainOutput[MAX_PATH];
     struct GainVariant* gainVariants;
@@ -208,6 +210,7 @@ static App g_app;
 static LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
 static void RefreshSubtitles(App* pApp);
 static void ScheduleGain(App* pApp);
+static void FinishSession(App* pApp, const WCHAR* pReason);
 
 static int Scale(const App* pApp, int dips)
 {
@@ -517,17 +520,21 @@ static void Layout(App* pApp)
 static void UpdateControls(App* pApp)
 {
     const int haveSession = (NULL != pApp->pSession);
+    const int busy = haveSession || pApp->preparingAudio;
     const int haveDevice  = (-1 != ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED));
     const int haveFile    = (GetWindowTextLengthW(pApp->hFile) > 0);
     const int playing     = (CAST_STATE_PLAYING == pApp->status.state || CAST_STATE_BUFFERING == pApp->status.state);
 
-    EnableWindow(pApp->hCast, !haveSession && haveDevice && haveFile);
+    EnableWindow(pApp->hCast, !busy && haveDevice && haveFile);
     EnableWindow(pApp->hRefresh, !pApp->discovering);
-    EnableWindow(pApp->hStop, haveSession && !pApp->stopping);
+    EnableWindow(pApp->hStop, busy && !pApp->stopping);
     EnableWindow(pApp->hPlayPause, haveSession && pApp->status.hasMedia);
     EnableWindow(pApp->hSeek, haveSession && pApp->status.hasMedia && pApp->status.duration > 0);
-    EnableWindow(pApp->hSubtitle, !haveSession);
-    EnableWindow(pApp->hSubtitleBrowse, !haveSession);
+    EnableWindow(pApp->hSubtitle, !busy);
+    EnableWindow(pApp->hSubtitleBrowse, !busy);
+    EnableWindow(pApp->hFile, !busy);
+    EnableWindow(pApp->hBrowse, !busy);
+    EnableWindow(pApp->hPreview, !pApp->preparingAudio && !pApp->previewBusy);
     EnableWindow(pApp->hGain, !haveSession || pApp->originalSource[0]);
     SetWindowTextW(pApp->hPlayPause, playing ? L"Pause" : L"Play");
 }
@@ -845,8 +852,8 @@ static void ScheduleGain(App* app)
     WCHAR directory[MAX_PATH];
     DWORD length;
     CancelGain(app);
-    if (!app->pSession || !app->originalSource[0]) return;
-    if (percent == 100)
+    if ((!app->pSession && !app->preparingAudio) || !app->originalSource[0]) return;
+    if (percent == 100 && !app->audioNeedsConversion && !app->preparingAudio)
     {
         CastSession_ReplaceMedia(app->pSession, app->originalUrl, app->originalType);
         SetWindowTextW(app->hGainState, L"Original audio");
@@ -856,13 +863,16 @@ static void ScheduleGain(App* app)
     if (!length || length >= MAX_PATH || _snwprintf_s(app->gainOutput, MAX_PATH, _TRUNCATE,
         L"%lscvkcast_gain_%lu_%u.mp4", directory, GetCurrentProcessId(), app->gainSerial) < 0)
     {
-        SetWindowTextW(app->hGainState, L"Cannot create gain file"); return;
+        SetWindowTextW(app->hGainState, L"Cannot create gain file");
+        if (app->preparingAudio) FinishSession(app, L"Cannot create the audio preparation file.");
+        return;
     }
     app->gainPercent = percent;
     InterlockedExchange(&app->gainCancel, 0);
     InterlockedExchange(&app->gainProgress, 0);
     app->hGainThread = CreateThread(NULL, 0, GainThread, app, 0, NULL);
     SetWindowTextW(app->hGainState, app->hGainThread ? L"Preparing gain..." : L"Cannot start audio worker");
+    if (!app->hGainThread && app->preparingAudio) FinishSession(app, L"Cannot start audio preparation.");
 }
 
 static void FinishGain(App* app, unsigned serial)
@@ -872,25 +882,49 @@ static void FinishGain(App* app, unsigned serial)
     if (serial != app->gainSerial || !app->hGainThread) return;
     WaitForSingleObject(app->hGainThread, INFINITE);
     CloseHandle(app->hGainThread); app->hGainThread = NULL;
-    if (!app->pSession || !app->gainOk)
+    if ((!app->pSession && !app->preparingAudio) || !app->gainOk)
     {
         WCHAR* message = DupUtf8ToWide(app->gainError);
-        SetWindowTextW(app->hGainState, L"Gain failed - audio unchanged");
-        if (message) { SetStatus(app, message); free(message); }
-        CancelGain(app); return;
+        SetWindowTextW(app->hGainState, L"Audio preparation failed");
+        if (app->preparingAudio) FinishSession(app, message ? message : L"Audio preparation failed.");
+        else { CancelGain(app); if (message) SetStatus(app, message); }
+        free(message); return;
     }
     variant = (GainVariant*)calloc(1, sizeof(*variant));
     /* Use the same reachable local address selected for the original file. */
     if (!variant || sscanf(app->originalUrl, "http://%63[^:]", local) != 1)
-    { free(variant); CancelGain(app); SetWindowTextW(app->hGainState, L"Cannot serve audio gain"); return; }
+    {
+        free(variant); CancelGain(app);
+        if (app->preparingAudio) FinishSession(app, L"Cannot serve prepared audio.");
+        SetWindowTextW(app->hGainState, L"Cannot serve audio gain"); return;
+    }
     variant->server = MediaServer_Start(app->gainOutput, NULL, 0, "video/mp4", error, sizeof(error));
     if (!variant->server)
-    { free(variant); CancelGain(app); SetWindowTextW(app->hGainState, L"Cannot serve audio gain"); return; }
+    {
+        free(variant); CancelGain(app);
+        if (app->preparingAudio) FinishSession(app, L"Cannot serve prepared audio.");
+        SetWindowTextW(app->hGainState, L"Cannot serve audio gain"); return;
+    }
     wcscpy_s(variant->path, MAX_PATH, app->gainOutput); app->gainOutput[0] = 0;
     variant->next = app->gainVariants; app->gainVariants = variant;
     snprintf(url, sizeof(url), "http://%s:%u/gain.mp4", local, (unsigned)MediaServer_GetPort(variant->server));
-    CastSession_ReplaceMedia(app->pSession, url, "video/mp4");
-    SetWindowTextW(app->hGainState, L"Gain ready - switching");
+    if (app->preparingAudio)
+    {
+        snprintf(app->pendingConfig.contentUrl, sizeof(app->pendingConfig.contentUrl), "%s", url);
+        snprintf(app->pendingConfig.contentType, sizeof(app->pendingConfig.contentType), "video/mp4");
+        app->pSession = CastSession_Create(&app->pendingConfig);
+        if (app->pSession) app->hSessionThread = CreateThread(NULL, 0, SessionThread, app->pSession, 0, NULL);
+        if (!app->hSessionThread) { FinishSession(app, L"Cannot start the Cast session."); return; }
+        app->preparingAudio = 0;
+        ZeroMemory(&app->status, sizeof(app->status));
+        UpdateControls(app);
+        SetWindowTextW(app->hGainState, L"AAC audio ready");
+    }
+    else
+    {
+        CastSession_ReplaceMedia(app->pSession, url, "video/mp4");
+        SetWindowTextW(app->hGainState, L"Gain ready - switching");
+    }
 }
 
 static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
@@ -905,7 +939,7 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
     size_t            vttSize = 0;
     const SubtitleTrack* subtitle = NULL;
 
-    if (NULL != pApp->pSession || selected < 0 || (unsigned)selected >= pApp->devices.count)
+    if (NULL != pApp->pSession || pApp->preparingAudio || selected < 0 || (unsigned)selected >= pApp->devices.count)
     {
         return;
     }
@@ -1004,6 +1038,28 @@ static void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
     free(vtt);
     snprintf(pApp->originalUrl, sizeof(pApp->originalUrl), "%s", config.contentUrl);
     snprintf(pApp->originalType, sizeof(pApp->originalType), "%s", config.contentType);
+    pApp->audioNeedsConversion = 0;
+    if (buildProxy && pApp->originalSource[0])
+    {
+        pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, sizeof(error));
+        if (pApp->audioNeedsConversion < 0)
+        {
+            WCHAR* message = DupUtf8ToWide(error);
+            FinishSession(pApp, message ? message : L"Cannot inspect the source audio.");
+            free(message); return;
+        }
+        if (pApp->audioNeedsConversion || SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
+        {
+            pApp->pendingConfig = config;
+            pApp->preparingAudio = 1;
+            pApp->proxyLocal[0] = 0;
+            pApp->stopping = 0;
+            SetStatus(pApp, L"Preparing AAC audio before playback; video quality is preserved. Stop cancels.");
+            UpdateControls(pApp);
+            ScheduleGain(pApp);
+            return;
+        }
+    }
     pApp->pSession = CastSession_Create(&config);
     if (NULL != pApp->pSession)
     {
@@ -1111,7 +1167,7 @@ static void StartPreview(App* pApp)
     double      ratio;
     int         position;
 
-    if (pApp->previewBusy)
+    if (pApp->previewBusy || pApp->preparingAudio)
     {
         return;
     }
@@ -1160,6 +1216,7 @@ static void StartPreview(App* pApp)
 
 static void StopCast(App* pApp)
 {
+    if (pApp->preparingAudio) { FinishSession(pApp, L"Audio preparation cancelled."); return; }
     if (NULL != pApp->pSession && !pApp->stopping)
     {
         pApp->stopping = 1;
@@ -1252,6 +1309,10 @@ static void FinishSession(App* pApp, const WCHAR* pReason)
         free(variant);
     }
     pApp->originalSource[0] = 0;
+    pApp->preparingAudio = 0;
+    pApp->audioNeedsConversion = 0;
+    ZeroMemory(&pApp->pendingConfig, sizeof(pApp->pendingConfig));
+    SetWindowTextW(pApp->hGainState, L"");
     free(pApp->pKeyframes);
     pApp->pKeyframes = NULL;
     pApp->stopping   = 0;
@@ -1479,11 +1540,11 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             if (pApp->hGainThread)
             {
                 WCHAR progress[100];
-                _snwprintf_s(progress, 100, _TRUNCATE, L"Preparing %u%% gain: %ld%%", pApp->gainPercent, InterlockedCompareExchange(&pApp->gainProgress, 0, 0));
+                _snwprintf_s(progress, 100, _TRUNCATE, L"Preparing AAC (%u%%): %ld%%", pApp->gainPercent, InterlockedCompareExchange(&pApp->gainProgress, 0, 0));
                 SetWindowTextW(pApp->hGainState, progress);
             }
         }
-        else if (wParam == SUBTITLE_TIMER) { KillTimer(hWnd, SUBTITLE_TIMER); if (!pApp->pSession) RefreshSubtitles(pApp); }
+        else if (wParam == SUBTITLE_TIMER) { KillTimer(hWnd, SUBTITLE_TIMER); if (!pApp->pSession && !pApp->preparingAudio) RefreshSubtitles(pApp); }
         else if (wParam == GAIN_TIMER) { KillTimer(hWnd, GAIN_TIMER); ScheduleGain(pApp); }
         return 0;
     case WM_SIZE:
@@ -1591,7 +1652,7 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             unsigned percent = (unsigned)SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0);
             _snwprintf_s(text, 64, _TRUNCATE, L"Audio gain %u%%", percent);
             SetWindowTextW(pApp->hGainLabel, text);
-            if (pApp->pSession) SetTimer(hWnd, GAIN_TIMER, 500, NULL);
+            if (pApp->pSession || pApp->preparingAudio) SetTimer(hWnd, GAIN_TIMER, 500, NULL);
             else SetWindowTextW(pApp->hGainState, percent == 100 ? L"Original audio" : L"Applies during playback");
         }
         else if ((HWND)lParam == pApp->hSeek)
@@ -1633,7 +1694,7 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         PreviewResult* pResult = (PreviewResult*)lParam;
 
         pApp->previewBusy = 0;
-        EnableWindow(pApp->hPreview, TRUE);
+        EnableWindow(pApp->hPreview, !pApp->preparingAudio);
         if (NULL != pResult && pResult->ok && pResult->frames > 0)
         {
             WCHAR text[192];
@@ -1674,8 +1735,8 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         if (NULL != pApp->pSession)
         {
             CastSession_Post(pApp->pSession, CAST_COMMAND_STOP, 0);
-            FinishSession(pApp, NULL);
         }
+        FinishSession(pApp, NULL);
         DestroyWindow(hWnd);
         return 0;
     case WM_DESTROY:
