@@ -48,13 +48,13 @@
  */
 typedef struct GpuProbe_Storage_s
 {
-    VkInstance               instance;       ///< Native instance retained until destruction can be issued.
-    bool_t                   loader;         ///< Exclusive loader lifetime acquired by this probe.
-    uint32_t                 deviceCount;    ///< Fully returned physical-device records.
-    uint32_t                 extensionCount; ///< Fully returned extension records for the current device.
-    uint32_t                 familyCount;    ///< Fully returned queue-family records for the current device.
-    VkPhysicalDevice         devices[CVK_MAX_PHYSICAL_DEVICES];         ///< Fixed enumeration output.
-    VkExtensionProperties    extensions[CVK_MAX_PROPERTIES];            ///< Reused per-device extension output.
+    VkInstance              instance;       ///< Native instance retained until destruction can be issued.
+    bool_t                  loader;         ///< Exclusive loader lifetime acquired by this probe.
+    uint32_t                deviceCount;    ///< Fully returned physical-device records.
+    uint32_t                extensionCount; ///< Fully returned extension records for the current device.
+    uint32_t                familyCount;    ///< Fully returned queue-family records for the current device.
+    VkPhysicalDevice        devices[CVK_MAX_PHYSICAL_DEVICES];         ///< Fixed enumeration output.
+    VkExtensionProperties   extensions[CVK_MAX_PROPERTIES];            ///< Reused per-device extension output.
     VkQueueFamilyProperties families[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Reused queue metadata.
     VkQueueFamilyVideoPropertiesKHR
         video[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Codec operations linked into family records.
@@ -395,11 +395,11 @@ static FORCE_INLINE void AppendText(GpuProbe_t* probe, const char_t* text, uint3
  */
 static FORCE_INLINE void AppendNumber(GpuProbe_t* probe, uint32_t value)
 {
-    char_t   digits[DECIMAL_CAPACITY];
+    byte_t   digits[DECIMAL_CAPACITY];
     uint32_t bytes;
     bytes = Utl_Decimal_WriteUint64(value, digits, sizeof(digits));
     LOGASSERT(0 < bytes);
-    AppendText(probe, digits, bytes);
+    AppendText(probe, (const char_t*)digits, bytes);
 }
 
 /*************************************************************************************************/
@@ -462,12 +462,12 @@ static FORCE_INLINE bool_t ReadExtensions(GpuProbe_t* probe, VkPhysicalDevice ph
 {
     GpuProbe_Storage_t* storage;
     bool_t              complete;
-    storage                 = probe->storage;
-    support->video          = FALSE;
-    support->encode         = FALSE;
-    support->decode         = FALSE;
-    support->encodeFamily   = NO_QUEUE_FAMILY;
-    support->decodeFamily   = NO_QUEUE_FAMILY;
+    storage               = probe->storage;
+    support->video        = FALSE;
+    support->encode       = FALSE;
+    support->decode       = FALSE;
+    support->encodeFamily = NO_QUEUE_FAMILY;
+    support->decodeFamily = NO_QUEUE_FAMILY;
     cvkEnumerateDeviceExtensionProperties(physical, NULL, &storage->extensionCount, storage->extensions);
     complete = TRUE;
     if (complete)
@@ -500,10 +500,10 @@ static FORCE_INLINE bool_t ReadExtensions(GpuProbe_t* probe, VkPhysicalDevice ph
 static FORCE_INLINE bool_t ReadFamilies(GpuProbe_t* probe, VkPhysicalDevice physical, DeviceSupport_t* support)
 {
     GpuProbe_Storage_t* storage;
-    uint32_t video_count;
-    uint32_t encode_family;
-    uint32_t decode_family;
-    bool_t complete;
+    uint32_t            video_count;
+    uint32_t            encode_family;
+    uint32_t            decode_family;
+    bool_t              complete;
     storage = probe->storage;
     cvkGetPhysicalDeviceQueueFamilyProperties(physical, &storage->familyCount, storage->families);
     complete = TRUE;
@@ -513,8 +513,10 @@ static FORCE_INLINE bool_t ReadFamilies(GpuProbe_t* probe, VkPhysicalDevice phys
         complete = CheckCapacity(probe, video_count == storage->familyCount);
         if (complete)
         {
-            encode_family = cvkGetVideoQueueFamilyIndex(video_count, storage->video, VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR);
-            decode_family = cvkGetVideoQueueFamilyIndex(video_count, storage->video, VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR);
+            encode_family =
+                cvkGetVideoQueueFamilyIndex(video_count, storage->video, VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR);
+            decode_family =
+                cvkGetVideoQueueFamilyIndex(video_count, storage->video, VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR);
             if (support->encode)
             {
                 support->encodeFamily = encode_family;
@@ -549,18 +551,20 @@ static FORCE_INLINE bool_t ReadEncodeProfile(GpuProbe_t* probe, VkPhysicalDevice
     CRT_Memory_Set(&encode_caps, 0, sizeof(encode_caps));
     CRT_Memory_Set(&caps, 0, sizeof(caps));
     cvkInitVideoEncodeH264ProfileInfo(&h264, NULL, STD_VIDEO_H264_PROFILE_IDC_MAIN);
-    cvkInitVideoProfileInfo(&profile, &h264, VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR,
-                           VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR,
-                           VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR,
-                           VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR);
-    h264_caps.sType             = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
-    encode_caps.sType           = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
-    encode_caps.pNext           = &h264_caps;
-    caps.sType                  = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
-    caps.pNext                  = &encode_caps;
-    result                      = cvkGetPhysicalDeviceVideoCapabilities(physical, &profile, caps.pNext, &caps);
-    succeeded                   = (VK_SUCCESS == result);
-    complete                    = succeeded || IsUnsupported(result);
+    cvkInitVideoProfileInfo(&profile,
+                            &h264,
+                            VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR,
+                            VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR,
+                            VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR,
+                            VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR);
+    h264_caps.sType   = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_CAPABILITIES_KHR;
+    encode_caps.sType = VK_STRUCTURE_TYPE_VIDEO_ENCODE_CAPABILITIES_KHR;
+    encode_caps.pNext = &h264_caps;
+    caps.sType        = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
+    caps.pNext        = &encode_caps;
+    result            = cvkGetPhysicalDeviceVideoCapabilities(physical, &profile, caps.pNext, &caps);
+    succeeded         = (VK_SUCCESS == result);
+    complete          = succeeded || IsUnsupported(result);
     if (!complete)
     {
         (void)CheckResult(probe, result);
@@ -597,20 +601,24 @@ static FORCE_INLINE bool_t ReadDecodeProfile(GpuProbe_t* probe, VkPhysicalDevice
     CRT_Memory_Set(&h264_caps, 0, sizeof(h264_caps));
     CRT_Memory_Set(&decode_caps, 0, sizeof(decode_caps));
     CRT_Memory_Set(&caps, 0, sizeof(caps));
-    cvkInitVideoDecodeH264ProfileInfo(&h264, NULL, STD_VIDEO_H264_PROFILE_IDC_MAIN,
+    cvkInitVideoDecodeH264ProfileInfo(&h264,
+                                      NULL,
+                                      STD_VIDEO_H264_PROFILE_IDC_MAIN,
                                       VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR);
-    cvkInitVideoProfileInfo(&profile, &h264, VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR,
-                           VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR,
-                           VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR,
-                           VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR);
-    h264_caps.sType             = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
-    decode_caps.sType           = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
-    decode_caps.pNext           = &h264_caps;
-    caps.sType                  = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
-    caps.pNext                  = &decode_caps;
-    result                      = cvkGetPhysicalDeviceVideoCapabilities(physical, &profile, caps.pNext, &caps);
-    candidate->canDecodeH264    = (VK_SUCCESS == result);
-    complete                    = candidate->canDecodeH264 || IsUnsupported(result);
+    cvkInitVideoProfileInfo(&profile,
+                            &h264,
+                            VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR,
+                            VK_VIDEO_CHROMA_SUBSAMPLING_420_BIT_KHR,
+                            VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR,
+                            VK_VIDEO_COMPONENT_BIT_DEPTH_8_BIT_KHR);
+    h264_caps.sType          = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_CAPABILITIES_KHR;
+    decode_caps.sType        = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
+    decode_caps.pNext        = &h264_caps;
+    caps.sType               = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
+    caps.pNext               = &decode_caps;
+    result                   = cvkGetPhysicalDeviceVideoCapabilities(physical, &profile, caps.pNext, &caps);
+    candidate->canDecodeH264 = (VK_SUCCESS == result);
+    complete                 = candidate->canDecodeH264 || IsUnsupported(result);
     if (!complete)
     {
         (void)CheckResult(probe, result);
@@ -720,7 +728,7 @@ static FORCE_INLINE bool_t ReadDevice(GpuProbe_t* probe, VkPhysicalDevice physic
     complete = CheckCapacity(probe, name_bytes < GPU_PROBE_DEVICE_NAME_CAPACITY);
     if (complete)
     {
-        CRT_Memory_Copy(candidate.deviceName, properties.properties.deviceName, name_bytes + 1);
+        CRT_Memory_Copy(candidate.deviceName, properties.properties.deviceName, (uint64_t)name_bytes + 1);
         complete = ReadExtensions(probe, physical, &support);
     }
     eligible = complete && (VK_API_VERSION_1_3 <= properties.properties.apiVersion);
@@ -772,25 +780,25 @@ static FORCE_INLINE bool_t ReadDevice(GpuProbe_t* probe, VkPhysicalDevice physic
  */
 static FORCE_INLINE bool_t OpenNative(GpuProbe_t* probe)
 {
-    VkResult result;
-    bool_t ready;
-    uint32_t version;
-    bool_t has_version_query;
-    bool_t supports_version;
+    VkResult          result;
+    bool_t            ready;
+    uint32_t          version;
+    bool_t            has_version_query;
+    bool_t            supports_version;
     VkApplicationInfo application;
     result = volkInitialize();
-    ready = CheckResult(probe, result);
+    ready  = CheckResult(probe, result);
     if (ready)
     {
         probe->storage->loader = TRUE;
-        version = VK_API_VERSION_1_0;
-        has_version_query = (NULL != vkEnumerateInstanceVersion);
+        version                = VK_API_VERSION_1_0;
+        has_version_query      = (NULL != vkEnumerateInstanceVersion);
         if (has_version_query)
         {
             cvkEnumerateInstanceVersion(&version);
         }
         supports_version = (VK_API_VERSION_1_3 <= version);
-        ready = supports_version;
+        ready            = supports_version;
         if (!supports_version)
         {
             probe->status = GPU_PROBE_API_UNSUPPORTED;
@@ -799,8 +807,13 @@ static FORCE_INLINE bool_t OpenNative(GpuProbe_t* probe)
     }
     if (ready)
     {
-        cvkInitApplicationInfo(&application, NULL, PROBE_APPLICATION_NAME, PROBE_APPLICATION_VERSION,
-                              PROBE_ENGINE_NAME, PROBE_ENGINE_VERSION, VK_API_VERSION_1_3);
+        cvkInitApplicationInfo(&application,
+                               NULL,
+                               PROBE_APPLICATION_NAME,
+                               PROBE_APPLICATION_VERSION,
+                               PROBE_ENGINE_NAME,
+                               PROBE_ENGINE_VERSION,
+                               VK_API_VERSION_1_3);
         cvkCreateInstance(NULL, 0, &application, 0, NULL, 0, NULL, NULL, &probe->storage->instance);
         volkLoadInstanceOnly(probe->storage->instance);
     }
@@ -837,8 +850,8 @@ static FORCE_INLINE bool_t CloseNative(GpuProbe_Storage_t* storage)
 static FORCE_INLINE bool_t Collect(GpuProbe_t* probe)
 {
     GpuProbe_Storage_t* storage;
-    bool_t complete;
-    uint32_t index;
+    bool_t              complete;
+    uint32_t            index;
     storage = probe->storage;
     cvkEnumeratePhysicalDevices(storage->instance, &storage->deviceCount, storage->devices);
     complete = TRUE;

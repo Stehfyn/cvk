@@ -109,7 +109,7 @@ typedef struct LiveState_s
 typedef struct SubtitleData_s
 {
     uint64_t      size; ///< Exact published representation size.
-    const char_t* data; ///< Immutable caller-owned bytes retained through successful stop.
+    const byte_t* data; ///< Immutable caller-owned bytes retained through successful stop.
 } SubtitleData_t;
 
 /*************************************************************************************************/
@@ -145,8 +145,8 @@ typedef struct Connection_s
     CastHttp_Request_t http;   ///< Counted per-connection HTTP parser and policy.
     Utl_Http_Field_t
                   fields[REQUEST_FIELD_CAPACITY]; ///< Fixed request-field slots bounded by the admitted request extent.
-    char_t                request[REQUEST_CAPACITY];          ///< Retained request prefix and pipelined bytes.
-    char_t                response[RESPONSE_CAPACITY];        ///< Complete response header serialized before sending.
+    byte_t                request[REQUEST_CAPACITY];          ///< Retained request prefix and pipelined bytes.
+    byte_t                response[RESPONSE_CAPACITY];        ///< Complete response header serialized before sending.
     uint32_t              requestUsed;                        ///< Initialized request bytes, bounded by REQUEST_CAPACITY.
     LARGE_INTEGER         responseStart;                      ///< Counter acquired before response dispatch.
     bool_t                responseTimed;                      ///< Counter query succeeded.
@@ -186,7 +186,7 @@ typedef struct ServerRepresentation_s
     const char_t*   contentType;      ///< Immutable terminated response media type.
     uint32_t        contentTypeBytes; ///< Validated media-type bytes excluding termination.
     bool_t          growing;          ///< The producer may append bytes until completion publication.
-    const char_t*   subtitles;        ///< Immutable subtitle bytes or metadata retained through client retirement.
+    const byte_t*   subtitles;        ///< Immutable subtitle bytes or metadata retained through client retirement.
     uint64_t        subtitleBytes;    ///< Readable immutable subtitle extent.
     uint64_t        fileBytes;        ///< Validated native file size.
 } ServerRepresentation_t;
@@ -759,7 +759,7 @@ static FORCE_INLINE MediaServer* StartInternal(MediaServer_Workspace_t* workspac
                                                uint16_t                 port,
                                                const char_t*            contentType,
                                                bool_t                   growing,
-                                               const char_t*            vtt,
+                                               const byte_t*            vtt,
                                                uint64_t                 vttSize,
                                                char_t*                  error,
                                                uint32_t                 errorCapacity);
@@ -785,7 +785,7 @@ static FORCE_INLINE Utl_Http_Text_t GetContentType(const Connection_t* connectio
         }
     }
     LOGASSERT(count < sizeof(connection->contentType));
-    text.data      = connection->contentType;
+    text.data      = (const byte_t*)connection->contentType;
     text.byteCount = count;
     return text;
 }
@@ -1172,7 +1172,7 @@ static FORCE_INLINE bool_t HandleSubtitleRequest(Connection_t* connection, const
     else
     {
         CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_OK);
-        response.contentType.data      = SUBTITLE_CONTENT_TYPE;
+        response.contentType.data      = (const byte_t*)SUBTITLE_CONTENT_TYPE;
         response.contentType.byteCount = sizeof(SUBTITLE_CONTENT_TYPE) - 1;
         response.representationBytes   = subtitles->size;
         response.keepAlive             = request->keepAlive;
@@ -1245,7 +1245,7 @@ static FORCE_INLINE bool_t ReadRequest(Connection_t* connection)
             if (active && (0 < selected))
             {
                 received =
-                    recv(connection->socket, connection->request + connection->requestUsed, (int32_t)available, 0);
+                    recv(connection->socket, (char_t*)connection->request + connection->requestUsed, (int32_t)available, 0);
                 active = (0 < received) && ((uint32_t)received <= available);
                 if (active)
                 {
@@ -1390,7 +1390,7 @@ static FORCE_INLINE bool_t ReadBindAddress(const char_t* text, uint32_t* address
                 break;
             }
         }
-        source.data      = text;
+        source.data      = (const byte_t*)text;
         source.byteCount = count;
         valid            = Utl_Url_ReadIpv4(source, address);
     }
@@ -1953,7 +1953,7 @@ static FORCE_INLINE MediaServer* StartInternal(MediaServer_Workspace_t* workspac
                                                uint16_t                 port,
                                                const char_t*            contentType,
                                                bool_t                   growing,
-                                               const char_t*            vtt,
+                                               const byte_t*            vtt,
                                                uint64_t                 vttSize,
                                                char_t*                  error,
                                                uint32_t                 errorCapacity)
@@ -2248,7 +2248,7 @@ int MediaServer_ParseRange(const char* pValue, uint64_t size, uint64_t* pFirst, 
         is_valid = (byte_count < REQUEST_CAPACITY);
         if (is_valid)
         {
-            is_valid = Utl_Http_ReadRange(&request, pValue, byte_count);
+            is_valid = Utl_Http_ReadRange(&request, (const byte_t*)pValue, byte_count);
         }
         if (is_valid)
         {
@@ -2294,7 +2294,7 @@ MediaServer* MediaServer_StartWithSubtitles(MediaServer_Workspace_t* workspace,
                                             const char*              pBindAddress,
                                             uint16_t                 port,
                                             const char*              pContentType,
-                                            const char*              pVtt,
+                                            const byte_t*              pVtt,
                                             uint64_t                 vttSize,
                                             char*                    pError,
                                             uint32_t                 errorCapacity)

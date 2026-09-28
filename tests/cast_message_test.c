@@ -1,5 +1,5 @@
 /* CASTV2 framing, HTTP range parsing and receiver-status JSON checks; no network, no Vulkan. */
-#include "cast_message.h"
+#include "utl/utl_castv2.h"
 #include "cvk_json.h"
 #include "media_server.h"
 #include "mp4_index.h"
@@ -21,46 +21,63 @@
 static int TestEncodeKnownBytes(void)
 {
     /* 08 00 | 12 01 's' | 1A 01 'd' | 22 01 'n' | 28 00 | 32 02 '{' '}'  = 17 bytes */
-    static const uint8_t expected[] = {0, 0, 0, 17, 0x08, 0x00, 0x12, 0x01, 's', 0x1A, 0x01, 'd', 0x22, 0x01, 'n', 0x28, 0x00, 0x32, 0x02, '{', '}'};
-    CastMessage_t message;
-    uint8_t       frame[64];
+    static const byte_t expected[] = {0, 0, 0, 17, 0x08, 0x00, 0x12, 0x01, 's', 0x1A, 0x01, 'd', 0x22, 0x01, 'n', 0x28, 0x00, 0x32, 0x02, '{', '}'};
+    Utl_CastV2_Message_t message;
+    byte_t       frame[64];
     uint32_t      length;
 
-    CastMessage_Initialize(&message, "s", "d", "n", "{}");
-    length = CastMessage_Encode(&message, frame, sizeof(frame));
+    message.source.data = (const byte_t*)"s";
+    message.source.byteCount = sizeof("s") - 1;
+    message.destination.data = (const byte_t*)"d";
+    message.destination.byteCount = sizeof("d") - 1;
+    message.nameSpace.data = (const byte_t*)"n";
+    message.nameSpace.byteCount = sizeof("n") - 1;
+    message.payload.data = (const byte_t*)"{}";
+    message.payload.byteCount = sizeof("{}") - 1;
+    message.payloadType = UTL_CASTV2_STRING;
+    length = Utl_CastV2_WriteFrame(&message, frame, sizeof(frame));
     CHECK(length == sizeof(expected));
     CHECK(0 == memcmp(frame, expected, sizeof(expected)));
-    CHECK(0 == CastMessage_Encode(&message, frame, sizeof(expected) - 1));
+    CHECK(0 == Utl_CastV2_WriteFrame(&message, frame, sizeof(expected) - 1));
     return 0;
 }
 
 static int TestRoundTripLongPayload(void)
 {
-    static uint8_t frame[CAST_MESSAGE_MAX_FRAME];
-    char          payload[300];
-    CastMessage_t message;
-    CastMessage_t decoded;
+    static byte_t frame[UTL_CASTV2_MAX_FRAME];
+    byte_t          payload[300];
+    Utl_CastV2_Message_t message;
+    Utl_CastV2_Message_t decoded;
     uint32_t      length;
     uint32_t      index;
 
     for (index = 0; index < sizeof(payload) - 1; ++index)
     {
-        payload[index] = (char)('a' + (index % 26));
+        payload[index] = (byte_t)('a' + (index % 26));
     }
     payload[sizeof(payload) - 1] = 0;
-    CastMessage_Initialize(&message, "sender-0", "receiver-0", "urn:x-cast:com.google.cast.receiver", payload);
-    length = CastMessage_Encode(&message, frame, sizeof(frame));
+    message.source.data = (const byte_t*)"sender-0";
+    message.source.byteCount = sizeof("sender-0") - 1;
+    message.destination.data = (const byte_t*)"receiver-0";
+    message.destination.byteCount = sizeof("receiver-0") - 1;
+    message.nameSpace.data = (const byte_t*)"urn:x-cast:com.google.cast.receiver";
+    message.nameSpace.byteCount = sizeof("urn:x-cast:com.google.cast.receiver") - 1;
+    message.payload.data = payload;
+    message.payload.byteCount = sizeof(payload) - 1;
+    message.payloadType = UTL_CASTV2_STRING;
+    length = Utl_CastV2_WriteFrame(&message, frame, sizeof(frame));
     CHECK(length > 4);
-    CHECK((((size_t)frame[0] << 24) | ((size_t)frame[1] << 16) | ((size_t)frame[2] << 8) | frame[3]) == length - 4);
-    CHECK(CastMessage_Decode(frame + 4, length - 4, &decoded));
-    CHECK(decoded.sourceLength == 8 && 0 == memcmp(decoded.pSource, "sender-0", 8));
-    CHECK(decoded.destinationLength == 10 && 0 == memcmp(decoded.pDestination, "receiver-0", 10));
-    CHECK(CastMessage_IsNamespace(&decoded, "urn:x-cast:com.google.cast.receiver"));
-    CHECK(!CastMessage_IsNamespace(&decoded, "urn:x-cast:com.google.cast.media"));
-    CHECK(decoded.payloadLength == sizeof(payload) - 1 && 0 == memcmp(decoded.pPayload, payload, sizeof(payload) - 1));
-    CHECK(0 == decoded.binary);
+    CHECK((((uint32_t)frame[0] << 24) | ((uint32_t)frame[1] << 16) | ((uint32_t)frame[2] << 8) | frame[3]) == length - 4);
+    CHECK(Utl_CastV2_ReadMessage(&decoded, frame + 4, length - 4));
+    CHECK(decoded.source.byteCount == 8 && 0 == memcmp(decoded.source.data, "sender-0", 8));
+    CHECK(decoded.destination.byteCount == 10 && 0 == memcmp(decoded.destination.data, "receiver-0", 10));
+    CHECK(sizeof("urn:x-cast:com.google.cast.receiver") - 1 == decoded.nameSpace.byteCount);
+    CHECK(0 == memcmp(decoded.nameSpace.data, "urn:x-cast:com.google.cast.receiver", decoded.nameSpace.byteCount));
+    CHECK(sizeof("urn:x-cast:com.google.cast.media") - 1 != decoded.nameSpace.byteCount);
+    CHECK(decoded.payload.byteCount == sizeof(payload) - 1 && 0 == memcmp(decoded.payload.data, payload, sizeof(payload) - 1));
+    CHECK(UTL_CASTV2_STRING == decoded.payloadType);
     /* truncated bodies are rejected */
-    CHECK(!CastMessage_Decode(frame + 4, length - 5, &decoded));
+    CHECK(!Utl_CastV2_ReadMessage(&decoded, frame + 4, length - 5));
     return 0;
 }
 
@@ -68,24 +85,25 @@ static int TestDecodeSkipsUnknownFields(void)
 {
     /* protocol_version, source, destination, unknown fixed64 (field 9), unknown fixed32 (field 10),
     ** namespace, payload_type BINARY, payload_binary */
-    static const uint8_t body[] = {0x08, 0x00, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x49, 1, 2, 3, 4, 5, 6, 7, 8, 0x55, 1, 2, 3, 4, 0x22, 0x01, 'n', 0x28, 0x01, 0x3A, 0x02, 0xFF, 0x00};
-    CastMessage_t decoded;
+    static const byte_t body[] = {0x08, 0x00, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x49, 1, 2, 3, 4, 5, 6, 7, 8, 0x55, 1, 2, 3, 4, 0x22, 0x01, 'n', 0x28, 0x01, 0x3A, 0x02, 0xFF, 0x00};
+    Utl_CastV2_Message_t decoded;
 
-    CHECK(CastMessage_Decode(body, sizeof(body), &decoded));
-    CHECK(decoded.binary);
-    CHECK(decoded.payloadLength == 2 && 0xFF == (uint8_t)decoded.pPayload[0]);
-    CHECK(CastMessage_IsNamespace(&decoded, "n"));
+    CHECK(Utl_CastV2_ReadMessage(&decoded, body, sizeof(body)));
+    CHECK(UTL_CASTV2_BINARY == decoded.payloadType);
+    CHECK(decoded.payload.byteCount == 2 && 0xFF == (byte_t)decoded.payload.data[0]);
+    CHECK(1 == decoded.nameSpace.byteCount);
+    CHECK(0 == memcmp(decoded.nameSpace.data, "n", 1));
     /* a different protocol version is not understood */
     {
-        static const uint8_t wrongVersion[] = {0x08, 0x01, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x22, 0x01, 'n', 0x32, 0x00};
+        static const byte_t wrongVersion[] = {0x08, 0x01, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x22, 0x01, 'n', 0x32, 0x00};
 
-        CHECK(!CastMessage_Decode(wrongVersion, sizeof(wrongVersion), &decoded));
+        CHECK(!Utl_CastV2_ReadMessage(&decoded, wrongVersion, sizeof(wrongVersion)));
     }
     /* a body missing the namespace is incomplete */
     {
-        static const uint8_t noNamespace[] = {0x08, 0x00, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x32, 0x00};
+        static const byte_t noNamespace[] = {0x08, 0x00, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x32, 0x00};
 
-        CHECK(!CastMessage_Decode(noNamespace, sizeof(noNamespace), &decoded));
+        CHECK(!Utl_CastV2_ReadMessage(&decoded, noNamespace, sizeof(noNamespace)));
     }
     return 0;
 }

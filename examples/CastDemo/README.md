@@ -13,7 +13,7 @@ third-party libraries:
 2. **Channel.** A TCP connection to port 8009 is wrapped in TLS 1.2 by SChannel. Cast
    receivers present self-signed certificates, so the chain is not validated. Each
    CASTV2 frame is a 4-byte big-endian length and a `CastMessage` protocol buffer,
-   encoded and decoded by hand in `cast_message.c`.
+   encoded and decoded by the counted `utl_castv2` model over `utl_protobuf`.
 3. **Session.** `CONNECT` to `receiver-0`, `LAUNCH` the default media receiver
    (`CC1AD845`), read the `RECEIVER_STATUS` for its `transportId`, `CONNECT` to that
    transport, wait for the application's first `MEDIA_STATUS`, then `LOAD` the media

@@ -32,7 +32,10 @@
 #include "os/os_memory.h"
 #include "os/os_atomic.h"
 #include "crt/crt_memory.h"
-#include "utl/utl_castjson.h"
+#include "utl/utl_chromecast.h"
+#include "utl/utl_castv2.h"
+#include "utl/utl_json.h"
+#include "os/os_types.h"
 #include "utl/utl_unicode.h"
 #include "cvk_json.h"
 #include "mp4_index.h"
@@ -43,11 +46,6 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define NS_CONNECTION "urn:x-cast:com.google.cast.tp.connection"
-#define NS_HEARTBEAT  "urn:x-cast:com.google.cast.tp.heartbeat"
-#define NS_RECEIVER   "urn:x-cast:com.google.cast.receiver"
-#define NS_MEDIA      "urn:x-cast:com.google.cast.media"
-#define NS_PREFIX_LEN (sizeof("urn:x-cast:com.google.cast.") - 1)
 
 #define DEFAULT_MEDIA_RECEIVER  "CC1AD845"
 #define SENDER_ID               "sender-0"
@@ -63,34 +61,77 @@
 #define SCRUB_TO_PROXY_MS       (140)  /* sustained scrub before dropping to the low-res proxy */
 #define SETTLE_MS               (1400) /* quiet time before upgrading back to full quality */
 #define JSON_VALUE_CAPACITY     (4096)
-#define LOAD_PAYLOAD_CAPACITY   (20000)
-#define SESSION_RUN_IDLE        (0)
-#define SESSION_RUN_ACTIVE      (1)
-#define SESSION_RUN_COMPLETE    (2)
-#define SESSION_ID_CAPACITY     (128)
-#define LOAD_SUBTITLE_TRACK_ID  (1)
-#define LOAD_SUBTITLE_NAME      "Subtitles"
-#define LOAD_DEFAULT_LANGUAGE   "und"
-#define LOAD_STREAM_NONE        "NONE"
-#define LOAD_STREAM_BUFFERED    "BUFFERED"
-#define LOAD_STREAM_LIVE        "LIVE"
-#define LOAD_MILLISECONDS_LIMIT (18446744073709551616.0) /* Exclusive uint64_t conversion limit. */
+#define LOAD_PAYLOAD_CAPACITY     (20000)
+#define SESSION_RUN_IDLE          (0)
+#define SESSION_RUN_ACTIVE        (1)
+#define SESSION_RUN_COMPLETE      (2)
+#define SESSION_ID_CAPACITY       (128)
+#define SESSION_STATUS_TEXT_CAPACITY (128)
+#define LOAD_SUBTITLE_FOREGROUND  (0xFFFFFFFF)
+#define LOAD_SUBTITLE_BACKGROUND  (0x00000000)
+#define LOAD_SUBTITLE_EDGE_COLOR  (0x000000FF)
+#define LOAD_SUBTITLE_FONT_SCALE  (10)
+#define LOAD_SUBTITLE_FONT_DIGITS (1)
+#define LOAD_SUBTITLE_TRACK_ID    (1)
+#define LOAD_SUBTITLE_NAME        "Subtitles"
+#define LOAD_DEFAULT_LANGUAGE     "und"
+#define LOAD_STREAM_NONE          "NONE"
+#define LOAD_STREAM_BUFFERED      "BUFFERED"
+#define LOAD_STREAM_LIVE          "LIVE"
+#define LOAD_MILLISECONDS_LIMIT   (18446744073709551616.0) /* Exclusive uint64_t conversion limit. */
+#define SEEK_FRACTION_DIGITS      (3)
+#define LEAVE_DEADLINE_MS         (1000)
+#define LEAVE_RECEIVE_MS          (200)
 
 /*=================================================================================================
 ** 3.2 Types
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \brief Complete result of deriving an application time in milliseconds.
+ */
+typedef struct MillisecondPosition_s
+{
+    bool_t   valid;        ///< TRUE only when the input belongs to the supported finite domain.
+    uint64_t milliseconds; ///< Rounded result when valid; zero otherwise.
+} MillisecondPosition_t;
+
+/*************************************************************************************************/
+/**
+ * \brief One application seek intent before schema conversion and transmission.
+ */
+typedef struct SeekRequest_s
+{
+    float64_t seconds; ///< Requested timeline position before clamping.
+    bool_t    resume;  ///< TRUE resumes playback; FALSE pauses at the target.
+} SeekRequest_t;
+
+/*************************************************************************************************/
+/**
+ * \brief Complete preflight result for an escaped receiver identifier.
+ */
+typedef struct ReceiverIdentifier_s
+{
+    Utl_Json_Text_t encoded;   ///< Borrowed encoded JSON string body.
+    uint32_t        byteCount; ///< Exact decoded extent when valid.
+    bool_t          valid;     ///< Nonempty scalar UTF-8 fitting retained storage.
+} ReceiverIdentifier_t;
+
 typedef struct CastSession_State_s
 {
-    CastMedia_Channel_t proxyUpdates;       ///< Proxy worker to runner, latest complete pair.
-    CastMedia_Channel_t replacementUpdates; ///< GUI owner to runner, latest complete pair.
-    const CastMedia_t*  proxy;              ///< Runner borrow, stable until its next proxy Take.
+    CastMedia_Channel_t proxyUpdates;                        ///< Proxy worker to runner, latest complete pair.
+    CastMedia_Channel_t replacementUpdates;                  ///< GUI owner to runner, latest complete pair.
+    const CastMedia_t*  proxy;                               ///< Runner borrow, stable until its next proxy Take.
     CastSessionConfig   config;
     CastChannel*        pChannel;
-    char                loadPayload[LOAD_PAYLOAD_CAPACITY];
+    byte_t              loadPayload[LOAD_PAYLOAD_CAPACITY];
+    cvkJsonValue        jsonValues[JSON_VALUE_CAPACITY];     ///< Startup-owned response storage, exclusive to the runner.
     int32_t             requestId;
-    char                sessionId[SESSION_ID_CAPACITY];   /* the receiver application instance */
-    char                transportId[SESSION_ID_CAPACITY]; /* where media messages go */
+    byte_t              sessionBytes[SESSION_ID_CAPACITY];   ///< Retained decoded receiver session bytes.
+    Utl_Json_Text_t     sessionId;                           ///< Counted borrow of sessionBytes while joined.
+    byte_t              transportBytes[SESSION_ID_CAPACITY]; ///< Retained decoded receiver transport bytes.
+    Utl_Json_Text_t     transportId;                         ///< Counted borrow of transportBytes while joined.
     bool_t              joined;
     bool_t              loadPending;  /* LOAD waits for the application's first MEDIA_STATUS */
     uint64_t            loadDeadline; /* ... or for this tick count, whichever comes first */
@@ -160,6 +201,50 @@ static FORCE_INLINE void InitializeState(CastSession_State_t* state, const CastS
 
 /*************************************************************************************************/
 /**
+ * \brief Gets the fixed platform receiver endpoint.
+ *
+ * \par Requirements:
+ *  - 001 The returned counted borrow shall refer to immutable program storage.
+ *  - 002 No scan, allocation or native call shall occur.
+ *
+ *
+ * \retval endpoint Counted receiver endpoint.
+ */
+static FORCE_INLINE Utl_Json_Text_t GetReceiverEndpoint(void);
+
+/*************************************************************************************************/
+/**
+ * \brief Derives the decoded extent of a required receiver identifier.
+ *
+ * \par Requirements:
+ *  - 001 A present value shall be an unchanged record from the current complete receiver document.
+ *  - 002 Missing, non-string, malformed, empty or oversized identifiers shall produce an invalid result.
+ *  - 003 Encoded input shall remain borrowed; no output storage shall change.
+ *
+ * \param[in] value   Optional receiver record
+ *
+ * \retval result Complete validation result with a counted encoded borrow.
+ */
+static FORCE_INLINE ReceiverIdentifier_t GetReceiverIdentifier(const cvkJsonValue* value);
+
+/*************************************************************************************************/
+/**
+ * \brief Compares a received envelope namespace with a protocol namespace.
+ *
+ * \par Requirements:
+ *  - 001 The envelope shall be a valid unchanged CastV2 model with live borrowed routing bytes.
+ *  - 002 Only an exact counted match to a supported namespace shall succeed.
+ *
+ * \param[in] message   Required borrowed envelope
+ * \param[in] kind      Expected protocol namespace
+ *
+ * \retval TRUE Equal counted namespace.
+ * \retval FALSE Unsupported or different namespace.
+ */
+static FORCE_INLINE bool_t IsNamespace(const Utl_CastV2_Message_t* message, Utl_Chromecast_Namespace_t kind);
+
+/*************************************************************************************************/
+/**
  * \brief Determines whether settled receiver state permits a media source change.
  *
  * \par Requirements:
@@ -173,6 +258,219 @@ static FORCE_INLINE void InitializeState(CastSession_State_t* state, const CastS
  * \retval    FALSE   A transition is pending or no active media session is available.
  */
 static FORCE_INLINE bool_t IsMediaSwitchReady(const CastSession_State_t* state);
+
+/*************************************************************************************************/
+/**
+ * \brief Determines whether an ordinary media command can address settled media.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own the initialized state.
+ *  - 002 A media ID, transport endpoint and absence of a pending LOAD shall be required.
+ *
+ * \param[in] session   Required runner-owned state
+ *
+ * \retval    TRUE    Media commands may be sent.
+ * \retval    FALSE   No addressable settled media is available.
+ */
+static FORCE_INLINE bool_t CanSendMediaCommand(const CastSession_State_t* session);
+
+/*************************************************************************************************/
+/**
+ * \brief Rounds an application time to its nonnegative millisecond send domain.
+ *
+ * \par Requirements:
+ *  - 001 The complete returned result shall be initialized on every path.
+ *  - 002 Negative finite times shall clamp to zero; nonfinite or oversized times shall fail.
+ *  - 003 Rounding shall occur only after a floating-point range check; invalid results shall carry zero milliseconds.
+ *
+ * \param[in] seconds   Application timeline position
+ *
+ * \retval    result   Valid rounded milliseconds or an explicit invalid result.
+ */
+static FORCE_INLINE MillisecondPosition_t GetMilliseconds(float64_t seconds);
+
+/*************************************************************************************************/
+/**
+ * \brief Sends a counted serialized payload through a borrowed CastV2 envelope.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own a live channel and retain routing names and payload through the send.
+ *  - 002 The payload shall contain byteCount readable bytes within the CastV2 body limit.
+ *  - 003 No payload terminator or string-length scan shall be required.
+ *
+ * \param[in,out] session       Required runner-owned session
+ * \param[in]     nameSpace     Supported protocol namespace
+ * \param[in]     destination   Counted destination endpoint
+ * \param[in]     payload       Counted serialized UTF-8 bytes
+ * \param[in]     byteCount     Exact payload extent
+ *
+ * \retval        TRUE    The complete message was sent.
+ * \retval        FALSE   Framing or native transport failed.
+ */
+static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
+                                    Utl_Chromecast_Namespace_t nameSpace,
+                                    Utl_Json_Text_t            destination,
+                                    const byte_t*              payload,
+                                    uint32_t                   byteCount);
+
+/*************************************************************************************************/
+/**
+ * \brief Serializes one typed command into the runner's retained byte buffer.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall retain the channel, routing names and command model through the send.
+ *  - 002 Invalid fields or insufficient retained capacity shall fail before transport begins.
+ *  - 003 Protocol grammar shall belong to utl_chromecast and utl_json; output shall remain counted bytes.
+ *
+ * \param[in,out] session       Required runner-owned session
+ * \param[in]     destination   Counted destination endpoint
+ * \param[in]     command       Stable borrowed typed model
+ *
+ * \retval        TRUE    The complete message was sent.
+ * \retval        FALSE   Validation, capacity, framing or native transport failed.
+ */
+static FORCE_INLINE bool_t SendCommand(CastSession_State_t*            session,
+                                       Utl_Json_Text_t                 destination,
+                                       const Utl_Chromecast_Command_t* command);
+
+/*************************************************************************************************/
+/**
+ * \brief Sends a typed connection or heartbeat message.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own a live channel and the retained serialization buffer.
+ *  - 002 Kind shall be CONNECT, PING or PONG; caller misuse shall assert.
+ *
+ * \param[in,out] session       Required runner-owned state
+ * \param[in]     destination   Counted destination endpoint
+ * \param[in]     kind          Type-only schema
+ *
+ * \retval        TRUE    Complete command sent.
+ * \retval        FALSE   Serialization or transport failed.
+ */
+static FORCE_INLINE bool_t SendSimpleCommand(CastSession_State_t*         session,
+                                             Utl_Json_Text_t              destination,
+                                             Utl_Chromecast_CommandKind_t kind);
+
+/*************************************************************************************************/
+/**
+ * \brief Takes a unique positive request identifier for the current conversation.
+ *
+ * \par Requirements:
+ *  - 001 Only the runner shall mutate the initialized correlation sequence.
+ *  - 002 Exhaustion shall return zero without signed overflow or identifier reuse.
+ *
+ * \param[in,out] session   Required runner-owned state
+ *
+ * \retval        positive   New correlation identifier.
+ * \retval        0          Signed application sequence is exhausted.
+ */
+static FORCE_INLINE int32_t TakeRequestId(CastSession_State_t* session);
+
+/*************************************************************************************************/
+/**
+ * \brief Sends an ordinary typed media command when media is addressable.
+ *
+ * \par Requirements:
+ *  - 001 Kind shall be PLAY, PAUSE, STOP_MEDIA or GET_MEDIA_STATUS; misuse shall assert.
+ *  - 002 Missing media, missing transport or an in-flight LOAD shall suppress the command successfully.
+ *  - 003 Active commands shall use a unique request ID and retained serialization storage.
+ *
+ * \param[in,out] session   Required runner-owned state
+ * \param[in]     kind      Supported media command schema
+ *
+ * \retval        TRUE    Command sent or intentionally suppressed during transition.
+ * \retval        FALSE   Correlation, serialization or transport failure.
+ */
+static FORCE_INLINE bool_t SendMediaCommand(CastSession_State_t* session, Utl_Chromecast_CommandKind_t kind);
+
+/*************************************************************************************************/
+/**
+ * \brief Sends a bounded SEEK and then publishes its pending confirmation state.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own initialized state; unavailable media shall suppress the command successfully.
+ *  - 002 Nonfinite times shall fail; finite times shall clamp to the known timeline and round to milliseconds.
+ *  - 003 Position and seek confirmation state shall change only after a successful complete send.
+ *
+ * \param[in,out] session   Required runner-owned state
+ * \param[in]     request   Required borrowed position and playback intent
+ *
+ * \retval        TRUE    Command sent or suppressed during media transition.
+ * \retval        FALSE   Time, correlation, serialization or transport failure.
+ */
+static FORCE_INLINE bool_t Seek(CastSession_State_t* session, const SeekRequest_t* request);
+
+/*************************************************************************************************/
+/**
+ * \brief Sends the newest queued seek once loading and rate-limit constraints permit it.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own initialized session state and its queued seek.
+ *  - 002 At most one coalesced seek shall be attempted; a failed send shall retain the queued request.
+ *
+ * \param[in,out] session   Required runner-owned state
+ * \param[in]     now       Current monotonic milliseconds
+ *
+ * \retval        TRUE    Nothing is due or the queued seek was sent.
+ * \retval        FALSE   The due seek failed.
+ */
+static FORCE_INLINE bool_t FlushSeek(CastSession_State_t* session, uint64_t now);
+
+/*************************************************************************************************/
+/**
+ * \brief Connects to one validated receiver application before publishing its route.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own an unjoined session and a stable complete receiver document.
+ *  - 002 Both required identifiers shall pass Unicode and capacity preflight before either is decoded.
+ *  - 003 Only successful virtual connection transmission shall publish identifiers, joined state and LOAD deadline.
+ *
+ * \param[in,out] session       Required runner-owned state
+ * \param[in]     document      Required current receiver document
+ * \param[in]     application   Required receiver application object
+ *
+ * \retval TRUE Application route published.
+ * \retval FALSE Invalid identifiers or failed virtual connection; route remains unpublished.
+ */
+static FORCE_INLINE bool_t JoinReceiver(CastSession_State_t*   session,
+                                        const cvkJsonDocument* document,
+                                        const cvkJsonValue*    application);
+
+/*************************************************************************************************/
+/**
+ * \brief Handles application presence in a receiver status message.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own initialized conversation state and the complete borrowed document.
+ *  - 002 A present applications member shall be an array; malformed status shall fail without publishing a route.
+ *  - 003 Missing application before joining shall remain pending; its disappearance after joining shall end the conversation.
+ *
+ * \param[in,out] session    Required runner-owned state
+ * \param[in]     document   Required complete receiver document
+ * \param[in]     root       Required receiver response object
+ *
+ * \retval TRUE Continue the receiver conversation.
+ * \retval FALSE Invalid status, closed application or failed connection.
+ */
+static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
+                                            const cvkJsonDocument* document,
+                                            const cvkJsonValue*    root);
+
+/*************************************************************************************************/
+/**
+ * \brief Requests application shutdown and drains replies until the bounded deadline.
+ *
+ * \par Requirements:
+ *  - 001 The runner shall own the channel and stable counted application session ID.
+ *  - 002 Missing session/channel or failed command transmission shall leave without waiting.
+ *  - 003 The receiver session ID shall be escaped by the schema writer, never interpolated into JSON.
+ *
+ * \param[in,out] pSession   Required runner-owned state
+ *
+ * \retval        None   Request/drain attempt finished; channel cleanup remains with the runner.
+ */
+static void Leave(CastSession_State_t* pSession);
 
 /*************************************************************************************************/
 /**
@@ -197,56 +495,133 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession);
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Command reset discards prior Stop and positions. Empty string terminators
- *  make retained payload bytes inaccessible until each bounded producer writes them.
+ *  Command reset discards prior Stop and positions. Zero identifier counts
+ *  keep retained bytes unpublished until a validated connection succeeds.
  */
 static FORCE_INLINE void InitializeState(CastSession_State_t* state, const CastSessionConfig* config)
 {
     CRT_Memory_Copy(&state->config, config, sizeof(CastSessionConfig));
-    state->pChannel            = NULL;
-    state->loadPayload[0]      = 0;
-    state->requestId           = 0;
-    state->sessionId[0]        = 0;
-    state->transportId[0]      = 0;
-    state->joined              = FALSE;
-    state->loadPending         = FALSE;
-    state->loadDeadline        = 0;
-    state->mediaSessionId      = 0;
-    state->status.state        = CAST_STATE_CONNECTING;
-    state->status.stateName[0] = 0;
-    state->status.currentTime  = 0.0;
-    state->status.duration     = 0.0;
-    state->status.hasMedia     = FALSE;
-    state->finished            = FALSE;
-    state->seekQueued          = FALSE;
-    state->seekQueuedSeconds   = 0.0;
-    state->seekQueuedResume    = FALSE;
-    state->lastSeekTick        = 0;
-    state->seekPending         = FALSE;
-    state->seekTarget          = 0.0;
-    state->seekPendingSince    = 0;
-    state->wantPlayAfterSeek   = FALSE;
-    state->playAfterSeekSince  = 0;
-    state->scrubbing           = FALSE;
-    state->playingBeforeScrub  = FALSE;
-    state->resumeSince         = 0;
-    state->measurePending      = FALSE;
-    state->measureTarget       = 0.0;
-    state->measureSince        = 0;
-    state->measureRebuffered   = FALSE;
-    state->onProxy             = FALSE;
-    state->switchedToProxy     = FALSE;
-    state->scrubRunSince       = 0;
-    state->lastActivityTick    = 0;
-    state->settlePending       = FALSE;
-    state->playingWanted       = FALSE;
-    state->awaitingLoad        = FALSE;
-    state->preLoadSessionId    = 0;
-    state->proxy               = NULL;
+    state->pChannel              = NULL;
+    state->loadPayload[0]        = 0;
+    state->requestId             = 0;
+    state->sessionId.data        = state->sessionBytes;
+    state->sessionId.byteCount   = 0;
+    state->transportId.data      = state->transportBytes;
+    state->transportId.byteCount = 0;
+    state->joined                = FALSE;
+    state->loadPending           = FALSE;
+    state->loadDeadline          = 0;
+    state->mediaSessionId        = 0;
+    state->status.state          = CAST_STATE_CONNECTING;
+    state->status.stateName[0]   = 0;
+    state->status.currentTime    = 0.0;
+    state->status.duration       = 0.0;
+    state->status.hasMedia       = FALSE;
+    state->finished              = FALSE;
+    state->seekQueued            = FALSE;
+    state->seekQueuedSeconds     = 0.0;
+    state->seekQueuedResume      = FALSE;
+    state->lastSeekTick          = 0;
+    state->seekPending           = FALSE;
+    state->seekTarget            = 0.0;
+    state->seekPendingSince      = 0;
+    state->wantPlayAfterSeek     = FALSE;
+    state->playAfterSeekSince    = 0;
+    state->scrubbing             = FALSE;
+    state->playingBeforeScrub    = FALSE;
+    state->resumeSince           = 0;
+    state->measurePending        = FALSE;
+    state->measureTarget         = 0.0;
+    state->measureSince          = 0;
+    state->measureRebuffered     = FALSE;
+    state->onProxy               = FALSE;
+    state->switchedToProxy       = FALSE;
+    state->scrubRunSince         = 0;
+    state->lastActivityTick      = 0;
+    state->settlePending         = FALSE;
+    state->playingWanted         = FALSE;
+    state->awaitingLoad          = FALSE;
+    state->preLoadSessionId      = 0;
+    state->proxy                 = NULL;
     CastMedia_Initialize(&state->proxyUpdates);
     CastMedia_Initialize(&state->replacementUpdates);
     InitializeSRWLock(&state->commandLock);
     CastCommands_Reset(&state->commands);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE Utl_Json_Text_t GetReceiverEndpoint(void)
+{
+    Utl_Json_Text_t endpoint;
+
+    endpoint.data      = (const byte_t*)RECEIVER_ID;
+    endpoint.byteCount = sizeof(RECEIVER_ID) - 1;
+    return endpoint;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The legacy document supplies an encoded string body; utl_json owns escape decoding.
+ */
+static FORCE_INLINE ReceiverIdentifier_t GetReceiverIdentifier(const cvkJsonValue* value)
+{
+    ReceiverIdentifier_t identifier;
+    bool_t               has_value;
+    bool_t               is_string;
+    bool_t               decoded;
+    bool_t               nonempty;
+    bool_t               fits;
+
+    identifier.encoded.data      = NULL;
+    identifier.encoded.byteCount = 0;
+    identifier.byteCount         = 0;
+    identifier.valid             = FALSE;
+    has_value                    = (NULL != value);
+    if (has_value)
+    {
+        is_string = (CVK_JSON_STRING == value->kind);
+        if (is_string)
+        {
+            identifier.encoded.data      = (const byte_t*)value->pText;
+            identifier.encoded.byteCount = value->textLength;
+            decoded                      = Utl_Json_GetDecodedByteCount(&identifier.byteCount, identifier.encoded);
+            nonempty                     = (0 < identifier.byteCount);
+            fits                         = (identifier.byteCount <= SESSION_ID_CAPACITY);
+            identifier.valid             = decoded && nonempty && fits;
+        }
+    }
+    return identifier;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  No routing byte is interpreted as a terminator.
+ */
+static FORCE_INLINE bool_t IsNamespace(const Utl_CastV2_Message_t* message, Utl_Chromecast_Namespace_t kind)
+{
+    Utl_Json_Text_t expected;
+    bool_t          supported;
+    bool_t          same_count;
+    bool_t          can_compare;
+    bool_t          matches;
+
+    LOGASSERT(NULL != message);
+    expected    = Utl_Chromecast_GetNamespace(kind);
+    supported   = (0 < expected.byteCount);
+    same_count  = (message->nameSpace.byteCount == expected.byteCount);
+    can_compare = supported && same_count;
+    matches     = FALSE;
+    if (can_compare)
+    {
+        matches = (0 == CRT_Memory_Compare(message->nameSpace.data, expected.data, expected.byteCount));
+    }
+    return matches;
 }
 
 /*************************************************************************************************/
@@ -269,6 +644,58 @@ static FORCE_INLINE bool_t IsMediaSwitchReady(const CastSession_State_t* state)
     active      = playing || paused;
 
     return settled && has_session && active;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t CanSendMediaCommand(const CastSession_State_t* session)
+{
+    bool_t has_media;
+    bool_t has_transport;
+    bool_t is_settled;
+    bool_t can_send;
+
+    has_media     = (0 != session->mediaSessionId);
+    has_transport = (0 < session->transportId.byteCount);
+    is_settled    = !session->awaitingLoad;
+    can_send      = has_media && has_transport && is_settled;
+    return can_send;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Both the seconds value and the rounded product are checked before narrowing.
+ *  The application retains its existing three-decimal wire-time precision.
+ */
+static FORCE_INLINE MillisecondPosition_t GetMilliseconds(float64_t seconds)
+{
+    bool_t                meets_minimum;
+    bool_t                below_limit;
+    MillisecondPosition_t position;
+    float64_t             rounded;
+
+    meets_minimum         = (-DBL_MAX <= seconds);
+    below_limit           = (seconds < LOAD_MILLISECONDS_LIMIT / UTL_CHROMECAST_MILLISECONDS_PER_SECOND);
+    position.valid        = meets_minimum && below_limit;
+    position.milliseconds = 0;
+    if (position.valid)
+    {
+        if (0.0 > seconds)
+        {
+            seconds = 0.0;
+        }
+        rounded        = (seconds * UTL_CHROMECAST_MILLISECONDS_PER_SECOND) + 0.5;
+        position.valid = (rounded < LOAD_MILLISECONDS_LIMIT);
+        if (position.valid)
+        {
+            position.milliseconds = (uint64_t)rounded;
+        }
+    }
+    return position;
 }
 
 /*************************************************************************************************/
@@ -316,24 +743,119 @@ static void SetPhase(CastSession_State_t* pSession, CastPlayerState state, const
  *  Borrows a JSON payload into a Cast envelope, optionally logs it and sends it
  *  through the channel. Transport failure is reported through the session log.
  */
-static int SendJson(CastSession_State_t* pSession,
-                    const char*          pNamespace,
-                    const char*          pDestination,
-                    const char*          pPayload)
+static FORCE_INLINE bool_t SendJson(CastSession_State_t*       session,
+                                    Utl_Chromecast_Namespace_t nameSpace,
+                                    Utl_Json_Text_t            destination,
+                                    const byte_t*              payload,
+                                    uint32_t                   byteCount)
 {
-    CastMessage_t message;
+    Utl_Json_Text_t      namespace_text;
+    Utl_CastV2_Message_t message;
+    bool_t               sent;
 
-    CastMessage_Initialize(&message, SENDER_ID, pDestination, pNamespace, pPayload);
-    if (pSession->config.verbose)
+    LOGASSERT(byteCount <= UTL_CASTV2_MAX_BODY);
+    namespace_text = Utl_Chromecast_GetNamespace(nameSpace);
+    LOGASSERT(0 < namespace_text.byteCount);
+    LOGASSERT(0 < destination.byteCount);
+    message.source.data           = (const byte_t*)SENDER_ID;
+    message.source.byteCount      = sizeof(SENDER_ID) - 1;
+    message.destination.data      = destination.data;
+    message.destination.byteCount = destination.byteCount;
+    message.nameSpace.data        = namespace_text.data;
+    message.nameSpace.byteCount   = namespace_text.byteCount;
+    message.payloadType           = UTL_CASTV2_STRING;
+    message.payload.data          = payload;
+    message.payload.byteCount     = byteCount;
+    if (session->config.verbose)
     {
-        Log(pSession, ">> %s -> %s %s", pNamespace + NS_PREFIX_LEN, pDestination, pPayload);
+        Log(session,
+            ">> %.*s -> %.*s %.*s",
+            (int32_t)namespace_text.byteCount,
+            (const char_t*)namespace_text.data,
+            (int32_t)destination.byteCount,
+            (const char_t*)destination.data,
+            (int32_t)byteCount,
+            (const char_t*)payload);
     }
-    if (!CastChannel_Send(pSession->pChannel, &message))
+    sent = CastChannel_Send(session->pChannel, &message);
+    if (!sent)
     {
-        Log(pSession, "cast: %s", CastChannel_GetError(pSession->pChannel));
-        return 0;
+        Log(session, "cast: %s", CastChannel_GetError(session->pChannel));
     }
-    return 1;
+    return sent;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The schema writer preflights complete commands. Retained payload storage is
+ *  exclusively runner-owned; the send consumes it before the next serialization.
+ */
+static FORCE_INLINE bool_t SendCommand(CastSession_State_t*            session,
+                                       Utl_Json_Text_t                 destination,
+                                       const Utl_Chromecast_Command_t* command)
+{
+    uint32_t                   byte_count;
+    bool_t                     encoded;
+    bool_t                     sent;
+    Utl_Chromecast_Namespace_t name_space;
+
+    byte_count = Utl_Chromecast_WriteCommand(command, session->loadPayload, LOAD_PAYLOAD_CAPACITY);
+    encoded    = (0 < byte_count);
+    sent       = FALSE;
+    if (encoded)
+    {
+        name_space = Utl_Chromecast_GetCommandNamespace(command->kind);
+        sent       = SendJson(session, name_space, destination, session->loadPayload, byte_count);
+    }
+    return sent;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Type-only schemas inspect no inactive command data and need no request ID.
+ */
+static FORCE_INLINE bool_t SendSimpleCommand(CastSession_State_t*         session,
+                                             Utl_Json_Text_t              destination,
+                                             Utl_Chromecast_CommandKind_t kind)
+{
+    bool_t                   is_connect;
+    bool_t                   is_ping;
+    bool_t                   is_pong;
+    bool_t                   is_supported;
+    Utl_Chromecast_Command_t command;
+    bool_t                   sent;
+
+    is_connect   = (UTL_CHROMECAST_COMMAND_CONNECT == kind);
+    is_ping      = (UTL_CHROMECAST_COMMAND_PING == kind);
+    is_pong      = (UTL_CHROMECAST_COMMAND_PONG == kind);
+    is_supported = is_connect || is_ping || is_pong;
+    LOGASSERT(is_supported);
+    command.kind = kind;
+    sent         = SendCommand(session, destination, &command);
+    return sent;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Exhaustion is a normal send failure, never signed overflow or silent reuse.
+ */
+static FORCE_INLINE int32_t TakeRequestId(CastSession_State_t* session)
+{
+    bool_t  has_next;
+    int32_t request;
+
+    LOGASSERT(0 <= session->requestId);
+    has_next = (INT32_MAX > session->requestId);
+    request  = 0;
+    if (has_next)
+    {
+        request            = session->requestId + 1;
+        session->requestId = request;
+    }
+    return request;
 }
 
 /*************************************************************************************************/
@@ -349,30 +871,35 @@ static FORCE_INLINE bool_t LoadMedia(CastSession_State_t* pSession,
                                      int                  autoplay,
                                      const char*          pStreamType)
 {
-    bool_t is_valid;
+    uint32_t byte_count;
+    bool_t   is_valid;
 
-    if (startSeconds < 0)
-    {
-        startSeconds = 0;
-    }
-    is_valid = (0 < CastSession_FormatLoad(&pSession->config,
-                                           pSession->sessionId,
-                                           ++pSession->requestId,
-                                           pUrl,
-                                           pType,
-                                           startSeconds,
-                                           autoplay,
-                                           pStreamType,
-                                           pSession->loadPayload,
-                                           LOAD_PAYLOAD_CAPACITY));
+    byte_count = CastSession_WriteLoad(&pSession->config,
+                                       pSession->sessionId,
+                                       TakeRequestId(pSession),
+                                       pUrl,
+                                       pType,
+                                       startSeconds,
+                                       autoplay,
+                                       pStreamType,
+                                       pSession->loadPayload,
+                                       LOAD_PAYLOAD_CAPACITY);
+    is_valid = (0 < byte_count);
     if (is_valid)
     {
-        SetPhase(pSession, CAST_STATE_LOADING, "LOADING");
+        is_valid = SendJson(pSession,
+                            UTL_CHROMECAST_NAMESPACE_MEDIA,
+                            pSession->transportId,
+                            pSession->loadPayload,
+                            byte_count);
+    }
+    if (is_valid)
+    {
         pSession->playingWanted    = autoplay;
         pSession->awaitingLoad     = 1; /* the media session id changes; hold seeks until the new one lands */
         pSession->preLoadSessionId = pSession->mediaSessionId;
         pSession->seekPending      = 0;
-        is_valid                   = SendJson(pSession, NS_MEDIA, pSession->transportId, pSession->loadPayload);
+        SetPhase(pSession, CAST_STATE_LOADING, "LOADING");
     }
 
     return is_valid;
@@ -398,21 +925,40 @@ static int Load(CastSession_State_t* pSession)
  *  Suppresses commands until a media session and transport are available and no
  *  LOAD is pending; otherwise sends a request with the next request ID.
  */
-static int SendMediaCommand(CastSession_State_t* pSession, const char* pType)
+static FORCE_INLINE bool_t SendMediaCommand(CastSession_State_t* session, Utl_Chromecast_CommandKind_t kind)
 {
-    char payload[256];
+    bool_t                   is_play;
+    bool_t                   is_pause;
+    bool_t                   is_stop;
+    bool_t                   is_status;
+    bool_t                   is_supported;
+    bool_t                   can_send;
+    bool_t                   sent;
+    Utl_Chromecast_Command_t command;
 
-    if (0 == pSession->mediaSessionId || 0 == pSession->transportId[0] || pSession->awaitingLoad)
+    is_play      = (UTL_CHROMECAST_COMMAND_PLAY == kind);
+    is_pause     = (UTL_CHROMECAST_COMMAND_PAUSE == kind);
+    is_stop      = (UTL_CHROMECAST_COMMAND_STOP_MEDIA == kind);
+    is_status    = (UTL_CHROMECAST_COMMAND_GET_MEDIA_STATUS == kind);
+    is_supported = is_play || is_pause || is_stop || is_status;
+    LOGASSERT(is_supported);
+    can_send = CanSendMediaCommand(session);
+    sent     = TRUE;
+    if (can_send)
     {
-        return 1;
+        command.kind      = kind;
+        command.requestId = (uint32_t)TakeRequestId(session);
+        if (is_status)
+        {
+            command.data.statusSessionId = &session->mediaSessionId;
+        }
+        else
+        {
+            command.data.mediaSessionId = session->mediaSessionId;
+        }
+        sent = SendCommand(session, session->transportId, &command);
     }
-    (void)snprintf(payload,
-                   sizeof(payload),
-                   "{\"type\":\"%s\",\"requestId\":%d,\"mediaSessionId\":%lld}",
-                   pType,
-                   ++pSession->requestId,
-                   (long long)pSession->mediaSessionId);
-    return SendJson(pSession, NS_MEDIA, pSession->transportId, payload);
+    return sent;
 }
 
 /* A paused seek only decodes to the target frame and paints it; a resuming seek also refills
@@ -420,52 +966,77 @@ static int SendMediaCommand(CastSession_State_t* pSession, const char* pType)
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Clamps the target to the known timeline, records seek-confirmation state and
- *  publishes the target immediately before sending SEEK with the requested
- *  resume state.
+ *  Validates and clamps the target to the known timeline. Seek confirmation and
+ *  display state change only after the complete typed command has been sent.
  */
-static int Seek(CastSession_State_t* pSession, double seconds, int resume)
+static FORCE_INLINE bool_t Seek(CastSession_State_t* session, const SeekRequest_t* request)
 {
-    char payload[256];
+    float64_t                seconds;
+    bool_t                   resume;
+    bool_t                   can_send;
+    bool_t                   sent;
+    bool_t                   meets_minimum;
+    bool_t                   below_maximum;
+    bool_t                   finite;
+    bool_t                   has_duration;
+    bool_t                   beyond_duration;
+    MillisecondPosition_t    position;
+    Utl_Chromecast_Command_t command;
 
-    if (0 == pSession->mediaSessionId || 0 == pSession->transportId[0] || pSession->awaitingLoad)
+    LOGASSERT(NULL != request);
+    seconds  = request->seconds;
+    resume   = request->resume;
+    can_send = CanSendMediaCommand(session);
+    sent     = TRUE;
+    if (can_send)
     {
-        return 1; /* a LOAD is in flight; its currentTime positions us and a seek now is stale */
+        meets_minimum = (-DBL_MAX <= seconds);
+        below_maximum = (seconds <= DBL_MAX);
+        finite        = meets_minimum && below_maximum;
+        if (0.0 > seconds)
+        {
+            seconds = 0.0;
+        }
+        has_duration    = (0.0 < session->status.duration);
+        beyond_duration = (session->status.duration < seconds);
+        if (has_duration && beyond_duration)
+        {
+            seconds = session->status.duration;
+        }
+        position = GetMilliseconds(seconds);
+        sent     = finite && position.valid;
+        if (sent)
+        {
+            command.kind                                 = UTL_CHROMECAST_COMMAND_SEEK;
+            command.requestId                            = (uint32_t)TakeRequestId(session);
+            command.data.seek.mediaSessionId             = session->mediaSessionId;
+            command.data.seek.currentTime.coefficient    = position.milliseconds;
+            command.data.seek.currentTime.fractionDigits = SEEK_FRACTION_DIGITS;
+            command.data.seek.resume                     = resume ? UTL_CHROMECAST_RESUME_START : UTL_CHROMECAST_RESUME_PAUSE;
+            sent                                         = SendCommand(session, session->transportId, &command);
+        }
+        if (sent)
+        {
+            session->lastSeekTick       = GetTickCount64();
+            session->seekPending        = TRUE;
+            session->seekTarget         = seconds;
+            session->seekPendingSince   = session->lastSeekTick;
+            session->resumeSince        = resume ? session->lastSeekTick : 0;
+            session->wantPlayAfterSeek  = resume;
+            session->playAfterSeekSince = session->lastSeekTick;
+            if (resume)
+            {
+                session->measurePending    = TRUE;
+                session->measureTarget     = seconds;
+                session->measureSince      = session->lastSeekTick;
+                session->measureRebuffered = FALSE;
+            }
+            /* Publish a new target only after its complete command was sent. */
+            session->status.currentTime = seconds;
+            EmitStatus(session);
+        }
     }
-    if (seconds < 0)
-    {
-        seconds = 0;
-    }
-    if (pSession->status.duration > 0 && seconds > pSession->status.duration)
-    {
-        seconds = pSession->status.duration;
-    }
-    (void)snprintf(
-        payload,
-        sizeof(payload),
-        "{\"type\":\"SEEK\",\"requestId\":%d,\"mediaSessionId\":%lld,\"currentTime\":%.3f,\"resumeState\":\"%s\"}",
-        ++pSession->requestId,
-        (long long)pSession->mediaSessionId,
-        seconds,
-        resume ? "PLAYBACK_START" : "PLAYBACK_PAUSE");
-    pSession->lastSeekTick       = GetTickCount64();
-    pSession->seekPending        = 1;
-    pSession->seekTarget         = seconds;
-    pSession->seekPendingSince   = pSession->lastSeekTick;
-    pSession->resumeSince        = resume ? pSession->lastSeekTick : 0;
-    pSession->wantPlayAfterSeek  = resume;
-    pSession->playAfterSeekSince = pSession->lastSeekTick;
-    if (resume)
-    {
-        pSession->measurePending    = 1;
-        pSession->measureTarget     = seconds;
-        pSession->measureSince      = pSession->lastSeekTick;
-        pSession->measureRebuffered = 0;
-    }
-    /* Report the target at once so the display follows the hand, not the round trip. */
-    pSession->status.currentTime = seconds;
-    EmitStatus(pSession);
-    return SendJson(pSession, NS_MEDIA, pSession->transportId, payload);
+    return sent;
 }
 
 /* Sends the newest queued scrub position once the rate limit allows. */
@@ -475,14 +1046,31 @@ static int Seek(CastSession_State_t* pSession, double seconds, int resume)
  *  Sends only the newest queued position after the rate-limit interval and after
  *  an in-flight LOAD has completed.
  */
-static int FlushSeek(CastSession_State_t* pSession, ULONGLONG now)
+static FORCE_INLINE bool_t FlushSeek(CastSession_State_t* session, uint64_t now)
 {
-    if (!pSession->seekQueued || pSession->awaitingLoad || now - pSession->lastSeekTick < SEEK_INTERVAL_MS)
+    bool_t        has_seek;
+    bool_t        is_settled;
+    bool_t        interval_passed;
+    bool_t        can_send;
+    bool_t        sent;
+    SeekRequest_t request;
+
+    has_seek        = session->seekQueued;
+    is_settled      = !session->awaitingLoad;
+    interval_passed = (SEEK_INTERVAL_MS <= now - session->lastSeekTick);
+    can_send        = has_seek && is_settled && interval_passed;
+    sent            = TRUE;
+    if (can_send)
     {
-        return 1; /* hold the newest scrub target until any in-flight LOAD lands */
+        request.seconds = session->seekQueuedSeconds;
+        request.resume  = session->seekQueuedResume;
+        sent            = Seek(session, &request);
+        if (sent)
+        {
+            session->seekQueued = FALSE;
+        }
     }
-    pSession->seekQueued = 0;
-    return Seek(pSession, pSession->seekQueuedSeconds, pSession->seekQueuedResume);
+    return sent;
 }
 
 /*************************************************************************************************/
@@ -524,56 +1112,149 @@ static FORCE_INLINE void CopyJsonString(const cvkJsonValue* pValue, char* pOut, 
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Locates the default media receiver application, records its session and
- *  transport IDs, then connects to its virtual channel and defers LOAD until
- *  media status or the fallback deadline.
+ *  Retained byte arrays are scratch until CONNECT succeeds. No terminator is appended.
  */
-static int OnReceiverStatus(CastSession_State_t* pSession, const cvkJsonDocument* pDocument, const cvkJsonValue* pRoot)
+static FORCE_INLINE bool_t JoinReceiver(CastSession_State_t*   session,
+                                        const cvkJsonDocument* document,
+                                        const cvkJsonValue*    application)
 {
-    const cvkJsonValue* pStatus       = cvkGetJsonMember(pDocument, pRoot, "status");
-    const cvkJsonValue* pApplications = cvkGetJsonMember(pDocument, pStatus, "applications");
-    const cvkJsonValue* pApplication  = NULL;
-    uint32_t index;
+    ReceiverIdentifier_t session_id;
+    ReceiverIdentifier_t transport_id;
+    bool_t               identifiers_valid;
+    bool_t               joined;
+    uint32_t             session_count;
+    uint32_t             transport_count;
+    bool_t               session_decoded;
+    bool_t               transport_decoded;
+    bool_t               decoded;
+    Utl_Json_Text_t      destination;
+    char_t               status_text[SESSION_STATUS_TEXT_CAPACITY];
 
-    for (index = 0; NULL != pApplications && index < pApplications->childCount; ++index)
+    LOGASSERT(NULL != session);
+    LOGASSERT(NULL != document);
+    LOGASSERT(NULL != application);
+    LOGASSERT(!session->joined);
+    session_id        = GetReceiverIdentifier(cvkGetJsonMember(document, application, "sessionId"));
+    transport_id      = GetReceiverIdentifier(cvkGetJsonMember(document, application, "transportId"));
+    identifiers_valid = session_id.valid && transport_id.valid;
+    joined            = FALSE;
+    if (identifiers_valid)
     {
-        const cvkJsonValue* pCandidate = cvkGetJsonElement(pDocument, pApplications, index);
-
-        if (cvkJsonStringEquals(cvkGetJsonMember(pDocument, pCandidate, "appId"), DEFAULT_MEDIA_RECEIVER))
+        session_count   = 0;
+        transport_count = 0;
+        session_decoded = Utl_Json_ReadString(&session_count,
+                                              session->sessionBytes,
+                                              sizeof(session->sessionBytes),
+                                              session_id.encoded);
+        transport_decoded = Utl_Json_ReadString(&transport_count,
+                                                session->transportBytes,
+                                                sizeof(session->transportBytes),
+                                                transport_id.encoded);
+        decoded = session_decoded && transport_decoded;
+        LOGASSERT(decoded);
+        LOGASSERT(session_id.byteCount == session_count);
+        LOGASSERT(transport_id.byteCount == transport_count);
+        destination.data      = session->transportBytes;
+        destination.byteCount = transport_count;
+        joined                = SendSimpleCommand(session, destination, UTL_CHROMECAST_COMMAND_CONNECT);
+        if (joined)
         {
-            pApplication = pCandidate;
-            break;
+            session->sessionId.byteCount   = session_count;
+            session->transportId.byteCount = transport_count;
+            session->joined                = TRUE;
+            session->loadPending           = TRUE;
+            session->loadDeadline          = GetTickCount64() + LOAD_FALLBACK_MS;
+            CopyJsonString(cvkGetJsonMember(document, application, "statusText"), status_text, sizeof(status_text));
+            Log(session,
+                "media receiver connected: %s (session %.*s)",
+                status_text,
+                (int32_t)session_count,
+                (const char_t*)session->sessionBytes);
         }
     }
-    if (NULL == pApplication)
+    else
     {
-        if (pSession->joined)
-        {
-            Log(pSession, "the media receiver was closed on the device");
-            return 0;
-        }
-        return 1; /* still launching */
+        Log(session, "media receiver supplied an invalid session or transport identifier");
     }
-    if (!pSession->joined)
-    {
-        char statusText[128];
+    return joined;
+}
 
-        CopyJsonString(cvkGetJsonMember(pDocument, pApplication, "sessionId"),
-                       pSession->sessionId,
-                       sizeof(pSession->sessionId));
-        CopyJsonString(cvkGetJsonMember(pDocument, pApplication, "transportId"),
-                       pSession->transportId,
-                       sizeof(pSession->transportId));
-        CopyJsonString(cvkGetJsonMember(pDocument, pApplication, "statusText"), statusText, sizeof(statusText));
-        pSession->joined = 1;
-        Log(pSession, "media receiver running: %s (session %s)", statusText, pSession->sessionId);
-        /* A second virtual connection, to the application. It announces its media state to
-        ** the new sender once it is ready; the LOAD waits for that (or a short fallback). */
-        pSession->loadPending  = 1;
-        pSession->loadDeadline = GetTickCount64() + LOAD_FALLBACK_MS;
-        return SendJson(pSession, NS_CONNECTION, pSession->transportId, "{\"type\":\"CONNECT\"}");
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The application route is published by JoinReceiver only after CONNECT succeeds.
+ */
+static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
+                                            const cvkJsonDocument* document,
+                                            const cvkJsonValue*    root)
+{
+    const cvkJsonValue* status;
+    const cvkJsonValue* applications;
+    const cvkJsonValue* application;
+    bool_t              has_status;
+    bool_t              valid_status;
+    bool_t              has_applications;
+    bool_t              valid_applications;
+    bool_t              accepted;
+    uint32_t            index;
+    const cvkJsonValue* candidate;
+    bool_t              matches;
+    bool_t              has_application;
+
+    LOGASSERT(NULL != session);
+    LOGASSERT(NULL != document);
+    LOGASSERT(NULL != root);
+    status       = cvkGetJsonMember(document, root, "status");
+    applications = cvkGetJsonMember(document, status, "applications");
+    application  = NULL;
+    has_status   = (NULL != status);
+    valid_status = FALSE;
+    if (has_status)
+    {
+        valid_status = (CVK_JSON_OBJECT == status->kind);
     }
-    return 1;
+    has_applications   = (NULL != applications);
+    valid_applications = TRUE;
+    if (has_applications)
+    {
+        valid_applications = (CVK_JSON_ARRAY == applications->kind);
+    }
+    accepted = valid_status && valid_applications;
+    if (accepted && has_applications)
+    {
+        for (index = 0; index < applications->childCount; ++index)
+        {
+            candidate = cvkGetJsonElement(document, applications, index);
+            matches =
+                (0 != cvkJsonStringEquals(cvkGetJsonMember(document, candidate, "appId"), DEFAULT_MEDIA_RECEIVER));
+            if (matches)
+            {
+                application = candidate;
+                break;
+            }
+        }
+    }
+    if (accepted)
+    {
+        has_application = (NULL != application);
+        if (has_application)
+        {
+            if (!session->joined)
+            {
+                accepted = JoinReceiver(session, document, application);
+            }
+        }
+        else if (session->joined)
+        {
+            Log(session, "the media receiver was closed on the device");
+            accepted = FALSE;
+        }
+        else
+        {
+            /* Launch is still pending; retain its existing deadline and state. */
+        }
+    }
+    return accepted;
 }
 
 /*************************************************************************************************/
@@ -712,7 +1393,7 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
         else if (CAST_STATE_PAUSED == pSession->status.state)
         {
             Log(pSession, "seek landed paused; sending PLAY so audio and video keep running");
-            (void)SendMediaCommand(pSession, "PLAY");
+            (void)SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_PLAY);
             pSession->wantPlayAfterSeek = 0;
         }
         else if (GetTickCount64() - pSession->playAfterSeekSince > 3000)
@@ -786,42 +1467,39 @@ static void ExplainMediaError(CastSession_State_t*   pSession,
  *  Routes text JSON by Cast namespace to heartbeat, connection, receiver and
  *  media handlers. Binary and unrelated messages leave the session running.
  */
-static int HandleMessage(CastSession_State_t* pSession, const CastMessage_t* pMessage)
+static int HandleMessage(CastSession_State_t* pSession, const Utl_CastV2_Message_t* pMessage)
 {
-    static cvkJsonValue values[JSON_VALUE_CAPACITY];
     cvkJsonDocument     document;
     const cvkJsonValue* pRoot;
     const cvkJsonValue* pType;
 
     if (pSession->config.verbose)
     {
-        const size_t skip = (pMessage->namespaceLength > NS_PREFIX_LEN) ? NS_PREFIX_LEN : 0;
-
         Log(pSession,
             "<< %.*s %.*s",
-            (int)(pMessage->namespaceLength - skip),
-            pMessage->pNamespace + skip,
-            (int)pMessage->payloadLength,
-            pMessage->pPayload);
+            (int)pMessage->nameSpace.byteCount,
+            (const char_t*)pMessage->nameSpace.data,
+            (int)pMessage->payload.byteCount,
+            (const char_t*)pMessage->payload.data);
     }
-    if (pMessage->binary || 0 == pMessage->payloadLength || '{' != pMessage->pPayload[0])
+    if ((UTL_CASTV2_BINARY == pMessage->payloadType) || 0 == pMessage->payload.byteCount || '{' != pMessage->payload.data[0])
     {
         return 1;
     }
     document.valueCount =
-        cvkParseJsonDocument(pMessage->pPayload, pMessage->payloadLength, values, JSON_VALUE_CAPACITY);
-    document.pValues = values;
-    pRoot            = &values[0];
+        cvkParseJsonDocument((const char_t*)pMessage->payload.data, pMessage->payload.byteCount, pSession->jsonValues, JSON_VALUE_CAPACITY);
+    document.pValues = pSession->jsonValues;
+    pRoot            = &pSession->jsonValues[0];
     pType            = cvkGetJsonMember(&document, pRoot, "type");
-    if (CastMessage_IsNamespace(pMessage, NS_HEARTBEAT))
+    if (IsNamespace(pMessage, UTL_CHROMECAST_NAMESPACE_HEARTBEAT))
     {
         if (cvkJsonStringEquals(pType, "PING"))
         {
-            return SendJson(pSession, NS_HEARTBEAT, RECEIVER_ID, "{\"type\":\"PONG\"}");
+            return SendSimpleCommand(pSession, GetReceiverEndpoint(), UTL_CHROMECAST_COMMAND_PONG);
         }
         return 1;
     }
-    if (CastMessage_IsNamespace(pMessage, NS_CONNECTION))
+    if (IsNamespace(pMessage, UTL_CHROMECAST_NAMESPACE_CONNECTION))
     {
         if (cvkJsonStringEquals(pType, "CLOSE"))
         {
@@ -830,7 +1508,7 @@ static int HandleMessage(CastSession_State_t* pSession, const CastMessage_t* pMe
         }
         return 1;
     }
-    if (CastMessage_IsNamespace(pMessage, NS_RECEIVER))
+    if (IsNamespace(pMessage, UTL_CHROMECAST_NAMESPACE_RECEIVER))
     {
         if (cvkJsonStringEquals(pType, "RECEIVER_STATUS"))
         {
@@ -846,7 +1524,7 @@ static int HandleMessage(CastSession_State_t* pSession, const CastMessage_t* pMe
         }
         return 1;
     }
-    if (CastMessage_IsNamespace(pMessage, NS_MEDIA))
+    if (IsNamespace(pMessage, UTL_CHROMECAST_NAMESPACE_MEDIA))
     {
         if (cvkJsonStringEquals(pType, "MEDIA_STATUS"))
         {
@@ -875,34 +1553,43 @@ static int HandleMessage(CastSession_State_t* pSession, const CastMessage_t* pMe
  */
 static void Leave(CastSession_State_t* pSession)
 {
-    char      payload[256];
-    ULONGLONG deadline;
+    bool_t                   has_session;
+    bool_t                   has_channel;
+    bool_t                   can_leave;
+    Utl_Chromecast_Command_t command;
+    bool_t                   sent;
+    uint64_t                 started;
+    uint64_t                 elapsed;
+    bool_t                   deadline_reached;
+    int32_t                  received;
+    Utl_CastV2_Message_t     message;
 
-    if (0 == pSession->sessionId[0] || NULL == pSession->pChannel)
+    has_session = (0 < pSession->sessionId.byteCount);
+    has_channel = (NULL != pSession->pChannel);
+    can_leave   = has_session && has_channel;
+    if (can_leave)
     {
-        return;
-    }
-    (void)snprintf(payload,
-                   sizeof(payload),
-                   "{\"type\":\"STOP\",\"requestId\":%d,\"sessionId\":\"%s\"}",
-                   ++pSession->requestId,
-                   pSession->sessionId);
-    if (!SendJson(pSession, NS_RECEIVER, RECEIVER_ID, payload))
-    {
-        return;
-    }
-    deadline = GetTickCount64() + 1000;
-    for (;;)
-    {
-        CastMessage_t message;
-
-        if (GetTickCount64() >= deadline)
+        command.kind           = UTL_CHROMECAST_COMMAND_STOP_APPLICATION;
+        command.requestId      = (uint32_t)TakeRequestId(pSession);
+        command.data.sessionId = pSession->sessionId;
+        sent                   = SendCommand(pSession, GetReceiverEndpoint(), &command);
+        if (sent)
         {
-            break;
-        }
-        if (CastChannel_Receive(pSession->pChannel, &message, 200) < 0)
-        {
-            break;
+            started = GetTickCount64();
+            for (;;)
+            {
+                elapsed          = GetTickCount64() - started;
+                deadline_reached = (LEAVE_DEADLINE_MS <= elapsed);
+                if (deadline_reached)
+                {
+                    break;
+                }
+                received = CastChannel_Receive(pSession->pChannel, &message, LEAVE_RECEIVE_MS);
+                if (0 > received)
+                {
+                    break;
+                }
+            }
         }
     }
 }
@@ -917,7 +1604,8 @@ static void Leave(CastSession_State_t* pSession)
  */
 static int ProcessCommands(CastSession_State_t* pSession)
 {
-    unsigned processed;
+    unsigned      processed;
+    SeekRequest_t seek_request;
 
     for (processed = 0U; processed < CAST_COMMAND_CAPACITY; ++processed)
     {
@@ -934,17 +1622,17 @@ static int ProcessCommands(CastSession_State_t* pSession)
         switch (command.command)
         {
         case CAST_COMMAND_PLAY:
-            ok = SendMediaCommand(pSession, "PLAY");
+            ok = SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_PLAY);
             break;
         case CAST_COMMAND_PAUSE:
-            ok = SendMediaCommand(pSession, "PAUSE");
+            ok = SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_PAUSE);
             break;
         case CAST_COMMAND_TOGGLE:
             ok = SendMediaCommand(
                 pSession,
                 (CAST_STATE_PLAYING == pSession->status.state || CAST_STATE_BUFFERING == pSession->status.state)
-                    ? "PAUSE"
-                    : "PLAY");
+                    ? UTL_CHROMECAST_COMMAND_PAUSE
+                    : UTL_CHROMECAST_COMMAND_PLAY);
             break;
         case CAST_COMMAND_SCRUB:
         {
@@ -993,7 +1681,9 @@ static int ProcessCommands(CastSession_State_t* pSession)
             else
             {
                 pSession->seekQueued = 0; /* this exact position supersedes any pending scrub */
-                ok                   = Seek(pSession, command.seconds, resume);
+                seek_request.seconds = command.seconds;
+                seek_request.resume  = resume;
+                ok                   = Seek(pSession, &seek_request);
             }
             break;
         }
@@ -1019,10 +1709,12 @@ static int ProcessCommands(CastSession_State_t* pSession)
  */
 static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
 {
-    char      error[256];
-    char      payload[128];
-    ULONGLONG lastHeartbeat;
-    ULONGLONG lastPoll;
+    char                     error[256];
+    Utl_Chromecast_Command_t launch;
+    bool_t                   connected;
+    bool_t                   launched;
+    ULONGLONG                lastHeartbeat;
+    ULONGLONG                lastPoll;
     const char* pReason        = NULL;
     int         result         = 1;
     int         proxyAnnounced = 0;
@@ -1048,13 +1740,17 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
             (pSession->config.pKeyframes[pSession->config.keyframeCount - 1] - pSession->config.pKeyframes[0]) /
                 (pSession->config.keyframeCount - 1));
     }
-    (void)snprintf(payload,
-                   sizeof(payload),
-                   "{\"type\":\"LAUNCH\",\"requestId\":%d,\"appId\":\"%s\"}",
-                   ++pSession->requestId,
-                   DEFAULT_MEDIA_RECEIVER);
-    if (!SendJson(pSession, NS_CONNECTION, RECEIVER_ID, "{\"type\":\"CONNECT\"}") ||
-        !SendJson(pSession, NS_RECEIVER, RECEIVER_ID, payload))
+    launch.kind                         = UTL_CHROMECAST_COMMAND_LAUNCH;
+    launch.requestId                    = (uint32_t)TakeRequestId(pSession);
+    launch.data.applicationId.data      = (const byte_t*)DEFAULT_MEDIA_RECEIVER;
+    launch.data.applicationId.byteCount = sizeof(DEFAULT_MEDIA_RECEIVER) - 1;
+    connected                           = SendSimpleCommand(pSession, GetReceiverEndpoint(), UTL_CHROMECAST_COMMAND_CONNECT);
+    launched                            = FALSE;
+    if (connected)
+    {
+        launched = SendCommand(pSession, GetReceiverEndpoint(), &launch);
+    }
+    if (!launched)
     {
         pReason = CastChannel_GetError(pSession->pChannel);
         goto done;
@@ -1065,7 +1761,7 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
     lastPoll      = lastHeartbeat;
     for (;;)
     {
-        CastMessage_t message;
+        Utl_CastV2_Message_t message;
         const int          received = CastChannel_Receive(pSession->pChannel, &message, RECEIVE_SLICE_MS);
         ULONGLONG          now;
         int                commands;
@@ -1109,7 +1805,7 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
         if (now - lastHeartbeat >= HEARTBEAT_MS)
         {
             lastHeartbeat = now;
-            if (!SendJson(pSession, NS_HEARTBEAT, RECEIVER_ID, "{\"type\":\"PING\"}"))
+            if (!SendSimpleCommand(pSession, GetReceiverEndpoint(), UTL_CHROMECAST_COMMAND_PING))
             {
                 pReason = CastChannel_GetError(pSession->pChannel);
                 goto done;
@@ -1122,7 +1818,7 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
         if (pSession->mediaSessionId && poll_due)
         {
             lastPoll = now;
-            if (!SendMediaCommand(pSession, "GET_STATUS"))
+            if (!SendMediaCommand(pSession, UTL_CHROMECAST_COMMAND_GET_MEDIA_STATUS))
             {
                 pReason = CastChannel_GetError(pSession->pChannel);
                 goto done;
@@ -1165,11 +1861,11 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
                 was_playing               = (CAST_STATE_PLAYING == pSession->status.state);
                 Log(pSession, "applying audio gain at %.1f s", pSession->status.currentTime);
                 if (!LoadMedia(pSession,
-                               pSession->config.contentUrl,
-                               pSession->config.contentType,
-                               pSession->status.currentTime,
-                               was_playing,
-                               LOAD_STREAM_BUFFERED))
+                    pSession->config.contentUrl,
+                    pSession->config.contentType,
+                    pSession->status.currentTime,
+                    was_playing,
+                    LOAD_STREAM_BUFFERED))
                 {
                     pReason = CastChannel_GetError(pSession->pChannel);
                     goto done;
@@ -1196,11 +1892,11 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
             pSession->switchedToProxy = TRUE;
             pSession->playingWanted   = was_playing;
             if (!LoadMedia(pSession,
-                           pSession->proxy->url,
-                           pSession->proxy->type,
-                           pSession->status.currentTime,
-                           was_playing,
-                           LOAD_STREAM_BUFFERED))
+                pSession->proxy->url,
+                pSession->proxy->type,
+                pSession->status.currentTime,
+                was_playing,
+                LOAD_STREAM_BUFFERED))
             {
                 pReason = CastChannel_GetError(pSession->pChannel);
                 goto done;
@@ -1322,51 +2018,52 @@ void CastSession_Prepare(CastSession_t* session, const CastSessionConfig* config
  *  or complete track is materialized on the stack. Preflight preserves output on failure.
  *  Millisecond rounding is explicit and independent of CRT locale or formatting.
  */
-uint32_t CastSession_FormatLoad(const CastSessionConfig* config,
-                                const char*              sessionId,
-                                int32_t                  requestId,
-                                const char*              url,
-                                const char*              type,
-                                double                   start,
-                                bool_t                   autoplay,
-                                const char*              streamType,
-                                char*                    output,
-                                uint32_t                 capacity)
+uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
+                               Utl_Json_Text_t          sessionId,
+                               int32_t                  requestId,
+                               const char*              url,
+                               const char*              type,
+                               double                   start,
+                               bool_t                   autoplay,
+                               const char*              streamType,
+                               byte_t*                  output,
+                               uint32_t                 capacity)
 {
-    Utl_CastJson_Load_t     load;
-    Utl_CastJson_Subtitle_t subtitle;
-    uint32_t                stream_length;
-    bool_t                  is_buffered;
-    bool_t                  is_live;
-    bool_t                  is_none;
-    bool_t                  valid_stream;
-    bool_t                  has_subtitle;
-    bool_t                  valid_subtitle;
-    bool_t                  valid_text;
-    bool_t                  valid_request;
-    bool_t                  valid_start;
-    bool_t                  valid_capacity;
-    bool_t                  can_encode;
-    uint32_t                written;
-    double                  milliseconds;
+    Utl_Chromecast_Load_t           load;
+    uint32_t                        stream_length;
+    bool_t                          is_buffered;
+    bool_t                          is_live;
+    bool_t                          is_none;
+    bool_t                          valid_stream;
+    Utl_Chromecast_Subtitle_t       subtitle;
+    bool_t                          has_subtitle;
+    bool_t                          valid_subtitle;
+    Utl_Chromecast_TextTrackStyle_t style;
+    bool_t                          valid_content_text;
+    bool_t                          valid_type_text;
+    bool_t                          valid_title_text;
+    bool_t                          valid_text;
+    bool_t                          valid_request;
+    MillisecondPosition_t           position;
+    bool_t                          can_encode;
+    uint32_t                        written;
 
     LOGASSERT(NULL != config);
-    LOGASSERT(NULL != sessionId);
     LOGASSERT(NULL != url);
     LOGASSERT(NULL != type);
     LOGASSERT(NULL != streamType);
     LOGASSERT(NULL != output);
 
-    load.sessionId.data        = sessionId;
-    load.sessionId.byteCount   = Utl_Unicode_GetUtf8StringByteCount(sessionId, SESSION_ID_CAPACITY);
-    load.contentId.data        = url;
+    load.sessionId             = sessionId;
+    load.contentId.data        = (const byte_t*)url;
     load.contentId.byteCount   = Utl_Unicode_GetUtf8StringByteCount(url, sizeof(config->contentUrl));
-    load.contentType.data      = type;
+    load.contentType.data      = (const byte_t*)type;
     load.contentType.byteCount = Utl_Unicode_GetUtf8StringByteCount(type, sizeof(config->contentType));
-    load.title.data            = config->title;
+    load.title.data            = (const byte_t*)config->title;
     load.title.byteCount       = Utl_Unicode_GetUtf8StringByteCount(config->title, sizeof(config->title));
     load.autoplay              = autoplay;
     load.subtitle              = NULL;
+    load.textTrackStyle        = NULL;
     stream_length              = Utl_Unicode_GetUtf8StringByteCount(streamType, sizeof(LOAD_STREAM_BUFFERED));
     is_buffered                = FALSE;
     is_live                    = FALSE;
@@ -1380,65 +2077,58 @@ uint32_t CastSession_FormatLoad(const CastSessionConfig* config,
         is_live = (0 == CRT_Memory_Compare(streamType, LOAD_STREAM_LIVE, stream_length));
         is_none = (0 == CRT_Memory_Compare(streamType, LOAD_STREAM_NONE, stream_length));
     }
-    load.stream = UTL_CASTJSON_STREAM_NONE;
+    load.stream = UTL_CHROMECAST_STREAM_NONE;
     if (is_buffered)
     {
-        load.stream = UTL_CASTJSON_STREAM_BUFFERED;
+        load.stream = UTL_CHROMECAST_STREAM_BUFFERED;
     }
     if (is_live)
     {
-        load.stream = UTL_CASTJSON_STREAM_LIVE;
+        load.stream = UTL_CHROMECAST_STREAM_LIVE;
     }
     valid_stream = is_buffered || is_live || is_none;
 
-    subtitle.contentId.data      = config->subtitleUrl;
+    subtitle.contentId.data      = (const byte_t*)config->subtitleUrl;
     subtitle.contentId.byteCount = Utl_Unicode_GetUtf8StringByteCount(config->subtitleUrl, sizeof(config->subtitleUrl));
     has_subtitle                 = (0 < subtitle.contentId.byteCount);
     valid_subtitle               = (UTL_UNICODE_NO_TERMINATOR != subtitle.contentId.byteCount);
     if (has_subtitle && valid_subtitle)
     {
-        subtitle.trackId        = LOAD_SUBTITLE_TRACK_ID;
-        subtitle.name.data      = LOAD_SUBTITLE_NAME;
-        subtitle.name.byteCount = sizeof(LOAD_SUBTITLE_NAME) - 1;
-        subtitle.language.data  = config->subtitleLanguage;
+        style.foregroundColor          = LOAD_SUBTITLE_FOREGROUND;
+        style.backgroundColor          = LOAD_SUBTITLE_BACKGROUND;
+        style.edge                     = UTL_CHROMECAST_TEXT_EDGE_OUTLINE;
+        style.edgeColor                = LOAD_SUBTITLE_EDGE_COLOR;
+        style.fontScale.coefficient    = LOAD_SUBTITLE_FONT_SCALE;
+        style.fontScale.fractionDigits = LOAD_SUBTITLE_FONT_DIGITS;
+        load.textTrackStyle            = &style;
+        subtitle.trackId               = LOAD_SUBTITLE_TRACK_ID;
+        subtitle.name.data             = (const byte_t*)LOAD_SUBTITLE_NAME;
+        subtitle.name.byteCount        = sizeof(LOAD_SUBTITLE_NAME) - 1;
+        subtitle.language.data         = (const byte_t*)config->subtitleLanguage;
         subtitle.language.byteCount =
             Utl_Unicode_GetUtf8StringByteCount(config->subtitleLanguage, sizeof(config->subtitleLanguage));
         valid_subtitle = (UTL_UNICODE_NO_TERMINATOR != subtitle.language.byteCount);
         if (0 == subtitle.language.byteCount)
         {
-            subtitle.language.data      = LOAD_DEFAULT_LANGUAGE;
+            subtitle.language.data      = (const byte_t*)LOAD_DEFAULT_LANGUAGE;
             subtitle.language.byteCount = sizeof(LOAD_DEFAULT_LANGUAGE) - 1;
         }
         load.subtitle = &subtitle;
     }
 
-    valid_text = (UTL_UNICODE_NO_TERMINATOR != load.sessionId.byteCount) &&
-                     (UTL_UNICODE_NO_TERMINATOR != load.contentId.byteCount) &&
-                     (UTL_UNICODE_NO_TERMINATOR != load.contentType.byteCount) &&
-                     (UTL_UNICODE_NO_TERMINATOR != load.title.byteCount);
-    valid_request  = (0 <= requestId);
-    valid_start    = (-DBL_MAX <= start) && (start < LOAD_MILLISECONDS_LIMIT / UTL_CASTJSON_MILLISECONDS_PER_SECOND);
-    valid_capacity = (0 < capacity);
-    can_encode     = valid_stream && valid_subtitle && valid_text && valid_request && valid_start && valid_capacity;
-    written        = 0;
+    valid_content_text = (UTL_UNICODE_NO_TERMINATOR != load.contentId.byteCount);
+    valid_type_text    = (UTL_UNICODE_NO_TERMINATOR != load.contentType.byteCount);
+    valid_title_text   = (UTL_UNICODE_NO_TERMINATOR != load.title.byteCount);
+    valid_text         = valid_content_text && valid_type_text && valid_title_text;
+    valid_request      = (0 < requestId);
+    position           = GetMilliseconds(start);
+    can_encode         = valid_stream && valid_subtitle && valid_text && valid_request && position.valid;
+    written            = 0;
     if (can_encode)
     {
-        if (0.0 > start)
-        {
-            start = 0.0;
-        }
-        milliseconds = start * UTL_CASTJSON_MILLISECONDS_PER_SECOND + 0.5;
-        valid_start  = (milliseconds < LOAD_MILLISECONDS_LIMIT);
-        if (valid_start)
-        {
-            load.requestId         = (uint32_t)requestId;
-            load.startMilliseconds = (uint64_t)milliseconds;
-            written                = Utl_CastJson_WriteLoad(&load, output, capacity - 1);
-            if (0 < written)
-            {
-                output[written] = 0;
-            }
-        }
+        load.requestId         = (uint32_t)requestId;
+        load.startMilliseconds = position.milliseconds;
+        written                = Utl_Chromecast_WriteLoad(&load, output, capacity);
     }
 
     return written;

@@ -239,9 +239,9 @@ static FORCE_INLINE void CheckTimestamp(const Time_t* item)
 {
     uint32_t count;
     uint64_t value;
-    char_t   before[TEXT_TEST_CAPACITY];
+    byte_t   before[TEXT_TEST_CAPACITY];
     uint32_t capacity;
-    char_t   output[TEXT_TEST_CAPACITY];
+    byte_t   output[TEXT_TEST_CAPACITY];
     uint32_t consumed;
     bool_t   valid;
 
@@ -258,7 +258,7 @@ static FORCE_INLINE void CheckTimestamp(const Time_t* item)
     consumed = Utl_WebVtt_WriteTimestamp(item->value, output, item->count);
     LOGASSERT(item->count == consumed);
     LOGASSERT(0 == CRT_Memory_Compare(output, item->text, item->count));
-    valid = Utl_WebVtt_ReadTimestamp(&value, &consumed, item->text, item->count);
+    valid = Utl_WebVtt_ReadTimestamp(&value, &consumed, (const byte_t*)item->text, item->count);
     LOGASSERT(valid);
     LOGASSERT(item->value == value);
     LOGASSERT(item->count == consumed);
@@ -282,7 +282,7 @@ static FORCE_INLINE void CheckInvalidTimestamps(void)
         count    = Utl_Unicode_GetUtf8StringByteCount(c_invalidTimes[index], TEXT_TEST_CAPACITY);
         value    = UINT64_MAX;
         consumed = UINT32_MAX;
-        valid    = Utl_WebVtt_ReadTimestamp(&value, &consumed, c_invalidTimes[index], count);
+        valid    = Utl_WebVtt_ReadTimestamp(&value, &consumed, (const byte_t*)c_invalidTimes[index], count);
         LOGASSERT(!valid);
         LOGASSERT(UINT64_MAX == value);
         LOGASSERT(UINT32_MAX == consumed);
@@ -291,12 +291,12 @@ static FORCE_INLINE void CheckInvalidTimestamps(void)
     {
         value    = UINT64_MAX;
         consumed = UINT32_MAX;
-        valid    = Utl_WebVtt_ReadTimestamp(&value, &consumed, TEXT_TEST_MAX_TIMESTAMP, count);
+        valid    = Utl_WebVtt_ReadTimestamp(&value, &consumed, (const byte_t*)TEXT_TEST_MAX_TIMESTAMP, count);
         LOGASSERT(!valid);
         LOGASSERT(UINT64_MAX == value);
         LOGASSERT(UINT32_MAX == consumed);
     }
-    valid = Utl_WebVtt_ReadTimestamp(&value, &consumed, "00:01.001 trailing", sizeof("00:01.001 trailing") - 1);
+    valid = Utl_WebVtt_ReadTimestamp(&value, &consumed, (const byte_t*)"00:01.001 trailing", sizeof("00:01.001 trailing") - 1);
     LOGASSERT(valid);
     LOGASSERT(TEXT_TEST_END == value);
     LOGASSERT(sizeof("00:01.001") - 1 == consumed);
@@ -310,9 +310,9 @@ static FORCE_INLINE void CheckInvalidTimestamps(void)
 static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* expected, uint32_t byteCount)
 {
     uint32_t count;
-    char_t   before[TEXT_TEST_CAPACITY];
+    byte_t   before[TEXT_TEST_CAPACITY];
     uint32_t capacity;
-    char_t   output[TEXT_TEST_CAPACITY];
+    byte_t   output[TEXT_TEST_CAPACITY];
     uint32_t written;
 
     count = Utl_WebVtt_GetCueByteCount(cue);
@@ -338,9 +338,9 @@ static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* exp
 static FORCE_INLINE void CheckCues(void)
 {
     Utl_WebVtt_Cue_t cue;
-    char_t           before[TEXT_TEST_CAPACITY];
+    byte_t           before[TEXT_TEST_CAPACITY];
     uint32_t         index;
-    char_t           output[TEXT_TEST_CAPACITY];
+    byte_t           output[TEXT_TEST_CAPACITY];
     uint32_t         written;
 
     cue.start         = 0;

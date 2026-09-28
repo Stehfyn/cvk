@@ -54,8 +54,8 @@ typedef struct ResponseHead_s
 {
     Utl_Http_Head_t  head;                            ///< Complete HTTP model.
     Utl_Http_Field_t fields[HTTP_RESPONSE_FIELDS];    ///< Bounded response fields.
-    char_t           length[HTTP_DECIMAL_BYTES];      ///< Exact decimal Content-Length value.
-    char_t           range[HTTP_CONTENT_RANGE_BYTES]; ///< Exact serialized Content-Range value.
+    byte_t           length[HTTP_DECIMAL_BYTES];      ///< Exact decimal Content-Length value.
+    byte_t           range[HTTP_CONTENT_RANGE_BYTES]; ///< Exact serialized Content-Range value.
 } ResponseHead_t;
 
 /*=================================================================================================
@@ -187,7 +187,7 @@ static FORCE_INLINE uint16_t ReadPolicy(CastHttp_Request_t* request);
 static FORCE_INLINE Utl_Http_Text_t GetText(const char_t* data, uint32_t byteCount)
 {
     Utl_Http_Text_t text;
-    text.data      = data;
+    text.data      = (const byte_t*)data;
     text.byteCount = byteCount;
     return text;
 }
@@ -350,8 +350,9 @@ static FORCE_INLINE void SetResponseHead(ResponseHead_t* output, const CastHttp_
         }
         count = Utl_Decimal_WriteUint64(length, output->length, HTTP_DECIMAL_BYTES);
         LOGASSERT(0 < count);
-        field.name  = GetText(UTL_HTTP_FIELD_CONTENT_LENGTH, sizeof(UTL_HTTP_FIELD_CONTENT_LENGTH) - 1);
-        field.value = GetText(output->length, count);
+        field.name            = GetText(UTL_HTTP_FIELD_CONTENT_LENGTH, sizeof(UTL_HTTP_FIELD_CONTENT_LENGTH) - 1);
+        field.value.data      = output->length;
+        field.value.byteCount = count;
         AppendField(output, &field);
     }
     if ((UTL_HTTP_STATUS_PARTIAL_CONTENT == response->status) ||
@@ -368,8 +369,9 @@ static FORCE_INLINE void SetResponseHead(ResponseHead_t* output, const CastHttp_
         }
         count = Utl_Http_WriteContentRange(&range, output->range, HTTP_CONTENT_RANGE_BYTES);
         LOGASSERT(0 < count);
-        field.name  = GetText(UTL_HTTP_FIELD_CONTENT_RANGE, sizeof(UTL_HTTP_FIELD_CONTENT_RANGE) - 1);
-        field.value = GetText(output->range, count);
+        field.name            = GetText(UTL_HTTP_FIELD_CONTENT_RANGE, sizeof(UTL_HTTP_FIELD_CONTENT_RANGE) - 1);
+        field.value.data      = output->range;
+        field.value.byteCount = count;
         AppendField(output, &field);
     }
     if ((UTL_HTTP_STATUS_METHOD_NOT_ALLOWED == response->status) || (UTL_HTTP_STATUS_NO_CONTENT == response->status))
@@ -437,8 +439,8 @@ static FORCE_INLINE uint16_t ReadPolicy(CastHttp_Request_t* request)
         else
         {
             get = Utl_Http_IsTextEqual(head->method,
-                                                     GetText(UTL_HTTP_METHOD_GET, sizeof(UTL_HTTP_METHOD_GET) - 1),
-                                                     FALSE);
+                                       GetText(UTL_HTTP_METHOD_GET, sizeof(UTL_HTTP_METHOD_GET) - 1),
+                                       FALSE);
             request->headOnly = Utl_Http_IsTextEqual(head->method,
                                                      GetText(UTL_HTTP_METHOD_HEAD, sizeof(UTL_HTTP_METHOD_HEAD) - 1),
                                                      FALSE);
@@ -586,7 +588,7 @@ uint32_t CastHttp_GetResponseByteCount(const CastHttp_Response_t* response)
  * \par Details:
  *  The underlying terminal head result is not re-read until a new request is initialized.
  */
-CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const char_t* data, uint32_t byteCount)
+CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const byte_t* data, uint32_t byteCount)
 {
     Utl_Http_Result_t result;
     LOGASSERT(NULL != request);
@@ -622,7 +624,7 @@ CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const char_t
  * \par Details:
  *  The complete response uses only caller-owned or bounded automatic storage.
  */
-uint32_t CastHttp_WriteResponse(const CastHttp_Response_t* response, char_t* output, uint32_t capacity)
+uint32_t CastHttp_WriteResponse(const CastHttp_Response_t* response, byte_t* output, uint32_t capacity)
 {
     uint32_t       count;
     ResponseHead_t head;

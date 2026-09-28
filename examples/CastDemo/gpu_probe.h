@@ -103,10 +103,10 @@ typedef struct GpuProbe_s
  *  - 002 The caller shall exclusively own Volk initialization and instance dispatch during this call and any pending closure.
  *  - 003 All enumeration storage and driver work shall be acquired here, before normal interaction.
  *  - 004 Loader/API support shall be queried before instance creation; CVK construction contracts shall remain fatal.
- *  - 008 Unsupported capability queries and insufficient application capacity shall publish no selected capabilities.
  *  - 005 A completed snapshot without a suitable encoder shall be successful with available FALSE.
  *  - 006 The selected profile shall be H.264 Main, 8-bit 4:2:0; decode support shall additionally require progressive pictures.
  *  - 007 Native instance/loader cleanup shall be attempted before return; partial ownership shall remain closable.
+ *  - 008 Unsupported capability queries and insufficient application capacity shall publish no selected capabilities.
  *
  * \param[out] probe   Stable caller-owned storage
  *

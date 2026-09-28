@@ -337,7 +337,7 @@ static FORCE_INLINE void CheckClients(void)
                                             "127.0.0.1",
                                             0,
                                             "video/mp4",
-                                            SERVER_TEST_VTT,
+                                            (const byte_t*)SERVER_TEST_VTT,
                                             sizeof(SERVER_TEST_VTT) - 1,
                                             error,
                                             sizeof(error));
@@ -432,7 +432,7 @@ static FORCE_INLINE void CheckClientCapacity(void)
                                             "127.0.0.1",
                                             0,
                                             "video/mp4",
-                                            SERVER_TEST_VTT,
+                                            (const byte_t*)SERVER_TEST_VTT,
                                             sizeof(SERVER_TEST_VTT) - 1,
                                             error,
                                             sizeof(error));

@@ -24,6 +24,8 @@
 
 #include "cast_channel.h"
 #include "cast_session.h"
+#include "os/os_assert.h"
+#include "os/os_memory.h"
 #include "media_server.h"
 #include "cast_network.h"
 #include "os/os_network.h"
@@ -139,8 +141,8 @@ typedef struct App
     HBRUSH                selectedBrush, accentBrush, mutedBrush, borderBrush;
     SubtitleTrack         subtitles[SUBTITLE_MAX_TRACKS];
     Subtitles_Workspace_t subtitleWorkspace;
-    char_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
-    char_t                subtitleOutput[SUBTITLE_TEXT_CAPACITY];
+    byte_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
+    byte_t                subtitleOutput[SUBTITLE_TEXT_CAPACITY];
     unsigned              subtitleCount;
     WCHAR                 subtitleSource[1024];
     WCHAR                 originalSource[MAX_PATH];
@@ -212,6 +214,7 @@ typedef struct App
     int                previewBusy;
     PreviewJob         previewJob; /* fixed storage for the running preview, no per-click alloc */
     PreviewResult      previewResult;
+    bool_t windowDestroyed; ///< UI-owned completion of the native window lifetime.
 } App;
 
 #define POSITION_TIMER   (1)
@@ -232,7 +235,35 @@ typedef struct GainVariant
     WCHAR               path[MAX_PATH];
 } GainVariant;
 
-static App g_app;
+
+
+/*************************************************************************************************/
+/**
+ * \brief Borrows the startup context already attached to a live window.
+ *
+ * \par Requirements:
+ *  - 001 WM_NCCREATE shall have attached the context before any caller uses this query.
+ *  - 002 The entry point shall retain the context until native destruction and worker closure.
+ *
+ * \param[in] window   Native application window
+ *
+ * \retval    non-NULL   Borrowed startup context; a missing binding asserts.
+ */
+static FORCE_INLINE App* GetApp(HWND window);
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The native window owns only a borrowed pointer, never the context allocation.
+ */
+static FORCE_INLINE App* GetApp(HWND window)
+{
+    App* app;
+
+    app = (App*)GetWindowLongPtr(window, GWLP_USERDATA);
+    LOGASSERT(NULL != app);
+    return app;
+}
 
 /*************************************************************************************************/
 /**
@@ -1314,7 +1345,7 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     WCHAR             source[1024];
     char              error[256];
     char              localAddress[64];
-    const char_t*        vtt      = NULL;
+    const byte_t*        vtt      = NULL;
     uint64_t             vttSize  = 0;
     const SubtitleTrack* subtitle = NULL;
 
@@ -2109,7 +2140,7 @@ static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
 
     (void)pCreate;
 
-    pApp        = &g_app;
+    pApp        = GetApp(hWnd);
     pApp->hWnd  = hWnd;
     timer       = SetTimer(hWnd, POSITION_TIMER, POSITION_TICK_MS, NULL);
     timer_ready = (0 != timer);
@@ -2164,8 +2195,9 @@ static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
  */
 static FORCE_INLINE BOOL OnEraseBackground(HWND hWnd, HDC dc)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     RECT rect;
     GetClientRect(hWnd, &rect);
     FillRect(dc, &rect, pApp->backgroundBrush);
@@ -2180,8 +2212,9 @@ static FORCE_INLINE BOOL OnEraseBackground(HWND hWnd, HDC dc)
  */
 static FORCE_INLINE HBRUSH OnControlColor(HWND hWnd, HDC dc, HWND hControl, int type)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)hWnd;
 
     int field = type == CTLCOLOR_EDIT || type == CTLCOLOR_LISTBOX || hControl == pApp->hSubtitle;
@@ -2197,8 +2230,9 @@ static FORCE_INLINE HBRUSH OnControlColor(HWND hWnd, HDC dc, HWND hControl, int 
  */
 static FORCE_INLINE void OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
     {
         item->itemHeight = (UINT)Scale(pApp, 22);
@@ -2215,8 +2249,9 @@ static FORCE_INLINE void OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
  */
 static FORCE_INLINE void OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
 {
-    App*   pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     WCHAR  label[128];
     HBRUSH fill;
     if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
@@ -2325,7 +2360,7 @@ static FORCE_INLINE void PollJobs(App* app)
  */
 static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
 {
-    App*   pApp = &g_app;
+    App*   pApp = GetApp(hWnd);
     bool_t discovery_closed;
     bool_t gain_closed;
     bool_t session_closed;
@@ -2436,8 +2471,9 @@ static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
  */
 static FORCE_INLINE void OnSize(HWND hWnd, UINT state, int width, int height)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)hWnd;
     (void)state;
     (void)width;
@@ -2453,8 +2489,9 @@ static FORCE_INLINE void OnSize(HWND hWnd, UINT state, int width, int height)
  */
 static FORCE_INLINE void OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)hWnd;
 
     pInfo->ptMinTrackSize.x = Scale(pApp, 620);
@@ -2469,8 +2506,9 @@ static FORCE_INLINE void OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo)
  */
 static FORCE_INLINE void OnDpiChanged(HWND hWnd, UINT dpiX, UINT dpiY, const RECT* pSuggested)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)dpiX;
 
     pApp->dpi = dpiY;
@@ -2493,8 +2531,9 @@ static FORCE_INLINE void OnDpiChanged(HWND hWnd, UINT dpiX, UINT dpiY, const REC
  */
 static FORCE_INLINE void OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNotify)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     switch (id)
     {
     case ID_REFRESH:
@@ -2551,8 +2590,9 @@ static FORCE_INLINE void OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNo
  */
 static FORCE_INLINE LRESULT OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     if (NM_CUSTOMDRAW == pHeader->code)
     {
         NMCUSTOMDRAW* draw   = (NMCUSTOMDRAW*)pHeader;
@@ -2596,8 +2636,9 @@ static FORCE_INLINE LRESULT OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
  */
 static FORCE_INLINE void OnHScroll(HWND hWnd, HWND hControl, UINT code, int position)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)position;
 
     if (hControl == pApp->hGain)
@@ -2630,8 +2671,9 @@ static FORCE_INLINE void OnHScroll(HWND hWnd, HWND hControl, UINT code, int posi
  */
 static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)hWnd;
 
     pApp->previewBusy = 0;
@@ -2671,7 +2713,7 @@ static FORCE_INLINE void OnClose(HWND hWnd)
 {
     App* app;
 
-    app = &g_app;
+    app = GetApp(hWnd);
     if (!app->closing)
     {
         app->closing = TRUE;
@@ -2697,8 +2739,9 @@ static FORCE_INLINE void OnClose(HWND hWnd)
  */
 static FORCE_INLINE void OnDestroy(HWND hWnd)
 {
-    App* pApp = &g_app;
+    App* pApp;
 
+    pApp = GetApp(hWnd);
     (void)hWnd;
 
     DeleteObject(pApp->backgroundBrush);
@@ -2707,6 +2750,7 @@ static FORCE_INLINE void OnDestroy(HWND hWnd)
     DeleteObject(pApp->accentBrush);
     DeleteObject(pApp->mutedBrush);
     DeleteObject(pApp->borderBrush);
+    pApp->windowDestroyed = TRUE;
     PostQuitMessage(0);
 }
 
@@ -2719,35 +2763,94 @@ static FORCE_INLINE void OnDestroy(HWND hWnd)
 
 /*************************************************************************************************/
 /**
+ * \brief Binds the caller-owned context passed to CreateWindowEx.
+ *
+ * \param[in] window   Native window being constructed
+ * \param[in] create   Native creation record containing the required context
+ *
+ * \retval    TRUE    Context binding succeeded.
+ * \retval    FALSE   Native binding failed; creation must stop.
+ */
+static FORCE_INLINE BOOL OnNcCreate(HWND window, LPCREATESTRUCT create);
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  A zero previous value is expected for a new window. Last-error distinguishes
+ *  that successful result from native failure before WM_CREATE may use the owner.
+ */
+static FORCE_INLINE BOOL OnNcCreate(HWND window, LPCREATESTRUCT create)
+{
+    App*     app;
+    LONG_PTR previous;
+    DWORD    error;
+    bool_t   has_previous;
+    bool_t   no_error;
+    bool_t   attached;
+
+    LOGASSERT(NULL != create);
+    LOGASSERT(NULL != create->lpCreateParams);
+
+    app          = (App*)create->lpCreateParams;
+    app->hWnd    = window;
+    SetLastError(ERROR_SUCCESS);
+    previous     = SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)app);
+    error        = GetLastError();
+    has_previous = (0 != previous);
+    no_error     = (ERROR_SUCCESS == error);
+    attached     = has_previous || no_error;
+    return attached;
+}
+
+/*************************************************************************************************/
+/**
  * \par Details:
  *  Uses the main-window message crackers and forwards unhandled messages to
  *  default window processing.
  */
 static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    App* app;
+    LRESULT result;
+
     switch (message)
     {
-        HANDLE_MSG(hWnd, WM_CREATE, OnCreate);
-        HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBackground);
-        HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC, OnControlColor);
-        HANDLE_MSG(hWnd, WM_CTLCOLORBTN, OnControlColor);
-        HANDLE_MSG(hWnd, WM_CTLCOLOREDIT, OnControlColor);
-        HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX, OnControlColor);
-        HANDLE_MSG(hWnd, WM_MEASUREITEM, OnMeasureItem);
-        HANDLE_MSG(hWnd, WM_DRAWITEM, OnDrawItem);
-        HANDLE_MSG(hWnd, WM_TIMER, OnTimer);
-        HANDLE_MSG(hWnd, WM_SIZE, OnSize);
-        HANDLE_MSG(hWnd, WM_GETMINMAXINFO, OnGetMinMaxInfo);
-        HANDLE_MSG(hWnd, WM_DPICHANGED, OnDpiChanged);
-        HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
-        HANDLE_MSG(hWnd, WM_NOTIFY, OnNotify);
-        HANDLE_MSG(hWnd, WM_HSCROLL, OnHScroll);
-        HANDLE_MSG(hWnd, WM_CLOSE, OnClose);
-        HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
+        HANDLE_MSG(hWnd, WM_NCCREATE, OnNcCreate);
     default:
         break;
     }
-    return DefWindowProcW(hWnd, message, wParam, lParam);
+    app = (App*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+    if (NULL != app)
+    {
+        switch (message)
+        {
+            HANDLE_MSG(hWnd, WM_CREATE, OnCreate);
+            HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBackground);
+            HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC, OnControlColor);
+            HANDLE_MSG(hWnd, WM_CTLCOLORBTN, OnControlColor);
+            HANDLE_MSG(hWnd, WM_CTLCOLOREDIT, OnControlColor);
+            HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX, OnControlColor);
+            HANDLE_MSG(hWnd, WM_MEASUREITEM, OnMeasureItem);
+            HANDLE_MSG(hWnd, WM_DRAWITEM, OnDrawItem);
+            HANDLE_MSG(hWnd, WM_TIMER, OnTimer);
+            HANDLE_MSG(hWnd, WM_SIZE, OnSize);
+            HANDLE_MSG(hWnd, WM_GETMINMAXINFO, OnGetMinMaxInfo);
+            HANDLE_MSG(hWnd, WM_DPICHANGED, OnDpiChanged);
+            HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
+            HANDLE_MSG(hWnd, WM_NOTIFY, OnNotify);
+            HANDLE_MSG(hWnd, WM_HSCROLL, OnHScroll);
+            HANDLE_MSG(hWnd, WM_CLOSE, OnClose);
+            HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
+        default:
+            break;
+        }
+    }
+    result = DefWindowProc(hWnd, message, wParam, lParam);
+    if (WM_NCDESTROY == message)
+    {
+        (void)SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+    }
+    return result;
 }
 
 /*************************************************************************************************/
@@ -2756,101 +2859,186 @@ static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM 
  *  Initializes DPI, OLE, Winsock and common controls, creates the application
  *  window, then runs dialog-key translation and the window message loop.
  */
-int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
+static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
 {
-    static const WCHAR   kClass[] = L"cvkCastDemo";
-    WNDCLASSEXW          wc;
+    HRESULT              ole_result;
+    bool_t               ole_ready;
+    WSADATA              wsa_data;
+    int32_t              network_result;
+    bool_t               network_ready;
+    int32_t              result;
     INITCOMMONCONTROLSEX controls;
-    WSADATA              wsaData;
-    HWND                 hWnd;
-    MSG                  msg;
-    int                  argc = 0;
-    LPWSTR* argv;
-    BOOL    message_result;
-    int     exit_code;
+    bool_t               controls_ready;
+    WNDCLASSEX           window_class;
+    ATOM                 class_atom;
+    bool_t               class_ready;
+    HWND                 window;
+    bool_t               window_ready;
+    int32_t              argument_count;
+    LPWSTR*              arguments;
+    MSG                  message;
+    BOOL                 message_result;
+    bool_t               pump_failed;
+    bool_t               has_message;
+    bool_t               is_quit;
 
-    (void)hPrevInstance;
-    (void)lpCmdLine;
-    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-    /* The common file dialog is shell-backed and needs this thread in a single-threaded OLE
-    ** apartment; without it GetOpenFileName fails. This does not depend on how the app started. */
-    OleInitialize(NULL);
-    if (0 != WSAStartup(MAKEWORD(2, 2), &wsaData))
-    {
-        MessageBoxW(NULL, L"WSAStartup failed.", L"CastDemo", MB_ICONERROR);
-        return 1;
-    }
-    controls.dwSize = sizeof(controls);
-    controls.dwICC  = ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES | ICC_STANDARD_CLASSES;
-    InitCommonControlsEx(&controls);
+    LOGASSERT(NULL != app);
 
-    ZeroMemory(&wc, sizeof(wc));
-    wc.cbSize        = sizeof(wc);
-    wc.lpfnWndProc   = WindowProc;
-    wc.hInstance     = hInstance;
-    wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
-    wc.hbrBackground = NULL;
-    wc.lpszClassName = kClass;
-    wc.hIcon         = LoadIconW(NULL, IDI_APPLICATION);
-    if (0 == RegisterClassExW(&wc))
+    (void)SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+    ole_result    = OleInitialize(NULL);
+    ole_ready     = SUCCEEDED(ole_result);
+    network_ready = FALSE;
+    class_ready   = FALSE;
+    result        = 1;
+    if (ole_ready)
     {
-        WSACleanup();
-        return 1;
+        network_result = WSAStartup(MAKEWORD(2, 2), &wsa_data);
+        network_ready  = (0 == network_result);
     }
-    g_app.hInstance = hInstance;
-    g_app.dpi       = GetDpiForSystem();
-    hWnd            = CreateWindowExW(0,
-                                      kClass,
-                                      L"CastDemo",
-                                      WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX,
-                                      CW_USEDEFAULT,
-                                      CW_USEDEFAULT,
-                                      Scale(&g_app, 720),
-                                      Scale(&g_app, 700),
-                                      NULL,
-                                      NULL,
-                                      hInstance,
-                                      NULL);
-    if (NULL == hWnd)
+    if (network_ready)
     {
-        WSACleanup();
-        return 1;
-    }
-    argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    if (NULL != argv)
-    {
-        if (argc > 1)
+        controls.dwSize = sizeof(controls);
+        controls.dwICC  = ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES | ICC_STANDARD_CLASSES;
+        controls_ready  = !!InitCommonControlsEx(&controls);
+        if (controls_ready)
         {
-            SetWindowTextW(g_app.hFile, argv[1]);
-            UpdateControls(&g_app);
+            ZeroMemory(&window_class, sizeof(window_class));
+            window_class.cbSize        = sizeof(window_class);
+            window_class.lpfnWndProc   = WindowProc;
+            window_class.hInstance     = instance;
+            window_class.hCursor       = LoadCursor(NULL, IDC_ARROW);
+            window_class.hbrBackground = NULL;
+            window_class.lpszClassName = TEXT("cvkCastDemo");
+            window_class.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
+            class_atom                 = RegisterClassEx(&window_class);
+            class_ready                = (0 != class_atom);
         }
-        LocalFree(argv);
     }
-    ShowWindow(hWnd, nShowCmd);
+    if (class_ready)
+    {
+        app->hInstance = instance;
+        app->dpi       = GetDpiForSystem();
+        window         = CreateWindowEx(0,
+                                        TEXT("cvkCastDemo"),
+                                        TEXT("CastDemo"),
+                                        WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX,
+                                        CW_USEDEFAULT,
+                                        CW_USEDEFAULT,
+                                        Scale(app, 720),
+                                        Scale(app, 700),
+                                        NULL,
+                                        NULL,
+                                        instance,
+                                        app);
+        window_ready = (NULL != window);
+        if (window_ready)
+        {
+            argument_count = 0;
+            arguments      = CommandLineToArgvW(GetCommandLineW(), &argument_count);
+            if (NULL != arguments)
+            {
+                if (1 < argument_count)
+                {
+                    SetWindowTextW(app->hFile, arguments[1]);
+                    UpdateControls(app);
+                }
+                (void)LocalFree(arguments);
+            }
+            ShowWindow(window, showCommand);
+            pump_failed = FALSE;
+            for (;;)
+            {
+                if (app->windowDestroyed)
+                {
+                    break;
+                }
+                if (pump_failed)
+                {
+                    has_message = !!PeekMessage(&message, NULL, 0, 0, PM_REMOVE);
+                    if (!has_message)
+                    {
+                        OnTimer(window, POSITION_TIMER);
+                        (void)MsgWaitForMultipleObjectsEx(0, NULL, POSITION_TICK_MS, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+                    }
+                }
+                else
+                {
+                    message_result = GetMessage(&message, NULL, 0, 0);
+                    has_message    = (0 < message_result);
+                    is_quit        = (0 == message_result);
+                    if (!has_message)
+                    {
+                        if (is_quit)
+                        {
+                            result = (int32_t)message.wParam;
+                        }
+                        pump_failed = TRUE;
+                        OnClose(window);
+                    }
+                }
+                if (has_message)
+                {
+                    if (!IsDialogMessage(window, &message))
+                    {
+                        TranslateMessage(&message);
+                        DispatchMessage(&message);
+                    }
+                }
+            }
+            if (!pump_failed)
+            {
+                result = 0;
+            }
+        }
+        if (NULL != app->hFont)
+        {
+            (void)DeleteObject(app->hFont);
+        }
+        (void)UnregisterClass(TEXT("cvkCastDemo"), instance);
+    }
+    if (network_ready)
+    {
+        (void)WSACleanup();
+    }
+    if (ole_ready)
+    {
+        OleUninitialize();
+    }
+    return result;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Retains the context outside the window procedure until all workers and the
+ *  native window have stopped using it. Native memory-release failure is retried.
+ */
+int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE previousInstance, LPWSTR commandLine, int showCommand)
+{
+    OS_Memory_t memory;
+    bool_t      ready;
+    int32_t     result;
+    App*        app;
+    bool_t      closed;
+
+    (void)previousInstance;
+    (void)commandLine;
+
+    ready  = OS_Memory_Initialize(&memory, sizeof(App));
+    result = 1;
+    if (ready)
+    {
+        app    = (App*)OS_Memory_GetAddress(&memory);
+        result = RunWindow(app, instance, showCommand);
+    }
     for (;;)
     {
-        message_result = GetMessage(&msg, NULL, 0, 0);
-        if (-1 == message_result)
+        closed = OS_Memory_TryClose(&memory);
+        if (closed)
         {
-            exit_code = 1;
             break;
         }
-        if (0 == message_result)
-        {
-            exit_code = (int)msg.wParam;
-            break;
-        }
-        if (!IsDialogMessage(hWnd, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
+        Sleep(POSITION_TICK_MS);
     }
-    if (NULL != g_app.hFont)
-    {
-        DeleteObject(g_app.hFont);
-    }
-    WSACleanup();
-    OleUninitialize();
-    return exit_code;
+    return result;
 }

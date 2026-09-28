@@ -55,8 +55,8 @@ typedef struct FixtureWorkspace_s
     Buffer                cueGroup;
     SubtitleTrack         found[SUBTITLE_MAX_TRACKS];
     Subtitles_Workspace_t subtitles;
-    char_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
-    char_t                subtitleOutput[SUBTITLE_TEXT_CAPACITY];
+    byte_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
+    byte_t                subtitleOutput[SUBTITLE_TEXT_CAPACITY];
 } FixtureWorkspace_t;
 
 static FixtureWorkspace_t g_fixture;
@@ -158,13 +158,13 @@ static FORCE_INLINE void CheckWorkspace(void)
     const char_t          expected[] = "WEBVTT\n\n1\n00:00:00.000 --> 00:00:01.001\nx\n\n";
     const byte_t          invalid[]  = {0xC0, 0x80};
     uint32_t              capacity;
-    char_t                source[TEST_TEXT_CAPACITY + 2];
-    char_t                output[TEST_TEXT_CAPACITY + 2];
+    byte_t                source[TEST_TEXT_CAPACITY + 2];
+    byte_t                output[TEST_TEXT_CAPACITY + 2];
     Subtitles_Workspace_t workspace;
     bool_t                accepted;
     bool_t                fits;
     uint32_t              count;
-    const char_t*         result;
+    const byte_t*         result;
     uint32_t              iteration;
 
     LOGASSERT(sizeof(expected) <= TEST_TEXT_CAPACITY);
@@ -402,7 +402,7 @@ static int FixtureTests(void)
     SubtitleTrack* found;
     wchar_t          directory[MAX_PATH], path[MAX_PATH];
     char             error[256];
-    const char_t*    vtt;
+    const byte_t*    vtt;
     uint64_t         size;
     unsigned         count;
     MkvSubtitleTrack single;
@@ -461,13 +461,13 @@ static int FixtureTests(void)
     CHECK(Subtitles_Load(&g_fixture.subtitles, &found[0], error, sizeof(error)));
     vtt  = Subtitles_GetText(&g_fixture.subtitles);
     size = Subtitles_GetByteCount(&g_fixture.subtitles);
-    CHECK(vtt && size == strlen(vtt));
-    CHECK(!strcmp(vtt,
+    CHECK(vtt && size == strlen((const char_t*)vtt));
+    CHECK(!strcmp((const char_t*)vtt,
                   "WEBVTT\n\n00:00:01.400 --> 00:00:02.400\n<i>Hello</i>\nSecond line\n\n00:00:05.900 --> "
                   "00:00:07.900\nLater\n\n"));
     CHECK(Subtitles_Load(&g_fixture.subtitles, &found[1], error, sizeof(error)));
     vtt = Subtitles_GetText(&g_fixture.subtitles);
-    CHECK(vtt && strstr(vtt, "Bl\xc3\xa5"));
+    CHECK(vtt && strstr((const char_t*)vtt, "Bl\xc3\xa5"));
     found[1].matroskaTrack = 999;
     CHECK(!Subtitles_Load(&g_fixture.subtitles, &found[1], error, sizeof(error)));
     CHECK(0 == Subtitles_GetByteCount(&g_fixture.subtitles));
@@ -517,7 +517,7 @@ int wmain(int argc, wchar_t** argv)
     for (unsigned i = 0; i < count; ++i)
     {
         char          error[256];
-        const char_t* vtt;
+        const byte_t* vtt;
         const char_t* cursor;
         wchar_t       output[MAX_PATH];
         uint64_t      size;
@@ -530,7 +530,7 @@ int wmain(int argc, wchar_t** argv)
         }
         vtt  = Subtitles_GetText(&g_fixture.subtitles);
         size = Subtitles_GetByteCount(&g_fixture.subtitles);
-        for (cursor = vtt; (cursor = strstr(cursor, " --> ")) != NULL; cursor += 5)
+        for (cursor = (const char_t*)vtt; (cursor = strstr(cursor, " --> ")) != NULL; cursor += 5)
             ++cues;
         CHECK(cues > 0);
         CHECK(_snwprintf_s(output,

@@ -58,8 +58,8 @@ typedef struct SubtitleTrack
  */
 typedef struct Subtitles_Workspace_s
 {
-    char_t*  source;    ///< Normalization scratch, capacity bytes.
-    char_t*  output;    ///< Borrowed result or transient sidecar input, capacity bytes.
+    byte_t*  source;    ///< Normalization scratch, capacity bytes.
+    byte_t*  output;    ///< Borrowed result or transient sidecar input, capacity bytes.
     uint32_t capacity;  ///< Bytes in each buffer, including termination space.
     uint32_t byteCount; ///< Published output bytes, zero after failure.
 } Subtitles_Workspace_t;
@@ -93,7 +93,7 @@ typedef struct Subtitles_Workspace_s
  *
  * \retval     None   The workspace is ready for reuse.
  */
-void Subtitles_Initialize(Subtitles_Workspace_t* workspace, char_t* source, char_t* output, uint32_t capacity);
+void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -123,7 +123,7 @@ void Subtitles_InitializeFileTrack(const wchar_t* path, SubtitleTrack* track);
  *
  * \retval    text   Borrowed terminated UTF-8, valid until the next mutating operation.
  */
-const char_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace);
+const byte_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace);
 
 /*************************************************************************************************/
 /**

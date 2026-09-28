@@ -208,13 +208,13 @@ static FORCE_INLINE bool_t PrepareJob(Proxy_State_t* state, const Proxy_Request_
     valid         = source_valid && address_valid;
     if (valid)
     {
-        address_text.data      = request->localAddress;
+        address_text.data      = (const byte_t*)request->localAddress;
         address_text.byteCount = address_bytes;
         valid                  = Utl_Url_ReadIpv4(address_text, &address);
         if (valid)
         {
             CRT_Memory_Copy(state->source, request->source, ((uint64_t)source_units + 1) * sizeof(uint16_t));
-            state->addressBytes = Utl_Url_WriteIpv4(address, state->localAddress, UTL_URL_IPV4_MAX_BYTES);
+            state->addressBytes = Utl_Url_WriteIpv4(address, (byte_t*)state->localAddress, UTL_URL_IPV4_MAX_BYTES);
             LOGASSERT(address_bytes == state->addressBytes);
             state->localAddress[state->addressBytes] = UTL_URL_CHAR_NUL;
             if (NULL != request->config)
@@ -247,7 +247,7 @@ static FORCE_INLINE bool_t WriteUrl(Proxy_State_t* state)
     Utl_Url_t url;
     uint16_t  selected_port;
     uint32_t  port_bytes;
-    char_t    port[PROXY_PORT_CAPACITY];
+    byte_t    port[PROXY_PORT_CAPACITY];
     bool_t    written;
     uint32_t  url_bytes;
 
@@ -255,19 +255,19 @@ static FORCE_INLINE bool_t WriteUrl(Proxy_State_t* state)
     selected_port = MediaServer_GetPort(state->server);
     port_bytes    = Utl_Decimal_WriteUint64(selected_port, port, PROXY_PORT_CAPACITY);
     LOGASSERT(0 < port_bytes);
-    url.scheme.data      = PROXY_SCHEME;
+    url.scheme.data      = (const byte_t*)PROXY_SCHEME;
     url.scheme.byteCount = sizeof(PROXY_SCHEME) - 1;
-    url.host.data        = state->localAddress;
+    url.host.data        = (const byte_t*)state->localAddress;
     url.host.byteCount   = state->addressBytes;
     url.port.data        = port;
     url.port.byteCount   = port_bytes;
-    url.path.data        = PROXY_RESOURCE;
+    url.path.data        = (const byte_t*)PROXY_RESOURCE;
     url.path.byteCount   = sizeof(PROXY_RESOURCE) - 1;
     url.hostKind         = UTL_URL_HOST_IPV4;
     url.hasScheme        = TRUE;
     url.hasAuthority     = TRUE;
     url.hasPort          = TRUE;
-    written              = Utl_Url_Write(&url, state->url, PROXY_URL_CAPACITY - 1, &url_bytes);
+    written              = Utl_Url_Write(&url, (byte_t*)state->url, PROXY_URL_CAPACITY - 1, &url_bytes);
     if (written)
     {
         LOGASSERT(PROXY_URL_CAPACITY > url_bytes);

@@ -8,7 +8,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include "utl/utl_mp4.h"
+#include "utl/utl_mpeg4.h"
 #include "utl/utl_matroska.h"
 #include "utl/utl_protobuf.h"
 
@@ -133,51 +133,62 @@ static bool_t EqualBytes(const byte_t* first, const byte_t* second, uint32_t byt
 /** \par Details: Partial headers must preserve every published output field. */
 static void CheckMp4(void)
 {
-    Utl_Mp4_BoxHeader_t header;
-    Utl_Mp4_BoxHeader_t saved;
-    byte_t              output[UTL_MP4_MAX_BOX_HEADER_BYTES];
+    Utl_Mpeg4_Span_t bytes;
+    Utl_Mpeg4_BoxHeader_t header;
+    Utl_Mpeg4_BoxHeader_t saved;
+    byte_t              output[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
     uint64_t            large_size;
     uint32_t            width;
     uint32_t            index;
     bool_t              accepted;
     bool_t              equal;
 
-    accepted = Utl_Mp4_ReadBoxHeader(&header, c_mp4Ordinary, sizeof(c_mp4Ordinary), 16);
+    bytes.data = c_mp4Ordinary;
+
+    bytes.byteCount = sizeof(c_mp4Ordinary);
+
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 16, 16);
     Check(accepted, 101);
     Check(16 == header.byteCount, 102);
     Check(0x66726565 == header.type, 103);
-    Check(8 == header.headerByteCount, 104);
+    Check(8 == Utl_Mpeg4_GetBoxHeaderByteCount(&header), 104);
     Check(!header.hasLargeSize && !header.extendsToEnd, 105);
-    width = Utl_Mp4_WriteBoxHeader(&header, output, sizeof(output));
+    width = Utl_Mpeg4_WriteBoxHeader(&header, output, sizeof(output));
     Check(sizeof(c_mp4Ordinary) == width, 106);
     equal = EqualBytes(output, c_mp4Ordinary, width);
     Check(equal, 107);
-    accepted = Utl_Mp4_ReadBoxHeader(&header, c_mp4ToEnd, sizeof(c_mp4ToEnd), UINT64_MAX);
+    bytes.data = c_mp4ToEnd;
+    bytes.byteCount = sizeof(c_mp4ToEnd);
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, UINT64_MAX, UINT64_MAX);
     Check(accepted && header.extendsToEnd, 108);
     Check(UINT64_MAX == header.byteCount, 109);
-    width = Utl_Mp4_WriteBoxHeader(&header, output, sizeof(output));
+    width = Utl_Mpeg4_WriteBoxHeader(&header, output, sizeof(output));
     equal = EqualBytes(output, c_mp4ToEnd, sizeof(c_mp4ToEnd));
     Check((sizeof(c_mp4ToEnd) == width) && equal, 110);
 
     large_size = ((uint64_t)1 << 32) + 32;
-    accepted   = Utl_Mp4_ReadBoxHeader(&header, c_mp4LargeUuid, sizeof(c_mp4LargeUuid), large_size);
+    bytes.data = c_mp4LargeUuid;
+    bytes.byteCount = sizeof(c_mp4LargeUuid);
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size, large_size);
     Check(accepted, 111);
     Check(large_size == header.byteCount, 112);
-    Check(32 == header.headerByteCount, 113);
+    Check(32 == Utl_Mpeg4_GetBoxHeaderByteCount(&header), 113);
     Check(header.hasLargeSize && !header.extendsToEnd, 114);
-    width = Utl_Mp4_WriteBoxHeader(&header, output, sizeof(output));
+    width = Utl_Mpeg4_WriteBoxHeader(&header, output, sizeof(output));
     equal = EqualBytes(output, c_mp4LargeUuid, sizeof(c_mp4LargeUuid));
     Check((sizeof(c_mp4LargeUuid) == width) && equal, 115);
     saved = header;
     index = 0;
     for (;;)
     {
-        accepted = Utl_Mp4_ReadBoxHeader(&header, c_mp4LargeUuid, index, large_size);
+        bytes.data = c_mp4LargeUuid;
+        bytes.byteCount = index;
+        accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size, large_size);
         Check(!accepted, 116);
         Check(saved.byteCount == header.byteCount, 117);
         Check(saved.type == header.type, 118);
-        Check(saved.headerByteCount == header.headerByteCount, 119);
-        equal = EqualBytes(saved.userType, header.userType, UTL_MP4_USER_TYPE_BYTES);
+        Check(Utl_Mpeg4_GetBoxHeaderByteCount(&saved) == Utl_Mpeg4_GetBoxHeaderByteCount(&header), 119);
+        equal = EqualBytes(saved.userType, header.userType, UTL_MPEG4_USER_TYPE_BYTES);
         Check(equal && header.hasLargeSize && !header.extendsToEnd, 120);
         ++index;
         if (!(sizeof(c_mp4LargeUuid) > index))
@@ -185,11 +196,17 @@ static void CheckMp4(void)
             break;
         }
     }
-    accepted = Utl_Mp4_ReadBoxHeader(&header, c_mp4LargeUuid, sizeof(c_mp4LargeUuid), large_size - 1);
+    bytes.data = c_mp4LargeUuid;
+    bytes.byteCount = sizeof(c_mp4LargeUuid);
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, large_size - 1, large_size - 1);
     Check(!accepted, 121);
-    accepted = Utl_Mp4_ReadBoxHeader(&header, c_mp4Ordinary, sizeof(c_mp4Ordinary), 15);
+    bytes.data = c_mp4Ordinary;
+    bytes.byteCount = sizeof(c_mp4Ordinary);
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 15, 15);
     Check(!accepted, 122);
-    accepted = Utl_Mp4_ReadBoxHeader(&header, c_mp4ToEnd, sizeof(c_mp4ToEnd), 7);
+    bytes.data = c_mp4ToEnd;
+    bytes.byteCount = sizeof(c_mp4ToEnd);
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 7, 7);
     Check(!accepted, 123);
 
     index = 0;
@@ -205,7 +222,7 @@ static void CheckMp4(void)
     index = 0;
     for (;;)
     {
-        width = Utl_Mp4_WriteBoxHeader(&saved, output, index);
+        width = Utl_Mpeg4_WriteBoxHeader(&saved, output, index);
         Check(0 == width, 124);
         ++index;
         if (!(sizeof(output) > index))
@@ -214,14 +231,14 @@ static void CheckMp4(void)
         }
     }
     saved.extendsToEnd = TRUE;
-    width              = Utl_Mp4_WriteBoxHeader(&saved, output, sizeof(output));
+    width              = Utl_Mpeg4_WriteBoxHeader(&saved, output, sizeof(output));
     Check(0 == width, 125);
     saved.extendsToEnd = FALSE;
     saved.hasLargeSize = FALSE;
-    width              = Utl_Mp4_WriteBoxHeader(&saved, output, sizeof(output));
+    width              = Utl_Mpeg4_WriteBoxHeader(&saved, output, sizeof(output));
     Check(0 == width, 126);
     saved.byteCount = 23;
-    width           = Utl_Mp4_WriteBoxHeader(&saved, output, sizeof(output));
+    width           = Utl_Mpeg4_WriteBoxHeader(&saved, output, sizeof(output));
     Check(0 == width, 127);
     index = 0;
     for (;;)
@@ -233,9 +250,13 @@ static void CheckMp4(void)
             break;
         }
     }
-    accepted = Utl_Mp4_ReadBoxHeader(NULL, c_mp4Ordinary, sizeof(c_mp4Ordinary), 16);
+    bytes.data = NULL;
+    bytes.byteCount = 0;
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 16, 16);
     Check(!accepted, 129);
-    accepted = Utl_Mp4_ReadBoxHeader(&header, NULL, 8, 16);
+    bytes.data = c_mp4Ordinary;
+    bytes.byteCount = sizeof(c_mp4Ordinary);
+    accepted = Utl_Mpeg4_ReadBoxHeader(&header, bytes, 17, 16);
     Check(!accepted, 130);
 }
 

@@ -6,6 +6,30 @@ if(MSVC AND CMAKE_C_COMPILER_ARCHITECTURE_ID STREQUAL "x64")
 else()
     message(FATAL_ERROR "The OS atomics need a verified backend for this target")
 endif()
+# ReadConsoleInputEx has documented exports but no SDK import library. Bind its
+# exact ABI at process load, with no runtime module lookup or function-pointer cast.
+set(cast_console_import_library "${CMAKE_CURRENT_BINARY_DIR}/console_imports.lib")
+add_custom_command(OUTPUT "${cast_console_import_library}"
+    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/console_imports.exp"
+    COMMAND "${CMAKE_AR}" /nologo /machine:x64
+        "/def:${CMAKE_CURRENT_SOURCE_DIR}/os/win32/console_imports.def"
+        "/out:${cast_console_import_library}"
+    DEPENDS os/win32/console_imports.def
+    VERBATIM)
+add_custom_target(cast-console-imports-build DEPENDS "${cast_console_import_library}")
+add_library(cast-console-imports STATIC IMPORTED)
+set_target_properties(cast-console-imports PROPERTIES IMPORTED_LOCATION "${cast_console_import_library}")
+add_dependencies(cast-console-imports cast-console-imports-build)
+# Both native text modes compile the same encoding-independent key implementation.
+# The application consumes the Unicode object; ANSI remains a required compile check.
+foreach(cast_console_mode IN ITEMS unicode ansi)
+    add_library(cast-console-${cast_console_mode} OBJECT os/win32/os_console.c)
+    target_include_directories(cast-console-${cast_console_mode} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_compile_options(cast-console-${cast_console_mode} PRIVATE /GS- /Zl)
+    target_compile_definitions(cast-console-${cast_console_mode} PRIVATE WIN32_LEAN_AND_MEAN)
+endforeach()
+target_compile_definitions(cast-console-unicode PRIVATE UNICODE _UNICODE ReadConsoleInputEx=ReadConsoleInputExW)
+target_compile_definitions(cast-console-ansi PRIVATE ReadConsoleInputEx=ReadConsoleInputExA)
 if(WIN32)
     set(cast_arguments_source utl/win32/utl_arguments.c)
 elseif(UNIX)
@@ -15,8 +39,10 @@ else()
 endif()
 add_library(cast-formats STATIC
     cast_http.c cast_http.h
-    utl/utl_mp4.c utl/utl_mp4.h
+    utl/utl_mpeg4.c utl/utl_mpeg4.h
     utl/utl_matroska.c utl/utl_matroska.h
+    utl/utl_mpeg4systems.c utl/utl_mpeg4systems.h
+    utl/utl_mpeg4audio.c utl/utl_mpeg4audio.h
     utl/utl_protobuf.c utl/utl_protobuf.h
     utl/utl_unicode.c utl/utl_unicode.h
     utl/utl_webvtt.c utl/utl_webvtt.h
@@ -25,7 +51,8 @@ add_library(cast-formats STATIC
     utl/utl_xml.c utl/utl_xml.h
     utl/utl_upnp.c utl/utl_upnp.h
     utl/utl_castv2.c utl/utl_castv2.h
-    utl/utl_castjson.c utl/utl_castjson.h
+    utl/utl_json.c utl/utl_json.h
+    utl/utl_chromecast.c utl/utl_chromecast.h
     utl/utl_decimal.c utl/utl_decimal.h
     utl/utl_http.c utl/utl_http.h
     utl/utl_ssdp.c utl/utl_ssdp.h
@@ -37,6 +64,8 @@ add_library(cast-formats STATIC
     os/os_mailbox.c os/os_mailbox.h
     os/os_thread.h os/win32/os_thread.c
     os/os_memory.h os/win32/os_memory.c
+    os/os_console.h os/win32/os_console_native.h
+    $<TARGET_OBJECTS:cast-console-unicode>
     os/os_temporaryfile.h os/win32/os_temporaryfile.c
     os/win32/os_assert.c os/win32/os_process.c)
 set_source_files_properties(os/win32/os_process.c PROPERTIES COMPILE_DEFINITIONS "UNICODE;_UNICODE;WIN32_LEAN_AND_MEAN")
@@ -47,8 +76,10 @@ set_source_files_properties(os/win32/os_temporaryfile.c
     PROPERTIES COMPILE_DEFINITIONS "UNICODE;_UNICODE;WIN32_LEAN_AND_MEAN")
 set_source_files_properties(os/win32/os_network.c ssdp.c media_server.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
 set_source_files_properties(mkv_subtitles.c subtitles.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
+set_source_files_properties(mp4_demux.c mp4_mux.c mp4_index.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
 target_include_directories(cast-formats PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(cast-formats PUBLIC crt)
+add_dependencies(cast-formats cast-console-ansi)
+target_link_libraries(cast-formats PUBLIC crt cast-console-imports)
 if(MSVC)
     target_compile_options(cast-formats PRIVATE /GS- /Zl)
 endif()
@@ -62,7 +93,7 @@ endif()
 add_library(cast-session STATIC cast_session.c cast_session.h cast_channel.c cast_channel.h
     cast_media.c cast_media.h
     cast_events.c cast_events.h cast_commands.c cast_commands.h
-    cast_message.c cast_message.h media_server.c media_server.h mp4_index.c mp4_index.h
+    media_server.c media_server.h mp4_index.c mp4_index.h
     subtitles.c subtitles.h audio_gain.c audio_gain.h
     mkv_subtitles.c mkv_subtitles.h
     proxy.c proxy.h gpu_transcode.c gpu_transcode.h gpu_probe.c gpu_probe.h mp4_demux.c mp4_demux.h
@@ -80,6 +111,7 @@ target_compile_definitions(CastDemo PRIVATE UNICODE _UNICODE)
 target_link_libraries(CastDemo PRIVATE cast-session comctl32 comdlg32 shell32 ole32 user32 gdi32 uxtheme dwmapi)
 
 add_executable(CastDemoCli cast_demo.c)
+target_compile_definitions(CastDemoCli PRIVATE WIN32_LEAN_AND_MEAN)
 target_link_libraries(CastDemoCli PRIVATE cast-session)
 
 # Framing, range and JSON checks that need no receiver or GPU.
@@ -105,6 +137,15 @@ if(MSVC)
     target_link_libraries(cast-no-crt INTERFACE cast-formats crt-abi kernel32)
     target_compile_options(cast-no-crt INTERFACE /GS- /Zl)
     target_link_options(cast-no-crt INTERFACE /NODEFAULTLIB /ENTRY:WinMainStartup)
+
+    add_executable(cvk-cast-console-test "${PROJECT_SOURCE_DIR}/tests/win32/cast_console_test.c"
+        os/win32/os_entry.c)
+    target_compile_definitions(cvk-cast-console-test PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN)
+    target_link_libraries(cvk-cast-console-test PRIVATE cast-no-crt)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME cvk-cast-console COMMAND "${Python3_EXECUTABLE}"
+            "${PROJECT_SOURCE_DIR}/tests/run_isolated_console.py" $<TARGET_FILE:cvk-cast-console-test>)
+    endif()
 
     add_executable(cvk-cast-thread-test "${PROJECT_SOURCE_DIR}/tests/win32/cast_thread_test.c"
         os/win32/os_entry.c)
@@ -146,6 +187,26 @@ if(MSVC)
     target_link_libraries(cvk-cast-proxy-test PRIVATE cast-session cast-no-crt)
     add_test(NAME cvk-cast-proxy COMMAND cvk-cast-proxy-test)
 
+
+    add_executable(cvk-cast-mpeg4-test "${PROJECT_SOURCE_DIR}/tests/cast_mpeg4_test.c"
+        os/win32/os_entry.c)
+    target_link_libraries(cvk-cast-mpeg4-test PRIVATE cast-no-crt)
+    add_test(NAME cvk-cast-mpeg4 COMMAND cvk-cast-mpeg4-test)
+
+    add_executable(cvk-cast-mpeg4audio-test "${PROJECT_SOURCE_DIR}/tests/cast_mpeg4audio_test.c"
+        os/win32/os_entry.c)
+    target_link_libraries(cvk-cast-mpeg4audio-test PRIVATE cast-no-crt)
+    add_test(NAME cvk-cast-mpeg4audio COMMAND cvk-cast-mpeg4audio-test)
+
+    add_executable(cvk-cast-mpeg4systems-test "${PROJECT_SOURCE_DIR}/tests/cast_mpeg4systems_test.c"
+        os/win32/os_entry.c)
+    target_link_libraries(cvk-cast-mpeg4systems-test PRIVATE cast-no-crt)
+    add_test(NAME cvk-cast-mpeg4systems COMMAND cvk-cast-mpeg4systems-test)
+
+    add_executable(cvk-cast-chromecast-test "${PROJECT_SOURCE_DIR}/tests/cast_chromecast_test.c"
+        os/win32/os_entry.c)
+    target_link_libraries(cvk-cast-chromecast-test PRIVATE cast-no-crt)
+    add_test(NAME cvk-cast-chromecast COMMAND cvk-cast-chromecast-test)
 
     add_executable(cvk-cast-json-test "${PROJECT_SOURCE_DIR}/tests/cast_json_test.c"
         os/win32/os_entry.c)
@@ -230,7 +291,7 @@ if(MSVC)
         "/MAP:$<TARGET_FILE_DIR:cvk-cast-format-test>/cvk-cast-format-test.map")
     add_test(NAME cvk-cast-formats COMMAND cvk-cast-format-test)
 
-    add_executable(cvk-cast-protocol-test "${PROJECT_SOURCE_DIR}/tests/cast_protocol_test.c" cast_message.c)
+    add_executable(cvk-cast-protocol-test "${PROJECT_SOURCE_DIR}/tests/cast_protocol_test.c")
     target_link_libraries(cvk-cast-protocol-test PRIVATE cast-no-crt)
     target_link_options(cvk-cast-protocol-test PRIVATE
         "/MAP:$<TARGET_FILE_DIR:cvk-cast-protocol-test>/cvk-cast-protocol-test.map")
@@ -254,7 +315,7 @@ if(MSVC)
     add_test(NAME cvk-cast-arguments-posix COMMAND cvk-cast-arguments-posix-test)
 
     add_executable(cvk-cast-assert-test "${PROJECT_SOURCE_DIR}/tests/cast_assert_test.c"
-        os/win32/os_entry.c cast_commands.c cast_events.c cast_message.c)
+        os/win32/os_entry.c cast_commands.c cast_events.c)
     target_link_libraries(cvk-cast-assert-test PRIVATE cast-no-crt)
     if(Python3_Interpreter_FOUND)
         add_test(NAME cvk-cast-api-conventions COMMAND ${Python3_EXECUTABLE}

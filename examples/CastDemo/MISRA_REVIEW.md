@@ -74,7 +74,7 @@ These are review areas and current defects, not a substitute guideline inventory
 The strict build currently fails on owned-source, dependency and included
 SDK/header diagnostics, including C4191 conversions in the linked Volk loader.
 Recent native analysis no longer reports the LOAD formatter's
-25 KB stack frame after migration to `utl_castjson`, or the subtitle reader's
+25 KB stack frame after the earlier typed LOAD migration (now `utl_chromecast` over `utl_json`), or the subtitle reader's
 19 KB track-array frame after selecting during traversal. These are corrected
 defects, not proof of MISRA compliance. The new thread and JSON fixtures have
 not executed from a successful strict build. Runtime allocation tracing,
@@ -305,3 +305,285 @@ auditor regressions pass, and generated policy inspection covers 38 C targets.
 These checks neither trace allocation nor establish MISRA C:2025 coverage. The
 authoritative guideline inventory, dedicated analysis and manual evidence remain
 required for the complete program; no diagnostic exception was added.
+
+## JSON/Chromecast separation review
+
+The typed Chromecast schema now consumes the generic JSON specification writer.
+Caller-selected style replaces fixed demo appearance in the protocol library.
+Exact decimals group coefficient and scale in a typed value; numeric grammar,
+name-state preparation and emission are separately staged. Invalid post-root
+operations consistently latch a writer error. Every distinct range/storage
+question in the changed validation code is named before composition.
+
+Native `/Wall /WX` and AllRules compile the two modules and both protocol
+fixtures. Strict clang-tidy remains failing, with full logs under
+`build/cast-{chromecast,json}{,-fixture}-native.log`. Remaining owned diagnostics
+include Clang indexed-buffer/pointer usage in the generic writer and Chromecast
+fixture. The latest Chromecast module and generic JSON fixture logs contain no
+owned-file findings, but included SDK findings still prevent success. No warning
+policy was weakened, and no C fixture was executed outside the failed checks.
+The audit-script regression suite passes 30 tests and generated project policy
+covers 39 C targets. These checks do not certify MISRA compliance or a Release.
+
+The GUI/CLI context migration remains unfinished. The CLI placeholder has now
+been replaced by a startup-owned keyboard backend and bounded application input
+policy. Native control callbacks must not be connected by hidden global state.
+The executable integration must be completed before any full-build claim.
+
+## Console integration and front-end compilation
+
+`os_console` duplicates its input handle at startup and retains the original
+mode through retryable restoration and handle closure. Keyboard reads consume
+at most one record with the documented native NOWAIT operation. Empty, ignored
+and failed reads preserve caller output. The CLI consumes at most 32 records per
+poll, owns the key-to-command policy and checks retained input errors only after
+the session worker is quiescent. Repeated key-down records cannot be canceled by
+parity: a toggle uses asynchronously reported receiver state.
+
+Native `/Wall /WX` and AllRules pass for both ANSI/Unicode console objects and
+the isolated-console fixture. Required clang-tidy still fails on included
+headers; the fixture additionally reports its unused `Windows.h` umbrella
+include. Neither console object has an owned-file finding in the latest logs.
+The fixture has not linked or executed. Its launcher creates a hidden isolated
+console for keyboard tests and a detached process for absent-input tests. It
+never detaches or injects events into the caller's console. Native restoration
+failure, input failure after successful startup and concurrent signal/teardown
+injection remain uncovered.
+
+Logs are `build/cast-console-{ansi,unicode}-native.log` and
+`build/cvk-cast-console-test-native.log`. The generated import archive contains
+both exact native read exports, verified against this host's Kernel32 exports.
+The latest `cast_session.c` and `gpu_probe.c` selected compilations also pass
+native compilation/AllRules and fail clang-tidy; this is not whole-target success.
+
+The GUI's misplaced WM_NCCREATE HANDLE_MSG case is corrected inside a switch.
+Native GUI compilation still fails SDK C4668/C4255 diagnostics. Native CLI
+compilation still fails C4996 at its legacy transcode-output `fopen`; substituting
+another CRT call or suppressing the warning would not satisfy the goal. Logs are
+`build/cast-gui-context-native.log` and `build/CastDemoCli-native.log`.
+All 31 lexical-auditor regressions pass and generated policy inspection covers
+42 C targets. No warning exemption, fixture execution or new Release is claimed.
+
+Native Ctrl+Break, generated control events, console close and shutdown remain
+open. Keyboard Ctrl+C input does not replace these lifecycle obligations.
+The native signal mechanism creates a handler thread per event and provides
+no caller context, so its lifetime and allocation behavior require an explicit
+solution under the unchanged goal. See Microsoft's
+[control-signal contract](https://learn.microsoft.com/en-us/windows/console/ctrl-c-and-ctrl-break-signals).
+All broader CRT, allocation, realtime, protocol and MISRA obligations remain open.
+
+
+## Counted-byte and JSON reader review
+
+The latest user correction is recorded in REFERENCE_RULES.md and
+REFACTOR_REQUIREMENTS.md: serialized and counted wire data uses `byte_t` through
+storage, interfaces and callers. The correction reaches the JSON/Chromecast,
+CastV2 adapter, HTTP/range, SSDP, URL, XML, decimal, SRT and WebVTT chains; retained
+application buffers and binary media/codec/image-plane storage were reviewed too.
+Terminated native/application text remains text, with explicit boundary views.
+This does not discharge CRT use, allocation lifetime or missing format semantics.
+
+The new iterative JSON reader has fixed caller-owned records, no recursive C
+calls and no allocation. External syntax/capacity failures publish no root;
+Unicode decoding preflights output and preserves count/storage on rejection.
+Native `/Wall /WX` and AllRules compilation of the reader passes. Clang-tidy
+identified excessive nesting in escape parsing and record admission; separating
+hexadecimal decoding, escape selection and record publication cleared those
+complexity findings. Its buffer-access diagnostics and SDK diagnostics still
+fail the strict target. No checks or warnings were disabled. Evidence is in
+`build/cast-json-reader-native.log`.
+
+Native reader/Chromecast and affected protocol fixtures compile, but the strict
+analysis gate has not passed and these binaries have not been linked or run.
+The protocol adapter fixture uses a payload with invalid bytes beyond its
+explicit count to check that framing excludes them. Reader cases cover complete
+and malformed grammar, every truncated container prefix, record exhaustion,
+maximum admitted nesting, decoded name lookup, surrogate pairs and output
+preservation. Fixture evidence is in `build/cvk-cast-*-byte-native.log`.
+
+Application checks are deliberately selected per source in
+`build/*-byte-selected-native.log`; incremental project checks are insufficient
+proof that every changed body was compiled. Full application compilation also
+still encounters native SDK macro/prototype diagnostics and the CLI's existing
+`fopen` warning. The production receiver parser and its CRT numeric conversion
+remain unmigrated. There is no new validated Release and no MISRA completion claim.
+
+
+The selected per-source pass also exposed native C6001 in transcoder partial
+startup cleanup and C26451 in MP4 sample-table/edit-list offsets. The transcoder
+now records successful plane acquisitions before cleanup and releases exactly
+that retained prefix in reverse order. MP4 offset multiplication now widens the
+operand before arithmetic, matching the existing 64-bit table-extent preflight.
+The transcoder passes native compilation/AllRules after this correction; strict
+clang-tidy still fails. The demux also passes native compilation/AllRules after the last edit-list
+offset correction; its strict clang-tidy check remains rejected in
+`build/mp4_demux-byte-selected-native.log`. These are scoped corrections, not
+completion of allocator removal, teardown-failure handling or MP4 semantics.
+Version-specific composition offsets and complete sample/run/extent validation
+remain part of the required MP4 specification migration.
+
+The selected socket/discovery checks still fail native SDK C6101 in
+`WS2tcpip.h` for the SDK's output-MTU path. This is distinct from passing native
+compilation of the message, session, subtitle, proxy and probe sources. No SDK
+warning is suppressed and full-target acceptance is still withheld.
+
+
+## Typed command serialization review
+
+Outgoing commands now use the generic JSON writer through typed Chromecast
+models. Their serializers use counted byte_t output, fixed automatic writer
+frames, borrowed input and two-pass validation. There is no vendor CRT call,
+allocation, global state or recursive traversal in the new command serialization.
+The session reuses its startup payload storage and has no remaining text-formatted
+wire commands. Its diagnostic formatting and incoming legacy JSON/numeric parser
+are still CRT/reader defects.
+
+The signed JSON writer derives negative magnitudes by incrementing before
+negation, so INT64_MIN never overflows. The request sequence checks exhaustion
+before incrementing. Complete time-derivation results replaced a conditional
+output path that clang diagnosed as potentially uninitialized. Seek requests use
+named model fields instead of interchangeable floating-point/boolean parameters.
+The parser publication helper derives its record index from its owner, eliminating
+a redundant index argument; decoded comparison no longer performs a dead store.
+
+Native /Wall /WX and AllRules compilation passes for the affected JSON and
+Chromecast implementation units, session unit and command fixtures. Strict
+clang-tidy still rejects included SDK diagnostics, generic JSON buffer accesses,
+fixture buffer accesses and existing application findings. This is not a strict
+build pass and no new C fixture was linked or executed. Compiler and analysis
+settings, including warning treatment, remain unchanged. Evidence is recorded in
+`build/utl_chromecast-command-native.log`, `build/utl_json-command-native.log`,
+`build/cast-session-command-native.log` and
+`build/cast-chromecast-command-fixture-native.log`.
+
+The full specification, initialization-only allocation, no-CRT application,
+reference-style, MISRA and Release acceptance obligations remain open. Neither
+selected native compilation nor authored fixtures establish runtime correctness,
+complete compliance or a fixed release binary.
+
+
+## Exact integer and counted routing review
+
+The exact JSON integer query uses bounded integer arithmetic throughout. Its
+decimal prefix cannot exceed nineteen digits, the exponent summary is bounded
+against the uint32_t source extent, and signed magnitude is checked before
+narrowing. INT64_MIN is published separately. A rejected value leaves the
+output unchanged. Native compilation and AllRules pass for the implementation
+and integer fixtures (`build/cast-json-integer-native.log` and
+`build/cast-json-integer-fixture-native.log`). Full clang-tidy still fails on
+generic JSON buffer diagnostics, existing fixture findings and included SDK
+diagnostics; these C fixtures were not linked or executed.
+
+The counted routing migration removes the redundant Cast message structure and
+all CastMessage_* application/fixture calls. The channel now serializes and reads
+the specification model directly. Namespace mapping queries read no command
+payload fields. Receiver IDs are decoded into startup-owned storage only after
+both pass preflight; logical route state is published after CONNECT succeeds.
+The two-pass decode asserts the stable-source preflight guarantee rather than
+treating a programmer invariant as malformed external input. Diagnostics still
+use the legacy terminated logging interface; incoming numeric/media semantics,
+allocation dependencies and native transport behavior remain open.
+
+Selected native /Wall /WX and AllRules compilation passes for the updated
+Chromecast module, session, routing fixture, legacy message fixture and assertion
+fixture. The channel still fails native SDK C6101 in WS2tcpip.h. The protocol
+fixture still fails native SDK C4668 in shellapi.h/winioctl.h. No warning is
+suppressed, excluded or weakened. The Chromecast module has no owned clang-tidy
+diagnostic in its selected log; the session and fixtures still have owned
+findings, and included dependencies remain rejected. Full targets therefore do
+not pass. Current evidence is `build/cast-*-routes-native.log` and
+`build/cast-chromecast-routes-fixture-native.log`; compact diagnostic counts are
+in `build/cast-routes-review.json`.
+
+The auditor's 31 regressions pass, and all 42 generated C targets retain the
+required compiler/analysis settings. These are infrastructure checks, not
+execution evidence for the changed C. No new Release or full MISRA acceptance
+is claimed. The current binary in the Release directory predates these changes.
+
+
+## MPEG-4 Systems and Audio configuration review
+
+The new descriptor and AudioSpecificConfig modules have no mutable global state,
+heap operation, platform I/O or external CRT dependency. Their models use counted
+byte spans and explicit-width fields. Missing required owner/storage pointers
+assert; malformed external bytes, unsupported syntax and output exhaustion remain
+ordinary outcomes. Public output publication follows complete validation. Writers
+measure the entire active model and output capacity before mutation. Optional
+fields are accessed only when selected; fixed program arrays are checked before
+traversal and bit shifts occur only after field-width checks.
+
+Expandable descriptor arithmetic is bounded by the 28-bit body limit. Audio read
+positions use uint64_t so a uint32_t byte extent cannot overflow conversion to
+bits. Serialization traverses bounded program arrays and at most 255 comment
+bytes. Invalid scalar widths, duplicate element selectors and inconsistent
+program/tool fields fail before any caller output write. Terminal transport
+alignment is not interpreted as a codec field. No unmodeled audio object is
+silently treated as LC.
+
+Native /Wall /WX and AllRules compilation passes for the two new modules, their
+fixtures and the updated MP4 sources. The strict clang-tidy gate still rejects
+buffer-access diagnostics in these modules, included dependency diagnostics and
+legacy application findings. These failures remain unsuppressed; authored C
+fixtures have not executed. The generated 44 C targets retain all required
+compiler and analyzer settings. Logs and per-check counts are captured in
+`build/mpeg4-codec-review.json`.
+
+No full MISRA acceptance, realtime timing bound, successful end-to-end playback,
+complete specification coverage or Release build is established. The demux/mux
+still allocate at runtime, use CRT and retain unresolved state/resource behavior.
+MF, Schannel, Vulkan and other dependency allocations also remain open; moving
+these operations to workers does not satisfy initialization-only allocation.
+
+## Shared MPEG-4 foundation review
+
+`utl_mpeg4` now owns the shared span, explicit-width integer, bit-field,
+bit-reader and bit-writer models consumed by the Systems and Audio modules.
+Owners initialize explicitly; the reader/writer failure state is sticky and
+reinitialization resets it. Field capacity is checked by subtraction before
+cursor advancement. A 64-bit bit position represents the entire uint32_t byte
+domain. Shift widths are bounded before use, including full-width integers;
+bit operations move at most one byte portion per iteration. Counter mode never
+dereferences source byte sequences, and write mode initializes partial bytes.
+There is no runtime allocation, external CRT operation or mutable global in
+these common wire operations. They do not establish those properties for the
+application or dependencies.
+
+The Box reader now receives distinct parent and file extents; native consumers
+propagate the file boundary instead of silently resolving size zero to a nested
+parent end. The common FileType and FullBox field codecs replace additional
+inline output syntax. Unknown types and supported opaque data remain preserved;
+complete document and codec semantics remain explicitly open.
+
+The three modules, their three focused fixtures and three MP4 consumers pass
+selected native /Wall /WX and AllRules compilation. Fully enabled clang-tidy
+still rejects owned unsafe-buffer usage and included dependency findings.
+The legacy combined format fixture additionally has SDK C4668 failures. No
+suppression or policy relaxation was added. All 45 generated C targets retain
+the required policy. The fixtures are authored and compiled, not executed;
+strict target success, full MISRA acceptance and a verified Release remain open.
+See `build/mpeg4-common-review.json` for source hashes, log paths and diagnostics.
+
+## MPEG-4 sample-table and bounded-index review
+
+The shared library adds typed sample-table prefixes and cursors with caller-owned
+state, no heap/native/CRT operations, explicit widths, named decision predicates,
+initialization assertions, one final return and transactional field publication.
+The native indexer replaces whole-table malloc/free with two fixed pages and
+validates complete entry sequences before returning a nonzero index count.
+Page size bounds resident bytes; it does not bound file latency or the total
+number of operations. Native file opening, synchronous reads, GUI scheduling,
+platform-specific interfaces and composition/edit timing remain unresolved.
+
+Native /Wall /WX compilation reports no diagnostics for the shared MPEG-4 unit,
+indexer and expanded fixture. Full clang-tidy still fails, including owned
+buffer-usage findings and included SDK/compiler-header findings. The fixture
+has no owned-source analysis findings, but its included-header gate still fails.
+The existing media-header adapter also retains style/complexity findings.
+No warning was disabled and no gate was bypassed to link or execute the fixtures.
+No new Release or full MISRA acceptance is claimed.
+
+All 45 generated C targets retain the required compiler and analysis settings;
+the auditor's 31 regression cases pass. Exact source hashes and unit-specific
+diagnostics are retained in `build/mpeg4-tables-review.json`. The full lexical
+inventory is regenerated separately; its absence of a finding does not prove
+semantic, allocation, timing, concurrency or guideline compliance.

@@ -91,9 +91,9 @@ typedef struct HttpFramingFields_s
 static const char_t c_rangeUnit[] = UTL_HTTP_RANGE_UNIT;
 
 /** RFC 9110 section 5.6.7 day-name and month terminals, in calendar order. */
-static const char_t c_weekdays[DATE_WEEKDAY_COUNT][DATE_NAME_BYTES + 1] =
+static const byte_t c_weekdays[DATE_WEEKDAY_COUNT][DATE_NAME_BYTES + 1] =
     {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-static const char_t c_months[DATE_MONTH_COUNT][DATE_NAME_BYTES + 1] =
+static const byte_t c_months[DATE_MONTH_COUNT][DATE_NAME_BYTES + 1] =
     {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 /** Gregorian month lengths before the leap-day adjustment. */
 static const uint8_t c_monthDays[DATE_MONTH_COUNT] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -124,7 +124,7 @@ static FORCE_INLINE bool_t IsTokenByte(byte_t value);
  * \retval    TRUE    For SP or HTAB.
  * \retval    FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t IsWhitespace(char_t value);
+static FORCE_INLINE bool_t IsWhitespace(byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -146,7 +146,7 @@ static FORCE_INLINE byte_t FoldAscii(byte_t value);
  *
  * \retval    cursor..byteCount   Offset of the first non-whitespace byte, or byteCount when none remains.
  */
-static FORCE_INLINE uint32_t GetWhitespaceEnd(const char_t* buffer, uint32_t byteCount, uint32_t cursor);
+static FORCE_INLINE uint32_t GetWhitespaceEnd(const byte_t* buffer, uint32_t byteCount, uint32_t cursor);
 
 /*************************************************************************************************/
 /**
@@ -194,7 +194,7 @@ static FORCE_INLINE bool_t IsTarget(Utl_Http_Text_t target);
  * \retval        TRUE    When the prefix matches.
  * \retval        FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t HasBytesUnit(const char_t* buffer, uint32_t byteCount, uint32_t* cursor, char_t separator);
+static FORCE_INLINE bool_t HasBytesUnit(const byte_t* buffer, uint32_t byteCount, uint32_t* cursor, byte_t separator);
 
 /*************************************************************************************************/
 /**
@@ -322,7 +322,7 @@ static FORCE_INLINE bool_t ReadFramingField(HttpFramingFields_t* fields, Utl_Htt
  * \retval        TRUE    For a representable numeric prefix.
  * \retval        FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const char_t* buffer, uint32_t byteCount, uint32_t* cursor);
+static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const byte_t* buffer, uint32_t byteCount, uint32_t* cursor);
 
 /*************************************************************************************************/
 /**
@@ -337,7 +337,7 @@ static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const char_t* buffer, uin
  * \retval        FALSE   Otherwise.
  */
 static FORCE_INLINE bool_t ReadRangeMember(Utl_Http_Range_t* range,
-                                           const char_t*     buffer,
+                                           const byte_t*     buffer,
                                            uint32_t          byteCount,
                                            uint32_t*         cursor);
 
@@ -351,7 +351,7 @@ static FORCE_INLINE bool_t ReadRangeMember(Utl_Http_Range_t* range,
  *
  * \retval        None   No result value.
  */
-static FORCE_INLINE void WriteSpan(char_t* buffer, uint32_t* cursor, Utl_Http_Text_t text);
+static FORCE_INLINE void WriteSpan(byte_t* buffer, uint32_t* cursor, Utl_Http_Text_t text);
 
 /*************************************************************************************************/
 /**
@@ -363,7 +363,7 @@ static FORCE_INLINE void WriteSpan(char_t* buffer, uint32_t* cursor, Utl_Http_Te
  *
  * \retval        None   No result value.
  */
-static FORCE_INLINE void WriteLiteral(char_t* buffer, uint32_t* cursor, const char_t* literal);
+static FORCE_INLINE void WriteLiteral(byte_t* buffer, uint32_t* cursor, const char_t* literal);
 
 /*************************************************************************************************/
 /**
@@ -375,7 +375,7 @@ static FORCE_INLINE void WriteLiteral(char_t* buffer, uint32_t* cursor, const ch
  *
  * \retval     None   No result value.
  */
-static FORCE_INLINE void WriteDateNumber(char_t* output, uint32_t value, uint32_t width);
+static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_t width);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -430,7 +430,7 @@ static FORCE_INLINE bool_t IsTokenByte(byte_t value)
  * \par Details:
  *  None
  */
-static FORCE_INLINE bool_t IsWhitespace(char_t value)
+static FORCE_INLINE bool_t IsWhitespace(byte_t value)
 {
     return (UTL_HTTP_CHAR_SPACE == value) || (UTL_HTTP_CHAR_TAB == value);
 }
@@ -454,7 +454,7 @@ static FORCE_INLINE byte_t FoldAscii(byte_t value)
  * \par Details:
  *  None
  */
-static FORCE_INLINE uint32_t GetWhitespaceEnd(const char_t* buffer, uint32_t byteCount, uint32_t cursor)
+static FORCE_INLINE uint32_t GetWhitespaceEnd(const byte_t* buffer, uint32_t byteCount, uint32_t cursor)
 {
     uint32_t index;
 
@@ -579,7 +579,7 @@ static FORCE_INLINE bool_t IsTarget(Utl_Http_Text_t target)
  * \par Details:
  *  The comparison uses ASCII folding only; whitespace around '=' is not introduced.
  */
-static FORCE_INLINE bool_t HasBytesUnit(const char_t* buffer, uint32_t byteCount, uint32_t* cursor, char_t separator)
+static FORCE_INLINE bool_t HasBytesUnit(const byte_t* buffer, uint32_t byteCount, uint32_t* cursor, byte_t separator)
 {
     bool_t          has_prefix;
     Utl_Http_Text_t unit;
@@ -783,9 +783,9 @@ static FORCE_INLINE bool_t ReadStartLine(Utl_Http_Head_t* head, Utl_Http_Text_t 
         status            = 0;
         status_bytes      = 0;
         has_status        = Utl_Decimal_ReadUint64(&status,
-                                                      &status_bytes,
-                                                      line.data + UTL_HTTP_STATUS_OFFSET,
-                                                      UTL_HTTP_STATUS_DIGIT_COUNT);
+                                                   &status_bytes,
+                                                   line.data + UTL_HTTP_STATUS_OFFSET,
+                                                   UTL_HTTP_STATUS_DIGIT_COUNT);
         has_status           = has_status && (UTL_HTTP_STATUS_DIGIT_COUNT == status_bytes);
         has_status_separator = (UTL_HTTP_CHAR_SPACE == line.data[UTL_HTTP_VERSION_BYTE_COUNT]);
         has_reason_separator = (UTL_HTTP_CHAR_SPACE == line.data[UTL_HTTP_REASON_OFFSET - 1]);
@@ -1144,7 +1144,7 @@ static FORCE_INLINE bool_t ReadFramingField(HttpFramingFields_t* fields, Utl_Htt
  * \par Details:
  *  The remaining counted span is supplied directly to the shared decimal reader.
  */
-static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const char_t* buffer, uint32_t byteCount, uint32_t* cursor)
+static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const byte_t* buffer, uint32_t byteCount, uint32_t* cursor)
 {
     bool_t   is_valid;
     uint32_t consumed;
@@ -1163,7 +1163,7 @@ static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const char_t* buffer, uin
  *  The enclosing list reader checks trailing delimiters and capacity.
  */
 static FORCE_INLINE bool_t ReadRangeMember(Utl_Http_Range_t* range,
-                                           const char_t*     buffer,
+                                           const byte_t*     buffer,
                                            uint32_t          byteCount,
                                            uint32_t*         cursor)
 {
@@ -1217,7 +1217,7 @@ static FORCE_INLINE bool_t ReadRangeMember(Utl_Http_Range_t* range,
  *  The enclosing writer has validated every source and the complete output size.
  *  A descending counted copy keeps the Release/LTCG build independent of memcpy.
  */
-static FORCE_INLINE void WriteSpan(char_t* buffer, uint32_t* cursor, Utl_Http_Text_t text)
+static FORCE_INLINE void WriteSpan(byte_t* buffer, uint32_t* cursor, Utl_Http_Text_t text)
 {
     uint32_t index;
 
@@ -1234,13 +1234,13 @@ static FORCE_INLINE void WriteSpan(char_t* buffer, uint32_t* cursor, Utl_Http_Te
  * \par Details:
  *  None
  */
-static FORCE_INLINE void WriteLiteral(char_t* buffer, uint32_t* cursor, const char_t* literal)
+static FORCE_INLINE void WriteLiteral(byte_t* buffer, uint32_t* cursor, const char_t* literal)
 {
     uint32_t index;
 
     for (index = 0; UTL_HTTP_CHAR_NUL != literal[index]; ++index)
     {
-        buffer[(*cursor) + index] = literal[index];
+        buffer[(*cursor) + index] = (byte_t)literal[index];
     }
     (*cursor) += index;
 }
@@ -1250,14 +1250,14 @@ static FORCE_INLINE void WriteLiteral(char_t* buffer, uint32_t* cursor, const ch
  * \par Details:
  *  The enclosing date writer has checked the fixed width and complete output capacity.
  */
-static FORCE_INLINE void WriteDateNumber(char_t* output, uint32_t value, uint32_t width)
+static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_t width)
 {
     uint32_t cursor;
 
     for (cursor = width; 0 < cursor;)
     {
         --cursor;
-        output[cursor]  = (char_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (value % DATE_RADIX));
+        output[cursor] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (value % DATE_RADIX));
         value          /= DATE_RADIX;
     }
 }
@@ -1748,7 +1748,7 @@ uint32_t Utl_Http_GetContentRangeByteCount(const Utl_Http_ContentRange_t* conten
         count = RANGE_PREFIX_BYTES + 1;
         if (content->hasRange)
         {
-            is_valid  = (content->first <= content->last);
+            is_valid = (content->first <= content->last);
             count    += Utl_Decimal_GetUint64ByteCount(content->first);
             count    += Utl_Decimal_GetUint64ByteCount(content->last);
             ++count;
@@ -1807,10 +1807,10 @@ bool_t Utl_Http_GetUrlEndpoint(const Utl_Url_t* url, Utl_Http_Endpoint_t* endpoi
     {
         scheme.data        = url->scheme.data;
         scheme.byteCount   = url->scheme.byteCount;
-        expected.data      = UTL_HTTP_SCHEME;
+        expected.data      = (const byte_t*)UTL_HTTP_SCHEME;
         expected.byteCount = sizeof(UTL_HTTP_SCHEME) - 1;
         plain              = Utl_Http_IsTextEqual(scheme, expected, TRUE);
-        expected.data      = UTL_HTTP_SECURE_SCHEME;
+        expected.data      = (const byte_t*)UTL_HTTP_SECURE_SCHEME;
         expected.byteCount = sizeof(UTL_HTTP_SECURE_SCHEME) - 1;
         secure             = Utl_Http_IsTextEqual(scheme, expected, TRUE);
         valid              = plain || secure;
@@ -1911,14 +1911,14 @@ uint32_t Utl_Http_FindField(const Utl_Http_Head_t* head, Utl_Http_Text_t name, u
  * \par Details:
  *  Only new bytes are scanned. Caller misuse asserts; malformed wire syntax remains a latched read result.
  */
-Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, const char_t* buffer, uint32_t byteCount)
+Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t          has_input;
     bool_t          same_input;
     bool_t          has_bounds;
     bool_t          at_end;
     bool_t          is_terminal;
-    char_t          value;
+    byte_t          value;
     Utl_Http_Text_t line;
     bool_t          failed;
 
@@ -1986,7 +1986,7 @@ Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, co
  */
 Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
                                     Utl_Http_Kind_t  kind,
-                                    const char_t*    buffer,
+                                    const byte_t*    buffer,
                                     uint32_t         byteCount)
 {
     Utl_Http_HeadReader_t reader;
@@ -2011,7 +2011,7 @@ Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
  * \par Details:
  *  The count is published only after all members have valid syntax and fit the supplied capacity.
  */
-bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const char_t* buffer, uint32_t byteCount)
+bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t           is_valid;
     uint32_t         cursor;
@@ -2081,7 +2081,7 @@ bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const char_t* buffer, ui
  * \par Details:
  *  Syntax is read into a local model and the same model query validates its semantic bounds.
  */
-bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const char_t* buffer, uint32_t byteCount)
+bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t                  is_valid;
     uint32_t                cursor;
@@ -2170,7 +2170,7 @@ bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const char_t*
  * \par Details:
  *  The size query excludes integer overflow; exact status digits need no formatter or CRT.
  */
-uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, char_t* buffer, uint32_t capacity)
+uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2192,17 +2192,17 @@ uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, char_t* buffer, uint32_
             ++cursor;
         }
         WriteLiteral(buffer, &cursor, UTL_HTTP_VERSION_PREFIX);
-        buffer[cursor]      = (char_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->major);
-        buffer[cursor + 1]  = UTL_HTTP_CHAR_DOT;
-        buffer[cursor + 2]  = (char_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->minor);
+        buffer[cursor]     = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->major);
+        buffer[cursor + 1] = UTL_HTTP_CHAR_DOT;
+        buffer[cursor + 2] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->minor);
         cursor             += 3;
         if (UTL_HTTP_RESPONSE == head->kind)
         {
-            buffer[cursor]      = UTL_HTTP_CHAR_SPACE;
-            buffer[cursor + 1]  = (char_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status / 100));
-            buffer[cursor + 2]  = (char_t)(UTL_HTTP_CHAR_DIGIT_FIRST + ((head->status / 10) % 10));
-            buffer[cursor + 3]  = (char_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status % 10));
-            buffer[cursor + 4]  = UTL_HTTP_CHAR_SPACE;
+            buffer[cursor]     = UTL_HTTP_CHAR_SPACE;
+            buffer[cursor + 1] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status / 100));
+            buffer[cursor + 2] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + ((head->status / 10) % 10));
+            buffer[cursor + 3] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status % 10));
+            buffer[cursor + 4] = UTL_HTTP_CHAR_SPACE;
             cursor             += 5;
             WriteSpan(buffer, &cursor, head->reason);
         }
@@ -2224,7 +2224,7 @@ uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, char_t* buffer, uint32_
  * \par Details:
  *  Weekday uses Gregorian arithmetic with January and February counted in the preceding year.
  */
-uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, char_t* buffer, uint32_t capacity)
+uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2278,7 +2278,7 @@ uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, char_t* buffer, uint32_
  * \par Details:
  *  Every append is bounded by the precomputed total and uses caller-owned storage.
  */
-uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, char_t* buffer, uint32_t capacity)
+uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, byte_t* buffer, uint32_t capacity)
 {
     uint32_t                count;
     bool_t                  can_write;
@@ -2332,7 +2332,7 @@ uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, char_t* buffer,
  * \par Details:
  *  The same semantic count query is used by standalone sizing and writing.
  */
-uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, char_t* buffer, uint32_t capacity)
+uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2351,7 +2351,7 @@ uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, char
         if (content->hasRange)
         {
             cursor         += Utl_Decimal_WriteUint64(content->first, &buffer[cursor], count - cursor);
-            buffer[cursor]  = UTL_HTTP_CHAR_HYPHEN;
+            buffer[cursor] = UTL_HTTP_CHAR_HYPHEN;
             ++cursor;
             cursor += Utl_Decimal_WriteUint64(content->last, &buffer[cursor], count - cursor);
         }
@@ -2384,7 +2384,7 @@ uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, char
  *  RFC 9112 section 3.2.1 retains the encoded path and query. Capacity and syntax
  *  are checked before any output write; fragments never enter the request target.
  */
-bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, char_t* output, uint32_t capacity, uint32_t* byteCount)
+bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t   valid;
     uint32_t count;

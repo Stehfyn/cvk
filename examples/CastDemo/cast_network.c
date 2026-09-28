@@ -78,7 +78,7 @@ bool_t CastNetwork_ReadLocalAddress(OS_Network_t* network,
             break;
         }
     }
-    text.data      = host;
+    text.data      = (const byte_t*)host;
     text.byteCount = count;
     valid          = terminated && (UTL_URL_IPV4_MIN_BYTES < outputCapacity);
     if (valid)
@@ -95,7 +95,7 @@ bool_t CastNetwork_ReadLocalAddress(OS_Network_t* network,
         valid  = (needed < outputCapacity);
         if (valid)
         {
-            written = Utl_Url_WriteIpv4(route.local, output, outputCapacity - 1);
+            written = Utl_Url_WriteIpv4(route.local, (byte_t*)output, outputCapacity - 1);
             LOGASSERT(needed == written);
             output[written] = UTL_URL_CHAR_NUL;
         }

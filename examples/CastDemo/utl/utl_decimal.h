@@ -76,7 +76,7 @@ uint32_t Utl_Decimal_GetUint64ByteCount(uint64_t value);
  * \retval     TRUE    For a representable prefix.
  * \retval     FALSE   Otherwise.
  */
-bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const char_t* buffer, uint32_t byteCount);
+bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -94,6 +94,6 @@ bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const char_t
  * \retval     1..20   Number of ASCII decimal digits written.
  * \retval     0       Output is missing or capacity is insufficient; output remains unchanged.
  */
-uint32_t Utl_Decimal_WriteUint64(uint64_t value, char_t* buffer, uint32_t capacity);
+uint32_t Utl_Decimal_WriteUint64(uint64_t value, byte_t* buffer, uint32_t capacity);
 
 #endif /* UTL_DECIMAL_H */

@@ -64,7 +64,7 @@
  */
 typedef struct Text
 {
-    char*    data;
+    byte_t*  data;
     uint32_t size;
     uint32_t capacity;
 } Text;
@@ -166,7 +166,7 @@ static FORCE_INLINE uint32_t GetUtf8TextByteCount(const byte_t* data, uint32_t s
  * \retval        1   Bytes appended and terminator retained.
  * \retval        0   Capacity limit exceeded.
  */
-static FORCE_INLINE int Append(Text* text, const char* data, uint64_t size);
+static FORCE_INLINE int Append(Text* text, const byte_t* data, uint64_t size);
 
 /*************************************************************************************************/
 /**
@@ -185,7 +185,7 @@ static FORCE_INLINE int Append(Text* text, const char* data, uint64_t size);
  * \retval        TRUE    Complete terminated UTF-8 was written.
  * \retval        FALSE   Invalid encoding, embedded NUL, oversized input or insufficient capacity.
  */
-static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const uint8_t* data, uint64_t size);
+static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const byte_t* data, uint64_t size);
 
 /*************************************************************************************************/
 /**
@@ -243,7 +243,7 @@ static FORCE_INLINE bool_t AppendMatroskaScalar(Text* out, SubtitleLine_t* line,
  * \retval        1   Cue accepted, including a duration rounded to zero milliseconds.
  * \retval        0   Conversion or buffer append failed.
  */
-static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const uint8_t* data, uint64_t size);
+static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const byte_t* data, uint64_t size);
 
 /*************************************************************************************************/
 /**
@@ -262,7 +262,7 @@ static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const 
  * \retval        1   Sample accepted.
  * \retval        0   Malformed sample, conversion or buffer append failure.
  */
-static FORCE_INLINE int TextSample(void* user, double start, double end, const uint8_t* data, uint32_t size);
+static FORCE_INLINE int TextSample(void* user, double start, double end, const byte_t* data, uint32_t size);
 
 /*************************************************************************************************/
 /**
@@ -469,7 +469,7 @@ static FORCE_INLINE uint32_t GetUtf8TextByteCount(const byte_t* data, uint32_t s
  * \par Details:
  *  Checks the retained capacity, appends counted bytes and restores termination.
  */
-static FORCE_INLINE int Append(Text* text, const char* data, uint64_t size)
+static FORCE_INLINE int Append(Text* text, const byte_t* data, uint64_t size)
 {
     bool_t   fits;
     uint32_t count;
@@ -500,7 +500,7 @@ static FORCE_INLINE int Append(Text* text, const char* data, uint64_t size)
  *  retained scratch. The second pass writes exact UTF-8 without allocation,
  *  native character conversion or temporary UTF-16 storage.
  */
-static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const uint8_t* data, uint64_t size)
+static FORCE_INLINE bool_t DecodeUtf8(Text* destination, const byte_t* data, uint64_t size)
 {
     bool_t                   valid;
     uint32_t                 byte_count;
@@ -635,14 +635,14 @@ static FORCE_INLINE bool_t AppendMatroskaScalar(Text* out, SubtitleLine_t* line,
             scalar = SUBTITLE_TIME_LF;
             if (line->previousNewline)
             {
-                valid = Append(out, " ", 1);
+                valid = Append(out, (const byte_t*)" ", 1);
             }
         }
         if (valid)
         {
             written = Utl_Unicode_WriteUtf8(scalar, encoded, sizeof(encoded));
             LOGASSERT(0 < written);
-            valid = Append(out, (const char_t*)encoded, written);
+            valid = Append(out, encoded, written);
         }
         line->previousNewline = (SUBTITLE_TIME_LF == scalar);
     }
@@ -656,7 +656,7 @@ static FORCE_INLINE bool_t AppendMatroskaScalar(Text* out, SubtitleLine_t* line,
  *  Serializes cue times in milliseconds, normalizes newlines and preserves inline
  *  SubRip markup while preventing blank payload lines from ending a WebVTT cue.
  */
-static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const uint8_t* data, uint64_t size)
+static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const byte_t* data, uint64_t size)
 {
     Text*                    out;
     bool_t                   valid;
@@ -666,7 +666,7 @@ static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const 
     bool_t                   positive;
     Utl_Unicode_Reader_t     reader;
     uint32_t                 written;
-    char_t                   timing[SUBTITLE_TIMING_CAPACITY];
+    byte_t                   timing[SUBTITLE_TIMING_CAPACITY];
     SubtitleLine_t           line;
     Utl_Unicode_ReadResult_t result;
     uint32_t                 scalar;
@@ -715,7 +715,7 @@ static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const 
     }
     if (valid && positive)
     {
-        valid = Append(out, line.previousNewline ? "\n" : "\n\n", line.previousNewline ? 1 : 2);
+        valid = Append(out, line.previousNewline ? (const byte_t*)"\n" : (const byte_t*)"\n\n", line.previousNewline ? 1 : 2);
     }
 
     return valid;
@@ -727,7 +727,7 @@ static FORCE_INLINE int MatroskaCue(void* user, double start, double end, const 
  *  Reads the tx3g counted text, escapes markup characters and prevents empty
  *  payload lines from splitting a WebVTT cue.
  */
-static FORCE_INLINE int TextSample(void* user, double start, double end, const uint8_t* data, uint32_t size)
+static FORCE_INLINE int TextSample(void* user, double start, double end, const byte_t* data, uint32_t size)
 {
     Text*            out;
     bool_t           valid;
@@ -792,7 +792,7 @@ static FORCE_INLINE void NormalizeNewlines(Text* text)
 {
     uint32_t read;
     uint32_t written;
-    char_t   value;
+    byte_t   value;
     bool_t   has_next;
 
     read    = 0;
@@ -830,7 +830,7 @@ static FORCE_INLINE bool_t AppendSrtCue(Text* out, const Utl_Srt_Cue_t* cue)
     bool_t   valid;
     bool_t   has_identifier;
     uint32_t written;
-    char_t   timing[SUBTITLE_TIMING_CAPACITY];
+    byte_t   timing[SUBTITLE_TIMING_CAPACITY];
     bool_t   has_payload;
 
     start_fits     = (cue->start.hourDigits <= SUBTITLE_MAX_HOUR_DIGITS);
@@ -842,7 +842,7 @@ static FORCE_INLINE bool_t AppendSrtCue(Text* out, const Utl_Srt_Cue_t* cue)
         valid = Append(out, cue->identifier.data, cue->identifier.byteCount);
         if (valid)
         {
-            valid = Append(out, SUBTITLE_NEWLINE, sizeof(SUBTITLE_NEWLINE) - 1);
+            valid = Append(out, (const byte_t*)SUBTITLE_NEWLINE, sizeof(SUBTITLE_NEWLINE) - 1);
         }
     }
     if (valid)
@@ -857,12 +857,12 @@ static FORCE_INLINE bool_t AppendSrtCue(Text* out, const Utl_Srt_Cue_t* cue)
         valid = Append(out, cue->payload.data, cue->payload.byteCount);
         if (valid)
         {
-            valid = Append(out, SUBTITLE_NEWLINE, sizeof(SUBTITLE_NEWLINE) - 1);
+            valid = Append(out, (const byte_t*)SUBTITLE_NEWLINE, sizeof(SUBTITLE_NEWLINE) - 1);
         }
     }
     if (valid)
     {
-        valid = Append(out, SUBTITLE_NEWLINE, sizeof(SUBTITLE_NEWLINE) - 1);
+        valid = Append(out, (const byte_t*)SUBTITLE_NEWLINE, sizeof(SUBTITLE_NEWLINE) - 1);
     }
 
     return valid;
@@ -883,7 +883,7 @@ static FORCE_INLINE bool_t ConvertSubRip(Conversion_t* conversion)
     Utl_Srt_Cue_t        cue;
 
     Utl_Srt_InitializeReader(&reader, conversion->source.data, conversion->source.size);
-    valid    = Append(&conversion->output, UTL_WEBVTT_HEADER, sizeof(UTL_WEBVTT_HEADER) - 1);
+    valid    = Append(&conversion->output, (const byte_t*)UTL_WEBVTT_HEADER, sizeof(UTL_WEBVTT_HEADER) - 1);
     has_cues = FALSE;
     for (;;)
     {
@@ -995,7 +995,7 @@ static FORCE_INLINE void WriteLoadError(char_t* error, uint32_t capacity)
  *  Clearing both buffers touches their pages during startup. This does not lock
  *  pages or establish residency for file, codec, server or operating-system state.
  */
-void Subtitles_Initialize(Subtitles_Workspace_t* workspace, char_t* source, char_t* output, uint32_t capacity)
+void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte_t* output, uint32_t capacity)
 {
     LOGASSERT(NULL != workspace);
     LOGASSERT(NULL != source);
@@ -1055,7 +1055,7 @@ void Subtitles_InitializeFileTrack(const wchar_t* path, SubtitleTrack* track)
  * \par Details:
  *  No ownership transfer occurs; consumers must finish before workspace reuse.
  */
-const char_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace)
+const byte_t* Subtitles_GetText(const Subtitles_Workspace_t* workspace)
 {
     LOGASSERT(NULL != workspace);
     LOGASSERT(NULL != workspace->output);
@@ -1155,7 +1155,7 @@ bool_t Subtitles_Convert(Subtitles_Workspace_t* workspace, const void* bytes, ui
     Conversion_t conversion;
     bool_t       valid;
     bool_t       has_signature;
-    char_t       separator;
+    byte_t       separator;
     bool_t       is_line_end;
     bool_t       is_space;
     bool_t       is_terminated;
@@ -1240,7 +1240,7 @@ bool_t Subtitles_Load(Subtitles_Workspace_t* workspace, const SubtitleTrack* tra
     out.capacity         = workspace->capacity;
     if (0 != track->matroskaTrack)
     {
-        valid = Append(&out, UTL_WEBVTT_HEADER, sizeof(UTL_WEBVTT_HEADER) - 1);
+        valid = Append(&out, (const byte_t*)UTL_WEBVTT_HEADER, sizeof(UTL_WEBVTT_HEADER) - 1);
         if (valid)
         {
             valid = !!MkvSubtitles_Read(track->path, track->matroskaTrack, MatroskaCue, &out);
@@ -1248,7 +1248,7 @@ bool_t Subtitles_Load(Subtitles_Workspace_t* workspace, const SubtitleTrack* tra
     }
     else if (0 <= track->embedded)
     {
-        valid = Append(&out, UTL_WEBVTT_HEADER, sizeof(UTL_WEBVTT_HEADER) - 1);
+        valid = Append(&out, (const byte_t*)UTL_WEBVTT_HEADER, sizeof(UTL_WEBVTT_HEADER) - 1);
         if (valid)
         {
             valid = !!Mp4Demux_ReadTextTrack(track->path, (uint32_t)track->embedded, language, TextSample, &out);

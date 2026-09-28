@@ -4,7 +4,7 @@
 #ifndef CAST_CHANNEL_H
 #define CAST_CHANNEL_H
 
-#include "cast_message.h"
+#include "utl/utl_castv2.h"
 
 #define CAST_PORT (8009)
 
@@ -17,11 +17,11 @@ const char* CastChannel_GetError(const CastChannel* pChannel);
 CastChannel* CastChannel_Connect(const char* pHost, unsigned short port, char* pError, size_t errorCapacity);
 
 /* Encodes, encrypts and sends one message. Returns 1 on success. */
-int CastChannel_Send(CastChannel* pChannel, const CastMessage_t* pMessage);
+int CastChannel_Send(CastChannel* pChannel, const Utl_CastV2_Message_t* pMessage);
 
 /* Waits up to timeoutMs for a complete frame. Returns 1 with the message borrowing channel
 ** storage (valid until the next call), 0 on timeout, -1 when the connection failed or closed. */
-int CastChannel_Receive(CastChannel* pChannel, CastMessage_t* pMessage, unsigned timeoutMs);
+int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, unsigned timeoutMs);
 
 void CastChannel_Close(CastChannel* pChannel);
 

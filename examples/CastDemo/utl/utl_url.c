@@ -102,7 +102,7 @@ static FORCE_INLINE void AssertText(Utl_Url_Text_t text);
  *
  * \retval    text   Borrowed slice.
  */
-static FORCE_INLINE Utl_Url_Text_t GetText(const char_t* data, Slice_t slice);
+static FORCE_INLINE Utl_Url_Text_t GetText(const byte_t* data, Slice_t slice);
 
 /*************************************************************************************************/
 /**
@@ -116,7 +116,7 @@ static FORCE_INLINE Utl_Url_Text_t GetText(const char_t* data, Slice_t slice);
  * \retval    TRUE    ASCII alphabetic byte.
  * \retval    FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t IsAlpha(char_t value);
+static FORCE_INLINE bool_t IsAlpha(byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -130,7 +130,7 @@ static FORCE_INLINE bool_t IsAlpha(char_t value);
  * \retval    TRUE    ASCII decimal digit.
  * \retval    FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t IsDigit(char_t value);
+static FORCE_INLINE bool_t IsDigit(byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -144,7 +144,7 @@ static FORCE_INLINE bool_t IsDigit(char_t value);
  * \retval    0..15         Hexadecimal value.
  * \retval    HEX_INVALID   Invalid digit.
  */
-static FORCE_INLINE uint32_t GetHexValue(char_t value);
+static FORCE_INLINE uint32_t GetHexValue(byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -158,7 +158,7 @@ static FORCE_INLINE uint32_t GetHexValue(char_t value);
  * \retval    TRUE    Unreserved byte.
  * \retval    FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t IsUnreserved(char_t value);
+static FORCE_INLINE bool_t IsUnreserved(byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -172,7 +172,7 @@ static FORCE_INLINE bool_t IsUnreserved(char_t value);
  * \retval    TRUE    Sub-delimiter byte.
  * \retval    FALSE   Otherwise.
  */
-static FORCE_INLINE bool_t IsSubDelimiter(char_t value);
+static FORCE_INLINE bool_t IsSubDelimiter(byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -376,7 +376,7 @@ static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text);
  *
  * \retval        None   The component bytes are copied and offset advances.
  */
-static FORCE_INLINE void WriteText(char_t* output, uint32_t* offset, Utl_Url_Text_t text);
+static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Text_t text);
 
 /*************************************************************************************************/
 /**
@@ -391,7 +391,7 @@ static FORCE_INLINE void WriteText(char_t* output, uint32_t* offset, Utl_Url_Tex
  *
  * \retval        None   One byte is written and offset advances.
  */
-static FORCE_INLINE void WriteCharacter(char_t* output, uint32_t* offset, char_t value);
+static FORCE_INLINE void WriteCharacter(byte_t* output, uint32_t* offset, byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -407,7 +407,7 @@ static FORCE_INLINE void WriteCharacter(char_t* output, uint32_t* offset, char_t
  *
  * \retval        None   Authority bytes are written and the offset advances.
  */
-static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, char_t* output, uint32_t* offset);
+static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, byte_t* output, uint32_t* offset);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -428,7 +428,7 @@ static FORCE_INLINE void AssertText(Utl_Url_Text_t text)
  * \par Details:
  *  Empty input is represented without evaluating NULL plus zero.
  */
-static FORCE_INLINE Utl_Url_Text_t GetText(const char_t* data, Slice_t slice)
+static FORCE_INLINE Utl_Url_Text_t GetText(const byte_t* data, Slice_t slice)
 {
     Utl_Url_Text_t text;
 
@@ -447,7 +447,7 @@ static FORCE_INLINE Utl_Url_Text_t GetText(const char_t* data, Slice_t slice)
  * \par Details:
  *  URI syntax is ASCII and does not depend on process locale.
  */
-static FORCE_INLINE bool_t IsAlpha(char_t value)
+static FORCE_INLINE bool_t IsAlpha(byte_t value)
 {
     bool_t upper;
     bool_t lower;
@@ -463,7 +463,7 @@ static FORCE_INLINE bool_t IsAlpha(char_t value)
  * \par Details:
  *  None
  */
-static FORCE_INLINE bool_t IsDigit(char_t value)
+static FORCE_INLINE bool_t IsDigit(byte_t value)
 {
     return (UTL_URL_CHAR_DIGIT_FIRST <= value) && (value <= UTL_URL_CHAR_DIGIT_LAST);
 }
@@ -473,7 +473,7 @@ static FORCE_INLINE bool_t IsDigit(char_t value)
  * \par Details:
  *  A distinguished value avoids treating malformed escapes as encoded zero.
  */
-static FORCE_INLINE uint32_t GetHexValue(char_t value)
+static FORCE_INLINE uint32_t GetHexValue(byte_t value)
 {
     uint32_t digit;
     bool_t   upper;
@@ -503,7 +503,7 @@ static FORCE_INLINE uint32_t GetHexValue(char_t value)
  * \par Details:
  *  RFC 3986 section 2.3.
  */
-static FORCE_INLINE bool_t IsUnreserved(char_t value)
+static FORCE_INLINE bool_t IsUnreserved(byte_t value)
 {
     bool_t alphabetic;
     bool_t digit;
@@ -522,7 +522,7 @@ static FORCE_INLINE bool_t IsUnreserved(char_t value)
  * \par Details:
  *  RFC 3986 section 2.2; gen-delims are handled by their individual components.
  */
-static FORCE_INLINE bool_t IsSubDelimiter(char_t value)
+static FORCE_INLINE bool_t IsSubDelimiter(byte_t value)
 {
     bool_t accepted;
 
@@ -558,7 +558,7 @@ static FORCE_INLINE bool_t IsScheme(Utl_Url_Text_t text)
 {
     bool_t   valid;
     uint32_t index;
-    char_t   value;
+    byte_t   value;
     bool_t   alphabetic;
     bool_t   digit;
     bool_t   punctuation;
@@ -590,7 +590,7 @@ static FORCE_INLINE bool_t IsComponent(Utl_Url_Text_t text, Component_t kind)
 {
     uint32_t index;
     bool_t   valid;
-    char_t   value;
+    byte_t   value;
     uint32_t first;
     uint32_t second;
     bool_t   unreserved;
@@ -614,9 +614,9 @@ static FORCE_INLINE bool_t IsComponent(Utl_Url_Text_t text, Component_t kind)
             valid = (PERCENT_BYTE_COUNT <= (text.byteCount - index));
             if (valid)
             {
-                first   = GetHexValue(text.data[index + 1]);
-                second  = GetHexValue(text.data[index + 2]);
-                valid   = (HEX_INVALID != first) && (HEX_INVALID != second);
+                first  = GetHexValue(text.data[index + 1]);
+                second = GetHexValue(text.data[index + 2]);
+                valid  = (HEX_INVALID != first) && (HEX_INVALID != second);
                 index  += PERCENT_BYTE_COUNT;
             }
         }
@@ -762,7 +762,7 @@ static FORCE_INLINE bool_t IsIpv6(Utl_Url_Text_t text)
         if (valid)
         {
             count += width;
-            valid  = (count <= IPV6_PART_COUNT);
+            valid = (count <= IPV6_PART_COUNT);
         }
         if (valid && (!last))
         {
@@ -1075,7 +1075,7 @@ static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text)
 {
     uint32_t offset;
     uint32_t first;
-    char_t   value;
+    byte_t   value;
     Slice_t  slice;
 
     offset = 0;
@@ -1123,7 +1123,7 @@ static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text)
  * \par Details:
  *  Complete syntax and size validation precede the first call from Write.
  */
-static FORCE_INLINE void WriteText(char_t* output, uint32_t* offset, Utl_Url_Text_t text)
+static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Text_t text)
 {
     if (0 < text.byteCount)
     {
@@ -1137,7 +1137,7 @@ static FORCE_INLINE void WriteText(char_t* output, uint32_t* offset, Utl_Url_Tex
  * \par Details:
  *  Complete syntax and size validation precede the first call from Write.
  */
-static FORCE_INLINE void WriteCharacter(char_t* output, uint32_t* offset, char_t value)
+static FORCE_INLINE void WriteCharacter(byte_t* output, uint32_t* offset, byte_t value)
 {
     output[*offset] = value;
     ++(*offset);
@@ -1148,7 +1148,7 @@ static FORCE_INLINE void WriteCharacter(char_t* output, uint32_t* offset, char_t
  * \par Details:
  *  Literal brackets and empty user/port delimiters are preserved exactly.
  */
-static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, char_t* output, uint32_t* offset)
+static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, byte_t* output, uint32_t* offset)
 {
     bool_t literal;
 
@@ -1278,7 +1278,7 @@ bool_t Utl_Url_GetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
     valid = Utl_Url_IsValid(url);
     if (valid)
     {
-        count  = url->scheme.byteCount;
+        count = url->scheme.byteCount;
         count += url->userInfo.byteCount;
         count += url->host.byteCount;
         count += url->port.byteCount;
@@ -1378,8 +1378,8 @@ uint32_t Utl_Url_GetIpv4ByteCount(uint32_t address)
     count = IPV4_PART_COUNT - 1;
     for (part = 0; part < IPV4_PART_COUNT; ++part)
     {
-        shift  = (IPV4_PART_COUNT - part - 1) * IPV4_PART_BITS;
-        value  = (address >> shift) & IPV4_PART_MAX;
+        shift = (IPV4_PART_COUNT - part - 1) * IPV4_PART_BITS;
+        value = (address >> shift) & IPV4_PART_MAX;
         count += Utl_Decimal_GetUint64ByteCount(value);
     }
     return count;
@@ -1415,9 +1415,9 @@ bool_t Utl_Url_GetDecodedByteCount(Utl_Url_Text_t text, uint32_t* byteCount)
             valid = (PERCENT_BYTE_COUNT <= (text.byteCount - index));
             if (valid)
             {
-                first   = GetHexValue(text.data[index + 1]);
-                second  = GetHexValue(text.data[index + 2]);
-                valid   = (HEX_INVALID != first) && (HEX_INVALID != second);
+                first  = GetHexValue(text.data[index + 1]);
+                second = GetHexValue(text.data[index + 2]);
+                valid  = (HEX_INVALID != first) && (HEX_INVALID != second);
                 index  += PERCENT_BYTE_COUNT;
             }
         }
@@ -1513,12 +1513,12 @@ bool_t Utl_Url_ReadIpv4(Utl_Url_Text_t text, uint32_t* address)
  *  Structural splitting retains component boundaries before validating their
  *  grammars. The private candidate is published only after complete validation.
  */
-bool_t Utl_Url_Read(Utl_Url_t* url, const char_t* data, uint32_t byteCount)
+bool_t Utl_Url_Read(Utl_Url_t* url, const byte_t* data, uint32_t byteCount)
 {
     Utl_Url_t      candidate;
     uint32_t       offset;
     uint32_t       index;
-    char_t         value;
+    byte_t         value;
     Slice_t        slice;
     bool_t         valid;
     bool_t         authority;
@@ -1555,9 +1555,9 @@ bool_t Utl_Url_Read(Utl_Url_t* url, const char_t* data, uint32_t byteCount)
     }
     if (authority)
     {
-        candidate.hasAuthority  = TRUE;
+        candidate.hasAuthority = TRUE;
         offset                 += 2;
-        first                   = offset;
+        first                  = offset;
         for (; offset < byteCount; ++offset)
         {
             value = data[offset];
@@ -1592,7 +1592,7 @@ bool_t Utl_Url_Read(Utl_Url_t* url, const char_t* data, uint32_t byteCount)
  * \par Details:
  *  Preflight guarantees each decimal write and separator fits before any output is changed.
  */
-uint32_t Utl_Url_WriteIpv4(uint32_t address, char_t* output, uint32_t capacity)
+uint32_t Utl_Url_WriteIpv4(uint32_t address, byte_t* output, uint32_t capacity)
 {
     uint32_t count;
     uint32_t written;
@@ -1629,7 +1629,7 @@ uint32_t Utl_Url_WriteIpv4(uint32_t address, char_t* output, uint32_t capacity)
  * \par Details:
  *  RFC 3986 section 5.3 delimiter recomposition, preserving the caller's syntax.
  */
-bool_t Utl_Url_Write(const Utl_Url_t* url, char_t* output, uint32_t capacity, uint32_t* byteCount)
+bool_t Utl_Url_Write(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t   valid;
     uint32_t count;
@@ -1706,9 +1706,9 @@ bool_t Utl_Url_WriteDecoded(Utl_Url_Text_t text, byte_t* output, uint32_t capaci
         {
             if (UTL_URL_CHAR_PERCENT == text.data[index])
             {
-                first           = GetHexValue(text.data[index + 1]);
-                second          = GetHexValue(text.data[index + 2]);
-                output[offset]  = (byte_t)((first * HEX_RADIX) + second);
+                first          = GetHexValue(text.data[index + 1]);
+                second         = GetHexValue(text.data[index + 2]);
+                output[offset] = (byte_t)((first * HEX_RADIX) + second);
                 index          += PERCENT_BYTE_COUNT;
             }
             else

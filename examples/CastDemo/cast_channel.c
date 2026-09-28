@@ -15,7 +15,7 @@
 
 /* One TLS record is at most 16 KiB of payload plus header and trailer. */
 #define INCOMING_CAPACITY  (32 * 1024)
-#define PLAINTEXT_CAPACITY (CAST_MESSAGE_MAX_FRAME + 16 * 1024)
+#define PLAINTEXT_CAPACITY (UTL_CASTV2_MAX_FRAME + 16 * 1024)
 #define CHUNK_CAPACITY     (20 * 1024)
 
 struct CastChannel
@@ -28,15 +28,15 @@ struct CastChannel
     SecPkgContext_StreamSizes sizes;
     char                      error[256];
     /* ciphertext received but not yet decrypted */
-    uint8_t incoming[INCOMING_CAPACITY];
-    size_t  incomingUsed;
+    byte_t incoming[INCOMING_CAPACITY];
+    size_t incomingUsed;
     /* decrypted stream, framed into CastMessages */
-    uint8_t plain[PLAINTEXT_CAPACITY];
-    size_t  plainUsed;
-    size_t  plainConsumed;
+    byte_t plain[PLAINTEXT_CAPACITY];
+    size_t plainUsed;
+    size_t plainConsumed;
     /* one encoded frame and one encrypted record */
-    uint8_t frame[CAST_MESSAGE_MAX_FRAME];
-    uint8_t chunk[CHUNK_CAPACITY];
+    byte_t frame[UTL_CASTV2_MAX_FRAME];
+    byte_t chunk[CHUNK_CAPACITY];
 };
 
 /*************************************************************************************************/
@@ -65,7 +65,7 @@ static void SetError(char* pError, size_t capacity, const char* pWhat, unsigned 
  */
 static int SendAll(SOCKET s, const void* pData, size_t length)
 {
-    const char* pCursor = (const char*)pData;
+    const byte_t* pCursor = (const byte_t*)pData;
 
     for (;;)
     {
@@ -75,7 +75,7 @@ static int SendAll(SOCKET s, const void* pData, size_t length)
         {
             break;
         }
-        sent = send(s, pCursor, (int)length, 0);
+        sent = send(s, (const char*)pCursor, (int)length, 0);
 
         if (sent <= 0)
         {
@@ -95,11 +95,11 @@ static int SendAll(SOCKET s, const void* pData, size_t length)
  */
 static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, size_t errorCapacity)
 {
-    struct addrinfo  hints;
+    struct addrinfo hints;
     struct addrinfo* pResults = NULL;
     struct addrinfo* pAddress;
     SOCKET           s = INVALID_SOCKET;
-    char             service[8];
+    char service[8];
 
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family   = AF_UNSPEC;
@@ -299,15 +299,15 @@ static int DecryptBuffered(CastChannel* pChannel)
 {
     for (;;)
     {
-        const uint8_t*         pExtra;
-        uint32_t               extraLength;
-        SecBuffer              buffers[4];
-        int                    index;
-        SecBufferDesc          desc;
-        SECURITY_STATUS        status;
-        bool_t                 has_consumed_record;
+        const byte_t*           pExtra;
+        uint32_t                extraLength;
+        SecBuffer               buffers[4];
+        int                     index;
+        SecBufferDesc           desc;
+        SECURITY_STATUS         status;
+        bool_t                  has_consumed_record;
         Utl_CastV2_FrameState_t frame_state;
-        uint32_t               frame_bytes;
+        uint32_t                frame_bytes;
 
         if (0 == pChannel->incomingUsed)
         {
@@ -356,7 +356,7 @@ static int DecryptBuffered(CastChannel* pChannel)
             }
             else if (SECBUFFER_EXTRA == buffers[index].BufferType && buffers[index].cbBuffer > 0)
             {
-                pExtra      = (const uint8_t*)buffers[index].pvBuffer;
+                pExtra      = (const byte_t*)buffers[index].pvBuffer;
                 extraLength = buffers[index].cbBuffer;
             }
         }
@@ -431,9 +431,9 @@ CastChannel* CastChannel_Connect(const char* pHost, unsigned short port, char* p
  *  Encodes one Cast frame, splits it at the negotiated TLS record payload limit,
  *  then encrypts and sends each record in order.
  */
-int CastChannel_Send(CastChannel* pChannel, const CastMessage_t* pMessage)
+int CastChannel_Send(CastChannel* pChannel, const Utl_CastV2_Message_t* pMessage)
 {
-    const size_t frameLength = CastMessage_Encode(pMessage, pChannel->frame, sizeof(pChannel->frame));
+    const size_t frameLength = Utl_CastV2_WriteFrame(pMessage, pChannel->frame, sizeof(pChannel->frame));
     size_t       offset      = 0;
 
     if (0 == frameLength)
@@ -498,7 +498,7 @@ int CastChannel_Send(CastChannel* pChannel, const CastMessage_t* pMessage)
  *  frame inspection immediately; an incomplete unchanged frame reaches the
  *  deadline and socket-read path instead of spinning on its existing header.
  */
-int CastChannel_Receive(CastChannel* pChannel, CastMessage_t* pMessage, unsigned timeoutMs)
+int CastChannel_Receive(CastChannel* pChannel, Utl_CastV2_Message_t* pMessage, unsigned timeoutMs)
 {
     const ULONGLONG deadline = GetTickCount64() + timeoutMs;
 
@@ -512,14 +512,14 @@ int CastChannel_Receive(CastChannel* pChannel, CastMessage_t* pMessage, unsigned
     for (;;)
     {
         Utl_CastV2_FrameState_t frame_state;
-        uint32_t               frame_bytes;
-        uint32_t               previous_plain_bytes;
-        ULONGLONG              now;
-        struct timeval         timeout;
-        fd_set                 readable;
-        int                    ready;
-        int                    received;
-        bool_t                 has_new_plaintext;
+        uint32_t                frame_bytes;
+        uint32_t                previous_plain_bytes;
+        ULONGLONG               now;
+        struct timeval          timeout;
+        fd_set                  readable;
+        int                     ready;
+        int                     received;
+        bool_t                  has_new_plaintext;
 
         /* plainUsed is bounded by PLAINTEXT_CAPACITY at every append. */
         frame_state = Utl_CastV2_InspectFrame(&frame_bytes, pChannel->plain, (uint32_t)pChannel->plainUsed);
@@ -530,7 +530,9 @@ int CastChannel_Receive(CastChannel* pChannel, CastMessage_t* pMessage, unsigned
         }
         if (UTL_CASTV2_FRAME_COMPLETE == frame_state)
         {
-            if (!CastMessage_Decode(&pChannel->plain[UTL_CASTV2_HEADER_BYTES], frame_bytes - UTL_CASTV2_HEADER_BYTES, pMessage))
+            if (!Utl_CastV2_ReadMessage(pMessage,
+                                      &pChannel->plain[UTL_CASTV2_HEADER_BYTES],
+                                      frame_bytes - UTL_CASTV2_HEADER_BYTES))
             {
                 SetError(pChannel->error, sizeof(pChannel->error), "malformed CastMessage", 0);
                 return -1;

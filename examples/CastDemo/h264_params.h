@@ -4,16 +4,17 @@
 #ifndef CAST_H264_PARAMS_H
 #define CAST_H264_PARAMS_H
 
+#include "os/os_types.h"
 #include <stdint.h>
 
 #include <vk_video/vulkan_video_codec_h264std.h>
 
 /* Parses one SPS NAL (without the length prefix, including the NAL header byte). Fills pSps and
 ** the coded/display dimensions. Returns 1 on success. */
-int H264_ParseSps(const uint8_t* pNal, uint32_t size, StdVideoH264SequenceParameterSet* pSps, unsigned* pWidth, unsigned* pHeight);
+int H264_ParseSps(const byte_t* pNal, uint32_t size, StdVideoH264SequenceParameterSet* pSps, unsigned* pWidth, unsigned* pHeight);
 
 /* Parses one PPS NAL. Returns 1 on success. */
-int H264_ParsePps(const uint8_t* pNal, uint32_t size, StdVideoH264PictureParameterSet* pPps);
+int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParameterSet* pPps);
 
 /* The parts of a slice header the decoder needs, plus the NAL header. */
 typedef struct H264SliceHeader
@@ -31,6 +32,6 @@ typedef struct H264SliceHeader
 } H264SliceHeader;
 
 /* Parses the header of one slice NAL using the SPS/PPS context. Returns 1 on success. */
-int H264_ParseSliceHeader(const uint8_t* pNal, uint32_t size, const StdVideoH264SequenceParameterSet* pSps, const StdVideoH264PictureParameterSet* pPps, H264SliceHeader* pHeader);
+int H264_ParseSliceHeader(const byte_t* pNal, uint32_t size, const StdVideoH264SequenceParameterSet* pSps, const StdVideoH264PictureParameterSet* pPps, H264SliceHeader* pHeader);
 
 #endif

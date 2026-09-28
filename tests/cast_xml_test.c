@@ -71,7 +71,7 @@ typedef struct DescriptionCase_s
 static Utl_Xml_Node_t      g_nodes[XML_TEST_NODES];
 static Utl_Xml_Attribute_t g_attributes[XML_TEST_ATTRIBUTES];
 static Utl_Xml_Document_t  g_document;
-static char_t              g_output[XML_TEST_OUTPUT];
+static byte_t              g_output[XML_TEST_OUTPUT];
 
 static const Case_t        c_cases[] = {
     {"<x/>", "", sizeof("<x/>") - 1, sizeof("") - 1, UTL_XML_COMPLETE},
@@ -495,7 +495,7 @@ static FORCE_INLINE void CheckText(const Case_t* test)
 static FORCE_INLINE void CheckCase(const Case_t* test)
 {
     Utl_Xml_Result_t result;
-    result = Utl_Xml_ReadDocument(&g_document, test->source, test->sourceBytes);
+    result = Utl_Xml_ReadDocument(&g_document, (const byte_t*)test->source, test->sourceBytes);
     LOGASSERT(test->result == result);
     LOGASSERT(result == g_document.result);
     LOGASSERT(g_document.errorOffset <= test->sourceBytes);
@@ -530,11 +530,11 @@ static FORCE_INLINE void CheckPrefixes(void)
     {
         for (index = 0; index < (sizeof(XML_TEST_PREFIX_DOCUMENT) - 1); ++index)
         {
-            result = Utl_Xml_ReadDocument(&g_document, XML_TEST_PREFIX_DOCUMENT, index);
+            result = Utl_Xml_ReadDocument(&g_document, (const byte_t*)XML_TEST_PREFIX_DOCUMENT, index);
             LOGASSERT(UTL_XML_INVALID == result);
             LOGASSERT(NULL == g_document.root);
         }
-        result = Utl_Xml_ReadDocument(&g_document, XML_TEST_PREFIX_DOCUMENT, sizeof(XML_TEST_PREFIX_DOCUMENT) - 1);
+        result = Utl_Xml_ReadDocument(&g_document, (const byte_t*)XML_TEST_PREFIX_DOCUMENT, sizeof(XML_TEST_PREFIX_DOCUMENT) - 1);
         LOGASSERT(UTL_XML_COMPLETE == result);
     }
 }
@@ -552,7 +552,7 @@ static FORCE_INLINE void CheckCapacity(void)
     storage.nodeCapacity = 0;
     storage.nodes        = NULL;
     Utl_Xml_InitializeDocument(&g_document, storage);
-    result = Utl_Xml_ReadDocument(&g_document, "<x/>", sizeof("<x/>") - 1);
+    result = Utl_Xml_ReadDocument(&g_document, (const byte_t*)"<x/>", sizeof("<x/>") - 1);
     LOGASSERT(UTL_XML_CAPACITY == result);
     LOGASSERT(NULL == g_document.root);
     storage.nodeCapacity      = XML_TEST_NODES;
@@ -560,7 +560,7 @@ static FORCE_INLINE void CheckCapacity(void)
     storage.attributeCapacity = 0;
     storage.attributes        = NULL;
     Utl_Xml_InitializeDocument(&g_document, storage);
-    result = Utl_Xml_ReadDocument(&g_document, "<x a='b'/>", sizeof("<x a='b'/>") - 1);
+    result = Utl_Xml_ReadDocument(&g_document, (const byte_t*)"<x a='b'/>", sizeof("<x a='b'/>") - 1);
     LOGASSERT(UTL_XML_CAPACITY == result);
     storage.attributeCapacity = XML_TEST_ATTRIBUTES;
     storage.attributes        = g_attributes;
@@ -582,21 +582,21 @@ static FORCE_INLINE void CheckNamespaces(void)
     uint32_t              count;
     int32_t               compared;
     result = Utl_Xml_ReadDocument(&g_document,
-                                  "<x xmlns:p='urn:a'><p:a xmlns:p='urn:b'/><p:b/></x>",
+                                  (const byte_t*)"<x xmlns:p='urn:a'><p:a xmlns:p='urn:b'/><p:b/></x>",
                                   sizeof("<x xmlns:p='urn:a'><p:a xmlns:p='urn:b'/><p:b/></x>") - 1);
     LOGASSERT(UTL_XML_COMPLETE == result);
     first = g_document.root->firstChild;
     LOGASSERT(NULL != first);
     second = first->next;
     LOGASSERT(NULL != second);
-    expected.data      = "urn:b";
+    expected.data      = (const byte_t*)"urn:b";
     expected.byteCount = sizeof("urn:b") - 1;
     expected.kind      = UTL_XML_TEXT_LITERAL;
     LOGASSERT(Utl_Xml_IsTextEqual(first->expanded.space, expected));
-    expected.data = "urn:a";
+    expected.data = (const byte_t*)"urn:a";
     LOGASSERT(Utl_Xml_IsTextEqual(second->expanded.space, expected));
     result = Utl_Xml_ReadDocument(&g_document,
-                                  "<x xmlns='urn:x' a='A&#xA;\tB\r\nC'/>",
+                                  (const byte_t*)"<x xmlns='urn:x' a='A&#xA;\tB\r\nC'/>",
                                   sizeof("<x xmlns='urn:x' a='A&#xA;\tB\r\nC'/>") - 1);
     LOGASSERT(UTL_XML_COMPLETE == result);
     LOGASSERT(0 == g_document.root->lastAttribute->expanded.space.byteCount);
@@ -622,7 +622,7 @@ static FORCE_INLINE void CheckDescription(void)
     Utl_Upnp_Description_t saved;
     result = Utl_Xml_ReadDocument(
         &g_document,
-        "<u:root xmlns:u='"
+        (const byte_t*)"<u:root xmlns:u='"
         "urn:schemas-upnp-org:device-1-0"
         "'><u:device>"
         "<u:deviceList><u:device><u:friendlyName>Wrong</u:friendlyName></u:device></u:deviceList>"
@@ -647,7 +647,7 @@ static FORCE_INLINE void CheckDescription(void)
     LOGASSERT(0 == compared);
     saved  = description;
     result = Utl_Xml_ReadDocument(&g_document,
-                                  "<root xmlns='"
+                                  (const byte_t*)"<root xmlns='"
                                   "urn:schemas-upnp-org:device-1-0"
                                   "'><device><friendlyName>A</friendlyName>"
                                   "<friendlyName>B</friendlyName></device></root>",
@@ -677,7 +677,7 @@ static FORCE_INLINE void CheckTextKinds(void)
     bool_t         valid;
     Utl_Xml_Text_t encoded;
     int32_t        compared;
-    raw.data      = "]]>";
+    raw.data      = (const byte_t*)"]]>";
     raw.byteCount = sizeof("]]>") - 1;
     raw.kind      = UTL_XML_TEXT_LITERAL;
     expected      = raw;
@@ -702,7 +702,7 @@ static FORCE_INLINE void CheckTextKinds(void)
     LOGASSERT(!valid);
     LOGASSERT(XML_TEST_COUNT == count);
     CheckGuard(0);
-    encoded.data      = "]]&gt;";
+    encoded.data      = (const byte_t*)"]]&gt;";
     encoded.byteCount = sizeof("]]&gt;") - 1;
     encoded.kind      = UTL_XML_TEXT_CONTENT;
     LOGASSERT(Utl_Xml_IsTextEqual(encoded, expected));
@@ -726,7 +726,7 @@ static FORCE_INLINE void CheckDescriptionCase(const DescriptionCase_t* test)
     bool_t                 valid;
     uint32_t               count;
     int32_t                compared;
-    result = Utl_Xml_ReadDocument(&g_document, test->source, test->sourceBytes);
+    result = Utl_Xml_ReadDocument(&g_document, (const byte_t*)test->source, test->sourceBytes);
     LOGASSERT(UTL_XML_COMPLETE == result);
     Utl_Upnp_InitializeDescription(&description);
     LOGASSERT(NULL == description.device);

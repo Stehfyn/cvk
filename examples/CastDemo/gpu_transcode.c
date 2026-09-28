@@ -50,7 +50,7 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 ** YCbCr layout the decoder produced (interleaved 2-plane or planar 3-plane). */
 typedef struct FrameSlot
 {
-    uint8_t* planes; /* luma, then the chroma plane(s), allocated once */
+    byte_t*  planes; /* luma, then the chroma plane(s), allocated once */
     unsigned width;
     unsigned height;
     unsigned lumaStride;
@@ -74,18 +74,19 @@ struct GpuTranscoder
     unsigned           sourceHeight;
     unsigned           sampleIndex;
     unsigned           sampleCount;
-    uint8_t*           sampleBuffer;
+    byte_t*            sampleBuffer;
     uint32_t           sampleCapacity;
-    uint8_t*           dstLuma;
-    uint8_t*           dstChroma;
+    byte_t*            dstLuma;
+    byte_t*            dstChroma;
     GpuTranscodeConfig config;
-    uint8_t*           prevLuma; /* previous frame's downscaled luma, for optical flow */
+    byte_t*            prevLuma; /* previous frame's downscaled luma, for optical flow */
     int                havePrev;
     double             lastMotion; /* 0..1 average inter-frame motion of the last frame */
 
     /* Decode-ahead pipeline: the producer thread decodes into a bounded ring while the caller's
     ** thread downscales and encodes, so the decode and encode engines run in parallel. */
     FrameSlot     ring[PIPELINE_SLOTS];
+    uint32_t      planeCount; /* successful plane acquisitions retained for partial-startup cleanup */
     HANDLE        emptySlots;  /* counts ring slots the producer may fill */
     HANDLE        filledSlots; /* counts ring slots the consumer may drain */
     HANDLE        producerThread;
@@ -106,21 +107,21 @@ struct GpuTranscoder
  *  Area-averages source luma and chroma into reduced luma and interleaved chroma,
  *  using the decoded frame's strides and planar/interleaved layout.
  */
-static void DownscaleFrame(const FrameSlot* pSrc, uint8_t* pDstLuma, uint8_t* pDstChroma, unsigned ow, unsigned oh)
+static void DownscaleFrame(const FrameSlot* pSrc, byte_t* pDstLuma, byte_t* pDstChroma, unsigned ow, unsigned oh)
 {
-    const uint8_t* p_luma;
-    unsigned       luma_stride;
-    unsigned       sw;
-    unsigned       sh;
-    unsigned       chroma_stride;
-    unsigned       src_chroma_w;
-    unsigned       src_chroma_h;
-    const uint8_t* p_cb;
-    const uint8_t* p_cr;
-    unsigned       cb_step;
-    unsigned       oy;
-    unsigned       dst_chroma_w;
-    unsigned       dst_chroma_h;
+    const byte_t* p_luma;
+    unsigned      luma_stride;
+    unsigned      sw;
+    unsigned      sh;
+    unsigned      chroma_stride;
+    unsigned      src_chroma_w;
+    unsigned      src_chroma_h;
+    const byte_t* p_cb;
+    const byte_t* p_cr;
+    unsigned      cb_step;
+    unsigned      oy;
+    unsigned      dst_chroma_w;
+    unsigned      dst_chroma_h;
 
     p_luma        = pSrc->planes;
     luma_stride   = pSrc->lumaStride;
@@ -234,8 +235,8 @@ static void DownscaleFrame(const FrameSlot* pSrc, uint8_t* pDstLuma, uint8_t* pD
  *  Searches nearby matches for sampled blocks in the previous luma frame.
  *  Zero-motion matches seed the search so ambiguous flat blocks stay stationary.
  */
-static double EstimateMotion(const uint8_t* pPrev,
-                             const uint8_t* pCurr,
+static double EstimateMotion(const byte_t* pPrev,
+                             const byte_t* pCurr,
                              unsigned       width,
                              unsigned       height,
                              double*        pResidual)
@@ -443,7 +444,7 @@ static int CanPreserveAudio(const Mp4Demux* pDemux)
  *  Copies audio samples beginning before the requested video boundary. A read
  *  or mux failure aborts the proxy path instead of omitting that sample.
  */
-static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, uint8_t* pBuffer, double endSeconds)
+static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, byte_t* pBuffer, double endSeconds)
 {
     const unsigned timescale = Mp4Demux_GetAudioTimescale(pDemux);
     const unsigned count     = Mp4Demux_GetAudioSampleCount(pDemux);
@@ -479,7 +480,7 @@ static int CopyAudioUntil(Mp4Demux* pDemux, Mp4Mux* pMux, unsigned* pIndex, uint
  *  Scans Annex B start codes and borrows the first matching NAL span without
  *  its start code; clears the result when none matches.
  */
-static void FindNalOfType(const uint8_t* pData, uint32_t size, int nalType, const uint8_t** pp, uint32_t* pLen)
+static void FindNalOfType(const byte_t* pData, uint32_t size, int nalType, const byte_t** pp, uint32_t* pLen)
 {
     uint32_t i;
     uint32_t nal_start;
@@ -618,6 +619,7 @@ GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
         Mp4Demux_Close(p_demux);
         return NULL;
     }
+    pTranscoder->planeCount     = 0;
     pTranscoder->config         = *pConfig;
     pTranscoder->demux          = p_demux;
     pTranscoder->outWidth       = out_width;
@@ -653,24 +655,25 @@ GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
                                                  1,
                                                  encode_report,
                                                  sizeof(encode_report));
-    pTranscoder->sampleBuffer = (uint8_t*)malloc(pTranscoder->sampleCapacity);
-    pTranscoder->dstLuma      = (uint8_t*)malloc((size_t)out_width * out_height);
+    pTranscoder->sampleBuffer = (byte_t*)malloc(pTranscoder->sampleCapacity);
+    pTranscoder->dstLuma      = (byte_t*)malloc((size_t)out_width * out_height);
     pTranscoder->dstChroma    =
-        (uint8_t*)malloc((((uint64_t)out_width + 1) / 2) * 2 * (((uint64_t)out_height + 1) / 2));
-    pTranscoder->prevLuma     = (uint8_t*)malloc((size_t)out_width * out_height);
+        (byte_t*)malloc((((uint64_t)out_width + 1) / 2) * 2 * (((uint64_t)out_height + 1) / 2));
+    pTranscoder->prevLuma     = (byte_t*)malloc((size_t)out_width * out_height);
     {
         unsigned slot;
 
         for (slot = 0; slot < PIPELINE_SLOTS; ++slot)
         {
             pTranscoder->ring[slot].planes =
-                (uint8_t*)malloc((size_t)source_width * source_height * 2u); /* luma + chroma, 4:2:0 or 4:2:2 */
+                (byte_t*)malloc((size_t)source_width * source_height * 2u); /* luma + chroma, 4:2:0 or 4:2:2 */
             if (NULL == pTranscoder->ring[slot].planes)
             {
                 Report(pReport, reportCapacity, "transcoder ring allocation failed\n");
                 GpuTranscode_Close(pTranscoder);
                 return NULL;
             }
+            ++pTranscoder->planeCount;
         }
     }
     pTranscoder->emptySlots  = CreateSemaphoreW(NULL, PIPELINE_SLOTS, PIPELINE_SLOTS, NULL);
@@ -715,7 +718,7 @@ double GpuTranscode_GetLastMotion(const GpuTranscoder* pTranscoder)
  * \par Details:
  *  None
  */
-const uint8_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize)
+const byte_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize)
 {
     return GpuEncode_GetHeader(pTranscoder->encoder, pSize);
 }
@@ -787,12 +790,12 @@ unsigned GpuTranscode_SeekKeyframe(GpuTranscoder* pTranscoder, unsigned approxFr
  *  Starts the producer on first use, consumes a decoded ring slot, downscales
  *  and selects adaptive encode parameters, then returns the encoded frame.
  */
-const uint8_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* pSize, int* pKeyframe)
+const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* pSize, int* pKeyframe)
 {
-    FrameSlot*     p_slot;
-    int            force_idr;
-    int            qp_override;
-    const uint8_t* coded;
+    FrameSlot*    p_slot;
+    int           force_idr;
+    int           qp_override;
+    const byte_t* coded;
 
     if (pTranscoder->sawEof)
     {
@@ -915,9 +918,16 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
     {
         Mp4Demux_Close(pTranscoder->demux);
     }
-    for (slot = 0; slot < PIPELINE_SLOTS; ++slot)
+    for (;;)
     {
+        if (0 == pTranscoder->planeCount)
+        {
+            break;
+        }
+        slot = pTranscoder->planeCount - 1;
         free(pTranscoder->ring[slot].planes);
+        pTranscoder->ring[slot].planes = NULL;
+        pTranscoder->planeCount        = slot;
     }
     free(pTranscoder->sampleBuffer);
     free(pTranscoder->dstLuma);
@@ -944,11 +954,11 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
     GpuTranscoder* pTranscoder;
     char           open_report[1600];
     Mp4Demux*      pTiming;
-    const uint8_t* header;
+    const byte_t*  header;
     uint32_t       header_size;
-    const uint8_t* sps;
+    const byte_t*  sps;
     uint32_t       sps_size;
-    const uint8_t* pps;
+    const byte_t*  pps;
     uint32_t       pps_size;
     unsigned       video_timescale;
     unsigned       total_samples;
@@ -956,11 +966,11 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
     unsigned       end_index;
     unsigned       audio_samples;
     unsigned       audio_timescale;
-    const uint8_t* asc;
+    const byte_t*  asc;
     uint32_t       asc_size;
     int            has_audio;
     Mp4Mux*        pMux;
-    uint8_t*       audio_buffer;
+    byte_t*        audio_buffer;
     unsigned       audio_index;
     unsigned       produced;
     double         motion_accum;
@@ -1026,7 +1036,7 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
         return 0;
     }
 
-    audio_buffer = has_audio ? (uint8_t*)malloc(64u * 1024u) : NULL;
+    audio_buffer = has_audio ? (byte_t*)malloc(64u * 1024u) : NULL;
     audio_index  = 0;
     produced     = 0;
     motion_accum = 0.0;
@@ -1059,7 +1069,7 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
 
     for (frame = start_index; ok && frame < end_index; ++frame)
     {
-        const uint8_t*   coded;
+        const byte_t*    coded;
         uint32_t         coded_size;
         int              keyframe;
         const Mp4Sample* p_video;
@@ -1139,23 +1149,23 @@ int GpuTranscode_WriteFragmentedMp4(const uint16_t*           pSource,
     GpuTranscoder*   pTranscoder;
     char             open_report[1600];
     Mp4Demux*        pTiming;
-    const uint8_t*   header;
+    const byte_t*    header;
     uint32_t         header_size;
-    const uint8_t*   sps;
+    const byte_t*    sps;
     uint32_t         sps_size;
-    const uint8_t*   pps;
+    const byte_t*    pps;
     uint32_t         pps_size;
     unsigned         video_timescale;
     unsigned         total_samples;
     unsigned         audio_samples;
     unsigned         audio_timescale;
-    const uint8_t*   asc;
+    const byte_t*    asc;
     uint32_t         asc_size;
     int              has_audio;
     const Mp4Sample* p_last;
     double           full_duration;
     Mp4Mux*          pMux;
-    uint8_t*         audio_buffer;
+    byte_t*          audio_buffer;
     unsigned         audio_index;
     unsigned         produced;
     unsigned         fragments;
@@ -1225,7 +1235,7 @@ int GpuTranscode_WriteFragmentedMp4(const uint16_t*           pSource,
         return 0;
     }
 
-    audio_buffer        = has_audio ? (uint8_t*)malloc(64u * 1024u) : NULL;
+    audio_buffer        = has_audio ? (byte_t*)malloc(64u * 1024u) : NULL;
     audio_index         = 0;
     produced            = 0;
     fragments           = 0;
@@ -1234,7 +1244,7 @@ int GpuTranscode_WriteFragmentedMp4(const uint16_t*           pSource,
     ok                  = !has_audio || NULL != audio_buffer;
     for (frame = 0; ok && frame < total_samples && (0 == maxFrames || frame < maxFrames); ++frame)
     {
-        const uint8_t*   coded;
+        const byte_t*    coded;
         uint32_t         coded_size;
         int              keyframe;
         const Mp4Sample* p_video;

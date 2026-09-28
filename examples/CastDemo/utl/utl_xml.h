@@ -72,7 +72,7 @@ typedef enum Utl_Xml_TextKind_e
 /** \brief Counted immutable XML source, excluding syntactic delimiters. */
 typedef struct Utl_Xml_Text_s
 {
-    const char_t*      data;      ///< NULL only for zero byteCount.
+    const byte_t*      data;      ///< NULL only for zero byteCount.
     uint32_t           byteCount; ///< Exact readable UTF-8 source extent.
     Utl_Xml_TextKind_t kind;      ///< Escape and whitespace interpretation.
 } Utl_Xml_Text_t;
@@ -305,7 +305,7 @@ const Utl_Xml_Node_t* Utl_Xml_FindSibling(const Utl_Xml_Document_t* document,
  * \retval        UTL_XML_CAPACITY      Fixed record capacity was exceeded.
  * \retval        UTL_XML_UNSUPPORTED   DTD or unsupported encoding/version was encountered.
  */
-Utl_Xml_Result_t Utl_Xml_ReadDocument(Utl_Xml_Document_t* document, const char_t* data, uint32_t byteCount);
+Utl_Xml_Result_t Utl_Xml_ReadDocument(Utl_Xml_Document_t* document, const byte_t* data, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -324,7 +324,7 @@ Utl_Xml_Result_t Utl_Xml_ReadDocument(Utl_Xml_Document_t* document, const char_t
  * \retval     TRUE    Complete normalized bytes are published.
  * \retval     FALSE   Outputs are unchanged.
  */
-bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, char_t* output, uint32_t capacity, uint32_t* byteCount);
+bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, byte_t* output, uint32_t capacity, uint32_t* byteCount);
 
 /*************************************************************************************************/
 /**
@@ -343,6 +343,6 @@ bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, char_t* output, uint32_t capacity,
  * \retval     TRUE    Complete concatenated bytes are published.
  * \retval     FALSE   Outputs are unchanged.
  */
-bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, char_t* output, uint32_t capacity, uint32_t* byteCount);
+bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, byte_t* output, uint32_t capacity, uint32_t* byteCount);
 
 #endif /* UTL_XML_H */

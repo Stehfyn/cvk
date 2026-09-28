@@ -81,7 +81,7 @@
 typedef struct CastDiscoveryLocation_s
 {
     char_t   location[LOCATION_CAPACITY];           ///< Terminated description URL.
-    char_t   identity[DISCOVERY_IDENTITY_CAPACITY]; ///< Counted USN used across interfaces.
+    byte_t   identity[DISCOVERY_IDENTITY_CAPACITY]; ///< Counted USN used across interfaces.
     uint32_t identityBytes;                         ///< Exact USN byte count.
 } CastDiscoveryLocation_t;
 
@@ -103,14 +103,14 @@ typedef struct Ssdp_State_s
     HINTERNET               connection;                                      ///< Retained until request/connection closure succeeds.
     HINTERNET               requestHandle;                                   ///< Current description request, including failed closure.
     uint32_t                requestBytes;                                    ///< Serialized M-SEARCH size.
-    char_t                  request[DISCOVERY_SEARCH_CAPACITY];              ///< Immutable search bytes after startup.
-    char_t                  response[DISCOVERY_RESPONSE_CAPACITY];           ///< Reused datagram input.
+    byte_t                  request[DISCOVERY_SEARCH_CAPACITY];              ///< Immutable search bytes after startup.
+    byte_t                  response[DISCOVERY_RESPONSE_CAPACITY];           ///< Reused datagram input.
     Utl_Http_Field_t        fields[DISCOVERY_FIELD_CAPACITY];                ///< Reused HTTP field descriptors.
     CastDiscoveryLocation_t locations[CAST_MAX_DEVICES];                     ///< Deduplicated reply locations.
     uint32_t                locationCount;                                   ///< Number of initialized location records.
-    char_t                  document[DISCOVERY_DOCUMENT_CAPACITY];           ///< Reused bounded XML body storage.
+    byte_t                  document[DISCOVERY_DOCUMENT_CAPACITY];           ///< Reused bounded XML body storage.
     char_t                  directLocation[LOCATION_CAPACITY];               ///< Staged direct-host description URL.
-    char_t                  target[DISCOVERY_PATH_CAPACITY];                 ///< Encoded origin-form request bytes.
+    byte_t                  target[DISCOVERY_PATH_CAPACITY];                 ///< Encoded origin-form request bytes.
     WCHAR                   nativeHost[DISCOVERY_HOST_CAPACITY];             ///< WinHTTP fixed UTF-16 host boundary.
     WCHAR                   nativeTarget[DISCOVERY_PATH_CAPACITY];           ///< WinHTTP fixed UTF-16 target boundary.
     Utl_Xml_Node_t          xmlNodes[DISCOVERY_XML_NODE_CAPACITY];           ///< Retained document records.
@@ -454,7 +454,7 @@ static FORCE_INLINE bool_t WriteDisplayText(const Utl_Xml_Node_t* element, char_
     LOGASSERT(NULL != output);
     LOGASSERT(0 < capacity);
     count = 0;
-    valid = Utl_Xml_WriteElementText(element, output, capacity - 1, &count);
+    valid = Utl_Xml_WriteElementText(element, (byte_t*)output, capacity - 1, &count);
     if (valid)
     {
         output[count] = DISCOVERY_TERMINATOR;
@@ -561,7 +561,7 @@ static FORCE_INLINE bool_t ReadLocation(Ssdp_t* discovery, const char_t* locatio
     valid        = (UTL_UNICODE_NO_TERMINATOR != count);
     if (valid)
     {
-        valid = Utl_Url_Read(&url, location, count);
+        valid = Utl_Url_Read(&url, (const byte_t*)location, count);
     }
     if (valid)
     {
@@ -621,7 +621,7 @@ static FORCE_INLINE bool_t ReadDocument(Ssdp_t* discovery)
     uint32_t      total;
     bool_t        ended;
     DWORD         received;
-    char_t        overflow;
+    byte_t        overflow;
     uint32_t      error;
     bool_t        fits;
 
@@ -822,7 +822,7 @@ static FORCE_INLINE bool_t DrainSocket(Ssdp_t* discovery)
     for (index = 0; index < DISCOVERY_DRAIN_LIMIT; ++index)
     {
         received =
-            recvfrom(discovery->state->socket, discovery->state->response, DISCOVERY_RESPONSE_CAPACITY, 0, NULL, NULL);
+            recvfrom(discovery->state->socket, (char_t*)discovery->state->response, DISCOVERY_RESPONSE_CAPACITY, 0, NULL, NULL);
         if (SOCKET_ERROR == received)
         {
             error = (uint32_t)WSAGetLastError();
@@ -896,7 +896,7 @@ static FORCE_INLINE bool_t SendSearch(Ssdp_t* discovery)
                 for (attempt = 0; attempt < DISCOVERY_SEARCH_ATTEMPTS; ++attempt)
                 {
                     status = sendto(state->socket,
-                                    state->request,
+                                    (const char_t*)state->request,
                                     (int32_t)state->requestBytes,
                                     0,
                                     (const struct sockaddr*)&state->group,
@@ -957,7 +957,7 @@ static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount)
     }
     if (valid)
     {
-        target.data      = DISCOVERY_DIAL_TARGET;
+        target.data      = (const byte_t*)DISCOVERY_DIAL_TARGET;
         target.byteCount = sizeof(DISCOVERY_DIAL_TARGET) - 1;
         matches_target   = Utl_Http_IsTextEqual(candidate.target, target, FALSE);
         fits_location    = (candidate.location.byteCount < LOCATION_CAPACITY);
@@ -1037,7 +1037,7 @@ static FORCE_INLINE void CollectResponses(Ssdp_t* discovery, uint32_t capacity, 
         {
             break;
         }
-        status = recvfrom(state->socket, state->response, DISCOVERY_RESPONSE_CAPACITY, 0, NULL, NULL);
+        status = recvfrom(state->socket, (char_t*)state->response, DISCOVERY_RESPONSE_CAPACITY, 0, NULL, NULL);
         if (0 < status)
         {
             ReadResponse(state, (uint32_t)status);
@@ -1171,7 +1171,7 @@ bool_t Ssdp_Initialize(Ssdp_t* discovery)
         state->group.sin_port   = htons(UTL_SSDP_MULTICAST_PORT);
         status                  = inet_pton(AF_INET, UTL_SSDP_MULTICAST_ADDRESS, &state->group.sin_addr);
         LOGASSERT(1 == status);
-        target.data      = DISCOVERY_DIAL_TARGET;
+        target.data      = (const byte_t*)DISCOVERY_DIAL_TARGET;
         target.byteCount = sizeof(DISCOVERY_DIAL_TARGET) - 1;
         Utl_Ssdp_InitializeSearch(&search, target, DISCOVERY_RESPONSE_SECONDS);
         state->requestBytes = Utl_Ssdp_WriteSearch(&search, state->request, DISCOVERY_SEARCH_CAPACITY);

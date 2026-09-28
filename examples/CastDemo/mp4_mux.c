@@ -1,6 +1,13 @@
+/*=================================================================================================
+** 1. References
+**===============================================================================================*/
+
 /* mp4_mux.c - a minimal progressive MP4 muxer for the GPU proxy: ftyp, a streamed mdat, and a moov
 ** written on finish with avc1/avcC video and optional mp4a/esds AAC audio. */
-#define WIN32_LEAN_AND_MEAN
+/*=================================================================================================
+** 2. INCLUDE FILES
+**===============================================================================================*/
+
 #include <windows.h>
 
 #include <share.h>
@@ -10,9 +17,43 @@
 #include <string.h>
 
 #include "mp4_mux.h"
+#include "utl/utl_mpeg4.h"
+#include "utl/utl_mpeg4systems.h"
+#include "utl/utl_mpeg4audio.h"
+#include "os/os_compiler.h"
+#include "os/os_assert.h"
+#include "os/os_types.h"
+#include "crt/crt_memory.h"
 
-#define MAX_PARAM_BYTES      512u
-#define MAX_FRAGMENT_SAMPLES 256u
+/*=================================================================================================
+** 3. DECLARATIONS
+**
+** 3.1 Macros
+**===============================================================================================*/
+
+#define AUDIO_CONFIGURATION_CAPACITY (64)
+#define AUDIO_DESCRIPTOR_CAPACITY    (128) /* 64 configuration bytes plus complete nested descriptor overhead. */
+#define AUDIO_SAMPLE_BITS            (16)
+#define AUDIO_RATE_SHIFT             (16)
+#define AUDIO_RESERVED_BYTES         (6)
+#define AUDIO_DATA_REFERENCE         (1)
+#define FILE_TYPE_BYTE_COUNT         (24)
+#define FILE_TYPE_MINOR_VERSION      (0x200)
+#define FILE_TYPE_PROGRESSIVE_BRANDS "\x69\x73\x6F\x32\x61\x76\x63\x31"
+#define FILE_TYPE_FRAGMENTED_BRANDS  "\x69\x73\x6F\x36\x69\x73\x6F\x35"
+
+#define MAX_PARAM_BYTES            (512)
+#define MAX_FRAGMENT_SAMPLES       (256)
+#define FRAGMENT_TRACK_CAPACITY    (2)
+#define FRAGMENT_METADATA_CAPACITY (8192) ///< Above 5272-byte maximum moof and current bounded init segment.
+#define MUX_INTEGER32_BYTES        (4)
+#define ANNEXB_PREFIX_BYTES        (3)
+#define ANNEXB_ZERO_BYTE           (0)
+#define ANNEXB_STOP_BYTE           (1)
+
+/*=================================================================================================
+** 3.2 Types
+**===============================================================================================*/
 
 typedef struct MuxSample
 {
@@ -22,12 +63,14 @@ typedef struct MuxSample
     int      keyframe;
 } MuxSample;
 
-/* A growable byte buffer for assembling the moov in memory. */
+/* Explicitly bounded assembly state. Legacy payload/progressive buffers still grow; fragment metadata is fixed. */
 typedef struct MuxBuffer
 {
-    uint8_t* data;
-    size_t   size;
-    size_t   capacity;
+    byte_t*  data;
+    uint32_t size;
+    uint32_t capacity;
+    bool_t   fixed;  ///< The supplied storage shall never be grown or freed here.
+    bool_t   failed; ///< Sticky append failure; later writes are no-ops.
 } MuxBuffer;
 
 struct Mp4Mux
@@ -35,16 +78,16 @@ struct Mp4Mux
     FILE*      file;
     unsigned   width;
     unsigned   height;
-    uint8_t    sps[MAX_PARAM_BYTES];
+    byte_t     sps[MAX_PARAM_BYTES];
     uint32_t   spsSize;
-    uint8_t    pps[MAX_PARAM_BYTES];
+    byte_t     pps[MAX_PARAM_BYTES];
     uint32_t   ppsSize;
     unsigned   videoTimescale;
     int        hasAudio;
     unsigned   audioTimescale;
     unsigned   audioSampleRate;
     unsigned   audioChannels;
-    uint8_t    asc[64];
+    byte_t     asc[AUDIO_CONFIGURATION_CAPACITY];
     uint32_t   ascSize;
     int64_t    mdatStart;
     MuxSample* video;
@@ -57,61 +100,485 @@ struct Mp4Mux
 
     /* Fragmented (fMP4) mode: an init segment up front, then moof+mdat fragments appended as the
     ** transcode produces them, so the file is playable within seconds instead of after the end. */
-    int       fragmented;
-    double    fullDurationSeconds; /* the whole timeline, so the init segment shows the full seek bar */
-    uint32_t  sequenceNumber;
-    uint64_t  videoBaseTime; /* baseMediaDecodeTime of the next video fragment */
-    uint64_t  audioBaseTime;
-    MuxBuffer fragVideoData; /* AVCC sample bytes buffered for the current fragment */
-    MuxBuffer fragAudioData;
-    MuxBuffer fragMoof; /* reused each flush so fragments allocate nothing on the hot path */
-    MuxSample fragVideo[MAX_FRAGMENT_SAMPLES];
-    uint32_t  fragVideoCount;
-    MuxSample fragAudio[MAX_FRAGMENT_SAMPLES];
-    uint32_t  fragAudioCount;
+    int                        fragmented;
+    double                     fullDurationSeconds; /* the whole timeline, so the init segment shows the full seek bar */
+    uint32_t                   sequenceNumber;
+    uint64_t                   videoBaseTime; /* baseMediaDecodeTime of the next video fragment */
+    uint64_t                   audioBaseTime;
+    MuxBuffer                  fragVideoData; /* AVCC sample bytes buffered for the current fragment */
+    MuxBuffer                  fragAudioData;
+    MuxBuffer                  fragMoof; ///< Borrows the owner's fixed metadata storage.
+    byte_t                     fragmentMetadata[FRAGMENT_METADATA_CAPACITY];
+    Utl_Mpeg4_FragmentSample_t fragVideo[MAX_FRAGMENT_SAMPLES];
+    uint32_t                   fragVideoCount;
+    Utl_Mpeg4_FragmentSample_t fragAudio[MAX_FRAGMENT_SAMPLES];
+    uint32_t                   fragAudioCount;
 };
 
 /*************************************************************************************************/
 /**
- * \par Details:
- *  Grows buffer capacity geometrically when needed and appends the requested
- *  span. Allocation failure leaves the append unapplied.
+ * \brief Worker-local layout borrowing the retained samples of one pending fragment.
  */
-static void BufferBytes(MuxBuffer* pBuffer, const void* pData, size_t count)
+typedef struct FragmentLayout_s
 {
-    if (count > (SIZE_MAX - pBuffer->size))
-    {
-        return;
-    }
-    if (pBuffer->size + count > pBuffer->capacity)
-    {
-        size_t   new_capacity;
-        uint8_t* grown;
+    Utl_Mpeg4_TrackFragment_t tracks[FRAGMENT_TRACK_CAPACITY]; ///< Initialized video and audio tracks.
+    Utl_Mpeg4_TrackRun_t runs[FRAGMENT_TRACK_CAPACITY]; ///< Runs borrowing retained sample arrays.
+    Utl_Mpeg4_MovieFragment_t fragment; ///< Selected nonempty tracks, referencing this layout.
+    Utl_Mpeg4_BoxHeader_t media; ///< Complete following media-data box extent.
+    uint64_t videoTime; ///< Next video decode time; published only after native flush succeeds.
+    uint64_t audioTime; ///< Next audio decode time; published only after native flush succeeds.
+    uint32_t metadataByteCount; ///< Validated movie-fragment extent.
+    uint32_t headerByteCount; ///< Validated media-data header extent.
+} FragmentLayout_t;
 
-        new_capacity = pBuffer->capacity ? pBuffer->capacity : 4096;
-        for (;;)
+/*=================================================================================================
+** 3.3 External global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.4 Static global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.5 Static function prototypes
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \brief Writes the MP4 audio elementary-stream descriptor from retained configuration.
+ *
+ * \par Requirements:
+ *  - 001 The mux owner shall retain configuration within its array capacity; an absent configuration shall fail without writing.
+ *  - 002 Output shall be disjoint; typed Systems writers shall validate every nested extent.
+ *  - 003 Local ES fields and SL predefined value shall follow ISO/IEC 14496-14 section 4.1.2.
+ *
+ * \param[in]  mux        Required mux owner
+ * \param[out] output     Required descriptor storage
+ * \param[in]  capacity   Writable descriptor bytes
+ *
+ * \retval nonzero Complete descriptor bytes.
+ * \retval 0 Configuration or serialization failed.
+ */
+static FORCE_INLINE uint32_t WriteAudioDescriptor(const Mp4Mux* mux, byte_t* output, uint32_t capacity);
+
+/*************************************************************************************************/
+/**
+ * \brief Appends an mp4a sample description containing a typed esds descriptor.
+ *
+ * \par Requirements:
+ *  - 001 The owner and output buffer shall be valid and exclusively owned by the mux worker.
+ *  - 002 Descriptor generation shall finish before any enclosing box is appended.
+ *  - 003 Failure shall set the mux's sticky failure state.
+ *
+ * \param[in,out] mux      Required mux owner
+ * \param[in,out] buffer   Required legacy box-assembly buffer
+ *
+ * \retval None Description appended or sticky failure published.
+ */
+static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer);
+
+/*************************************************************************************************/
+/**
+ * \brief Appends version zero and explicit flags through the common FullBox codec.
+ *
+ * \par Requirements:
+ *  - 001 The internal caller shall provide representable flags.
+ *  - 002 The buffer shall remain exclusively owned; its legacy growth policy is a separate open defect.
+ *
+ * \param[in,out] buffer   Required legacy output buffer
+ * \param[in]     flags    Box-specific 24-bit flags
+ *
+ * \retval None Fields appended.
+ */
+static FORCE_INLINE void BufferFullBoxVersionZero(MuxBuffer* buffer, uint32_t flags);
+
+/*************************************************************************************************/
+/**
+ * \brief Writes the complete file-type record through the common MPEG-4 codecs.
+ *
+ * \par Requirements:
+ *  - 001 The mux shall exclusively own its open output stream.
+ *  - 002 The existing mode-specific brand list shall be preserved.
+ *  - 003 Serialization shall use fixed scratch storage before the native write.
+ *
+ * \param[in,out] mux          Required open mux owner
+ * \param[in]     fragmented   Selects the existing fragmented brand declaration
+ *
+ * \retval TRUE Complete record written.
+ * \retval FALSE Output write failed; mux failure is latched.
+ */
+static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented);
+
+/*************************************************************************************************/
+/**
+ * \brief Appends one complete bounded span and latches failure.
+ *
+ * \par Requirements:
+ *  - 001 Missing required storage shall assert.
+ *  - 002 Fixed metadata storage shall never grow.
+ *  - 003 Capacity or native allocation failure shall preserve this append and latch later operations as no-ops.
+ *  - 004 Legacy payload/progressive growth remains a separate open lifecycle defect.
+ *
+ * \param[in,out] buffer   Required initialized assembly state
+ * \param[in]     data     Disjoint input, nullable only when empty
+ * \param[in]     count    Readable input bytes
+ *
+ * \retval None Inspect failed; no partial append is published.
+ */
+static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32_t count);
+
+/*************************************************************************************************/
+/**
+ * \brief Replaces a previously reserved complete network integer.
+ *
+ * \par Requirements:
+ *  - 001 A failed owner shall remain a no-op without reading any output address.
+ *  - 002 An active owner shall contain the reserved slot; violations are internal development errors.
+ *
+ * \param[in,out] buffer   Required assembly owner
+ * \param[in]     offset   Reserved byte offset
+ * \param[in]     value    Complete replacement value
+ *
+ * \retval None Existing field replaced or sticky failure preserved.
+ */
+static FORCE_INLINE void PatchBuffer32(MuxBuffer* buffer, uint32_t offset, uint32_t value);
+
+/*************************************************************************************************/
+/**
+ * \brief Finishes a reserved ordinary box without indexing a failed buffer.
+ *
+ * \par Requirements:
+ *  - 001 The opening prefix shall be present unless failure is already latched.
+ *  - 002 All assembly counts are uint32_t; larger layouts require a different writer.
+ *
+ * \param[in,out] buffer     Required assembly owner
+ * \param[in]     position   Previously reserved box start
+ *
+ * \retval None Box size published or sticky failure retained.
+ */
+static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position);
+
+/*************************************************************************************************/
+/**
+ * \brief Binds fixed metadata storage already belonging to the mux owner.
+ *
+ * \par Requirements:
+ *  - 001 The complete owner shall be initialized before this operation.
+ *  - 002 No native allocation or resource acquisition shall occur here.
+ *
+ * \param[in,out] mux   Required exclusively owned mux
+ *
+ * \retval None Fixed metadata storage bound.
+ */
+static FORCE_INLINE void InitializeFragmentStorage(Mp4Mux* mux);
+
+/*************************************************************************************************/
+/**
+ * \brief Constructs a moof-relative track with one explicit duration/size run.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall provide disjoint initialized-lifetime storage and a positive track ID.
+ *  - 002 The file shall advertise iso5 or later compatibility.
+ *
+ * \param[out] track     Required track model
+ * \param[out] run       Required associated run model
+ * \param[in]  trackId   Movie track identity
+ *
+ * \retval None Known fragment layout initialized.
+ */
+static FORCE_INLINE void InitializeFragmentTrack(Utl_Mpeg4_TrackFragment_t* track,
+                                                 Utl_Mpeg4_TrackRun_t*      run,
+                                                 uint32_t                   trackId);
+
+/*************************************************************************************************/
+/**
+ * \brief Checks retained payload extent and derives the bounded fragment duration.
+ *
+ * \par Requirements:
+ *  - 001 Counts shall stay within fixed sample storage; sums widen before addition.
+ *  - 002 A mismatched retained payload shall preserve output.
+ *
+ * \param[out] duration    Required media tick result
+ * \param[in]  samples     Stable fixed sample array
+ * \param[in]  count       Valid records
+ * \param[in]  byteCount   Retained payload bytes
+ *
+ * \retval TRUE Matching payload and duration published.
+ * \retval FALSE Metadata/payload mismatch.
+ */
+static FORCE_INLINE bool_t GetFragmentDuration(uint64_t*                         duration,
+                                               const Utl_Mpeg4_FragmentSample_t* samples,
+                                               uint32_t                          count,
+                                               uint32_t                          byteCount);
+
+/*************************************************************************************************/
+/**
+ * \brief Writes a complete native span while preserving sticky failure.
+ *
+ * \par Requirements:
+ *  - 001 Empty data shall perform no native operation.
+ *  - 002 A failed mux shall perform no later write.
+ *  - 003 Native output remains a CRT and synchronous-I/O boundary pending OS migration.
+ *
+ * \param[in,out] mux     Required initialized mux
+ * \param[in]     data    Readable bytes, nullable for zero count
+ * \param[in]     count   Exact native span bytes
+ *
+ * \retval TRUE Complete write or active empty span.
+ * \retval FALSE Sticky or native failure.
+ */
+static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_t count);
+
+/*************************************************************************************************/
+/**
+ * \brief Publishes a fragment video record only after complete payload assembly.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall provide an active mux and stable readable bytes.
+ *  - 002 Full sample storage or failed payload assembly shall latch mux failure without advancing the sample count.
+ *
+ * \param[in,out] mux        Required active mux
+ * \param[in]     bytes      Stable Annex-B sample
+ * \param[in]     duration   Media duration
+ * \param[in]     keyframe   Sync-sample indication
+ *
+ * \retval TRUE Complete sample retained.
+ * \retval FALSE Sticky failure; sample count unchanged.
+ */
+static FORCE_INLINE bool_t AppendFragmentVideo(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes, uint32_t duration, bool_t keyframe);
+
+/*************************************************************************************************/
+/**
+ * \brief Publishes a fragment audio record only after complete payload assembly.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall provide an active audio mux and stable readable bytes.
+ *  - 002 Capacity or payload failure shall preserve the published sample count.
+ *
+ * \param[in,out] mux        Required active mux
+ * \param[in]     bytes      Stable coded sample
+ * \param[in]     duration   Media duration
+ *
+ * \retval TRUE Complete sample retained.
+ * \retval FALSE Sticky failure; sample count unchanged.
+ */
+static FORCE_INLINE bool_t AppendFragmentAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes, uint32_t duration);
+
+/*************************************************************************************************/
+/**
+ * \brief Writes a counted NAL with its complete network length prefix.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall validate sample-domain byte-count arithmetic before native writes.
+ *  - 002 A partial native write shall latch failure.
+ *
+ * \param[in,out] mux     Required active mux
+ * \param[in]     bytes   Stable complete NAL payload
+ *
+ * \retval TRUE Prefix and payload written.
+ * \retval FALSE Sticky native failure.
+ */
+static FORCE_INLINE bool_t WriteNal(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes);
+
+/*************************************************************************************************/
+/**
+ * \brief Writes the legacy progressive Annex-B sample and then records its complete extent.
+ *
+ * \par Requirements:
+ *  - 001 Count arithmetic and native position shall validate before narrowing.
+ *  - 002 All failure paths shall latch mux failure.
+ *  - 003 Annex-B specification migration and progressive sample-array allocation remain open.
+ *
+ * \param[in,out] mux        Required active mux
+ * \param[in]     bytes      Stable Annex-B bytes
+ * \param[in]     duration   Media duration
+ * \param[in]     keyframe   Sync-sample indication
+ *
+ * \retval TRUE Complete sample and record written.
+ * \retval FALSE Sticky failure.
+ */
+static FORCE_INLINE bool_t WriteProgressiveVideo(Mp4Mux*          mux,
+                                                 Utl_Mpeg4_Span_t bytes,
+                                                 uint32_t         duration,
+                                                 bool_t           keyframe);
+
+/*************************************************************************************************/
+/**
+ * \brief Writes a progressive audio sample and records its validated native position.
+ *
+ * \par Requirements:
+ *  - 001 Negative native positions shall never become unsigned file offsets.
+ *  - 002 Native or record-capacity failure shall latch.
+ *
+ * \param[in,out] mux        Required active audio mux
+ * \param[in]     bytes      Stable sample bytes
+ * \param[in]     duration   Media duration
+ *
+ * \retval TRUE Complete sample recorded.
+ * \retval FALSE Sticky failure.
+ */
+static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes, uint32_t duration);
+
+/*************************************************************************************************/
+/**
+ * \brief Binds one worker-local fragment layout to the current retained sample records.
+ *
+ * \par Requirements:
+ *  - 001 The mux shall have at least one pending sample and exclusively own every borrowed array.
+ *  - 002 The layout shall remain at a stable address through serialization; its interior pointers shall not outlive it.
+ *
+ * \param[out] layout   Required worker-local storage
+ * \param[in] mux   Required stable mux owner
+ *
+ * \retval None Every selected model and derived-output slot initialized.
+ */
+static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux);
+
+/*************************************************************************************************/
+/**
+ * \brief Validates retained payload totals and derives the next sequence and decoding times.
+ *
+ * \par Requirements:
+ *  - 001 The layout shall have been initialized against this same unchanged mux.
+ *  - 002 Failure shall leave the mux unchanged; layout scratch shall be discarded.
+ *  - 003 Every total shall fit before addition or narrowing; failed payload buffers shall be rejected.
+ *
+ * \param[in,out] layout   Initialized scratch layout
+ * \param[in] mux   Stable retained samples and current sequence
+ *
+ * \retval TRUE Next sequence and decode times derived.
+ * \retval FALSE Payload, time or sequence validation failed.
+ */
+static FORCE_INLINE bool_t GetFragmentTimeline(FragmentLayout_t* layout, const Mp4Mux* mux);
+
+/*************************************************************************************************/
+/**
+ * \brief Derives placement for video then audio payloads following one typed movie fragment.
+ *
+ * \par Requirements:
+ *  - 001 The initialized layout shall borrow stable input throughout preflight and serialization.
+ *  - 002 The common MPEG-4 queries shall validate all selected metadata before any output write.
+ *  - 003 Signed run offsets and fixed output capacity shall be checked before publication into scratch.
+ *
+ * \param[in,out] layout   Initialized scratch layout
+ * \param[in] mux   Required retained sample and payload owner
+ *
+ * \retval TRUE Complete writable layout derived.
+ * \retval FALSE Invalid timeline, metadata, capacity or offset; scratch is not publishable.
+ */
+static FORCE_INLINE bool_t GetFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux);
+
+/*************************************************************************************************/
+/**
+ * \brief Serializes validated metadata before writing a complete pending fragment to the native stream.
+ *
+ * \par Requirements:
+ *  - 001 The layout shall have passed GetFragmentLayout and its borrowed arrays shall remain unchanged.
+ *  - 002 No native write shall precede complete metadata serialization.
+ *  - 003 A native partial write or flush failure cannot be rolled back; the caller shall latch terminal mux failure.
+ *  - 004 This operation shall not advance sequence, times or pending sample counts.
+ *
+ * \param[in,out] mux   Required exclusive native stream and scratch owner
+ * \param[in] layout   Required prevalidated layout
+ *
+ * \retval TRUE All bytes and the native flush succeeded.
+ * \retval FALSE Serialization or native publication failed.
+ */
+static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout_t* layout);
+
+/*************************************************************************************************/
+/**
+ * \brief Publishes a successfully flushed fragment and releases its pending logical slots for reuse.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall have completed WriteFragmentLayout successfully.
+ *  - 002 All new sequence and time values shall have been prevalidated before native output.
+ *
+ * \param[in,out] mux   Required exclusive mux owner
+ * \param[in] layout   Successfully published layout
+ *
+ * \retval None Progress advanced and pending counts cleared without allocation.
+ */
+static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* layout);
+
+/*=================================================================================================
+** 4. PRIVATE FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32_t count)
+{
+    bool_t   has_input;
+    bool_t   empty;
+    bool_t   valid_input;
+    bool_t   fits;
+    uint32_t required;
+    uint32_t capacity;
+    byte_t*  grown;
+
+    LOGASSERT(NULL != buffer);
+    has_input   = (NULL != data);
+    empty       = (0 == count);
+    valid_input = has_input || empty;
+    LOGASSERT(valid_input);
+    if (!buffer->failed)
+    {
+        fits           = (count <= UINT32_MAX - buffer->size);
+        buffer->failed = !fits;
+        if (fits)
         {
-            if (new_capacity >= (pBuffer->size + count))
+            required = buffer->size + count;
+            if (buffer->capacity < required)
             {
-                break;
+                if (buffer->fixed)
+                {
+                    buffer->failed = TRUE;
+                }
+                else
+                {
+                    capacity = buffer->capacity;
+                    if (0 == capacity)
+                    {
+                        capacity = FRAGMENT_METADATA_CAPACITY;
+                    }
+                    for (;;)
+                    {
+                        if (required <= capacity)
+                        {
+                            break;
+                        }
+                        if (UINT32_MAX / 2 < capacity)
+                        {
+                            capacity = required;
+                        }
+                        else
+                        {
+                            capacity *= 2;
+                        }
+                    }
+                    grown          = (byte_t*)realloc(buffer->data, capacity);
+                    buffer->failed = (NULL == grown);
+                    if (!buffer->failed)
+                    {
+                        buffer->data     = grown;
+                        buffer->capacity = capacity;
+                    }
+                }
             }
-            if (new_capacity > (SIZE_MAX / 2))
+            if (!buffer->failed)
             {
-                new_capacity = pBuffer->size + count;
-                break;
+                if (!empty)
+                {
+                    CRT_Memory_Copy(&buffer->data[buffer->size], data, count);
+                    buffer->size = required;
+                }
             }
-            new_capacity *= 2;
         }
-        grown = (uint8_t*)realloc(pBuffer->data, new_capacity);
-        if (NULL == grown)
-        {
-            return;
-        }
-        pBuffer->data     = grown;
-        pBuffer->capacity = new_capacity;
     }
-    memcpy(pBuffer->data + pBuffer->size, pData, count);
-    pBuffer->size += count;
 }
 
 /*************************************************************************************************/
@@ -131,7 +598,7 @@ static void BufferU8(MuxBuffer* pBuffer, uint8_t value)
  */
 static void BufferU16(MuxBuffer* pBuffer, uint16_t value)
 {
-    uint8_t bytes[2];
+    byte_t bytes[2];
 
     bytes[0] = (uint8_t)(value >> 8);
     bytes[1] = (uint8_t)value;
@@ -145,7 +612,7 @@ static void BufferU16(MuxBuffer* pBuffer, uint16_t value)
  */
 static void BufferU32(MuxBuffer* pBuffer, uint32_t value)
 {
-    uint8_t bytes[4];
+    byte_t bytes[4];
 
     bytes[0] = (uint8_t)(value >> 24);
     bytes[1] = (uint8_t)(value >> 16);
@@ -165,15 +632,34 @@ static void BufferU64(MuxBuffer* pBuffer, uint64_t value)
     BufferU32(pBuffer, (uint32_t)value);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void BufferFullBoxVersionZero(MuxBuffer* buffer, uint32_t flags)
+{
+    Utl_Mpeg4_FullBoxFields_t fields;
+    uint32_t                  count;
+    byte_t                    bytes[UTL_MPEG4_FULLBOX_FIELDS_BYTES];
+
+    LOGASSERT(NULL != buffer);
+    fields.version = 0;
+    fields.flags   = flags;
+    count          = Utl_Mpeg4_WriteFullBoxFields(&fields, bytes, sizeof(bytes));
+    LOGASSERT(UTL_MPEG4_FULLBOX_FIELDS_BYTES == count);
+    BufferBytes(buffer, bytes, count);
+}
+
 /* Opens a box with a placeholder size, returning its start offset for BoxClose. */
 /*************************************************************************************************/
 /**
  * \par Details:
  *  Writes a placeholder size and box type, returning the offset for backpatching.
  */
-static size_t BoxOpen(MuxBuffer* pBuffer, const char* pType)
+static FORCE_INLINE uint32_t BoxOpen(MuxBuffer* pBuffer, const char* pType)
 {
-    size_t position;
+    uint32_t position;
 
     position = pBuffer->size;
     BufferU32(pBuffer, 0);
@@ -185,18 +671,20 @@ static size_t BoxOpen(MuxBuffer* pBuffer, const char* pType)
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Backpatches the 32-bit box size from its starting offset to the buffer's
- *  current end.
+ *  None
  */
-static void BoxClose(MuxBuffer* pBuffer, size_t position)
+static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position)
 {
-    uint32_t box_size;
+    uint32_t count;
 
-    box_size                     = (uint32_t)(pBuffer->size - position);
-    pBuffer->data[position]      = (uint8_t)(box_size >> 24);
-    pBuffer->data[position + 1u] = (uint8_t)(box_size >> 16);
-    pBuffer->data[position + 2u] = (uint8_t)(box_size >> 8);
-    pBuffer->data[position + 3u] = (uint8_t)box_size;
+    LOGASSERT(NULL != buffer);
+    if (!buffer->failed)
+    {
+        LOGASSERT(position <= buffer->size);
+        count = buffer->size - position;
+        LOGASSERT(UTL_MPEG4_BOX_HEADER_BYTES <= count);
+        PatchBuffer32(buffer, position, count);
+    }
 }
 
 /* The 3x3 video transform matrix (identity in 16.16 / 2.30 fixed point). */
@@ -221,21 +709,59 @@ static void BufferMatrix(MuxBuffer* pBuffer)
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Treats an empty span as success and latches the mux failure flag if fwrite
- *  cannot write the complete nonempty span.
+ *  None
  */
-static int WriteFileBytes(Mp4Mux* pMux, const void* pData, size_t count)
+static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_t count)
 {
-    if (0 == count)
+    bool_t valid;
+
+    LOGASSERT(NULL != mux);
+    valid = !mux->failed;
+    if (valid)
     {
-        return 1;
+        if (0 < count)
+        {
+            LOGASSERT(NULL != data);
+            valid       = (1 == fwrite(data, count, 1, mux->file));
+            mux->failed = !valid;
+        }
     }
-    if (1 != fwrite(pData, count, 1, pMux->file))
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented)
+{
+    Utl_Mpeg4_BoxHeader_t header;
+    Utl_Mpeg4_FileType_t  file_type;
+    uint32_t              header_count;
+    byte_t                bytes[FILE_TYPE_BYTE_COUNT];
+    uint32_t              payload_count;
+    bool_t                written;
+
+    LOGASSERT(NULL != mux);
+    Utl_Mpeg4_InitializeBoxHeader(&header, UTL_MPEG4_BOX_FTYP);
+    header.byteCount                     = FILE_TYPE_BYTE_COUNT;
+    file_type.majorBrand                 = UTL_MPEG4_BRAND_ISOM;
+    file_type.minorVersion               = FILE_TYPE_MINOR_VERSION;
+    file_type.compatibleBrands.data      = (const byte_t*)FILE_TYPE_PROGRESSIVE_BRANDS;
+    file_type.compatibleBrands.byteCount = sizeof(FILE_TYPE_PROGRESSIVE_BRANDS) - 1;
+    if (fragmented)
     {
-        pMux->failed = 1;
-        return 0;
+        file_type.majorBrand                 = UTL_MPEG4_BRAND_ISO5;
+        file_type.compatibleBrands.data      = (const byte_t*)FILE_TYPE_FRAGMENTED_BRANDS;
+        file_type.compatibleBrands.byteCount = sizeof(FILE_TYPE_FRAGMENTED_BRANDS) - 1;
     }
-    return 1;
+    header_count = Utl_Mpeg4_WriteBoxHeader(&header, bytes, sizeof(bytes));
+    LOGASSERT(UTL_MPEG4_BOX_HEADER_BYTES == header_count);
+    payload_count = Utl_Mpeg4_WriteFileType(&file_type, &bytes[header_count], sizeof(bytes) - header_count);
+    LOGASSERT(FILE_TYPE_BYTE_COUNT - UTL_MPEG4_BOX_HEADER_BYTES == payload_count);
+    written = WriteFileBytes(mux, bytes, sizeof(bytes));
+    return written;
 }
 
 /* Drops a leading Annex-B start code (00 00 01 or 00 00 00 01) from a parameter set, copying the
@@ -246,7 +772,7 @@ static int WriteFileBytes(Mp4Mux* pMux, const void* pData, size_t count)
  *  Removes an optional three- or four-byte Annex B start code and copies the
  *  raw NAL into fixed parameter storage when it fits.
  */
-static void StoreParameterSet(const uint8_t* pData, uint32_t size, uint8_t* pOut, uint32_t* pOutSize)
+static void StoreParameterSet(const byte_t* pData, uint32_t size, byte_t* pOut, uint32_t* pOutSize)
 {
     uint32_t start;
 
@@ -300,12 +826,14 @@ static MuxSample* AppendSample(MuxSample** ppArray, uint32_t* pCount, uint32_t* 
  *  Scans Annex B NAL boundaries and appends four-byte length prefixes with raw
  *  NAL payloads, stripping trailing zero bytes before the next start code.
  */
-static uint32_t AppendAvcc(MuxBuffer* pBuffer, const uint8_t* pData, uint32_t size)
+static uint32_t AppendAvcc(MuxBuffer* pBuffer, const byte_t* pData, uint32_t size)
 {
+    uint32_t original;
     uint32_t total;
     uint32_t i;
     uint32_t nal_start;
 
+    original  = pBuffer->size;
     total     = 0;
     i         = 0;
     nal_start = 0;
@@ -336,10 +864,9 @@ static uint32_t AppendAvcc(MuxBuffer* pBuffer, const uint8_t* pData, uint32_t si
                 }
                 BufferU32(pBuffer, nal_length);
                 BufferBytes(pBuffer, pData + nal_start, nal_length);
-                total += 4u + nal_length;
             }
             i         += 3;
-            nal_start  = i;
+            nal_start = i;
         }
         else
         {
@@ -350,7 +877,10 @@ static uint32_t AppendAvcc(MuxBuffer* pBuffer, const uint8_t* pData, uint32_t si
     {
         BufferU32(pBuffer, size - nal_start);
         BufferBytes(pBuffer, pData + nal_start, size - nal_start);
-        total += 4u + (size - nal_start);
+    }
+    if (!pBuffer->failed)
+    {
+        total = pBuffer->size - original;
     }
     return total;
 }
@@ -364,15 +894,15 @@ static uint32_t AppendAvcc(MuxBuffer* pBuffer, const uint8_t* pData, uint32_t si
  */
 static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uint32_t count, int isVideo)
 {
-    size_t   box;
-    size_t   entry_count_position;
+    uint32_t box;
+    uint32_t entry_count_position;
     uint32_t entries;
     uint32_t i;
     uint32_t run_count;
 
     /* stts: run-length of equal durations. */
     box = BoxOpen(pBuffer, "stts");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     entry_count_position = pBuffer->size;
     BufferU32(pBuffer, 0);
     entries = 0;
@@ -395,15 +925,12 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
         ++entries;
         i += run_count;
     }
-    pBuffer->data[entry_count_position]      = (uint8_t)(entries >> 24);
-    pBuffer->data[entry_count_position + 1u] = (uint8_t)(entries >> 16);
-    pBuffer->data[entry_count_position + 2u] = (uint8_t)(entries >> 8);
-    pBuffer->data[entry_count_position + 3u] = (uint8_t)entries;
+    PatchBuffer32(pBuffer, entry_count_position, entries);
     BoxClose(pBuffer, box);
 
     /* stsc: one sample per chunk. */
     box = BoxOpen(pBuffer, "stsc");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, 1);
     BufferU32(pBuffer, 1);
     BufferU32(pBuffer, 1);
@@ -412,7 +939,7 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
 
     /* stsz: explicit per-sample sizes. */
     box = BoxOpen(pBuffer, "stsz");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, count);
     for (i = 0; i < count; ++i)
@@ -423,7 +950,7 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
 
     /* co64: one 64-bit chunk offset per sample. */
     box = BoxOpen(pBuffer, "co64");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, count);
     for (i = 0; i < count; ++i)
     {
@@ -434,11 +961,11 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
     /* stss: sync-sample list for video (1-based sample numbers). */
     if (isVideo)
     {
-        size_t   sync_count_position;
+        uint32_t sync_count_position;
         uint32_t sync_count;
 
         box = BoxOpen(pBuffer, "stss");
-        BufferU32(pBuffer, 0);
+        BufferFullBoxVersionZero(pBuffer, 0);
         sync_count_position = pBuffer->size;
         BufferU32(pBuffer, 0);
         sync_count = 0;
@@ -450,10 +977,7 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
                 ++sync_count;
             }
         }
-        pBuffer->data[sync_count_position]      = (uint8_t)(sync_count >> 24);
-        pBuffer->data[sync_count_position + 1u] = (uint8_t)(sync_count >> 16);
-        pBuffer->data[sync_count_position + 2u] = (uint8_t)(sync_count >> 8);
-        pBuffer->data[sync_count_position + 3u] = (uint8_t)sync_count;
+        PatchBuffer32(pBuffer, sync_count_position, sync_count);
         BoxClose(pBuffer, box);
     }
 }
@@ -467,14 +991,14 @@ static void WriteSampleTables(MuxBuffer* pBuffer, const MuxSample* pSamples, uin
  */
 static void WriteVideoSampleEntry(Mp4Mux* pMux, MuxBuffer* pBuffer)
 {
-    size_t box;
-    size_t avcc;
+    uint32_t box;
+    uint32_t avcc;
 
     box = BoxOpen(pBuffer, "stsd");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, 1);
     {
-        size_t avc1;
+        uint32_t avc1;
 
         avc1 = BoxOpen(pBuffer, "avc1");
         BufferU8(pBuffer, 0);
@@ -496,7 +1020,7 @@ static void WriteVideoSampleEntry(Mp4Mux* pMux, MuxBuffer* pBuffer)
         BufferU32(pBuffer, 0);
         BufferU16(pBuffer, 1); /* frame count */
         {
-            uint8_t compressor[32];
+            byte_t compressor[32];
 
             memset(compressor, 0, sizeof(compressor));
             BufferBytes(pBuffer, compressor, sizeof(compressor));
@@ -522,71 +1046,131 @@ static void WriteVideoSampleEntry(Mp4Mux* pMux, MuxBuffer* pBuffer)
     BoxClose(pBuffer, box);
 }
 
-/* mp4a sample entry with an esds descriptor carrying the AudioSpecificConfig. */
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Writes mp4a and the nested esds descriptors carrying the stored AAC
- *  AudioSpecificConfig.
+ *  Fixed scratch arrays hold complete children before their parent is written.
+ *  AudioSpecificConfig is validated and serialized by the Audio module first.
+ *  These specification stages use fixed storage and the local CRT_ library.
  */
-static void WriteAudioSampleEntry(Mp4Mux* pMux, MuxBuffer* pBuffer)
+static FORCE_INLINE uint32_t WriteAudioDescriptor(const Mp4Mux* mux, byte_t* output, uint32_t capacity)
 {
-    size_t  box;
-    uint8_t dsi_len;
-    uint8_t dcd_len;
-    uint8_t es_len;
+    bool_t                              has_configuration;
+    uint32_t                            written;
+    bool_t                              valid_configuration;
+    Utl_Mpeg4_Span_t                    audio_bytes;
+    Utl_Mpeg4Audio_Status_t             audio_status;
+    Utl_Mpeg4Audio_Config_t             configuration;
+    uint32_t                            configuration_count;
+    byte_t                              encoded_configuration[AUDIO_CONFIGURATION_CAPACITY];
+    Utl_Mpeg4Systems_Descriptor_t       descriptor;
+    uint32_t                            decoder_child_count;
+    byte_t                              decoder_children[AUDIO_DESCRIPTOR_CAPACITY];
+    Utl_Mpeg4Systems_DecoderConfig_t    decoder;
+    uint32_t                            decoder_count;
+    byte_t                              stream_children[AUDIO_DESCRIPTOR_CAPACITY];
+    byte_t                              synchronization;
+    uint32_t                            synchronization_count;
+    Utl_Mpeg4Systems_ElementaryStream_t stream;
 
-    box = BoxOpen(pBuffer, "stsd");
-    BufferU32(pBuffer, 0);
-    BufferU32(pBuffer, 1);
+    LOGASSERT(NULL != mux);
+    LOGASSERT(NULL != output);
+    LOGASSERT(mux->ascSize <= sizeof(mux->asc));
+    has_configuration   = (0 < mux->ascSize);
+    written             = 0;
+    valid_configuration = FALSE;
+    if (has_configuration)
     {
-        size_t mp4a;
-        size_t esds;
-
-        mp4a = BoxOpen(pBuffer, "mp4a");
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);
-        BufferU16(pBuffer, 1); /* data reference index */
-        BufferU32(pBuffer, 0);
-        BufferU32(pBuffer, 0);
-        BufferU16(pBuffer, (uint16_t)pMux->audioChannels);
-        BufferU16(pBuffer, 16); /* sample size */
-        BufferU16(pBuffer, 0);
-        BufferU16(pBuffer, 0);
-        BufferU32(pBuffer, pMux->audioSampleRate << 16);
-
-        esds = BoxOpen(pBuffer, "esds");
-        BufferU32(pBuffer, 0);
-        dsi_len = (uint8_t)pMux->ascSize;
-        dcd_len = (uint8_t)(13u + 2u + dsi_len);
-        es_len  = (uint8_t)(3u + 2u + dcd_len + 3u);
-        BufferU8(pBuffer, 0x03); /* ES_Descriptor */
-        BufferU8(pBuffer, es_len);
-        BufferU16(pBuffer, 0);   /* ES_ID */
-        BufferU8(pBuffer, 0);    /* flags */
-        BufferU8(pBuffer, 0x04); /* DecoderConfigDescriptor */
-        BufferU8(pBuffer, dcd_len);
-        BufferU8(pBuffer, 0x40); /* objectTypeIndication: MPEG-4 AAC */
-        BufferU8(pBuffer, 0x15); /* streamType audio | !upstream | reserved */
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);
-        BufferU8(pBuffer, 0);    /* bufferSizeDB */
-        BufferU32(pBuffer, 0);   /* max bitrate */
-        BufferU32(pBuffer, 0);   /* avg bitrate */
-        BufferU8(pBuffer, 0x05); /* DecoderSpecificInfo */
-        BufferU8(pBuffer, dsi_len);
-        BufferBytes(pBuffer, pMux->asc, pMux->ascSize);
-        BufferU8(pBuffer, 0x06); /* SLConfigDescriptor */
-        BufferU8(pBuffer, 1);
-        BufferU8(pBuffer, 2);
-        BoxClose(pBuffer, esds);
-        BoxClose(pBuffer, mp4a);
+        audio_bytes.data      = mux->asc;
+        audio_bytes.byteCount = mux->ascSize;
+        audio_status          = Utl_Mpeg4Audio_ReadConfig(&configuration, audio_bytes);
+        valid_configuration   = (UTL_MPEG4AUDIO_COMPLETE == audio_status);
     }
-    BoxClose(pBuffer, box);
+    if (valid_configuration)
+    {
+        configuration_count =
+            Utl_Mpeg4Audio_WriteConfig(&configuration, encoded_configuration, sizeof(encoded_configuration));
+        LOGASSERT(0 < configuration_count);
+        descriptor.tag               = UTL_MPEG4SYSTEMS_TAG_DECODER_INFO;
+        descriptor.payload.data      = encoded_configuration;
+        descriptor.payload.byteCount = configuration_count;
+        decoder_child_count          = Utl_Mpeg4Systems_WriteDescriptor(&descriptor, decoder_children, sizeof(decoder_children));
+        LOGASSERT(0 < decoder_child_count);
+        decoder.objectType         = UTL_MPEG4SYSTEMS_OBJECT_AUDIO;
+        decoder.streamType         = UTL_MPEG4SYSTEMS_STREAM_AUDIO;
+        decoder.upstream           = FALSE;
+        decoder.bufferBytes        = 0;
+        decoder.maximumBitrate     = 0;
+        decoder.averageBitrate     = 0;
+        decoder.children.data      = decoder_children;
+        decoder.children.byteCount = decoder_child_count;
+        decoder_count              = Utl_Mpeg4Systems_WriteDecoderConfig(&decoder, stream_children, sizeof(stream_children));
+        LOGASSERT(0 < decoder_count);
+        synchronization              = UTL_MPEG4SYSTEMS_SL_MP4;
+        descriptor.tag               = UTL_MPEG4SYSTEMS_TAG_SL_CONFIG;
+        descriptor.payload.data      = &synchronization;
+        descriptor.payload.byteCount = sizeof(synchronization);
+        synchronization_count        = Utl_Mpeg4Systems_WriteDescriptor(&descriptor,
+                                                                        &stream_children[decoder_count],
+                                                                        sizeof(stream_children) - decoder_count);
+        LOGASSERT(0 < synchronization_count);
+        stream.streamId           = 0;
+        stream.priority           = 0;
+        stream.hasDependency      = FALSE;
+        stream.hasUrl             = FALSE;
+        stream.hasClock           = FALSE;
+        stream.children.data      = stream_children;
+        stream.children.byteCount = decoder_count + synchronization_count;
+        written                   = Utl_Mpeg4Systems_WriteElementaryStream(&stream, output, capacity);
+    }
+    return written;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The descriptor no longer assumes one-byte expandable lengths. Box assembly
+ *  still uses the legacy growable buffer and remains an allocation-lifecycle defect.
+ */
+static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer)
+{
+    uint32_t descriptor_count;
+    byte_t   descriptor[AUDIO_DESCRIPTOR_CAPACITY];
+    uint32_t box;
+    uint32_t entry;
+    uint32_t index;
+    uint32_t esds;
+
+    descriptor_count = WriteAudioDescriptor(mux, descriptor, sizeof(descriptor));
+    if (0 < descriptor_count)
+    {
+        box = BoxOpen(buffer, "stsd");
+        BufferFullBoxVersionZero(buffer, 0);
+        BufferU32(buffer, 1);
+        entry = BoxOpen(buffer, "mp4a");
+        for (index = 0; index < AUDIO_RESERVED_BYTES; ++index)
+        {
+            BufferU8(buffer, 0);
+        }
+        BufferU16(buffer, AUDIO_DATA_REFERENCE);
+        BufferU32(buffer, 0);
+        BufferU32(buffer, 0);
+        BufferU16(buffer, (uint16_t)mux->audioChannels);
+        BufferU16(buffer, AUDIO_SAMPLE_BITS);
+        BufferU16(buffer, 0);
+        BufferU16(buffer, 0);
+        BufferU32(buffer, mux->audioSampleRate << AUDIO_RATE_SHIFT);
+        esds = BoxOpen(buffer, "esds");
+        BufferFullBoxVersionZero(buffer, 0);
+        BufferBytes(buffer, descriptor, descriptor_count);
+        BoxClose(buffer, esds);
+        BoxClose(buffer, entry);
+        BoxClose(buffer, box);
+    }
+    else
+    {
+        mux->failed = TRUE;
+    }
 }
 
 /*************************************************************************************************/
@@ -620,10 +1204,10 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
     uint32_t         timescale;
     uint64_t         track_duration;
     uint32_t         movie_duration;
-    size_t           trak;
-    size_t           box;
-    size_t           mdia;
-    size_t           minf;
+    uint32_t         trak;
+    uint32_t         box;
+    uint32_t         mdia;
+    uint32_t         minf;
 
     if (isVideo)
     {
@@ -662,7 +1246,7 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
 
     mdia = BoxOpen(pBuffer, "mdia");
     box  = BoxOpen(pBuffer, "mdhd");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferU32(pBuffer, timescale);
@@ -672,7 +1256,7 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
     BoxClose(pBuffer, box);
 
     box = BoxOpen(pBuffer, "hdlr");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, 0);
     BufferBytes(pBuffer, isVideo ? "vide" : "soun", 4);
     BufferU32(pBuffer, 0);
@@ -693,7 +1277,7 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
     else
     {
         box = BoxOpen(pBuffer, "smhd");
-        BufferU32(pBuffer, 0);
+        BufferFullBoxVersionZero(pBuffer, 0);
         BufferU16(pBuffer, 0);
         BufferU16(pBuffer, 0);
         BoxClose(pBuffer, box);
@@ -701,11 +1285,11 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
 
     box = BoxOpen(pBuffer, "dinf");
     {
-        size_t dref;
-        size_t url;
+        uint32_t dref;
+        uint32_t url;
 
         dref = BoxOpen(pBuffer, "dref");
-        BufferU32(pBuffer, 0);
+        BufferFullBoxVersionZero(pBuffer, 0);
         BufferU32(pBuffer, 1);
         url = BoxOpen(pBuffer, "url ");
         BufferU32(pBuffer, 0x00000001); /* self-contained */
@@ -740,10 +1324,10 @@ static void WriteTrack(Mp4Mux* pMux, MuxBuffer* pBuffer, int isVideo, uint32_t m
  */
 static void WriteTrex(MuxBuffer* pBuffer, uint32_t trackId, uint32_t defaultSampleFlags)
 {
-    size_t box;
+    uint32_t box;
 
     box = BoxOpen(pBuffer, "trex");
-    BufferU32(pBuffer, 0);
+    BufferFullBoxVersionZero(pBuffer, 0);
     BufferU32(pBuffer, trackId);
     BufferU32(pBuffer, 1); /* default sample description index */
     BufferU32(pBuffer, 0); /* default sample duration */
@@ -762,23 +1346,15 @@ static void WriteTrex(MuxBuffer* pBuffer, uint32_t trackId, uint32_t defaultSamp
  */
 static int WriteFragmentedInit(Mp4Mux* pMux)
 {
-    uint8_t  ftyp[24];
     uint32_t movie_timescale;
     uint32_t movie_duration;
-    size_t   moov;
+    uint32_t moov;
+    bool_t   ready;
+    bool_t   has_storage;
+    bool_t   can_write;
+    bool_t   written;
 
-    memcpy(ftyp, "\0\0\0\30ftypiso5", 12);
-    ftyp[8]  = 'i';
-    ftyp[9]  = 's';
-    ftyp[10] = 'o';
-    ftyp[11] = '5';
-    ftyp[12] = 0;
-    ftyp[13] = 0;
-    ftyp[14] = 2;
-    ftyp[15] = 0;
-    memcpy(ftyp + 16, "iso6", 4);
-    memcpy(ftyp + 20, "mp41", 4);
-    if (!WriteFileBytes(pMux, ftyp, sizeof(ftyp)))
+    if (!WriteFileType(pMux, TRUE))
     {
         return 0;
     }
@@ -788,10 +1364,10 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
     pMux->fragMoof.size = 0;
     moov                = BoxOpen(&pMux->fragMoof, "moov");
     {
-        size_t mvhd;
+        uint32_t mvhd;
 
         mvhd = BoxOpen(&pMux->fragMoof, "mvhd");
-        BufferU32(&pMux->fragMoof, 0);
+        BufferFullBoxVersionZero(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, 0);
         BufferU32(&pMux->fragMoof, movie_timescale);
@@ -817,11 +1393,11 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
         WriteTrack(pMux, &pMux->fragMoof, 0, movie_timescale);
     }
     {
-        size_t mvex;
+        uint32_t mvex;
 
         mvex = BoxOpen(&pMux->fragMoof, "mvex");
         {
-            size_t mehd;
+            uint32_t mehd;
 
             mehd = BoxOpen(&pMux->fragMoof, "mehd");
             BufferU32(&pMux->fragMoof, 0);
@@ -836,7 +1412,548 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
         BoxClose(&pMux->fragMoof, mvex);
     }
     BoxClose(&pMux->fragMoof, moov);
-    return (NULL != pMux->fragMoof.data) && WriteFileBytes(pMux, pMux->fragMoof.data, pMux->fragMoof.size);
+    pMux->failed = pMux->failed || pMux->fragMoof.failed;
+    ready        = !pMux->failed;
+    has_storage  = (NULL != pMux->fragMoof.data);
+    can_write    = ready && has_storage;
+    written      = FALSE;
+    if (can_write)
+    {
+        written = WriteFileBytes(pMux, pMux->fragMoof.data, pMux->fragMoof.size);
+    }
+    return written;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void PatchBuffer32(MuxBuffer* buffer, uint32_t offset, uint32_t value)
+{
+    Utl_Mpeg4_Integer_t field;
+    uint32_t            written;
+
+    LOGASSERT(NULL != buffer);
+    if (!buffer->failed)
+    {
+        LOGASSERT(offset <= buffer->size);
+        LOGASSERT(MUX_INTEGER32_BYTES <= buffer->size - offset);
+        field.value     = value;
+        field.byteCount = MUX_INTEGER32_BYTES;
+        written         = Utl_Mpeg4_WriteUnsigned(field, &buffer->data[offset], MUX_INTEGER32_BYTES);
+        LOGASSERT(MUX_INTEGER32_BYTES == written);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void InitializeFragmentStorage(Mp4Mux* mux)
+{
+    LOGASSERT(NULL != mux);
+    mux->fragMoof.data     = mux->fragmentMetadata;
+    mux->fragMoof.size     = 0;
+    mux->fragMoof.capacity = sizeof(mux->fragmentMetadata);
+    mux->fragMoof.fixed    = TRUE;
+    mux->fragMoof.failed   = FALSE;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void InitializeFragmentTrack(Utl_Mpeg4_TrackFragment_t* track,
+                                                 Utl_Mpeg4_TrackRun_t*      run,
+                                                 uint32_t                   trackId)
+{
+    Utl_Mpeg4_InitializeTrackRun(run);
+    run->flags = UTL_MPEG4_TRUN_DATA_OFFSET | UTL_MPEG4_TRUN_DURATION | UTL_MPEG4_TRUN_SIZE;
+    Utl_Mpeg4_InitializeTrackFragment(track, trackId);
+    track->flags             = UTL_MPEG4_TFHD_MOOF_BASE;
+    track->hasDecodeTime     = TRUE;
+    track->decodeTimeVersion = 1;
+    track->runs              = run;
+    track->runCount          = 1;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t GetFragmentDuration(uint64_t*                         duration,
+                                               const Utl_Mpeg4_FragmentSample_t* samples,
+                                               uint32_t                          count,
+                                               uint32_t                          byteCount)
+{
+    uint64_t bytes;
+    uint64_t ticks;
+    uint32_t index;
+    bool_t   valid;
+
+    LOGASSERT(NULL != duration);
+    LOGASSERT(NULL != samples);
+    LOGASSERT(count <= MAX_FRAGMENT_SAMPLES);
+    bytes = 0;
+    ticks = 0;
+    for (index = 0; index < count; ++index)
+    {
+        bytes += samples[index].byteCount;
+        ticks += samples[index].duration;
+    }
+    valid = (bytes == byteCount);
+    if (valid)
+    {
+        *duration = ticks;
+    }
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t AppendFragmentVideo(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes, uint32_t duration, bool_t keyframe)
+{
+    bool_t                      valid;
+    uint32_t                    count;
+    bool_t                      has_bytes;
+    bool_t                      payload_valid;
+    Utl_Mpeg4_FragmentSample_t* sample;
+
+    valid = (mux->fragVideoCount < MAX_FRAGMENT_SAMPLES);
+    if (valid)
+    {
+        count         = AppendAvcc(&mux->fragVideoData, bytes.data, bytes.byteCount);
+        has_bytes     = (0 < count);
+        payload_valid = !mux->fragVideoData.failed;
+        valid         = has_bytes && payload_valid;
+        if (valid)
+        {
+            sample            = &mux->fragVideo[mux->fragVideoCount];
+            sample->byteCount = count;
+            sample->duration  = duration;
+            sample->flags     = UTL_MPEG4_SAMPLE_DEPENDENT;
+            if (keyframe)
+            {
+                sample->flags = UTL_MPEG4_SAMPLE_INDEPENDENT;
+            }
+            sample->compositionOffset = 0;
+            ++mux->fragVideoCount;
+        }
+    }
+    mux->failed = !valid;
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t AppendFragmentAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes, uint32_t duration)
+{
+    bool_t                      valid;
+    Utl_Mpeg4_FragmentSample_t* sample;
+
+    valid = (mux->fragAudioCount < MAX_FRAGMENT_SAMPLES);
+    if (valid)
+    {
+        BufferBytes(&mux->fragAudioData, bytes.data, bytes.byteCount);
+        valid = !mux->fragAudioData.failed;
+        if (valid)
+        {
+            sample                    = &mux->fragAudio[mux->fragAudioCount];
+            sample->byteCount         = bytes.byteCount;
+            sample->duration          = duration;
+            sample->flags             = UTL_MPEG4_SAMPLE_INDEPENDENT;
+            sample->compositionOffset = 0;
+            ++mux->fragAudioCount;
+        }
+    }
+    mux->failed = !valid;
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t WriteNal(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes)
+{
+    Utl_Mpeg4_Integer_t field;
+    uint32_t            count;
+    byte_t              prefix[MUX_INTEGER32_BYTES];
+    bool_t              valid;
+
+    field.value     = bytes.byteCount;
+    field.byteCount = MUX_INTEGER32_BYTES;
+    count           = Utl_Mpeg4_WriteUnsigned(field, prefix, sizeof(prefix));
+    LOGASSERT(MUX_INTEGER32_BYTES == count);
+    valid = WriteFileBytes(mux, prefix, count);
+    if (valid)
+    {
+        valid = WriteFileBytes(mux, bytes.data, bytes.byteCount);
+    }
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t WriteProgressiveVideo(Mp4Mux*          mux,
+                                                 Utl_Mpeg4_Span_t bytes,
+                                                 uint32_t         duration,
+                                                 bool_t           keyframe)
+{
+    int64_t          offset;
+    bool_t           valid;
+    uint32_t         total;
+    uint32_t         index;
+    uint32_t         start;
+    bool_t           first_zero;
+    bool_t           second_zero;
+    bool_t           has_stop;
+    bool_t           is_start;
+    bool_t           has_start;
+    bool_t           has_body;
+    bool_t           has_nal;
+    Utl_Mpeg4_Span_t nal;
+    uint64_t         next_count;
+    MuxSample*       sample;
+
+    offset = _ftelli64(mux->file);
+    valid  = (0 <= offset);
+    total  = 0;
+    index  = 0;
+    start  = 0;
+    for (;;)
+    {
+        if (!valid)
+        {
+            break;
+        }
+        if (bytes.byteCount - index < ANNEXB_PREFIX_BYTES)
+        {
+            break;
+        }
+        first_zero  = (ANNEXB_ZERO_BYTE == bytes.data[index]);
+        second_zero = (ANNEXB_ZERO_BYTE == bytes.data[index + 1]);
+        has_stop    = (ANNEXB_STOP_BYTE == bytes.data[index + 2]);
+        is_start    = first_zero && second_zero && has_stop;
+        if (is_start)
+        {
+            has_start = (0 < start);
+            has_body  = (start < index);
+            has_nal   = has_start && has_body;
+            if (has_nal)
+            {
+                nal.data      = &bytes.data[start];
+                nal.byteCount = index - start;
+                for (;;)
+                {
+                    if (0 == nal.byteCount)
+                    {
+                        break;
+                    }
+                    if (ANNEXB_ZERO_BYTE != nal.data[nal.byteCount - 1])
+                    {
+                        break;
+                    }
+                    --nal.byteCount;
+                }
+                next_count = (uint64_t)total + MUX_INTEGER32_BYTES + nal.byteCount;
+                valid      = (next_count <= UINT32_MAX);
+                if (valid)
+                {
+                    valid = WriteNal(mux, nal);
+                    total = (uint32_t)next_count;
+                }
+            }
+            index += ANNEXB_PREFIX_BYTES;
+            start = index;
+        }
+        else
+        {
+            ++index;
+        }
+    }
+    has_start = (0 < start);
+    has_body  = (start < bytes.byteCount);
+    has_nal   = valid && has_start && has_body;
+    if (has_nal)
+    {
+        nal.data      = &bytes.data[start];
+        nal.byteCount = bytes.byteCount - start;
+        next_count    = (uint64_t)total + MUX_INTEGER32_BYTES + nal.byteCount;
+        valid         = (next_count <= UINT32_MAX);
+        if (valid)
+        {
+            valid = WriteNal(mux, nal);
+            total = (uint32_t)next_count;
+        }
+    }
+    has_body = (0 < total);
+    valid    = valid && has_body;
+    if (valid)
+    {
+        sample = AppendSample(&mux->video, &mux->videoCount, &mux->videoCapacity);
+        valid  = (NULL != sample);
+        if (valid)
+        {
+            sample->offset   = (uint64_t)offset;
+            sample->size     = total;
+            sample->duration = duration;
+            sample->keyframe = keyframe;
+        }
+    }
+    mux->failed = !valid;
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t bytes, uint32_t duration)
+{
+    int64_t    offset;
+    bool_t     valid;
+    MuxSample* sample;
+
+    offset = _ftelli64(mux->file);
+    valid  = (0 <= offset);
+    if (valid)
+    {
+        valid = WriteFileBytes(mux, bytes.data, bytes.byteCount);
+    }
+    if (valid)
+    {
+        sample = AppendSample(&mux->audio, &mux->audioCount, &mux->audioCapacity);
+        valid  = (NULL != sample);
+        if (valid)
+        {
+            sample->offset   = (uint64_t)offset;
+            sample->size     = bytes.byteCount;
+            sample->duration = duration;
+            sample->keyframe = TRUE;
+        }
+    }
+    mux->failed = !valid;
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux)
+{
+    bool_t has_video;
+    bool_t has_audio;
+    bool_t has_samples;
+    bool_t has_both;
+    uint32_t track_count;
+
+    LOGASSERT(NULL != layout);
+    LOGASSERT(NULL != mux);
+    has_video = (0 < mux->fragVideoCount);
+    has_audio = (0 < mux->fragAudioCount);
+    has_samples = has_video || has_audio;
+    has_both = has_video && has_audio;
+    LOGASSERT(has_samples);
+    InitializeFragmentTrack(&layout->tracks[0], &layout->runs[0], 1);
+    layout->tracks[0].decodeTime = mux->videoBaseTime;
+    layout->runs[0].flags |= UTL_MPEG4_TRUN_FLAGS;
+    layout->runs[0].samples = mux->fragVideo;
+    layout->runs[0].sampleCount = mux->fragVideoCount;
+    InitializeFragmentTrack(&layout->tracks[1], &layout->runs[1], 2);
+    layout->tracks[1].decodeTime = mux->audioBaseTime;
+    layout->runs[1].samples = mux->fragAudio;
+    layout->runs[1].sampleCount = mux->fragAudioCount;
+    track_count = 1;
+    if (has_both)
+    {
+        track_count = FRAGMENT_TRACK_CAPACITY;
+    }
+    Utl_Mpeg4_InitializeMovieFragment(&layout->fragment, layout->tracks, track_count);
+    if (!has_video)
+    {
+        layout->fragment.tracks = &layout->tracks[1];
+    }
+    Utl_Mpeg4_InitializeBoxHeader(&layout->media, UTL_MPEG4_BOX_MDAT);
+    layout->videoTime = mux->videoBaseTime;
+    layout->audioTime = mux->audioBaseTime;
+    layout->metadataByteCount = 0;
+    layout->headerByteCount = 0;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t GetFragmentTimeline(FragmentLayout_t* layout, const Mp4Mux* mux)
+{
+    uint64_t video_ticks;
+    uint64_t audio_ticks;
+    bool_t video_valid;
+    bool_t audio_valid;
+    bool_t video_fits;
+    bool_t audio_fits;
+    bool_t sequence_fits;
+    bool_t video_buffer_valid;
+    bool_t audio_buffer_valid;
+    bool_t metadata_valid;
+    bool_t valid;
+
+    LOGASSERT(NULL != layout);
+    LOGASSERT(NULL != mux);
+    video_ticks = 0;
+    audio_ticks = 0;
+    video_valid = GetFragmentDuration(&video_ticks, mux->fragVideo, mux->fragVideoCount, mux->fragVideoData.size);
+    audio_valid = GetFragmentDuration(&audio_ticks, mux->fragAudio, mux->fragAudioCount, mux->fragAudioData.size);
+    video_fits = (video_ticks <= UINT64_MAX - mux->videoBaseTime);
+    audio_fits = (audio_ticks <= UINT64_MAX - mux->audioBaseTime);
+    sequence_fits = (mux->sequenceNumber < UINT32_MAX);
+    video_buffer_valid = !mux->fragVideoData.failed;
+    audio_buffer_valid = !mux->fragAudioData.failed;
+    metadata_valid = !mux->fragMoof.failed;
+    valid = video_valid && audio_valid && video_fits && audio_fits && sequence_fits;
+    valid = valid && video_buffer_valid && audio_buffer_valid && metadata_valid;
+    if (valid)
+    {
+        layout->fragment.sequenceNumber = mux->sequenceNumber + 1;
+        layout->videoTime = mux->videoBaseTime + video_ticks;
+        layout->audioTime = mux->audioBaseTime + audio_ticks;
+    }
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t GetFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux)
+{
+    bool_t valid;
+    uint64_t payload_bytes;
+    bool_t header_valid;
+    bool_t metadata_valid;
+    bool_t metadata_fits;
+    uint64_t video_offset;
+    uint64_t audio_offset;
+    bool_t video_fits;
+    bool_t audio_fits;
+
+    LOGASSERT(NULL != layout);
+    LOGASSERT(NULL != mux);
+    valid = GetFragmentTimeline(layout, mux);
+    if (valid)
+    {
+        payload_bytes = (uint64_t)mux->fragVideoData.size + mux->fragAudioData.size;
+        layout->media.byteCount = UTL_MPEG4_BOX_HEADER_BYTES + payload_bytes;
+        if (UINT32_MAX < layout->media.byteCount)
+        {
+            layout->media.hasLargeSize = TRUE;
+            layout->media.byteCount = UTL_MPEG4_LARGE_BOX_HEADER_BYTES + payload_bytes;
+        }
+        layout->headerByteCount = Utl_Mpeg4_GetBoxHeaderByteCount(&layout->media);
+        layout->metadataByteCount = Utl_Mpeg4_GetMovieFragmentByteCount(&layout->fragment);
+        header_valid = (0 < layout->headerByteCount);
+        metadata_valid = (0 < layout->metadataByteCount);
+        metadata_fits = (layout->metadataByteCount <= sizeof(mux->fragmentMetadata));
+        valid = header_valid && metadata_valid && metadata_fits;
+        video_offset = (uint64_t)layout->metadataByteCount + layout->headerByteCount;
+        audio_offset = video_offset + mux->fragVideoData.size;
+        video_fits = (video_offset <= INT32_MAX);
+        audio_fits = TRUE;
+        if (0 < mux->fragAudioCount)
+        {
+            audio_fits = (audio_offset <= INT32_MAX);
+        }
+        valid = valid && video_fits && audio_fits;
+        if (valid)
+        {
+            layout->runs[0].dataOffset = (int32_t)video_offset;
+            if (0 < mux->fragAudioCount)
+            {
+                layout->runs[1].dataOffset = (int32_t)audio_offset;
+            }
+        }
+    }
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout_t* layout)
+{
+    uint32_t written;
+    bool_t valid;
+    byte_t header[UTL_MPEG4_MAX_BOX_HEADER_BYTES];
+    int flushed;
+
+    LOGASSERT(NULL != mux);
+    LOGASSERT(NULL != layout);
+    written = Utl_Mpeg4_WriteMovieFragment(&layout->fragment, mux->fragmentMetadata, sizeof(mux->fragmentMetadata));
+    valid = (layout->metadataByteCount == written);
+    if (valid)
+    {
+        written = Utl_Mpeg4_WriteBoxHeader(&layout->media, header, sizeof(header));
+        LOGASSERT(layout->headerByteCount == written);
+        valid = WriteFileBytes(mux, mux->fragmentMetadata, layout->metadataByteCount);
+    }
+    if (valid)
+    {
+        valid = WriteFileBytes(mux, header, layout->headerByteCount);
+    }
+    if (valid)
+    {
+        valid = WriteFileBytes(mux, mux->fragVideoData.data, mux->fragVideoData.size);
+    }
+    if (valid)
+    {
+        valid = WriteFileBytes(mux, mux->fragAudioData.data, mux->fragAudioData.size);
+    }
+    if (valid)
+    {
+        flushed = fflush(mux->file);
+        valid = (0 == flushed);
+    }
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* layout)
+{
+    LOGASSERT(NULL != mux);
+    LOGASSERT(NULL != layout);
+    mux->sequenceNumber = layout->fragment.sequenceNumber;
+    mux->videoBaseTime = layout->videoTime;
+    mux->audioBaseTime = layout->audioTime;
+    mux->fragVideoCount = 0;
+    mux->fragAudioCount = 0;
+    mux->fragVideoData.size = 0;
+    mux->fragAudioData.size = 0;
 }
 
 /*=================================================================================================
@@ -852,27 +1969,27 @@ static int WriteFragmentedInit(Mp4Mux* pMux)
 Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
                       unsigned       width,
                       unsigned       height,
-                      const uint8_t* pSps,
+                      const byte_t*  pSps,
                       uint32_t       spsSize,
-                      const uint8_t* pPps,
+                      const byte_t*  pPps,
                       uint32_t       ppsSize,
                       unsigned       videoTimescale,
                       int            hasAudio,
                       unsigned       audioTimescale,
                       unsigned       audioSampleRate,
                       unsigned       audioChannels,
-                      const uint8_t* pAsc,
+                      const byte_t*  pAsc,
                       uint32_t       ascSize)
 {
     Mp4Mux* pMux;
-    uint8_t ftyp[24];
-    uint8_t mdat_header[8];
+    byte_t  mdat_header[8];
 
     pMux = (Mp4Mux*)calloc(1, sizeof(*pMux));
     if (NULL == pMux)
     {
         return NULL;
     }
+    InitializeFragmentStorage(pMux);
     pMux->file =
         _wfsopen(pPath,
                  L"wb",
@@ -897,19 +2014,7 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
         pMux->ascSize = ascSize;
     }
 
-    /* ftyp: major 'isom', minor 0x200, compatible isom/iso2/avc1/mp41. */
-    memcpy(ftyp, "\0\0\0\30ftypisom", 12);
-    ftyp[8]  = 'i';
-    ftyp[9]  = 's';
-    ftyp[10] = 'o';
-    ftyp[11] = 'm';
-    ftyp[12] = 0;
-    ftyp[13] = 0;
-    ftyp[14] = 2;
-    ftyp[15] = 0;
-    memcpy(ftyp + 16, "iso2", 4);
-    memcpy(ftyp + 20, "avc1", 4);
-    if (!WriteFileBytes(pMux, ftyp, sizeof(ftyp)))
+    if (!WriteFileType(pMux, FALSE))
     {
         Mp4Mux_Destroy(pMux);
         return NULL;
@@ -936,16 +2041,16 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
 Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
                                 unsigned       width,
                                 unsigned       height,
-                                const uint8_t* pSps,
+                                const byte_t*  pSps,
                                 uint32_t       spsSize,
-                                const uint8_t* pPps,
+                                const byte_t*  pPps,
                                 uint32_t       ppsSize,
                                 unsigned       videoTimescale,
                                 int            hasAudio,
                                 unsigned       audioTimescale,
                                 unsigned       audioSampleRate,
                                 unsigned       audioChannels,
-                                const uint8_t* pAsc,
+                                const byte_t*  pAsc,
                                 uint32_t       ascSize,
                                 double         fullDurationSeconds)
 {
@@ -956,6 +2061,7 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
     {
         return NULL;
     }
+    InitializeFragmentStorage(pMux);
     pMux->file =
         _wfsopen(pPath,
                  L"wb",
@@ -995,328 +2101,115 @@ Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Builds moof records, patches data offsets relative to the moof start and
- *  writes buffered payloads. Advances base decode times and clears fragment counts.
+ *  Preflights every retained record, derived size, signed data offset, decode-time addition and sequence increment.
+ *  Metadata uses fixed owner storage; payload buffers and native output still need lifecycle migration.
  */
 int Mp4Mux_FlushFragment(Mp4Mux* pMux)
 {
-    uint32_t video_bytes;
-    uint32_t audio_bytes;
-    size_t   video_data_offset_pos;
-    size_t   audio_data_offset_pos;
-    size_t   moof;
-    uint32_t i;
-    uint32_t moof_size;
-    uint32_t mdat_size;
-    uint8_t  mdat_header[8];
-    uint64_t video_ticks;
-    uint64_t audio_ticks;
+    bool_t has_video;
+    bool_t has_audio;
+    bool_t has_samples;
+    bool_t healthy;
+    bool_t fragmented;
+    bool_t active;
+    bool_t valid;
+    FragmentLayout_t layout;
 
-    if (pMux->failed || !pMux->fragmented || (0 == pMux->fragVideoCount && 0 == pMux->fragAudioCount))
+    LOGASSERT(NULL != pMux);
+    has_video = (0 < pMux->fragVideoCount);
+    has_audio = (0 < pMux->fragAudioCount);
+    has_samples = has_video || has_audio;
+    healthy = !pMux->failed;
+    fragmented = pMux->fragmented;
+    active = healthy && fragmented && has_samples;
+    valid = FALSE;
+    if (active)
     {
-        return 0;
-    }
-    video_bytes           = (uint32_t)pMux->fragVideoData.size;
-    audio_bytes           = (uint32_t)pMux->fragAudioData.size;
-    video_data_offset_pos = 0;
-    audio_data_offset_pos = 0;
-    pMux->fragMoof.size   = 0;
-
-    moof = BoxOpen(&pMux->fragMoof, "moof");
-    {
-        size_t mfhd;
-
-        mfhd = BoxOpen(&pMux->fragMoof, "mfhd");
-        BufferU32(&pMux->fragMoof, 0);
-        BufferU32(&pMux->fragMoof, ++pMux->sequenceNumber);
-        BoxClose(&pMux->fragMoof, mfhd);
-    }
-    if (pMux->fragVideoCount > 0)
-    {
-        size_t traf;
-        size_t trun;
-
-        traf = BoxOpen(&pMux->fragMoof, "traf");
+        InitializeFragmentLayout(&layout, pMux);
+        valid = GetFragmentLayout(&layout, pMux);
+        if (valid)
         {
-            size_t tfhd;
-            size_t tfdt;
-
-            tfhd = BoxOpen(&pMux->fragMoof, "tfhd");
-            BufferU32(&pMux->fragMoof, 0x00020000); /* default-base-is-moof */
-            BufferU32(&pMux->fragMoof, 1);          /* track ID */
-            BoxClose(&pMux->fragMoof, tfhd);
-            tfdt = BoxOpen(&pMux->fragMoof, "tfdt");
-            BufferU32(&pMux->fragMoof, 0x01000000); /* version 1 */
-            BufferU64(&pMux->fragMoof, pMux->videoBaseTime);
-            BoxClose(&pMux->fragMoof, tfdt);
+            valid = WriteFragmentLayout(pMux, &layout);
         }
-        trun = BoxOpen(&pMux->fragMoof, "trun");
-        BufferU32(&pMux->fragMoof, 0x00000701); /* data-offset, sample-duration, sample-size, sample-flags */
-        BufferU32(&pMux->fragMoof, pMux->fragVideoCount);
-        video_data_offset_pos = pMux->fragMoof.size;
-        BufferU32(&pMux->fragMoof, 0); /* data offset, patched below */
-        for (i = 0; i < pMux->fragVideoCount; ++i)
+        if (valid)
         {
-            BufferU32(&pMux->fragMoof, pMux->fragVideo[i].duration);
-            BufferU32(&pMux->fragMoof, pMux->fragVideo[i].size);
-            BufferU32(&pMux->fragMoof, pMux->fragVideo[i].keyframe ? 0x02000000u : 0x01010000u);
+            CommitFragment(pMux, &layout);
         }
-        BoxClose(&pMux->fragMoof, trun);
-        BoxClose(&pMux->fragMoof, traf);
+        pMux->failed = !valid;
     }
-    if (pMux->fragAudioCount > 0)
-    {
-        size_t traf;
-        size_t trun;
-
-        traf = BoxOpen(&pMux->fragMoof, "traf");
-        {
-            size_t tfhd;
-            size_t tfdt;
-
-            tfhd = BoxOpen(&pMux->fragMoof, "tfhd");
-            BufferU32(&pMux->fragMoof, 0x00020000);
-            BufferU32(&pMux->fragMoof, 2);
-            BoxClose(&pMux->fragMoof, tfhd);
-            tfdt = BoxOpen(&pMux->fragMoof, "tfdt");
-            BufferU32(&pMux->fragMoof, 0x01000000);
-            BufferU64(&pMux->fragMoof, pMux->audioBaseTime);
-            BoxClose(&pMux->fragMoof, tfdt);
-        }
-        trun = BoxOpen(&pMux->fragMoof, "trun");
-        BufferU32(&pMux->fragMoof, 0x00000301); /* data-offset, sample-duration, sample-size */
-        BufferU32(&pMux->fragMoof, pMux->fragAudioCount);
-        audio_data_offset_pos = pMux->fragMoof.size;
-        BufferU32(&pMux->fragMoof, 0);
-        for (i = 0; i < pMux->fragAudioCount; ++i)
-        {
-            BufferU32(&pMux->fragMoof, pMux->fragAudio[i].duration);
-            BufferU32(&pMux->fragMoof, pMux->fragAudio[i].size);
-        }
-        BoxClose(&pMux->fragMoof, trun);
-        BoxClose(&pMux->fragMoof, traf);
-    }
-    BoxClose(&pMux->fragMoof, moof);
-    moof_size = (uint32_t)pMux->fragMoof.size;
-
-    /* Sample data offsets are relative to the moof start (default-base-is-moof). */
-    if (pMux->fragVideoCount > 0)
-    {
-        uint32_t off = moof_size + 8u;
-
-        pMux->fragMoof.data[video_data_offset_pos]      = (uint8_t)(off >> 24);
-        pMux->fragMoof.data[video_data_offset_pos + 1u] = (uint8_t)(off >> 16);
-        pMux->fragMoof.data[video_data_offset_pos + 2u] = (uint8_t)(off >> 8);
-        pMux->fragMoof.data[video_data_offset_pos + 3u] = (uint8_t)off;
-    }
-    if (pMux->fragAudioCount > 0)
-    {
-        uint32_t off = moof_size + 8u + video_bytes;
-
-        pMux->fragMoof.data[audio_data_offset_pos]      = (uint8_t)(off >> 24);
-        pMux->fragMoof.data[audio_data_offset_pos + 1u] = (uint8_t)(off >> 16);
-        pMux->fragMoof.data[audio_data_offset_pos + 2u] = (uint8_t)(off >> 8);
-        pMux->fragMoof.data[audio_data_offset_pos + 3u] = (uint8_t)off;
-    }
-
-    mdat_size      = 8u + video_bytes + audio_bytes;
-    mdat_header[0] = (uint8_t)(mdat_size >> 24);
-    mdat_header[1] = (uint8_t)(mdat_size >> 16);
-    mdat_header[2] = (uint8_t)(mdat_size >> 8);
-    mdat_header[3] = (uint8_t)mdat_size;
-    memcpy(mdat_header + 4, "mdat", 4);
-    if (!WriteFileBytes(pMux, pMux->fragMoof.data, moof_size) ||
-        !WriteFileBytes(pMux, mdat_header, sizeof(mdat_header)) ||
-        !WriteFileBytes(pMux, pMux->fragVideoData.data, video_bytes) ||
-        (audio_bytes > 0 && !WriteFileBytes(pMux, pMux->fragAudioData.data, audio_bytes)))
-    {
-        return 0;
-    }
-    (void)fflush(pMux->file);
-
-    video_ticks = 0;
-    for (i = 0; i < pMux->fragVideoCount; ++i)
-    {
-        video_ticks += pMux->fragVideo[i].duration;
-    }
-    audio_ticks = 0;
-    for (i = 0; i < pMux->fragAudioCount; ++i)
-    {
-        audio_ticks += pMux->fragAudio[i].duration;
-    }
-    pMux->videoBaseTime      += video_ticks;
-    pMux->audioBaseTime      += audio_ticks;
-    pMux->fragVideoCount      = 0;
-    pMux->fragAudioCount      = 0;
-    pMux->fragVideoData.size  = 0;
-    pMux->fragAudioData.size  = 0;
-    return 1;
+    return valid;
 }
 
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Converts Annex B input to length-prefixed samples. Fragmented mode buffers
- *  the payload; ordinary mode writes it and records its offset and timing.
+ *  Routes a complete video sample through the selected output mode.
+ *  Payload failures latch before sample-count publication.
  */
-int Mp4Mux_AddVideo(Mp4Mux* pMux, const uint8_t* pData, uint32_t size, uint32_t duration, int keyframe)
+int Mp4Mux_AddVideo(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration, int keyframe)
 {
-    uint64_t   offset;
-    uint32_t   total;
-    uint32_t   i;
-    uint32_t   nal_start;
-    MuxSample* pSample;
+    bool_t           has_input;
+    bool_t           empty;
+    bool_t           valid_input;
+    bool_t           valid;
+    Utl_Mpeg4_Span_t bytes;
 
-    if (pMux->failed)
+    LOGASSERT(NULL != pMux);
+    has_input   = (NULL != pData);
+    empty       = (0 == size);
+    valid_input = has_input || empty;
+    LOGASSERT(valid_input);
+    valid = !pMux->failed;
+    if (valid)
     {
-        return 0;
-    }
-    if (pMux->fragmented)
-    {
-        MuxSample* p_frag;
-
-        if (pMux->fragVideoCount >= MAX_FRAGMENT_SAMPLES)
+        bytes.data      = pData;
+        bytes.byteCount = size;
+        if (pMux->fragmented)
         {
-            return 0; /* the driver must flush the fragment before it overflows */
-        }
-        p_frag           = &pMux->fragVideo[pMux->fragVideoCount++];
-        p_frag->offset   = pMux->fragVideoData.size;
-        p_frag->size     = AppendAvcc(&pMux->fragVideoData, pData, size);
-        p_frag->duration = duration;
-        p_frag->keyframe = keyframe;
-        return 1;
-    }
-    offset = (uint64_t)_ftelli64(pMux->file);
-    total  = 0;
-
-    /* Walk the Annex-B NAL units and re-emit each as a 4-byte length prefix + payload. */
-    i         = 0;
-    nal_start = 0;
-    for (;;)
-    {
-        int is_start;
-
-        if (3 > (size - i))
-        {
-            break;
-        }
-        is_start = (0 == pData[i] && 0 == pData[i + 1] && 1 == pData[i + 2]);
-        if (is_start)
-        {
-            /* Emit the NAL that ended here (trailing zero bytes belong to this start code). */
-            if (nal_start > 0 && i > nal_start)
-            {
-                uint32_t nal_length;
-                uint8_t  prefix[4];
-
-                nal_length = i - nal_start;
-                for (;;)
-                {
-                    if (0 == nal_length)
-                    {
-                        break;
-                    }
-                    if (0 != pData[nal_start + nal_length - 1])
-                    {
-                        break;
-                    }
-                    --nal_length;
-                }
-                prefix[0] = (uint8_t)(nal_length >> 24);
-                prefix[1] = (uint8_t)(nal_length >> 16);
-                prefix[2] = (uint8_t)(nal_length >> 8);
-                prefix[3] = (uint8_t)nal_length;
-                if (!WriteFileBytes(pMux, prefix, 4) || !WriteFileBytes(pMux, pData + nal_start, nal_length))
-                {
-                    return 0;
-                }
-                total += 4u + nal_length;
-            }
-            i         += 3;
-            nal_start  = i;
+            valid = AppendFragmentVideo(pMux, bytes, duration, keyframe);
         }
         else
         {
-            ++i;
+            valid = WriteProgressiveVideo(pMux, bytes, duration, keyframe);
         }
     }
-    if (nal_start > 0 && nal_start < size)
-    {
-        uint32_t nal_length;
-        uint8_t  prefix[4];
-
-        nal_length = size - nal_start;
-        prefix[0]  = (uint8_t)(nal_length >> 24);
-        prefix[1]  = (uint8_t)(nal_length >> 16);
-        prefix[2]  = (uint8_t)(nal_length >> 8);
-        prefix[3]  = (uint8_t)nal_length;
-        if (!WriteFileBytes(pMux, prefix, 4) || !WriteFileBytes(pMux, pData + nal_start, nal_length))
-        {
-            return 0;
-        }
-        total += 4u + nal_length;
-    }
-
-    pSample = AppendSample(&pMux->video, &pMux->videoCount, &pMux->videoCapacity);
-    if (NULL == pSample)
-    {
-        pMux->failed = 1;
-        return 0;
-    }
-    pSample->offset   = offset;
-    pSample->size     = total;
-    pSample->duration = duration;
-    pSample->keyframe = keyframe;
-    return 1;
+    return valid;
 }
 
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Appends AAC payload and timing to fragment storage or writes the sample and
- *  records its ordinary-file offset.
+ *  Routes a complete audio sample through the selected output mode.
+ *  Payload failures latch before sample-count publication.
  */
-int Mp4Mux_AddAudio(Mp4Mux* pMux, const uint8_t* pData, uint32_t size, uint32_t duration)
+int Mp4Mux_AddAudio(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration)
 {
-    uint64_t   offset;
-    MuxSample* pSample;
+    bool_t           has_input;
+    bool_t           empty;
+    bool_t           valid_input;
+    bool_t           valid;
+    Utl_Mpeg4_Span_t bytes;
 
-    if (pMux->failed || !pMux->hasAudio)
+    LOGASSERT(NULL != pMux);
+    has_input   = (NULL != pData);
+    empty       = (0 == size);
+    valid_input = has_input || empty;
+    LOGASSERT(valid_input);
+    valid = !pMux->failed && pMux->hasAudio;
+    if (valid)
     {
-        return 0;
-    }
-    if (pMux->fragmented)
-    {
-        MuxSample* p_frag;
-
-        if (pMux->fragAudioCount >= MAX_FRAGMENT_SAMPLES)
+        bytes.data      = pData;
+        bytes.byteCount = size;
+        if (pMux->fragmented)
         {
-            return 0;
+            valid = AppendFragmentAudio(pMux, bytes, duration);
         }
-        p_frag           = &pMux->fragAudio[pMux->fragAudioCount++];
-        p_frag->offset   = pMux->fragAudioData.size;
-        p_frag->size     = size;
-        p_frag->duration = duration;
-        p_frag->keyframe = 1;
-        BufferBytes(&pMux->fragAudioData, pData, size);
-        return 1;
+        else
+        {
+            valid = WriteProgressiveAudio(pMux, bytes, duration);
+        }
     }
-    offset = (uint64_t)_ftelli64(pMux->file);
-    if (!WriteFileBytes(pMux, pData, size))
-    {
-        return 0;
-    }
-    pSample = AppendSample(&pMux->audio, &pMux->audioCount, &pMux->audioCapacity);
-    if (NULL == pSample)
-    {
-        pMux->failed = 1;
-        return 0;
-    }
-    pSample->offset   = offset;
-    pSample->size     = size;
-    pSample->duration = duration;
-    pSample->keyframe = 1;
-    return 1;
+    return valid;
 }
 
 /*************************************************************************************************/
@@ -1329,13 +2222,13 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
 {
     int64_t   mdat_end;
     uint64_t  mdat_size;
-    uint8_t   patch[4];
+    byte_t    patch[4];
     MuxBuffer buffer;
     uint32_t  movie_timescale;
     uint64_t  video_seconds_scaled;
     uint64_t  audio_seconds_scaled;
     uint32_t  movie_duration;
-    size_t    moov;
+    uint32_t  moov;
     int       ok;
 
     if (pMux->fragmented)
@@ -1382,10 +2275,10 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
 
     moov = BoxOpen(&buffer, "moov");
     {
-        size_t mvhd;
+        uint32_t mvhd;
 
         mvhd = BoxOpen(&buffer, "mvhd");
-        BufferU32(&buffer, 0);
+        BufferFullBoxVersionZero(&buffer, 0);
         BufferU32(&buffer, 0);
         BufferU32(&buffer, 0);
         BufferU32(&buffer, movie_timescale);
@@ -1412,7 +2305,8 @@ int Mp4Mux_Finish(Mp4Mux* pMux)
     }
     BoxClose(&buffer, moov);
 
-    ok = (NULL != buffer.data) && WriteFileBytes(pMux, buffer.data, buffer.size);
+    pMux->failed = pMux->failed || buffer.failed;
+    ok           = !pMux->failed && (NULL != buffer.data) && WriteFileBytes(pMux, buffer.data, buffer.size);
     free(buffer.data);
     return ok && !pMux->failed;
 }
@@ -1437,6 +2331,5 @@ void Mp4Mux_Destroy(Mp4Mux* pMux)
     free(pMux->audio);
     free(pMux->fragVideoData.data);
     free(pMux->fragAudioData.data);
-    free(pMux->fragMoof.data);
     free(pMux);
 }

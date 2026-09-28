@@ -41,7 +41,7 @@
 /** \brief Borrowed, counted UTF-8 bytes with no implicit terminator. */
 typedef struct Utl_Srt_Span_s
 {
-    const char_t* data;      ///< Borrowed source, NULL for an absent span.
+    const byte_t* data;      ///< Borrowed source, NULL for an absent span.
     uint32_t      byteCount; ///< Readable extent.
 } Utl_Srt_Span_t;
 
@@ -84,7 +84,7 @@ typedef enum Utl_Srt_ReadResult_e
 /** \brief Caller-owned cursor over stable complete UTF-8 input. */
 typedef struct Utl_Srt_Reader_s
 {
-    const char_t* input;     ///< Borrowed storage, NULL only for empty input.
+    const byte_t* input;     ///< Borrowed storage, NULL only for empty input.
     uint32_t      byteCount; ///< Complete readable extent.
     uint32_t      offset;    ///< Next unconsumed byte, within byteCount.
 } Utl_Srt_Reader_t;
@@ -118,7 +118,7 @@ typedef struct Utl_Srt_Reader_s
  *
  * \retval     None   The reader is ready for queries and cue reads.
  */
-void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const char_t* input, uint32_t byteCount);
+void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -154,7 +154,7 @@ uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_t* reader);
  * \retval     TRUE    A complete timestamp was parsed.
  * \retval     FALSE   Invalid width, component, delimiter, truncation or overflow.
  */
-bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const char_t* input, uint32_t byteCount);
+bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**

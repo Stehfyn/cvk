@@ -54,7 +54,7 @@
 /** \brief Private cursor with sticky validity. */
 typedef struct Cursor_s
 {
-    const char_t* input;     ///< Stable borrowed source.
+    const byte_t* input;     ///< Stable borrowed source.
     uint32_t      byteCount; ///< Counted readable extent.
     uint32_t      offset;    ///< Next byte, never beyond byteCount.
     bool_t        valid;     ///< Sticky private validity.
@@ -123,7 +123,7 @@ static const NumberFormat_t c_fractionFormat = {SRT_FRACTION_DIGITS, SRT_FRACTIO
  *
  * \retval     None   The cursor is valid and at offset zero.
  */
-static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const char_t* input, uint32_t byteCount);
+static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -185,7 +185,7 @@ static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* form
  *
  * \retval        None   A delimiter is consumed or failure is latched.
  */
-static FORCE_INLINE void ReadDelimiter(Cursor_t* cursor, char_t expected);
+static FORCE_INLINE void ReadDelimiter(Cursor_t* cursor, byte_t expected);
 
 /*************************************************************************************************/
 /**
@@ -296,7 +296,7 @@ static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* 
  * \par Details:
  *  Public entry points own and retain the borrowed source.
  */
-static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const char_t* input, uint32_t byteCount)
+static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input, uint32_t byteCount)
 {
     bool_t has_source;
 
@@ -391,8 +391,8 @@ static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* form
             cursor->valid = valid_width && valid_value;
             if (cursor->valid)
             {
-                number->value   = value;
-                number->digits  = digits;
+                number->value  = value;
+                number->digits = digits;
                 cursor->offset += digits;
             }
         }
@@ -404,9 +404,9 @@ static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* form
  * \par Details:
  *  Only the fraction separator admits the compatibility alternative.
  */
-static FORCE_INLINE void ReadDelimiter(Cursor_t* cursor, char_t expected)
+static FORCE_INLINE void ReadDelimiter(Cursor_t* cursor, byte_t expected)
 {
-    char_t value;
+    byte_t value;
     bool_t exact;
     bool_t fraction;
     bool_t compatible;
@@ -435,7 +435,7 @@ static FORCE_INLINE bool_t ReadLine(Cursor_t* cursor, Line_t* line)
 {
     bool_t   present;
     uint32_t first;
-    char_t   value;
+    byte_t   value;
     bool_t   is_cr;
     bool_t   is_lf;
     bool_t   newline;
@@ -556,8 +556,8 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
     if (valid)
     {
         offset                         += last;
-        cue->timingExtension.data       = line->data + offset;
-        cue->timingExtension.byteCount  = line->byteCount - offset;
+        cue->timingExtension.data      = line->data + offset;
+        cue->timingExtension.byteCount = line->byteCount - offset;
     }
 
     return valid;
@@ -656,7 +656,7 @@ static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* 
  * \par Details:
  *  Only the complete leading UTF-8 signature is skipped. Other encodings fail during cue reading.
  */
-void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const char_t* input, uint32_t byteCount)
+void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount)
 {
     bool_t has_source;
     bool_t matches_first;
@@ -701,7 +701,7 @@ uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_t* reader)
  * \par Details:
  *  The hours bound precedes multiplication; the remaining fields are independently bounded before addition.
  */
-bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const char_t* input, uint32_t byteCount)
+bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
 {
     Cursor_t cursor;
     Number_t hours;

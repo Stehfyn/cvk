@@ -74,7 +74,7 @@
  */
 typedef struct Utl_Url_Text_s
 {
-    const char_t* data;      ///< Stable readable source; NULL only when byteCount is zero.
+    const byte_t* data;      ///< Stable readable source; NULL only when byteCount is zero.
     uint32_t      byteCount; ///< Exact component extent, excluding delimiters.
 } Utl_Url_Text_t;
 
@@ -262,7 +262,7 @@ bool_t Utl_Url_ReadIpv4(Utl_Url_Text_t text, uint32_t* address);
  * \retval     TRUE    A complete borrowed model is published.
  * \retval     FALSE   The caller's model is unchanged.
  */
-bool_t Utl_Url_Read(Utl_Url_t* url, const char_t* data, uint32_t byteCount);
+bool_t Utl_Url_Read(Utl_Url_t* url, const byte_t* data, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -280,7 +280,7 @@ bool_t Utl_Url_Read(Utl_Url_t* url, const char_t* data, uint32_t byteCount);
  * \retval     7..15   Complete bytes written.
  * \retval     0       Capacity is insufficient; output is unchanged.
  */
-uint32_t Utl_Url_WriteIpv4(uint32_t address, char_t* output, uint32_t capacity);
+uint32_t Utl_Url_WriteIpv4(uint32_t address, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -300,7 +300,7 @@ uint32_t Utl_Url_WriteIpv4(uint32_t address, char_t* output, uint32_t capacity);
  * \retval     TRUE    The exact URI bytes and count were published.
  * \retval     FALSE   All outputs are unchanged.
  */
-bool_t Utl_Url_Write(const Utl_Url_t* url, char_t* output, uint32_t capacity, uint32_t* byteCount);
+bool_t Utl_Url_Write(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount);
 
 /*************************************************************************************************/
 /**

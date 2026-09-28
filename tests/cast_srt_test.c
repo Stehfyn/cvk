@@ -216,15 +216,15 @@ static FORCE_INLINE void CheckFailures(void);
  */
 static FORCE_INLINE void InitializeMarker(Utl_Srt_Cue_t* cue)
 {
-    cue->identifier.data           = c_marker;
+    cue->identifier.data           = (const byte_t*)c_marker;
     cue->identifier.byteCount      = SRT_TEST_COUNT_SENTINEL;
     cue->start.milliseconds        = SRT_TEST_SENTINEL;
     cue->start.hourDigits          = SRT_TEST_WIDTH_SENTINEL;
     cue->end.milliseconds          = SRT_TEST_SENTINEL + 1;
     cue->end.hourDigits            = SRT_TEST_WIDTH_SENTINEL;
-    cue->timingExtension.data      = cue->identifier.data;
+    cue->timingExtension.data      = (const byte_t*)cue->identifier.data;
     cue->timingExtension.byteCount = SRT_TEST_COUNT_SENTINEL;
-    cue->payload.data              = cue->identifier.data;
+    cue->payload.data              = (const byte_t*)cue->identifier.data;
     cue->payload.byteCount         = SRT_TEST_COUNT_SENTINEL;
 }
 
@@ -236,7 +236,7 @@ static FORCE_INLINE void InitializeMarker(Utl_Srt_Cue_t* cue)
 static FORCE_INLINE void CheckMarker(const Utl_Srt_Cue_t* cue)
 {
     LOGASSERT(SRT_TEST_COUNT_SENTINEL == cue->identifier.byteCount);
-    LOGASSERT(c_marker == cue->identifier.data);
+    LOGASSERT((const byte_t*)c_marker == cue->identifier.data);
     LOGASSERT(SRT_TEST_SENTINEL == cue->start.milliseconds);
     LOGASSERT(SRT_TEST_WIDTH_SENTINEL == cue->start.hourDigits);
     LOGASSERT(SRT_TEST_SENTINEL + 1 == cue->end.milliseconds);
@@ -272,7 +272,7 @@ static FORCE_INLINE void CheckInvalidTimestamp(const char_t* input, uint32_t byt
     time.milliseconds = SRT_TEST_SENTINEL;
     time.hourDigits   = SRT_TEST_WIDTH_SENTINEL;
     consumed          = SRT_TEST_COUNT_SENTINEL;
-    valid             = Utl_Srt_ReadTimestamp(&time, &consumed, input, byteCount);
+    valid             = Utl_Srt_ReadTimestamp(&time, &consumed, (const byte_t*)input, byteCount);
     LOGASSERT(!valid);
     LOGASSERT(SRT_TEST_SENTINEL == time.milliseconds);
     LOGASSERT(SRT_TEST_WIDTH_SENTINEL == time.hourDigits);
@@ -296,7 +296,7 @@ static FORCE_INLINE void CheckTimestamps(void)
     for (index = 0; index < sizeof(c_times) / sizeof(TimeVector_t); ++index)
     {
         byte_count = Utl_Unicode_GetUtf8StringByteCount(c_times[index].input, SRT_TEST_STRING_BOUND);
-        valid      = Utl_Srt_ReadTimestamp(&time, &consumed, c_times[index].input, byte_count);
+        valid      = Utl_Srt_ReadTimestamp(&time, &consumed, (const byte_t*)c_times[index].input, byte_count);
         LOGASSERT(valid);
         LOGASSERT(c_times[index].milliseconds == time.milliseconds);
         LOGASSERT(c_times[index].hourDigits == time.hourDigits);
@@ -327,7 +327,7 @@ static FORCE_INLINE void CheckCues(void)
     const char_t         empty[]   = "00:00:00,000 --> 00:00:01,000";
     const char_t         blanks[]  = "\n\r\n\r";
 
-    Utl_Srt_InitializeReader(&reader, c_cues, sizeof(c_cues) - 1);
+    Utl_Srt_InitializeReader(&reader, (const byte_t*)c_cues, sizeof(c_cues) - 1);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_CUE == result);
     LOGASSERT(1234 == cue.start.milliseconds);
@@ -351,18 +351,18 @@ static FORCE_INLINE void CheckCues(void)
     LOGASSERT(UTL_SRT_READ_END == result);
     CheckMarker(&cue);
 
-    Utl_Srt_InitializeReader(&reader, cr_only, sizeof(cr_only) - 1);
+    Utl_Srt_InitializeReader(&reader, (const byte_t*)cr_only, sizeof(cr_only) - 1);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_CUE == result);
     CheckSpan(&cue.identifier, "custom id", sizeof("custom id") - 1);
     CheckSpan(&cue.payload, "A\rB", sizeof("A\rB") - 1);
 
-    Utl_Srt_InitializeReader(&reader, empty, sizeof(empty) - 1);
+    Utl_Srt_InitializeReader(&reader, (const byte_t*)empty, sizeof(empty) - 1);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_CUE == result);
     LOGASSERT(0 == cue.payload.byteCount);
 
-    Utl_Srt_InitializeReader(&reader, blanks, sizeof(blanks) - 1);
+    Utl_Srt_InitializeReader(&reader, (const byte_t*)blanks, sizeof(blanks) - 1);
     InitializeMarker(&cue);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_END == result);
@@ -395,7 +395,7 @@ static FORCE_INLINE void CheckFailures(void)
     for (index = 0; index < sizeof(c_invalidCues) / sizeof(const char_t*); ++index)
     {
         byte_count = Utl_Unicode_GetUtf8StringByteCount(c_invalidCues[index], SRT_TEST_STRING_BOUND);
-        Utl_Srt_InitializeReader(&reader, c_invalidCues[index], byte_count);
+        Utl_Srt_InitializeReader(&reader, (const byte_t*)c_invalidCues[index], byte_count);
         InitializeMarker(&cue);
         result = Utl_Srt_ReadCue(&reader, &cue);
         LOGASSERT(UTL_SRT_READ_INVALID == result);
@@ -408,20 +408,20 @@ static FORCE_INLINE void CheckFailures(void)
     }
     for (prefix = 1; prefix < sizeof(timing) - 1; ++prefix)
     {
-        Utl_Srt_InitializeReader(&reader, timing, prefix);
+        Utl_Srt_InitializeReader(&reader, (const byte_t*)timing, prefix);
         InitializeMarker(&cue);
         result = Utl_Srt_ReadCue(&reader, &cue);
         LOGASSERT(UTL_SRT_READ_INVALID == result);
         LOGASSERT(0 == reader.offset);
         CheckMarker(&cue);
     }
-    Utl_Srt_InitializeReader(&reader, nul_payload, sizeof(nul_payload) - 1);
+    Utl_Srt_InitializeReader(&reader, (const byte_t*)nul_payload, sizeof(nul_payload) - 1);
     InitializeMarker(&cue);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_INVALID == result);
     CheckMarker(&cue);
 
-    Utl_Srt_InitializeReader(&reader, late_invalid, sizeof(late_invalid) - 1);
+    Utl_Srt_InitializeReader(&reader, (const byte_t*)late_invalid, sizeof(late_invalid) - 1);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_CUE == result);
     offset = reader.offset;

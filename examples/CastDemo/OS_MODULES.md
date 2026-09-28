@@ -232,3 +232,25 @@ The fixture exercises distinct paths, a live no-delete-sharing handle, retained
 failure, successful retry and repeated closure. It passes native compilation
 and AllRules but remains blocked by required clang-tidy findings. No OS module
 is newly marked complete.
+
+`os_console` now supplies a separate startup-owned keyboard lifetime. The Win32
+backend duplicates standard console input once, saves its exact mode and applies
+nonprocessed key input. A failed standard-handle acquisition is distinguished
+from absent or redirected input. Each read uses the documented NOWAIT native
+operation with capacity one and preserves output unless a key record is complete.
+There is no readiness-check followed by a potentially blocking read. Portable
+key identities and modifiers reach CLI policy without CRT keyboard operations.
+Closure revokes reads, restores the original mode, then closes the owned handle;
+failed obligations remain retained for retry and repeated successful close does
+no native work. State has one explicit owner and no callback or global registry.
+
+The build compiles both native text modes and supplies an import archive for
+the SDK's missing ReadConsoleInputEx import. Imports resolve at process startup;
+there is no runtime symbol lookup or function-pointer conversion. The fixture
+covers intended key, modifier, repeat, ignored-event, empty, redirected, absent,
+failed-start and repeated-close behavior in isolated processes. Native compiler
+and AllRules checks pass; strict clang-tidy still fails, and fixture execution
+has not occurred. Native failure injection, provider allocation/timing evidence,
+Ctrl+Break/generated-control/close/shutdown handling and complete CLI integration
+remain open. This additional module does not complete any of the nine required
+shared OS modules or relax their acceptance requirements.

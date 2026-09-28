@@ -54,7 +54,7 @@
  *
  * \retval    text   Unmodified counted view.
  */
-static FORCE_INLINE Utl_Http_Text_t Text(const char_t* data, uint32_t byteCount);
+static FORCE_INLINE Utl_Http_Text_t Text(const byte_t* data, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -148,7 +148,7 @@ static FORCE_INLINE bool_t ReadIdentity(Utl_Http_Text_t* uuid, Utl_Http_Text_t u
  */
 static FORCE_INLINE void InitializeSearchHead(Utl_Http_Head_t*         head,
                                               Utl_Http_Field_t*        fields,
-                                              char_t*                  waitText,
+                                              byte_t*                  waitText,
                                               const Utl_Ssdp_Search_t* search);
 
 /*=================================================================================================
@@ -160,7 +160,7 @@ static FORCE_INLINE void InitializeSearchHead(Utl_Http_Head_t*         head,
  * \par Details:
  *  None
  */
-static FORCE_INLINE Utl_Http_Text_t Text(const char_t* data, uint32_t byteCount)
+static FORCE_INLINE Utl_Http_Text_t Text(const byte_t* data, uint32_t byteCount)
 {
     Utl_Http_Text_t text;
 
@@ -252,7 +252,7 @@ static FORCE_INLINE bool_t ReadMaximumAge(uint64_t* maximumAge, Utl_Http_Text_t 
     uint64_t        age;
     uint32_t        consumed;
     bool_t          at_end;
-    char_t          value;
+    byte_t          value;
     bool_t          at_separator;
     uint32_t        first;
     uint32_t        last;
@@ -312,8 +312,11 @@ static FORCE_INLINE bool_t ReadMaximumAge(uint64_t* maximumAge, Utl_Http_Text_t 
                         break;
                     }
                 }
-                name           = Text(text.data + first, name_end - first);
-                is_maximum_age = Utl_Http_IsTextEqual(name, Text(UTL_SSDP_MAX_AGE, sizeof(UTL_SSDP_MAX_AGE) - 1), TRUE);
+                name = Text(text.data + first, name_end - first);
+                is_maximum_age =
+                    Utl_Http_IsTextEqual(name,
+                                         Text((const byte_t*)UTL_SSDP_MAX_AGE, sizeof(UTL_SSDP_MAX_AGE) - 1),
+                                         TRUE);
                 if (is_maximum_age)
                 {
                     is_valid = (!found) && (equals < last);
@@ -380,7 +383,7 @@ static FORCE_INLINE bool_t ReadIdentity(Utl_Http_Text_t* uuid, Utl_Http_Text_t u
     bool_t          has_suffix;
     uint32_t        suffix;
 
-    prefix      = Text(UTL_SSDP_UUID_PREFIX, sizeof(UTL_SSDP_UUID_PREFIX) - 1);
+    prefix      = Text((const byte_t*)UTL_SSDP_UUID_PREFIX, sizeof(UTL_SSDP_UUID_PREFIX) - 1);
     valid_usn   = IsVisible(usn) && HasPrefix(usn, prefix) && (prefix.byteCount < usn.byteCount);
     uuid_target = HasPrefix(target, prefix);
     matches     = FALSE;
@@ -425,7 +428,7 @@ static FORCE_INLINE bool_t ReadIdentity(Utl_Http_Text_t* uuid, Utl_Http_Text_t u
  */
 static FORCE_INLINE void InitializeSearchHead(Utl_Http_Head_t*         head,
                                               Utl_Http_Field_t*        fields,
-                                              char_t*                  waitText,
+                                              byte_t*                  waitText,
                                               const Utl_Ssdp_Search_t* search)
 {
     uint32_t written;
@@ -433,22 +436,23 @@ static FORCE_INLINE void InitializeSearchHead(Utl_Http_Head_t*         head,
     CRT_Memory_Set(head, 0, sizeof(Utl_Http_Head_t));
     written = Utl_Decimal_WriteUint64(search->maximumWait, waitText, UTL_SSDP_WAIT_DIGITS);
     LOGASSERT(0 < written);
-    fields[0].name      = Text(UTL_HTTP_FIELD_HOST, sizeof(UTL_HTTP_FIELD_HOST) - 1);
-    fields[0].value     = Text(UTL_SSDP_MULTICAST_HOST, sizeof(UTL_SSDP_MULTICAST_HOST) - 1);
-    fields[1].name      = Text(UTL_SSDP_FIELD_MAN, sizeof(UTL_SSDP_FIELD_MAN) - 1);
-    fields[1].value     = Text(UTL_SSDP_DISCOVER, sizeof(UTL_SSDP_DISCOVER) - 1);
-    fields[2].name      = Text(UTL_SSDP_FIELD_MX, sizeof(UTL_SSDP_FIELD_MX) - 1);
-    fields[2].value     = Text(waitText, written);
-    fields[3].name      = Text(UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1);
-    fields[3].value     = search->target;
-    head->fields        = fields;
-    head->fieldCapacity = UTL_SSDP_SEARCH_FIELD_COUNT;
-    head->fieldCount    = UTL_SSDP_SEARCH_FIELD_COUNT;
-    head->kind          = UTL_HTTP_REQUEST;
-    head->major         = 1;
-    head->minor         = 1;
-    head->method        = Text(UTL_SSDP_METHOD_SEARCH, sizeof(UTL_SSDP_METHOD_SEARCH) - 1);
-    head->target        = Text(UTL_SSDP_REQUEST_TARGET, sizeof(UTL_SSDP_REQUEST_TARGET) - 1);
+    fields[0].name            = Text((const byte_t*)UTL_HTTP_FIELD_HOST, sizeof(UTL_HTTP_FIELD_HOST) - 1);
+    fields[0].value           = Text((const byte_t*)UTL_SSDP_MULTICAST_HOST, sizeof(UTL_SSDP_MULTICAST_HOST) - 1);
+    fields[1].name            = Text((const byte_t*)UTL_SSDP_FIELD_MAN, sizeof(UTL_SSDP_FIELD_MAN) - 1);
+    fields[1].value           = Text((const byte_t*)UTL_SSDP_DISCOVER, sizeof(UTL_SSDP_DISCOVER) - 1);
+    fields[2].name            = Text((const byte_t*)UTL_SSDP_FIELD_MX, sizeof(UTL_SSDP_FIELD_MX) - 1);
+    fields[2].value.data      = waitText;
+    fields[2].value.byteCount = written;
+    fields[3].name            = Text((const byte_t*)UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1);
+    fields[3].value           = search->target;
+    head->fields              = fields;
+    head->fieldCapacity       = UTL_SSDP_SEARCH_FIELD_COUNT;
+    head->fieldCount          = UTL_SSDP_SEARCH_FIELD_COUNT;
+    head->kind                = UTL_HTTP_REQUEST;
+    head->major               = 1;
+    head->minor               = 1;
+    head->method              = Text((const byte_t*)UTL_SSDP_METHOD_SEARCH, sizeof(UTL_SSDP_METHOD_SEARCH) - 1);
+    head->target              = Text((const byte_t*)UTL_SSDP_REQUEST_TARGET, sizeof(UTL_SSDP_REQUEST_TARGET) - 1);
 }
 
 /*=================================================================================================
@@ -492,17 +496,19 @@ bool_t Utl_Ssdp_IsTarget(Utl_Http_Text_t target)
     bool_t          is_device;
     bool_t          is_service;
     bool_t          nonzero;
-    char_t          value;
+    byte_t          value;
     bool_t          is_digit;
 
     is_valid = IsVisible(target);
     if (is_valid)
     {
-        is_all  = Utl_Http_IsTextEqual(target, Text(UTL_SSDP_ALL, sizeof(UTL_SSDP_ALL) - 1), FALSE);
-        is_root = Utl_Http_IsTextEqual(target, Text(UTL_SSDP_ROOT_DEVICE, sizeof(UTL_SSDP_ROOT_DEVICE) - 1), FALSE);
+        is_all  = Utl_Http_IsTextEqual(target, Text((const byte_t*)UTL_SSDP_ALL, sizeof(UTL_SSDP_ALL) - 1), FALSE);
+        is_root = Utl_Http_IsTextEqual(target,
+                                       Text((const byte_t*)UTL_SSDP_ROOT_DEVICE, sizeof(UTL_SSDP_ROOT_DEVICE) - 1),
+                                       FALSE);
         if (!(is_all || is_root))
         {
-            prefix  = Text(UTL_SSDP_UUID_PREFIX, sizeof(UTL_SSDP_UUID_PREFIX) - 1);
+            prefix  = Text((const byte_t*)UTL_SSDP_UUID_PREFIX, sizeof(UTL_SSDP_UUID_PREFIX) - 1);
             is_uuid = HasPrefix(target, prefix);
             if (is_uuid)
             {
@@ -516,7 +522,7 @@ bool_t Utl_Ssdp_IsTarget(Utl_Http_Text_t target)
             }
             else
             {
-                prefix   = Text(UTL_SSDP_URN_PREFIX, sizeof(UTL_SSDP_URN_PREFIX) - 1);
+                prefix   = Text((const byte_t*)UTL_SSDP_URN_PREFIX, sizeof(UTL_SSDP_URN_PREFIX) - 1);
                 is_valid = HasPrefix(target, prefix);
                 index    = prefix.byteCount;
                 for (part = 0; is_valid && (part < UTL_SSDP_URN_COMPONENT_COUNT); ++part)
@@ -535,13 +541,14 @@ bool_t Utl_Ssdp_IsTarget(Utl_Http_Text_t target)
                     if (is_valid && (UTL_SSDP_URN_KIND_INDEX == part))
                     {
                         component = Text(target.data + begin, index - begin);
-                        is_device = Utl_Http_IsTextEqual(component,
-                                                         Text(UTL_SSDP_DEVICE_KIND, sizeof(UTL_SSDP_DEVICE_KIND) - 1),
-                                                         FALSE);
-                        is_service =
-                            Utl_Http_IsTextEqual(component,
-                                                 Text(UTL_SSDP_SERVICE_KIND, sizeof(UTL_SSDP_SERVICE_KIND) - 1),
-                                                 FALSE);
+                        is_device = Utl_Http_IsTextEqual(
+                            component,
+                            Text((const byte_t*)UTL_SSDP_DEVICE_KIND, sizeof(UTL_SSDP_DEVICE_KIND) - 1),
+                                 FALSE);
+                        is_service = Utl_Http_IsTextEqual(
+                            component,
+                            Text((const byte_t*)UTL_SSDP_SERVICE_KIND, sizeof(UTL_SSDP_SERVICE_KIND) - 1),
+                                 FALSE);
                         is_valid = is_device || is_service;
                     }
                     ++index;
@@ -575,7 +582,7 @@ uint32_t Utl_Ssdp_GetSearchByteCount(const Utl_Ssdp_Search_t* search)
     uint32_t         byte_count;
     Utl_Http_Head_t  head;
     Utl_Http_Field_t fields[UTL_SSDP_SEARCH_FIELD_COUNT];
-    char_t           wait_text[UTL_SSDP_WAIT_DIGITS];
+    byte_t           wait_text[UTL_SSDP_WAIT_DIGITS];
 
     LOGASSERT(NULL != search);
 
@@ -637,18 +644,24 @@ bool_t Utl_Ssdp_ReadSearch(Utl_Ssdp_Search_t* search, const Utl_Http_Head_t* hea
     if (is_valid)
     {
         valid_method =
-            Utl_Http_IsTextEqual(head->method, Text(UTL_SSDP_METHOD_SEARCH, sizeof(UTL_SSDP_METHOD_SEARCH) - 1), FALSE);
-        valid_target = Utl_Http_IsTextEqual(head->target,
-                                            Text(UTL_SSDP_REQUEST_TARGET, sizeof(UTL_SSDP_REQUEST_TARGET) - 1),
-                                            FALSE);
-        is_valid     = valid_method && valid_target;
+            Utl_Http_IsTextEqual(head->method,
+                                 Text((const byte_t*)UTL_SSDP_METHOD_SEARCH, sizeof(UTL_SSDP_METHOD_SEARCH) - 1),
+                                 FALSE);
+        valid_target =
+            Utl_Http_IsTextEqual(head->target,
+                                 Text((const byte_t*)UTL_SSDP_REQUEST_TARGET, sizeof(UTL_SSDP_REQUEST_TARGET) - 1),
+                                 FALSE);
+        is_valid = valid_method && valid_target;
     }
     if (is_valid)
     {
-        has_host    = ReadUniqueField(&host, head, Text(UTL_HTTP_FIELD_HOST, sizeof(UTL_HTTP_FIELD_HOST) - 1));
-        has_man     = ReadUniqueField(&man, head, Text(UTL_SSDP_FIELD_MAN, sizeof(UTL_SSDP_FIELD_MAN) - 1));
-        has_wait    = ReadUniqueField(&wait, head, Text(UTL_SSDP_FIELD_MX, sizeof(UTL_SSDP_FIELD_MX) - 1));
-        has_target  = ReadUniqueField(&candidate.target, head, Text(UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
+        has_host =
+            ReadUniqueField(&host, head, Text((const byte_t*)UTL_HTTP_FIELD_HOST, sizeof(UTL_HTTP_FIELD_HOST) - 1));
+        has_man    = ReadUniqueField(&man, head, Text((const byte_t*)UTL_SSDP_FIELD_MAN, sizeof(UTL_SSDP_FIELD_MAN) - 1));
+        has_wait   = ReadUniqueField(&wait, head, Text((const byte_t*)UTL_SSDP_FIELD_MX, sizeof(UTL_SSDP_FIELD_MX) - 1));
+        has_target = ReadUniqueField(&candidate.target,
+                                     head,
+                                     Text((const byte_t*)UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
         has_address = has_host && has_man;
         has_search  = has_wait && has_target;
         is_valid    = has_address && has_search;
@@ -656,8 +669,11 @@ bool_t Utl_Ssdp_ReadSearch(Utl_Ssdp_Search_t* search, const Utl_Http_Head_t* hea
     if (is_valid)
     {
         valid_host =
-            Utl_Http_IsTextEqual(host, Text(UTL_SSDP_MULTICAST_HOST, sizeof(UTL_SSDP_MULTICAST_HOST) - 1), FALSE);
-        valid_man    = Utl_Http_IsTextEqual(man, Text(UTL_SSDP_DISCOVER, sizeof(UTL_SSDP_DISCOVER) - 1), FALSE);
+            Utl_Http_IsTextEqual(host,
+                                 Text((const byte_t*)UTL_SSDP_MULTICAST_HOST, sizeof(UTL_SSDP_MULTICAST_HOST) - 1),
+                                 FALSE);
+        valid_man =
+            Utl_Http_IsTextEqual(man, Text((const byte_t*)UTL_SSDP_DISCOVER, sizeof(UTL_SSDP_DISCOVER) - 1), FALSE);
         valid_target = Utl_Ssdp_IsTarget(candidate.target);
         is_valid     = valid_host && valid_man && valid_target;
     }
@@ -725,19 +741,29 @@ bool_t Utl_Ssdp_ReadResponse(Utl_Ssdp_Response_t* response, const Utl_Http_Head_
     is_valid      = valid_head && valid_version && valid_status;
     if (is_valid)
     {
-        is_valid = Utl_Http_IsTextEqual(head->reason, Text(UTL_SSDP_REASON_OK, sizeof(UTL_SSDP_REASON_OK) - 1), FALSE);
+        is_valid = Utl_Http_IsTextEqual(head->reason,
+                                        Text((const byte_t*)UTL_SSDP_REASON_OK, sizeof(UTL_SSDP_REASON_OK) - 1),
+                                        FALSE);
     }
     if (is_valid)
     {
-        has_target   = ReadUniqueField(&candidate.target, head, Text(UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
-        has_usn      = ReadUniqueField(&candidate.usn, head, Text(UTL_SSDP_FIELD_USN, sizeof(UTL_SSDP_FIELD_USN) - 1));
-        has_location = ReadUniqueField(&candidate.location,
-                                       head,
-                                       Text(UTL_SSDP_FIELD_LOCATION, sizeof(UTL_SSDP_FIELD_LOCATION) - 1));
-        has_server =
-            ReadUniqueField(&candidate.server, head, Text(UTL_SSDP_FIELD_SERVER, sizeof(UTL_SSDP_FIELD_SERVER) - 1));
-        has_cache       = ReadUniqueField(&cache, head, Text(UTL_SSDP_FIELD_CACHE, sizeof(UTL_SSDP_FIELD_CACHE) - 1));
-        has_extension   = ReadUniqueField(&extension, head, Text(UTL_SSDP_FIELD_EXT, sizeof(UTL_SSDP_FIELD_EXT) - 1));
+        has_target = ReadUniqueField(&candidate.target,
+                                     head,
+                                     Text((const byte_t*)UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
+        has_usn = ReadUniqueField(&candidate.usn,
+                                  head,
+                                  Text((const byte_t*)UTL_SSDP_FIELD_USN, sizeof(UTL_SSDP_FIELD_USN) - 1));
+        has_location =
+            ReadUniqueField(&candidate.location,
+                            head,
+                            Text((const byte_t*)UTL_SSDP_FIELD_LOCATION, sizeof(UTL_SSDP_FIELD_LOCATION) - 1));
+        has_server = ReadUniqueField(&candidate.server,
+                                     head,
+                                     Text((const byte_t*)UTL_SSDP_FIELD_SERVER, sizeof(UTL_SSDP_FIELD_SERVER) - 1));
+        has_cache =
+            ReadUniqueField(&cache, head, Text((const byte_t*)UTL_SSDP_FIELD_CACHE, sizeof(UTL_SSDP_FIELD_CACHE) - 1));
+        has_extension =
+            ReadUniqueField(&extension, head, Text((const byte_t*)UTL_SSDP_FIELD_EXT, sizeof(UTL_SSDP_FIELD_EXT) - 1));
         has_identity    = has_target && has_usn;
         has_description = has_location && has_server;
         has_lifetime    = has_cache && has_extension;
@@ -745,8 +771,9 @@ bool_t Utl_Ssdp_ReadResponse(Utl_Ssdp_Response_t* response, const Utl_Http_Head_
     }
     if (is_valid)
     {
-        valid_target      = Utl_Ssdp_IsTarget(candidate.target);
-        is_all            = Utl_Http_IsTextEqual(candidate.target, Text(UTL_SSDP_ALL, sizeof(UTL_SSDP_ALL) - 1), FALSE);
+        valid_target = Utl_Ssdp_IsTarget(candidate.target);
+        is_all =
+            Utl_Http_IsTextEqual(candidate.target, Text((const byte_t*)UTL_SSDP_ALL, sizeof(UTL_SSDP_ALL) - 1), FALSE);
         valid_description = IsVisible(candidate.location) && (0 < candidate.server.byteCount);
         valid_extension   = (0 == extension.byteCount);
         is_valid          = valid_target && (!is_all) && valid_description && valid_extension;
@@ -773,14 +800,14 @@ bool_t Utl_Ssdp_ReadResponse(Utl_Ssdp_Response_t* response, const Utl_Http_Head_
  *  The writer first validates and measures the complete head. It never appends a
  *  C terminator or partially publishes a datagram on capacity failure.
  */
-uint32_t Utl_Ssdp_WriteSearch(const Utl_Ssdp_Search_t* search, char_t* buffer, uint32_t capacity)
+uint32_t Utl_Ssdp_WriteSearch(const Utl_Ssdp_Search_t* search, byte_t* buffer, uint32_t capacity)
 {
     uint32_t         required;
     bool_t           fits;
     uint32_t         written;
     Utl_Http_Head_t  head;
     Utl_Http_Field_t fields[UTL_SSDP_SEARCH_FIELD_COUNT];
-    char_t           wait_text[UTL_SSDP_WAIT_DIGITS];
+    byte_t           wait_text[UTL_SSDP_WAIT_DIGITS];
 
     LOGASSERT(NULL != search);
     LOGASSERT(NULL != buffer);

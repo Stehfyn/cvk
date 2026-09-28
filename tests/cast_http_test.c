@@ -197,23 +197,23 @@ static void CheckHeads(void)
     Utl_Http_Result_t result;
     Utl_Http_Text_t   name;
     uint32_t          index;
-    char_t            output[128];
+    byte_t            output[128];
     uint32_t          count;
 
     head.fields        = fields;
     head.fieldCapacity = 8;
     for (prefix = 0; prefix < (sizeof(c_input) - 5); ++prefix)
     {
-        result = Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, c_input, prefix);
+        result = Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, prefix);
         Check(UTL_HTTP_INCOMPLETE == result, __LINE__);
         Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     }
-    result = Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, c_input, sizeof(c_input) - 1);
+    result = Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1);
     Check(UTL_HTTP_COMPLETE == result, __LINE__);
     Check((3 == head.fieldCount) && ((sizeof(c_input) - 5) == head.byteCount), __LINE__);
     Check((1 == head.major) && (1 == head.minor), __LINE__);
     Check((3 == head.method.byteCount) && (10 == head.target.byteCount), __LINE__);
-    name.data      = "rAnGe";
+    name.data      = (const byte_t*)"rAnGe";
     name.byteCount = 5;
     Check(1 == Utl_Http_FindField(&head, name, 0), __LINE__);
     Check(UTL_HTTP_NO_FIELD == Utl_Http_FindField(&head, name, 2), __LINE__);
@@ -238,17 +238,17 @@ static void CheckHeads(void)
     }
     Check((char_t)('a' + (count % 26)) == output[count], __LINE__);
     head.fieldCapacity = 2;
-    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, c_input, sizeof(c_input) - 1), __LINE__);
+    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
     Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     head.fieldCapacity = 8;
     for (index = 0; index < (sizeof(c_badHeads) / sizeof(c_badHeads[0])); ++index)
     {
-        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, c_badHeads[index], c_badHeadBytes[index]), __LINE__);
+        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_badHeads[index], c_badHeadBytes[index]), __LINE__);
         Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     }
     for (index = 0; index < (sizeof(c_badResponses) / sizeof(c_badResponses[0])); ++index)
     {
-        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head, UTL_HTTP_RESPONSE, c_badResponses[index], c_badResponseBytes[index]), __LINE__);
+        Check(UTL_HTTP_INVALID == Utl_Http_ReadHead(&head, UTL_HTTP_RESPONSE, (const byte_t*)c_badResponses[index], c_badResponseBytes[index]), __LINE__);
         Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
     }
     Check(UTL_HTTP_INCOMPLETE == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, NULL, 0), __LINE__);
@@ -269,15 +269,15 @@ static void CheckFraming(void)
     Utl_Http_Framing_t     framing;
     bool_t                 accepted;
     uint32_t               count;
-    char_t                 output[256];
+    byte_t                 output[256];
 
     for (index = 0; index < (sizeof(c_framing) / sizeof(c_framing[0])); ++index)
     {
         vector             = &c_framing[index];
         head.fields        = fields;
         head.fieldCapacity = 8;
-        Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&head, vector->kind, vector->text, vector->byteCount), __LINE__);
-        method.data                    = vector->method;
+        Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&head, vector->kind, (const byte_t*)vector->text, vector->byteCount), __LINE__);
+        method.data                    = (const byte_t*)vector->method;
         method.byteCount               = vector->methodBytes;
         framing.kind                   = UTL_HTTP_BODY_TUNNEL;
         framing.contentLength          = 73;
@@ -314,7 +314,7 @@ static void CheckDates(void)
 {
     uint32_t        index;
     uint32_t        byte_index;
-    char_t          output[UTL_HTTP_DATE_BYTE_COUNT + 1];
+    byte_t          output[UTL_HTTP_DATE_BYTE_COUNT + 1];
     uint32_t        capacity;
     Utl_Http_Date_t invalid;
 
@@ -386,12 +386,12 @@ static void CheckIncremental(void)
     Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 8);
     for (prefix = 0; prefix < boundary; ++prefix)
     {
-        result = Utl_Http_ReadHeadIncremental(&reader, c_input, prefix);
+        result = Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, prefix);
         Check(UTL_HTTP_INCOMPLETE == result, __LINE__);
         Check(prefix == reader.scan, __LINE__);
         Check(0 == reader.head.byteCount, __LINE__);
     }
-    Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHeadIncremental(&reader, c_input, sizeof(c_input) - 1), __LINE__);
+    Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
     Check((boundary == reader.scan) && (boundary == reader.head.byteCount), __LINE__);
     Check(3 == reader.head.fieldCount, __LINE__);
     Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHeadIncremental(&reader, NULL, 0), __LINE__);
@@ -402,18 +402,18 @@ static void CheckIncremental(void)
         result = UTL_HTTP_INCOMPLETE;
         for (prefix = 0; prefix <= c_badHeadBytes[index]; ++prefix)
         {
-            result = Utl_Http_ReadHeadIncremental(&reader, c_badHeads[index], prefix);
+            result = Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_badHeads[index], prefix);
             if (UTL_HTTP_INCOMPLETE != result)
             {
                 break;
             }
         }
         Check(UTL_HTTP_INVALID == result, __LINE__);
-        Check(UTL_HTTP_INVALID == Utl_Http_ReadHeadIncremental(&reader, c_input, sizeof(c_input) - 1), __LINE__);
+        Check(UTL_HTTP_INVALID == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
         Check((0 == reader.head.fieldCount) && (0 == reader.head.byteCount), __LINE__);
     }
     Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 2);
-    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHeadIncremental(&reader, c_input, sizeof(c_input) - 1), __LINE__);
+    Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, sizeof(c_input) - 1), __LINE__);
     Check((0 == reader.head.fieldCount) && (0 == reader.head.byteCount), __LINE__);
 }
 

@@ -131,7 +131,7 @@ uint32_t Utl_WebVtt_GetCueByteCount(const Utl_WebVtt_Cue_t* cue);
  * \retval     TRUE    A complete representable timestamp prefix was published.
  * \retval     FALSE   Invalid, incomplete or overflowing timestamp; outputs are unchanged.
  */
-bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const char_t* input, uint32_t byteCount);
+bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -149,7 +149,7 @@ bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, con
  * \retval     nonzero   Exact bytes written.
  * \retval     0         Insufficient capacity; output is unchanged.
  */
-uint32_t Utl_WebVtt_WriteTimestamp(uint64_t milliseconds, char_t* output, uint32_t capacity);
+uint32_t Utl_WebVtt_WriteTimestamp(uint64_t milliseconds, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -167,7 +167,7 @@ uint32_t Utl_WebVtt_WriteTimestamp(uint64_t milliseconds, char_t* output, uint32
  * \retval     nonzero   Exact bytes written.
  * \retval     0         Invalid timing or insufficient capacity; output is unchanged.
  */
-uint32_t Utl_WebVtt_WriteTiming(uint64_t start, uint64_t end, char_t* output, uint32_t capacity);
+uint32_t Utl_WebVtt_WriteTiming(uint64_t start, uint64_t end, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -187,6 +187,6 @@ uint32_t Utl_WebVtt_WriteTiming(uint64_t start, uint64_t end, char_t* output, ui
  * \retval     nonzero   Exact cue bytes written.
  * \retval     0         Invalid cue or insufficient capacity; output is unchanged.
  */
-uint32_t Utl_WebVtt_WriteCue(const Utl_WebVtt_Cue_t* cue, char_t* output, uint32_t capacity);
+uint32_t Utl_WebVtt_WriteCue(const Utl_WebVtt_Cue_t* cue, byte_t* output, uint32_t capacity);
 
 #endif /* UTL_WEBVTT_H */

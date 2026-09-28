@@ -127,7 +127,7 @@ static FORCE_INLINE bool_t OpenReader(const TCHAR* path, Reader_t* reader);
  * \retval        FALSE   Cursor, encoding or width is invalid.
  */
 static FORCE_INLINE bool_t
-Vint(const uint8_t* data, uint64_t limit, uint64_t* cursor, uint64_t* value, bool_t id, bool_t* unknown);
+Vint(const byte_t* data, uint64_t limit, uint64_t* cursor, uint64_t* value, bool_t id, bool_t* unknown);
 
 /*************************************************************************************************/
 /**
@@ -389,7 +389,7 @@ static FORCE_INLINE bool_t OpenReader(const TCHAR* path, Reader_t* reader)
         }
         if (is_valid)
         {
-            reader->data = (const uint8_t*)MapViewOfFile(reader->mapping, FILE_MAP_READ, 0, 0, 0);
+            reader->data = (const byte_t*)MapViewOfFile(reader->mapping, FILE_MAP_READ, 0, 0, 0);
             is_valid     = (NULL != reader->data);
         }
     }
@@ -404,7 +404,7 @@ static FORCE_INLINE bool_t OpenReader(const TCHAR* path, Reader_t* reader)
  *  marker for IDs and reporting the unknown-size pattern for sizes.
  */
 static FORCE_INLINE bool_t
-Vint(const uint8_t* data, uint64_t limit, uint64_t* cursor, uint64_t* value, bool_t id, bool_t* unknown)
+Vint(const byte_t* data, uint64_t limit, uint64_t* cursor, uint64_t* value, bool_t id, bool_t* unknown)
 {
     bool_t              cursor_in_bounds;
     bool_t              is_valid;

@@ -7,6 +7,7 @@
 #ifndef CAST_MP4_MUX_H
 #define CAST_MP4_MUX_H
 
+#include "os/os_types.h"
 #include <stdint.h>
 #include <wchar.h>
 
@@ -18,16 +19,16 @@ typedef struct Mp4Mux Mp4Mux;
 Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
                       unsigned       width,
                       unsigned       height,
-                      const uint8_t* pSps,
+                      const byte_t* pSps,
                       uint32_t       spsSize,
-                      const uint8_t* pPps,
+                      const byte_t* pPps,
                       uint32_t       ppsSize,
                       unsigned       videoTimescale,
                       int            hasAudio,
                       unsigned       audioTimescale,
                       unsigned       audioSampleRate,
                       unsigned       audioChannels,
-                      const uint8_t* pAsc,
+                      const byte_t* pAsc,
                       uint32_t       ascSize);
 
 /* Opens pPath as a fragmented MP4: an init segment (moov with mvex) is written now, and moof+mdat
@@ -37,16 +38,16 @@ Mp4Mux* Mp4Mux_Create(const wchar_t* pPath,
 Mp4Mux* Mp4Mux_CreateFragmented(const wchar_t* pPath,
                                 unsigned       width,
                                 unsigned       height,
-                                const uint8_t* pSps,
+                                const byte_t* pSps,
                                 uint32_t       spsSize,
-                                const uint8_t* pPps,
+                                const byte_t* pPps,
                                 uint32_t       ppsSize,
                                 unsigned       videoTimescale,
                                 int            hasAudio,
                                 unsigned       audioTimescale,
                                 unsigned       audioSampleRate,
                                 unsigned       audioChannels,
-                                const uint8_t* pAsc,
+                                const byte_t* pAsc,
                                 uint32_t       ascSize,
                                 double         fullDurationSeconds);
 
@@ -56,10 +57,10 @@ int Mp4Mux_FlushFragment(Mp4Mux* pMux);
 
 /* Appends one coded video frame (Annex-B) with its duration in the video timescale. Returns 1 on
 ** success. */
-int Mp4Mux_AddVideo(Mp4Mux* pMux, const uint8_t* pData, uint32_t size, uint32_t duration, int keyframe);
+int Mp4Mux_AddVideo(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration, int keyframe);
 
 /* Appends one AAC access unit with its duration in the audio timescale. Returns 1 on success. */
-int Mp4Mux_AddAudio(Mp4Mux* pMux, const uint8_t* pData, uint32_t size, uint32_t duration);
+int Mp4Mux_AddAudio(Mp4Mux* pMux, const byte_t* pData, uint32_t size, uint32_t duration);
 
 /* Writes the moov and closes the file. Returns 1 on success. */
 int Mp4Mux_Finish(Mp4Mux* pMux);

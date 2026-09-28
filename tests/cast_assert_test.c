@@ -23,7 +23,7 @@
 #include "cast_commands.h"
 #include "cast_events.h"
 #include "os/os_thread.h"
-#include "cast_message.h"
+#include "utl/utl_json.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -44,8 +44,8 @@
 #define ASSERT_CASE_NULL_COMMANDS       ('c')
 #define ASSERT_CASE_NULL_WORKER         ('w')
 #define ASSERT_CASE_NULL_CALLBACK       ('j')
-#define ASSERT_CASE_NULL_MESSAGE        ('v')
-#define ASSERT_CASE_NULL_STRING         ('x')
+#define ASSERT_CASE_NULL_JSON_READER        ('v')
+#define ASSERT_CASE_NULL_JSON_VALUES         ('x')
 #define ASSERT_CASE_SUCCESS             ('t')
 #define ASSERT_CASE_NULL_UNIT_COUNT     ('n')
 #define ASSERT_CASE_NULL_UNIT_OUTPUT    ('q')
@@ -187,7 +187,8 @@ uint32_t OS_Application_Main(void)
     OS_Thread_t            worker;
     Utl_Http_HeadReader_t  reader;
     Utl_Http_Date_t        date;
-    CastMessage_t          message;
+    Utl_Json_Reader_t json_reader;
+    Utl_Json_Value_t json_values[1];
 
     OS_Process_SetInteractive(FALSE);
     unit_count     = 0;
@@ -401,8 +402,8 @@ uint32_t OS_Application_Main(void)
         break;
     case ASSERT_CASE_MOVED_INPUT:
         Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 2);
-        (void)Utl_Http_ReadHeadIncremental(&reader, c_input, 4);
-        (void)Utl_Http_ReadHeadIncremental(&reader, c_other, sizeof(c_other) - 1);
+        (void)Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, 4);
+        (void)Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_other, sizeof(c_other) - 1);
         break;
     case ASSERT_CASE_NULL_UNIT_COUNT:
         (void)Utl_Arguments_Read(NULL, argument, 1, &arguments, 0);
@@ -418,14 +419,14 @@ uint32_t OS_Application_Main(void)
         break;
     case ASSERT_CASE_SHRINKING_PREFIX:
         Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 2);
-        (void)Utl_Http_ReadHeadIncremental(&reader, c_input, 4);
-        (void)Utl_Http_ReadHeadIncremental(&reader, c_input, 3);
+        (void)Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, 4);
+        (void)Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, 3);
         break;
     case ASSERT_CASE_NULL_UNIT_OUTPUT:
         (void)Utl_Arguments_Read(&unit_count, NULL, 1, &arguments, 0);
         break;
     case ASSERT_CASE_NULL_HEAD:
-        (void)Utl_Http_ReadHead(NULL, UTL_HTTP_REQUEST, c_input, sizeof(c_input) - 1);
+        (void)Utl_Http_ReadHead(NULL, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1);
         break;
     case ASSERT_CASE_NULL_FIELDS:
         Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, NULL, 1);
@@ -434,7 +435,7 @@ uint32_t OS_Application_Main(void)
         Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, NULL, 0);
         CastCommands_Reset(&commands);
         CastEvents_Initialize(&s_events);
-        CastMessage_Initialize(&message, "", "", "", "");
+        Utl_Json_InitializeReader(&json_reader, json_values, 1);
         LOGASSERT(UTL_HTTP_INCOMPLETE == reader.result);
         LOGASSERT(0 == OS_Queue_GetEntryCount(&commands.queue));
         LOGASSERT(0 == OS_Atomic_Load32(&s_events.terminal));
@@ -442,14 +443,14 @@ uint32_t OS_Application_Main(void)
     case ASSERT_CASE_NULL_UNICODE:
         (void)Utl_Unicode_GetUtf16StringUnitCount(NULL, 0);
         break;
-    case ASSERT_CASE_NULL_MESSAGE:
-        CastMessage_Initialize(NULL, "", "", "", "");
+    case ASSERT_CASE_NULL_JSON_READER:
+        Utl_Json_InitializeReader(NULL, json_values, 1);
         break;
     case ASSERT_CASE_NULL_WORKER:
         (void)OS_Thread_Initialize(NULL, EmptyJob, NULL);
         break;
-    case ASSERT_CASE_NULL_STRING:
-        CastMessage_Initialize(&message, NULL, "", "", "");
+    case ASSERT_CASE_NULL_JSON_VALUES:
+        Utl_Json_InitializeReader(&json_reader, NULL, 1);
         break;
     case ASSERT_CASE_NULL_OS_OUTPUT:
         (void)OS_Process_ReadArgument(&unit_count, NULL, 1, 1);

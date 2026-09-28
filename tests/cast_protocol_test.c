@@ -8,9 +8,9 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include "cast_message.h"
 #include "utl/utl_unicode.h"
 #include "utl/utl_protobuf.h"
+#include "utl/utl_castv2.h"
 #include "utl/utl_decimal.h"
 #include "utl/utl_http.h"
 
@@ -359,7 +359,7 @@ static void CheckCastFrames(void)
     Utl_CastV2_Message_t    message;
     uint32_t                count;
     byte_t                  buffer[64];
-    CastMessage_t           legacy;
+    byte_t                  payload[4];
     uint32_t                prefix;
     Utl_CastV2_FrameState_t state;
     uint32_t                index;
@@ -371,13 +371,18 @@ static void CheckCastFrames(void)
     count = Utl_CastV2_WriteFrame(&message, buffer, sizeof(buffer));
     Check(sizeof(c_frame) == count, __LINE__);
     Check(Equal(buffer, c_frame, count), __LINE__);
-    CastMessage_Initialize(&legacy, "s", "d", "n", "{}");
-    count = CastMessage_Encode(&legacy, buffer, sizeof(buffer));
+    payload[0] = c_frame[sizeof(c_frame) - 2];
+    payload[1] = c_frame[sizeof(c_frame) - 1];
+    payload[2] = 0xFF;
+    payload[3] = 0;
+    message.payload.data = payload;
+    message.payload.byteCount = 2;
+    count = Utl_CastV2_WriteFrame(&message, buffer, sizeof(buffer));
     Check(sizeof(c_frame) == count, __LINE__);
     Check(Equal(buffer, c_frame, count), __LINE__);
-    Check(CastMessage_Decode(&buffer[4], count - 4, &legacy), __LINE__);
-    Check(CastMessage_IsNamespace(&legacy, "n"), __LINE__);
-    Check(!CastMessage_IsNamespace(&legacy, "longer"), __LINE__);
+    Check(Utl_CastV2_ReadMessage(&decoded, &buffer[4], count - 4), __LINE__);
+    Check(1 == decoded.nameSpace.byteCount, __LINE__);
+    Check(Equal(decoded.nameSpace.data, (const byte_t*)"n", 1), __LINE__);
     for (prefix = 0; prefix < sizeof(c_frame); ++prefix)
     {
         count = UINT32_MAX;
@@ -441,7 +446,6 @@ static void CheckCastSchema(void)
     byte_t               body[128];
     uint32_t             cursor;
     Utl_Protobuf_Field_t field;
-    CastMessage_t        legacy;
 
     Check(Utl_CastV2_ReadMessage(&message, &c_frame[4], 17), __LINE__);
     for (index = 0; index < 17; ++index)
@@ -512,8 +516,6 @@ static void CheckCastSchema(void)
     body[16] = 0;
     Check(Utl_CastV2_ReadMessage(&message, body, 17), __LINE__);
     Check(UTL_CASTV2_BINARY == message.payloadType, __LINE__);
-    Check(CastMessage_Decode(body, 17, &legacy), __LINE__);
-    Check(legacy.binary, __LINE__);
     count = Utl_CastV2_WriteFrame(&message, s_frame, sizeof(s_frame));
     Check((21 == count) && (0xFF == s_frame[19]), __LINE__);
     body[17] = 0x32;
@@ -531,9 +533,9 @@ static void CheckCastSchema(void)
     Check(!Utl_CastV2_ReadMessage(&message, body, 19), __LINE__);
     body[17] = 0;
     Check(!Utl_CastV2_ReadMessage(&message, body, 18), __LINE__);
-    Check(legacy.binary && (2 == legacy.payloadLength), __LINE__);
-    Check(!CastMessage_Decode(body, 18, &legacy), __LINE__);
-    Check(legacy.binary && (2 == legacy.payloadLength), __LINE__);
+    Check((UTL_CASTV2_BINARY == message.payloadType) && (2 == message.payload.byteCount), __LINE__);
+    Check(!Utl_CastV2_ReadMessage(&message, body, 18), __LINE__);
+    Check((UTL_CASTV2_BINARY == message.payloadType) && (2 == message.payload.byteCount), __LINE__);
 }
 
 /*************************************************************************************************/
@@ -546,22 +548,22 @@ static void CheckDecimal(void)
     uint64_t value;
     uint32_t consumed;
     uint32_t index;
-    char_t   output[24];
+    byte_t   output[24];
     uint32_t capacity;
 
     value    = 7;
     consumed = 7;
-    Check(!Utl_Decimal_ReadUint64(&value, &consumed, c_decimalOverflow, sizeof(c_decimalOverflow) - 1), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalOverflow, sizeof(c_decimalOverflow) - 1), __LINE__);
     Check((7 == value) && (7 == consumed), __LINE__);
-    Check(!Utl_Decimal_ReadUint64(&value, &consumed, "-1", 2), __LINE__);
-    Check(!Utl_Decimal_ReadUint64(&value, &consumed, "+1", 2), __LINE__);
-    Check(!Utl_Decimal_ReadUint64(&value, &consumed, " 1", 2), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"-1", 2), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"+1", 2), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)" 1", 2), __LINE__);
     Check(!Utl_Decimal_ReadUint64(&value, &consumed, NULL, 1), __LINE__);
-    Check(!Utl_Decimal_ReadUint64(&value, &consumed, "1", 0), __LINE__);
-    Check(!Utl_Decimal_ReadUint64(NULL, &consumed, "1", 1), __LINE__);
-    Check(!Utl_Decimal_ReadUint64(&value, NULL, "1", 1), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"1", 0), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(NULL, &consumed, (const byte_t*)"1", 1), __LINE__);
+    Check(!Utl_Decimal_ReadUint64(&value, NULL, (const byte_t*)"1", 1), __LINE__);
     Check((7 == value) && (7 == consumed), __LINE__);
-    Check(Utl_Decimal_ReadUint64(&value, &consumed, c_decimalMax, sizeof(c_decimalMax) - 1), __LINE__);
+    Check(Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalMax, sizeof(c_decimalMax) - 1), __LINE__);
     Check((UINT64_MAX == value) && (20 == consumed), __LINE__);
     Check(20 == Utl_Decimal_GetUint64ByteCount(value), __LINE__);
     for (index = 0; index < sizeof(output); ++index)
@@ -579,9 +581,9 @@ static void CheckDecimal(void)
     Check(20 == Utl_Decimal_WriteUint64(value, output, 20), __LINE__);
     Check(Equal((const byte_t*)c_decimalMax, (const byte_t*)output, 20), __LINE__);
     Check('u' == output[20], __LINE__);
-    Check(Utl_Decimal_ReadUint64(&value, &consumed, c_decimalPrefix, sizeof(c_decimalPrefix) - 1), __LINE__);
+    Check(Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)c_decimalPrefix, sizeof(c_decimalPrefix) - 1), __LINE__);
     Check((42 == value) && (32 == consumed), __LINE__);
-    Check(Utl_Decimal_ReadUint64(&value, &consumed, "0rest", 5), __LINE__);
+    Check(Utl_Decimal_ReadUint64(&value, &consumed, (const byte_t*)"0rest", 5), __LINE__);
     Check((0 == value) && (1 == consumed), __LINE__);
     Check(1 == Utl_Decimal_GetUint64ByteCount(0), __LINE__);
     Check(1 == Utl_Decimal_WriteUint64(0, output, 1), __LINE__);
@@ -601,14 +603,14 @@ static void CheckHttpRanges(void)
     uint32_t                 capacity;
     Utl_Http_RangeInterval_t interval;
     uint32_t                 index;
-    char_t                   output[64];
-    char_t                   empty_members[48];
+    byte_t                   output[64];
+    byte_t                   empty_members[48];
     Utl_Http_ContentRange_t  content;
 
     request.ranges   = slots;
     request.capacity = 3;
     request.count    = 0;
-    Check(Utl_Http_ReadRange(&request, c_rangeInput, sizeof(c_rangeInput) - 1), __LINE__);
+    Check(Utl_Http_ReadRange(&request, (const byte_t*)c_rangeInput, sizeof(c_rangeInput) - 1), __LINE__);
     Check(3 == request.count, __LINE__);
     Check((UTL_HTTP_RANGE_CLOSED == slots[0].kind) && (0 == slots[0].first) && (9 == slots[0].last), __LINE__);
     Check((UTL_HTTP_RANGE_OPEN == slots[1].kind) && (20 == slots[1].first), __LINE__);
@@ -641,16 +643,16 @@ static void CheckHttpRanges(void)
     Check((sizeof(c_rangeCanonical) - 1) == Utl_Http_WriteRange(&request, output, sizeof(c_rangeCanonical) - 1), __LINE__);
     Check(Equal((const byte_t*)c_rangeCanonical, (const byte_t*)output, sizeof(c_rangeCanonical) - 1), __LINE__);
     request.capacity = 2;
-    Check(!Utl_Http_ReadRange(&request, c_rangeInput, sizeof(c_rangeInput) - 1), __LINE__);
+    Check(!Utl_Http_ReadRange(&request, (const byte_t*)c_rangeInput, sizeof(c_rangeInput) - 1), __LINE__);
     Check(0 == request.count, __LINE__);
     request.capacity = 3;
     for (index = 0; index < (sizeof(c_badRanges) / sizeof(c_badRanges[0])); ++index)
     {
         request.count = 3;
-        Check(!Utl_Http_ReadRange(&request, c_badRanges[index], c_badRangeBytes[index]), __LINE__);
+        Check(!Utl_Http_ReadRange(&request, (const byte_t*)c_badRanges[index], c_badRangeBytes[index]), __LINE__);
         Check(0 == request.count, __LINE__);
     }
-    Check(Utl_Http_ReadRange(&request, "bytes=-0", 8), __LINE__);
+    Check(Utl_Http_ReadRange(&request, (const byte_t*)"bytes=-0", 8), __LINE__);
     Check(!Utl_Http_ResolveRange(&interval, &slots[0], UINT64_MAX), __LINE__);
     Check(!Utl_Http_ResolveRange(&interval, &slots[0], 0), __LINE__);
     slots[0].suffixLength = UINT64_MAX;
@@ -678,7 +680,7 @@ static void CheckHttpRanges(void)
     empty_members[39] = '0';
     empty_members[40] = '-';
     Check(!Utl_Http_ReadRange(&request, empty_members, 41), __LINE__);
-    Check(Utl_Http_ReadContentRange(&content, c_contentInput, sizeof(c_contentInput) - 1), __LINE__);
+    Check(Utl_Http_ReadContentRange(&content, (const byte_t*)c_contentInput, sizeof(c_contentInput) - 1), __LINE__);
     Check(content.hasRange && content.hasCompleteLength, __LINE__);
     Check((0 == content.first) && (9 == content.last) && (10 == content.completeLength), __LINE__);
     Check((sizeof(c_contentCanonical) - 1) == Utl_Http_GetContentRangeByteCount(&content), __LINE__);
@@ -698,14 +700,14 @@ static void CheckHttpRanges(void)
     Check(Equal((const byte_t*)c_contentCanonical, (const byte_t*)output, sizeof(c_contentCanonical) - 1), __LINE__);
     for (index = 0; index < (sizeof(c_badContents) / sizeof(c_badContents[0])); ++index)
     {
-        Check(!Utl_Http_ReadContentRange(&content, c_badContents[index], c_badContentBytes[index]), __LINE__);
+        Check(!Utl_Http_ReadContentRange(&content, (const byte_t*)c_badContents[index], c_badContentBytes[index]), __LINE__);
         Check(content.hasRange && content.hasCompleteLength && (9 == content.last) && (10 == content.completeLength), __LINE__);
     }
-    Check(Utl_Http_ReadContentRange(&content, c_unknownLength, sizeof(c_unknownLength) - 1), __LINE__);
+    Check(Utl_Http_ReadContentRange(&content, (const byte_t*)c_unknownLength, sizeof(c_unknownLength) - 1), __LINE__);
     Check(content.hasRange && !content.hasCompleteLength && (1 == content.first) && (9 == content.last), __LINE__);
     Check((sizeof(c_unknownLength) - 1) == Utl_Http_WriteContentRange(&content, output, sizeof(output)), __LINE__);
     Check(Equal((const byte_t*)c_unknownLength, (const byte_t*)output, sizeof(c_unknownLength) - 1), __LINE__);
-    Check(Utl_Http_ReadContentRange(&content, c_unsatisfied, sizeof(c_unsatisfied) - 1), __LINE__);
+    Check(Utl_Http_ReadContentRange(&content, (const byte_t*)c_unsatisfied, sizeof(c_unsatisfied) - 1), __LINE__);
     Check(!content.hasRange && content.hasCompleteLength && (0 == content.completeLength), __LINE__);
     Check((sizeof(c_unsatisfied) - 1) == Utl_Http_WriteContentRange(&content, output, sizeof(output)), __LINE__);
     Check(Equal((const byte_t*)c_unsatisfied, (const byte_t*)output, sizeof(c_unsatisfied) - 1), __LINE__);

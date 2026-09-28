@@ -66,7 +66,7 @@ typedef struct CacheCase_s
 /** Caller-owned fixed test workspace. */
 static Utl_Http_Head_t  s_head;
 static Utl_Http_Field_t s_fields[SSDP_TEST_FIELDS];
-static char_t           s_output[SSDP_TEST_OUTPUT_BYTES];
+static byte_t           s_output[SSDP_TEST_OUTPUT_BYTES];
 
 /** Independent expected protocol fields and datagrams. */
 static const char_t c_target[]   = "urn:dial-multiscreen-org:service:dial:1";
@@ -181,7 +181,7 @@ static void CheckSearch(void)
     Utl_Ssdp_Search_t before;
     Utl_Http_Result_t result;
 
-    target.data      = c_target;
+    target.data      = (const byte_t*)c_target;
     target.byteCount = sizeof(c_target) - 1;
     Utl_Ssdp_InitializeSearch(&search, target, 2);
     expected = sizeof(c_search) - 1;
@@ -201,7 +201,7 @@ static void CheckSearch(void)
     LOGASSERT(SSDP_TEST_SENTINEL == (byte_t)s_output[written]);
     s_head.fields        = s_fields;
     s_head.fieldCapacity = SSDP_TEST_FIELDS;
-    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&s_head, UTL_HTTP_REQUEST, s_output, written));
+    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&s_head, UTL_HTTP_REQUEST, (const byte_t*)s_output, written));
     LOGASSERT(Utl_Ssdp_ReadSearch(&decoded, &s_head));
     LOGASSERT(2 == decoded.maximumWait);
     LOGASSERT(Utl_Http_IsTextEqual(target, decoded.target, FALSE));
@@ -209,21 +209,21 @@ static void CheckSearch(void)
     before = decoded;
     for (index = 0; index < expected; ++index)
     {
-        result = Utl_Http_ReadHead(&s_head, UTL_HTTP_REQUEST, c_search, index);
+        result = Utl_Http_ReadHead(&s_head, UTL_HTTP_REQUEST, (const byte_t*)c_search, index);
         LOGASSERT(UTL_HTTP_INCOMPLETE == result);
         LOGASSERT(!Utl_Ssdp_ReadSearch(&decoded, &s_head));
         LOGASSERT(0 == CRT_Memory_Compare(&before, &decoded, sizeof(Utl_Ssdp_Search_t)));
     }
     for (index = 0; index < (sizeof(c_targets) / sizeof(TargetCase_t)); ++index)
     {
-        target.data      = c_targets[index].text;
+        target.data      = (const byte_t*)c_targets[index].text;
         target.byteCount = c_targets[index].byteCount;
         LOGASSERT(c_targets[index].valid == Utl_Ssdp_IsTarget(target));
     }
     search.maximumWait = UINT32_MAX;
     written            = Utl_Ssdp_WriteSearch(&search, s_output, sizeof(s_output));
     LOGASSERT(0 < written);
-    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&s_head, UTL_HTTP_REQUEST, s_output, written));
+    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&s_head, UTL_HTTP_REQUEST, (const byte_t*)s_output, written));
     LOGASSERT(Utl_Ssdp_ReadSearch(&decoded, &s_head));
     LOGASSERT(UINT32_MAX == decoded.maximumWait);
     search.maximumWait = 0;
@@ -240,7 +240,7 @@ static void ReadFixture(void)
 {
     s_head.fields        = s_fields;
     s_head.fieldCapacity = SSDP_TEST_FIELDS;
-    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&s_head, UTL_HTTP_RESPONSE, c_response, sizeof(c_response) - 1));
+    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&s_head, UTL_HTTP_RESPONSE, (const byte_t*)c_response, sizeof(c_response) - 1));
 }
 
 /*************************************************************************************************/
@@ -260,7 +260,7 @@ static void CheckResponses(void)
     ReadFixture();
     LOGASSERT(Utl_Ssdp_ReadResponse(&response, &s_head));
     LOGASSERT(1800 == response.maximumAge);
-    target.data      = c_target;
+    target.data      = (const byte_t*)c_target;
     target.byteCount = sizeof(c_target) - 1;
     LOGASSERT(Utl_Http_IsTextEqual(target, response.target, FALSE));
     LOGASSERT((sizeof(c_uuid) - 1) == response.uuid.byteCount);
@@ -269,7 +269,7 @@ static void CheckResponses(void)
     for (index = 0; index < (sizeof(c_cache) / sizeof(CacheCase_t)); ++index)
     {
         ReadFixture();
-        s_fields[SSDP_TEST_CACHE_SLOT].value.data      = c_cache[index].text;
+        s_fields[SSDP_TEST_CACHE_SLOT].value.data      = (const byte_t*)c_cache[index].text;
         s_fields[SSDP_TEST_CACHE_SLOT].value.byteCount = c_cache[index].byteCount;
         accepted                                       = Utl_Ssdp_ReadResponse(&response, &s_head);
         LOGASSERT(c_cache[index].valid == accepted);
@@ -286,7 +286,7 @@ static void CheckResponses(void)
     for (index = 0; index < SSDP_TEST_REQUIRED_FIELDS; ++index)
     {
         ReadFixture();
-        s_fields[index].name.data      = c_unknown;
+        s_fields[index].name.data      = (const byte_t*)c_unknown;
         s_fields[index].name.byteCount = sizeof(c_unknown) - 1;
         LOGASSERT(!Utl_Ssdp_ReadResponse(&response, &s_head));
         LOGASSERT(0 == CRT_Memory_Compare(&before, &response, sizeof(Utl_Ssdp_Response_t)));
@@ -297,15 +297,15 @@ static void CheckResponses(void)
         LOGASSERT(0 == CRT_Memory_Compare(&before, &response, sizeof(Utl_Ssdp_Response_t)));
     }
     ReadFixture();
-    s_fields[SSDP_TEST_ST_SLOT].value.data      = UTL_SSDP_ALL;
+    s_fields[SSDP_TEST_ST_SLOT].value.data      = (const byte_t*)UTL_SSDP_ALL;
     s_fields[SSDP_TEST_ST_SLOT].value.byteCount = sizeof(UTL_SSDP_ALL) - 1;
     LOGASSERT(!Utl_Ssdp_ReadResponse(&response, &s_head));
     ReadFixture();
-    s_fields[SSDP_TEST_ST_SLOT].value.data      = UTL_SSDP_ROOT_DEVICE;
+    s_fields[SSDP_TEST_ST_SLOT].value.data      = (const byte_t*)UTL_SSDP_ROOT_DEVICE;
     s_fields[SSDP_TEST_ST_SLOT].value.byteCount = sizeof(UTL_SSDP_ROOT_DEVICE) - 1;
     LOGASSERT(!Utl_Ssdp_ReadResponse(&response, &s_head));
     ReadFixture();
-    s_fields[SSDP_TEST_ST_SLOT].value.data      = c_uuid;
+    s_fields[SSDP_TEST_ST_SLOT].value.data      = (const byte_t*)c_uuid;
     s_fields[SSDP_TEST_ST_SLOT].value.byteCount = sizeof(c_uuid) - 1;
     s_fields[SSDP_TEST_USN_SLOT].value          = s_fields[SSDP_TEST_ST_SLOT].value;
     LOGASSERT(Utl_Ssdp_ReadResponse(&response, &s_head));
@@ -318,12 +318,12 @@ static void CheckResponses(void)
     s_head.minor = 0;
     LOGASSERT(!Utl_Ssdp_ReadResponse(&response, &s_head));
     ReadFixture();
-    s_fields[SSDP_TEST_EXT_SLOT].value.data      = c_unknown;
+    s_fields[SSDP_TEST_EXT_SLOT].value.data      = (const byte_t*)c_unknown;
     s_fields[SSDP_TEST_EXT_SLOT].value.byteCount = sizeof(c_unknown) - 1;
     LOGASSERT(!Utl_Ssdp_ReadResponse(&response, &s_head));
     for (index = 0; index < (sizeof(c_response) - 1); ++index)
     {
-        result = Utl_Http_ReadHead(&s_head, UTL_HTTP_RESPONSE, c_response, index);
+        result = Utl_Http_ReadHead(&s_head, UTL_HTTP_RESPONSE, (const byte_t*)c_response, index);
         LOGASSERT(UTL_HTTP_INCOMPLETE == result);
         LOGASSERT(!Utl_Ssdp_ReadResponse(&response, &s_head));
         LOGASSERT(0 == CRT_Memory_Compare(&before, &response, sizeof(Utl_Ssdp_Response_t)));

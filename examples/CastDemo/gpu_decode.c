@@ -514,7 +514,7 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
  *  Derives the first plane's offset and stride from the selected output format
  *  and returns a borrowed pointer into mapped readback storage.
  */
-const uint8_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pStride)
+const byte_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pStride)
 {
     VkDeviceSize plane_offsets[MAX_IMAGE_PLANES];
     uint32_t     plane_strides[MAX_IMAGE_PLANES];
@@ -534,7 +534,7 @@ const uint8_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, u
     *pWidth  = pDecoder->displayWidth;
     *pHeight = pDecoder->displayHeight;
     *pStride = plane_strides[0]; /* row bytes of the luma plane as the format defines it */
-    return (const uint8_t*)pDecoder->readbackMapped + plane_offsets[0];
+    return (const byte_t*)pDecoder->readbackMapped + plane_offsets[0];
 }
 
 /*************************************************************************************************/
@@ -543,11 +543,11 @@ const uint8_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, u
  *  Derives luma/chroma plane offsets and strides from the output format and
  *  returns borrowed pointers into mapped readback storage.
  */
-const uint8_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
+const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
                                  unsigned*         pWidth,
                                  unsigned*         pHeight,
                                  unsigned*         pLumaStride,
-                                 const uint8_t**   ppChroma,
+                                 const byte_t**   ppChroma,
                                  unsigned*         pChromaStride)
 {
     VkDeviceSize plane_offsets[MAX_IMAGE_PLANES];
@@ -569,8 +569,8 @@ const uint8_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
     *pHeight       = pDecoder->displayHeight;
     *pLumaStride   = plane_strides[0];
     *pChromaStride = plane_strides[1];
-    *ppChroma      = (const uint8_t*)pDecoder->readbackMapped + plane_offsets[1];
-    return (const uint8_t*)pDecoder->readbackMapped + plane_offsets[0];
+    *ppChroma      = (const byte_t*)pDecoder->readbackMapped + plane_offsets[1];
+    return (const byte_t*)pDecoder->readbackMapped + plane_offsets[0];
 }
 
 /*************************************************************************************************/
@@ -581,16 +581,16 @@ const uint8_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
  */
 void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame)
 {
-    const uint8_t* base;
-    uint32_t       plane_count;
-    VkDeviceSize   plane_offsets[MAX_IMAGE_PLANES];
-    uint32_t       plane_strides[MAX_IMAGE_PLANES];
-    VkExtent3D     plane_extents[MAX_IMAGE_PLANES];
-    VkDeviceSize   size;
+    const byte_t* base;
+    uint32_t      plane_count;
+    VkDeviceSize  plane_offsets[MAX_IMAGE_PLANES];
+    uint32_t      plane_strides[MAX_IMAGE_PLANES];
+    VkExtent3D    plane_extents[MAX_IMAGE_PLANES];
+    VkDeviceSize  size;
 
     /* Read back the frame in whatever layout the pixel format defines: vku gives each plane's
     ** offset, row stride and subsampled extent, so no bit depth or chroma shape is hard-coded. */
-    base                      = (const uint8_t*)pDecoder->readbackMapped;
+    base                      = (const byte_t*)pDecoder->readbackMapped;
     plane_count               = cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat,
                                                                pDecoder->displayWidth,
                                                                pDecoder->displayHeight,
@@ -619,13 +619,13 @@ void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame)
  *  Collects coded slices from length-prefixed NAL units, updates reference state,
  *  records decode and readback work, then applies sliding-window reference marking.
  */
-int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t size)
+int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t size)
 {
     uint32_t                        offset;
-    uint8_t*                        p_stream;
+    byte_t*                         p_stream;
     uint32_t                        stream_length;
     uint32_t                        slice_count;
-    const uint8_t*                  p_first_slice;
+    const byte_t*                   p_first_slice;
     uint32_t                        first_slice_size;
     uint32_t                        slice_offsets[64];
     H264SliceHeader                 header;
@@ -663,7 +663,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
     int                             oldest_slot;
 
     offset           = 0;
-    p_stream         = (uint8_t*)pDecoder->bitstreamMapped;
+    p_stream         = (byte_t*)pDecoder->bitstreamMapped;
     stream_length    = 0;
     slice_count      = 0;
     p_first_slice    = NULL;
@@ -856,7 +856,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t
     {
         aligned_range = BITSTREAM_CAPACITY;
     }
-    memset((uint8_t*)pDecoder->bitstreamMapped + stream_length, 0, (size_t)(aligned_range - stream_length));
+    memset((byte_t*)pDecoder->bitstreamMapped + stream_length, 0, (size_t)(aligned_range - stream_length));
 
     cvkCmdDecodeVideoWithH264PictureInfo(pDecoder->decodeCmd,
                                          NULL,

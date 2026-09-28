@@ -7,11 +7,11 @@
 
 typedef struct BitReader
 {
-    const uint8_t* pData;
-    uint32_t       size;
-    uint32_t       bytePos;
-    int            bitPos;  /* 0..7, MSB first */
-    int            zeroRun; /* trailing zero bytes, for emulation-prevention removal */
+    const byte_t* pData;
+    uint32_t      size;
+    uint32_t      bytePos;
+    int           bitPos;  /* 0..7, MSB first */
+    int           zeroRun; /* trailing zero bytes, for emulation-prevention removal */
 } BitReader;
 
 /*************************************************************************************************/
@@ -19,7 +19,7 @@ typedef struct BitReader
  * \par Details:
  *  Borrows the NAL payload and resets byte, bit and emulation-prevention state.
  */
-static void BitReader_Init(BitReader* pReader, const uint8_t* pData, uint32_t size)
+static void BitReader_Init(BitReader* pReader, const byte_t* pData, uint32_t size)
 {
     pReader->pData   = pData;
     pReader->size    = size;
@@ -223,7 +223,7 @@ static StdVideoH264LevelIdc MapLevel(uint32_t levelIdc)
  *  Reads SPS fields used by the decoder and derives cropped display dimensions.
  *  VUI data and reference-cycle offsets are not retained by this implementation.
  */
-int H264_ParseSps(const uint8_t*                    pNal,
+int H264_ParseSps(const byte_t*                    pNal,
                   uint32_t                          size,
                   StdVideoH264SequenceParameterSet* pSps,
                   unsigned*                         pWidth,
@@ -361,7 +361,7 @@ int H264_ParseSps(const uint8_t*                    pNal,
  *  Searches backward for the last set bit so PPS parsing can distinguish payload
  *  from the RBSP stop bit and padding.
  */
-static int GetRbspLastBit(const uint8_t* pData, uint32_t size)
+static int GetRbspLastBit(const byte_t* pData, uint32_t size)
 {
     int byteIndex;
 
@@ -389,9 +389,9 @@ static int GetRbspLastBit(const uint8_t* pData, uint32_t size)
  *  Removes emulation-prevention bytes before locating trailing bits, rejects FMO
  *  slice groups and reads the optional transform/chroma-QP extension.
  */
-int H264_ParsePps(const uint8_t* pNal, uint32_t size, StdVideoH264PictureParameterSet* pPps)
+int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParameterSet* pPps)
 {
-    uint8_t rbsp[MAX_PARAM_SET];
+    byte_t rbsp[MAX_PARAM_SET];
     uint32_t  rbspSize = 0;
     BitReader reader;
     int       stopBit;
@@ -473,7 +473,7 @@ int H264_ParsePps(const uint8_t* pNal, uint32_t size, StdVideoH264PictureParamet
  *  Reads the coded-slice prefix required for frame and POC tracking using SPS/PPS
  *  bit widths. This does not parse the complete slice header.
  */
-int H264_ParseSliceHeader(const uint8_t*                          pNal,
+int H264_ParseSliceHeader(const byte_t*                          pNal,
                           uint32_t                                size,
                           const StdVideoH264SequenceParameterSet* pSps,
                           const StdVideoH264PictureParameterSet*  pPps,

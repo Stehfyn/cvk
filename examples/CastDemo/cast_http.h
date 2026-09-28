@@ -183,7 +183,7 @@ uint32_t CastHttp_GetResponseByteCount(const CastHttp_Response_t* response);
  * \retval        CAST_HTTP_READY        The bodyless request and policy are complete.
  * \retval        CAST_HTTP_REJECTED     errorStatus describes the final response; the connection shall close.
  */
-CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const char_t* data, uint32_t byteCount);
+CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const byte_t* data, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -202,6 +202,6 @@ CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const char_t
  * \retval     nonzero   Complete head bytes written.
  * \retval     0         Invalid model or insufficient capacity; output is unchanged.
  */
-uint32_t CastHttp_WriteResponse(const CastHttp_Response_t* response, char_t* output, uint32_t capacity);
+uint32_t CastHttp_WriteResponse(const CastHttp_Response_t* response, byte_t* output, uint32_t capacity);
 
 #endif /* CAST_HTTP_H */

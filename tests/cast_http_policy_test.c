@@ -67,8 +67,8 @@ static const char_t        c_second[] = "HEAD /subtitles.vtt HTTP/1.1\r\nHost: x
 
 static CastHttp_Request_t  g_request;
 static Utl_Http_Field_t    g_fields[POLICY_TEST_FIELDS];
-static char_t              g_input[POLICY_TEST_BYTES];
-static char_t              g_output[POLICY_TEST_BYTES];
+static byte_t              g_input[POLICY_TEST_BYTES];
+static byte_t              g_output[POLICY_TEST_BYTES];
 
 static const RequestCase_t c_requests[] = {
     {"GET /video HTTP/1.1\r\nHost: x\r\n\r\n",
@@ -590,7 +590,7 @@ static FORCE_INLINE void CheckRequest(const RequestCase_t* test)
     Utl_Http_RangeInterval_t interval;
     CastHttp_RangeResult_t   range;
     CastHttp_InitializeRequest(&g_request, g_fields, POLICY_TEST_FIELDS);
-    result = CastHttp_ReadRequest(&g_request, test->wire, test->byteCount);
+    result = CastHttp_ReadRequest(&g_request, (const byte_t*)test->wire, test->byteCount);
     LOGASSERT(test->result == result);
     LOGASSERT(test->status == g_request.errorStatus);
     LOGASSERT(test->keepAlive == g_request.keepAlive);
@@ -641,10 +641,10 @@ static FORCE_INLINE void CheckPipeline(void)
     LOGASSERT(g_request.subtitles);
     LOGASSERT(!g_request.keepAlive);
     CastHttp_InitializeRequest(&g_request, NULL, 0);
-    result = CastHttp_ReadRequest(&g_request, c_first, sizeof(c_first) - 1);
+    result = CastHttp_ReadRequest(&g_request, (const byte_t*)c_first, sizeof(c_first) - 1);
     LOGASSERT(CAST_HTTP_REJECTED == result);
     LOGASSERT(UTL_HTTP_STATUS_HEADERS_TOO_LARGE == g_request.errorStatus);
-    LOGASSERT(CAST_HTTP_REJECTED == CastHttp_ReadRequest(&g_request, c_second, sizeof(c_second) - 1));
+    LOGASSERT(CAST_HTTP_REJECTED == CastHttp_ReadRequest(&g_request, (const byte_t*)c_second, sizeof(c_second) - 1));
 }
 
 /*************************************************************************************************/
@@ -684,7 +684,7 @@ static FORCE_INLINE void CheckResponses(void)
 {
     CastHttp_Response_t response;
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_OK);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 0;
@@ -703,7 +703,7 @@ static FORCE_INLINE void CheckResponses(void)
                "Range\r\nAccess-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_PARTIAL_CONTENT);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 2;
@@ -736,7 +736,7 @@ static FORCE_INLINE void CheckResponses(void)
             "Range\r\nAccess-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_RANGE_NOT_SATISFIABLE);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 0;
@@ -755,7 +755,7 @@ static FORCE_INLINE void CheckResponses(void)
                "Range\r\nAccess-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_NO_CONTENT);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 0;
@@ -773,7 +773,7 @@ static FORCE_INLINE void CheckResponses(void)
                "Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_OK);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 0;
@@ -792,7 +792,7 @@ static FORCE_INLINE void CheckResponses(void)
                "Range\r\nAccess-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_METHOD_NOT_ALLOWED);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 0;
@@ -811,7 +811,7 @@ static FORCE_INLINE void CheckResponses(void)
                "Range\r\nAccess-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_BAD_REQUEST);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = POLICY_TEST_REPRESENTATION_BYTES;
     response.interval.offset       = 0;
@@ -829,7 +829,7 @@ static FORCE_INLINE void CheckResponses(void)
                "Accept-Ranges\r\n\r\n") -
             1);
     CastHttp_InitializeResponse(&response, UTL_HTTP_STATUS_PARTIAL_CONTENT);
-    response.contentType.data      = "video/mp4";
+    response.contentType.data      = (const byte_t*)"video/mp4";
     response.contentType.byteCount = sizeof("video/mp4") - 1;
     response.representationBytes   = UINT64_MAX;
     response.interval.offset       = UINT64_MAX;
@@ -839,7 +839,7 @@ static FORCE_INLINE void CheckResponses(void)
     LOGASSERT(0 == CastHttp_WriteResponse(&response, g_output, POLICY_TEST_BYTES));
     CheckGuard(0);
     response.interval.offset       = 0;
-    response.contentType.data      = "video/mp4\r\nX: bad";
+    response.contentType.data      = (const byte_t*)"video/mp4\r\nX: bad";
     response.contentType.byteCount = sizeof("video/mp4\r\nX: bad") - 1;
     LOGASSERT(0 == CastHttp_WriteResponse(&response, g_output, POLICY_TEST_BYTES));
     CheckGuard(0);

@@ -8,6 +8,7 @@
 #ifndef CAST_GPU_TRANSCODE_H
 #define CAST_GPU_TRANSCODE_H
 
+#include "os/os_types.h"
 #include "os/os_atomic.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -48,7 +49,7 @@ GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
 double GpuTranscode_GetLastMotion(const GpuTranscoder* pTranscoder);
 
 /* The encoded proxy SPS + PPS (Annex-B sequence header). Bytes live until GpuTranscode_Close. */
-const uint8_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize);
+const byte_t* GpuTranscode_GetHeader(GpuTranscoder* pTranscoder, uint32_t* pSize);
 
 unsigned GpuTranscode_GetOutputWidth(const GpuTranscoder* pTranscoder);
 
@@ -62,7 +63,7 @@ unsigned GpuTranscode_SeekKeyframe(GpuTranscoder* pTranscoder, unsigned approxFr
 /* Decodes, downscales and re-encodes the next source frame. Returns the coded picture's bytes
 ** (valid until the next call) and its length in pSize; sets *pKeyframe when it is a keyframe.
 ** Returns NULL with *pSize 0 at end of stream or on failure. */
-const uint8_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* pSize, int* pKeyframe);
+const byte_t* GpuTranscode_ReadNextFrame(GpuTranscoder* pTranscoder, uint32_t* pSize, int* pKeyframe);
 
 void GpuTranscode_Close(GpuTranscoder* pTranscoder);
 

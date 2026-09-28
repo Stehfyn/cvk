@@ -5,6 +5,7 @@
 #ifndef CAST_GPU_ENCODE_H
 #define CAST_GPU_ENCODE_H
 
+#include "os/os_types.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -29,7 +30,7 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
 
 /* The encoded SPS + PPS as an Annex-B header (the sequence header for the muxer). Returns the
 ** byte length, 0 on failure; the bytes live until GpuEncode_Destroy. */
-const uint8_t* GpuEncode_GetHeader(GpuEncoder* pEncoder, uint32_t* pSize);
+const byte_t* GpuEncode_GetHeader(GpuEncoder* pEncoder, uint32_t* pSize);
 
 /* Whether the most recently encoded frame was an IDR keyframe (a GOP boundary or a forced key),
 ** so the muxer can mark it as a sync sample even when the caller did not request it. */
@@ -40,10 +41,10 @@ int GpuEncode_IsLastFrameKeyframe(const GpuEncoder* pEncoder);
 ** (1..51, or <=0 for the session default) sets this frame's quantiser, which the motion-adaptive
 ** transcoder uses to spend fewer bits on low-motion frames. Returns a pointer to the coded
 ** picture's bytes (valid until the next call) and writes its length to pSize; NULL/0 on failure. */
-const uint8_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
-                                     const uint8_t* pLuma,
+const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
+                                     const byte_t* pLuma,
                                      unsigned       lumaStride,
-                                     const uint8_t* pChroma,
+                                     const byte_t* pChroma,
                                      unsigned       chromaStride,
                                      int            forceIdr,
                                      int            qpOverride,

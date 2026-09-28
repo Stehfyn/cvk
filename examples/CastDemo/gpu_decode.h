@@ -4,6 +4,7 @@
 #ifndef CAST_GPU_DECODE_H
 #define CAST_GPU_DECODE_H
 
+#include "os/os_types.h"
 #include <stddef.h>
 
 #include "gpu_device.h"
@@ -16,16 +17,16 @@ typedef struct GpuDecoder GpuDecoder;
 ** layout (I420-style) where pCr is the third plane. Chroma dimensions follow the subsampling. */
 typedef struct DecodedFrame
 {
-    const uint8_t* pLuma;
-    const uint8_t* pCb; /* interleaved Cb/Cr when chromaInterleaved, else the Cb plane */
-    const uint8_t* pCr; /* the Cr plane when planar, else NULL */
-    unsigned       width;
-    unsigned       height;
-    unsigned       lumaStride;
-    unsigned       chromaStride;
-    unsigned       chromaWidth;
-    unsigned       chromaHeight;
-    int            chromaInterleaved;
+    const byte_t* pLuma;
+    const byte_t* pCb; /* interleaved Cb/Cr when chromaInterleaved, else the Cb plane */
+    const byte_t* pCr; /* the Cr plane when planar, else NULL */
+    unsigned      width;
+    unsigned      height;
+    unsigned      lumaStride;
+    unsigned      chromaStride;
+    unsigned      chromaWidth;
+    unsigned      chromaHeight;
+    int           chromaInterleaved;
 } DecodedFrame;
 
 /* Creates a Vulkan H.264 decode session on the shared device, sized for width x height and loaded
@@ -42,15 +43,15 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
                              size_t                                  reportCapacity);
 
 /* The most recently decoded frame's luma plane (8-bit), its row stride, and dimensions. */
-const uint8_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pStride);
+const byte_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pStride);
 
 /* The most recently decoded frame as NV12: the returned pointer is the luma plane; ppChroma points
 ** to the interleaved half-resolution Cb/Cr plane. Strides and dimensions are written out. */
-const uint8_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
+const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
                                  unsigned*         pWidth,
                                  unsigned*         pHeight,
                                  unsigned*         pLumaStride,
-                                 const uint8_t**   ppChroma,
+                                 const byte_t**   ppChroma,
                                  unsigned*         pChromaStride);
 
 /* Fills pFrame with a view of the most recently decoded frame in whatever format the decoder chose. */
@@ -58,7 +59,7 @@ void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame);
 
 /* Decodes one access unit (the AVCC length-prefixed sample bytes of one frame) on the GPU. On
 ** success the decoded luma is available through GpuDecode_GetLuma. Returns 1 on success. */
-int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const uint8_t* pSample, uint32_t size);
+int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t size);
 
 void GpuDecode_Destroy(GpuDecoder* pDecoder);
 

@@ -58,7 +58,7 @@
 /** \brief Bounded writer shared by exact preflight and committed output. */
 typedef struct Writer_s
 {
-    char_t*  output;   ///< NULL only during preflight.
+    byte_t*  output;   ///< NULL only during preflight.
     uint32_t capacity; ///< Maximum representable or writable count.
     uint32_t used;     ///< Count never beyond capacity.
     bool_t   valid;    ///< Sticky success state.
@@ -68,7 +68,7 @@ typedef struct Writer_s
 /** \brief Private transactional timestamp cursor. */
 typedef struct Reader_s
 {
-    const char_t* input;     ///< Stable counted source.
+    const byte_t* input;     ///< Stable counted source.
     uint32_t      byteCount; ///< Readable extent.
     uint32_t      offset;    ///< Consumed prefix within byteCount.
     bool_t        valid;     ///< Sticky parse validity.
@@ -117,7 +117,7 @@ typedef struct Line_s
  *
  * \retval     None   The empty cursor is valid.
  */
-static FORCE_INLINE void InitializeWriter(Writer_t* writer, char_t* output, uint32_t capacity);
+static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -133,7 +133,7 @@ static FORCE_INLINE void InitializeWriter(Writer_t* writer, char_t* output, uint
  *
  * \retval        None   Count/output advances on success; validity records capacity failure.
  */
-static FORCE_INLINE void AppendBytes(Writer_t* writer, const char_t* input, uint32_t byteCount);
+static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -149,7 +149,7 @@ static FORCE_INLINE void AppendBytes(Writer_t* writer, const char_t* input, uint
  *
  * \retval        None   Cursor validity records failure.
  */
-static FORCE_INLINE void AppendByte(Writer_t* writer, char_t value);
+static FORCE_INLINE void AppendByte(Writer_t* writer, byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -278,7 +278,7 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
  *
  * \retval        None   The delimiter is consumed or failure is latched.
  */
-static FORCE_INLINE void ReadDelimiter(Reader_t* reader, char_t delimiter);
+static FORCE_INLINE void ReadDelimiter(Reader_t* reader, byte_t delimiter);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -289,7 +289,7 @@ static FORCE_INLINE void ReadDelimiter(Reader_t* reader, char_t delimiter);
  * \par Details:
  *  Required private storage is established by each public entry point.
  */
-static FORCE_INLINE void InitializeWriter(Writer_t* writer, char_t* output, uint32_t capacity)
+static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint32_t capacity)
 {
     LOGASSERT(NULL != writer);
 
@@ -305,7 +305,7 @@ static FORCE_INLINE void InitializeWriter(Writer_t* writer, char_t* output, uint
  *  Subtraction uses the established used-within-capacity invariant; no count
  *  addition occurs until remaining capacity has been checked.
  */
-static FORCE_INLINE void AppendBytes(Writer_t* writer, const char_t* input, uint32_t byteCount)
+static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint32_t byteCount)
 {
     bool_t fits;
     bool_t writing;
@@ -331,7 +331,7 @@ static FORCE_INLINE void AppendBytes(Writer_t* writer, const char_t* input, uint
  * \par Details:
  *  A direct bounded byte store avoids a general memory-copy call for grammar bytes.
  */
-static FORCE_INLINE void AppendByte(Writer_t* writer, char_t value)
+static FORCE_INLINE void AppendByte(Writer_t* writer, byte_t value)
 {
     bool_t fits;
     bool_t writing;
@@ -361,7 +361,7 @@ static FORCE_INLINE void AppendByte(Writer_t* writer, char_t value)
 static FORCE_INLINE void AppendNumber(Writer_t* writer, const Number_t* number)
 {
     uint32_t count;
-    char_t   digits[WEBVTT_UINT64_DIGITS];
+    byte_t   digits[WEBVTT_UINT64_DIGITS];
     uint32_t padding;
 
     LOGASSERT(NULL != number);
@@ -414,7 +414,7 @@ static FORCE_INLINE void AppendTiming(Writer_t* writer, uint64_t start, uint64_t
     if (writer->valid)
     {
         AppendTimestamp(writer, start);
-        AppendBytes(writer, WEBVTT_TIMING_ARROW, sizeof(WEBVTT_TIMING_ARROW) - 1);
+        AppendBytes(writer, (const byte_t*)WEBVTT_TIMING_ARROW, sizeof(WEBVTT_TIMING_ARROW) - 1);
         AppendTimestamp(writer, end);
         AppendByte(writer, WEBVTT_CHAR_LF);
     }
@@ -434,24 +434,24 @@ static FORCE_INLINE void AppendScalar(Writer_t* writer, uint32_t scalar)
     switch (scalar)
     {
     case WEBVTT_CHAR_AMP:
-        AppendBytes(writer, WEBVTT_ESCAPE_AMP, sizeof(WEBVTT_ESCAPE_AMP) - 1);
+        AppendBytes(writer, (const byte_t*)WEBVTT_ESCAPE_AMP, sizeof(WEBVTT_ESCAPE_AMP) - 1);
         break;
     case WEBVTT_CHAR_LT:
-        AppendBytes(writer, WEBVTT_ESCAPE_LT, sizeof(WEBVTT_ESCAPE_LT) - 1);
+        AppendBytes(writer, (const byte_t*)WEBVTT_ESCAPE_LT, sizeof(WEBVTT_ESCAPE_LT) - 1);
         break;
     case WEBVTT_CHAR_GT:
-        AppendBytes(writer, WEBVTT_ESCAPE_GT, sizeof(WEBVTT_ESCAPE_GT) - 1);
+        AppendBytes(writer, (const byte_t*)WEBVTT_ESCAPE_GT, sizeof(WEBVTT_ESCAPE_GT) - 1);
         break;
     default:
         if (WEBVTT_ASCII_MAX >= scalar)
         {
-            AppendByte(writer, (char_t)scalar);
+            AppendByte(writer, (byte_t)scalar);
         }
         else
         {
             count = Utl_Unicode_WriteUtf8(scalar, encoded, sizeof(encoded));
             LOGASSERT(0 < count);
-            AppendBytes(writer, (const char_t*)encoded, count);
+            AppendBytes(writer, (const byte_t*)encoded, count);
         }
         break;
     }
@@ -570,8 +570,8 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
         reader->valid = Utl_Decimal_ReadUint64(value, &count, reader->input + reader->offset, available);
         if (reader->valid)
         {
-            width_valid     = (!fixed_width) || (count == width);
-            reader->valid   = width_valid;
+            width_valid    = (!fixed_width) || (count == width);
+            reader->valid  = width_valid;
             reader->offset += count;
         }
     }
@@ -584,7 +584,7 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
  * \par Details:
  *  End-of-input is checked before loading the required delimiter.
  */
-static FORCE_INLINE void ReadDelimiter(Reader_t* reader, char_t delimiter)
+static FORCE_INLINE void ReadDelimiter(Reader_t* reader, byte_t delimiter)
 {
     if (reader->valid)
     {
@@ -667,7 +667,7 @@ uint32_t Utl_WebVtt_GetCueByteCount(const Utl_WebVtt_Cue_t* cue)
  *  The first field is hours only when a second colon follows. Arithmetic is
  *  staged after width/range validation; overflow never wraps into a valid time.
  */
-bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const char_t* input, uint32_t byteCount)
+bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
 {
     Reader_t reader;
     uint64_t first;
@@ -748,7 +748,7 @@ bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, con
  * \par Details:
  *  Preflight establishes sufficient capacity before any writer operation.
  */
-uint32_t Utl_WebVtt_WriteTimestamp(uint64_t milliseconds, char_t* output, uint32_t capacity)
+uint32_t Utl_WebVtt_WriteTimestamp(uint64_t milliseconds, byte_t* output, uint32_t capacity)
 {
     uint32_t required;
     uint32_t written;
@@ -775,7 +775,7 @@ uint32_t Utl_WebVtt_WriteTimestamp(uint64_t milliseconds, char_t* output, uint32
  * \par Details:
  *  The timing query rejects invalid intervals before output is made available.
  */
-uint32_t Utl_WebVtt_WriteTiming(uint64_t start, uint64_t end, char_t* output, uint32_t capacity)
+uint32_t Utl_WebVtt_WriteTiming(uint64_t start, uint64_t end, byte_t* output, uint32_t capacity)
 {
     uint32_t required;
     bool_t   fits;
@@ -804,7 +804,7 @@ uint32_t Utl_WebVtt_WriteTiming(uint64_t start, uint64_t end, char_t* output, ui
  * \par Details:
  *  Stable disjoint source storage makes the committed pass identical to preflight.
  */
-uint32_t Utl_WebVtt_WriteCue(const Utl_WebVtt_Cue_t* cue, char_t* output, uint32_t capacity)
+uint32_t Utl_WebVtt_WriteCue(const Utl_WebVtt_Cue_t* cue, byte_t* output, uint32_t capacity)
 {
     uint32_t required;
     bool_t   fits;

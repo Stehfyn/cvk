@@ -120,23 +120,22 @@ typedef struct Reader_s
  * \par Details:
  *  https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameStartChar
  */
-static const Range_t c_nameStart[] =
-{
-    {':',     ':'},
-    {'A',     'Z'},
-    {'_',     '_'},
-    {'a',     'z'},
-    {0xC0,    0xD6},
-    {0xD8,    0xF6},
-    {0xF8,    0x2FF},
-    {0x370,   0x37D},
-    {0x37F,   0x1FFF},
-    {0x200C,  0x200D},
-    {0x2070,  0x218F},
-    {0x2C00,  0x2FEF},
-    {0x3001,  0xD7FF},
-    {0xF900,  0xFDCF},
-    {0xFDF0,  0xFFFD},
+static const Range_t c_nameStart[] = {
+    {':', ':'},
+    {'A', 'Z'},
+    {'_', '_'},
+    {'a', 'z'},
+    {0xC0, 0xD6},
+    {0xD8, 0xF6},
+    {0xF8, 0x2FF},
+    {0x370, 0x37D},
+    {0x37F, 0x1FFF},
+    {0x200C, 0x200D},
+    {0x2070, 0x218F},
+    {0x2C00, 0x2FEF},
+    {0x3001, 0xD7FF},
+    {0xF900, 0xFDCF},
+    {0xFDF0, 0xFFFD},
     {0x10000, 0xEFFFF},
 };
 /*************************************************************************************************/
@@ -146,13 +145,12 @@ static const Range_t c_nameStart[] =
  * \par Details:
  *  https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
  */
-static const Range_t c_nameAdditional[] =
-{
-    {'-',    '-'},
-    {'.',    '.'},
-    {'0',    '9'},
-    {0xB7,   0xB7},
-    {0x300,  0x36F},
+static const Range_t c_nameAdditional[] = {
+    {'-', '-'},
+    {'.', '.'},
+    {'0', '9'},
+    {0xB7, 0xB7},
+    {0x300, 0x36F},
     {0x203F, 0x2040},
 };
 
@@ -186,7 +184,7 @@ static FORCE_INLINE void AssertText(Utl_Xml_Text_t text);
  *
  * \retval    text   Borrowed literal.
  */
-static FORCE_INLINE Utl_Xml_Text_t GetLiteral(const char_t* data, uint32_t byteCount);
+static FORCE_INLINE Utl_Xml_Text_t GetLiteral(const byte_t* data, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -244,7 +242,7 @@ static FORCE_INLINE bool_t IsRawEqual(Utl_Xml_Text_t first, Utl_Xml_Text_t secon
  * \retval    TRUE    Complete token equality.
  * \retval    FALSE   The token differs or the remaining source is too short.
  */
-static FORCE_INLINE bool_t Matches(const Cursor_t* cursor, const char_t* literal, uint32_t byteCount);
+static FORCE_INLINE bool_t Matches(const Cursor_t* cursor, const byte_t* literal, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -738,7 +736,7 @@ static FORCE_INLINE void AssertText(Utl_Xml_Text_t text)
  * \par Details:
  *  None
  */
-static FORCE_INLINE Utl_Xml_Text_t GetLiteral(const char_t* data, uint32_t byteCount)
+static FORCE_INLINE Utl_Xml_Text_t GetLiteral(const byte_t* data, uint32_t byteCount)
 {
     Utl_Xml_Text_t text;
     text.data      = data;
@@ -804,7 +802,7 @@ static FORCE_INLINE bool_t IsRawEqual(Utl_Xml_Text_t first, Utl_Xml_Text_t secon
  * \par Details:
  *  Partial token input never matches.
  */
-static FORCE_INLINE bool_t Matches(const Cursor_t* cursor, const char_t* literal, uint32_t byteCount)
+static FORCE_INLINE bool_t Matches(const Cursor_t* cursor, const byte_t* literal, uint32_t byteCount)
 {
     bool_t   matches;
     uint32_t index;
@@ -985,10 +983,10 @@ static FORCE_INLINE bool_t GetNamespace(const Utl_Xml_Node_t* node, Utl_Xml_Text
     bool_t                     matches;
     bool_t                     valid;
     *space = GetLiteral(NULL, 0);
-    found  = IsRawEqual(prefix, GetLiteral(UTL_XML_PREFIX_XML, sizeof(UTL_XML_PREFIX_XML) - 1));
+    found  = IsRawEqual(prefix, GetLiteral((const byte_t*)UTL_XML_PREFIX_XML, sizeof(UTL_XML_PREFIX_XML) - 1));
     if (found)
     {
-        *space = GetLiteral(UTL_XML_NAMESPACE_XML, sizeof(UTL_XML_NAMESPACE_XML) - 1);
+        *space = GetLiteral((const byte_t*)UTL_XML_NAMESPACE_XML, sizeof(UTL_XML_NAMESPACE_XML) - 1);
     }
     ancestor = node;
     for (level = 0; (!found) && (level <= node->depth); ++level)
@@ -1001,7 +999,8 @@ static FORCE_INLINE bool_t GetNamespace(const Utl_Xml_Node_t* node, Utl_Xml_Text
             if (attribute->declaration)
             {
                 declared = attribute->expanded.local;
-                if (IsRawEqual(attribute->name, GetLiteral(UTL_XML_PREFIX_XMLNS, sizeof(UTL_XML_PREFIX_XMLNS) - 1)))
+                if (IsRawEqual(attribute->name,
+                    GetLiteral((const byte_t*)UTL_XML_PREFIX_XMLNS, sizeof(UTL_XML_PREFIX_XMLNS) - 1)))
                 {
                     declared = GetLiteral(NULL, 0);
                 }
@@ -1088,7 +1087,7 @@ static FORCE_INLINE bool_t SetNamespaces(Utl_Xml_Node_t* node)
     }
     if (valid)
     {
-        valid = !IsRawEqual(prefix, GetLiteral(UTL_XML_PREFIX_XMLNS, sizeof(UTL_XML_PREFIX_XMLNS) - 1));
+        valid = !IsRawEqual(prefix, GetLiteral((const byte_t*)UTL_XML_PREFIX_XMLNS, sizeof(UTL_XML_PREFIX_XMLNS) - 1));
     }
     if (valid)
     {
@@ -1281,30 +1280,30 @@ static FORCE_INLINE bool_t ReadReference(Cursor_t* cursor, uint32_t* scalar)
         ++cursor->offset;
         valid = ReadNumberReference(cursor, scalar);
     }
-    else if (Matches(cursor, XML_REFERENCE_AMP, sizeof(XML_REFERENCE_AMP) - 1))
+    else if (Matches(cursor, (const byte_t*)XML_REFERENCE_AMP, sizeof(XML_REFERENCE_AMP) - 1))
     {
         cursor->offset += sizeof(XML_REFERENCE_AMP) - 1;
-        *scalar         = UTL_XML_CHAR_AMP;
+        *scalar        = UTL_XML_CHAR_AMP;
     }
-    else if (Matches(cursor, XML_REFERENCE_LT, sizeof(XML_REFERENCE_LT) - 1))
+    else if (Matches(cursor, (const byte_t*)XML_REFERENCE_LT, sizeof(XML_REFERENCE_LT) - 1))
     {
         cursor->offset += sizeof(XML_REFERENCE_LT) - 1;
-        *scalar         = UTL_XML_CHAR_LT;
+        *scalar        = UTL_XML_CHAR_LT;
     }
-    else if (Matches(cursor, XML_REFERENCE_GT, sizeof(XML_REFERENCE_GT) - 1))
+    else if (Matches(cursor, (const byte_t*)XML_REFERENCE_GT, sizeof(XML_REFERENCE_GT) - 1))
     {
         cursor->offset += sizeof(XML_REFERENCE_GT) - 1;
-        *scalar         = UTL_XML_CHAR_GT;
+        *scalar        = UTL_XML_CHAR_GT;
     }
-    else if (Matches(cursor, XML_REFERENCE_QUOT, sizeof(XML_REFERENCE_QUOT) - 1))
+    else if (Matches(cursor, (const byte_t*)XML_REFERENCE_QUOT, sizeof(XML_REFERENCE_QUOT) - 1))
     {
         cursor->offset += sizeof(XML_REFERENCE_QUOT) - 1;
-        *scalar         = UTL_XML_CHAR_QUOT;
+        *scalar        = UTL_XML_CHAR_QUOT;
     }
-    else if (Matches(cursor, XML_REFERENCE_APOS, sizeof(XML_REFERENCE_APOS) - 1))
+    else if (Matches(cursor, (const byte_t*)XML_REFERENCE_APOS, sizeof(XML_REFERENCE_APOS) - 1))
     {
         cursor->offset += sizeof(XML_REFERENCE_APOS) - 1;
-        *scalar         = UTL_XML_CHAR_APOS;
+        *scalar        = UTL_XML_CHAR_APOS;
     }
     else
     {
@@ -1336,7 +1335,7 @@ static FORCE_INLINE bool_t ReadLiteralScalar(Cursor_t* cursor, uint32_t* scalar)
     if (valid)
     {
         cursor->offset += width;
-        normalized      = (UTL_XML_TEXT_LITERAL != cursor->source.kind);
+        normalized     = (UTL_XML_TEXT_LITERAL != cursor->source.kind);
         if (normalized && (UTL_XML_CHAR_CR == value))
         {
             if (UTL_XML_CHAR_LF == GetByte(cursor))
@@ -1370,7 +1369,7 @@ static FORCE_INLINE bool_t ReadTextScalar(Cursor_t* cursor, uint32_t* scalar)
     bool_t   valid;
     escaped    = (UTL_XML_TEXT_CONTENT == cursor->source.kind) || (UTL_XML_TEXT_ATTRIBUTE == cursor->source.kind);
     content    = (UTL_XML_TEXT_CONTENT == cursor->source.kind) || (UTL_XML_TEXT_CDATA == cursor->source.kind);
-    terminator = content && Matches(cursor, XML_CDATA_CLOSE, sizeof(XML_CDATA_CLOSE) - 1);
+    terminator = content && Matches(cursor, (const byte_t*)XML_CDATA_CLOSE, sizeof(XML_CDATA_CLOSE) - 1);
     value      = GetByte(cursor);
     raw_markup = escaped && (UTL_XML_CHAR_LT == value);
     if (terminator || raw_markup)
@@ -1500,8 +1499,8 @@ static FORCE_INLINE bool_t ReadNamespaceDeclaration(Utl_Xml_Attribute_t* attribu
     bool_t         xml_space;
     bool_t         xmlns_space;
     valid = SplitName(attribute->name, &prefix, &local);
-    xml   = GetLiteral(UTL_XML_PREFIX_XML, sizeof(UTL_XML_PREFIX_XML) - 1);
-    xmlns = GetLiteral(UTL_XML_PREFIX_XMLNS, sizeof(UTL_XML_PREFIX_XMLNS) - 1);
+    xml   = GetLiteral((const byte_t*)UTL_XML_PREFIX_XML, sizeof(UTL_XML_PREFIX_XML) - 1);
+    xmlns = GetLiteral((const byte_t*)UTL_XML_PREFIX_XMLNS, sizeof(UTL_XML_PREFIX_XMLNS) - 1);
     if (valid)
     {
         default_name           = (0 == prefix.byteCount) && IsRawEqual(local, xmlns);
@@ -1510,16 +1509,19 @@ static FORCE_INLINE bool_t ReadNamespaceDeclaration(Utl_Xml_Attribute_t* attribu
         if (attribute->declaration)
         {
             reserved_xml = prefixed_name && IsRawEqual(local, xml);
-            xml_space    = Utl_Xml_IsTextEqual(attribute->value,
-                                               GetLiteral(UTL_XML_NAMESPACE_XML, sizeof(UTL_XML_NAMESPACE_XML) - 1));
-            xmlns_space = Utl_Xml_IsTextEqual(attribute->value,
-                                              GetLiteral(UTL_XML_NAMESPACE_XMLNS, sizeof(UTL_XML_NAMESPACE_XMLNS) - 1));
+            xml_space    = Utl_Xml_IsTextEqual(
+                attribute->value,
+                GetLiteral((const byte_t*)UTL_XML_NAMESPACE_XML, sizeof(UTL_XML_NAMESPACE_XML) - 1));
+            xmlns_space = Utl_Xml_IsTextEqual(
+                attribute->value,
+                GetLiteral((const byte_t*)UTL_XML_NAMESPACE_XMLNS, sizeof(UTL_XML_NAMESPACE_XMLNS) - 1));
             valid = (!xmlns_space) && (reserved_xml == xml_space);
             if (prefixed_name)
             {
                 valid = valid && (!IsRawEqual(local, xmlns)) && (0 < attribute->value.byteCount);
             }
-            attribute->expanded.space = GetLiteral(UTL_XML_NAMESPACE_XMLNS, sizeof(UTL_XML_NAMESPACE_XMLNS) - 1);
+            attribute->expanded.space =
+                GetLiteral((const byte_t*)UTL_XML_NAMESPACE_XMLNS, sizeof(UTL_XML_NAMESPACE_XMLNS) - 1);
             attribute->expanded.local = local;
         }
     }
@@ -1542,7 +1544,7 @@ static FORCE_INLINE bool_t ReadUntil(Cursor_t* cursor, Utl_Xml_Text_t terminator
         valid = Matches(cursor, terminator.data, terminator.byteCount);
         if (valid)
         {
-            *text           = GetSlice(cursor, first);
+            *text          = GetSlice(cursor, first);
             cursor->offset += terminator.byteCount;
             break;
         }
@@ -1560,7 +1562,9 @@ static FORCE_INLINE bool_t ReadComment(Reader_t* reader)
     bool_t         valid;
     Utl_Xml_Text_t ignored;
     reader->cursor.offset += sizeof(XML_COMMENT_OPEN) - 1;
-    valid                  = ReadUntil(&reader->cursor, GetLiteral(XML_COMMENT_DASHES, sizeof(XML_COMMENT_DASHES) - 1), &ignored);
+    valid                 = ReadUntil(&reader->cursor,
+                                      GetLiteral((const byte_t*)XML_COMMENT_DASHES, sizeof(XML_COMMENT_DASHES) - 1),
+                                      &ignored);
     if (valid)
     {
         valid = (UTL_XML_CHAR_GT == GetByte(&reader->cursor));
@@ -1582,12 +1586,13 @@ static FORCE_INLINE bool_t ReadCdata(Reader_t* reader)
     Utl_Xml_Text_t  text;
     bool_t          valid;
     Utl_Xml_Node_t* node;
-    text                   = GetLiteral(NULL, 0);
-    valid                  = (NULL != reader->parent);
+    text                  = GetLiteral(NULL, 0);
+    valid                 = (NULL != reader->parent);
     reader->cursor.offset += sizeof(XML_CDATA_OPEN) - 1;
     if (valid)
     {
-        valid = ReadUntil(&reader->cursor, GetLiteral(XML_CDATA_CLOSE, sizeof(XML_CDATA_CLOSE) - 1), &text);
+        valid =
+            ReadUntil(&reader->cursor, GetLiteral((const byte_t*)XML_CDATA_CLOSE, sizeof(XML_CDATA_CLOSE) - 1), &text);
     }
     if (valid)
     {
@@ -1619,11 +1624,11 @@ static FORCE_INLINE bool_t ReadVersionDeclaration(Reader_t* reader)
     }
     if (valid)
     {
-        valid = IsRawEqual(attribute.name, GetLiteral(XML_VERSION_NAME, sizeof(XML_VERSION_NAME) - 1));
+        valid = IsRawEqual(attribute.name, GetLiteral((const byte_t*)XML_VERSION_NAME, sizeof(XML_VERSION_NAME) - 1));
     }
     if (valid)
     {
-        valid = IsRawEqual(attribute.value, GetLiteral(XML_VERSION, sizeof(XML_VERSION) - 1));
+        valid = IsRawEqual(attribute.value, GetLiteral((const byte_t*)XML_VERSION, sizeof(XML_VERSION) - 1));
         if (!valid)
         {
             reader->result = UTL_XML_UNSUPPORTED;
@@ -1656,7 +1661,7 @@ static FORCE_INLINE bool_t ReadDeclaration(Reader_t* reader)
     {
         first = reader->cursor.offset;
         ReadWhitespace(&reader->cursor);
-        if ((!valid) || Matches(&reader->cursor, XML_PI_CLOSE, sizeof(XML_PI_CLOSE) - 1))
+        if ((!valid) || Matches(&reader->cursor, (const byte_t*)XML_PI_CLOSE, sizeof(XML_PI_CLOSE) - 1))
         {
             break;
         }
@@ -1667,11 +1672,14 @@ static FORCE_INLINE bool_t ReadDeclaration(Reader_t* reader)
         }
         if (valid)
         {
-            encoding   = IsRawEqual(attribute.name, GetLiteral(XML_ENCODING_NAME, sizeof(XML_ENCODING_NAME) - 1));
-            standalone = IsRawEqual(attribute.name, GetLiteral(XML_STANDALONE_NAME, sizeof(XML_STANDALONE_NAME) - 1));
+            encoding =
+                IsRawEqual(attribute.name, GetLiteral((const byte_t*)XML_ENCODING_NAME, sizeof(XML_ENCODING_NAME) - 1));
+            standalone = IsRawEqual(attribute.name,
+                                    GetLiteral((const byte_t*)XML_STANDALONE_NAME, sizeof(XML_STANDALONE_NAME) - 1));
             if (encoding && (!encoding_seen) && (!standalone_seen))
             {
-                valid         = IsAsciiEqual(attribute.value, GetLiteral(XML_ENCODING_UTF8, sizeof(XML_ENCODING_UTF8) - 1));
+                valid = IsAsciiEqual(attribute.value,
+                                     GetLiteral((const byte_t*)XML_ENCODING_UTF8, sizeof(XML_ENCODING_UTF8) - 1));
                 encoding_seen = TRUE;
                 if (!valid)
                 {
@@ -1680,8 +1688,8 @@ static FORCE_INLINE bool_t ReadDeclaration(Reader_t* reader)
             }
             else if (standalone && (!standalone_seen))
             {
-                enabled         = IsRawEqual(attribute.value, GetLiteral(XML_YES, sizeof(XML_YES) - 1));
-                disabled        = IsRawEqual(attribute.value, GetLiteral(XML_NO, sizeof(XML_NO) - 1));
+                enabled         = IsRawEqual(attribute.value, GetLiteral((const byte_t*)XML_YES, sizeof(XML_YES) - 1));
+                disabled        = IsRawEqual(attribute.value, GetLiteral((const byte_t*)XML_NO, sizeof(XML_NO) - 1));
                 valid           = enabled || disabled;
                 standalone_seen = TRUE;
             }
@@ -1713,13 +1721,13 @@ static FORCE_INLINE bool_t ReadInstruction(Reader_t* reader)
     bool_t         declaration;
     Utl_Xml_Text_t ignored;
     reader->cursor.offset += sizeof(XML_PI_OPEN) - 1;
-    valid                  = ReadName(&reader->cursor, &target);
+    valid                 = ReadName(&reader->cursor, &target);
     if (valid)
     {
         valid = SplitName(target, &prefix, &local);
         valid = valid && (0 == prefix.byteCount);
     }
-    xml = GetLiteral(UTL_XML_PREFIX_XML, sizeof(UTL_XML_PREFIX_XML) - 1);
+    xml = GetLiteral((const byte_t*)UTL_XML_PREFIX_XML, sizeof(UTL_XML_PREFIX_XML) - 1);
     if (valid)
     {
         declaration = IsAsciiEqual(target, xml);
@@ -1734,10 +1742,12 @@ static FORCE_INLINE bool_t ReadInstruction(Reader_t* reader)
         else
         {
             valid = IsWhitespace(GetByte(&reader->cursor)) ||
-                    Matches(&reader->cursor, XML_PI_CLOSE, sizeof(XML_PI_CLOSE) - 1);
+                    Matches(&reader->cursor, (const byte_t*)XML_PI_CLOSE, sizeof(XML_PI_CLOSE) - 1);
             if (valid)
             {
-                valid = ReadUntil(&reader->cursor, GetLiteral(XML_PI_CLOSE, sizeof(XML_PI_CLOSE) - 1), &ignored);
+                valid = ReadUntil(&reader->cursor,
+                                  GetLiteral((const byte_t*)XML_PI_CLOSE, sizeof(XML_PI_CLOSE) - 1),
+                                  &ignored);
             }
         }
     }
@@ -1808,8 +1818,8 @@ static FORCE_INLINE bool_t ReadEnd(Reader_t* reader)
 {
     Utl_Xml_Text_t name;
     bool_t         valid;
-    name                   = GetLiteral(NULL, 0);
-    valid                  = (NULL != reader->parent);
+    name                  = GetLiteral(NULL, 0);
+    valid                 = (NULL != reader->parent);
     reader->cursor.offset += sizeof(XML_END_OPEN) - 1;
     if (valid)
     {
@@ -1885,23 +1895,23 @@ static FORCE_INLINE bool_t ReadContent(Reader_t* reader)
 static FORCE_INLINE bool_t ReadMarkup(Reader_t* reader)
 {
     bool_t valid;
-    if (Matches(&reader->cursor, XML_COMMENT_OPEN, sizeof(XML_COMMENT_OPEN) - 1))
+    if (Matches(&reader->cursor, (const byte_t*)XML_COMMENT_OPEN, sizeof(XML_COMMENT_OPEN) - 1))
     {
         valid = ReadComment(reader);
     }
-    else if (Matches(&reader->cursor, XML_CDATA_OPEN, sizeof(XML_CDATA_OPEN) - 1))
+    else if (Matches(&reader->cursor, (const byte_t*)XML_CDATA_OPEN, sizeof(XML_CDATA_OPEN) - 1))
     {
         valid = ReadCdata(reader);
     }
-    else if (Matches(&reader->cursor, XML_PI_OPEN, sizeof(XML_PI_OPEN) - 1))
+    else if (Matches(&reader->cursor, (const byte_t*)XML_PI_OPEN, sizeof(XML_PI_OPEN) - 1))
     {
         valid = ReadInstruction(reader);
     }
-    else if (Matches(&reader->cursor, XML_END_OPEN, sizeof(XML_END_OPEN) - 1))
+    else if (Matches(&reader->cursor, (const byte_t*)XML_END_OPEN, sizeof(XML_END_OPEN) - 1))
     {
         valid = ReadEnd(reader);
     }
-    else if (Matches(&reader->cursor, XML_DTD_OPEN, sizeof(XML_DTD_OPEN) - 1))
+    else if (Matches(&reader->cursor, (const byte_t*)XML_DTD_OPEN, sizeof(XML_DTD_OPEN) - 1))
     {
         reader->result = UTL_XML_UNSUPPORTED;
         valid          = FALSE;
@@ -2105,7 +2115,7 @@ bool_t Utl_Xml_GetTextByteCount(Utl_Xml_Text_t text, uint32_t* byteCount)
         if (valid)
         {
             count += Utl_Unicode_GetUtf8ByteCount(scalar);
-            valid  = (count <= UINT32_MAX);
+            valid = (count <= UINT32_MAX);
         }
     }
     if (valid)
@@ -2145,7 +2155,7 @@ bool_t Utl_Xml_GetElementTextByteCount(const Utl_Xml_Node_t* element, uint32_t* 
         if (valid)
         {
             count += child_bytes;
-            valid  = (count <= UINT32_MAX);
+            valid = (count <= UINT32_MAX);
         }
         child = child->next;
     }
@@ -2192,7 +2202,7 @@ const Utl_Xml_Node_t* Utl_Xml_FindSibling(const Utl_Xml_Document_t* document,
  * \par Details:
  *  Records are scratch until the final publication; a failed read can be followed by a fresh read.
  */
-Utl_Xml_Result_t Utl_Xml_ReadDocument(Utl_Xml_Document_t* document, const char_t* data, uint32_t byteCount)
+Utl_Xml_Result_t Utl_Xml_ReadDocument(Utl_Xml_Document_t* document, const byte_t* data, uint32_t byteCount)
 {
     Reader_t reader;
     bool_t   valid;
@@ -2254,7 +2264,7 @@ Utl_Xml_Result_t Utl_Xml_ReadDocument(Utl_Xml_Document_t* document, const char_t
  * \par Details:
  *  Complete validation and sizing precede the first destination write.
  */
-bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, char_t* output, uint32_t capacity, uint32_t* byteCount)
+bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t   valid;
     uint32_t count;
@@ -2297,7 +2307,7 @@ bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, char_t* output, uint32_t capacity,
  * \par Details:
  *  CDATA and entity-decoded text concatenate in document order.
  */
-bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, char_t* output, uint32_t capacity, uint32_t* byteCount)
+bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t                valid;
     uint32_t              count;
@@ -2323,7 +2333,7 @@ bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, char_t* output, u
             copied = Utl_Xml_WriteText(child->text, output + offset, count - offset, &written);
             LOGASSERT(copied);
             offset += written;
-            child   = child->next;
+            child  = child->next;
         }
         LOGASSERT(offset == count);
     }

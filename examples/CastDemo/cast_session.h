@@ -21,6 +21,7 @@
 #include "os/os_atomic.h"
 #include "os/os_memory.h"
 #include "cast_media.h"
+#include "utl/utl_json.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -191,40 +192,40 @@ void CastSession_Prepare(CastSession_t* session, const CastSessionConfig* config
 
 /*************************************************************************************************/
 /**
- * \brief Serializes the session's LOAD profile as complete terminated JSON.
+ * \brief Serializes the session's LOAD profile as complete counted JSON.
  *
  * \par Requirements:
  *  - 001 Required configuration, text and output pointers shall assert when missing.
  *  - 002 The model and all input strings shall remain stable and disjoint from output.
- *  - 003 Strings shall terminate within their documented session/configuration capacities.
+ *  - 003 Configuration strings shall terminate within their documented capacities; the session ID shall remain counted bytes.
  *  - 004 Finite negative times shall clamp to zero; other times shall round to the nearest millisecond, with ties upward.
  *  - 005 Invalid encoding, stream kinds, times, request IDs or capacity shall preserve output and return zero.
  *  - 006 No allocation or CRT operation shall occur.
  *
  * \param[in]  config       Required configuration with bounded title and optional subtitle strings
- * \param[in]  sessionId    Terminated application session ID, within 128 bytes
- * \param[in]  requestId    Nonnegative request identifier
+ * \param[in]  sessionId    Counted decoded application session ID
+ * \param[in]  requestId    Positive request identifier; zero denotes exhausted correlation storage
  * \param[in]  url          Terminated content URL, within the configuration URL capacity
  * \param[in]  type         Terminated MIME type, within the configuration MIME capacity
  * \param[in]  start        Finite seconds, representable as uint64_t milliseconds after rounding
  * \param[in]  autoplay     Whether playback should start after loading
  * \param[in]  streamType   Terminated NONE, BUFFERED or LIVE token
  * \param[out] output       Required caller-owned disjoint storage
- * \param[in]  capacity     Writable bytes including the final zero
+ * \param[in]  capacity     Writable byte capacity; no terminator is appended
  *
- * \retval     nonzero   JSON bytes written, excluding the appended zero.
+ * \retval     nonzero   Exact JSON bytes written.
  * \retval     0         Invalid model or insufficient output; output remains unchanged.
  */
-uint32_t CastSession_FormatLoad(const CastSessionConfig* config,
-                                const char*              sessionId,
-                                int32_t                  requestId,
-                                const char*              url,
-                                const char*              type,
-                                double                   start,
-                                bool_t                   autoplay,
-                                const char*              streamType,
-                                char*                    output,
-                                uint32_t                 capacity);
+uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
+                               Utl_Json_Text_t          sessionId,
+                               int32_t                  requestId,
+                               const char*              url,
+                               const char*              type,
+                               double                   start,
+                               bool_t                   autoplay,
+                               const char*              streamType,
+                               byte_t*                  output,
+                               uint32_t                 capacity);
 
 /*************************************************************************************************/
 /**

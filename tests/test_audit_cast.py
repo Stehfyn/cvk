@@ -262,6 +262,18 @@ int Second(void) { return 2; }
         self.assertEqual([f["line"] for f in findings if f["rule"] == "do-while-loop"], [3])
         self.assertEqual([f["line"] for f in findings if f["rule"] == "while-loop"], [3, 4])
 
+    def test_console_input_and_retained_handles_are_lifetime_boundaries(self):
+        text = "void Exercise(void) {\n"
+        text += "OS_Console_Initialize(console);\nDuplicateHandle(process, input);\n"
+        text += "OS_Console_ReadKey(console, key);\nReadConsoleInputEx(input, record);\n"
+        text += "SetConsoleMode(input, mode);\nOS_Console_TryClose(console);\n}\n"
+        result = self.scan_text(".c", text)
+        boundaries = result["boundaries_requiring_lifecycle_review"]
+        resources = [b["line"] for b in boundaries if b["rule"] == "thread-and-resource-lifetime"]
+        operations = [b["line"] for b in boundaries if b["rule"] == "waiting-and-io"]
+        self.assertEqual(resources, [2, 3, 7])
+        self.assertEqual(operations, [4, 5, 6])
+
     def test_cast_sources_and_tests_have_no_prohibited_loops(self):
         paths = sorted(AUDIT.SOURCE.rglob("*.c")) + sorted(AUDIT.SOURCE.rglob("*.h"))
         paths += sorted((ROOT / "tests").glob("cast*.c"))

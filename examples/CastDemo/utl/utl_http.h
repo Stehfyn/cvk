@@ -144,7 +144,7 @@
 /** \brief A borrowed HTTP octet span; not a terminated or decoded Unicode string. */
 typedef struct Utl_Http_Text_s
 {
-    const char_t* data;      ///< Borrowed bytes, NULL only when byteCount is zero.
+    const byte_t* data;      ///< Borrowed bytes, NULL only when byteCount is zero.
     uint32_t      byteCount; ///< Counted bytes.
 } Utl_Http_Text_t;
 
@@ -226,7 +226,7 @@ typedef struct Utl_Http_HeadReader_s
     uint32_t          leadingEmptyLines; ///< Leading request CRLF count.
     bool_t            inFields;          ///< Start-line was validated.
     bool_t            pendingCr;         ///< Last consumed byte was CR, awaiting LF.
-    const char_t*     input;             ///< Retained input address after the first consumed byte.
+    const byte_t*     input;             ///< Retained input address after the first consumed byte.
     Utl_Http_Result_t result;            ///< INCOMPLETE or a latched terminal result.
 } Utl_Http_HeadReader_t;
 
@@ -263,7 +263,7 @@ typedef struct Utl_Http_Body_s
     uint32_t            stage;
     uint64_t            remaining;
     uint64_t            contentBytes;
-    char_t*             line;
+    byte_t*             line;
     uint32_t            lineCapacity;
     uint32_t            lineCount;
     uint32_t            metadataBytes;
@@ -594,7 +594,7 @@ uint32_t Utl_Http_FindField(const Utl_Http_Head_t* head, Utl_Http_Text_t name, u
  * \retval        UTL_HTTP_INVALID      The input violates the supported HTTP grammar.
  * \retval        UTL_HTTP_CAPACITY     Field slots or the leading-empty-line limit were exhausted.
  */
-Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, const char_t* buffer, uint32_t byteCount);
+Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, const byte_t* buffer, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -620,7 +620,7 @@ Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, co
  */
 Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
                                     Utl_Http_Kind_t  kind,
-                                    const char_t*    buffer,
+                                    const byte_t*    buffer,
                                     uint32_t         byteCount);
 
 /*************************************************************************************************/
@@ -641,7 +641,7 @@ Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
  * \retval        TRUE    For a nonempty fully parsed range set.
  * \retval        FALSE   Otherwise.
  */
-bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const char_t* buffer, uint32_t byteCount);
+bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const byte_t* buffer, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -659,7 +659,7 @@ bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const char_t* buffer, ui
  * \retval     TRUE    For a validated field value.
  * \retval     FALSE   Otherwise.
  */
-bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const char_t* buffer, uint32_t byteCount);
+bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const byte_t* buffer, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -677,7 +677,7 @@ bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const char_t*
  * \retval     1..UINT32_MAX   Number of complete HTTP head bytes written.
  * \retval     0               The model, output pointer or capacity is invalid; output remains unchanged.
  */
-uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, char_t* buffer, uint32_t capacity);
+uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, byte_t* buffer, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -695,7 +695,7 @@ uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, char_t* buffer, uint32_
  * \retval     UTL_HTTP_DATE_BYTE_COUNT   Number of IMF-fixdate bytes written.
  * \retval     0                          The civil time is invalid or capacity is insufficient; output remains unchanged.
  */
-uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, char_t* buffer, uint32_t capacity);
+uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, byte_t* buffer, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -713,7 +713,7 @@ uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, char_t* buffer, uint32_
  * \retval     1..UINT32_MAX   Number of canonical Range field-value bytes written.
  * \retval     0               The model, output pointer or capacity is invalid; output remains unchanged.
  */
-uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, char_t* buffer, uint32_t capacity);
+uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, byte_t* buffer, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -731,7 +731,7 @@ uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, char_t* buffer,
  * \retval     1..UINT32_MAX   Number of canonical Content-Range field-value bytes written.
  * \retval     0               The model, output pointer or capacity is invalid; output remains unchanged.
  */
-uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, char_t* buffer, uint32_t capacity);
+uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte_t* buffer, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
@@ -752,6 +752,6 @@ uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, char
  * \retval     TRUE    Complete target bytes and count are published.
  * \retval     FALSE   All output is unchanged.
  */
-bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, char_t* output, uint32_t capacity, uint32_t* byteCount);
+bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount);
 
 #endif /* UTL_HTTP_H */

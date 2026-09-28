@@ -230,6 +230,6 @@ bool_t Utl_Ssdp_ReadResponse(Utl_Ssdp_Response_t* response, const Utl_Http_Head_
  * \retval     1..capacity   Complete datagram bytes written.
  * \retval     0             Invalid model or insufficient output capacity; output unchanged.
  */
-uint32_t Utl_Ssdp_WriteSearch(const Utl_Ssdp_Search_t* search, char_t* buffer, uint32_t capacity);
+uint32_t Utl_Ssdp_WriteSearch(const Utl_Ssdp_Search_t* search, byte_t* buffer, uint32_t capacity);
 
 #endif /* UTL_SSDP_H */

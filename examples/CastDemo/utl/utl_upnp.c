@@ -88,10 +88,10 @@ static FORCE_INLINE bool_t FindUnique(const Utl_Xml_Document_t* document,
 static FORCE_INLINE Utl_Xml_Name_t GetName(const char_t* local, uint32_t byteCount)
 {
     Utl_Xml_Name_t name;
-    name.space.data      = UTL_UPNP_DEVICE_NAMESPACE;
+    name.space.data      = (const byte_t*)UTL_UPNP_DEVICE_NAMESPACE;
     name.space.byteCount = sizeof(UTL_UPNP_DEVICE_NAMESPACE) - 1;
     name.space.kind      = UTL_XML_TEXT_LITERAL;
-    name.local.data      = local;
+    name.local.data      = (const byte_t*)local;
     name.local.byteCount = byteCount;
     name.local.kind      = UTL_XML_TEXT_LITERAL;
     return name;

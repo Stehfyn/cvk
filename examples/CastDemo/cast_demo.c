@@ -1,3 +1,7 @@
+/*=================================================================================================
+** 1. References
+**===============================================================================================*/
+
 /* cast_demo.c - CastDemoCli: play a video on a Google Cast receiver such as the XGIMI Horizon S.
 **
 ** The projector is a Chromecast built-in device, so "connecting" means the CASTV2 protocol:
@@ -17,12 +21,14 @@
 **     --verbose        print every Cast message sent and received
 **
 ** Keys while playing: Space pauses/resumes, Q or Escape stops and exits. */
-#define WIN32_LEAN_AND_MEAN
+/*=================================================================================================
+** 2. INCLUDE FILES
+**===============================================================================================*/
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
 
-#include <conio.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +37,9 @@
 
 #include "cast_channel.h"
 #include "cast_session.h"
+#include "cast_events.h"
+#include "os/os_assert.h"
+#include "os/os_console.h"
 #include "os/os_thread.h"
 #include "os/os_compiler.h"
 #include "media_server.h"
@@ -47,11 +56,22 @@
 #include "proxy.h"
 #include "ssdp.h"
 
-#define DEFAULT_DEVICE_NAME "XGIMI"
-#define DEFAULT_SERVER_PORT (8642)
-#define DISCOVERY_MS        (3000)
-#define PROGRESS_MS         (5000)
-#define SESSION_POLL_MS     (50)
+/*=================================================================================================
+** 3. DECLARATIONS
+**
+** 3.1 Macros
+**===============================================================================================*/
+
+#define DEFAULT_DEVICE_NAME  "XGIMI"
+#define DEFAULT_SERVER_PORT  (8642)
+#define DISCOVERY_MS         (3000)
+#define PROGRESS_MS          (5000)
+#define SESSION_POLL_MS      (50)
+#define CONSOLE_RECORD_LIMIT (32) ///< Maximum native input records consumed by one playback poll.
+
+/*=================================================================================================
+** 3.2 Types
+**===============================================================================================*/
 
 typedef struct Options
 {
@@ -70,18 +90,45 @@ typedef struct Options
     int      verbose;
 } Options;
 
-static volatile LONG      g_interrupted;
-static volatile ULONGLONG g_playingSince; /* first PLAYING status, for --seconds */
-static char               g_lastState[32];
-static ULONGLONG          g_lastProgress;
-static int                g_runResult;
-static volatile double    g_duration; /* media duration once the receiver reports it */
-static CastSession_t      g_session;
-static OS_Thread_t        g_sessionWorker;
-static Ssdp_t             g_discovery;
-static OS_Network_t g_routeNetwork;
-static Proxy_t      g_proxy;
-static MediaServer_Workspace_t g_serving;
+/*************************************************************************************************/
+/**
+ * \brief Startup-owned console state and the resources borrowed by its session worker.
+ *
+ * \par Details:
+ *  The entry point retains this object until every worker and resource is closed.
+ *  Status crosses the worker boundary through the mailbox. Playback timing belongs
+ *  exclusively to the console thread; progress text belongs to the session worker.
+ */
+typedef struct CastConsole_s
+{
+    uint64_t                playingSince;  ///< Console-owned first PLAYING time in milliseconds.
+    char_t                  lastState[32]; ///< Worker-owned last printed state.
+    uint64_t                lastProgress;  ///< Worker-owned last progress-print time.
+    int32_t                 runResult;     ///< Worker result, read only after acquiring completion.
+    float64_t               duration;      ///< Console-owned duration acquired from the mailbox.
+    CastSession_t           session;       ///< Session storage retained through worker closure.
+    OS_Thread_t             sessionWorker; ///< Persistent worker borrowing this owner.
+    Ssdp_t                  discovery;     ///< Discovery resource established before interaction.
+    OS_Network_t            routeNetwork;  ///< Route-query resource established at startup.
+    Proxy_t                 proxy;         ///< Proxy lifetime and persistent execution state.
+    MediaServer_Workspace_t serving;       ///< HTTP listener and worker pool.
+    GpuProbe_t              gpuProbe;      ///< Startup diagnostic storage.
+    CastEvents_t            events;        ///< Worker-to-console status publication.
+    CastEvents_Snapshot_t   snapshot;      ///< Consumer-owned acquired status.
+    OS_Console_t            console;       ///< Startup-owned keyboard input and mode restoration.
+} CastConsole_t;
+
+/*=================================================================================================
+** 3.3 External global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.4 Static global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.5 Static function prototypes
+**===============================================================================================*/
 
 /*************************************************************************************************/
 /**
@@ -93,7 +140,7 @@ static MediaServer_Workspace_t g_serving;
  *
  * \retval None   Proxy and route resources are released; failed Winsock cleanup sets the process result.
  */
-static FORCE_INLINE void CloseNetworkResources(void);
+static FORCE_INLINE void CloseNetworkResources(CastConsole_t* app);
 
 /*************************************************************************************************/
 /**
@@ -106,7 +153,7 @@ static FORCE_INLINE void CloseNetworkResources(void);
  *
  * \retval None   Native session resources are closed; any recorded failure changes the exit result.
  */
-static FORCE_INLINE void CloseSessionResources(void);
+static FORCE_INLINE void CloseSessionResources(CastConsole_t* app);
 
 /*************************************************************************************************/
 /**
@@ -124,19 +171,55 @@ static FORCE_INLINE void CloseSessionResources(void);
  */
 static FORCE_INLINE void CloseServingResources(Proxy_t* proxy, MediaServer** server);
 
+/*************************************************************************************************/
+/**
+ * \brief Determines whether a normalized key names a playback stop gesture.
+ *
+ * \param[in] key   Required complete input record
+ *
+ * \retval    TRUE    Q, Escape, Cancel or Control+C was pressed.
+ * \retval    FALSE   The key does not name a stop gesture.
+ */
+static FORCE_INLINE bool_t IsStopKey(const OS_Console_Key_t* key);
 
 /*************************************************************************************************/
 /**
- * \par Details:
- *  Latches interruption atomically; the main loop observes the flag and requests
- *  session shutdown.
+ * \brief Applies one keyboard record to the playback command policy.
+ *
+ * \par Requirements:
+ *  - 001 Key releases and zero-repeat input shall not change playback.
+ *  - 002 One Space key-down record shall enqueue one toggle against reported playback state.
+ *  - 003 Stop gestures shall be returned to the owner for one latched session stop.
+ *
+ * \param[in,out] session   Initialized active session
+ * \param[in]     key       Complete normalized input record
+ *
+ * \retval        TRUE    Stop was requested.
+ * \retval        FALSE   No stop gesture occurred.
  */
-static BOOL WINAPI OnConsoleControl(DWORD type)
-{
-    (void)type;
-    InterlockedExchange(&g_interrupted, 1);
-    return TRUE;
-}
+static FORCE_INLINE bool_t HandleConsoleKey(CastSession_t* session, const OS_Console_Key_t* key);
+
+/*************************************************************************************************/
+/**
+ * \brief Consumes a bounded batch of keyboard input without waiting for a record.
+ *
+ * \par Requirements:
+ *  - 001 The owner shall retain the console and session for every input attempt.
+ *  - 002 One poll shall consume at most CONSOLE_RECORD_LIMIT native records.
+ *  - 003 Native input failure shall request stop and remain recorded in the console.
+ *  - 004 This function shall not write the session worker's runResult field.
+ *
+ * \param[in,out] app   Required active console owner
+ *
+ * \retval        TRUE    Stop was requested, including after input failure.
+ * \retval        FALSE   No stop request occurred in this batch.
+ */
+static FORCE_INLINE bool_t PollConsoleInput(CastConsole_t* app);
+
+/*=================================================================================================
+** 4. PRIVATE FUNCTIONS
+**===============================================================================================*/
+
 
 /*************************************************************************************************/
 /**
@@ -181,10 +264,10 @@ static int ContainsNoCase(const char* pHaystack, const char* pNeedle)
 static void Usage(void)
 {
     (void)fprintf(stderr,
-                  "CastDemoCli [file.mp4] [--device NAME] [--host ADDRESS] [--url URL] [--port N] [--bind ADDRESS]\n"
+     "CastDemoCli [file.mp4] [--device NAME] [--host ADDRESS] [--url URL] [--port N] [--bind ADDRESS]\n"
                   "            [--seconds N] [--seek T] [--scrub T] [--bounce N] [--loop] [--list] [--verbose]\n"
                   "Plays a video on a Google Cast receiver (default device name: %s).\n",
-                  DEFAULT_DEVICE_NAME);
+                                                            DEFAULT_DEVICE_NAME);
 }
 
 /*************************************************************************************************/
@@ -311,7 +394,7 @@ static int ResolveIPv4(const char* pHost, char* pOut, size_t capacity)
  *  An explicit host bypasses multicast selection. Otherwise lists discovery
  *  results and selects the first case-insensitive receiver-name match.
  */
-static int FindDevice(const Options* pOptions, CastDevice* pDevice)
+static int FindDevice(CastConsole_t* app, const Options* pOptions, CastDevice* pDevice)
 {
     unsigned   count;
     CastDevice devices[CAST_MAX_DEVICES];
@@ -326,23 +409,23 @@ static int FindDevice(const Options* pOptions, CastDevice* pDevice)
             (void)fprintf(stderr, "cannot resolve %s\n", pOptions->host);
             return 0;
         }
-        if (!Ssdp_DescribeHost(&g_discovery, pDevice->host, pDevice))
+        if (!Ssdp_DescribeHost(&app->discovery, pDevice->host, pDevice))
         {
             (void)snprintf(pDevice->friendlyName, sizeof(pDevice->friendlyName), "%s", pOptions->host);
         }
         return 1;
     }
     (void)printf("searching for Cast receivers...\n");
-    count = Ssdp_DiscoverCastDevices(&g_discovery, devices, CAST_MAX_DEVICES, DISCOVERY_MS);
+    count = Ssdp_DiscoverCastDevices(&app->discovery, devices, CAST_MAX_DEVICES, DISCOVERY_MS);
     for (index = 0; index < count; ++index)
     {
         const int match = ContainsNoCase(devices[index].friendlyName, pOptions->device);
 
         (void)printf("  %s%s  %s  (%s)\n",
-                     match ? "* " : "  ",
-                     devices[index].friendlyName,
-                     devices[index].host,
-                     devices[index].model);
+         match ? "* " : "  ",
+         devices[index].friendlyName,
+         devices[index].host,
+         devices[index].model);
         if (match && !found)
         {
             *pDevice = devices[index];
@@ -369,27 +452,24 @@ static int FindDevice(const Options* pOptions, CastDevice* pDevice)
  */
 static void OnSessionEvent(void* pUser, CastEvent event, const CastStatus* pStatus, const char* pText)
 {
-    const ULONGLONG now = GetTickCount64();
+    CastConsole_t* app;
+    uint64_t       now;
 
-    (void)pUser;
+    LOGASSERT(NULL != pUser);
+
+    app = (CastConsole_t*)pUser;
+    now = GetTickCount64();
     switch (event)
     {
     case CAST_EVENT_LOG:
         (void)printf("%s\n", pText);
         break;
     case CAST_EVENT_STATUS:
-        if (CAST_STATE_PLAYING == pStatus->state && 0 == g_playingSince)
+        (void)CastEvents_Publish(&app->events, 0, event, pStatus, NULL);
+        if (pStatus->hasMedia && (0 != strcmp(pStatus->stateName, app->lastState) || now - app->lastProgress >= PROGRESS_MS))
         {
-            g_playingSince = now;
-        }
-        if (pStatus->duration > 0)
-        {
-            g_duration = pStatus->duration;
-        }
-        if (pStatus->hasMedia && (0 != strcmp(pStatus->stateName, g_lastState) || now - g_lastProgress >= PROGRESS_MS))
-        {
-            (void)snprintf(g_lastState, sizeof(g_lastState), "%s", pStatus->stateName);
-            g_lastProgress = now;
+            (void)snprintf(app->lastState, sizeof(app->lastState), "%s", pStatus->stateName);
+            app->lastProgress = now;
             (void)printf("%s  %.1f / %.1f s\n", pStatus->stateName, pStatus->currentTime, pStatus->duration);
         }
         break;
@@ -407,7 +487,12 @@ static void OnSessionEvent(void* pUser, CastEvent event, const CastStatus* pStat
  */
 static FORCE_INLINE void SessionJob(void* context)
 {
-    g_runResult = CastSession_Run((CastSession_t*)context);
+    CastConsole_t* app;
+
+    LOGASSERT(NULL != context);
+
+    app            = (CastConsole_t*)context;
+    app->runResult = CastSession_Run(&app->session);
 }
 
 /*************************************************************************************************/
@@ -415,21 +500,21 @@ static FORCE_INLINE void SessionJob(void* context)
  * \par Details:
  *  Shutdown preserves the owner through native release retries.
  */
-static FORCE_INLINE void CloseNetworkResources(void)
+static FORCE_INLINE void CloseNetworkResources(CastConsole_t* app)
 {
     bool_t  proxy_closed;
-    bool_t  serving_closed;
     bool_t  route_closed;
+    bool_t  serving_closed;
     bool_t  closed;
     int32_t status;
     for (;;)
     {
-        proxy_closed   = Proxy_TryClose(&g_proxy);
-        route_closed   = OS_Network_TryClose(&g_routeNetwork);
+        proxy_closed   = Proxy_TryClose(&app->proxy);
+        route_closed   = OS_Network_TryClose(&app->routeNetwork);
         serving_closed = FALSE;
         if (proxy_closed)
         {
-            serving_closed = MediaServer_TryClose(&g_serving);
+            serving_closed = MediaServer_TryClose(&app->serving);
         }
         closed = proxy_closed && route_closed && serving_closed;
         if (closed)
@@ -441,7 +526,7 @@ static FORCE_INLINE void CloseNetworkResources(void)
     status = WSACleanup();
     if (0 != status)
     {
-        g_runResult = 1;
+        app->runResult = 1;
     }
 }
 
@@ -451,7 +536,7 @@ static FORCE_INLINE void CloseNetworkResources(void)
  *  Each closure attempt is nonblocking. The console shutdown loop retains both
  *  owners until native release succeeds; no callback can outlive its storage.
  */
-static FORCE_INLINE void CloseSessionResources(void)
+static FORCE_INLINE void CloseSessionResources(CastConsole_t* app)
 {
     bool_t   worker_closed;
     bool_t   storage_closed;
@@ -461,12 +546,12 @@ static FORCE_INLINE void CloseSessionResources(void)
 
     for (;;)
     {
-        worker_closed  = OS_Thread_TryClose(&g_sessionWorker);
+        worker_closed  = OS_Thread_TryClose(&app->sessionWorker);
         storage_closed = FALSE;
         if (worker_closed)
         {
-            CastSession_Reset(&g_session);
-            storage_closed = CastSession_TryClose(&g_session);
+            CastSession_Reset(&app->session);
+            storage_closed = CastSession_TryClose(&app->session);
         }
         if (storage_closed)
         {
@@ -474,12 +559,12 @@ static FORCE_INLINE void CloseSessionResources(void)
         }
         Sleep(SESSION_POLL_MS);
     }
-    worker_error  = OS_Thread_GetError(&g_sessionWorker);
-    storage_error = OS_Memory_GetError(&g_session.memory);
+    worker_error  = OS_Thread_GetError(&app->sessionWorker);
+    storage_error = OS_Memory_GetError(&app->session.memory);
     has_error     = (0 != worker_error) || (0 != storage_error);
     if (has_error)
     {
-        g_runResult = 1;
+        app->runResult = 1;
     }
 }
 
@@ -511,16 +596,106 @@ static FORCE_INLINE void CloseServingResources(Proxy_t* proxy, MediaServer** ser
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Checks that standard input is a console before querying pending keyboard input.
+ *  Modifier interpretation is application policy; the OS layer only reports keys.
  */
-static int ConsoleHasKeys(void)
+static FORCE_INLINE bool_t IsStopKey(const OS_Console_Key_t* key)
 {
-    DWORD mode;
+    bool_t is_quit;
+    bool_t is_escape;
+    bool_t is_cancel;
+    bool_t is_c;
+    bool_t has_control;
+    bool_t is_control_c;
+    bool_t is_stop;
 
-    return GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &mode) && _kbhit();
+    LOGASSERT(NULL != key);
+
+    is_quit      = (OS_CONSOLE_KEY_Q == key->code);
+    is_escape    = (OS_CONSOLE_KEY_ESCAPE == key->code);
+    is_cancel    = (OS_CONSOLE_KEY_CANCEL == key->code);
+    is_c         = (OS_CONSOLE_KEY_C == key->code);
+    has_control  = !!(key->modifiers & OS_CONSOLE_MODIFIER_CONTROL);
+    is_control_c = is_c && has_control;
+    is_stop      = is_quit || is_escape || is_cancel || is_control_c;
+    return is_stop;
 }
 
-static GpuProbe_t g_gpuProbe;
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Native repeat counts coalesce to one request per record. Toggle is resolved
+ *  against asynchronously reported receiver state, so parity cannot cancel it.
+ */
+static FORCE_INLINE bool_t HandleConsoleKey(CastSession_t* session, const OS_Console_Key_t* key)
+{
+    bool_t has_repeats;
+    bool_t is_press;
+    bool_t stop;
+    bool_t is_space;
+
+    LOGASSERT(NULL != session);
+    LOGASSERT(NULL != key);
+
+    has_repeats = (0 < key->repeatCount);
+    is_press    = key->pressed && has_repeats;
+    stop        = FALSE;
+    if (is_press)
+    {
+        stop     = IsStopKey(key);
+        is_space = (OS_CONSOLE_KEY_SPACE == key->code);
+        if (is_space)
+        {
+            CastSession_Post(session, CAST_COMMAND_TOGGLE, 0);
+        }
+    }
+    return stop;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Ignored native records count against the same limit as keyboard records.
+ *  Stop ends consumption immediately. The retained OS error is checked after
+ *  the worker is quiescent, preserving sole worker ownership of runResult.
+ */
+static FORCE_INLINE bool_t PollConsoleInput(CastConsole_t* app)
+{
+    bool_t                  stop;
+    uint32_t                index;
+    OS_Console_ReadResult_t result;
+    OS_Console_Key_t        key;
+    bool_t                  is_empty;
+    bool_t                  failed;
+    bool_t                  is_key;
+
+    LOGASSERT(NULL != app);
+
+    stop = FALSE;
+    for (index = 0; index < CONSOLE_RECORD_LIMIT; ++index)
+    {
+        result   = OS_Console_ReadKey(&app->console, &key);
+        is_empty = (OS_CONSOLE_READ_EMPTY == result);
+        failed   = (OS_CONSOLE_READ_FAILED == result);
+        is_key   = (OS_CONSOLE_READ_KEY == result);
+        if (is_empty)
+        {
+            break;
+        }
+        if (failed)
+        {
+            stop = TRUE;
+        }
+        else if (is_key)
+        {
+            stop = HandleConsoleKey(&app->session, &key);
+        }
+        if (stop)
+        {
+            break;
+        }
+    }
+    return stop;
+}
 
 /*************************************************************************************************/
 /**
@@ -528,7 +703,7 @@ static GpuProbe_t g_gpuProbe;
  *  Parses options, starts local serving when required and runs the Cast session
  *  on a worker thread while processing console and scripted playback commands.
  */
-int wmain(int argc, wchar_t** argv)
+static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
 {
     Options           options;
     CastDevice        device;
@@ -564,16 +739,16 @@ int wmain(int argc, wchar_t** argv)
                 bool_t closed;
                 bool_t available;
 
-                ready = GpuProbe_Initialize(&g_gpuProbe);
-                available = ready && GpuProbe_GetCaps(&g_gpuProbe)->available;
-                (void)printf("%s", GpuProbe_GetReport(&g_gpuProbe));
-                if (GpuProbe_IsReportTruncated(&g_gpuProbe))
+                ready     = GpuProbe_Initialize(&app->gpuProbe);
+                available = ready && GpuProbe_GetCaps(&app->gpuProbe)->available;
+                (void)printf("%s", GpuProbe_GetReport(&app->gpuProbe));
+                if (GpuProbe_IsReportTruncated(&app->gpuProbe))
                 {
                     (void)printf("[GPU probe report truncated]\n");
                 }
                 for (;;)
                 {
-                    closed = GpuProbe_TryClose(&g_gpuProbe);
+                    closed = GpuProbe_TryClose(&app->gpuProbe);
                     if (closed)
                     {
                         break;
@@ -610,8 +785,8 @@ int wmain(int argc, wchar_t** argv)
                 const unsigned encode_width  = 480;
                 const unsigned encode_height = 272;
                 unsigned frame_count;
-                uint8_t* luma;
-                uint8_t* chroma;
+                byte_t* luma;
+                byte_t* chroma;
                 unsigned frame;
                 uint64_t total;
 
@@ -634,12 +809,12 @@ int wmain(int argc, wchar_t** argv)
                     GpuDevice_Destroy(pGpu);
                     return 1;
                 }
-                luma   = (uint8_t*)malloc((size_t)encode_width * encode_height);
-                chroma = (uint8_t*)malloc((size_t)encode_width * (encode_height / 2));
+                luma   = (byte_t*)malloc((size_t)encode_width * encode_height);
+                chroma = (byte_t*)malloc((size_t)encode_width * (encode_height / 2));
                 total  = 0;
                 for (frame = 0; frame < frame_count; ++frame)
                 {
-                    const uint8_t* coded;
+                    const byte_t* coded;
                     uint32_t       coded_size;
                     unsigned       y;
 
@@ -674,10 +849,10 @@ int wmain(int argc, wchar_t** argv)
                         nal_type =
                             (coded[0] == 0 && coded[1] == 0 && coded[2] == 1) ? (coded[3] & 0x1F) : (coded[4] & 0x1F);
                         (void)printf("frame %2u: ok %5u bytes, %s, first NAL type %d\n",
-                                     frame,
-                                     coded_size,
-                                     start_code ? "annex-b" : "no start code",
-                                     nal_type);
+                         frame,
+                         coded_size,
+                         start_code ? "annex-b" : "no start code",
+                         nal_type);
                     }
                     else
                     {
@@ -685,9 +860,9 @@ int wmain(int argc, wchar_t** argv)
                     }
                 }
                 (void)printf("encoded %u frames, %llu bytes total, avg %llu B/frame\n",
-                             frame_count,
-                             (unsigned long long)total,
-                             (unsigned long long)(frame_count ? total / frame_count : 0));
+                 frame_count,
+                 (unsigned long long)total,
+                 (unsigned long long)(frame_count ? total / frame_count : 0));
                 free(luma);
                 free(chroma);
                 GpuEncode_Destroy(pEncoder);
@@ -701,7 +876,7 @@ int wmain(int argc, wchar_t** argv)
                 char               report[1600];
                 unsigned           frame_limit;
                 unsigned           frame;
-                const uint8_t*     header;
+                const byte_t*     header;
                 uint32_t           header_size;
                 FILE*              out;
                 uint64_t           total;
@@ -729,7 +904,7 @@ int wmain(int argc, wchar_t** argv)
                 keyframes = 0;
                 for (frame = 0; frame < frame_limit; ++frame)
                 {
-                    const uint8_t* coded;
+                    const byte_t* coded;
                     uint32_t       coded_size;
                     int            keyframe;
 
@@ -755,11 +930,11 @@ int wmain(int argc, wchar_t** argv)
                     (void)fclose(out);
                 }
                 (void)printf("transcoded %u frames (%u keyframes), %llu bytes -> proxy.264 (%ux%u)\n",
-                             frame,
-                             keyframes,
-                             (unsigned long long)total,
-                             GpuTranscode_GetOutputWidth(pTranscoder),
-                             GpuTranscode_GetOutputHeight(pTranscoder));
+                 frame,
+                 keyframes,
+                 (unsigned long long)total,
+                 GpuTranscode_GetOutputWidth(pTranscoder),
+                 GpuTranscode_GetOutputHeight(pTranscoder));
                 GpuTranscode_Close(pTranscoder);
                 return 0;
             }
@@ -861,7 +1036,7 @@ int wmain(int argc, wchar_t** argv)
                 char        deviceReport[256];
                 GpuDevice*  pGpu;
                 GpuDecoder* pDecoder;
-                uint8_t*    pSampleBuffer;
+                byte_t*    pSampleBuffer;
                 unsigned frameCount = (argIndex + 2 < argc) ? (unsigned)wcstoul(argv[argIndex + 2], NULL, 10) : 8;
                 unsigned frame;
 
@@ -885,15 +1060,15 @@ int wmain(int argc, wchar_t** argv)
                     return 1;
                 }
                 pDecoder = GpuDecode_Create(pGpu,
-                                                 &sps,
-                                                 &pps,
-                                                 w,
-                                                 h,
-                                                 sps.max_num_ref_frames + 2u,
-                                                 Mp4Demux_GetNalLengthSize(pDemux),
-                                                 report,
-                                                 sizeof(report));
-                pSampleBuffer = (uint8_t*)malloc(4u * 1024u * 1024u);
+                                            &sps,
+                                            &pps,
+                                            w,
+                                            h,
+                                            sps.max_num_ref_frames + 2u,
+                                            Mp4Demux_GetNalLengthSize(pDemux),
+                                            report,
+                                            sizeof(report));
+                pSampleBuffer = (byte_t*)malloc(4u * 1024u * 1024u);
                 (void)printf("%s", report);
                 if (NULL == pDecoder || NULL == pSampleBuffer)
                 {
@@ -919,7 +1094,7 @@ int wmain(int argc, wchar_t** argv)
                     }
                     {
                         unsigned       lw, lh, ls, x, y;
-                        const uint8_t* pLuma   = GpuDecode_GetLuma(pDecoder, &lw, &lh, &ls);
+                        const byte_t* pLuma   = GpuDecode_GetLuma(pDecoder, &lw, &lh, &ls);
                         uint64_t       sum     = 0;
                         uint64_t       nonzero = 0;
 
@@ -934,11 +1109,11 @@ int wmain(int argc, wchar_t** argv)
                             }
                         }
                         (void)printf("frame %u: %ux%u luma mean %.1f, %.0f%% nonzero\n",
-                                     frame,
-                                     lw,
-                                     lh,
-                                     (double)sum / ((double)lw * lh),
-                                     100.0 * (double)nonzero / ((double)lw * lh));
+                         frame,
+                         lw,
+                         lh,
+                         (double)sum / ((double)lw * lh),
+                         100.0 * (double)nonzero / ((double)lw * lh));
                     }
                 }
                 free(pSampleBuffer);
@@ -966,12 +1141,12 @@ int wmain(int argc, wchar_t** argv)
                     keyframes += Mp4Demux_GetSample(pDemux, i)->keyframe;
                 }
                 (void)printf("video %ux%u, timescale %u, NAL length %d, SPS %u B, PPS %u B\n",
-                             Mp4Demux_GetWidth(pDemux),
-                             Mp4Demux_GetHeight(pDemux),
-                             Mp4Demux_GetTimescale(pDemux),
-                             Mp4Demux_GetNalLengthSize(pDemux),
-                             spsSize,
-                             ppsSize);
+                 Mp4Demux_GetWidth(pDemux),
+                 Mp4Demux_GetHeight(pDemux),
+                 Mp4Demux_GetTimescale(pDemux),
+                 Mp4Demux_GetNalLengthSize(pDemux),
+                 spsSize,
+                 ppsSize);
                 {
                     StdVideoH264SequenceParameterSet sps;
                     StdVideoH264PictureParameterSet  pps;
@@ -983,14 +1158,14 @@ int wmain(int argc, wchar_t** argv)
                         (void)printf("SPS: profile %d level %d, %ux%u, %u ref frames, poc type %d; PPS: id %u, cabac "
                                      "%u, init_qp %d\n",
                                      (int)sps.profile_idc,
-                                     (int)sps.level_idc,
-                                     w,
-                                     h,
-                                     sps.max_num_ref_frames,
-                                     (int)sps.pic_order_cnt_type,
-                                     pps.pic_parameter_set_id,
-                                     pps.flags.entropy_coding_mode_flag,
-                                     26 + pps.pic_init_qp_minus26);
+                                      (int)sps.level_idc,
+                                      w,
+                                      h,
+                                      sps.max_num_ref_frames,
+                                      (int)sps.pic_order_cnt_type,
+                                      pps.pic_parameter_set_id,
+                                      pps.flags.entropy_coding_mode_flag,
+                                      26 + pps.pic_init_qp_minus26);
                     }
                     else
                     {
@@ -998,21 +1173,21 @@ int wmain(int argc, wchar_t** argv)
                     }
                 }
                 (void)printf("%u samples, %u keyframes; audio codec %d, %u Hz, %u ch\n",
-                             Mp4Demux_GetSampleCount(pDemux),
-                             keyframes,
-                             (int)Mp4Demux_GetAudioCodec(pDemux),
-                             Mp4Demux_GetAudioSampleRate(pDemux),
-                             Mp4Demux_GetAudioChannels(pDemux));
+                 Mp4Demux_GetSampleCount(pDemux),
+                 keyframes,
+                 (int)Mp4Demux_GetAudioCodec(pDemux),
+                 Mp4Demux_GetAudioSampleRate(pDemux),
+                 Mp4Demux_GetAudioChannels(pDemux));
                 for (i = 0; i < 3 && i < Mp4Demux_GetSampleCount(pDemux); ++i)
                 {
                     const Mp4Sample* s = Mp4Demux_GetSample(pDemux, i);
 
                     (void)printf("  sample %u: offset %llu size %u dts %lld key %d\n",
-                                 i,
-                                 (unsigned long long)s->offset,
-                                 s->size,
-                                 (long long)s->decodeTime,
-                                 s->keyframe);
+                     i,
+                     (unsigned long long)s->offset,
+                     s->size,
+                     (long long)s->decodeTime,
+                     s->keyframe);
                 }
                 Mp4Demux_Close(pDemux);
                 return 0;
@@ -1030,27 +1205,27 @@ int wmain(int argc, wchar_t** argv)
         return 1;
     }
     /* Failed optional proxy startup leaves original-stream casting available. */
-    (void)Proxy_Initialize(&g_proxy);
-    serving_ready   = MediaServer_Initialize(&g_serving);
-    route_ready     = OS_Network_Initialize(&g_routeNetwork);
-    discovery_ready = Ssdp_Initialize(&g_discovery);
+    (void)Proxy_Initialize(&app->proxy);
+    serving_ready   = MediaServer_Initialize(&app->serving);
+    route_ready     = OS_Network_Initialize(&app->routeNetwork);
+    discovery_ready = Ssdp_Initialize(&app->discovery);
     network_ready   = serving_ready && route_ready && discovery_ready;
     device_found    = FALSE;
     if (network_ready)
     {
-        device_found = !!FindDevice(&options, &device);
+        device_found = !!FindDevice(app, &options, &device);
     }
     else
     {
         (void)fprintf(stderr,
-                       "network initialization failed: serving %u, discovery %u, route %u\n",
-                       MediaServer_GetError(&g_serving),
-                       Ssdp_GetError(&g_discovery),
-                       OS_Network_GetError(&g_routeNetwork));
+         "network initialization failed: serving %u, discovery %u, route %u\n",
+         MediaServer_GetError(&app->serving),
+         Ssdp_GetError(&app->discovery),
+         OS_Network_GetError(&app->routeNetwork));
     }
     for (;;)
     {
-        discovery_closed = Ssdp_TryClose(&g_discovery);
+        discovery_closed = Ssdp_TryClose(&app->discovery);
         if (discovery_closed)
         {
             break;
@@ -1059,13 +1234,13 @@ int wmain(int argc, wchar_t** argv)
     }
     if (!device_found)
     {
-        CloseNetworkResources();
-        return (network_ready && options.list) ? g_runResult : 2;
+        CloseNetworkResources(app);
+        return (network_ready && options.list) ? app->runResult : 2;
     }
     if (options.list)
     {
-        CloseNetworkResources();
-        return g_runResult;
+        CloseNetworkResources(app);
+        return app->runResult;
     }
     (void)printf("using %s at %s\n", device.friendlyName, device.host);
 
@@ -1074,6 +1249,7 @@ int wmain(int argc, wchar_t** argv)
     config.loop     = options.loop;
     config.verbose  = options.verbose;
     config.callback = OnSessionEvent;
+    config.pUser    = app;
     if (options.url[0])
     {
         const char* pExtension = strrchr(options.url, '.');
@@ -1085,9 +1261,9 @@ int wmain(int argc, wchar_t** argv)
             0 != MultiByteToWideChar(CP_UTF8, 0, pExtension, -1, extension, 16))
         {
             (void)snprintf(config.contentType,
-                           sizeof(config.contentType),
-                           "%s",
-                           MediaServer_GetContentTypeForExtension(extension));
+             sizeof(config.contentType),
+             "%s",
+             MediaServer_GetContentTypeForExtension(extension));
         }
         else
         {
@@ -1108,25 +1284,25 @@ int wmain(int argc, wchar_t** argv)
         ToUtf8(pName, config.title, sizeof(config.title));
         ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
         (void)snprintf(config.contentType,
-                       sizeof(config.contentType),
-                       "%s",
-                       MediaServer_GetContentTypeForExtension(pExtension));
+         sizeof(config.contentType),
+         "%s",
+         MediaServer_GetContentTypeForExtension(pExtension));
         config.servingLocally = 1;
         if (options.bind[0])
         {
             (void)snprintf(localAddress, sizeof(localAddress), "%s", options.bind);
         }
-        else if (!CastNetwork_ReadLocalAddress(&g_routeNetwork,
-                                               device.host,
-                                               sizeof(device.host),
-                                               localAddress,
-                                               sizeof(localAddress)))
+        else if (!CastNetwork_ReadLocalAddress(&app->routeNetwork,
+                 device.host,
+                 sizeof(device.host),
+                 localAddress,
+                 sizeof(localAddress)))
         {
             (void)fprintf(stderr, "cannot determine the local address facing %s; pass --bind ADDRESS\n", device.host);
-            CloseNetworkResources();
+            CloseNetworkResources(app);
             return 1;
         }
-        pServer = MediaServer_Start(&g_serving,
+        pServer = MediaServer_Start(&app->serving,
                                     options.file,
                                     options.bind[0] ? options.bind : NULL,
                                     options.port,
@@ -1136,15 +1312,15 @@ int wmain(int argc, wchar_t** argv)
         if (NULL == pServer)
         {
             (void)fprintf(stderr, "server: %s\n", error);
-            CloseNetworkResources();
+            CloseNetworkResources(app);
             return 1;
         }
         (void)snprintf(config.contentUrl,
-                       sizeof(config.contentUrl),
-                       "http://%s:%u/media%s",
-                       localAddress,
-                       (unsigned)MediaServer_GetPort(pServer),
-                       extension);
+         sizeof(config.contentUrl),
+         "http://%s:%u/media%s",
+         localAddress,
+         (unsigned)MediaServer_GetPort(pServer),
+         extension);
         (void)printf("serving %ls as %s (%s)\n", options.file, config.contentUrl, config.contentType);
         pKeyframes = (double*)malloc(MP4_INDEX_MAX_KEYFRAMES * sizeof(double));
         if (NULL != pKeyframes)
@@ -1154,23 +1330,23 @@ int wmain(int argc, wchar_t** argv)
         }
     }
 
-    storage_ready = CastSession_Initialize(&g_session);
-    worker_ready  = OS_Thread_Initialize(&g_sessionWorker, SessionJob, &g_session);
+    storage_ready = CastSession_Initialize(&app->session);
+    worker_ready  = OS_Thread_Initialize(&app->sessionWorker, SessionJob, app);
     session_ready = storage_ready && worker_ready;
     submitted     = FALSE;
-    pSession      = &g_session;
+    pSession      = &app->session;
     if (session_ready)
     {
         CastSession_Prepare(pSession, &config);
-        submitted = OS_Thread_Submit(&g_sessionWorker);
+        submitted = OS_Thread_Submit(&app->sessionWorker);
     }
     if (!submitted)
     {
         (void)fprintf(stderr, "cannot start the session\n");
-        CloseServingResources(&g_proxy, &pServer);
-        CloseSessionResources();
+        CloseServingResources(&app->proxy, &pServer);
+        CloseSessionResources(app);
         free(pKeyframes);
-        CloseNetworkResources();
+        CloseNetworkResources(app);
         return 1;
     }
     /* Build and serve the low-latency scrub proxy in the background (local files only). */
@@ -1179,7 +1355,7 @@ int wmain(int argc, wchar_t** argv)
         Proxy_Request_t request;
         bool_t          proxy_started;
 
-        request.serving = &g_serving;
+        request.serving = &app->serving;
         request.source  = options.file;
 
         request.sourceCapacity       = MAX_PATH;
@@ -1188,13 +1364,12 @@ int wmain(int argc, wchar_t** argv)
         request.config               = NULL;
         request.port                 = (uint16_t)(MediaServer_GetPort(pServer) + 1);
         request.session              = pSession;
-        proxy_started                = Proxy_Start(&g_proxy, &request);
+        proxy_started                = Proxy_Start(&app->proxy, &request);
         if (proxy_started)
         {
             (void)printf("building responsive scrub proxy in the background...\n");
         }
     }
-    SetConsoleCtrlHandler(OnConsoleControl, TRUE);
     {
         unsigned       bounceDone = 0;
         ULONGLONG      nextBounce = 0;
@@ -1206,48 +1381,71 @@ int wmain(int argc, wchar_t** argv)
             bool_t failed;
             int    stop;
 
-            completed = OS_Thread_TakeResult(&g_sessionWorker);
-            failed    = (OS_THREAD_FAILED == OS_Thread_GetState(&g_sessionWorker));
+            completed = OS_Thread_TakeResult(&app->sessionWorker);
+            failed    = (OS_THREAD_FAILED == OS_Thread_GetState(&app->sessionWorker));
             if (failed)
             {
-                g_runResult = 1;
+                app->runResult = 1;
             }
             if (completed || failed)
             {
                 break;
             }
-            stop = g_interrupted;
+            stop = FALSE;
+            if (CastEvents_Take(&app->events, &app->snapshot))
+            {
+                if (app->snapshot.present & CAST_EVENTS_STATUS)
+                {
+                    bool_t is_playing;
+                    bool_t has_started;
+                    bool_t first_playing;
+                    bool_t has_duration;
+
+                    is_playing    = (CAST_STATE_PLAYING == app->snapshot.status.state);
+                    has_started   = (0 != app->playingSince);
+                    first_playing = is_playing && !has_started;
+                    has_duration  = (0 < app->snapshot.status.duration);
+                    if (first_playing)
+                    {
+                        app->playingSince = GetTickCount64();
+                    }
+                    if (has_duration)
+                    {
+                        app->duration = app->snapshot.status.duration;
+                    }
+                }
+            }
 
             /* Bounce: jump across the timeline many times so the numbers reflect scrubbing, not one
         ** cold seek. Positions follow the golden ratio so successive jumps are far apart. */
-            if (options.bounce > 0 && 0 != g_playingSince && g_duration > 0)
+            if (options.bounce > 0 && 0 != app->playingSince && app->duration > 0)
             {
                 const ULONGLONG t = GetTickCount64();
 
                 if (0 == nextBounce)
                 {
-                    nextBounce = g_playingSince + 3000;
+                    nextBounce = app->playingSince + 3000;
                 }
                 if (bounceDone < options.bounce && t >= nextBounce)
                 {
                     const double fromFrac = 0.03 + 0.94 * fmod(0.137 + (bounceDone + 0) * 0.6180339887, 1.0);
                     const double toFrac   = 0.03 + 0.94 * fmod(0.137 + (bounceDone + 1) * 0.6180339887, 1.0);
-                    const double seconds  = toFrac * g_duration;
+                    const double seconds  = toFrac * app->duration;
                     int step;
 
                     ++bounceDone;
                     (void)printf("bounce %u/%u -> %.1f s (%.0f%%)\n",
-                                 bounceDone,
-                                 options.bounce,
-                                 seconds,
-                                 toFrac * 100.0);
+                     bounceDone,
+                     options.bounce,
+                     seconds,
+                     toFrac * 100.0);
                     /* Simulate a real drag: sweep scrub previews toward the target over ~360 ms, then
                 ** release. This exercises the proxy switch and hysteresis, not just a lone seek. */
                     for (step = 1; step <= 6; ++step)
                     {
                         const double f = fromFrac + (toFrac - fromFrac) * step / 6.0;
 
-                        CastSession_Post(pSession, CAST_COMMAND_SCRUB, f * g_duration);
+                        CastSession_Post(pSession, CAST_COMMAND_SCRUB, f * app->duration);
                         Sleep(60);
                     }
                     CastSession_Post(pSession, CAST_COMMAND_SEEK, seconds); /* release */
@@ -1260,22 +1458,22 @@ int wmain(int argc, wchar_t** argv)
                 }
             }
 
-            if (options.seek > 0 && 0 != g_playingSince && GetTickCount64() >= g_playingSince + 3000)
+            if (options.seek > 0 && 0 != app->playingSince && GetTickCount64() >= app->playingSince + 3000)
             {
                 (void)printf("seeking to %.1f s\n", options.seek);
                 CastSession_Post(pSession, CAST_COMMAND_SEEK, options.seek);
                 options.seek = 0;
             }
-            if (options.scrub > 0 && 0 != g_playingSince && GetTickCount64() >= g_playingSince + 3000)
+            if (options.scrub > 0 && 0 != app->playingSince && GetTickCount64() >= app->playingSince + 3000)
             {
                 (void)printf("scrubbing to %.1f s (paused preview at the keyframe before it)\n", options.scrub);
                 CastSession_Post(pSession, CAST_COMMAND_SCRUB, options.scrub);
-                options.seek    = options.scrub; /* the release: an exact, resuming seek two seconds later */
-                options.scrub   = 0;
-                g_playingSince += 2000;
+                options.seek      = options.scrub; /* the release: an exact, resuming seek two seconds later */
+                options.scrub     = 0;
+                app->playingSince += 2000;
             }
-            if (options.seconds > 0 && 0 != g_playingSince &&
-                GetTickCount64() >= g_playingSince + (ULONGLONG)options.seconds * 1000)
+            if (options.seconds > 0 && 0 != app->playingSince &&
+                GetTickCount64() >= app->playingSince + (ULONGLONG)options.seconds * 1000)
             {
                 if (!stopping)
                 {
@@ -1283,23 +1481,13 @@ int wmain(int argc, wchar_t** argv)
                 }
                 stop = 1;
             }
-            for (;;)
             {
-                int key;
+                bool_t input_stop;
 
-                if (!ConsoleHasKeys())
+                input_stop = PollConsoleInput(app);
+                if (input_stop)
                 {
-                    break;
-                }
-                key = _getch();
-
-                if (' ' == key)
-                {
-                    CastSession_Post(pSession, CAST_COMMAND_TOGGLE, 0);
-                }
-                else if ('q' == key || 'Q' == key || 27 == key)
-                {
-                    stop = 1;
+                    stop = TRUE;
                 }
             }
             if (stop && !stopping)
@@ -1310,9 +1498,68 @@ int wmain(int argc, wchar_t** argv)
             Sleep(SESSION_POLL_MS);
         }
     }
-    CloseServingResources(&g_proxy, &pServer);
-    CloseSessionResources();
+    CloseServingResources(&app->proxy, &pServer);
+    CloseSessionResources(app);
     free(pKeyframes);
-    CloseNetworkResources();
-    return g_runResult;
+    CloseNetworkResources(app);
+    return app->runResult;
+}
+
+/*=================================================================================================
+** 5. PUBLIC FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Owns the console context from startup through complete resource closure.
+ *  Failed startup retains its memory owner for release; no callback borrows the
+ *  context after RunConsole returns. Keyboard polling registers no native callback;
+ *  native control-signal cancellation remains a separate integration obligation.
+ */
+int wmain(int argc, wchar_t** argv)
+{
+    bool_t         ready;
+    OS_Memory_t    memory;
+    int32_t        result;
+    CastConsole_t* app;
+    bool_t         closed;
+    bool_t         console_failed;
+
+    ready  = OS_Memory_Initialize(&memory, sizeof(CastConsole_t));
+    result = 1;
+    if (ready)
+    {
+        app = (CastConsole_t*)OS_Memory_GetAddress(&memory);
+        CastEvents_Initialize(&app->events);
+        ready = OS_Console_Initialize(&app->console);
+        if (ready)
+        {
+            result = RunConsole(app, argc, argv);
+        }
+        for (;;)
+        {
+            closed = OS_Console_TryClose(&app->console);
+            if (closed)
+            {
+                break;
+            }
+            Sleep(SESSION_POLL_MS);
+        }
+        console_failed = (0 != OS_Console_GetError(&app->console));
+        if (console_failed)
+        {
+            result = 1;
+        }
+    }
+    for (;;)
+    {
+        closed = OS_Memory_TryClose(&memory);
+        if (closed)
+        {
+            break;
+        }
+        Sleep(SESSION_POLL_MS);
+    }
+    return result;
 }

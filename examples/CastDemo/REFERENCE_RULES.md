@@ -82,7 +82,7 @@ explicitly establishes otherwise. A corrected occurrence does not close the rule
 | W33 / WinUserX; startup sources | Respect startup show/placement/DPI contracts and consistent structures; do not force foreground or guess startup state | Entry and first-show path need review with the requested `WinMainStartup` |
 | W34 / main.c; message pump | Preserve accelerator/dialog translation, normal dispatch, quit and failure handling; do not spin or block the UI on worker completion | Pump is hard-coded W; gain/preview cancellation and close still contain blocking waits |
 | W35 / manifest; theme contract 3, 4, 6 | Verify common-controls v6 activation context; handle absent theme handles; request owner-draw styles and honor custom-draw return semantics | New executable/paint paths have no recorded manifest/runtime verification |
-| W36 / theme contract 0â€“4b | Do not assume unforwarded messages were processed, DWM handles sizing/paint, or conditional owner-draw callbacks occur every frame | Needed for any theme/paint refactor; these are conditional behavior contracts, not a reason to add unused animation |
+| W36 / theme contract 0Ã¢â‚¬â€œ4b | Do not assume unforwarded messages were processed, DWM handles sizing/paint, or conditional owner-draw callbacks occur every frame | Needed for any theme/paint refactor; these are conditional behavior contracts, not a reason to add unused animation |
 | W37 / theme contract 3, 4b | A themed surface needs coherent text rendering; if buffered animation is used, continue the active animation first and do not start competing animations; no GUI-thread DwmFlush | Apply if those APIs/features are used; the no-post-init-allocation requirement still applies to animation resources |
 | W38 / PDF 19 | Guards must cover line endings, circumvention, layout/style, formatting, analysis and applicable owner-draw rules | `audit_cast.py` is only a partial lexical guard; it cannot certify these requirements |
 | W39 / goal; release CMake precedent | Preserve aggressive optimization and measure executable size, memory, CPU and latency; emit final artifacts in the designated build tree | No final performance comparison or fully compliant release exists |
@@ -96,7 +96,7 @@ conversion boundary. Generic CRT macros such as `_tcslen` are not a no-CRT solut
 
 | ID / source | Rule/precedent to apply | CastDemo gap or evidence required |
 | --- | --- | --- |
-| X01 / utl_xml.h and utl_arinc661.h sections 1â€“3.5; source sections 1â€“5 | Complete numbered source/header layout, including empty prescribed sections; macros/types/globals/prototypes in their respective places | Many old and new control modules only have fragments of the layout |
+| X01 / utl_xml.h and utl_arinc661.h sections 1Ã¢â‚¬â€œ3.5; source sections 1Ã¢â‚¬â€œ5 | Complete numbered source/header layout, including empty prescribed sections; macros/types/globals/prototypes in their respective places | Many old and new control modules only have fragments of the layout |
 | X02 / public contracts in both headers | Every public function needs an accurate brief, details where needed, numbered requirements, parameter direction/meaning and specific returns | Most existing APIs have a one-line comment or no contract; new controls remain incomplete |
 | X03 / utl_arinc661.c prototype section; implementation Details blocks | Document private prototypes before implementations; implementation comments explain mechanics without replacing public contracts | `cast_commands.c` and the new message/format modules have prototype preambles; `cast_events.c` and other existing modules still need complete contracts and structure |
 | X04 / type/member docs and schema citations | Document each public model/member's domain, unit, ownership and meaning, with actual specification productions/clauses | Existing MP4/MKV/codec structs largely expose implementation details instead of documented spec models |
@@ -106,7 +106,7 @@ conversion boundary. Generic CRT macros such as `_tcslen` are not a no-CRT solut
 | X08 / utl_xml.h section 3.1; utl_xml.c lexical helpers and grammar tables; explicit user correction | Parser/writer character terminals, delimiters, keywords and bounds use named module constants in section 3.1. Documented static grammar tables belong in section 3.4 and may contain their literal ranges | Replaced raw characters throughout `utl_http` and its consolidated range code; named HTTP tokens, status/version bounds and derived widths follow the same rule. `utl_decimal` digit terminals are named too. The audit rejects character literals inside specification function bodies and tests escaped characters, comments, strings, macros and tables. Token meaning, numeric grammar bounds and the rest of the application still require semantic review |
 | X09 / utl_xml.c InRange/DecodeUtf8; ARINC HasElementName | Readable named questions express separate validity decisions, followed by staged work | Long compound expressions remain; boolean names alone do not excuse opaque expressions |
 | X10 / utl_xml.c traversal; utl_scan.c | Conventional bounded `for` and explicit `for (;;)` termination; traversal limits and progress must be visible; user forbids both `while` and `do ... while` | Converted production and Cast test loops, including gain/test macros. Kept I/O calls explicit, preserved cursor progress, removed post-decrement underflow in MP4 runs, and distinguished GetMessage failure from WM_QUIT. Remaining complex conditions and lifecycle behavior still require review |
-| X11 / XML design Goal and scope | Generic syntax belongs below schema/application interpretation; ARINC rules do not leak into XML | Existing Cast wire, JSON, socket/session logic and container I/O are intertwined |
+| X11 / XML design Goal and scope | Generic syntax belongs below protocol/schema interpretation; ARINC rules do not leak into XML | `utl_chromecast` now consumes `utl_json`; `cast_session` supplies application policy. JSON parsing, the remaining Cast messages, socket/session logic and container I/O still need migration |
 | X12 / utl_arinc661.h typed Configuration/Definition | A specification module provides substantive typed domain models and readers/writers; string searches or generic nodes alone do not implement a schema | Format inventory remains largely unimplemented; MP4/Matroska header primitives are partial |
 | X13 / InitializeXmlWorkspace, utl_arinc661.c:580 | Caller supplies aligned bounded workspace; partitioning checks size/alignment, then establishes fixed typed storage | Heap-backed subtitle/container/mux/GPU paths and per-operation storage remain |
 | X14 / ReadConfiguration and ReadDefinition contracts | Temporary parse representation does not escape into long-lived typed results; string and workspace ownership is explicit | Borrowed pointers, file mappings, queued payloads and converted-text ownership need full tracing |
@@ -263,3 +263,34 @@ also corrected a misplaced public contract and removed accidental control bytes
 from comments; the lexical guard now detects those bytes. Strict diagnostics and
 legacy server/application conventions remain open, as do native allocation and
 the complete reference/MISRA review. This is not whole-module acceptance.
+
+## Latest ownership and protocol corrections
+
+- The user prohibits globals. Explicit startup contexts must reach borrowers
+  through parameters and native callback userdata. Global pointers, local statics,
+  TLS and singleton accessors are not substitutes. All borrowers must be quiescent
+  before context storage is released. The GUI/CLI migration is in progress and is
+  not a whole-tree proof; console cancellation integration is still unfinished.
+- Each separate bound, presence and validity question needs its own `bool_t`
+  before composition. A single name for a compound comparison is insufficient.
+- Counted protocol input, serialized output, packet/container/codec buffers and
+  borrowed wire spans use `byte_t`, including UTF-8 syntax. This applies through
+  the storage, public interface and every caller; changing only `loadPayload` or
+  casting incorrectly typed storage at each call does not satisfy the rule.
+  `C:/dev/xml/include/utl/utl_xml.h` demonstrates this in attribute/node names and
+  values and in `Utl_Xml_IsString`. Terminated application/native text uses its
+  text type; C literals and fixed native text APIs need explicit byte/text views
+  at that boundary. Numeric eight-bit values retain their numeric type.
+- Chromecast message semantics belong in `utl_chromecast`, consuming `utl_json`.
+  `cast_json` misclassified a protocol schema as an application adapter. Demo
+  appearance is caller policy, represented by a typed optional style.
+
+The console integration keeps native input representation inside `os/win32`,
+with a build-selected generic native read spelling for both ANSI and Unicode.
+Application keys and receiver commands stay in CLI policy. Initializer, queries,
+read and close appear in matching public order; caller misuse asserts separately
+from native failure. The first error and outstanding restoration/handle duties
+remain owned until closure. The application consumes bounded input without
+writing worker-owned results. The GUI WM_NCCREATE cracker is now inside a switch,
+as HANDLE_MSG requires. Complete GUI/CLI reference-style migration, strict
+diagnostics, native signals and the whole-program allocation proof remain open.

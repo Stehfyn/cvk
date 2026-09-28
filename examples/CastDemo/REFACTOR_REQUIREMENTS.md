@@ -57,11 +57,32 @@ The user's other explicit instructions remain in force:
   goal. Their responsibilities and acceptance criteria are recorded in
   [OS_MODULES.md](OS_MODULES.md); all remain open.
 - Target MISRA C:2025, as accepted in the user's response about the edition.
+- No globals. Application state belongs to explicit startup-owned contexts and
+  reaches workers and callbacks through their context parameters. Do not replace
+  global objects with global pointers, local statics, TLS or hidden singleton
+  accessors. Keep every context alive until all borrowers have stopped.
+- Name each distinct validity, range and capacity question with `bool_t` before
+  combining the answers. Naming only the final compound expression is insufficient.
+- Use CVK for Vulkan operations. Query loader, version, extension, queue, format
+  and profile prerequisites before construction. Do not bypass CVK with raw
+  Vulkan calls or replace its construction contracts with application recovery
+  branches. Reuse its existing query functions and builders throughout CastDemo.
+- JSON syntax belongs in a general `utl_json` specification module. Cast message
+  models belong in `utl_chromecast`, which consumes `utl_json`. CastDemo selects
+  policy and appearance through typed values. Neither `utl_castjson` nor a
+  `cast_json` application adapter is the requested specification-layer boundary.
 - Read the actual Win32X and XML references. Do not substitute guessed conventions,
   generic C style, superficial resemblance, or a formatter's defaults.
 - Specification libraries follow `C:/dev/xml`'s `utl_xml` and `utl_arinc661`.
   They need substantive typed specification models and implementations, not renamed
   ad hoc parsers, empty module files, or only outer headers.
+- CastDemo is an application composing RFC technologies, ISO formats and protocol
+  schemas; its implementation must echo that composition. Specification libraries
+  must replace bespoke, non-conformant production logic with auditable models,
+  contracts and implementations. General grammar belongs below protocol schemas;
+  application policy composes their typed interfaces. Record specification-clause,
+  implementation, independent-vector and production-consumer traceability. The
+  acceptance criterion is in [SPECIFICATION_MODULES.md](SPECIFICATION_MODULES.md).
 - Use canonical `windowsx.h` message handling with `HANDLE_MSG`.
 - Use character-set-agnostic Win32 operations. Generic API names, `TCHAR`,
   `LPTSTR`/`LPCTSTR`, generic structures and `TEXT(...)` must agree throughout the
@@ -84,6 +105,11 @@ The user's other explicit instructions remain in force:
 - Put macros in their correct section. The complete source organization and
   documentation conventions apply; a few numbered comment banners are insufficient.
 - Do not use `size_t` in application-owned declarations or interfaces.
+- Use `byte_t` for counted protocol spans and serialized, network, container,
+  codec and subtitle storage, including UTF-8 syntax. Carry that type through
+  APIs, owners and callers. A cast that conceals incorrectly typed owned storage
+  is not a correction. Keep terminated application/native strings distinct,
+  with explicit representation views only at their actual boundaries.
 - Do not introduce U/u integer-literal suffixes as a substitute for choosing types.
 - Do not use `while` or `do ... while` loops, including macro wrappers. The user's
   clarification is: "remember while and do while loops are non-grata".
@@ -424,13 +450,13 @@ Verification snapshot, 2026-09-28:
 - Twenty-nine lexical-audit regression tests pass, including nonfinal returns,
   void guard returns, switch exits, inline barriers, startup allocation wrappers,
   CRT warning suppressions and the prior API/doc checks.
-- The current lexical scan covers 105 production C/header files, 46,440 lines
-  and 703 definitions. It still reports 311 nonfinal returns,
-  338 CRT calls, 130 `size_t` uses, 199 unsigned-suffix literals,
-  184 missing section headings, 63 macro-placement findings, 94 explicit A/W
-  API calls, 19 dereference-sizeof forms and 3 declarations in for headers.
-  Lifecycle review includes 135 allocation/release, 143 resource/thread
-  and 46 wait/I/O boundaries. Regenerate the report after changes;
+- The current lexical scan covers 116 production C/header files, 60,114 lines
+  and 925 definitions. It still reports 293 nonfinal returns,
+  321 CRT calls, 120 `size_t` uses, 182 unsigned-suffix literals,
+  138 missing section headings, 45 macro-placement findings, 88 explicit A/W
+  API calls, 18 dereference-sizeof forms and 3 declarations in for headers.
+  Lifecycle review includes 137 allocation/release, 151 resource/thread
+  and 57 wait/I/O boundaries. Regenerate the report after changes;
   these counts are not a baseline allowlist.
 - SSDP specification parsing/writing and discovery adapters now use final
   results; discovery checks capacity for each ready socket in the batch.
@@ -891,6 +917,34 @@ Verification snapshot, 2026-09-28:
 - `FORCE_INLINE` is defined by the compiler abstraction and applied to private
   helpers in the new protocol/OS/command/event/message modules. Review of all
   remaining application helpers and final optimized C5045 dataflow remains open.
+- Production Cast framing and routing now consume the counted CastV2 model directly;
+  the duplicate cast_message adapter is removed. Session/transport IDs use retained
+  decoded byte storage and publish only after successful CONNECT. JSON exact-int64
+  conversion and namespace/routing fixtures are implemented, but the production
+  receiver parser, floating-point conversion, strict analysis and runtime evidence
+  remain open. See SPECIFICATION_MODULES.md and MISRA_REVIEW.md for this scoped review.
+- MPEG-4 Systems descriptor and AAC AudioSpecificConfig modules now drive the
+  production MP4 descriptor paths. The guessed AAC-LC fallback is removed; typed
+  configuration supports Main/LC/SSR/LTP, PCE and explicit/synchronized SBR/PS.
+  Other codec/profile semantics, strict analysis, unexecuted C fixtures and
+  application/dependency runtime allocation remain open. These additions do not
+  close MP4, Matroska, tx3g, AVC or the other specification rows. Current evidence
+  and exact limitations are in SPECIFICATION_MODULES.md, MISRA_REVIEW.md and
+  build/mpeg4-codec-review.json.
+- The user requires `utl_mpeg4` as the shared MPEG-4 foundation, consumed by
+  `utl_mpeg4systems` and `utl_mpeg4audio`. Those dependencies now use shared spans
+  and actual common integer/bitstream operations. The former `utl_mp4` header
+  module is retired into this foundation; typed FullBox and file-type operations
+  are connected to native readers and mux paths. Container/track/fragment and
+  codec semantics, strict analysis, unexecuted fixtures and runtime allocation
+  remain open. See build/mpeg4-common-review.json and SPECIFICATION_MODULES.md.
+- Shared MPEG-4 `stts`/`stss` models and cursors now drive a two-page keyframe
+  indexer without whole-table heap allocation. Full entry validation, overflow,
+  missing-table and insufficient-index-capacity behavior are explicit. Other
+  tables, native media headers, edit/composition timing, mux entry writers,
+  synchronous I/O, OS/resource lifecycle and runtime validation remain open.
+  Native compilation passes for this increment; strict analysis still fails.
+  See build/mpeg4-tables-review.json and the scoped specification/MISRA ledgers.
 - The last pre-policy GUI/CLI builds are in the required Release directory
   (654,336 / 610,304 bytes, 07:18:55 / 07:18:57 UTC). They do not contain all
   subsequent edits and do not satisfy the strict compiler/analysis requirement.

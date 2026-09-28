@@ -88,7 +88,7 @@ struct GpuEncoder
     int      qpIntra;
     int      qpInter;
 
-    uint8_t  header[MAX_HEADER_BYTES];
+    byte_t   header[MAX_HEADER_BYTES];
     uint32_t headerSize;
 };
 
@@ -270,12 +270,12 @@ static VkVideoPictureResourceInfoKHR GetPictureResource(const GpuEncoder* pEncod
  *  the final row/column through the macroblock-aligned border.
  */
 static void PackFrame(GpuEncoder*    pEncoder,
-                      const uint8_t* pLuma,
+                      const byte_t* pLuma,
                       unsigned       lumaStride,
-                      const uint8_t* pChroma,
+                      const byte_t* pChroma,
                       unsigned       chromaStride)
 {
-    uint8_t*     p_dst;
+    byte_t*      p_dst;
     uint32_t     plane_count;
     VkDeviceSize plane_offsets[MAX_PLANES];
     uint32_t     plane_strides[MAX_PLANES];
@@ -283,7 +283,7 @@ static void PackFrame(GpuEncoder*    pEncoder,
     VkDeviceSize staging_size;
     uint32_t     plane;
 
-    p_dst       = (uint8_t*)pEncoder->stagingMapped;
+    p_dst       = (byte_t*)pEncoder->stagingMapped;
     plane_count = cvkCalculateFormatPlaneLayouts(pEncoder->inputFormat,
                                                  pEncoder->codedExtent.width,
                                                  pEncoder->codedExtent.height,
@@ -296,16 +296,16 @@ static void PackFrame(GpuEncoder*    pEncoder,
                                                  &staging_size);
     for (plane = 0; plane < plane_count; ++plane)
     {
-        const uint8_t* p_src;
-        unsigned       src_stride;
-        unsigned       texel;
-        unsigned       div_w;
-        unsigned       div_h;
-        unsigned       src_valid_w;
-        unsigned       src_valid_h;
-        unsigned       plane_width;
-        unsigned       plane_height;
-        unsigned       y;
+        const byte_t* p_src;
+        unsigned      src_stride;
+        unsigned      texel;
+        unsigned      div_w;
+        unsigned      div_h;
+        unsigned      src_valid_w;
+        unsigned      src_valid_h;
+        unsigned      plane_width;
+        unsigned      plane_height;
+        unsigned      y;
 
         plane_width  = plane_extents[plane].width;
         plane_height = plane_extents[plane].height;
@@ -654,7 +654,7 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
  * \par Details:
  *  None
  */
-const uint8_t* GpuEncode_GetHeader(GpuEncoder* pEncoder, uint32_t* pSize)
+const byte_t* GpuEncode_GetHeader(GpuEncoder* pEncoder, uint32_t* pSize)
 {
     *pSize = pEncoder->headerSize;
     return pEncoder->header;
@@ -676,10 +676,10 @@ int GpuEncode_IsLastFrameKeyframe(const GpuEncoder* pEncoder)
  *  Uploads the input planes and encodes one slice with constant QP. Tracks the
  *  reconstructed reference slot, keyframe state and driver-reported output span.
  */
-const uint8_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
-                                     const uint8_t* pLuma,
+const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
+                                     const byte_t* pLuma,
                                      unsigned       lumaStride,
-                                     const uint8_t* pChroma,
+                                     const byte_t* pChroma,
                                      unsigned       chromaStride,
                                      int            forceIdr,
                                      int            qpOverride,
@@ -968,7 +968,7 @@ const uint8_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
     }
 
     *pSize = feedback[1];
-    return (const uint8_t*)pEncoder->bitstreamMapped + feedback[0];
+    return (const byte_t*)pEncoder->bitstreamMapped + feedback[0];
 }
 
 /*************************************************************************************************/

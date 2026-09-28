@@ -81,7 +81,7 @@ typedef struct Ipv4Case_s
 ** 3.4 Static global variables
 **===============================================================================================*/
 
-static char_t       g_output[URL_TEST_CAPACITY];
+static byte_t       g_output[URL_TEST_CAPACITY];
 static byte_t       g_decoded[URL_TEST_CAPACITY];
 
 static const Case_t c_cases[] = {
@@ -466,9 +466,9 @@ static FORCE_INLINE void CheckCases(void)
 
     for (index = 0; index < (sizeof(c_cases) / sizeof(Case_t)); ++index)
     {
-        accepted = Utl_Url_Read(&url, c_model, sizeof(c_model) - 1);
+        accepted = Utl_Url_Read(&url, (const byte_t*)c_model, sizeof(c_model) - 1);
         LOGASSERT(accepted);
-        accepted = Utl_Url_Read(&url, c_cases[index].text, c_cases[index].byteCount);
+        accepted = Utl_Url_Read(&url, (const byte_t*)c_cases[index].text, c_cases[index].byteCount);
         LOGASSERT(c_cases[index].valid == accepted);
         if (accepted)
         {
@@ -495,7 +495,7 @@ static FORCE_INLINE void CheckComponents(void)
     uint16_t  port;
     uint32_t  count;
 
-    accepted = Utl_Url_Read(&url, c_model, sizeof(c_model) - 1);
+    accepted = Utl_Url_Read(&url, (const byte_t*)c_model, sizeof(c_model) - 1);
     LOGASSERT(accepted);
     CheckText(url.scheme, "HtTp", sizeof("HtTp") - 1);
     CheckText(url.userInfo, "user:pass", sizeof("user:pass") - 1);
@@ -508,18 +508,18 @@ static FORCE_INLINE void CheckComponents(void)
     accepted = Utl_Url_GetPort(&url, &port);
     LOGASSERT(accepted);
     LOGASSERT(80 == port);
-    accepted = Utl_Url_Read(&url, "http://host:65535", sizeof("http://host:65535") - 1);
+    accepted = Utl_Url_Read(&url, (const byte_t*)"http://host:65535", sizeof("http://host:65535") - 1);
     LOGASSERT(accepted);
     accepted = Utl_Url_GetPort(&url, &port);
     LOGASSERT(accepted);
     LOGASSERT(UINT16_MAX == port);
-    accepted = Utl_Url_Read(&url, "http://host:65536", sizeof("http://host:65536") - 1);
+    accepted = Utl_Url_Read(&url, (const byte_t*)"http://host:65536", sizeof("http://host:65536") - 1);
     LOGASSERT(accepted);
     port     = URL_TEST_PORT;
     accepted = Utl_Url_GetPort(&url, &port);
     LOGASSERT(!accepted);
     LOGASSERT(URL_TEST_PORT == port);
-    accepted = Utl_Url_Read(&url, "//@:?#", sizeof("//@:?#") - 1);
+    accepted = Utl_Url_Read(&url, (const byte_t*)"//@:?#", sizeof("//@:?#") - 1);
     LOGASSERT(accepted);
     LOGASSERT(url.hasAuthority && url.hasUserInfo && url.hasPort && url.hasQuery && url.hasFragment);
     LOGASSERT(0 == url.userInfo.byteCount);
@@ -538,7 +538,7 @@ static FORCE_INLINE void CheckComponents(void)
     accepted = Utl_Url_Write(&url, NULL, 0, &count);
     LOGASSERT(accepted);
     LOGASSERT(0 == count);
-    url.path.data      = "a:b";
+    url.path.data      = (const byte_t*)"a:b";
     url.path.byteCount = sizeof("a:b") - 1;
     CRT_Memory_Set(g_output, URL_TEST_GUARD, sizeof(g_output));
     count    = URL_TEST_COUNT;
@@ -562,7 +562,7 @@ static FORCE_INLINE void CheckDecoding(void)
     uint32_t       index;
     int32_t        compared;
 
-    text.data      = c_encoded;
+    text.data      = (const byte_t*)c_encoded;
     text.byteCount = sizeof(c_encoded) - 1;
     count          = URL_TEST_COUNT;
     accepted       = Utl_Url_GetDecodedByteCount(text, &count);
@@ -586,7 +586,7 @@ static FORCE_INLINE void CheckDecoding(void)
     compared = CRT_Memory_Compare(g_decoded, c_decoded, count);
     LOGASSERT(0 == compared);
     LOGASSERT(URL_TEST_GUARD == g_decoded[count]);
-    text.data      = "%41%4g";
+    text.data      = (const byte_t*)"%41%4g";
     text.byteCount = sizeof("%41%4g") - 1;
     CRT_Memory_Set(g_decoded, URL_TEST_GUARD, sizeof(g_decoded));
     count    = URL_TEST_COUNT;
@@ -612,7 +612,7 @@ static FORCE_INLINE void CheckHttpTarget(const HttpCase_t* test)
     uint32_t  capacity;
     int32_t   compared;
 
-    accepted = Utl_Url_Read(&url, test->text, test->byteCount);
+    accepted = Utl_Url_Read(&url, (const byte_t*)test->text, test->byteCount);
     LOGASSERT(accepted);
     accepted = Utl_Http_GetOriginTargetByteCount(&url, &count);
     LOGASSERT(accepted);
@@ -646,15 +646,15 @@ static FORCE_INLINE void CheckHttpFailure(const HttpCase_t* test)
     Utl_Http_Endpoint_t endpoint;
     uint32_t            count;
 
-    accepted = Utl_Url_Read(&url, test->text, test->byteCount);
+    accepted = Utl_Url_Read(&url, (const byte_t*)test->text, test->byteCount);
     LOGASSERT(accepted);
-    endpoint.host.data      = test->text;
+    endpoint.host.data      = (const byte_t*)test->text;
     endpoint.host.byteCount = test->byteCount;
     endpoint.port           = URL_TEST_PORT;
     endpoint.secure         = TRUE;
     accepted                = Utl_Http_GetUrlEndpoint(&url, &endpoint);
     LOGASSERT(!accepted);
-    LOGASSERT(test->text == endpoint.host.data);
+    LOGASSERT((const byte_t*)test->text == endpoint.host.data);
     LOGASSERT(test->byteCount == endpoint.host.byteCount);
     LOGASSERT(URL_TEST_PORT == endpoint.port);
     LOGASSERT(endpoint.secure);
@@ -691,7 +691,7 @@ static FORCE_INLINE void CheckHttpCases(void)
         }
         else
         {
-            accepted = Utl_Url_Read(&url, test->text, test->byteCount);
+            accepted = Utl_Url_Read(&url, (const byte_t*)test->text, test->byteCount);
             LOGASSERT(accepted);
             accepted = Utl_Http_GetUrlEndpoint(&url, &endpoint);
             LOGASSERT(accepted);
@@ -744,7 +744,7 @@ static FORCE_INLINE void CheckIpv4(void)
     for (index = 0; index < sizeof(c_ipv4Cases) / sizeof(Ipv4Case_t); ++index)
     {
         test           = &c_ipv4Cases[index];
-        text.data      = test->text;
+        text.data      = (const byte_t*)test->text;
         text.byteCount = test->byteCount;
         address        = URL_TEST_IPV4_SENTINEL;
         valid          = Utl_Url_ReadIpv4(text, &address);

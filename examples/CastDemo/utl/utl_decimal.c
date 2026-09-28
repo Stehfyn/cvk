@@ -74,14 +74,14 @@ uint32_t Utl_Decimal_GetUint64ByteCount(uint64_t value)
  * \par Details:
  *  Each digit is checked against the remaining uint64_t range before multiplication.
  */
-bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const char_t* buffer, uint32_t byteCount)
+bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t   has_outputs;
     bool_t   has_input;
     bool_t   is_valid;
     uint32_t cursor;
     uint64_t number;
-    char_t   current;
+    byte_t   current;
     bool_t   is_digit;
     uint64_t digit;
     bool_t   fits_value;
@@ -130,7 +130,7 @@ bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const char_t
  * \par Details:
  *  Digits are written from right to left within the exact precomputed width.
  */
-uint32_t Utl_Decimal_WriteUint64(uint64_t value, char_t* buffer, uint32_t capacity)
+uint32_t Utl_Decimal_WriteUint64(uint64_t value, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   has_buffer;
@@ -146,7 +146,7 @@ uint32_t Utl_Decimal_WriteUint64(uint64_t value, char_t* buffer, uint32_t capaci
         for (;;)
         {
             --cursor;
-            buffer[cursor]  = (char_t)(UTL_DECIMAL_CHAR_FIRST + (value % DECIMAL_RADIX));
+            buffer[cursor] = (byte_t)(UTL_DECIMAL_CHAR_FIRST + (value % DECIMAL_RADIX));
             value          /= DECIMAL_RADIX;
             if (0 == cursor)
             {

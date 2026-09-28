@@ -216,7 +216,7 @@ MediaServer* MediaServer_StartWithSubtitles(MediaServer_Workspace_t* workspace,
                                             const char*              pBindAddress,
                                             uint16_t                 port,
                                             const char*              pContentType,
-                                            const char*              pVtt,
+                                            const byte_t*              pVtt,
                                             uint64_t                 vttSize,
                                             char*                    pError,
                                             uint32_t                 errorCapacity);
