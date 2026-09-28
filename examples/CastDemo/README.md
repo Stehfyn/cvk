@@ -48,8 +48,6 @@ log: TLS connection, application launch, the URL being loaded, and any error the
 receiver reports. Closing the window stops playback and returns the projector to its
 home screen.
 
-### Adaptive quality: the full stream, then a GPU proxy
-
 ### Subtitles
 
 The **Subtitles** selector discovers SRT/WebVTT files beside the video or in its
