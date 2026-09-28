@@ -29,42 +29,56 @@ typedef enum Mp4AudioCodec
 
 typedef struct Mp4Demux Mp4Demux;
 
+/* Reads a local MP4/MOV tx3g (mov_text) track independently of the video codec.
+** index is zero-based among supported text tracks. A NULL callback only probes metadata.
+** Sample bytes begin with a big-endian text length; modifier boxes follow the text. */
+typedef int             (*Mp4TextProc)(void* pUser, double start, double end, const uint8_t* pData, uint32_t size);
+
 /* Opens the file and reads the sample tables. Returns NULL if it is not an AVC MP4. */
 Mp4Demux* Mp4Demux_Open(const wchar_t* pFile);
 
 /* Video track parameters. */
-unsigned Mp4Demux_Width(const Mp4Demux* pDemux);
-unsigned Mp4Demux_Height(const Mp4Demux* pDemux);
-unsigned Mp4Demux_Timescale(const Mp4Demux* pDemux);
-int Mp4Demux_NalLengthSize(const Mp4Demux* pDemux); /* 1, 2 or 4 */
-const uint8_t* Mp4Demux_Sps(const Mp4Demux* pDemux, uint32_t* pSize);
-const uint8_t* Mp4Demux_Pps(const Mp4Demux* pDemux, uint32_t* pSize);
-unsigned Mp4Demux_SampleCount(const Mp4Demux* pDemux);
-const Mp4Sample* Mp4Demux_Sample(const Mp4Demux* pDemux, unsigned index);
+unsigned Mp4Demux_GetWidth(const Mp4Demux* pDemux);
+
+unsigned Mp4Demux_GetHeight(const Mp4Demux* pDemux);
+
+unsigned Mp4Demux_GetTimescale(const Mp4Demux* pDemux);
+
+/* Returns the NAL length-prefix width: 1, 2 or 4 bytes. */
+int Mp4Demux_GetNalLengthSize(const Mp4Demux* pDemux);
+
+const uint8_t* Mp4Demux_GetSps(const Mp4Demux* pDemux, uint32_t* pSize);
+
+const uint8_t* Mp4Demux_GetPps(const Mp4Demux* pDemux, uint32_t* pSize);
+
+unsigned Mp4Demux_GetSampleCount(const Mp4Demux* pDemux);
+
+const Mp4Sample* Mp4Demux_GetSample(const Mp4Demux* pDemux, unsigned index);
+
+/* Audio track summary for the separate audio path. */
+Mp4AudioCodec Mp4Demux_GetAudioCodec(const Mp4Demux* pDemux);
+
+unsigned Mp4Demux_GetAudioSampleRate(const Mp4Demux* pDemux);
+
+unsigned Mp4Demux_GetAudioChannels(const Mp4Demux* pDemux);
+
+unsigned Mp4Demux_GetAudioTimescale(const Mp4Demux* pDemux);
+
+/* The AAC AudioSpecificConfig (from esds, or synthesised for AAC-LC). Bytes live until Close. */
+const uint8_t* Mp4Demux_GetAudioConfig(const Mp4Demux* pDemux, uint32_t* pSize);
+
+/* Audio (AAC) sample table for passthrough muxing. */
+unsigned Mp4Demux_GetAudioSampleCount(const Mp4Demux* pDemux);
+
+const Mp4Sample* Mp4Demux_GetAudioSample(const Mp4Demux* pDemux, unsigned index);
 
 /* Reads one sample's bytes into pBuffer (AVCC length-prefixed NAL units). Returns bytes read. */
 uint32_t Mp4Demux_ReadSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity);
 
-/* Audio track summary for the separate audio path. */
-Mp4AudioCodec Mp4Demux_AudioCodec(const Mp4Demux* pDemux);
-unsigned Mp4Demux_AudioSampleRate(const Mp4Demux* pDemux);
-unsigned Mp4Demux_AudioChannels(const Mp4Demux* pDemux);
-unsigned Mp4Demux_AudioTimescale(const Mp4Demux* pDemux);
-
-/* The AAC AudioSpecificConfig (from esds, or synthesised for AAC-LC). Bytes live until Close. */
-const uint8_t* Mp4Demux_AudioConfig(const Mp4Demux* pDemux, uint32_t* pSize);
-
-/* Audio (AAC) sample table for passthrough muxing. */
-unsigned Mp4Demux_AudioSampleCount(const Mp4Demux* pDemux);
-const Mp4Sample* Mp4Demux_AudioSample(const Mp4Demux* pDemux, unsigned index);
 uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity);
 
-void Mp4Demux_Close(Mp4Demux* pDemux);
-
-/* Reads a local MP4/MOV tx3g (mov_text) track independently of the video codec.
-** index is zero-based among supported text tracks. A NULL callback only probes metadata.
-** Sample bytes begin with a big-endian text length; modifier boxes follow the text. */
-typedef int (*Mp4TextProc)(void* pUser, double start, double end, const uint8_t* pData, uint32_t size);
 int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser);
+
+void Mp4Demux_Close(Mp4Demux* pDemux);
 
 #endif

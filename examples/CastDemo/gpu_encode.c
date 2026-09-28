@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <vulkan/vulkan.h>
 #include <volk.h>
 #include "cvk.h"
 
@@ -82,7 +83,7 @@ struct GpuEncoder
     uint32_t framesSinceIdr;
     uint32_t idrPicId;
     uint32_t gopLength;
-    int      lastKeyframe;  /* whether the most recent GpuEncode_Frame produced an IDR */
+    int      lastKeyframe; /* whether the most recent GpuEncode_EncodeFrame produced an IDR */
     int      rateControlReset;
     int      qpIntra;
     int      qpInter;
@@ -91,10 +92,15 @@ struct GpuEncoder
     uint32_t headerSize;
 };
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Appends formatted diagnostic text within the unused portion of the report buffer.
+ */
 static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 {
-    va_list arguments;
     size_t  used;
+    va_list arguments;
 
     used = pReport ? strlen(pReport) : 0;
     if (!pReport || used + 1 >= capacity)
@@ -108,7 +114,18 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 
 /* Creates a video image (input picture or DPB) with the given number of array layers, bound to
 ** device-local memory. Views are created separately so the DPB can expose a view per layer. */
-static void CreateVideoImage(GpuEncoder* pEncoder, VkFormat format, VkImageUsageFlags usage, uint32_t arrayLayers, VkImage* pImage, VkDeviceMemory* pMemory)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Creates and binds a device-local image with the requested layer count.
+ *  Per-layer views are created separately.
+ */
+static void CreateVideoImage(GpuEncoder*       pEncoder,
+                             VkFormat          format,
+                             VkImageUsageFlags usage,
+                             uint32_t          arrayLayers,
+                             VkImage*          pImage,
+                             VkDeviceMemory*   pMemory)
 {
     VkExtent3D extent;
 
@@ -132,23 +149,57 @@ static void CreateVideoImage(GpuEncoder* pEncoder, VkFormat format, VkImageUsage
                                            VK_IMAGE_LAYOUT_UNDEFINED,
                                            NULL,
                                            pImage);
-    cvkAllocateImageMemory(pEncoder->physical, pEncoder->device, *pImage, (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, NULL, NULL, pMemory);
+    cvkAllocateImageMemory(pEncoder->physical,
+                           pEncoder->device,
+                           *pImage,
+                           (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                           NULL,
+                           NULL,
+                           pMemory);
     cvkBindImageMemory(pEncoder->device, *pImage, *pMemory, VK_NO_OFFSET);
 }
 
 /* Creates a single-layer color view of an image at the given base array layer. */
-static void CreateLayerView(GpuEncoder* pEncoder, VkImage image, VkFormat format, uint32_t baseArrayLayer, VkImageView* pView)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Creates a color view covering one array layer at the requested base layer.
+ */
+static void CreateLayerView(GpuEncoder*  pEncoder,
+                            VkImage      image,
+                            VkFormat     format,
+                            uint32_t     baseArrayLayer,
+                            VkImageView* pView)
 {
     VkComponentMapping      identity;
     VkImageSubresourceRange range;
 
-    cvkInitComponentMapping(&identity, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY);
+    cvkInitComponentMapping(&identity,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY);
     cvkInitImageSubresourceRange(&range, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, baseArrayLayer, 1);
-    cvkCreateImageView(pEncoder->device, NULL, (VkImageViewCreateFlags)0, image, VK_IMAGE_VIEW_TYPE_2D, format, identity, range, NULL, pView);
+    cvkCreateImageView(pEncoder->device,
+                       NULL,
+                       (VkImageViewCreateFlags)0,
+                       image,
+                       VK_IMAGE_VIEW_TYPE_2D,
+                       format,
+                       identity,
+                       range,
+                       NULL,
+                       pView);
 }
 
 /* Fills a Main-profile SPS/PPS for the proxy: 4:2:0, progressive frames, one short-term reference,
 ** CAVLC, no scaling matrices. The driver serializes these to the sequence header. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Builds Main-profile progressive 4:2:0 parameter sets with one reference picture
+ *  and CAVLC for serialization by the video driver.
+ */
 static void GenerateParameters(GpuEncoder* pEncoder)
 {
     StdVideoH264SequenceParameterSet* pSps;
@@ -189,24 +240,142 @@ static void GenerateParameters(GpuEncoder* pEncoder)
     pPps->flags.entropy_coding_mode_flag               = 0;
 }
 
-GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, unsigned bitrateKbps, unsigned gopLength, int qpIntra, int qpInter, unsigned frameRateNum, unsigned frameRateDen, char* pReport, size_t reportCapacity)
+/* Fills a picture-resource descriptor for an encode image view at the coded extent. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Builds a picture-resource descriptor from the encoder's coded extent and view.
+ */
+static VkVideoPictureResourceInfoKHR GetPictureResource(const GpuEncoder* pEncoder, VkImageView view)
+{
+    VkVideoPictureResourceInfoKHR resource;
+
+    memset(&resource, 0, sizeof(resource));
+    resource.sType            = VK_STRUCTURE_TYPE_VIDEO_PICTURE_RESOURCE_INFO_KHR;
+    resource.codedExtent      = pEncoder->codedExtent;
+    resource.baseArrayLayer   = 0;
+    resource.imageViewBinding = view;
+    return resource;
+}
+
+/* Packs one downscaled frame (a luma plane plus interleaved chroma) into the staging buffer using
+** the input pixel format's own plane layout, replicating the last row and column into the
+** macroblock-aligned border so the coded picture has no undefined samples. Every plane's offset,
+** row stride, subsampling divisor and per-texel byte count come from vku, so nothing about the
+** bit depth or chroma shape of the encode input format is assumed here. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Uses the input format's plane layouts to pack staging bytes and replicates
+ *  the final row/column through the macroblock-aligned border.
+ */
+static void PackFrame(GpuEncoder*    pEncoder,
+                      const uint8_t* pLuma,
+                      unsigned       lumaStride,
+                      const uint8_t* pChroma,
+                      unsigned       chromaStride)
+{
+    uint8_t*     p_dst;
+    uint32_t     plane_count;
+    VkDeviceSize plane_offsets[MAX_PLANES];
+    uint32_t     plane_strides[MAX_PLANES];
+    VkExtent3D   plane_extents[MAX_PLANES];
+    VkDeviceSize staging_size;
+    uint32_t     plane;
+
+    p_dst       = (uint8_t*)pEncoder->stagingMapped;
+    plane_count = cvkCalculateFormatPlaneLayouts(pEncoder->inputFormat,
+                                                 pEncoder->codedExtent.width,
+                                                 pEncoder->codedExtent.height,
+                                                 1,
+                                                 1,
+                                                 1,
+                                                 plane_offsets,
+                                                 plane_strides,
+                                                 plane_extents,
+                                                 &staging_size);
+    for (plane = 0; plane < plane_count; ++plane)
+    {
+        const uint8_t* p_src;
+        unsigned       src_stride;
+        unsigned       texel;
+        unsigned       div_w;
+        unsigned       div_h;
+        unsigned       src_valid_w;
+        unsigned       src_valid_h;
+        unsigned       plane_width;
+        unsigned       plane_height;
+        unsigned       y;
+
+        plane_width  = plane_extents[plane].width;
+        plane_height = plane_extents[plane].height;
+        texel        = plane_strides[plane] / plane_width; /* bytes per texel, from the stride */
+        div_w        = pEncoder->codedExtent.width / plane_width;
+        div_h        = pEncoder->codedExtent.height / plane_height;
+        src_valid_w  = (pEncoder->width + div_w - 1u) / div_w;
+        src_valid_h  = (pEncoder->height + div_h - 1u) / div_h;
+        p_src        = (0 == plane) ? pLuma : pChroma;
+        src_stride   = (0 == plane) ? lumaStride : chromaStride;
+        for (y = 0; y < plane_height; ++y)
+        {
+            unsigned src_y;
+            unsigned x;
+
+            src_y = (y < src_valid_h) ? y : src_valid_h - 1u;
+            for (x = 0; x < plane_width; ++x)
+            {
+                unsigned src_x;
+                unsigned b;
+
+                src_x = (x < src_valid_w) ? x : src_valid_w - 1u;
+                for (b = 0; b < texel; ++b)
+                {
+                    p_dst[plane_offsets[plane] + (VkDeviceSize)y * plane_strides[plane] + (VkDeviceSize)x * texel + b] =
+                        p_src[(size_t)src_y * src_stride + (size_t)src_x * texel + b];
+                }
+            }
+        }
+    }
+}
+
+/*=================================================================================================
+** 5. PUBLIC FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Queries encode formats/capabilities, obtains serialized parameter sets and
+ *  creates the input, DPB, staging, output and feedback resources.
+ */
+GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
+                             unsigned   width,
+                             unsigned   height,
+                             unsigned   bitrateKbps,
+                             unsigned   gopLength,
+                             int        qpIntra,
+                             int        qpInter,
+                             unsigned   frameRateNum,
+                             unsigned   frameRateDen,
+                             char*      pReport,
+                             size_t     reportCapacity)
 {
     GpuEncoder*                                       pEncoder;
     VkVideoProfileListInfoKHR                         profile_list;
-    VkPhysicalDeviceVideoFormatInfoKHR                format_info;
-    VkVideoFormatPropertiesKHR                        formats[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
     VkVideoEncodeH264CapabilitiesKHR                  h264_caps;
     VkVideoEncodeCapabilitiesKHR                      encode_caps;
     VkVideoCapabilitiesKHR                            capabilities;
-    VkVideoEncodeH264SessionCreateInfoKHR             session_create;
+    VkPhysicalDeviceVideoFormatInfoKHR                format_info;
+    uint32_t                                          format_count;
+    VkVideoFormatPropertiesKHR                        formats[CVK_MAX_VIDEO_FORMAT_PROPERTIES];
     VkExtensionProperties                             std_header;
+    VkVideoEncodeH264SessionCreateInfoKHR             session_create;
     VkVideoEncodeH264SessionParametersAddInfoKHR      add_info;
     VkVideoEncodeH264SessionParametersGetInfoKHR      get_info;
-    VkVideoEncodeH264SessionParametersFeedbackInfoKHR h264_feedback;
-    uint32_t                                          format_count;
-    uint32_t                                          i;
     size_t                                            header_size;
     VkResult                                          result;
+    VkVideoEncodeH264SessionParametersFeedbackInfoKHR h264_feedback;
+    uint32_t                                          i;
 
     (void)bitrateKbps;
     (void)frameRateNum;
@@ -246,16 +415,21 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
 
     cvkInitVideoEncodeH264Capabilities(&h264_caps, NULL);
     cvkInitVideoEncodeCapabilities(&encode_caps, &h264_caps);
-    if (VK_SUCCESS != cvkGetPhysicalDeviceVideoCapabilities(pEncoder->physical, &pEncoder->profile, &encode_caps, &capabilities))
+    if (VK_SUCCESS !=
+        cvkGetPhysicalDeviceVideoCapabilities(pEncoder->physical, &pEncoder->profile, &encode_caps, &capabilities))
     {
         Report(pReport, reportCapacity, "encode not supported for this profile\n");
         GpuEncode_Destroy(pEncoder);
         return NULL;
     }
-    pEncoder->bitstreamAlignment = capabilities.minBitstreamBufferSizeAlignment ? capabilities.minBitstreamBufferSizeAlignment : 1;
+    pEncoder->bitstreamAlignment =
+        capabilities.minBitstreamBufferSizeAlignment ? capabilities.minBitstreamBufferSizeAlignment : 1;
 
     /* The encode input picture and the DPB are separate images with their own advertised formats. */
-    cvkInitPhysicalDeviceVideoFormatInfo(&format_info, &profile_list, (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR | (VkFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT));
+    cvkInitPhysicalDeviceVideoFormatInfo(&format_info,
+                                         &profile_list,
+                                         (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR |
+                                                             (VkFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT));
     cvkGetPhysicalDeviceVideoFormatProperties(pEncoder->physical, &format_info, &format_count, formats);
     if (0 == format_count)
     {
@@ -264,7 +438,9 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
         return NULL;
     }
     pEncoder->inputFormat = formats[0].format;
-    cvkInitPhysicalDeviceVideoFormatInfo(&format_info, &profile_list, (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR);
+    cvkInitPhysicalDeviceVideoFormatInfo(&format_info,
+                                         &profile_list,
+                                         (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR);
     cvkGetPhysicalDeviceVideoFormatProperties(pEncoder->physical, &format_info, &format_count, formats);
     if (0 == format_count)
     {
@@ -275,7 +451,10 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
     pEncoder->dpbFormat = formats[0].format;
 
     memset(&std_header, 0, sizeof(std_header));
-    (void)snprintf(std_header.extensionName, sizeof(std_header.extensionName), "%s", VK_STD_VULKAN_VIDEO_CODEC_H264_ENCODE_EXTENSION_NAME);
+    (void)snprintf(std_header.extensionName,
+                   sizeof(std_header.extensionName),
+                   "%s",
+                   VK_STD_VULKAN_VIDEO_CODEC_H264_ENCODE_EXTENSION_NAME);
     std_header.specVersion = VK_STD_VULKAN_VIDEO_CODEC_H264_ENCODE_SPEC_VERSION;
 
     cvkInitVideoEncodeH264SessionCreateInfo(&session_create, NULL, VK_TRUE, STD_VIDEO_H264_LEVEL_IDC_4_1);
@@ -315,10 +494,22 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
     /* Ask the driver for the serialized SPS + PPS: the sequence header the muxer prepends. */
     cvkInitVideoEncodeH264SessionParametersGetInfo(&get_info, NULL, VK_TRUE, VK_TRUE, 0, 0);
     header_size = 0;
-    result      = cvkGetEncodedVideoSessionParametersWithH264Info(pEncoder->device, &get_info, pEncoder->parameters, NULL, &header_size, NULL, &h264_feedback);
+    result      = cvkGetEncodedVideoSessionParametersWithH264Info(pEncoder->device,
+                                                                  &get_info,
+                                                                  pEncoder->parameters,
+                                                                  NULL,
+                                                                  &header_size,
+                                                                  NULL,
+                                                                  &h264_feedback);
     if (VK_SUCCESS == result && header_size > 0 && header_size <= MAX_HEADER_BYTES)
     {
-        result = cvkGetEncodedVideoSessionParametersWithH264Info(pEncoder->device, &get_info, pEncoder->parameters, NULL, &header_size, pEncoder->header, &h264_feedback);
+        result = cvkGetEncodedVideoSessionParametersWithH264Info(pEncoder->device,
+                                                                 &get_info,
+                                                                 pEncoder->parameters,
+                                                                 NULL,
+                                                                 &header_size,
+                                                                 pEncoder->header,
+                                                                 &h264_feedback);
     }
     if (VK_SUCCESS != result || 0 == header_size)
     {
@@ -331,12 +522,18 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
     /* Input picture (upload target), the reconstructed-picture DPB, staging, bitstream, feedback. */
     CreateVideoImage(pEncoder,
                      pEncoder->inputFormat,
-                     (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR | (VkFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT),
+                     (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR |
+                                         (VkFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT),
                      1,
                      &pEncoder->inputImage,
                      &pEncoder->inputMemory);
     CreateLayerView(pEncoder, pEncoder->inputImage, pEncoder->inputFormat, 0, &pEncoder->inputView);
-    CreateVideoImage(pEncoder, pEncoder->dpbFormat, (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR, ENCODE_DPB_SLOTS, &pEncoder->dpbImage, &pEncoder->dpbMemory);
+    CreateVideoImage(pEncoder,
+                     pEncoder->dpbFormat,
+                     (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
+                     ENCODE_DPB_SLOTS,
+                     &pEncoder->dpbImage,
+                     &pEncoder->dpbMemory);
     for (i = 0; i < ENCODE_DPB_SLOTS; ++i)
     {
         CreateLayerView(pEncoder, pEncoder->dpbImage, pEncoder->dpbFormat, i, &pEncoder->dpbView[i]);
@@ -344,17 +541,33 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
 
     /* Size the upload staging buffer straight from the input pixel format (tightly packed): vku
     ** knows every plane's subsampled extent and per-texel bytes, so no bit depth is assumed. */
-    pEncoder->stagingSize = cvkGetFormatSize(pEncoder->inputFormat, pEncoder->codedExtent.width, pEncoder->codedExtent.height);
-    cvkCreateBuffer(pEncoder->device, NULL, (VkBufferCreateFlags)0, pEncoder->stagingSize, (VkBufferUsageFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, 0, NULL, NULL, &pEncoder->staging);
+    pEncoder->stagingSize =
+        cvkGetFormatSize(pEncoder->inputFormat, pEncoder->codedExtent.width, pEncoder->codedExtent.height);
+    cvkCreateBuffer(pEncoder->device,
+                    NULL,
+                    (VkBufferCreateFlags)0,
+                    pEncoder->stagingSize,
+                    (VkBufferUsageFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                    VK_SHARING_MODE_EXCLUSIVE,
+                    0,
+                    NULL,
+                    NULL,
+                    &pEncoder->staging);
     cvkAllocateBufferMemory(pEncoder->physical,
                             pEncoder->device,
                             pEncoder->staging,
-                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                                    (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                             NULL,
                             NULL,
                             &pEncoder->stagingMemory);
     cvkBindBufferMemory(pEncoder->device, pEncoder->staging, pEncoder->stagingMemory, VK_NO_OFFSET);
-    cvkMapMemory(pEncoder->device, pEncoder->stagingMemory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, &pEncoder->stagingMapped);
+    cvkMapMemory(pEncoder->device,
+                 pEncoder->stagingMemory,
+                 VK_NO_OFFSET,
+                 VK_WHOLE_SIZE,
+                 (VkMemoryMapFlags)0,
+                 &pEncoder->stagingMapped);
 
     cvkCreateBufferWithVideoProfileListInfo(pEncoder->device,
                                             NULL,
@@ -371,25 +584,53 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
     cvkAllocateBufferMemory(pEncoder->physical,
                             pEncoder->device,
                             pEncoder->bitstream,
-                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                                    (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                             NULL,
                             NULL,
                             &pEncoder->bitstreamMemory);
     cvkBindBufferMemory(pEncoder->device, pEncoder->bitstream, pEncoder->bitstreamMemory, VK_NO_OFFSET);
-    cvkMapMemory(pEncoder->device, pEncoder->bitstreamMemory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, &pEncoder->bitstreamMapped);
+    cvkMapMemory(pEncoder->device,
+                 pEncoder->bitstreamMemory,
+                 VK_NO_OFFSET,
+                 VK_WHOLE_SIZE,
+                 (VkMemoryMapFlags)0,
+                 &pEncoder->bitstreamMapped);
 
-    cvkCreateVideoEncodeFeedbackQueryPool(pEncoder->device,
-                                          &pEncoder->profile,
-                                          (VkVideoEncodeFeedbackFlagsKHR)((VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR | (VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR),
-                                          (VkQueryPoolCreateFlags)0,
-                                          1,
-                                          NULL,
-                                          &pEncoder->feedbackPool);
+    cvkCreateVideoEncodeFeedbackQueryPool(
+        pEncoder->device,
+        &pEncoder->profile,
+        (VkVideoEncodeFeedbackFlagsKHR)((VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BUFFER_OFFSET_BIT_KHR |
+                                        (VkFlags)VK_VIDEO_ENCODE_FEEDBACK_BITSTREAM_BYTES_WRITTEN_BIT_KHR),
+        (VkQueryPoolCreateFlags)0,
+        1,
+        NULL,
+        &pEncoder->feedbackPool);
 
-    cvkCreateCommandPool(pEncoder->device, NULL, (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, pEncoder->encodeFamily, NULL, &pEncoder->encodePool);
-    cvkAllocateCommandBuffers(pEncoder->device, NULL, pEncoder->encodePool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1, &pEncoder->encodeCmd);
-    cvkCreateCommandPool(pEncoder->device, NULL, (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, pEncoder->transferFamily, NULL, &pEncoder->transferPool);
-    cvkAllocateCommandBuffers(pEncoder->device, NULL, pEncoder->transferPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1, &pEncoder->transferCmd);
+    cvkCreateCommandPool(pEncoder->device,
+                         NULL,
+                         (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+                         pEncoder->encodeFamily,
+                         NULL,
+                         &pEncoder->encodePool);
+    cvkAllocateCommandBuffers(pEncoder->device,
+                              NULL,
+                              pEncoder->encodePool,
+                              VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                              1,
+                              &pEncoder->encodeCmd);
+    cvkCreateCommandPool(pEncoder->device,
+                         NULL,
+                         (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+                         pEncoder->transferFamily,
+                         NULL,
+                         &pEncoder->transferPool);
+    cvkAllocateCommandBuffers(pEncoder->device,
+                              NULL,
+                              pEncoder->transferPool,
+                              VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                              1,
+                              &pEncoder->transferCmd);
     cvkCreateFence(pEncoder->device, NULL, (VkFenceCreateFlags)0, NULL, &pEncoder->encodeFence);
     cvkCreateFence(pEncoder->device, NULL, (VkFenceCreateFlags)0, NULL, &pEncoder->transferFence);
     cvkCreateSemaphore(pEncoder->device, NULL, (VkSemaphoreCreateFlags)0, NULL, &pEncoder->uploadDone);
@@ -408,80 +649,41 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu, unsigned width, unsigned height, u
     return pEncoder;
 }
 
-/* Fills a picture-resource descriptor for an encode image view at the coded extent. */
-static VkVideoPictureResourceInfoKHR PictureResource(const GpuEncoder* pEncoder, VkImageView view)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const uint8_t* GpuEncode_GetHeader(GpuEncoder* pEncoder, uint32_t* pSize)
 {
-    VkVideoPictureResourceInfoKHR resource;
-
-    memset(&resource, 0, sizeof(resource));
-    resource.sType            = VK_STRUCTURE_TYPE_VIDEO_PICTURE_RESOURCE_INFO_KHR;
-    resource.codedExtent      = pEncoder->codedExtent;
-    resource.baseArrayLayer   = 0;
-    resource.imageViewBinding = view;
-    return resource;
+    *pSize = pEncoder->headerSize;
+    return pEncoder->header;
 }
 
-/* Packs one downscaled frame (a luma plane plus interleaved chroma) into the staging buffer using
-** the input pixel format's own plane layout, replicating the last row and column into the
-** macroblock-aligned border so the coded picture has no undefined samples. Every plane's offset,
-** row stride, subsampling divisor and per-texel byte count come from vku, so nothing about the
-** bit depth or chroma shape of the encode input format is assumed here. */
-static void PackFrame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsigned lumaStride, const uint8_t* pChroma, unsigned chromaStride)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+int GpuEncode_IsLastFrameKeyframe(const GpuEncoder* pEncoder)
 {
-    uint8_t*     p_dst;
-    VkDeviceSize plane_offsets[MAX_PLANES];
-    uint32_t     plane_strides[MAX_PLANES];
-    VkExtent3D   plane_extents[MAX_PLANES];
-    VkDeviceSize staging_size;
-    uint32_t     plane_count;
-    uint32_t     plane;
-
-    p_dst       = (uint8_t*)pEncoder->stagingMapped;
-    plane_count = cvkCalculateFormatPlaneLayouts(pEncoder->inputFormat, pEncoder->codedExtent.width, pEncoder->codedExtent.height, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &staging_size);
-    for (plane = 0; plane < plane_count; ++plane)
-    {
-        const uint8_t* p_src;
-        unsigned       src_stride;
-        unsigned       texel;
-        unsigned       div_w;
-        unsigned       div_h;
-        unsigned       src_valid_w;
-        unsigned       src_valid_h;
-        unsigned       plane_width;
-        unsigned       plane_height;
-        unsigned       y;
-
-        plane_width  = plane_extents[plane].width;
-        plane_height = plane_extents[plane].height;
-        texel        = plane_strides[plane] / plane_width; /* bytes per texel, from the stride */
-        div_w        = pEncoder->codedExtent.width / plane_width;
-        div_h        = pEncoder->codedExtent.height / plane_height;
-        src_valid_w  = (pEncoder->width + div_w - 1u) / div_w;
-        src_valid_h  = (pEncoder->height + div_h - 1u) / div_h;
-        p_src        = (0 == plane) ? pLuma : pChroma;
-        src_stride   = (0 == plane) ? lumaStride : chromaStride;
-        for (y = 0; y < plane_height; ++y)
-        {
-            unsigned src_y;
-            unsigned x;
-
-            src_y = (y < src_valid_h) ? y : src_valid_h - 1u;
-            for (x = 0; x < plane_width; ++x)
-            {
-                unsigned src_x;
-                unsigned b;
-
-                src_x = (x < src_valid_w) ? x : src_valid_w - 1u;
-                for (b = 0; b < texel; ++b)
-                {
-                    p_dst[plane_offsets[plane] + (VkDeviceSize)y * plane_strides[plane] + (VkDeviceSize)x * texel + b] = p_src[(size_t)src_y * src_stride + (size_t)src_x * texel + b];
-                }
-            }
-        }
-    }
+    return pEncoder->lastKeyframe;
 }
 
-const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsigned lumaStride, const uint8_t* pChroma, unsigned chromaStride, int forceIdr, int qpOverride, uint32_t* pSize)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Uploads the input planes and encodes one slice with constant QP. Tracks the
+ *  reconstructed reference slot, keyframe state and driver-reported output span.
+ */
+const uint8_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
+                                     const uint8_t* pLuma,
+                                     unsigned       lumaStride,
+                                     const uint8_t* pChroma,
+                                     unsigned       chromaStride,
+                                     int            forceIdr,
+                                     int            qpOverride,
+                                     uint32_t*      pSize)
 {
     int                                  is_idr;
     uint32_t                             current_slot;
@@ -489,34 +691,34 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     int                                  has_ref;
     int                                  qp;
     VkImageSubresourceRange              color;
-    VkBufferImageCopy                    regions[MAX_PLANES];
-    VkImageSubresourceLayers             base_layers;
     VkOffset3D                           zero_offset;
     VkExtent3D                           coded_extent;
+    VkImageSubresourceLayers             base_layers;
+    uint32_t                             region_count;
+    VkBufferImageCopy                    regions[MAX_PLANES];
     VkDeviceSize                         transfer_bytes;
     VkImageAspectFlags                   aspect_mask;
-    uint32_t                             region_count;
-    uint32_t                             slot;
+    VkSubmitInfo                         submit;
     VkVideoEncodeRateControlInfoKHR      rate_control;
     VkVideoPictureResourceInfoKHR        input_resource;
     VkVideoPictureResourceInfoKHR        setup_resource;
-    VkVideoPictureResourceInfoKHR        ref_resource;
     StdVideoEncodeH264ReferenceInfo      setup_ref_info;
-    StdVideoEncodeH264ReferenceInfo      ref_ref_info;
     VkVideoEncodeH264DpbSlotInfoKHR      setup_dpb_info;
-    VkVideoEncodeH264DpbSlotInfoKHR      ref_dpb_info;
     VkVideoReferenceSlotInfoKHR          setup_slot_begin;
     VkVideoReferenceSlotInfoKHR          setup_slot_encode;
+    uint32_t                             begin_count;
+    VkVideoPictureResourceInfoKHR        ref_resource;
+    StdVideoEncodeH264ReferenceInfo      ref_ref_info;
+    VkVideoEncodeH264DpbSlotInfoKHR      ref_dpb_info;
     VkVideoReferenceSlotInfoKHR          ref_slot_info;
     VkVideoReferenceSlotInfoKHR          begin_slots[ENCODE_DPB_SLOTS + 1];
-    uint32_t                             begin_count;
+    uint32_t                             slot;
     StdVideoEncodeH264SliceHeader        slice_header;
     StdVideoEncodeH264ReferenceListsInfo ref_lists;
     StdVideoEncodeH264PictureInfo        std_picture;
     VkVideoEncodeH264NaluSliceInfoKHR    nalu_slice;
-    VkSubmitInfo                         submit;
-    VkPipelineStageFlags                 wait_stage;
     VkDeviceSize                         aligned_range;
+    VkPipelineStageFlags                 wait_stage;
     uint32_t                             feedback[3];
 
     is_idr = (0 == pEncoder->framesSinceIdr) || forceIdr;
@@ -538,7 +740,15 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     cvkInitOffset3D(&zero_offset, 0, 0, 0);
     cvkInitExtent3D(&coded_extent, pEncoder->codedExtent.width, pEncoder->codedExtent.height, 1);
     base_layers  = cvkGetFormatBaseSubresourceLayers(pEncoder->inputFormat);
-    region_count = cvkGetBufferImageCopyRegions(0, 1, pEncoder->inputFormat, zero_offset, coded_extent, base_layers, regions, &transfer_bytes, &aspect_mask);
+    region_count = cvkGetBufferImageCopyRegions(0,
+                                                1,
+                                                pEncoder->inputFormat,
+                                                zero_offset,
+                                                coded_extent,
+                                                base_layers,
+                                                regions,
+                                                &transfer_bytes,
+                                                &aspect_mask);
 
     cvkBeginOneTimeCommandBuffer(pEncoder->transferCmd, NULL);
     cvkCmdImageBarrier2(pEncoder->transferCmd,
@@ -553,7 +763,12 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
                         color,
                         (VkDependencyFlags)0,
                         NULL);
-    cvkCmdCopyBufferToImage(pEncoder->transferCmd, pEncoder->staging, pEncoder->inputImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, region_count, regions);
+    cvkCmdCopyBufferToImage(pEncoder->transferCmd,
+                            pEncoder->staging,
+                            pEncoder->inputImage,
+                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                            region_count,
+                            regions);
     cvkCmdImageQueueOwnershipBarrier2(pEncoder->transferCmd,
                                       NULL,
                                       VK_PIPELINE_STAGE_2_COPY_BIT,
@@ -574,10 +789,17 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     cvkQueueSubmit(pEncoder->transferQueue, 1, &submit, pEncoder->transferFence);
 
     /* Rate control: constant QP (rate control disabled), matched on begin and set on the first frame. */
-    cvkInitVideoEncodeRateControlInfo(&rate_control, NULL, (VkVideoEncodeRateControlFlagsKHR)0, VK_VIDEO_ENCODE_RATE_CONTROL_MODE_DISABLED_BIT_KHR, 0, NULL, 0, 0);
+    cvkInitVideoEncodeRateControlInfo(&rate_control,
+                                      NULL,
+                                      (VkVideoEncodeRateControlFlagsKHR)0,
+                                      VK_VIDEO_ENCODE_RATE_CONTROL_MODE_DISABLED_BIT_KHR,
+                                      0,
+                                      NULL,
+                                      0,
+                                      0);
 
-    input_resource = PictureResource(pEncoder, pEncoder->inputView);
-    setup_resource = PictureResource(pEncoder, pEncoder->dpbView[current_slot]);
+    input_resource = GetPictureResource(pEncoder, pEncoder->inputView);
+    setup_resource = GetPictureResource(pEncoder, pEncoder->dpbView[current_slot]);
 
     memset(&setup_ref_info, 0, sizeof(setup_ref_info));
     setup_ref_info.primary_pic_type = is_idr ? STD_VIDEO_H264_PICTURE_TYPE_IDR : STD_VIDEO_H264_PICTURE_TYPE_P;
@@ -590,7 +812,7 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     begin_count = 0;
     if (has_ref)
     {
-        ref_resource = PictureResource(pEncoder, pEncoder->dpbView[ref_slot]);
+        ref_resource = GetPictureResource(pEncoder, pEncoder->dpbView[ref_slot]);
         memset(&ref_ref_info, 0, sizeof(ref_ref_info));
         ref_ref_info.primary_pic_type = STD_VIDEO_H264_PICTURE_TYPE_P;
         ref_ref_info.FrameNum         = pEncoder->framesSinceIdr - 1u;
@@ -629,7 +851,8 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
                             VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
                             (VkAccessFlags2)0,
                             VK_PIPELINE_STAGE_2_VIDEO_ENCODE_BIT_KHR,
-                            (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_VIDEO_ENCODE_WRITE_BIT_KHR | (VkFlags64)VK_ACCESS_2_VIDEO_ENCODE_READ_BIT_KHR),
+                            (VkAccessFlags2)((VkFlags64)VK_ACCESS_2_VIDEO_ENCODE_WRITE_BIT_KHR |
+                                             (VkFlags64)VK_ACCESS_2_VIDEO_ENCODE_READ_BIT_KHR),
                             pEncoder->dpbValid[slot] ? VK_IMAGE_LAYOUT_VIDEO_ENCODE_DPB_KHR : VK_IMAGE_LAYOUT_UNDEFINED,
                             VK_IMAGE_LAYOUT_VIDEO_ENCODE_DPB_KHR,
                             pEncoder->dpbImage,
@@ -640,18 +863,28 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
 
     /* The first begin must match the session's initial (default) rate control state; only after the
     ** control command below has set constant-QP mode does begin carry the disabled rate control. */
-    cvkCmdBeginVideoCoding(pEncoder->encodeCmd, pEncoder->rateControlReset ? NULL : (const void*)&rate_control, (VkVideoBeginCodingFlagsKHR)0, pEncoder->session, pEncoder->parameters, begin_count, begin_slots);
+    cvkCmdBeginVideoCoding(pEncoder->encodeCmd,
+                           pEncoder->rateControlReset ? NULL : (const void*)&rate_control,
+                           (VkVideoBeginCodingFlagsKHR)0,
+                           pEncoder->session,
+                           pEncoder->parameters,
+                           begin_count,
+                           begin_slots);
     if (pEncoder->rateControlReset)
     {
-        cvkCmdControlVideoCoding(pEncoder->encodeCmd, &rate_control, (VkVideoCodingControlFlagsKHR)((VkFlags)VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR | (VkFlags)VK_VIDEO_CODING_CONTROL_ENCODE_RATE_CONTROL_BIT_KHR));
+        cvkCmdControlVideoCoding(
+            pEncoder->encodeCmd,
+            &rate_control,
+            (VkVideoCodingControlFlagsKHR)((VkFlags)VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR |
+                                           (VkFlags)VK_VIDEO_CODING_CONTROL_ENCODE_RATE_CONTROL_BIT_KHR));
         pEncoder->rateControlReset = 0;
     }
 
     memset(&slice_header, 0, sizeof(slice_header));
-    slice_header.first_mb_in_slice          = 0;
-    slice_header.slice_type                 = is_idr ? STD_VIDEO_H264_SLICE_TYPE_I : STD_VIDEO_H264_SLICE_TYPE_P;
-    slice_header.slice_qp_delta             = (int8_t)(qp - 26);
-    slice_header.cabac_init_idc             = STD_VIDEO_H264_CABAC_INIT_IDC_0;
+    slice_header.first_mb_in_slice             = 0;
+    slice_header.slice_type                    = is_idr ? STD_VIDEO_H264_SLICE_TYPE_I : STD_VIDEO_H264_SLICE_TYPE_P;
+    slice_header.slice_qp_delta                = (int8_t)(qp - 26);
+    slice_header.cabac_init_idc                = STD_VIDEO_H264_CABAC_INIT_IDC_0;
     slice_header.disable_deblocking_filter_idc = STD_VIDEO_H264_DISABLE_DEBLOCKING_FILTER_IDC_DISABLED;
 
     memset(&ref_lists, 0, sizeof(ref_lists));
@@ -665,15 +898,15 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     }
 
     memset(&std_picture, 0, sizeof(std_picture));
-    std_picture.flags.IdrPicFlag    = is_idr ? 1u : 0u;
-    std_picture.flags.is_reference  = 1u;
+    std_picture.flags.IdrPicFlag     = is_idr ? 1u : 0u;
+    std_picture.flags.is_reference   = 1u;
     std_picture.seq_parameter_set_id = 0;
     std_picture.pic_parameter_set_id = 0;
-    std_picture.idr_pic_id          = (uint16_t)pEncoder->idrPicId;
-    std_picture.primary_pic_type    = is_idr ? STD_VIDEO_H264_PICTURE_TYPE_IDR : STD_VIDEO_H264_PICTURE_TYPE_P;
-    std_picture.frame_num           = is_idr ? 0u : pEncoder->framesSinceIdr;
-    std_picture.PicOrderCnt         = (int32_t)(2u * pEncoder->framesSinceIdr);
-    std_picture.pRefLists           = &ref_lists;
+    std_picture.idr_pic_id           = (uint16_t)pEncoder->idrPicId;
+    std_picture.primary_pic_type     = is_idr ? STD_VIDEO_H264_PICTURE_TYPE_IDR : STD_VIDEO_H264_PICTURE_TYPE_P;
+    std_picture.frame_num            = is_idr ? 0u : pEncoder->framesSinceIdr;
+    std_picture.PicOrderCnt          = (int32_t)(2u * pEncoder->framesSinceIdr);
+    std_picture.pRefLists            = &ref_lists;
 
     cvkInitVideoEncodeH264NaluSliceInfo(&nalu_slice, NULL, qp, &slice_header);
 
@@ -708,7 +941,14 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     feedback[0] = 0;
     feedback[1] = 0;
     feedback[2] = 0;
-    if (VK_SUCCESS != cvkGetQueryPoolResults(pEncoder->device, pEncoder->feedbackPool, 0, 1, sizeof(feedback), feedback, sizeof(feedback), (VkQueryResultFlags)VK_QUERY_RESULT_WAIT_BIT))
+    if (VK_SUCCESS != cvkGetQueryPoolResults(pEncoder->device,
+                                             pEncoder->feedbackPool,
+                                             0,
+                                             1,
+                                             sizeof(feedback),
+                                             feedback,
+                                             sizeof(feedback),
+                                             (VkQueryResultFlags)VK_QUERY_RESULT_WAIT_BIT))
     {
         *pSize = 0;
         return NULL;
@@ -731,17 +971,12 @@ const uint8_t* GpuEncode_Frame(GpuEncoder* pEncoder, const uint8_t* pLuma, unsig
     return (const uint8_t*)pEncoder->bitstreamMapped + feedback[0];
 }
 
-const uint8_t* GpuEncode_Header(GpuEncoder* pEncoder, uint32_t* pSize)
-{
-    *pSize = pEncoder->headerSize;
-    return pEncoder->header;
-}
-
-int GpuEncode_LastKeyframe(const GpuEncoder* pEncoder)
-{
-    return pEncoder->lastKeyframe;
-}
-
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Waits for device work and releases encoder-owned resources and memory.
+ *  The shared GPU device and instance are not destroyed here.
+ */
 void GpuEncode_Destroy(GpuEncoder* pEncoder)
 {
     uint32_t i;

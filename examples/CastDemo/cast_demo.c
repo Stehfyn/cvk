@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 /* cast_demo.c - CastDemoCli: play a video on a Google Cast receiver such as the XGIMI Horizon S.
 **
 ** The projector is a Chromecast built-in device, so "connecting" means the CASTV2 protocol:
@@ -32,12 +31,17 @@
 
 #include "cast_channel.h"
 #include "cast_session.h"
+#include "os/os_thread.h"
+#include "os/os_compiler.h"
 #include "media_server.h"
+#include "cast_network.h"
+#include "os/os_network.h"
 #include "mp4_index.h"
 #include "gpu_device.h"
 #include "gpu_decode.h"
 #include "gpu_encode.h"
 #include "gpu_transcode.h"
+#include "gpu_probe.h"
 #include "h264_params.h"
 #include "mp4_demux.h"
 #include "proxy.h"
@@ -47,22 +51,23 @@
 #define DEFAULT_SERVER_PORT (8642)
 #define DISCOVERY_MS        (3000)
 #define PROGRESS_MS         (5000)
+#define SESSION_POLL_MS     (50)
 
 typedef struct Options
 {
-    WCHAR          file[MAX_PATH];
-    char           device[128];
-    char           host[256];
-    char           url[1024];
-    char           bind[64];
+    WCHAR file[MAX_PATH];
+    char  device[128];
+    char  host[256];
+    char  url[1024];
+    char  bind[64];
     unsigned short port;
-    unsigned       seconds;
-    double         seek;   /* > 0: seek here three seconds into playback, to time the round trip */
-    double         scrub;  /* > 0: preview this position (paused, keyframe-snapped) at three seconds, release at five */
-    unsigned       bounce; /* > 0: after playback starts, jump to this many varied positions, timing each */
-    int            loop;
-    int            list;
-    int            verbose;
+    unsigned seconds;
+    double   seek;   /* > 0: seek here three seconds into playback, to time the round trip */
+    double   scrub;  /* > 0: preview this position (paused, keyframe-snapped) at three seconds, release at five */
+    unsigned bounce; /* > 0: after playback starts, jump to this many varied positions, timing each */
+    int      loop;
+    int      list;
+    int      verbose;
 } Options;
 
 static volatile LONG      g_interrupted;
@@ -71,7 +76,61 @@ static char               g_lastState[32];
 static ULONGLONG          g_lastProgress;
 static int                g_runResult;
 static volatile double    g_duration; /* media duration once the receiver reports it */
+static CastSession_t      g_session;
+static OS_Thread_t        g_sessionWorker;
+static Ssdp_t             g_discovery;
+static OS_Network_t g_routeNetwork;
+static Proxy_t      g_proxy;
+static MediaServer_Workspace_t g_serving;
 
+/*************************************************************************************************/
+/**
+ * \brief Releases startup-owned proxy and route resources before Winsock shutdown.
+ *
+ * \par Requirements:
+ *  - 001 Both initialized owners shall remain live and Winsock shall remain available until closure succeeds.
+ *  - 002 Failed releases shall retain ownership and be retried; the console polling wait remains an open timing defect.
+ *
+ * \retval None   Proxy and route resources are released; failed Winsock cleanup sets the process result.
+ */
+static FORCE_INLINE void CloseNetworkResources(void);
+
+/*************************************************************************************************/
+/**
+ * \brief Closes startup-owned session resources after work and publishers are quiescent.
+ *
+ * \par Requirements:
+ *  - 001 Both lifetime objects shall have been initialized, including after failed startup.
+ *  - 002 The caller shall stop proxy publication and acquire worker completion before entry.
+ *  - 003 Failed native releases shall retain owner storage and be retried on later shutdown polls.
+ *
+ * \retval None   Native session resources are closed; any recorded failure changes the exit result.
+ */
+static FORCE_INLINE void CloseSessionResources(void);
+
+/*************************************************************************************************/
+/**
+ * \brief Polls proxy and serving shutdown before releasing their dependencies.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall have requested session Stop; both owners shall remain live.
+ *  - 002 Winsock and the proxy's session shall remain live until both shutdown operations succeed.
+ *  - 003 Failed releases shall preserve ownership; console polling latency remains an open timing defect.
+ *
+ * \param[in,out] proxy    Required initialized proxy owner
+ * \param[in,out] server   Required pointer to a possibly NULL server owner
+ *
+ * \retval None   No remaining proxy publisher or serving worker can use the dependencies.
+ */
+static FORCE_INLINE void CloseServingResources(Proxy_t* proxy, MediaServer** server);
+
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Latches interruption atomically; the main loop observes the flag and requests
+ *  session shutdown.
+ */
 static BOOL WINAPI OnConsoleControl(DWORD type)
 {
     (void)type;
@@ -79,6 +138,12 @@ static BOOL WINAPI OnConsoleControl(DWORD type)
     return TRUE;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Converts a terminated Windows string into the caller's UTF-8 buffer. Conversion
+ *  failure produces an empty string.
+ */
 static void ToUtf8(const wchar_t* pText, char* pOut, size_t capacity)
 {
     if (0 == WideCharToMultiByte(CP_UTF8, 0, pText, -1, pOut, (int)capacity, NULL, NULL))
@@ -87,10 +152,16 @@ static void ToUtf8(const wchar_t* pText, char* pOut, size_t capacity)
     }
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Tests each possible start position with a case-insensitive prefix comparison.
+ *  An empty search string matches.
+ */
 static int ContainsNoCase(const char* pHaystack, const char* pNeedle)
 {
     const size_t needleLength = strlen(pNeedle);
-    size_t       index;
+    size_t index;
 
     for (index = 0; pHaystack[index]; ++index)
     {
@@ -102,6 +173,11 @@ static int ContainsNoCase(const char* pHaystack, const char* pNeedle)
     return 0 == needleLength;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Writes the supported command-line options and default receiver name to stderr.
+ */
 static void Usage(void)
 {
     (void)fprintf(stderr,
@@ -111,6 +187,12 @@ static void Usage(void)
                   DEFAULT_DEVICE_NAME);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Applies defaults, scans command-line switches and converts their values.
+ *  When no file is supplied, uses demo.mp4 beside the executable.
+ */
 static int ParseOptions(int argc, wchar_t** argv, Options* pOptions)
 {
     int index;
@@ -200,9 +282,15 @@ static int ParseOptions(int argc, wchar_t** argv, Options* pOptions)
     return 1;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Resolves the first IPv4 result into numeric address text, then releases the
+ *  resolver's result list.
+ */
 static int ResolveIPv4(const char* pHost, char* pOut, size_t capacity)
 {
-    struct addrinfo  hints;
+    struct addrinfo hints;
     struct addrinfo* pResult = NULL;
     int              ok      = 0;
 
@@ -217,10 +305,16 @@ static int ResolveIPv4(const char* pHost, char* pOut, size_t capacity)
     return ok;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  An explicit host bypasses multicast selection. Otherwise lists discovery
+ *  results and selects the first case-insensitive receiver-name match.
+ */
 static int FindDevice(const Options* pOptions, CastDevice* pDevice)
 {
-    CastDevice devices[CAST_MAX_DEVICES];
     unsigned   count;
+    CastDevice devices[CAST_MAX_DEVICES];
     unsigned   index;
     int        found = 0;
 
@@ -232,19 +326,23 @@ static int FindDevice(const Options* pOptions, CastDevice* pDevice)
             (void)fprintf(stderr, "cannot resolve %s\n", pOptions->host);
             return 0;
         }
-        if (!Ssdp_DescribeHost(pDevice->host, pDevice))
+        if (!Ssdp_DescribeHost(&g_discovery, pDevice->host, pDevice))
         {
             (void)snprintf(pDevice->friendlyName, sizeof(pDevice->friendlyName), "%s", pOptions->host);
         }
         return 1;
     }
     (void)printf("searching for Cast receivers...\n");
-    count = Ssdp_DiscoverCastDevices(devices, CAST_MAX_DEVICES, DISCOVERY_MS);
+    count = Ssdp_DiscoverCastDevices(&g_discovery, devices, CAST_MAX_DEVICES, DISCOVERY_MS);
     for (index = 0; index < count; ++index)
     {
         const int match = ContainsNoCase(devices[index].friendlyName, pOptions->device);
 
-        (void)printf("  %s%s  %s  (%s)\n", match ? "* " : "  ", devices[index].friendlyName, devices[index].host, devices[index].model);
+        (void)printf("  %s%s  %s  (%s)\n",
+                     match ? "* " : "  ",
+                     devices[index].friendlyName,
+                     devices[index].host,
+                     devices[index].model);
         if (match && !found)
         {
             *pDevice = devices[index];
@@ -263,6 +361,12 @@ static int FindDevice(const Options* pOptions, CastDevice* pDevice)
 }
 
 /* Runs on the session thread: print progress, remember when playback started. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Runs on the session thread. Prints log and terminal events, records the first
+ *  PLAYING time and throttles repeated progress lines.
+ */
 static void OnSessionEvent(void* pUser, CastEvent event, const CastStatus* pStatus, const char* pText)
 {
     const ULONGLONG now = GetTickCount64();
@@ -295,12 +399,120 @@ static void OnSessionEvent(void* pUser, CastEvent event, const CastStatus* pStat
     }
 }
 
-static DWORD WINAPI SessionThread(LPVOID pParameter)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Stores the session runner's result for the console owner to read after the
+ *  thread exits.
+ */
+static FORCE_INLINE void SessionJob(void* context)
 {
-    g_runResult = CastSession_Run((CastSession*)pParameter);
-    return 0;
+    g_runResult = CastSession_Run((CastSession_t*)context);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Shutdown preserves the owner through native release retries.
+ */
+static FORCE_INLINE void CloseNetworkResources(void)
+{
+    bool_t  proxy_closed;
+    bool_t  serving_closed;
+    bool_t  route_closed;
+    bool_t  closed;
+    int32_t status;
+    for (;;)
+    {
+        proxy_closed   = Proxy_TryClose(&g_proxy);
+        route_closed   = OS_Network_TryClose(&g_routeNetwork);
+        serving_closed = FALSE;
+        if (proxy_closed)
+        {
+            serving_closed = MediaServer_TryClose(&g_serving);
+        }
+        closed = proxy_closed && route_closed && serving_closed;
+        if (closed)
+        {
+            break;
+        }
+        Sleep(SESSION_POLL_MS);
+    }
+    status = WSACleanup();
+    if (0 != status)
+    {
+        g_runResult = 1;
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Each closure attempt is nonblocking. The console shutdown loop retains both
+ *  owners until native release succeeds; no callback can outlive its storage.
+ */
+static FORCE_INLINE void CloseSessionResources(void)
+{
+    bool_t   worker_closed;
+    bool_t   storage_closed;
+    uint32_t worker_error;
+    uint32_t storage_error;
+    bool_t   has_error;
+
+    for (;;)
+    {
+        worker_closed  = OS_Thread_TryClose(&g_sessionWorker);
+        storage_closed = FALSE;
+        if (worker_closed)
+        {
+            CastSession_Reset(&g_session);
+            storage_closed = CastSession_TryClose(&g_session);
+        }
+        if (storage_closed)
+        {
+            break;
+        }
+        Sleep(SESSION_POLL_MS);
+    }
+    worker_error  = OS_Thread_GetError(&g_sessionWorker);
+    storage_error = OS_Memory_GetError(&g_session.memory);
+    has_error     = (0 != worker_error) || (0 != storage_error);
+    if (has_error)
+    {
+        g_runResult = 1;
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Polls both owners on each iteration so either shutdown can make progress.
+ *  No timeout is interpreted as successful release.
+ */
+static FORCE_INLINE void CloseServingResources(Proxy_t* proxy, MediaServer** server)
+{
+    bool_t proxy_stopped;
+    bool_t server_stopped;
+    bool_t stopped;
+
+    for (;;)
+    {
+        proxy_stopped  = Proxy_TryStop(proxy);
+        server_stopped = MediaServer_TryStop(server);
+        stopped        = proxy_stopped && server_stopped;
+        if (stopped)
+        {
+            break;
+        }
+        Sleep(SESSION_POLL_MS);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Checks that standard input is a console before querying pending keyboard input.
+ */
 static int ConsoleHasKeys(void)
 {
     DWORD mode;
@@ -308,20 +520,36 @@ static int ConsoleHasKeys(void)
     return GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &mode) && _kbhit();
 }
 
+static GpuProbe_t g_gpuProbe;
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Parses options, starts local serving when required and runs the Cast session
+ *  on a worker thread while processing console and scripted playback commands.
+ */
 int wmain(int argc, wchar_t** argv)
 {
     Options           options;
     CastDevice        device;
     CastSessionConfig config;
-    CastSession*      pSession;
+    CastSession_t*    pSession;
     MediaServer*      pServer    = NULL;
-    Proxy*            pProxy     = NULL;
     double*           pKeyframes = NULL;
-    HANDLE            hThread;
-    WSADATA           wsaData;
-    char              error[256];
-    char              localAddress[64];
+    WSADATA wsaData;
+    char    error[256];
+    char    localAddress[64];
     int               stopping = 0;
+    bool_t storage_ready;
+    bool_t worker_ready;
+    bool_t session_ready;
+    bool_t submitted;
+    bool_t serving_ready;
+    bool_t route_ready;
+    bool_t discovery_ready;
+    bool_t network_ready;
+    bool_t device_found;
+    bool_t discovery_closed;
 
     SetConsoleOutputCP(CP_UTF8);
     setvbuf(stdout, NULL, _IONBF, 0);
@@ -332,12 +560,27 @@ int wmain(int argc, wchar_t** argv)
         {
             if (0 == wcscmp(argv[argIndex], L"--gpuprobe"))
             {
-                GpuTranscodeCaps caps;
-                char             report[1024];
+                bool_t ready;
+                bool_t closed;
+                bool_t available;
 
-                GpuTranscode_Probe(&caps, report, sizeof(report));
-                (void)printf("%s", report);
-                return caps.available ? 0 : 1;
+                ready = GpuProbe_Initialize(&g_gpuProbe);
+                available = ready && GpuProbe_GetCaps(&g_gpuProbe)->available;
+                (void)printf("%s", GpuProbe_GetReport(&g_gpuProbe));
+                if (GpuProbe_IsReportTruncated(&g_gpuProbe))
+                {
+                    (void)printf("[GPU probe report truncated]\n");
+                }
+                for (;;)
+                {
+                    closed = GpuProbe_TryClose(&g_gpuProbe);
+                    if (closed)
+                    {
+                        break;
+                    }
+                    Sleep(SESSION_POLL_MS);
+                }
+                return available ? 0 : 1;
             }
             if (0 == wcscmp(argv[argIndex], L"--encodeinit"))
             {
@@ -360,17 +603,17 @@ int wmain(int argc, wchar_t** argv)
             }
             if (0 == wcscmp(argv[argIndex], L"--encodeframe"))
             {
-                GpuDevice*     pGpu;
-                GpuEncoder*    pEncoder;
-                char           device_report[256];
-                char           report[512];
+                GpuDevice*  pGpu;
+                GpuEncoder* pEncoder;
+                char        device_report[256];
+                char        report[512];
                 const unsigned encode_width  = 480;
                 const unsigned encode_height = 272;
-                unsigned       frame_count;
-                uint8_t*       luma;
-                uint8_t*       chroma;
-                unsigned       frame;
-                uint64_t       total;
+                unsigned frame_count;
+                uint8_t* luma;
+                uint8_t* chroma;
+                unsigned frame;
+                uint64_t total;
 
                 frame_count = 30;
                 if (argIndex + 1 < argc)
@@ -383,7 +626,8 @@ int wmain(int argc, wchar_t** argv)
                 {
                     return 1;
                 }
-                pEncoder = GpuEncode_Create(pGpu, encode_width, encode_height, 600, 12, 24, 28, 30, 1, report, sizeof(report));
+                pEncoder =
+                    GpuEncode_Create(pGpu, encode_width, encode_height, 600, 12, 24, 28, 30, 1, report, sizeof(report));
                 (void)printf("%s", report);
                 if (NULL == pEncoder)
                 {
@@ -417,23 +661,33 @@ int wmain(int argc, wchar_t** argv)
                             chroma[(size_t)y * encode_width + x] = (uint8_t)(128 + ((int)frame * 2));
                         }
                     }
-                    coded = GpuEncode_Frame(pEncoder, luma, encode_width, chroma, encode_width, 0, 0, &coded_size);
+                    coded =
+                        GpuEncode_EncodeFrame(pEncoder, luma, encode_width, chroma, encode_width, 0, 0, &coded_size);
                     total += coded_size;
                     if (coded && coded_size >= 5)
                     {
                         int start_code;
                         int nal_type;
 
-                        start_code = (coded[0] == 0 && coded[1] == 0 && coded[2] == 0 && coded[3] == 1) || (coded[0] == 0 && coded[1] == 0 && coded[2] == 1);
-                        nal_type   = (coded[0] == 0 && coded[1] == 0 && coded[2] == 1) ? (coded[3] & 0x1F) : (coded[4] & 0x1F);
-                        (void)printf("frame %2u: ok %5u bytes, %s, first NAL type %d\n", frame, coded_size, start_code ? "annex-b" : "no start code", nal_type);
+                        start_code = (coded[0] == 0 && coded[1] == 0 && coded[2] == 0 && coded[3] == 1) ||
+                                     (coded[0] == 0 && coded[1] == 0 && coded[2] == 1);
+                        nal_type =
+                            (coded[0] == 0 && coded[1] == 0 && coded[2] == 1) ? (coded[3] & 0x1F) : (coded[4] & 0x1F);
+                        (void)printf("frame %2u: ok %5u bytes, %s, first NAL type %d\n",
+                                     frame,
+                                     coded_size,
+                                     start_code ? "annex-b" : "no start code",
+                                     nal_type);
                     }
                     else
                     {
                         (void)printf("frame %2u: FAIL %u bytes\n", frame, coded_size);
                     }
                 }
-                (void)printf("encoded %u frames, %llu bytes total, avg %llu B/frame\n", frame_count, (unsigned long long)total, (unsigned long long)(frame_count ? total / frame_count : 0));
+                (void)printf("encoded %u frames, %llu bytes total, avg %llu B/frame\n",
+                             frame_count,
+                             (unsigned long long)total,
+                             (unsigned long long)(frame_count ? total / frame_count : 0));
                 free(luma);
                 free(chroma);
                 GpuEncode_Destroy(pEncoder);
@@ -453,7 +707,7 @@ int wmain(int argc, wchar_t** argv)
                 uint64_t           total;
                 unsigned           keyframes;
 
-                GpuTranscode_DefaultConfig(&tconfig);
+                GpuTranscode_InitializeConfig(&tconfig);
                 frame_limit = (argIndex + 2 < argc) ? (unsigned)wcstoul(argv[argIndex + 2], NULL, 10) : 60u;
                 pTranscoder = GpuTranscode_Open(argv[argIndex + 1], &tconfig, report, sizeof(report));
                 (void)printf("%s", report);
@@ -461,12 +715,12 @@ int wmain(int argc, wchar_t** argv)
                 {
                     return 1;
                 }
-                if (frame_limit > GpuTranscode_FrameCount(pTranscoder))
+                if (frame_limit > GpuTranscode_GetFrameCount(pTranscoder))
                 {
-                    frame_limit = GpuTranscode_FrameCount(pTranscoder);
+                    frame_limit = GpuTranscode_GetFrameCount(pTranscoder);
                 }
                 out    = fopen("proxy.264", "wb");
-                header = GpuTranscode_Header(pTranscoder, &header_size);
+                header = GpuTranscode_GetHeader(pTranscoder, &header_size);
                 if (out && header && header_size)
                 {
                     (void)fwrite(header, 1, header_size, out);
@@ -479,7 +733,7 @@ int wmain(int argc, wchar_t** argv)
                     uint32_t       coded_size;
                     int            keyframe;
 
-                    coded = GpuTranscode_NextFrame(pTranscoder, &coded_size, &keyframe);
+                    coded = GpuTranscode_ReadNextFrame(pTranscoder, &coded_size, &keyframe);
                     if (NULL == coded)
                     {
                         (void)printf("frame %u: end of stream or failure\n", frame);
@@ -489,7 +743,7 @@ int wmain(int argc, wchar_t** argv)
                     {
                         (void)fwrite(coded, 1, coded_size, out);
                     }
-                    total += coded_size;
+                    total     += coded_size;
                     keyframes += (unsigned)(keyframe != 0);
                     if (frame < 8 || (frame % 30) == 0)
                     {
@@ -500,7 +754,12 @@ int wmain(int argc, wchar_t** argv)
                 {
                     (void)fclose(out);
                 }
-                (void)printf("transcoded %u frames (%u keyframes), %llu bytes -> proxy.264 (%ux%u)\n", frame, keyframes, (unsigned long long)total, GpuTranscode_OutWidth(pTranscoder), GpuTranscode_OutHeight(pTranscoder));
+                (void)printf("transcoded %u frames (%u keyframes), %llu bytes -> proxy.264 (%ux%u)\n",
+                             frame,
+                             keyframes,
+                             (unsigned long long)total,
+                             GpuTranscode_GetOutputWidth(pTranscoder),
+                             GpuTranscode_GetOutputHeight(pTranscoder));
                 GpuTranscode_Close(pTranscoder);
                 return 0;
             }
@@ -511,9 +770,17 @@ int wmain(int argc, wchar_t** argv)
                 unsigned           max_frames;
                 int                ok;
 
-                GpuTranscode_DefaultConfig(&fragConfig);
+                GpuTranscode_InitializeConfig(&fragConfig);
                 max_frames = (argIndex + 3 < argc) ? (unsigned)wcstoul(argv[argIndex + 3], NULL, 10) : 0u;
-                ok         = GpuTranscode_ToFragmentedMp4(argv[argIndex + 1], argv[argIndex + 2], &fragConfig, max_frames, NULL, NULL, NULL, report, sizeof(report));
+                ok         = GpuTranscode_WriteFragmentedMp4(argv[argIndex + 1],
+                                                             argv[argIndex + 2],
+                                                             &fragConfig,
+                                                             max_frames,
+                                                             NULL,
+                                                             NULL,
+                                                             NULL,
+                                                             report,
+                                                             sizeof(report));
                 (void)printf("%s", report);
                 return ok ? 0 : 1;
             }
@@ -524,9 +791,16 @@ int wmain(int argc, wchar_t** argv)
                 unsigned           max_frames;
                 int                ok;
 
-                GpuTranscode_DefaultConfig(&proxyConfig);
+                GpuTranscode_InitializeConfig(&proxyConfig);
                 max_frames = (argIndex + 3 < argc) ? (unsigned)wcstoul(argv[argIndex + 3], NULL, 10) : 0u;
-                ok         = GpuTranscode_ToMp4(argv[argIndex + 1], argv[argIndex + 2], &proxyConfig, 0, max_frames, NULL, report, sizeof(report));
+                ok         = GpuTranscode_WriteMp4(argv[argIndex + 1],
+                                                   argv[argIndex + 2],
+                                                   &proxyConfig,
+                                                   0,
+                                                   max_frames,
+                                                   NULL,
+                                                   report,
+                                                   sizeof(report));
                 (void)printf("%s", report);
                 return ok ? 0 : 1;
             }
@@ -537,17 +811,18 @@ int wmain(int argc, wchar_t** argv)
                 StdVideoH264PictureParameterSet  pps;
                 unsigned                         w, h;
                 uint32_t                         spsSize, ppsSize;
-                char                             report[512];
-                char                             deviceReport[256];
-                GpuDevice*                       pGpu;
-                GpuDecoder*                      pDecoder;
+                char        report[512];
+                char        deviceReport[256];
+                GpuDevice*  pGpu;
+                GpuDecoder* pDecoder;
 
                 if (NULL == pDemux)
                 {
                     (void)printf("not an AVC MP4\n");
                     return 1;
                 }
-                if (!H264_ParseSps(Mp4Demux_Sps(pDemux, &spsSize), spsSize, &sps, &w, &h) || !H264_ParsePps(Mp4Demux_Pps(pDemux, &ppsSize), ppsSize, &pps))
+                if (!H264_ParseSps(Mp4Demux_GetSps(pDemux, &spsSize), spsSize, &sps, &w, &h) ||
+                    !H264_ParsePps(Mp4Demux_GetPps(pDemux, &ppsSize), ppsSize, &pps))
                 {
                     (void)printf("SPS/PPS parse failed\n");
                     Mp4Demux_Close(pDemux);
@@ -560,7 +835,15 @@ int wmain(int argc, wchar_t** argv)
                     Mp4Demux_Close(pDemux);
                     return 1;
                 }
-                pDecoder = GpuDecode_Create(pGpu, &sps, &pps, w, h, sps.max_num_ref_frames + 2u, Mp4Demux_NalLengthSize(pDemux), report, sizeof(report));
+                pDecoder = GpuDecode_Create(pGpu,
+                                            &sps,
+                                            &pps,
+                                            w,
+                                            h,
+                                            sps.max_num_ref_frames + 2u,
+                                            Mp4Demux_GetNalLengthSize(pDemux),
+                                            report,
+                                            sizeof(report));
                 (void)printf("%s", report);
                 GpuDecode_Destroy(pDecoder);
                 GpuDevice_Destroy(pGpu);
@@ -574,20 +857,21 @@ int wmain(int argc, wchar_t** argv)
                 StdVideoH264PictureParameterSet  pps;
                 unsigned                         w, h;
                 uint32_t                         spsSize, ppsSize;
-                char                             report[512];
-                char                             deviceReport[256];
-                GpuDevice*                       pGpu;
-                GpuDecoder*                      pDecoder;
-                uint8_t*                         pSampleBuffer;
-                unsigned                         frameCount = (argIndex + 2 < argc) ? (unsigned)wcstoul(argv[argIndex + 2], NULL, 10) : 8;
-                unsigned                         frame;
+                char        report[512];
+                char        deviceReport[256];
+                GpuDevice*  pGpu;
+                GpuDecoder* pDecoder;
+                uint8_t*    pSampleBuffer;
+                unsigned frameCount = (argIndex + 2 < argc) ? (unsigned)wcstoul(argv[argIndex + 2], NULL, 10) : 8;
+                unsigned frame;
 
                 if (NULL == pDemux)
                 {
                     (void)printf("not an AVC MP4\n");
                     return 1;
                 }
-                if (!H264_ParseSps(Mp4Demux_Sps(pDemux, &spsSize), spsSize, &sps, &w, &h) || !H264_ParsePps(Mp4Demux_Pps(pDemux, &ppsSize), ppsSize, &pps))
+                if (!H264_ParseSps(Mp4Demux_GetSps(pDemux, &spsSize), spsSize, &sps, &w, &h) ||
+                    !H264_ParsePps(Mp4Demux_GetPps(pDemux, &ppsSize), ppsSize, &pps))
                 {
                     (void)printf("SPS/PPS parse failed\n");
                     Mp4Demux_Close(pDemux);
@@ -600,7 +884,15 @@ int wmain(int argc, wchar_t** argv)
                     Mp4Demux_Close(pDemux);
                     return 1;
                 }
-                pDecoder      = GpuDecode_Create(pGpu, &sps, &pps, w, h, sps.max_num_ref_frames + 2u, Mp4Demux_NalLengthSize(pDemux), report, sizeof(report));
+                pDecoder = GpuDecode_Create(pGpu,
+                                                 &sps,
+                                                 &pps,
+                                                 w,
+                                                 h,
+                                                 sps.max_num_ref_frames + 2u,
+                                                 Mp4Demux_GetNalLengthSize(pDemux),
+                                                 report,
+                                                 sizeof(report));
                 pSampleBuffer = (uint8_t*)malloc(4u * 1024u * 1024u);
                 (void)printf("%s", report);
                 if (NULL == pDecoder || NULL == pSampleBuffer)
@@ -612,9 +904,9 @@ int wmain(int argc, wchar_t** argv)
                     Mp4Demux_Close(pDemux);
                     return 1;
                 }
-                if (frameCount > Mp4Demux_SampleCount(pDemux))
+                if (frameCount > Mp4Demux_GetSampleCount(pDemux))
                 {
-                    frameCount = Mp4Demux_SampleCount(pDemux);
+                    frameCount = Mp4Demux_GetSampleCount(pDemux);
                 }
                 for (frame = 0; frame < frameCount; ++frame)
                 {
@@ -627,7 +919,7 @@ int wmain(int argc, wchar_t** argv)
                     }
                     {
                         unsigned       lw, lh, ls, x, y;
-                        const uint8_t* pLuma   = GpuDecode_Luma(pDecoder, &lw, &lh, &ls);
+                        const uint8_t* pLuma   = GpuDecode_GetLuma(pDecoder, &lw, &lh, &ls);
                         uint64_t       sum     = 0;
                         uint64_t       nonzero = 0;
 
@@ -637,11 +929,16 @@ int wmain(int argc, wchar_t** argv)
                             {
                                 const uint8_t v = pLuma[(size_t)y * ls + x];
 
-                                sum += v;
+                                sum     += v;
                                 nonzero += (v != 0);
                             }
                         }
-                        (void)printf("frame %u: %ux%u luma mean %.1f, %.0f%% nonzero\n", frame, lw, lh, (double)sum / ((double)lw * lh), 100.0 * (double)nonzero / ((double)lw * lh));
+                        (void)printf("frame %u: %ux%u luma mean %.1f, %.0f%% nonzero\n",
+                                     frame,
+                                     lw,
+                                     lh,
+                                     (double)sum / ((double)lw * lh),
+                                     100.0 * (double)nonzero / ((double)lw * lh));
                     }
                 }
                 free(pSampleBuffer);
@@ -655,24 +952,24 @@ int wmain(int argc, wchar_t** argv)
                 Mp4Demux* pDemux = Mp4Demux_Open(argv[argIndex + 1]);
                 uint32_t  spsSize, ppsSize;
                 unsigned  keyframes = 0;
-                unsigned  i;
+                unsigned i;
 
                 if (NULL == pDemux)
                 {
                     (void)printf("not an AVC MP4, or unreadable\n");
                     return 1;
                 }
-                (void)Mp4Demux_Sps(pDemux, &spsSize);
-                (void)Mp4Demux_Pps(pDemux, &ppsSize);
-                for (i = 0; i < Mp4Demux_SampleCount(pDemux); ++i)
+                (void)Mp4Demux_GetSps(pDemux, &spsSize);
+                (void)Mp4Demux_GetPps(pDemux, &ppsSize);
+                for (i = 0; i < Mp4Demux_GetSampleCount(pDemux); ++i)
                 {
-                    keyframes += Mp4Demux_Sample(pDemux, i)->keyframe;
+                    keyframes += Mp4Demux_GetSample(pDemux, i)->keyframe;
                 }
                 (void)printf("video %ux%u, timescale %u, NAL length %d, SPS %u B, PPS %u B\n",
-                             Mp4Demux_Width(pDemux),
-                             Mp4Demux_Height(pDemux),
-                             Mp4Demux_Timescale(pDemux),
-                             Mp4Demux_NalLengthSize(pDemux),
+                             Mp4Demux_GetWidth(pDemux),
+                             Mp4Demux_GetHeight(pDemux),
+                             Mp4Demux_GetTimescale(pDemux),
+                             Mp4Demux_GetNalLengthSize(pDemux),
                              spsSize,
                              ppsSize);
                 {
@@ -680,9 +977,11 @@ int wmain(int argc, wchar_t** argv)
                     StdVideoH264PictureParameterSet  pps;
                     unsigned                         w, h;
 
-                    if (H264_ParseSps(Mp4Demux_Sps(pDemux, &spsSize), spsSize, &sps, &w, &h) && H264_ParsePps(Mp4Demux_Pps(pDemux, &ppsSize), ppsSize, &pps))
+                    if (H264_ParseSps(Mp4Demux_GetSps(pDemux, &spsSize), spsSize, &sps, &w, &h) &&
+                        H264_ParsePps(Mp4Demux_GetPps(pDemux, &ppsSize), ppsSize, &pps))
                     {
-                        (void)printf("SPS: profile %d level %d, %ux%u, %u ref frames, poc type %d; PPS: id %u, cabac %u, init_qp %d\n",
+                        (void)printf("SPS: profile %d level %d, %ux%u, %u ref frames, poc type %d; PPS: id %u, cabac "
+                                     "%u, init_qp %d\n",
                                      (int)sps.profile_idc,
                                      (int)sps.level_idc,
                                      w,
@@ -699,16 +998,21 @@ int wmain(int argc, wchar_t** argv)
                     }
                 }
                 (void)printf("%u samples, %u keyframes; audio codec %d, %u Hz, %u ch\n",
-                             Mp4Demux_SampleCount(pDemux),
+                             Mp4Demux_GetSampleCount(pDemux),
                              keyframes,
-                             (int)Mp4Demux_AudioCodec(pDemux),
-                             Mp4Demux_AudioSampleRate(pDemux),
-                             Mp4Demux_AudioChannels(pDemux));
-                for (i = 0; i < 3 && i < Mp4Demux_SampleCount(pDemux); ++i)
+                             (int)Mp4Demux_GetAudioCodec(pDemux),
+                             Mp4Demux_GetAudioSampleRate(pDemux),
+                             Mp4Demux_GetAudioChannels(pDemux));
+                for (i = 0; i < 3 && i < Mp4Demux_GetSampleCount(pDemux); ++i)
                 {
-                    const Mp4Sample* s = Mp4Demux_Sample(pDemux, i);
+                    const Mp4Sample* s = Mp4Demux_GetSample(pDemux, i);
 
-                    (void)printf("  sample %u: offset %llu size %u dts %lld key %d\n", i, (unsigned long long)s->offset, s->size, (long long)s->decodeTime, s->keyframe);
+                    (void)printf("  sample %u: offset %llu size %u dts %lld key %d\n",
+                                 i,
+                                 (unsigned long long)s->offset,
+                                 s->size,
+                                 (long long)s->decodeTime,
+                                 s->keyframe);
                 }
                 Mp4Demux_Close(pDemux);
                 return 0;
@@ -725,15 +1029,43 @@ int wmain(int argc, wchar_t** argv)
         (void)fprintf(stderr, "WSAStartup failed\n");
         return 1;
     }
-    if (!FindDevice(&options, &device))
+    /* Failed optional proxy startup leaves original-stream casting available. */
+    (void)Proxy_Initialize(&g_proxy);
+    serving_ready   = MediaServer_Initialize(&g_serving);
+    route_ready     = OS_Network_Initialize(&g_routeNetwork);
+    discovery_ready = Ssdp_Initialize(&g_discovery);
+    network_ready   = serving_ready && route_ready && discovery_ready;
+    device_found    = FALSE;
+    if (network_ready)
     {
-        WSACleanup();
-        return options.list ? 0 : 2;
+        device_found = !!FindDevice(&options, &device);
+    }
+    else
+    {
+        (void)fprintf(stderr,
+                       "network initialization failed: serving %u, discovery %u, route %u\n",
+                       MediaServer_GetError(&g_serving),
+                       Ssdp_GetError(&g_discovery),
+                       OS_Network_GetError(&g_routeNetwork));
+    }
+    for (;;)
+    {
+        discovery_closed = Ssdp_TryClose(&g_discovery);
+        if (discovery_closed)
+        {
+            break;
+        }
+        Sleep(SESSION_POLL_MS);
+    }
+    if (!device_found)
+    {
+        CloseNetworkResources();
+        return (network_ready && options.list) ? g_runResult : 2;
     }
     if (options.list)
     {
-        WSACleanup();
-        return 0;
+        CloseNetworkResources();
+        return g_runResult;
     }
     (void)printf("using %s at %s\n", device.friendlyName, device.host);
 
@@ -745,13 +1077,17 @@ int wmain(int argc, wchar_t** argv)
     if (options.url[0])
     {
         const char* pExtension = strrchr(options.url, '.');
-        wchar_t     extension[16];
+        wchar_t extension[16];
 
         (void)snprintf(config.contentUrl, sizeof(config.contentUrl), "%s", options.url);
         (void)snprintf(config.title, sizeof(config.title), "%s", options.url);
-        if (NULL != pExtension && NULL == strchr(pExtension, '/') && 0 != MultiByteToWideChar(CP_UTF8, 0, pExtension, -1, extension, 16))
+        if (NULL != pExtension && NULL == strchr(pExtension, '/') &&
+            0 != MultiByteToWideChar(CP_UTF8, 0, pExtension, -1, extension, 16))
         {
-            (void)snprintf(config.contentType, sizeof(config.contentType), "%s", MediaServer_ContentTypeForExtension(extension));
+            (void)snprintf(config.contentType,
+                           sizeof(config.contentType),
+                           "%s",
+                           MediaServer_GetContentTypeForExtension(extension));
         }
         else
         {
@@ -762,7 +1098,7 @@ int wmain(int argc, wchar_t** argv)
     {
         const wchar_t* pName      = wcsrchr(options.file, L'\\');
         const wchar_t* pExtension = wcsrchr(options.file, L'.');
-        char           extension[16];
+        char extension[16];
 
         pName = (NULL != pName) ? pName + 1 : options.file;
         if (NULL != pExtension && pExtension < pName)
@@ -771,26 +1107,44 @@ int wmain(int argc, wchar_t** argv)
         }
         ToUtf8(pName, config.title, sizeof(config.title));
         ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
-        (void)snprintf(config.contentType, sizeof(config.contentType), "%s", MediaServer_ContentTypeForExtension(pExtension));
+        (void)snprintf(config.contentType,
+                       sizeof(config.contentType),
+                       "%s",
+                       MediaServer_GetContentTypeForExtension(pExtension));
         config.servingLocally = 1;
         if (options.bind[0])
         {
             (void)snprintf(localAddress, sizeof(localAddress), "%s", options.bind);
         }
-        else if (!MediaServer_LocalAddressToward(device.host, localAddress, sizeof(localAddress)))
+        else if (!CastNetwork_ReadLocalAddress(&g_routeNetwork,
+                                               device.host,
+                                               sizeof(device.host),
+                                               localAddress,
+                                               sizeof(localAddress)))
         {
             (void)fprintf(stderr, "cannot determine the local address facing %s; pass --bind ADDRESS\n", device.host);
-            WSACleanup();
+            CloseNetworkResources();
             return 1;
         }
-        pServer = MediaServer_Start(options.file, options.bind[0] ? options.bind : NULL, options.port, config.contentType, error, sizeof(error));
+        pServer = MediaServer_Start(&g_serving,
+                                    options.file,
+                                    options.bind[0] ? options.bind : NULL,
+                                    options.port,
+                                    config.contentType,
+                                    error,
+                                    sizeof(error));
         if (NULL == pServer)
         {
             (void)fprintf(stderr, "server: %s\n", error);
-            WSACleanup();
+            CloseNetworkResources();
             return 1;
         }
-        (void)snprintf(config.contentUrl, sizeof(config.contentUrl), "http://%s:%u/media%s", localAddress, (unsigned)MediaServer_GetPort(pServer), extension);
+        (void)snprintf(config.contentUrl,
+                       sizeof(config.contentUrl),
+                       "http://%s:%u/media%s",
+                       localAddress,
+                       (unsigned)MediaServer_GetPort(pServer),
+                       extension);
         (void)printf("serving %ls as %s (%s)\n", options.file, config.contentUrl, config.contentType);
         pKeyframes = (double*)malloc(MP4_INDEX_MAX_KEYFRAMES * sizeof(double));
         if (NULL != pKeyframes)
@@ -800,21 +1154,42 @@ int wmain(int argc, wchar_t** argv)
         }
     }
 
-    pSession = CastSession_Create(&config);
-    hThread  = (NULL != pSession) ? CreateThread(NULL, 0, SessionThread, pSession, 0, NULL) : NULL;
-    if (NULL == hThread)
+    storage_ready = CastSession_Initialize(&g_session);
+    worker_ready  = OS_Thread_Initialize(&g_sessionWorker, SessionJob, &g_session);
+    session_ready = storage_ready && worker_ready;
+    submitted     = FALSE;
+    pSession      = &g_session;
+    if (session_ready)
+    {
+        CastSession_Prepare(pSession, &config);
+        submitted = OS_Thread_Submit(&g_sessionWorker);
+    }
+    if (!submitted)
     {
         (void)fprintf(stderr, "cannot start the session\n");
-        CastSession_Destroy(pSession);
-        MediaServer_Stop(pServer);
-        WSACleanup();
+        CloseServingResources(&g_proxy, &pServer);
+        CloseSessionResources();
+        free(pKeyframes);
+        CloseNetworkResources();
         return 1;
     }
     /* Build and serve the low-latency scrub proxy in the background (local files only). */
     if (config.servingLocally)
     {
-        pProxy = Proxy_Start(options.file, NULL, localAddress, (unsigned short)(MediaServer_GetPort(pServer) + 1), pSession);
-        if (NULL != pProxy)
+        Proxy_Request_t request;
+        bool_t          proxy_started;
+
+        request.serving = &g_serving;
+        request.source  = options.file;
+
+        request.sourceCapacity       = MAX_PATH;
+        request.localAddress         = localAddress;
+        request.localAddressCapacity = sizeof(localAddress);
+        request.config               = NULL;
+        request.port                 = (uint16_t)(MediaServer_GetPort(pServer) + 1);
+        request.session              = pSession;
+        proxy_started                = Proxy_Start(&g_proxy, &request);
+        if (proxy_started)
         {
             (void)printf("building responsive scrub proxy in the background...\n");
         }
@@ -825,9 +1200,23 @@ int wmain(int argc, wchar_t** argv)
         ULONGLONG      nextBounce = 0;
         const unsigned dwellMs    = 2800; /* let each resume complete before the next jump */
 
-        while (WAIT_TIMEOUT == WaitForSingleObject(hThread, 50))
+        for (;;)
         {
-            int stop = g_interrupted;
+            bool_t completed;
+            bool_t failed;
+            int    stop;
+
+            completed = OS_Thread_TakeResult(&g_sessionWorker);
+            failed    = (OS_THREAD_FAILED == OS_Thread_GetState(&g_sessionWorker));
+            if (failed)
+            {
+                g_runResult = 1;
+            }
+            if (completed || failed)
+            {
+                break;
+            }
+            stop = g_interrupted;
 
             /* Bounce: jump across the timeline many times so the numbers reflect scrubbing, not one
         ** cold seek. Positions follow the golden ratio so successive jumps are far apart. */
@@ -844,10 +1233,14 @@ int wmain(int argc, wchar_t** argv)
                     const double fromFrac = 0.03 + 0.94 * fmod(0.137 + (bounceDone + 0) * 0.6180339887, 1.0);
                     const double toFrac   = 0.03 + 0.94 * fmod(0.137 + (bounceDone + 1) * 0.6180339887, 1.0);
                     const double seconds  = toFrac * g_duration;
-                    int          step;
+                    int step;
 
                     ++bounceDone;
-                    (void)printf("bounce %u/%u -> %.1f s (%.0f%%)\n", bounceDone, options.bounce, seconds, toFrac * 100.0);
+                    (void)printf("bounce %u/%u -> %.1f s (%.0f%%)\n",
+                                 bounceDone,
+                                 options.bounce,
+                                 seconds,
+                                 toFrac * 100.0);
                     /* Simulate a real drag: sweep scrub previews toward the target over ~360 ms, then
                 ** release. This exercises the proxy switch and hysteresis, not just a lone seek. */
                     for (step = 1; step <= 6; ++step)
@@ -877,11 +1270,12 @@ int wmain(int argc, wchar_t** argv)
             {
                 (void)printf("scrubbing to %.1f s (paused preview at the keyframe before it)\n", options.scrub);
                 CastSession_Post(pSession, CAST_COMMAND_SCRUB, options.scrub);
-                options.seek  = options.scrub; /* the release: an exact, resuming seek two seconds later */
-                options.scrub = 0;
+                options.seek    = options.scrub; /* the release: an exact, resuming seek two seconds later */
+                options.scrub   = 0;
                 g_playingSince += 2000;
             }
-            if (options.seconds > 0 && 0 != g_playingSince && GetTickCount64() >= g_playingSince + (ULONGLONG)options.seconds * 1000)
+            if (options.seconds > 0 && 0 != g_playingSince &&
+                GetTickCount64() >= g_playingSince + (ULONGLONG)options.seconds * 1000)
             {
                 if (!stopping)
                 {
@@ -889,9 +1283,15 @@ int wmain(int argc, wchar_t** argv)
                 }
                 stop = 1;
             }
-            while (ConsoleHasKeys())
+            for (;;)
             {
-                const int key = _getch();
+                int key;
+
+                if (!ConsoleHasKeys())
+                {
+                    break;
+                }
+                key = _getch();
 
                 if (' ' == key)
                 {
@@ -907,13 +1307,12 @@ int wmain(int argc, wchar_t** argv)
                 stopping = 1;
                 CastSession_Post(pSession, CAST_COMMAND_STOP, 0);
             }
+            Sleep(SESSION_POLL_MS);
         }
     }
-    CloseHandle(hThread);
-    Proxy_Stop(pProxy);
-    CastSession_Destroy(pSession);
-    MediaServer_Stop(pServer);
+    CloseServingResources(&g_proxy, &pServer);
+    CloseSessionResources();
     free(pKeyframes);
-    WSACleanup();
+    CloseNetworkResources();
     return g_runResult;
 }

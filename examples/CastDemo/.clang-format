@@ -1,0 +1,15 @@
+BasedOnStyle: InheritParentConfig
+ColumnLimit: 120
+AttributeMacros: [FORCE_INLINE, OS_NORETURN]
+LineEnding: CRLF
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+  AlignCompound: true
+  PadOperators: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignFunctionPointers: true

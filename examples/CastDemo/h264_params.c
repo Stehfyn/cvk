@@ -14,6 +14,11 @@ typedef struct BitReader
     int            zeroRun; /* trailing zero bytes, for emulation-prevention removal */
 } BitReader;
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Borrows the NAL payload and resets byte, bit and emulation-prevention state.
+ */
 static void BitReader_Init(BitReader* pReader, const uint8_t* pData, uint32_t size)
 {
     pReader->pData   = pData;
@@ -24,6 +29,12 @@ static void BitReader_Init(BitReader* pReader, const uint8_t* pData, uint32_t si
 }
 
 /* Reads one bit, transparently skipping emulation-prevention 0x03 bytes after two 0x00 bytes. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Advances most-significant bit first and skips an emulation-prevention 0x03
+ *  after two zero bytes. Exhausted input currently produces zero.
+ */
 static uint32_t ReadBit(BitReader* pReader)
 {
     uint8_t  byte;
@@ -57,10 +68,15 @@ static uint32_t ReadBit(BitReader* pReader)
     return bit;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Accumulates the requested bit count by repeated ReadBit calls.
+ */
 static uint32_t ReadBits(BitReader* pReader, int count)
 {
     uint32_t value = 0;
-    int      i;
+    int i;
 
     for (i = 0; i < count; ++i)
     {
@@ -70,13 +86,33 @@ static uint32_t ReadBits(BitReader* pReader, int count)
 }
 
 /* ue(v): unsigned Exp-Golomb. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Counts leading zero bits and combines the Exp-Golomb prefix with its suffix.
+ */
 static uint32_t ReadUe(BitReader* pReader)
 {
-    int leadingZeros = 0;
+    int      leadingZeros;
+    uint32_t bit;
 
-    while (pReader->bytePos < pReader->size && 0 == ReadBit(pReader) && leadingZeros < 32)
+    leadingZeros = 0;
+    for (;;)
     {
+        if (pReader->bytePos >= pReader->size)
+        {
+            break;
+        }
+        bit = ReadBit(pReader);
+        if (bit || (32 == leadingZeros))
+        {
+            break;
+        }
         ++leadingZeros;
+    }
+    if (32 == leadingZeros)
+    {
+        return 0;
     }
     if (0 == leadingZeros)
     {
@@ -86,6 +122,12 @@ static uint32_t ReadUe(BitReader* pReader)
 }
 
 /* se(v): signed Exp-Golomb. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Maps unsigned Exp-Golomb code numbers to alternating positive and negative
+ *  signed values.
+ */
 static int32_t ReadSe(BitReader* pReader)
 {
     const uint32_t code = ReadUe(pReader);
@@ -98,11 +140,17 @@ static int32_t ReadSe(BitReader* pReader)
 }
 
 /* Consumes a scaling list of the given size (values are not stored). */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Consumes signed scaling deltas and updates the rolling scale without storing
+ *  the resulting matrix.
+ */
 static void SkipScalingList(BitReader* pReader, int count)
 {
     int32_t lastScale = 8;
     int32_t nextScale = 8;
-    int     j;
+    int j;
 
     for (j = 0; j < count; ++j)
     {
@@ -116,6 +164,12 @@ static void SkipScalingList(BitReader* pReader, int count)
     }
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Maps recognized H.264 level codes to the Vulkan video enum; the existing
+ *  fallback is level 4.1.
+ */
 static StdVideoH264LevelIdc MapLevel(uint32_t levelIdc)
 {
     switch (levelIdc)
@@ -163,7 +217,17 @@ static StdVideoH264LevelIdc MapLevel(uint32_t levelIdc)
     }
 }
 
-int H264_ParseSps(const uint8_t* pNal, uint32_t size, StdVideoH264SequenceParameterSet* pSps, unsigned* pWidth, unsigned* pHeight)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Reads SPS fields used by the decoder and derives cropped display dimensions.
+ *  VUI data and reference-cycle offsets are not retained by this implementation.
+ */
+int H264_ParseSps(const uint8_t*                    pNal,
+                  uint32_t                          size,
+                  StdVideoH264SequenceParameterSet* pSps,
+                  unsigned*                         pWidth,
+                  unsigned*                         pHeight)
 {
     BitReader reader;
     uint32_t  profileIdc;
@@ -192,8 +256,9 @@ int H264_ParseSps(const uint8_t* pNal, uint32_t size, StdVideoH264SequenceParame
     pSps->seq_parameter_set_id = (uint8_t)ReadUe(&reader);
     pSps->chroma_format_idc    = STD_VIDEO_H264_CHROMA_FORMAT_IDC_420;
 
-    if (profileIdc == 100 || profileIdc == 110 || profileIdc == 122 || profileIdc == 244 || profileIdc == 44 || profileIdc == 83 || profileIdc == 86 || profileIdc == 118 || profileIdc == 128 ||
-        profileIdc == 138 || profileIdc == 139 || profileIdc == 134 || profileIdc == 135)
+    if (profileIdc == 100 || profileIdc == 110 || profileIdc == 122 || profileIdc == 244 || profileIdc == 44 ||
+        profileIdc == 83 || profileIdc == 86 || profileIdc == 118 || profileIdc == 128 || profileIdc == 138 ||
+        profileIdc == 139 || profileIdc == 134 || profileIdc == 135)
     {
         const uint32_t chroma = ReadUe(&reader);
 
@@ -280,7 +345,7 @@ int H264_ParseSps(const uint8_t* pNal, uint32_t size, StdVideoH264SequenceParame
         {
             cropUnitY = pSps->flags.frame_mbs_only_flag ? 1u : 2u;
         }
-        width -= (pSps->frame_crop_left_offset + pSps->frame_crop_right_offset) * cropUnitX;
+        width  -= (pSps->frame_crop_left_offset + pSps->frame_crop_right_offset) * cropUnitX;
         height -= (pSps->frame_crop_top_offset + pSps->frame_crop_bottom_offset) * cropUnitY;
     }
     *pWidth  = width;
@@ -290,7 +355,13 @@ int H264_ParseSps(const uint8_t* pNal, uint32_t size, StdVideoH264SequenceParame
 
 /* The index of the last set bit (the rbsp_stop_one_bit) in a byte range, so that more_rbsp_data
 ** can distinguish payload bits from the trailing stop bit and padding. */
-static int RbspLastBit(const uint8_t* pData, uint32_t size)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Searches backward for the last set bit so PPS parsing can distinguish payload
+ *  from the RBSP stop bit and padding.
+ */
+static int GetRbspLastBit(const uint8_t* pData, uint32_t size)
 {
     int byteIndex;
 
@@ -312,9 +383,15 @@ static int RbspLastBit(const uint8_t* pData, uint32_t size)
     return -1;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Removes emulation-prevention bytes before locating trailing bits, rejects FMO
+ *  slice groups and reads the optional transform/chroma-QP extension.
+ */
 int H264_ParsePps(const uint8_t* pNal, uint32_t size, StdVideoH264PictureParameterSet* pPps)
 {
-    uint8_t   rbsp[MAX_PARAM_SET];
+    uint8_t rbsp[MAX_PARAM_SET];
     uint32_t  rbspSize = 0;
     BitReader reader;
     int       stopBit;
@@ -332,16 +409,16 @@ int H264_ParsePps(const uint8_t* pNal, uint32_t size, StdVideoH264PictureParamet
     {
         if (in + 2 < size && pNal[in] == 0 && pNal[in + 1] == 0 && pNal[in + 2] == 3)
         {
-            rbsp[rbspSize++] = 0;
-            rbsp[rbspSize++] = 0;
-            in += 2; /* skip the inserted 0x03 */
+            rbsp[rbspSize++]  = 0;
+            rbsp[rbspSize++]  = 0;
+            in               += 2; /* skip the inserted 0x03 */
         }
         else
         {
             rbsp[rbspSize++] = pNal[in];
         }
     }
-    stopBit = RbspLastBit(rbsp, rbspSize);
+    stopBit = GetRbspLastBit(rbsp, rbspSize);
     BitReader_Init(&reader, rbsp, rbspSize);
 
     pPps->pic_parameter_set_id                               = (uint8_t)ReadUe(&reader);
@@ -390,7 +467,17 @@ int H264_ParsePps(const uint8_t* pNal, uint32_t size, StdVideoH264PictureParamet
     return 1;
 }
 
-int H264_ParseSliceHeader(const uint8_t* pNal, uint32_t size, const StdVideoH264SequenceParameterSet* pSps, const StdVideoH264PictureParameterSet* pPps, H264SliceHeader* pHeader)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Reads the coded-slice prefix required for frame and POC tracking using SPS/PPS
+ *  bit widths. This does not parse the complete slice header.
+ */
+int H264_ParseSliceHeader(const uint8_t*                          pNal,
+                          uint32_t                                size,
+                          const StdVideoH264SequenceParameterSet* pSps,
+                          const StdVideoH264PictureParameterSet*  pPps,
+                          H264SliceHeader*                        pHeader)
 {
     BitReader reader;
 

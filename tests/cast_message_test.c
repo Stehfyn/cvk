@@ -8,24 +8,25 @@
 #include <string.h>
 
 #define CHECK(x)                                                                                                                                                                                       \
-    do                                                                                                                                                                                                 \
+    for (;;)                                                                                                                                                                                           \
     {                                                                                                                                                                                                  \
         if (!(x))                                                                                                                                                                                      \
         {                                                                                                                                                                                              \
             (void)fprintf(stderr, "line %d: %s\n", __LINE__, #x);                                                                                                                                      \
             return 1;                                                                                                                                                                                  \
         }                                                                                                                                                                                              \
-    } while (0)
+        break;                                                                                                                                                                                         \
+    }
 
 static int TestEncodeKnownBytes(void)
 {
     /* 08 00 | 12 01 's' | 1A 01 'd' | 22 01 'n' | 28 00 | 32 02 '{' '}'  = 17 bytes */
     static const uint8_t expected[] = {0, 0, 0, 17, 0x08, 0x00, 0x12, 0x01, 's', 0x1A, 0x01, 'd', 0x22, 0x01, 'n', 0x28, 0x00, 0x32, 0x02, '{', '}'};
-    CastMessage          message;
-    uint8_t              frame[64];
-    size_t               length;
+    CastMessage_t message;
+    uint8_t       frame[64];
+    uint32_t      length;
 
-    CastMessage_Set(&message, "s", "d", "n", "{}");
+    CastMessage_Initialize(&message, "s", "d", "n", "{}");
     length = CastMessage_Encode(&message, frame, sizeof(frame));
     CHECK(length == sizeof(expected));
     CHECK(0 == memcmp(frame, expected, sizeof(expected)));
@@ -36,26 +37,26 @@ static int TestEncodeKnownBytes(void)
 static int TestRoundTripLongPayload(void)
 {
     static uint8_t frame[CAST_MESSAGE_MAX_FRAME];
-    char           payload[300];
-    CastMessage    message;
-    CastMessage    decoded;
-    size_t         length;
-    size_t         index;
+    char          payload[300];
+    CastMessage_t message;
+    CastMessage_t decoded;
+    uint32_t      length;
+    uint32_t      index;
 
     for (index = 0; index < sizeof(payload) - 1; ++index)
     {
         payload[index] = (char)('a' + (index % 26));
     }
     payload[sizeof(payload) - 1] = 0;
-    CastMessage_Set(&message, "sender-0", "receiver-0", "urn:x-cast:com.google.cast.receiver", payload);
+    CastMessage_Initialize(&message, "sender-0", "receiver-0", "urn:x-cast:com.google.cast.receiver", payload);
     length = CastMessage_Encode(&message, frame, sizeof(frame));
     CHECK(length > 4);
     CHECK((((size_t)frame[0] << 24) | ((size_t)frame[1] << 16) | ((size_t)frame[2] << 8) | frame[3]) == length - 4);
     CHECK(CastMessage_Decode(frame + 4, length - 4, &decoded));
     CHECK(decoded.sourceLength == 8 && 0 == memcmp(decoded.pSource, "sender-0", 8));
     CHECK(decoded.destinationLength == 10 && 0 == memcmp(decoded.pDestination, "receiver-0", 10));
-    CHECK(CastMessage_NamespaceIs(&decoded, "urn:x-cast:com.google.cast.receiver"));
-    CHECK(!CastMessage_NamespaceIs(&decoded, "urn:x-cast:com.google.cast.media"));
+    CHECK(CastMessage_IsNamespace(&decoded, "urn:x-cast:com.google.cast.receiver"));
+    CHECK(!CastMessage_IsNamespace(&decoded, "urn:x-cast:com.google.cast.media"));
     CHECK(decoded.payloadLength == sizeof(payload) - 1 && 0 == memcmp(decoded.pPayload, payload, sizeof(payload) - 1));
     CHECK(0 == decoded.binary);
     /* truncated bodies are rejected */
@@ -68,12 +69,12 @@ static int TestDecodeSkipsUnknownFields(void)
     /* protocol_version, source, destination, unknown fixed64 (field 9), unknown fixed32 (field 10),
     ** namespace, payload_type BINARY, payload_binary */
     static const uint8_t body[] = {0x08, 0x00, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x49, 1, 2, 3, 4, 5, 6, 7, 8, 0x55, 1, 2, 3, 4, 0x22, 0x01, 'n', 0x28, 0x01, 0x3A, 0x02, 0xFF, 0x00};
-    CastMessage          decoded;
+    CastMessage_t decoded;
 
     CHECK(CastMessage_Decode(body, sizeof(body), &decoded));
     CHECK(decoded.binary);
     CHECK(decoded.payloadLength == 2 && 0xFF == (uint8_t)decoded.pPayload[0]);
-    CHECK(CastMessage_NamespaceIs(&decoded, "n"));
+    CHECK(CastMessage_IsNamespace(&decoded, "n"));
     /* a different protocol version is not understood */
     {
         static const uint8_t wrongVersion[] = {0x08, 0x01, 0x12, 0x01, 'a', 0x1A, 0x01, 'b', 0x22, 0x01, 'n', 0x32, 0x00};
@@ -101,15 +102,21 @@ static int TestRanges(void)
     CHECK(1 == MediaServer_ParseRange("bytes=0-5000", 1000, &first, &last) && 0 == first && 999 == last);
     CHECK(1 == MediaServer_ParseRange("bytes=10-20, 30-40", 1000, &first, &last) && 10 == first && 20 == last);
     CHECK(-1 == MediaServer_ParseRange("bytes=1000-", 1000, &first, &last));
-    CHECK(-1 == MediaServer_ParseRange("bytes=-1", 0, &first, &last));
+    CHECK(0 == MediaServer_ParseRange("bytes=-1", 0, &first, &last)); /* Empty representations ignore Range. */
+    CHECK(-1 == MediaServer_ParseRange("bytes=-0", 1000, &first, &last));
+    CHECK(1 == MediaServer_ParseRange("bytes=1000-,10-20", 1000, &first, &last) && 10 == first && 20 == last);
+    CHECK(0 == MediaServer_ParseRange("bytes=10-20,5-2", 1000, &first, &last));
+    CHECK(0 == MediaServer_ParseRange("bytes=10-20junk", 1000, &first, &last));
+    CHECK(1 == MediaServer_ParseRange("bytes=0-18446744073709551615", 1000, &first, &last) && 0 == first && 999 == last);
+    CHECK(0 == MediaServer_ParseRange("bytes=0-18446744073709551616", 1000, &first, &last));
     CHECK(0 == MediaServer_ParseRange("items=0-1", 1000, &first, &last));
     CHECK(0 == MediaServer_ParseRange("bytes=5-2", 1000, &first, &last));
     CHECK(0 == MediaServer_ParseRange("bytes=-", 1000, &first, &last));
     CHECK(0 == MediaServer_ParseRange("bytes=a-b", 1000, &first, &last));
-    CHECK(0 == strcmp("video/mp4", MediaServer_ContentTypeForExtension(L".MP4")));
-    CHECK(0 == strcmp("video/x-matroska", MediaServer_ContentTypeForExtension(L".mkv")));
-    CHECK(0 == strcmp("application/octet-stream", MediaServer_ContentTypeForExtension(L".bin")));
-    CHECK(0 == strcmp("application/octet-stream", MediaServer_ContentTypeForExtension(NULL)));
+    CHECK(0 == strcmp("video/mp4", MediaServer_GetContentTypeForExtension(L".MP4")));
+    CHECK(0 == strcmp("video/x-matroska", MediaServer_GetContentTypeForExtension(L".mkv")));
+    CHECK(0 == strcmp("application/octet-stream", MediaServer_GetContentTypeForExtension(L".bin")));
+    CHECK(0 == strcmp("application/octet-stream", MediaServer_GetContentTypeForExtension(NULL)));
     return 0;
 }
 

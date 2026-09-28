@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "mp4_demux.h"
+#include "utl/utl_mp4.h"
 
 #define FOURCC(a, b, c, d) (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (uint32_t)(d))
 #define MAX_TABLE_BYTES    (128u * 1024u * 1024u)
@@ -23,7 +24,7 @@ typedef struct Box
 
 struct Mp4Demux
 {
-    HANDLE        hFile;
+    HANDLE hFile;
     unsigned      width, height;
     unsigned      timescale;
     int           nalLengthSize;
@@ -43,70 +44,117 @@ struct Mp4Demux
     uint32_t      audioConfigSize;
 };
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Combines four big-endian bytes into an unsigned 32-bit value.
+ */
 static uint32_t Be32(const uint8_t* p)
 {
     return ((uint32_t)p[0] << 24) | ((uint32_t)p[1] << 16) | ((uint32_t)p[2] << 8) | (uint32_t)p[3];
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Combines two big-endian bytes into an unsigned 16-bit value.
+ */
 static uint16_t Be16(const uint8_t* p)
 {
     return (uint16_t)(((uint32_t)p[0] << 8) | (uint32_t)p[1]);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Combines two big-endian 32-bit words into an unsigned 64-bit value.
+ */
 static uint64_t Be64(const uint8_t* p)
 {
     return ((uint64_t)Be32(p) << 32) | Be32(p + 4);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Positions the file at an absolute offset and requires the exact requested
+ *  byte count.
+ */
 static int ReadAt(HANDLE hFile, uint64_t offset, void* pOut, DWORD size)
 {
     LARGE_INTEGER position;
     DWORD         read = 0;
 
     position.QuadPart = (LONGLONG)offset;
-    return SetFilePointerEx(hFile, position, NULL, FILE_BEGIN) && ReadFile(hFile, pOut, size, &read, NULL) && read == size;
+    return SetFilePointerEx(hFile, position, NULL, FILE_BEGIN) && ReadFile(hFile, pOut, size, &read, NULL) &&
+           read == size;
 }
 
 /* Reads the box header at offset within parentEnd. Returns 0 at the end or on a bad size. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Reads a bounded header prefix and delegates size validation to utl_mp4 before
+ *  publishing absolute payload and end offsets.
+ */
 static int ReadBox(HANDLE hFile, uint64_t offset, uint64_t parentEnd, Box* pBox)
 {
-    uint8_t  header[16];
-    uint64_t size;
+    Utl_Mp4_BoxHeader_t header;
+    bool_t              offset_in_parent;
+    bool_t              is_valid;
+    uint64_t            remaining;
+    bool_t              has_header;
+    DWORD               read_bytes;
+    byte_t              bytes[UTL_MP4_MAX_BOX_HEADER_BYTES];
 
-    if (offset + 8 > parentEnd || !ReadAt(hFile, offset, header, 8))
+    header.type            = 0;
+    header.headerByteCount = 0;
+    header.byteCount       = 0;
+    offset_in_parent       = (offset <= parentEnd);
+    is_valid               = offset_in_parent;
+    if (is_valid)
     {
-        return 0;
-    }
-    size          = Be32(header);
-    pBox->type    = Be32(header + 4);
-    pBox->payload = offset + 8;
-    if (1 == size)
-    {
-        if (!ReadAt(hFile, offset + 8, header + 8, 8))
+        remaining  = parentEnd - offset;
+        has_header = (UTL_MP4_BOX_HEADER_BYTES <= remaining);
+        is_valid   = has_header;
+        if (has_header)
         {
-            return 0;
+            read_bytes = UTL_MP4_MAX_BOX_HEADER_BYTES;
+            if (remaining < read_bytes)
+            {
+                read_bytes = (DWORD)remaining;
+            }
+            is_valid = ReadAt(hFile, offset, bytes, read_bytes);
+            if (is_valid)
+            {
+                is_valid = Utl_Mp4_ReadBoxHeader(&header, bytes, read_bytes, remaining);
+            }
         }
-        size          = Be64(header + 8);
-        pBox->payload = offset + 16;
     }
-    else if (0 == size)
+    if (is_valid)
     {
-        size = parentEnd - offset;
+        pBox->type    = header.type;
+        pBox->payload = offset + header.headerByteCount;
+        pBox->end     = offset + header.byteCount;
     }
-    if (size < pBox->payload - offset || offset + size > parentEnd)
-    {
-        return 0;
-    }
-    pBox->end = offset + size;
-    return 1;
+    return is_valid;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Advances through immediate children until a box of the requested type is found.
+ */
 static int FindChild(HANDLE hFile, const Box* pParent, uint32_t type, Box* pChild)
 {
     uint64_t offset = pParent->payload;
 
-    while (ReadBox(hFile, offset, pParent->end, pChild))
+    for (;;)
     {
+        if (!ReadBox(hFile, offset, pParent->end, pChild))
+        {
+            break;
+        }
         if (pChild->type == type)
         {
             return 1;
@@ -116,10 +164,16 @@ static int FindChild(HANDLE hFile, const Box* pParent, uint32_t type, Box* pChil
     return 0;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Allocates a table payload within MAX_TABLE_BYTES and frees it after a failed
+ *  exact read.
+ */
 static uint8_t* ReadPayload(HANDLE hFile, const Box* pBox, size_t* pSize)
 {
     const uint64_t size = pBox->end - pBox->payload;
-    uint8_t*       pData;
+    uint8_t* pData;
 
     if (size < 4 || size > MAX_TABLE_BYTES)
     {
@@ -137,10 +191,16 @@ static uint8_t* ReadPayload(HANDLE hFile, const Box* pBox, size_t* pSize)
 
 /* avcC: configurationVersion(1) profile(1) compat(1) level(1) [6 bits reserved | 2 bits lenSize-1]
 ** [3 bits reserved | 5 bits numSPS] then SPS entries, then numPPS and PPS entries. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Reads the NAL length width and parameter-set arrays, retaining the first SPS
+ *  and PPS that fit the fixed parameter buffers.
+ */
 static int ParseAvcC(Mp4Demux* pDemux, const uint8_t* pData, size_t size)
 {
-    size_t   position;
     unsigned count;
+    size_t   position;
     unsigned i;
 
     if (size < 7)
@@ -158,7 +218,7 @@ static int ParseAvcC(Mp4Demux* pDemux, const uint8_t* pData, size_t size)
         {
             return 0;
         }
-        length = Be16(pData + position);
+        length    = Be16(pData + position);
         position += 2;
         if (position + length > size)
         {
@@ -184,7 +244,7 @@ static int ParseAvcC(Mp4Demux* pDemux, const uint8_t* pData, size_t size)
         {
             return 0;
         }
-        length = Be16(pData + position);
+        length    = Be16(pData + position);
         position += 2;
         if (position + length > size)
         {
@@ -201,6 +261,12 @@ static int ParseAvcC(Mp4Demux* pDemux, const uint8_t* pData, size_t size)
 }
 
 /* stsd -> avc1/avc3 sample entry -> avcC. The visual sample entry is 78 bytes before child boxes. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Selects an AVC visual sample entry, reads its dimensions and searches beyond
+ *  its fixed header for the avcC child.
+ */
 static int ParseVideoSampleDescription(Mp4Demux* pDemux, HANDLE hFile, const Box* pStbl)
 {
     Box      stsd, entry, avcC;
@@ -237,11 +303,15 @@ static int ParseVideoSampleDescription(Mp4Demux* pDemux, HANDLE hFile, const Box
     ** consumed), then its child boxes; avcC is among them. */
     {
         uint64_t offset = entry.payload + 78;
-        Box      scan;
+        Box scan;
 
         ok = 0;
-        while (ReadBox(hFile, offset, entry.end, &scan))
+        for (;;)
         {
+            if (!ReadBox(hFile, offset, entry.end, &scan))
+            {
+                break;
+            }
             if (scan.type == FOURCC('a', 'v', 'c', 'C'))
             {
                 avcC = scan;
@@ -267,26 +337,34 @@ static int ParseVideoSampleDescription(Mp4Demux* pDemux, HANDLE hFile, const Box
 
 /* Builds a flat sample table (offsets, sizes, times, keyframes) from stsz, stsc, stco/co64, stts and
 ** stss into a freshly allocated array returned through ppSamples/pOutCount. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Expands chunk/sample tables into offsets, sizes, decode times, composition
+ *  offsets and sync flags. Releases temporary table payloads on every exit.
+ */
 static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSamples, uint32_t* pOutCount)
 {
-    Box         stsz, stsc, stco, stts, stss, ctts;
-    Mp4Sample*  samples  = NULL;
-    uint8_t*    pStsz    = NULL;
-    uint8_t*    pStsc    = NULL;
-    uint8_t*    pStco    = NULL;
-    uint8_t*    pStts    = NULL;
-    uint8_t*    pStss    = NULL;
-    uint8_t*    pCtts    = NULL;
-    size_t      stszSize = 0, stscSize = 0, stcoSize = 0, sttsSize = 0, stssSize = 0, cttsSize = 0;
-    int         is64 = 0;
-    uint32_t    sampleSizeFixed;
-    uint32_t    sampleCount;
-    uint32_t    chunkCount;
-    uint32_t    stscCount;
-    uint32_t    i;
-    int         ok = 0;
+    Box        stsz, stsc, stco, stts, stss, ctts;
+    Mp4Sample* samples  = NULL;
+    uint8_t*   pStsz    = NULL;
+    uint8_t*   pStsc    = NULL;
+    uint8_t*   pStco    = NULL;
+    uint8_t*   pStts    = NULL;
+    uint8_t*   pStss    = NULL;
+    uint8_t*   pCtts    = NULL;
+    size_t     stszSize = 0, stscSize = 0, stcoSize = 0, sttsSize = 0, stssSize = 0, cttsSize = 0;
+    int        is64 = 0;
+    uint32_t sampleSizeFixed;
+    uint32_t sampleCount;
+    uint32_t chunkCount;
+    uint32_t stscCount;
+    uint32_t i;
+    int        ok = 0;
 
-    if (!FindChild(hFile, pStbl, FOURCC('s', 't', 's', 'z'), &stsz) || !FindChild(hFile, pStbl, FOURCC('s', 't', 's', 'c'), &stsc) || !FindChild(hFile, pStbl, FOURCC('s', 't', 't', 's'), &stts))
+    if (!FindChild(hFile, pStbl, FOURCC('s', 't', 's', 'z'), &stsz) ||
+        !FindChild(hFile, pStbl, FOURCC('s', 't', 's', 'c'), &stsc) ||
+        !FindChild(hFile, pStbl, FOURCC('s', 't', 't', 's'), &stts))
     {
         return 0;
     }
@@ -310,9 +388,8 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     {
         pCtts = ReadPayload(hFile, &ctts, &cttsSize);
     }
-    if (NULL == pStsz || NULL == pStsc || NULL == pStco || NULL == pStts ||
-        stszSize < 12 || stscSize < 8 || stcoSize < 8 || sttsSize < 8 ||
-        (NULL != pCtts && cttsSize < 8) || (NULL != pStss && stssSize < 8))
+    if (NULL == pStsz || NULL == pStsc || NULL == pStco || NULL == pStts || stszSize < 12 || stscSize < 8 ||
+        stcoSize < 8 || sttsSize < 8 || (NULL != pCtts && cttsSize < 8) || (NULL != pStss && stssSize < 8))
     {
         goto cleanup;
     }
@@ -320,7 +397,8 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     sampleCount     = Be32(pStsz + 8);
     chunkCount      = Be32(pStco + 4);
     stscCount       = Be32(pStsc + 4);
-    if (0 == sampleCount || sampleCount > MAX_TABLE_BYTES / sizeof(Mp4Sample) || (uint64_t)stscCount * 12 + 8 > stscSize || (uint64_t)chunkCount * (is64 ? 8u : 4u) + 8 > stcoSize)
+    if (0 == sampleCount || sampleCount > MAX_TABLE_BYTES / sizeof(Mp4Sample) ||
+        (uint64_t)stscCount * 12 + 8 > stscSize || (uint64_t)chunkCount * (is64 ? 8u : 4u) + 8 > stcoSize)
     {
         goto cleanup;
     }
@@ -343,8 +421,9 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
         {
             const uint32_t firstChunk      = Be32(pStsc + 8 + entry * 12);
             const uint32_t samplesPerChunk = Be32(pStsc + 8 + entry * 12 + 4);
-            const uint32_t nextFirstChunk  = (entry + 1 < stscCount) ? Be32(pStsc + 8 + (entry + 1) * 12) : chunkCount + 1;
-            uint32_t       chunk;
+            const uint32_t nextFirstChunk =
+                (entry + 1 < stscCount) ? Be32(pStsc + 8 + (entry + 1) * 12) : chunkCount + 1;
+            uint32_t chunk;
 
             if (firstChunk == 0 || samplesPerChunk == 0)
             {
@@ -359,9 +438,9 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
                 {
                     const uint32_t sz = sampleSizeFixed ? sampleSizeFixed : Be32(pStsz + 12 + sample * 4);
 
-                    samples[sample].offset = offset;
-                    samples[sample].size   = sz;
-                    offset += sz;
+                    samples[sample].offset  = offset;
+                    samples[sample].size    = sz;
+                    offset                 += sz;
                     ++sample;
                 }
             }
@@ -375,7 +454,7 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     /* Decode times from stts run-length entries. */
     {
         const uint32_t entries = Be32(pStts + 4);
-        uint32_t       entry;
+        uint32_t entry;
         uint32_t       sample = 0;
         int64_t        time   = 0;
 
@@ -388,12 +467,17 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
             uint32_t       runCount = Be32(pStts + 8 + entry * 8);
             const uint32_t delta    = Be32(pStts + 8 + entry * 8 + 4);
 
-            while (runCount-- > 0 && sample < sampleCount)
+            for (;;)
             {
-                samples[sample].decodeTime      = time;
-                samples[sample].compositionTime = time;
-                samples[sample].duration        = delta;
-                time += delta;
+                if ((0 == runCount) || (sample == sampleCount))
+                {
+                    break;
+                }
+                --runCount;
+                samples[sample].decodeTime       = time;
+                samples[sample].compositionTime  = time;
+                samples[sample].duration         = delta;
+                time                            += delta;
                 ++sample;
             }
         }
@@ -407,7 +491,7 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     if (NULL != pCtts)
     {
         const uint32_t entries = Be32(pCtts + 4);
-        uint32_t       entry;
+        uint32_t entry;
         uint32_t       sample = 0;
 
         if ((uint64_t)entries * 8 + 8 <= cttsSize)
@@ -417,8 +501,13 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
                 uint32_t      runCount = Be32(pCtts + 8 + entry * 8);
                 const int32_t offset   = (int32_t)Be32(pCtts + 8 + entry * 8 + 4);
 
-                while (runCount-- > 0 && sample < sampleCount)
+                for (;;)
                 {
+                    if ((0 == runCount) || (sample == sampleCount))
+                    {
+                        break;
+                    }
+                    --runCount;
                     samples[sample].compositionTime = samples[sample].decodeTime + offset;
                     ++sample;
                 }
@@ -430,7 +519,7 @@ static int BuildSampleTable(HANDLE hFile, const Box* pStbl, Mp4Sample** ppSample
     if (NULL != pStss)
     {
         const uint32_t entries = Be32(pStss + 4);
-        uint32_t       i2;
+        uint32_t i2;
 
         if ((uint64_t)entries * 4 + 8 <= stssSize)
         {
@@ -469,6 +558,11 @@ cleanup:
 }
 
 /* mdhd gives the track timescale (needed to map times to seconds). */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Reads the mdhd timescale at the version-zero or version-one offset.
+ */
 static unsigned ReadTimescale(HANDLE hFile, const Box* pMdia)
 {
     Box     mdhd;
@@ -481,15 +575,27 @@ static unsigned ReadTimescale(HANDLE hFile, const Box* pMdia)
     return (1 == buffer[0]) ? Be32(buffer + 20) : Be32(buffer + 12);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Compares the hdlr handler type after locating and reading the child payload.
+ */
 static int TrackIsHandler(HANDLE hFile, const Box* pMdia, uint32_t handler)
 {
     Box     hdlr;
     uint8_t buffer[12];
 
-    return FindChild(hFile, pMdia, FOURCC('h', 'd', 'l', 'r'), &hdlr) && ReadAt(hFile, hdlr.payload, buffer, 12) && Be32(buffer + 8) == handler;
+    return FindChild(hFile, pMdia, FOURCC('h', 'd', 'l', 'r'), &hdlr) && ReadAt(hFile, hdlr.payload, buffer, 12) &&
+           Be32(buffer + 8) == handler;
 }
 
 /* Reads one MPEG-4 descriptor expandable length (1-4 bytes, 7 bits each, high bit continues). */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Accumulates up to four seven-bit descriptor-length groups while advancing
+ *  the supplied cursor.
+ */
 static uint32_t ReadDescriptorLength(const uint8_t* p, size_t size, size_t* pPosition)
 {
     uint32_t length;
@@ -513,6 +619,12 @@ static uint32_t ReadDescriptorLength(const uint8_t* p, size_t size, size_t* pPos
 /* esds: version+flags(4), ES_Descriptor(0x03){ES_ID(2) flags(1) DecoderConfigDescriptor(0x04){
 ** objectType(1) streamType+buffer(4) maxBitrate(4) avgBitrate(4) DecoderSpecificInfo(0x05){ASC}}}.
 ** Extracts the AudioSpecificConfig bytes. Returns 0 if the layout is not the common (flags 0) one. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Extracts DecoderSpecificInfo using the common ES_Descriptor layout with
+ *  stream-dependence, URL and OCR fields assumed absent.
+ */
 static int ParseEsds(Mp4Demux* pDemux, const uint8_t* p, size_t size)
 {
     size_t   position;
@@ -547,11 +659,18 @@ static int ParseEsds(Mp4Demux* pDemux, const uint8_t* p, size_t size)
 
 /* AudioSpecificConfig for AAC-LC synthesised from the sample rate and channel count, used when the
 ** esds cannot be parsed. objectType 2 (AAC-LC), then the sampling-frequency index and channels. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Builds the two-byte AAC-LC configuration from the sample-rate table index
+ *  and channel configuration used by the existing fallback.
+ */
 static void SynthesizeAudioConfig(Mp4Demux* pDemux)
 {
-    static const unsigned rates[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350};
-    unsigned              index;
-    unsigned              i;
+    static const unsigned rates[] =
+        {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350};
+    unsigned index;
+    unsigned i;
 
     index = 15;
     for (i = 0; i < sizeof(rates) / sizeof(rates[0]); ++i)
@@ -562,12 +681,18 @@ static void SynthesizeAudioConfig(Mp4Demux* pDemux)
             break;
         }
     }
-    pDemux->audioConfig[0] = (uint8_t)((2u << 3) | (index >> 1));
-    pDemux->audioConfig[1] = (uint8_t)(((index & 1u) << 7) | ((pDemux->audioChannels & 0x0Fu) << 3));
+    pDemux->audioConfig[0]  = (uint8_t)((2u << 3) | (index >> 1));
+    pDemux->audioConfig[1]  = (uint8_t)(((index & 1u) << 7) | ((pDemux->audioChannels & 0x0Fu) << 3));
     pDemux->audioConfigSize = 2;
 }
 
 /* Locates the AAC audio track: rate, channels, timescale, AudioSpecificConfig and sample table. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Selects AAC metadata, reads or synthesizes its AudioSpecificConfig and builds
+ *  the audio sample table.
+ */
 static void ParseAudioTrack(Mp4Demux* pDemux, HANDLE hFile, const Box* pMdia)
 {
     Box      minf, stbl, stsd, entry, esds;
@@ -576,7 +701,9 @@ static void ParseAudioTrack(Mp4Demux* pDemux, HANDLE hFile, const Box* pMdia)
     Box      scan;
 
     pDemux->audioCodec = MP4_AUDIO_OTHER;
-    if (!FindChild(hFile, pMdia, FOURCC('m', 'i', 'n', 'f'), &minf) || !FindChild(hFile, &minf, FOURCC('s', 't', 'b', 'l'), &stbl) || !FindChild(hFile, &stbl, FOURCC('s', 't', 's', 'd'), &stsd))
+    if (!FindChild(hFile, pMdia, FOURCC('m', 'i', 'n', 'f'), &minf) ||
+        !FindChild(hFile, &minf, FOURCC('s', 't', 'b', 'l'), &stbl) ||
+        !FindChild(hFile, &stbl, FOURCC('s', 't', 's', 'd'), &stsd))
     {
         return;
     }
@@ -599,8 +726,12 @@ static void ParseAudioTrack(Mp4Demux* pDemux, HANDLE hFile, const Box* pMdia)
 
     /* esds is a child of the mp4a entry, after the 28-byte AudioSampleEntry. */
     offset = entry.payload + 28;
-    while (ReadBox(hFile, offset, entry.end, &scan))
+    for (;;)
     {
+        if (!ReadBox(hFile, offset, entry.end, &scan))
+        {
+            break;
+        }
         if (scan.type == FOURCC('e', 's', 'd', 's'))
         {
             size_t   esdsSize;
@@ -624,19 +755,30 @@ static void ParseAudioTrack(Mp4Demux* pDemux, HANDLE hFile, const Box* pMdia)
     (void)BuildSampleTable(hFile, &stbl, &pDemux->pAudioSamples, &pDemux->audioSampleCount);
 }
 
+/*=================================================================================================
+** 5. PUBLIC FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Allocates the demux owner and reads movie tracks, requiring a usable video
+ *  track and timescale before returning the open source.
+ */
 Mp4Demux* Mp4Demux_Open(const wchar_t* pFile)
 {
     Mp4Demux*     pDemux = (Mp4Demux*)calloc(1, sizeof(*pDemux));
     LARGE_INTEGER size;
     Box           root, moov, trak;
-    uint64_t      offset;
+    uint64_t offset;
     int           haveVideo = 0;
 
     if (NULL == pDemux)
     {
         return NULL;
     }
-    pDemux->hFile = CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+    pDemux->hFile =
+        CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
     if (INVALID_HANDLE_VALUE == pDemux->hFile || !GetFileSizeEx(pDemux->hFile, &size))
     {
         Mp4Demux_Close(pDemux);
@@ -651,24 +793,31 @@ Mp4Demux* Mp4Demux_Open(const wchar_t* pFile)
         return NULL;
     }
     offset = moov.payload;
-    while (ReadBox(pDemux->hFile, offset, moov.end, &trak))
+    for (;;)
     {
+        if (!ReadBox(pDemux->hFile, offset, moov.end, &trak))
+        {
+            break;
+        }
         if (trak.type == FOURCC('t', 'r', 'a', 'k'))
         {
             Box mdia, minf, stbl;
 
             if (FindChild(pDemux->hFile, &trak, FOURCC('m', 'd', 'i', 'a'), &mdia))
             {
-                if (!haveVideo && TrackIsHandler(pDemux->hFile, &mdia, FOURCC('v', 'i', 'd', 'e')) && FindChild(pDemux->hFile, &mdia, FOURCC('m', 'i', 'n', 'f'), &minf) &&
+                if (!haveVideo && TrackIsHandler(pDemux->hFile, &mdia, FOURCC('v', 'i', 'd', 'e')) &&
+                    FindChild(pDemux->hFile, &mdia, FOURCC('m', 'i', 'n', 'f'), &minf) &&
                     FindChild(pDemux->hFile, &minf, FOURCC('s', 't', 'b', 'l'), &stbl))
                 {
                     pDemux->timescale = ReadTimescale(pDemux->hFile, &mdia);
-                    if (ParseVideoSampleDescription(pDemux, pDemux->hFile, &stbl) && BuildSampleTable(pDemux->hFile, &stbl, &pDemux->pSamples, &pDemux->sampleCount))
+                    if (ParseVideoSampleDescription(pDemux, pDemux->hFile, &stbl) &&
+                        BuildSampleTable(pDemux->hFile, &stbl, &pDemux->pSamples, &pDemux->sampleCount))
                     {
                         haveVideo = 1;
                     }
                 }
-                else if (MP4_AUDIO_NONE == pDemux->audioCodec && TrackIsHandler(pDemux->hFile, &mdia, FOURCC('s', 'o', 'u', 'n')))
+                else if (MP4_AUDIO_NONE == pDemux->audioCodec &&
+                         TrackIsHandler(pDemux->hFile, &mdia, FOURCC('s', 'o', 'u', 'n')))
                 {
                     ParseAudioTrack(pDemux, pDemux->hFile, &mdia);
                 }
@@ -684,84 +833,167 @@ Mp4Demux* Mp4Demux_Open(const wchar_t* pFile)
     return pDemux;
 }
 
-unsigned Mp4Demux_Width(const Mp4Demux* pDemux)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetWidth(const Mp4Demux* pDemux)
 {
     return pDemux->width;
 }
-unsigned Mp4Demux_Height(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetHeight(const Mp4Demux* pDemux)
 {
     return pDemux->height;
 }
-unsigned Mp4Demux_Timescale(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetTimescale(const Mp4Demux* pDemux)
 {
     return pDemux->timescale;
 }
-int Mp4Demux_NalLengthSize(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+int Mp4Demux_GetNalLengthSize(const Mp4Demux* pDemux)
 {
     return pDemux->nalLengthSize;
 }
-const uint8_t* Mp4Demux_Sps(const Mp4Demux* pDemux, uint32_t* pSize)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const uint8_t* Mp4Demux_GetSps(const Mp4Demux* pDemux, uint32_t* pSize)
 {
     *pSize = pDemux->spsSize;
     return pDemux->sps;
 }
-const uint8_t* Mp4Demux_Pps(const Mp4Demux* pDemux, uint32_t* pSize)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const uint8_t* Mp4Demux_GetPps(const Mp4Demux* pDemux, uint32_t* pSize)
 {
     *pSize = pDemux->ppsSize;
     return pDemux->pps;
 }
-unsigned Mp4Demux_SampleCount(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetSampleCount(const Mp4Demux* pDemux)
 {
     return pDemux->sampleCount;
 }
-const Mp4Sample* Mp4Demux_Sample(const Mp4Demux* pDemux, unsigned index)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const Mp4Sample* Mp4Demux_GetSample(const Mp4Demux* pDemux, unsigned index)
 {
     return (index < pDemux->sampleCount) ? &pDemux->pSamples[index] : NULL;
 }
 
-uint32_t Mp4Demux_ReadSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity)
-{
-    const Mp4Sample* pSample = Mp4Demux_Sample(pDemux, index);
-
-    if (NULL == pSample || pSample->size > capacity)
-    {
-        return 0;
-    }
-    return ReadAt(pDemux->hFile, pSample->offset, pBuffer, pSample->size) ? pSample->size : 0;
-}
-
-Mp4AudioCodec Mp4Demux_AudioCodec(const Mp4Demux* pDemux)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+Mp4AudioCodec Mp4Demux_GetAudioCodec(const Mp4Demux* pDemux)
 {
     return pDemux->audioCodec;
 }
-unsigned Mp4Demux_AudioSampleRate(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetAudioSampleRate(const Mp4Demux* pDemux)
 {
     return pDemux->audioSampleRate;
 }
-unsigned Mp4Demux_AudioChannels(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetAudioChannels(const Mp4Demux* pDemux)
 {
     return pDemux->audioChannels;
 }
-unsigned Mp4Demux_AudioTimescale(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetAudioTimescale(const Mp4Demux* pDemux)
 {
     return pDemux->audioTimescale;
 }
-const uint8_t* Mp4Demux_AudioConfig(const Mp4Demux* pDemux, uint32_t* pSize)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const uint8_t* Mp4Demux_GetAudioConfig(const Mp4Demux* pDemux, uint32_t* pSize)
 {
     *pSize = pDemux->audioConfigSize;
     return pDemux->audioConfig;
 }
-unsigned Mp4Demux_AudioSampleCount(const Mp4Demux* pDemux)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+unsigned Mp4Demux_GetAudioSampleCount(const Mp4Demux* pDemux)
 {
     return pDemux->audioSampleCount;
 }
-const Mp4Sample* Mp4Demux_AudioSample(const Mp4Demux* pDemux, unsigned index)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const Mp4Sample* Mp4Demux_GetAudioSample(const Mp4Demux* pDemux, unsigned index)
 {
     return (index < pDemux->audioSampleCount) ? &pDemux->pAudioSamples[index] : NULL;
 }
-uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity)
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Checks the selected sample and caller capacity before reading its file span.
+ */
+uint32_t Mp4Demux_ReadSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity)
 {
-    const Mp4Sample* pSample = Mp4Demux_AudioSample(pDemux, index);
+    const Mp4Sample* pSample = Mp4Demux_GetSample(pDemux, index);
 
     if (NULL == pSample || pSample->size > capacity)
     {
@@ -770,40 +1002,61 @@ uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBu
     return ReadAt(pDemux->hFile, pSample->offset, pBuffer, pSample->size) ? pSample->size : 0;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Checks the selected audio sample and caller capacity before reading its span.
+ */
+uint32_t Mp4Demux_ReadAudioSample(Mp4Demux* pDemux, unsigned index, uint8_t* pBuffer, uint32_t capacity)
+{
+    const Mp4Sample* pSample = Mp4Demux_GetAudioSample(pDemux, index);
+
+    if (NULL == pSample || pSample->size > capacity)
+    {
+        return 0;
+    }
+    return ReadAt(pDemux->hFile, pSample->offset, pBuffer, pSample->size) ? pSample->size : 0;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Locates the requested timed-text track, applies the supported edit-list timing
+ *  and dispatches nonempty sample intervals while temporary sample storage is valid.
+ */
 int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4], Mp4TextProc callback, void* pUser)
 {
     HANDLE file = CreateFileW(pFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
     LARGE_INTEGER size;
-    Box root, moov, trak, mvhd;
+    Box           root, moov, trak, mvhd;
     uint64_t offset;
-    Mp4Sample* samples = NULL;
-    uint32_t count = 0, i;
-    uint8_t* data = NULL;
-    int ok = 0;
+    Mp4Sample*    samples = NULL;
+    uint32_t      count   = 0, i;
+    uint8_t*      data    = NULL;
+    int           ok      = 0;
     if (INVALID_HANDLE_VALUE == file)
         return 0;
     if (!GetFileSizeEx(file, &size))
         goto done;
     root.payload = 0;
-    root.end = (uint64_t)size.QuadPart;
-    if (!FindChild(file, &root, FOURCC('m','o','o','v'), &moov))
+    root.end     = (uint64_t)size.QuadPart;
+    if (!FindChild(file, &root, FOURCC('m', 'o', 'o', 'v'), &moov))
         goto done;
     for (offset = moov.payload; ReadBox(file, offset, moov.end, &trak); offset = trak.end)
     {
-        Box mdia, minf, stbl, stsd, entry, mdhd, edts, elst;
-        uint8_t header[36];
+        Box      mdia, minf, stbl, stsd, entry, mdhd, edts, elst;
+        uint8_t  header[36];
         unsigned timescale;
-        double shift = 0, limit = -1;
-        if (trak.type != FOURCC('t','r','a','k') ||
-            !FindChild(file, &trak, FOURCC('m','d','i','a'), &mdia) ||
-            !FindChild(file, &mdia, FOURCC('m','i','n','f'), &minf) ||
-            !FindChild(file, &minf, FOURCC('s','t','b','l'), &stbl) ||
-            !FindChild(file, &stbl, FOURCC('s','t','s','d'), &stsd) ||
-            !ReadBox(file, stsd.payload + 8, stsd.end, &entry) || entry.type != FOURCC('t','x','3','g'))
+        double   shift = 0, limit = -1;
+        if (trak.type != FOURCC('t', 'r', 'a', 'k') || !FindChild(file, &trak, FOURCC('m', 'd', 'i', 'a'), &mdia) ||
+            !FindChild(file, &mdia, FOURCC('m', 'i', 'n', 'f'), &minf) ||
+            !FindChild(file, &minf, FOURCC('s', 't', 'b', 'l'), &stbl) ||
+            !FindChild(file, &stbl, FOURCC('s', 't', 's', 'd'), &stsd) ||
+            !ReadBox(file, stsd.payload + 8, stsd.end, &entry) || entry.type != FOURCC('t', 'x', '3', 'g'))
             continue;
         if (index-- > 0)
             continue;
-        if (!FindChild(file, &mdia, FOURCC('m','d','h','d'), &mdhd) || mdhd.end - mdhd.payload < 24 ||
+        if (!FindChild(file, &mdia, FOURCC('m', 'd', 'h', 'd'), &mdhd) || mdhd.end - mdhd.payload < 24 ||
             !ReadAt(file, mdhd.payload, header, 24))
             goto done;
         if (header[0] == 1 && (mdhd.end - mdhd.payload < 36 || !ReadAt(file, mdhd.payload, header, 36)))
@@ -816,35 +1069,54 @@ int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4
             for (i = 0; i < 3; ++i)
                 language[i] = (char)(((lang >> (10 - 5 * i)) & 31) + 0x60);
             language[3] = 0;
-            if (language[0] < 'a' || language[0] > 'z' || language[1] < 'a' || language[1] > 'z' || language[2] < 'a' || language[2] > 'z')
+            if (language[0] < 'a' || language[0] > 'z' || language[1] < 'a' || language[1] > 'z' || language[2] < 'a' ||
+                language[2] > 'z')
                 memcpy(language, "und", 4);
         }
-        if (NULL == callback) { ok = 1; goto done; }
-        /* Common edit list: optional empty lead-in followed by one rate-1 media edit. */
-        if (FindChild(file, &trak, FOURCC('e','d','t','s'), &edts) && FindChild(file, &edts, FOURCC('e','l','s','t'), &elst))
+        if (NULL == callback)
         {
-            size_t editSize = 0;
-            uint8_t* edits = ReadPayload(file, &elst, &editSize);
+            ok = 1;
+            goto done;
+        }
+        /* Common edit list: optional empty lead-in followed by one rate-1 media edit. */
+        if (FindChild(file, &trak, FOURCC('e', 'd', 't', 's'), &edts) &&
+            FindChild(file, &edts, FOURCC('e', 'l', 's', 't'), &elst))
+        {
+            size_t   editSize   = 0;
+            uint8_t* edits      = ReadPayload(file, &elst, &editSize);
             unsigned movieScale = 0, n, stride;
-            double lead = 0;
-            int haveMedia = 0;
-            if (FindChild(file, &moov, FOURCC('m','v','h','d'), &mvhd) && ReadAt(file, mvhd.payload, header, 24))
+            double   lead       = 0;
+            int      haveMedia  = 0;
+            if (FindChild(file, &moov, FOURCC('m', 'v', 'h', 'd'), &mvhd) && ReadAt(file, mvhd.payload, header, 24))
                 movieScale = Be32(header + (header[0] == 1 ? 20 : 12));
-            if (!edits || editSize < 8 || !movieScale) { free(edits); goto done; }
-            n = Be32(edits + 4);
+            if (!edits || editSize < 8 || !movieScale)
+            {
+                free(edits);
+                goto done;
+            }
+            n      = Be32(edits + 4);
             stride = edits[0] == 1 ? 20 : 12;
-            if (n > 2 || (uint64_t)n * stride + 8 > editSize) { free(edits); goto done; }
+            if (n > 2 || (uint64_t)n * stride + 8 > editSize)
+            {
+                free(edits);
+                goto done;
+            }
             for (i = 0; i < n; ++i)
             {
-                const uint8_t* e = edits + 8 + i * stride;
-                uint64_t duration = stride == 20 ? Be64(e) : Be32(e);
-                int64_t mediaTime = stride == 20 ? (int64_t)Be64(e + 8) : (int32_t)Be32(e + 4);
-                if (Be32(e + stride - 4) != 0x00010000 || haveMedia || mediaTime < -1) { free(edits); goto done; }
-                if (mediaTime == -1) lead += (double)duration / movieScale;
+                const uint8_t* e         = edits + 8 + i * stride;
+                uint64_t       duration  = stride == 20 ? Be64(e) : Be32(e);
+                int64_t        mediaTime = stride == 20 ? (int64_t)Be64(e + 8) : (int32_t)Be32(e + 4);
+                if (Be32(e + stride - 4) != 0x00010000 || haveMedia || mediaTime < -1)
+                {
+                    free(edits);
+                    goto done;
+                }
+                if (mediaTime == -1)
+                    lead += (double)duration / movieScale;
                 else
                 {
-                    shift = lead - (double)mediaTime / timescale;
-                    limit = lead + (double)duration / movieScale;
+                    shift     = lead - (double)mediaTime / timescale;
+                    limit     = lead + (double)duration / movieScale;
                     haveMedia = 1;
                 }
             }
@@ -853,16 +1125,20 @@ int Mp4Demux_ReadTextTrack(const wchar_t* pFile, unsigned index, char language[4
         if (!BuildSampleTable(file, &stbl, &samples, &count))
             goto done;
         data = (uint8_t*)malloc(1024 * 1024);
-        if (!data) goto done;
+        if (!data)
+            goto done;
         for (i = 0; i < count; ++i)
         {
             double start = (double)samples[i].compositionTime / timescale + shift;
-            double end = start + (double)samples[i].duration / timescale;
-            if (samples[i].size > 1024 * 1024 || samples[i].offset > root.end || samples[i].size > root.end - samples[i].offset ||
+            double end   = start + (double)samples[i].duration / timescale;
+            if (samples[i].size > 1024 * 1024 || samples[i].offset > root.end ||
+                samples[i].size > root.end - samples[i].offset ||
                 !ReadAt(file, samples[i].offset, data, samples[i].size))
                 goto done;
-            if (limit >= 0 && end > limit) end = limit;
-            if (start < 0) start = 0;
+            if (limit >= 0 && end > limit)
+                end = limit;
+            if (start < 0)
+                start = 0;
             if (end > start && !callback(pUser, start, end, data, samples[i].size))
                 goto done;
         }
@@ -876,6 +1152,12 @@ done:
     return ok;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Closes the source file and frees video/audio tables and the demux owner.
+ *  NULL is accepted.
+ */
 void Mp4Demux_Close(Mp4Demux* pDemux)
 {
     if (NULL == pDemux)

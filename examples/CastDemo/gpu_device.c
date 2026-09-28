@@ -7,11 +7,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <vulkan/vulkan.h>
 #include <volk.h>
 #include "cvk.h"
 
 #include "gpu_device.h"
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Appends formatted diagnostic text within the unused portion of the report buffer.
+ */
 static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 {
     va_list arguments;
@@ -27,6 +33,11 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
     va_end(arguments);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Searches the advertised extension names for an exact match.
+ */
 static int HasExtension(const VkExtensionProperties* pExtensions, uint32_t count, const char* pName)
 {
     uint32_t i;
@@ -42,6 +53,12 @@ static int HasExtension(const VkExtensionProperties* pExtensions, uint32_t count
 }
 
 #ifndef NDEBUG
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Writes the validation message to stderr and returns without requesting that
+ *  Vulkan abort the originating call.
+ */
 static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* data, void* user)
 {
     (void)severity;
@@ -52,6 +69,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlag
 }
 #endif
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Selects video-capable queue families and creates one queue request per distinct
+ *  family. Prefers a separate transfer family for decode readback when available.
+ */
 GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_t reportCapacity)
 {
     GpuDevice*                               pDevice;
@@ -243,6 +266,12 @@ GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_
     return pDevice;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Waits for the device, releases the logical device and optional validation
+ *  messenger, then destroys the instance and owner storage.
+ */
 void GpuDevice_Destroy(GpuDevice* pDevice)
 {
     if (NULL == pDevice)

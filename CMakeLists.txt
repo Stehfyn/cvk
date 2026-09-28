@@ -7,8 +7,8 @@ set(CMAKE_C_EXTENSIONS OFF)
 
 # Pinned Vulkan headers and registry (git submodules).
 add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL)
-# Treat third-party headers as system headers while checking cvk itself as C99.
-set_target_properties(Vulkan-Headers PROPERTIES SYSTEM TRUE)
+# Dependency headers participate in the same diagnostic policy as their consumers.
+set_target_properties(Vulkan-Headers PROPERTIES SYSTEM FALSE)
 
 # Generate every platform, but compile only those selected for the target SDK.
 set(cvk_default_platforms "")
@@ -58,7 +58,7 @@ endforeach()
 set(VOLK_PULL_IN_VULKAN OFF)
 set(VOLK_STATIC_DEFINES ${cvk_platform_defines})
 add_subdirectory(external/volk EXCLUDE_FROM_ALL)
-set_target_properties(volk PROPERTIES SYSTEM TRUE C_EXTENSIONS ON)
+set_target_properties(volk PROPERTIES SYSTEM FALSE C_EXTENSIONS ON)
 target_link_libraries(volk PUBLIC Vulkan::Headers)
 target_compile_definitions(volk PUBLIC VK_NO_PROTOTYPES)
 if("ubm" IN_LIST CVK_PLATFORMS)
@@ -130,7 +130,7 @@ set(CVK_SOURCES src/cvk.c src/cvk_json.c ${cvk_platform_sources})
 add_library(cvk STATIC ${CVK_SOURCES})
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Only the header-only format utilities are needed; keep their C++ libraries out of the build.
-target_include_directories(cvk SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include)
+target_include_directories(cvk PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include)
 target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk)
 target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
 

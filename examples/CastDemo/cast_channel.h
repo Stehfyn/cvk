@@ -10,18 +10,18 @@
 
 typedef struct CastChannel CastChannel;
 
+const char* CastChannel_GetError(const CastChannel* pChannel);
+
 /* Connects and completes the TLS handshake. WSAStartup must have been called.
 ** On failure returns NULL and describes the problem in pError. */
 CastChannel* CastChannel_Connect(const char* pHost, unsigned short port, char* pError, size_t errorCapacity);
 
 /* Encodes, encrypts and sends one message. Returns 1 on success. */
-int CastChannel_Send(CastChannel* pChannel, const CastMessage* pMessage);
+int CastChannel_Send(CastChannel* pChannel, const CastMessage_t* pMessage);
 
 /* Waits up to timeoutMs for a complete frame. Returns 1 with the message borrowing channel
 ** storage (valid until the next call), 0 on timeout, -1 when the connection failed or closed. */
-int CastChannel_Receive(CastChannel* pChannel, CastMessage* pMessage, unsigned timeoutMs);
-
-const char* CastChannel_GetError(const CastChannel* pChannel);
+int CastChannel_Receive(CastChannel* pChannel, CastMessage_t* pMessage, unsigned timeoutMs);
 
 void CastChannel_Close(CastChannel* pChannel);
 

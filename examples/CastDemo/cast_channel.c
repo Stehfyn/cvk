@@ -39,6 +39,12 @@ struct CastChannel
     uint8_t chunk[CHUNK_CAPACITY];
 };
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Formats the operation name and an optional hexadecimal status into the
+ *  caller's diagnostic buffer.
+ */
 static void SetError(char* pError, size_t capacity, const char* pWhat, unsigned long code)
 {
     if (0 != code)
@@ -51,13 +57,25 @@ static void SetError(char* pError, size_t capacity, const char* pWhat, unsigned 
     }
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Advances through partial socket writes until all bytes are sent or send
+ *  reports an error or a closed connection.
+ */
 static int SendAll(SOCKET s, const void* pData, size_t length)
 {
     const char* pCursor = (const char*)pData;
 
-    while (length > 0)
+    for (;;)
     {
-        const int sent = send(s, pCursor, (int)length, 0);
+        int sent;
+
+        if (0 == length)
+        {
+            break;
+        }
+        sent = send(s, pCursor, (int)length, 0);
 
         if (sent <= 0)
         {
@@ -69,6 +87,12 @@ static int SendAll(SOCKET s, const void* pData, size_t length)
     return 1;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Tries resolved TCP addresses in order and disables Nagle after connection.
+ *  Releases the address list and closes each unsuccessful socket.
+ */
 static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, size_t errorCapacity)
 {
     struct addrinfo  hints;
@@ -113,6 +137,13 @@ static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, s
     return s;
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Drives the Schannel client handshake, sends generated tokens and retains
+ *  unconsumed ciphertext for the next step. The current Cast connection uses
+ *  manual certificate validation with no certificate-chain or host-name check.
+ */
 static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, size_t errorCapacity)
 {
     const DWORD requested =
@@ -250,93 +281,40 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
     }
 }
 
-CastChannel* CastChannel_Connect(const char* pHost, unsigned short port, char* pError, size_t errorCapacity)
-{
-    CastChannel* pChannel;
-    SOCKET       s = ConnectTcp(pHost, port, pError, errorCapacity);
 
-    if (INVALID_SOCKET == s)
-    {
-        return NULL;
-    }
-    pChannel = (CastChannel*)calloc(1, sizeof(*pChannel));
-    if (NULL == pChannel)
-    {
-        closesocket(s);
-        SetError(pError, errorCapacity, "out of memory", 0);
-        return NULL;
-    }
-    pChannel->socket = s;
-    if (!Handshake(pChannel, pHost, pError, errorCapacity))
-    {
-        CastChannel_Close(pChannel);
-        return NULL;
-    }
-    return pChannel;
-}
 
-int CastChannel_Send(CastChannel* pChannel, const CastMessage* pMessage)
-{
-    const size_t frameLength = CastMessage_Encode(pMessage, pChannel->frame, sizeof(pChannel->frame));
-    size_t       offset      = 0;
 
-    if (0 == frameLength)
-    {
-        SetError(pChannel->error, sizeof(pChannel->error), "message does not fit one CASTV2 frame", 0);
-        return 0;
-    }
-    while (offset < frameLength)
-    {
-        const size_t    chunkLength = (frameLength - offset < pChannel->sizes.cbMaximumMessage) ? frameLength - offset : pChannel->sizes.cbMaximumMessage;
-        SecBuffer       buffers[4];
-        SecBufferDesc   desc;
-        SECURITY_STATUS status;
-
-        buffers[0].cbBuffer   = pChannel->sizes.cbHeader;
-        buffers[0].BufferType = SECBUFFER_STREAM_HEADER;
-        buffers[0].pvBuffer   = pChannel->chunk;
-        buffers[1].cbBuffer   = (unsigned long)chunkLength;
-        buffers[1].BufferType = SECBUFFER_DATA;
-        buffers[1].pvBuffer   = pChannel->chunk + pChannel->sizes.cbHeader;
-        buffers[2].cbBuffer   = pChannel->sizes.cbTrailer;
-        buffers[2].BufferType = SECBUFFER_STREAM_TRAILER;
-        buffers[2].pvBuffer   = pChannel->chunk + pChannel->sizes.cbHeader + chunkLength;
-        buffers[3].cbBuffer   = 0;
-        buffers[3].BufferType = SECBUFFER_EMPTY;
-        buffers[3].pvBuffer   = NULL;
-        desc.ulVersion        = SECBUFFER_VERSION;
-        desc.cBuffers         = 4;
-        desc.pBuffers         = buffers;
-        memcpy(buffers[1].pvBuffer, pChannel->frame + offset, chunkLength);
-        status = EncryptMessage(&pChannel->context, 0, &desc, 0);
-        if (SEC_E_OK != status)
-        {
-            SetError(pChannel->error, sizeof(pChannel->error), "EncryptMessage failed", (unsigned long)status);
-            return 0;
-        }
-        if (!SendAll(pChannel->socket, pChannel->chunk, buffers[0].cbBuffer + buffers[1].cbBuffer + buffers[2].cbBuffer))
-        {
-            SetError(pChannel->error, sizeof(pChannel->error), "send failed", (unsigned long)WSAGetLastError());
-            return 0;
-        }
-        offset += chunkLength;
-    }
-    return 1;
-}
 
 /* Decrypts the buffered records into the plaintext stream. Returns 1 when more ciphertext is
 ** needed, 0 on a fatal condition. */
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Appends decrypted data to the plaintext buffer and compacts Schannel's
+ *  unconsumed ciphertext. An incomplete TLS record remains buffered for more input.
+ *  A complete frame returns control before decrypting the following TLS record,
+ *  keeping coalesced frames within the fixed plaintext capacity.
+ */
 static int DecryptBuffered(CastChannel* pChannel)
 {
-    while (pChannel->incomingUsed > 0)
+    for (;;)
     {
-        SecBuffer       buffers[4];
-        SecBufferDesc   desc;
-        SECURITY_STATUS status;
-        const uint8_t*  pExtra      = NULL;
-        size_t          extraLength = 0;
-        int             index;
+        const uint8_t*         pExtra;
+        uint32_t               extraLength;
+        SecBuffer              buffers[4];
+        int                    index;
+        SecBufferDesc          desc;
+        SECURITY_STATUS        status;
+        bool_t                 has_consumed_record;
+        Utl_CastV2_FrameState_t frame_state;
+        uint32_t               frame_bytes;
 
+        if (0 == pChannel->incomingUsed)
+        {
+            break;
+        }
+        pExtra               = NULL;
+        extraLength          = 0;
         buffers[0].cbBuffer   = (unsigned long)pChannel->incomingUsed;
         buffers[0].BufferType = SECBUFFER_DATA;
         buffers[0].pvBuffer   = pChannel->incoming;
@@ -382,16 +360,145 @@ static int DecryptBuffered(CastChannel* pChannel)
                 extraLength = buffers[index].cbBuffer;
             }
         }
+        has_consumed_record = (extraLength < pChannel->incomingUsed);
+        if (!has_consumed_record)
+        {
+            SetError(pChannel->error, sizeof(pChannel->error), "TLS decryption made no progress", 0);
+            return 0;
+        }
         if (extraLength > 0)
         {
             memmove(pChannel->incoming, pExtra, extraLength); /* the extra bytes live inside incoming */
         }
         pChannel->incomingUsed = extraLength;
+        frame_state           = Utl_CastV2_InspectFrame(&frame_bytes, pChannel->plain, (uint32_t)pChannel->plainUsed);
+        if (UTL_CASTV2_FRAME_INCOMPLETE != frame_state)
+        {
+            return 1;
+        }
     }
     return 1;
 }
 
-int CastChannel_Receive(CastChannel* pChannel, CastMessage* pMessage, unsigned timeoutMs)
+/*=================================================================================================
+** 5. PUBLIC FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+const char* CastChannel_GetError(const CastChannel* pChannel)
+{
+    return pChannel->error;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Connects TCP before allocating the channel and negotiating TLS. Handshake
+ *  failure closes the socket and releases the partially initialized channel.
+ */
+CastChannel* CastChannel_Connect(const char* pHost, unsigned short port, char* pError, size_t errorCapacity)
+{
+    CastChannel* pChannel;
+    SOCKET       s = ConnectTcp(pHost, port, pError, errorCapacity);
+
+    if (INVALID_SOCKET == s)
+    {
+        return NULL;
+    }
+    pChannel = (CastChannel*)calloc(1, sizeof(*pChannel));
+    if (NULL == pChannel)
+    {
+        closesocket(s);
+        SetError(pError, errorCapacity, "out of memory", 0);
+        return NULL;
+    }
+    pChannel->socket = s;
+    if (!Handshake(pChannel, pHost, pError, errorCapacity))
+    {
+        CastChannel_Close(pChannel);
+        return NULL;
+    }
+    return pChannel;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Encodes one Cast frame, splits it at the negotiated TLS record payload limit,
+ *  then encrypts and sends each record in order.
+ */
+int CastChannel_Send(CastChannel* pChannel, const CastMessage_t* pMessage)
+{
+    const size_t frameLength = CastMessage_Encode(pMessage, pChannel->frame, sizeof(pChannel->frame));
+    size_t       offset      = 0;
+
+    if (0 == frameLength)
+    {
+        SetError(pChannel->error, sizeof(pChannel->error), "message does not fit one CASTV2 frame", 0);
+        return 0;
+    }
+    for (;;)
+    {
+        size_t          chunkLength;
+        SecBuffer       buffers[4];
+        SecBufferDesc   desc;
+        SECURITY_STATUS status;
+
+        if (offset == frameLength)
+        {
+            break;
+        }
+        chunkLength = (frameLength - offset < pChannel->sizes.cbMaximumMessage) ? frameLength - offset : pChannel->sizes.cbMaximumMessage;
+        if (0 == chunkLength)
+        {
+            SetError(pChannel->error, sizeof(pChannel->error), "TLS record payload limit is zero", 0);
+            return 0;
+        }
+        buffers[0].cbBuffer   = pChannel->sizes.cbHeader;
+        buffers[0].BufferType = SECBUFFER_STREAM_HEADER;
+        buffers[0].pvBuffer   = pChannel->chunk;
+        buffers[1].cbBuffer   = (unsigned long)chunkLength;
+        buffers[1].BufferType = SECBUFFER_DATA;
+        buffers[1].pvBuffer   = pChannel->chunk + pChannel->sizes.cbHeader;
+        buffers[2].cbBuffer   = pChannel->sizes.cbTrailer;
+        buffers[2].BufferType = SECBUFFER_STREAM_TRAILER;
+        buffers[2].pvBuffer   = pChannel->chunk + pChannel->sizes.cbHeader + chunkLength;
+        buffers[3].cbBuffer   = 0;
+        buffers[3].BufferType = SECBUFFER_EMPTY;
+        buffers[3].pvBuffer   = NULL;
+        desc.ulVersion        = SECBUFFER_VERSION;
+        desc.cBuffers         = 4;
+        desc.pBuffers         = buffers;
+        memcpy(buffers[1].pvBuffer, pChannel->frame + offset, chunkLength);
+        status = EncryptMessage(&pChannel->context, 0, &desc, 0);
+        if (SEC_E_OK != status)
+        {
+            SetError(pChannel->error, sizeof(pChannel->error), "EncryptMessage failed", (unsigned long)status);
+            return 0;
+        }
+        if (!SendAll(pChannel->socket, pChannel->chunk, buffers[0].cbBuffer + buffers[1].cbBuffer + buffers[2].cbBuffer))
+        {
+            SetError(pChannel->error, sizeof(pChannel->error), "send failed", (unsigned long)WSAGetLastError());
+            return 0;
+        }
+        offset += chunkLength;
+    }
+    return 1;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Discards the previously borrowed frame on the next call and assembles a Cast
+ *  message from buffered plaintext. Only newly decrypted plaintext retries the
+ *  frame inspection immediately; an incomplete unchanged frame reaches the
+ *  deadline and socket-read path instead of spinning on its existing header.
+ */
+int CastChannel_Receive(CastChannel* pChannel, CastMessage_t* pMessage, unsigned timeoutMs)
 {
     const ULONGLONG deadline = GetTickCount64() + timeoutMs;
 
@@ -404,37 +511,40 @@ int CastChannel_Receive(CastChannel* pChannel, CastMessage* pMessage, unsigned t
     }
     for (;;)
     {
-        ULONGLONG      now;
-        struct timeval timeout;
-        fd_set         readable;
-        int            ready;
-        int            received;
+        Utl_CastV2_FrameState_t frame_state;
+        uint32_t               frame_bytes;
+        uint32_t               previous_plain_bytes;
+        ULONGLONG              now;
+        struct timeval         timeout;
+        fd_set                 readable;
+        int                    ready;
+        int                    received;
+        bool_t                 has_new_plaintext;
 
-        if (pChannel->plainUsed >= 4)
+        /* plainUsed is bounded by PLAINTEXT_CAPACITY at every append. */
+        frame_state = Utl_CastV2_InspectFrame(&frame_bytes, pChannel->plain, (uint32_t)pChannel->plainUsed);
+        if (UTL_CASTV2_FRAME_INVALID == frame_state)
         {
-            const uint32_t bodyLength = ((uint32_t)pChannel->plain[0] << 24) | ((uint32_t)pChannel->plain[1] << 16) | ((uint32_t)pChannel->plain[2] << 8) | (uint32_t)pChannel->plain[3];
-
-            if (bodyLength > CAST_MESSAGE_MAX_BODY)
+            SetError(pChannel->error, sizeof(pChannel->error), "invalid CASTV2 frame length", 0);
+            return -1;
+        }
+        if (UTL_CASTV2_FRAME_COMPLETE == frame_state)
+        {
+            if (!CastMessage_Decode(&pChannel->plain[UTL_CASTV2_HEADER_BYTES], frame_bytes - UTL_CASTV2_HEADER_BYTES, pMessage))
             {
-                SetError(pChannel->error, sizeof(pChannel->error), "frame exceeds the CASTV2 limit", 0);
+                SetError(pChannel->error, sizeof(pChannel->error), "malformed CastMessage", 0);
                 return -1;
             }
-            if (pChannel->plainUsed >= 4 + (size_t)bodyLength)
-            {
-                if (!CastMessage_Decode(pChannel->plain + 4, bodyLength, pMessage))
-                {
-                    SetError(pChannel->error, sizeof(pChannel->error), "malformed CastMessage", 0);
-                    return -1;
-                }
-                pChannel->plainConsumed = 4 + (size_t)bodyLength;
-                return 1;
-            }
+            pChannel->plainConsumed = frame_bytes;
+            return 1;
         }
+        previous_plain_bytes = (uint32_t)pChannel->plainUsed;
         if (!DecryptBuffered(pChannel))
         {
             return -1;
         }
-        if (pChannel->plainUsed >= 4)
+        has_new_plaintext = (previous_plain_bytes < pChannel->plainUsed);
+        if (has_new_plaintext)
         {
             continue; /* a frame may have completed */
         }
@@ -477,11 +587,12 @@ int CastChannel_Receive(CastChannel* pChannel, CastMessage* pMessage, unsigned t
     }
 }
 
-const char* CastChannel_GetError(const CastChannel* pChannel)
-{
-    return pChannel->error;
-}
-
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Releases only the Schannel handles recorded as initialized, then shuts down
+ *  and closes the socket before freeing channel storage. NULL is accepted.
+ */
 void CastChannel_Close(CastChannel* pChannel)
 {
     if (NULL == pChannel)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Native analysis must see fresh compiler state in selected-file builds too. -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <!-- MSBuild normally delays native diagnostics until its post-build reporter
+       and excludes SDK paths. Keep diagnostics visible even when a later gate
+       prevents linking, and retain dependency analysis under the goal policy. -->
+  <Target Name="CastKeepNativeAnalysisVisible" BeforeTargets="ClCompile">
+    <ItemGroup>
+      <ClCompile>
+        <PREfastAdditionalOptions>$([System.Text.RegularExpressions.Regex]::Replace('%(ClCompile.PREfastAdditionalOptions)', '(^|;)quiet(?=;|$)', '').Trim(';'))</PREfastAdditionalOptions>
+      </ClCompile>
+    </ItemGroup>
+    <SetEnv Name="CAExcludePath" Value="" Prefix="false" />
+  </Target>
+</Project>

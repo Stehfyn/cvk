@@ -1,0 +1,21 @@
+---
+# Enable the complete general-purpose C analysis families. C++-only checks in
+# these families select their own language support; the database selects C.
+# Project-specific LLVM/Google/FPGA policies and C++ modernization are not the
+# coding standard for this repository. No per-diagnostic exclusion is used.
+Checks: >
+  clang-analyzer-*,
+  bugprone-*,
+  cert-*,
+  concurrency-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+SystemHeaders: true
+# The user permits only compiler-inserted padding diagnostics to be suppressed.
+ExtraArgs: ['-Wno-padded']
+FormatStyle: file
+...

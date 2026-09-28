@@ -1,226 +1,212 @@
-/* cast_message.c - hand-rolled protocol buffer encoding of CastMessage; no generated code. */
+/*=================================================================================================
+** 1. References
+**===============================================================================================*/
+
+/**
+ * Compatibility boundary between the current Cast session and utl_castv2.
+ * Wire syntax, required fields, UTF-8 validation and framing belong to utl_castv2.
+ * This adapter retains no storage and performs no allocation, CRT calls or I/O.
+ */
+
+/*=================================================================================================
+** 2. INCLUDE FILES
+**===============================================================================================*/
+
+#include "os/os_compiler.h"
 #include "cast_message.h"
+#include "os/os_assert.h"
 
-#include <string.h>
+/*=================================================================================================
+** 3. DECLARATIONS
+**
+** 3.1 Macros
+**===============================================================================================*/
 
-enum
+/*=================================================================================================
+** 3.2 Types
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.3 External global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.4 Static global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.5 Static function prototypes
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \brief Counts terminated text within the maximum representable body span.
+ *
+ * \par Requirements:
+ *  - 001 The operation shall allocate nothing, call no CRT and perform no I/O.
+ *  - 002 Counted spans shall remain caller-owned and valid for the duration of use.
+ *
+ * \param[in] text   Non-NULL terminated text
+ *
+ * \retval    0..UTL_CASTV2_MAX_BODY   Bytes before NUL, saturated at the body limit.
+ */
+static FORCE_INLINE uint32_t GetTextByteCount(const char_t* text);
+
+/*=================================================================================================
+** 4. PRIVATE FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  A saturated field leaves no space for required envelope metadata, so serialization fails.
+ */
+static FORCE_INLINE uint32_t GetTextByteCount(const char_t* text)
 {
-    WIRE_VARINT  = 0,
-    WIRE_FIXED64 = 1,
-    WIRE_LENGTH  = 2,
-    WIRE_FIXED32 = 5
-};
+    uint32_t length;
 
-enum
-{
-    FIELD_PROTOCOL_VERSION = 1,
-    FIELD_SOURCE_ID        = 2,
-    FIELD_DESTINATION_ID   = 3,
-    FIELD_NAMESPACE        = 4,
-    FIELD_PAYLOAD_TYPE     = 5,
-    FIELD_PAYLOAD_UTF8     = 6,
-    FIELD_PAYLOAD_BINARY   = 7
-};
-
-enum
-{
-    PAYLOAD_STRING = 0,
-    PAYLOAD_BINARY = 1
-};
-
-static size_t VarintSize(uint64_t value)
-{
-    size_t size = 1;
-
-    while (value >= 0x80)
+    length = 0;
+    for (;;)
     {
-        value >>= 7;
-        ++size;
-    }
-    return size;
-}
-
-static size_t PutVarint(uint8_t* pOut, uint64_t value)
-{
-    size_t size = 0;
-
-    while (value >= 0x80)
-    {
-        pOut[size++] = (uint8_t)(value | 0x80);
-        value >>= 7;
-    }
-    pOut[size++] = (uint8_t)value;
-    return size;
-}
-
-static size_t StringFieldSize(size_t length)
-{
-    return 1 + VarintSize(length) + length;
-}
-
-static size_t PutStringField(uint8_t* pOut, unsigned field, const char* pText, size_t length)
-{
-    size_t size = 0;
-
-    pOut[size++] = (uint8_t)((field << 3) | WIRE_LENGTH);
-    size += PutVarint(pOut + size, length);
-    if (length > 0)
-    {
-        memcpy(pOut + size, pText, length);
-    }
-    return size + length;
-}
-
-static size_t PutVarintField(uint8_t* pOut, unsigned field, uint64_t value)
-{
-    pOut[0] = (uint8_t)((field << 3) | WIRE_VARINT);
-    return 1 + PutVarint(pOut + 1, value);
-}
-
-static int GetVarint(const uint8_t* pBody, size_t length, size_t* pPosition, uint64_t* pValue)
-{
-    uint64_t value = 0;
-    unsigned shift = 0;
-
-    while (*pPosition < length && shift < 64)
-    {
-        const uint8_t byte = pBody[(*pPosition)++];
-
-        value |= (uint64_t)(byte & 0x7F) << shift;
-        if (0 == (byte & 0x80))
+        if (CAST_MESSAGE_MAX_BODY == length)
         {
-            *pValue = value;
-            return 1;
+            break;
         }
-        shift += 7;
-    }
-    return 0;
-}
-
-void CastMessage_Set(CastMessage* pMessage, const char* pSource, const char* pDestination, const char* pNamespace, const char* pPayload)
-{
-    pMessage->pSource           = pSource;
-    pMessage->sourceLength      = strlen(pSource);
-    pMessage->pDestination      = pDestination;
-    pMessage->destinationLength = strlen(pDestination);
-    pMessage->pNamespace        = pNamespace;
-    pMessage->namespaceLength   = strlen(pNamespace);
-    pMessage->pPayload          = pPayload;
-    pMessage->payloadLength     = strlen(pPayload);
-    pMessage->binary            = 0;
-}
-
-size_t CastMessage_Encode(const CastMessage* pMessage, uint8_t* pOut, size_t capacity)
-{
-    const size_t body =
-        2 + StringFieldSize(pMessage->sourceLength) + StringFieldSize(pMessage->destinationLength) + StringFieldSize(pMessage->namespaceLength) + 2 + StringFieldSize(pMessage->payloadLength);
-    size_t size;
-
-    if (pMessage->binary || body > CAST_MESSAGE_MAX_BODY || capacity < 4 + body)
-    {
-        return 0;
-    }
-    pOut[0] = (uint8_t)(body >> 24);
-    pOut[1] = (uint8_t)(body >> 16);
-    pOut[2] = (uint8_t)(body >> 8);
-    pOut[3] = (uint8_t)body;
-    size    = 4;
-    size += PutVarintField(pOut + size, FIELD_PROTOCOL_VERSION, 0);
-    size += PutStringField(pOut + size, FIELD_SOURCE_ID, pMessage->pSource, pMessage->sourceLength);
-    size += PutStringField(pOut + size, FIELD_DESTINATION_ID, pMessage->pDestination, pMessage->destinationLength);
-    size += PutStringField(pOut + size, FIELD_NAMESPACE, pMessage->pNamespace, pMessage->namespaceLength);
-    size += PutVarintField(pOut + size, FIELD_PAYLOAD_TYPE, PAYLOAD_STRING);
-    size += PutStringField(pOut + size, FIELD_PAYLOAD_UTF8, pMessage->pPayload, pMessage->payloadLength);
-    return size;
-}
-
-int CastMessage_Decode(const uint8_t* pBody, size_t length, CastMessage* pMessage)
-{
-    size_t position = 0;
-
-    memset(pMessage, 0, sizeof(*pMessage));
-    while (position < length)
-    {
-        uint64_t tag;
-        uint64_t value;
-        unsigned field;
-        unsigned wire;
-
-        if (!GetVarint(pBody, length, &position, &tag))
+        if ('\0' == text[length])
         {
-            return 0;
+            break;
         }
-        field = (unsigned)(tag >> 3);
-        wire  = (unsigned)(tag & 7);
-        switch (wire)
+        ++length;
+    }
+    return length;
+}
+
+/*=================================================================================================
+** 5. PUBLIC FUNCTIONS
+**===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Counting stops at the body limit. An over-limit field cannot fit a complete envelope and Encode rejects it.
+ */
+void CastMessage_Initialize(CastMessage_t* message,
+                            const char_t*  source,
+                            const char_t*  destination,
+                            const char_t*  nameSpace,
+                            const char_t*  payload)
+{
+    LOGASSERT(NULL != message);
+    LOGASSERT(NULL != source);
+    LOGASSERT(NULL != destination);
+    LOGASSERT(NULL != nameSpace);
+    LOGASSERT(NULL != payload);
+
+    message->pSource           = source;
+    message->sourceLength      = GetTextByteCount(source);
+    message->pDestination      = destination;
+    message->destinationLength = GetTextByteCount(destination);
+    message->pNamespace        = nameSpace;
+    message->namespaceLength   = GetTextByteCount(nameSpace);
+    message->pPayload          = payload;
+    message->payloadLength     = GetTextByteCount(payload);
+    message->binary            = FALSE;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Length is compared before any counted bytes; no CRT string operation is used.
+ */
+bool_t CastMessage_IsNamespace(const CastMessage_t* message, const char_t* nameSpace)
+{
+    bool_t   has_inputs;
+    bool_t   is_equal;
+    uint32_t length;
+    uint32_t index;
+
+    has_inputs = (NULL != message) && (NULL != nameSpace);
+    is_equal   = FALSE;
+    if (has_inputs)
+    {
+        length   = GetTextByteCount(nameSpace);
+        is_equal = (length == message->namespaceLength);
+        if (is_equal)
         {
-        case WIRE_VARINT:
-            if (!GetVarint(pBody, length, &position, &value))
+            is_equal = (0 == length) || (NULL != message->pNamespace);
+        }
+        if (is_equal)
+        {
+            for (index = 0; index < length; ++index)
             {
-                return 0;
+                if (nameSpace[index] != message->pNamespace[index])
+                {
+                    is_equal = FALSE;
+                    break;
+                }
             }
-            if (FIELD_PROTOCOL_VERSION == field && 0 != value)
-            {
-                return 0;
-            }
-            if (FIELD_PAYLOAD_TYPE == field)
-            {
-                pMessage->binary = (PAYLOAD_BINARY == value);
-            }
-            break;
-        case WIRE_LENGTH:
-            if (!GetVarint(pBody, length, &position, &value) || value > length - position)
-            {
-                return 0;
-            }
-            switch (field)
-            {
-            case FIELD_SOURCE_ID:
-                pMessage->pSource      = (const char*)pBody + position;
-                pMessage->sourceLength = (size_t)value;
-                break;
-            case FIELD_DESTINATION_ID:
-                pMessage->pDestination      = (const char*)pBody + position;
-                pMessage->destinationLength = (size_t)value;
-                break;
-            case FIELD_NAMESPACE:
-                pMessage->pNamespace      = (const char*)pBody + position;
-                pMessage->namespaceLength = (size_t)value;
-                break;
-            case FIELD_PAYLOAD_UTF8:
-            case FIELD_PAYLOAD_BINARY:
-                pMessage->pPayload      = (const char*)pBody + position;
-                pMessage->payloadLength = (size_t)value;
-                break;
-            default:
-                break;
-            }
-            position += (size_t)value;
-            break;
-        case WIRE_FIXED64:
-            if (length - position < 8)
-            {
-                return 0;
-            }
-            position += 8;
-            break;
-        case WIRE_FIXED32:
-            if (length - position < 4)
-            {
-                return 0;
-            }
-            position += 4;
-            break;
-        default:
-            return 0;
         }
     }
-    return NULL != pMessage->pSource && NULL != pMessage->pDestination && NULL != pMessage->pNamespace && NULL != pMessage->pPayload;
+    return is_equal;
 }
 
-int CastMessage_NamespaceIs(const CastMessage* pMessage, const char* pNamespace)
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Both text and binary output use the same typed model and bounded writer.
+ */
+uint32_t CastMessage_Encode(const CastMessage_t* message, byte_t* buffer, uint32_t capacity)
 {
-    const size_t length = strlen(pNamespace);
+    uint32_t             written;
+    Utl_CastV2_Message_t model;
 
-    return pMessage->namespaceLength == length && 0 == memcmp(pMessage->pNamespace, pNamespace, length);
+    written = 0;
+    if (NULL != message)
+    {
+        model.source.data           = (const byte_t*)message->pSource;
+        model.source.byteCount      = message->sourceLength;
+        model.destination.data      = (const byte_t*)message->pDestination;
+        model.destination.byteCount = message->destinationLength;
+        model.nameSpace.data        = (const byte_t*)message->pNamespace;
+        model.nameSpace.byteCount   = message->namespaceLength;
+        model.payloadType           = UTL_CASTV2_STRING;
+        model.payload.data          = (const byte_t*)message->pPayload;
+        model.payload.byteCount     = message->payloadLength;
+        if (message->binary)
+        {
+            model.payloadType = UTL_CASTV2_BINARY;
+        }
+        written = Utl_CastV2_WriteFrame(&model, buffer, capacity);
+    }
+    return written;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Only a successful specification parse publishes the borrowed application view.
+ */
+bool_t CastMessage_Decode(const byte_t* buffer, uint32_t byteCount, CastMessage_t* message)
+{
+    bool_t               is_valid;
+    Utl_CastV2_Message_t model;
+
+    is_valid = (NULL != message);
+    if (is_valid)
+    {
+        is_valid = Utl_CastV2_ReadMessage(&model, buffer, byteCount);
+        if (is_valid)
+        {
+            message->pSource           = (const char_t*)model.source.data;
+            message->sourceLength      = model.source.byteCount;
+            message->pDestination      = (const char_t*)model.destination.data;
+            message->destinationLength = model.destination.byteCount;
+            message->pNamespace        = (const char_t*)model.nameSpace.data;
+            message->namespaceLength   = model.nameSpace.byteCount;
+            message->pPayload          = (const char_t*)model.payload.data;
+            message->payloadLength     = model.payload.byteCount;
+            message->binary            = (UTL_CASTV2_BINARY == model.payloadType);
+        }
+    }
+    return is_valid;
 }

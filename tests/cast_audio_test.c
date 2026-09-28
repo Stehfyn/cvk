@@ -4,7 +4,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#define CHECK(x) do { if (!(x)) { fprintf(stderr, "line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+#define CHECK(x) for (;;) { if (!(x)) { fprintf(stderr, "line %d: %s\n", __LINE__, #x); return 1; } break; }
 
 int wmain(int argc, wchar_t** argv)
 {
