@@ -892,7 +892,7 @@ static void FinishGain(App* app, unsigned serial)
     }
     variant = (GainVariant*)calloc(1, sizeof(*variant));
     /* Use the same reachable local address selected for the original file. */
-    if (!variant || sscanf(app->originalUrl, "http://%63[^:]", local) != 1)
+    if (!variant || sscanf_s(app->originalUrl, "http://%63[^:]", local, (unsigned)sizeof(local)) != 1)
     {
         free(variant); CancelGain(app);
         if (app->preparingAudio) FinishSession(app, L"Cannot serve prepared audio.");
