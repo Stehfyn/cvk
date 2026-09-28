@@ -283,6 +283,132 @@ static HWND CreateChild(App* pApp, const WCHAR* pClass, const WCHAR* pText, DWOR
     return child;
 }
 
+/* The list-view owns its header, so header NM_CUSTOMDRAW never reaches WindowProc.
+** Paint the header itself, including the unused area after the last column. Native
+** header processing still handles column resizing and hit testing. */
+static void PaintDarkHeader(HWND hWnd, HDC dc, const App* pApp)
+{
+    RECT client;
+    const int saved = SaveDC(dc);
+    GetClientRect(hWnd, &client);
+    FillRect(dc, &client, pApp->fieldBrush);
+    SelectObject(dc, pApp->hFont);
+    SetBkMode(dc, TRANSPARENT);
+    SetTextColor(dc, DARK_MUTED);
+    for (int i = 0; i < Header_GetItemCount(hWnd); ++i)
+    {
+        WCHAR text[128] = {0};
+        HDITEMW item = {0};
+        RECT rect, divider;
+        item.mask = HDI_TEXT | HDI_FORMAT;
+        item.pszText = text;
+        item.cchTextMax = 128;
+        if (!Header_GetItem(hWnd, i, &item) || !Header_GetItemRect(hWnd, i, &rect)) continue;
+        divider = rect;
+        divider.left = divider.right - 1;
+        FillRect(dc, &divider, pApp->backgroundBrush);
+        InflateRect(&rect, -Scale(pApp, 6), 0);
+        DrawTextW(dc, text, -1, &rect, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX |
+                  ((item.fmt & HDF_RIGHT) ? DT_RIGHT : (item.fmt & HDF_CENTER) ? DT_CENTER : DT_LEFT));
+    }
+    RestoreDC(dc, saved);
+}
+
+static LRESULT CALLBACK DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+{
+    const App* pApp = (const App*)refData;
+    if (message == WM_PAINT)
+    {
+        PAINTSTRUCT paint;
+        HDC dc = BeginPaint(hWnd, &paint);
+        PaintDarkHeader(hWnd, dc, pApp);
+        EndPaint(hWnd, &paint);
+        return 0;
+    }
+    if (message == WM_PRINTCLIENT) { PaintDarkHeader(hWnd, (HDC)wParam, pApp); return 0; }
+    if (message == WM_ERASEBKGND) return 1;
+    if (message == WM_NCDESTROY) RemoveWindowSubclass(hWnd, DarkHeaderProc, idSubclass);
+    return DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
+static void PaintSubtitleItem(HWND combo, HDC dc, RECT rect, int index, UINT state, const App* pApp)
+{
+    WCHAR text[512] = {0};
+    const int saved = SaveDC(dc);
+    const int selected = (state & ODS_SELECTED) && !(state & ODS_COMBOBOXEDIT);
+    HBRUSH brush = selected ? CreateSolidBrush(RGB(48, 91, 146)) : pApp->fieldBrush;
+    FillRect(dc, &rect, brush);
+    if (selected) DeleteObject(brush);
+    SelectObject(dc, pApp->hFont);
+    SetBkMode(dc, TRANSPARENT);
+    SetTextColor(dc, (state & ODS_DISABLED) ? DARK_MUTED : DARK_TEXT);
+    if (index >= 0)
+    {
+        LRESULT length = SendMessageW(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
+        if (length >= 0 && length < 512) SendMessageW(combo, CB_GETLBTEXT, (WPARAM)index, (LPARAM)text);
+    }
+    InflateRect(&rect, -Scale(pApp, 6), 0);
+    DrawTextW(dc, text, -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+    if ((state & ODS_FOCUS) && !(state & ODS_NOFOCUSRECT)) DrawFocusRect(dc, &rect);
+    RestoreDC(dc, saved);
+}
+
+/* Owner-draw covers the list items; draw the closed field, border and arrow too,
+** because visual styles otherwise retain a white dropdown button. */
+static void PaintDarkCombo(HWND hWnd, HDC dc, const App* pApp)
+{
+    RECT client, text;
+    const int saved = SaveDC(dc);
+    const int enabled = IsWindowEnabled(hWnd);
+    const int focused = GetFocus() == hWnd;
+    const int arrowWidth = Scale(pApp, 24);
+    HBRUSH border;
+    POINT arrow[3];
+    int x, y;
+    GetClientRect(hWnd, &client);
+    FillRect(dc, &client, pApp->fieldBrush);
+    text = client;
+    InflateRect(&text, -1, -1);
+    text.right -= arrowWidth;
+    PaintSubtitleItem(hWnd, dc, text, (int)SendMessageW(hWnd, CB_GETCURSEL, 0, 0),
+                      ODS_COMBOBOXEDIT | (enabled ? 0 : ODS_DISABLED), pApp);
+    border = CreateSolidBrush(focused && enabled ? DARK_ACCENT : RGB(62, 68, 78));
+    FrameRect(dc, &client, border);
+    DeleteObject(border);
+    x = client.right - arrowWidth / 2;
+    y = (client.top + client.bottom) / 2;
+    arrow[0].x = x - Scale(pApp, 4); arrow[0].y = y - Scale(pApp, 2);
+    arrow[1].x = x + Scale(pApp, 4); arrow[1].y = y - Scale(pApp, 2);
+    arrow[2].x = x; arrow[2].y = y + Scale(pApp, 2);
+    SelectObject(dc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(dc, enabled ? DARK_TEXT : DARK_MUTED);
+    SelectObject(dc, GetStockObject(NULL_PEN));
+    Polygon(dc, arrow, 3);
+    RestoreDC(dc, saved);
+}
+
+static LRESULT CALLBACK DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+{
+    const App* pApp = (const App*)refData;
+    LRESULT result;
+    if (message == WM_PAINT)
+    {
+        PAINTSTRUCT paint;
+        HDC dc = BeginPaint(hWnd, &paint);
+        PaintDarkCombo(hWnd, dc, pApp);
+        EndPaint(hWnd, &paint);
+        return 0;
+    }
+    if (message == WM_PRINTCLIENT) { PaintDarkCombo(hWnd, (HDC)wParam, pApp); return 0; }
+    if (message == WM_ERASEBKGND) return 1;
+    if (message == WM_NCDESTROY) RemoveWindowSubclass(hWnd, DarkComboProc, idSubclass);
+    result = DefSubclassProc(hWnd, message, wParam, lParam);
+    if (message == WM_SETFOCUS || message == WM_KILLFOCUS || message == WM_ENABLE ||
+        message == CB_SETCURSEL || message == CB_SHOWDROPDOWN || message == WM_THEMECHANGED)
+        InvalidateRect(hWnd, NULL, FALSE);
+    return result;
+}
+
 static void ApplyFont(App* pApp)
 {
     NONCLIENTMETRICSW metrics;
@@ -306,6 +432,8 @@ static void ApplyFont(App* pApp)
     {
         SendMessageW(hChild, WM_SETFONT, (WPARAM)pApp->hFont, TRUE);
     }
+    SendMessageW(pApp->hSubtitle, CB_SETITEMHEIGHT, 0, Scale(pApp, 22));
+    SendMessageW(pApp->hSubtitle, CB_SETITEMHEIGHT, (WPARAM)-1, Scale(pApp, 20));
 }
 
 static void Layout(App* pApp)
@@ -455,7 +583,8 @@ static void CreateControls(App* pApp)
     pApp->hFile        = CreateChild(pApp, L"EDIT", L"", ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE, ID_FILE);
     pApp->hBrowse      = CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_BROWSE);
     pApp->hSubtitleLabel = CreateChild(pApp, L"STATIC", L"Subtitles", SS_LEFT, 0, ID_SUBTITLE_LABEL);
-    pApp->hSubtitle = CreateChild(pApp, L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, 0, ID_SUBTITLE);
+    pApp->hSubtitle = CreateChild(pApp, L"COMBOBOX", L"", CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP, 0, ID_SUBTITLE);
+    SetWindowSubclass(pApp->hSubtitle, DarkComboProc, 1, (DWORD_PTR)pApp);
     pApp->hSubtitleBrowse = CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE);
     SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Automatic");
     SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
@@ -512,6 +641,7 @@ static void CreateControls(App* pApp)
     ListView_InsertColumn(pApp->hList, 1, &column);
     column.pszText = L"Model";
     ListView_InsertColumn(pApp->hList, 2, &column);
+    SetWindowSubclass(ListView_GetHeader(pApp->hList), DarkHeaderProc, 1, (DWORD_PTR)pApp);
     SendMessageW(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
     /* A click on the channel should jump to the cursor and scrub, not page toward it. */
     SetWindowSubclass(pApp->hSeek, SeekBarProc, 1, (DWORD_PTR)pApp);
@@ -1308,11 +1438,27 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         SetBkColor((HDC)wParam, field ? DARK_FIELD : DARK_BACKGROUND);
         return (LRESULT)(field ? pApp->fieldBrush : pApp->backgroundBrush);
     }
+    case WM_MEASUREITEM:
+    {
+        MEASUREITEMSTRUCT* item = (MEASUREITEMSTRUCT*)lParam;
+        if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
+        {
+            item->itemHeight = (UINT)Scale(pApp, 22);
+            return TRUE;
+        }
+        break;
+    }
     case WM_DRAWITEM:
     {
         const DRAWITEMSTRUCT* item = (const DRAWITEMSTRUCT*)lParam;
         WCHAR label[128];
         HBRUSH fill;
+        if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
+        {
+            PaintSubtitleItem(item->hwndItem, item->hDC, item->rcItem,
+                              item->itemID == (UINT)-1 ? -1 : (int)item->itemID, item->itemState, pApp);
+            return TRUE;
+        }
         if (item->CtlType != ODT_BUTTON) break;
         fill = CreateSolidBrush((item->itemState & ODS_SELECTED) ? RGB(48, 91, 146) : DARK_FIELD);
         FillRect(item->hDC, &item->rcItem, fill); DeleteObject(fill);
@@ -1372,6 +1518,9 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
         case ID_SUBTITLE_BROWSE:
             BrowseSubtitles(pApp);
             return 0;
+        case ID_SUBTITLE:
+            InvalidateRect(pApp->hSubtitle, NULL, FALSE);
+            return 0;
         case ID_CAST:
             StartCast(pApp);
             return 0;
@@ -1410,25 +1559,13 @@ static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
             NMCUSTOMDRAW* draw = (NMCUSTOMDRAW*)lParam;
             int slider = pHeader->hwndFrom == pApp->hGain || pHeader->hwndFrom == pApp->hSeek || pHeader->hwndFrom == pApp->hResSlider ||
                          pHeader->hwndFrom == pApp->hQpSlider || pHeader->hwndFrom == pApp->hGopSlider || pHeader->hwndFrom == pApp->hMotionSlider;
-            if (slider || pHeader->hwndFrom == ListView_GetHeader(pApp->hList))
+            if (slider)
             {
                 if (draw->dwDrawStage == CDDS_PREPAINT) return CDRF_NOTIFYITEMDRAW;
-                if (draw->dwDrawStage == CDDS_ITEMPREPAINT && slider)
+                if (draw->dwDrawStage == CDDS_ITEMPREPAINT)
                 {
                     HBRUSH brush = CreateSolidBrush(draw->dwItemSpec == TBCD_THUMB ? (IsWindowEnabled(pHeader->hwndFrom) ? DARK_ACCENT : DARK_MUTED) : DARK_FIELD);
                     FillRect(draw->hdc, &draw->rc, brush); DeleteObject(brush);
-                    return CDRF_SKIPDEFAULT;
-                }
-                if (draw->dwDrawStage == CDDS_ITEMPREPAINT)
-                {
-                    WCHAR text[128];
-                    HDITEMW item = {0}; RECT rect = draw->rc;
-                    item.mask = HDI_TEXT; item.pszText = text; item.cchTextMax = 128;
-                    Header_GetItem(pHeader->hwndFrom, (int)draw->dwItemSpec, &item);
-                    FillRect(draw->hdc, &rect, pApp->fieldBrush);
-                    SetBkMode(draw->hdc, TRANSPARENT); SetTextColor(draw->hdc, DARK_MUTED);
-                    rect.left += Scale(pApp, 6);
-                    DrawTextW(draw->hdc, text, -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
                     return CDRF_SKIPDEFAULT;
                 }
             }
