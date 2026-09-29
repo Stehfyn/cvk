@@ -33,7 +33,7 @@ class PlatformTests(unittest.TestCase):
                              if gen.api in e.supported and e.platform and (e.commands or e.types)}
                 self.assertTrue(supported <= set(gen.decls))
                 for plat in supported:
-                    self.assertTrue((ROOT / f"include/{plat}/{profile}_{plat}.h").is_file())
+                    self.assertTrue((ROOT / f"include/{profile}/{plat}/{profile}_{plat}.h").is_file())
                     self.assertTrue((ROOT / f"src/{plat}/{profile}_{plat}.c").is_file())
                 for plat in gen.json_decls:
                     if plat:

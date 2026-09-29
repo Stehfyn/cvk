@@ -3,10 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "posix/cvk_posix.h"
+#include "cvk/cvk.h"
+#include "cvk/posix/cvk_posix.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
 #include <unistd.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
 
 void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,
                       VkDevice                           device,

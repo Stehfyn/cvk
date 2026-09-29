@@ -6,7 +6,7 @@
 #include "cdxgi.h"
 #include <d3dcompiler.h>
 #include <volk.h>
-#include "win32/cvk_win32.h"
+#include "cvk/win32/cvk_win32.h"
 #include <stdio.h>
 #include <string.h>
 

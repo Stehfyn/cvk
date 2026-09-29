@@ -37,7 +37,7 @@
 #include "utl/utl_json.h"
 #include "os/os_types.h"
 #include "utl/utl_unicode.h"
-#include "cvk_json.h"
+#include "cvk/cvk_json.h"
 #include "mp4_index.h"
 
 /*=================================================================================================

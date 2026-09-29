@@ -11,7 +11,7 @@
 
 #include <vulkan/vulkan.h>
 #include <volk.h>
-#include "cvk.h"
+#include "cvk/cvk.h"
 
 #include "gpu_device.h"
 #include "gpu_decode.h"

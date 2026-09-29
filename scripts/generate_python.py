@@ -493,11 +493,11 @@ def main():
 
     if struct.calcsize("P") != 8:
         parser.error("CVK Python currently requires a 64-bit build")
-    headers = ["cvk.h", "cvk_json.h"]
+    headers = ["cvk/cvk.h", "cvk/cvk_json.h"]
     for platform in args.platform:
-        headers.append(f"{platform}/cvk_{platform}.h")
-        if (ROOT / "include" / platform / f"cvk_{platform}_json.h").exists():
-            headers.append(f"{platform}/cvk_{platform}_json.h")
+        headers.append(f"cvk/{platform}/cvk_{platform}.h")
+        if (ROOT / "include/cvk" / platform / f"cvk_{platform}_json.h").exists():
+            headers.append(f"cvk/{platform}/cvk_{platform}_json.h")
     generated, adapters, exports, count = Bindings(headers, args.clang_arg).generate()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "_generated.py").write_text(

@@ -21,6 +21,10 @@ work and reuse existing build directories.
 
 The user's final compiler and analysis requirement (2026-09-28) is mandatory:
 
+- Public library includes carry the library namespace. CVK uses `cvk/cvk.h` and
+  `cvk/win32/cvk_win32.h`, with analogous JSON and other platform headers. The
+  standalone SC profile uses `scvk/`. Generators, exported include roots and every
+  owned consumer must agree; flat forwarding headers do not satisfy this rule.
 - Compile the owned CastDemo build, gfxlib and CVK with MSVC `/Wall /WX`.
 - Only warnings about compiler-introduced padding may be suppressed. No other
   owned-code warning may be disabled, filtered out, downgraded or circumvented.
@@ -29,6 +33,10 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   This explicitly includes Vulkan core, utility, video and SC header families.
   Consume the user's pinned `external/cdx` submodule for applicable DirectX work
   inside gfxlib, using the existing GitHub Desktop/Git Credential Manager credentials.
+  The user also authorizes external `cva`. Their subsequent instruction is to
+  remove the redundant `gfx_vulkan` and `gfx_vaapi` wrapper modules after replacing
+  call sites directly with CVK and cva. The higher-level public `Gfx_` signatures
+  remain unchanged; the explicitly retired wrapper families are the exception.
   The exception does not include the copied gfxlib, whose internals are now owned
   refactor work, or CVK. Allocation/lifecycle and functional requirements still apply
   at dependency boundaries; external-warning exclusion is not conformance evidence.
@@ -1016,3 +1024,61 @@ After the change, compare the entire affected module with the applicable convent
 run the necessary checks, and update the evidence. Before completion, re-audit every
 row against current source, final binaries and observed runtime behavior. Missing,
 indirect or partial evidence leaves the requirement open.
+
+Graphics migration checkpoint: the core `gfx_vulkan.c/.h` layer and standalone
+native helper pairs are retired. The API guard preserves the 23 higher-level
+public signatures; all 313 low-level declarations and their wrapper modules are retired.
+gfxlib itself is retained. Native
+platform wrapper modules are removed and sharing construction belongs to the image
+owner. Win32 imports now use CVK's existing image/buffer constructors; the corrected
+CVK protocol template and generated outputs remain reproducible. The owned
+`gfxlib` target is configured with the same strict gates. Selected surface and
+Win32 interop units reach clang-tidy, but owned diagnostics and imported support
+dependencies still prevent a successful library build. Canonical CastDemo use,
+allocation/lifetime evidence and the validated Release binary remain open. Exact
+scope and current logs are recorded in GFX_MODULES.md.
+
+VA image mapping now calls cva from the image owner and uses construction-time,
+validated plane geometry for packed transfers. The three former image-copy/layout
+wrappers are retired. Native compilation and MSVC analysis pass for the new private
+layout module; four unsafe-buffer clang-tidy diagnostics keep its strict gate failing.
+The consuming image source still stops at the missing imported allocator header.
+No runtime fixture, provider timing/allocation proof or validated Release is established.
+The image owner now uses cva directly for synchronization and diagnostics. The supported
+cva recoverable-error policy returns every specified diagnostic query failure separately
+from the primary synchronization result. Configuration verifies that only that function's
+result policy changes; upstream checkouts are untouched. The configured Win32 library
+build and regeneration check pass, and the DRM policy generates in memory. Diagnostic
+record traversal is bounded and reports its limit. Imported logging, provider allocations,
+blocking synchronization and native runtime validation remain open; retiring the wrappers
+does not resolve those requirements.
+
+The encoder's packed-header, IQ-matrix, rate/frame-control and remaining five
+H.264 parameter/sizing wrappers are retired. Native pictures and slices use cva;
+encoder policy consumes retained configuration and picture state with shared
+H.264 derivations. Complete native reference lists and bounded weight prefixes
+replace generic wrapper arguments. Status now polls completion and validates
+the complete bounded segment chain before copying, retaining undersized-capacity
+submissions for retry. These changes remain unvalidated by native compilation:
+the selected encoder build now gets past H.264 and stops at missing os_malloc.h. Structural API, dependency
+call and build-policy checks pass; none establish runtime correctness, provider
+allocation behavior or completion of the graphics migration.
+
+H.264 and Exp-Golomb support are integrated as owned specification modules over
+the shared MPEG-4 bitstream operations. The retained H.264 encoder models and
+serialization are partial; original production H.264 readers are still unmigrated.
+Exp-Golomb passes selected native compilation, analysis and clang-tidy. H.264
+passes native compilation/analysis and fails clang-tidy. No runtime codec fixture,
+sanitizer run or graphics release is established by those translation-unit checks.
+
+CVK workspace/count/header checkpoint: generated output enumeration arrays and
+large extension-property arrays now use caller storage, retaining existing query
+capacities. This changes the affected CVK helper signatures without changing the
+frozen gfxlib interface. Every two-call enumeration retains its initialized extent
+and checks the returned count against it. The core selected compile clears the
+reported native stack warnings and uninitialized queue-family read; clang-tidy
+remains failing. Public headers and all owned consumers now use `cvk/` or `scvk/`.
+Generation reproducibility, eleven generator-option tests, platform emission and
+Python binding generation pass. See GFX_MODULES.md for the exact scope; canonical
+application integration, dependency lifetime/allocation behavior and Release remain
+open.

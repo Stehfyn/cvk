@@ -6,12 +6,12 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "cvk/cvk.h"
 #include "os/os_assert.h"
 #include "gfx/gfx_image.h"
 #include "os/os_malloc.h"
 #include "gfx/gfx_surface.h"
 #include "gfx/gfx_swapchain.h"
-#include "gfx/gfx_vulkan.h"
 #include "gfx/gfx_swapchain_platform.h"
 #include "utl/utl_defines.h"
 
@@ -37,6 +37,10 @@
 #define NV12_CONVERT_INPUT_IMAGE_BINDING     (0U) ///< Descriptor binding for the four-channel source image.
 #define NV12_CONVERT_OUTPUT_BUFFER_BINDING   (1U) ///< Descriptor binding for the NV12 destination buffer.
 #define INITIAL_IMAGE_INDEX                  (0U) ///< Initial round-robin logical image index.
+
+#define NV12_Y_PLANE_INDEX  (0) ///< Luma plane in Vulkan's NV12 plane layout.
+#define NV12_UV_PLANE_INDEX (1) ///< Interleaved chroma plane in Vulkan's NV12 plane layout.
+#define NV12_PLANE_COUNT    (2) ///< Plane count required by the conversion shader.
 
 /*=================================================================================================
 ** 3.2 Types
@@ -110,18 +114,19 @@ typedef struct VulkanImageResources_s
  */
 struct Gfx_Swapchain_s
 {
-    Gfx_Swapchain_Kind_t   kind;                                    ///< Operation performed on each submitted image.
-    Gfx_Swapchain_Hint_t   hint;                                    ///< Backend used to process image submissions.
-    Gfx_Image_Format_t     imageFormat;                             ///< Logical caller-visible image format.
-    ConvertRoute_t         convertRoute;                            ///< Route selected when the swapchain is created.
-    uint32_t               outputWordSize;                          ///< Size of an output-buffer word, in bytes.
-    uint32_t               imageCount;                              ///< Number of slots in images and states.
-    uint32_t               nextImageIndex;                          ///< Next round-robin slot considered for acquisition.
-    uint32_t               acquiredImageIndex;                      ///< Caller-owned slot, or VK_INVALID when no image is acquired.
-    Gfx_Surface_t*         surface;                                 ///< Target surface owned by the caller.
-    Gfx_Image_t*           images[VK_MAX_SWAPCHAIN_IMAGES];         ///< Caller-facing images owned by this swapchain.
-    VulkanImageResources_t imageResources[VK_MAX_SWAPCHAIN_IMAGES]; ///< Conversion resources indexed by backing-image slot.
-    SlotState_t            states[VK_MAX_SWAPCHAIN_IMAGES];         ///< Ownership states parallel to images.
+    Gfx_Swapchain_Kind_t kind;               ///< Operation performed on each submitted image.
+    Gfx_Swapchain_Hint_t hint;               ///< Backend used to process image submissions.
+    Gfx_Image_Format_t   imageFormat;        ///< Logical caller-visible image format.
+    ConvertRoute_t       convertRoute;       ///< Route selected when the swapchain is created.
+    uint32_t             outputWordSize;     ///< Size of an output-buffer word, in bytes.
+    uint32_t             imageCount;         ///< Number of slots in images and states.
+    uint32_t             nextImageIndex;     ///< Next round-robin slot considered for acquisition.
+    uint32_t             acquiredImageIndex; ///< Caller-owned slot, or VK_INVALID when no image is acquired.
+    Gfx_Surface_t*       surface;            ///< Target surface owned by the caller.
+    Gfx_Image_t*         images[CVK_MAX_SWAPCHAIN_IMAGES]; ///< Caller-facing images owned by this swapchain.
+    VulkanImageResources_t
+                imageResources[CVK_MAX_SWAPCHAIN_IMAGES]; ///< Conversion resources indexed by backing-image slot.
+    SlotState_t states[CVK_MAX_SWAPCHAIN_IMAGES];         ///< Ownership states parallel to images.
 };
 
 /*=================================================================================================
@@ -172,18 +177,20 @@ static uint32_t GetVulkanConvertOutputWordSize(ConvertRoute_t convertRoute);
  * \brief Selects the descriptor schema used by a conversion route.
  *
  * \param[in]  convertRoute         Conversion route whose descriptor schema is queried
- * \param[out] descriptorBindings   Receives descriptor binding indices
- * \param[out] descriptorTypes      Receives descriptor types
- * \param[out] descriptorCounts     Receives descriptor array counts
- * \param[out] descriptorStageFlags Receives descriptor shader-stage visibility
+ * \par Requirements:
+ *  - 001 The route shall be RGBA8-to-NV12 or BGRA8-to-NV12; other routes shall assert.
+ *  - 002 Both output arrays shall provide MAX_CONVERT_DESCRIPTOR_BINDING_COUNT entries.
+ *  - 003 Each layout shall contain one sampled image and one writable storage buffer.
  *
- * \return Number of descriptor bindings written; unsupported routes are fatal.
+ * \param[out] descriptorBindings  Receives the two complete descriptor layout bindings
+ * \param[out] descriptorPoolSizes Receives the corresponding distinct pool resource counts
+ *
+ * \retval    None   No result value.
  */
-static uint32_t GetVulkanConvertDescriptorSchema(ConvertRoute_t     convertRoute,
-                                                 uint32_t           descriptorBindings[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
-                                                 VkDescriptorType   descriptorTypes[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
-                                                 uint32_t           descriptorCounts[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
-                                                 VkShaderStageFlags descriptorStageFlags[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT]);
+static void GetVulkanConvertDescriptorSchema(
+    ConvertRoute_t               convertRoute,
+    VkDescriptorSetLayoutBinding descriptorBindings[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
+    VkDescriptorPoolSize         descriptorPoolSizes[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT]);
 
 /*************************************************************************************************/
 /**
@@ -228,7 +235,7 @@ static const uint32_t* GetVulkanConvertShaderCode(ConvertRoute_t convertRoute, s
  * \param[out] pPipeline                  Receives imageCount compute pipelines
  * \param[out] ppBackingImages            Receives imageCount swapchain-owned backing images
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateVulkanConvertSwapchainResources(VkPhysicalDevice             physicalDevice,
                                                   VkDevice                     device,
@@ -264,7 +271,7 @@ static void CreateVulkanConvertSwapchainResources(VkPhysicalDevice             p
  *
  * \param[in] pCreateInfo    Swapchain configuration to validate
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -275,7 +282,7 @@ static void ValidateCreateInfo(const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
  * \param[out] swapchain     Swapchain receiving backing images and per-image conversion resources
  * \param[in]  pCreateInfo    Validated swapchain configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateVulkanConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -286,7 +293,7 @@ static void CreateVulkanConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_S
  * \param[out] swapchain     Destination swapchain
  * \param[in]  pCreateInfo    Conversion request whose backend hint selects the implementation
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -297,7 +304,7 @@ static void CreateConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapcha
  * \param[out] swapchain     Zero-initialized destination storage
  * \param[in]  pCreateInfo    Kind-specific creation request
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_CreateInfo_t* pCreateInfo);
 
@@ -309,7 +316,7 @@ static void CreateSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_Swapchain_Crea
  * \param[in]     timeout       Nanosecond Vulkan slot-completion timeout
  * \param[out]    ppImage       Receives the acquired backing image; timeout or invalid acquisition state is fatal
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout, Gfx_Image_t** ppImage);
 
@@ -350,7 +357,7 @@ static void AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout, Gfx_I
  * \param[in]        externalSemaphore            Optional destination timeline semaphore
  * \param[in,out]    externalSemaphoreValue       Current destination timeline value, advanced for this submission
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void DispatchVulkanConvertImage(VkDevice         device,
                                        VkQueue          queue,
@@ -392,7 +399,7 @@ static void DispatchVulkanConvertImage(VkDevice         device,
  * \param[in,out] swapchain Swapchain containing the conversion route, conversion resources, and target surface
  * \param[in,out] image     Acquired backing image whose pending writes are consumed by this submission
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void SubmitVulkanConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 
@@ -403,7 +410,7 @@ static void SubmitVulkanConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* im
  * \param[in,out] swapchain    Conversion swapchain owning the acquired image
  * \param[in,out] image        Acquired image submitted for conversion
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void SubmitConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 
@@ -414,7 +421,7 @@ static void SubmitConvertImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
  * \param[in,out] swapchain    Owning swapchain whose slot becomes available after backend work
  * \param[in,out] image        Acquired member image; foreign or already released images are fatal
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void SubmitImage(Gfx_Swapchain_t* swapchain, Gfx_Image_t* image);
 
@@ -486,29 +493,40 @@ static uint32_t GetVulkanConvertOutputWordSize(ConvertRoute_t convertRoute)
  * \par Details:
  *  None
  */
-static uint32_t GetVulkanConvertDescriptorSchema(ConvertRoute_t     convertRoute,
-                                                 uint32_t           descriptorBindings[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
-                                                 VkDescriptorType   descriptorTypes[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
-                                                 uint32_t           descriptorCounts[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
-                                                 VkShaderStageFlags descriptorStageFlags[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT])
+static void GetVulkanConvertDescriptorSchema(
+    ConvertRoute_t               convertRoute,
+    VkDescriptorSetLayoutBinding descriptorBindings[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT],
+    VkDescriptorPoolSize         descriptorPoolSizes[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT])
 {
-    switch (convertRoute)
-    {
-    case CONVERT_ROUTE_RGBA8_TO_NV12:
-    case CONVERT_ROUTE_BGRA8_TO_NV12:
-        descriptorBindings[NV12_CONVERT_INPUT_IMAGE_BINDING]     = NV12_CONVERT_INPUT_IMAGE_BINDING;
-        descriptorBindings[NV12_CONVERT_OUTPUT_BUFFER_BINDING]   = NV12_CONVERT_OUTPUT_BUFFER_BINDING;
-        descriptorTypes[NV12_CONVERT_INPUT_IMAGE_BINDING]        = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-        descriptorTypes[NV12_CONVERT_OUTPUT_BUFFER_BINDING]      = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-        descriptorCounts[NV12_CONVERT_INPUT_IMAGE_BINDING]       = 1;
-        descriptorCounts[NV12_CONVERT_OUTPUT_BUFFER_BINDING]     = 1;
-        descriptorStageFlags[NV12_CONVERT_INPUT_IMAGE_BINDING]   = (VkShaderStageFlags)VK_SHADER_STAGE_COMPUTE_BIT;
-        descriptorStageFlags[NV12_CONVERT_OUTPUT_BUFFER_BINDING] = (VkShaderStageFlags)VK_SHADER_STAGE_COMPUTE_BIT;
-        return MAX_CONVERT_DESCRIPTOR_BINDING_COUNT;
+    bool_t is_rgba;
+    bool_t is_bgra;
+    bool_t is_supported;
 
-    default:
-        LOGFATAL("Unsupported Vulkan conversion route!");
-    }
+    is_rgba      = (CONVERT_ROUTE_RGBA8_TO_NV12 == convertRoute);
+    is_bgra      = (CONVERT_ROUTE_BGRA8_TO_NV12 == convertRoute);
+    is_supported = is_rgba || is_bgra;
+    LOGASSERT(is_supported);
+    LOGASSERT(NULL != descriptorBindings);
+    LOGASSERT(NULL != descriptorPoolSizes);
+
+    cvkInitDescriptorSetLayoutBinding(&descriptorBindings[NV12_CONVERT_INPUT_IMAGE_BINDING],
+                                      NV12_CONVERT_INPUT_IMAGE_BINDING,
+                                      VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+                                      1,
+                                      (VkShaderStageFlags)VK_SHADER_STAGE_COMPUTE_BIT,
+                                      NULL);
+    cvkInitDescriptorSetLayoutBinding(&descriptorBindings[NV12_CONVERT_OUTPUT_BUFFER_BINDING],
+                                      NV12_CONVERT_OUTPUT_BUFFER_BINDING,
+                                      VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                                      1,
+                                      (VkShaderStageFlags)VK_SHADER_STAGE_COMPUTE_BIT,
+                                      NULL);
+    cvkInitDescriptorPoolSize(&descriptorPoolSizes[NV12_CONVERT_INPUT_IMAGE_BINDING],
+                              VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+                              1);
+    cvkInitDescriptorPoolSize(&descriptorPoolSizes[NV12_CONVERT_OUTPUT_BUFFER_BINDING],
+                              VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                              1);
 }
 
 /*************************************************************************************************/
@@ -566,37 +584,77 @@ static void CreateVulkanConvertSwapchainResources(VkPhysicalDevice             p
                                                   VkPipeline*                  pPipeline,
                                                   Gfx_Image_t**                ppBackingImages)
 {
-    Gfx_Image_CreateInfo_t image_create_info;
-    uint32_t               descriptor_binding_count;
-    uint32_t               descriptor_bindings[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT];
-    VkDescriptorType       descriptor_types[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT];
-    uint32_t               descriptor_counts[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT];
-    VkShaderStageFlags     descriptor_stage_flags[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT];
-    const uint32_t*        shader_code;
-    VkDeviceSize           destination_buffer_size;
-    size_t                 shader_code_size;
-    uint32_t               v_offset;
-    uint32_t               image_index;
-    VkCommandPool          upload_command_pool;
-    VkCommandBuffer        upload_command_buffer;
+    Gfx_Image_CreateInfo_t       image_create_info;
+    VkDescriptorSetLayoutBinding descriptor_bindings[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT];
+    VkDescriptorPoolSize         descriptor_pool_sizes[MAX_CONVERT_DESCRIPTOR_BINDING_COUNT];
+    VkDescriptorSetLayoutSupport descriptor_support;
+    const uint32_t*              shader_code;
+    VkDeviceSize                 destination_buffer_size;
+    size_t                       shader_code_size;
+    VkDeviceSize                 plane_offsets[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    uint32_t                     plane_strides[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    VkExtent3D                   plane_extents[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES];
+    uint32_t                     plane_count;
+    bool_t                       needs_buffer;
+    uint32_t                     image_index;
+    VkCommandPool                upload_command_pool;
+    VkCommandBuffer              upload_command_buffer;
 
-    descriptor_binding_count = GetVulkanConvertDescriptorSchema(convertRoute, descriptor_bindings, descriptor_types, descriptor_counts, descriptor_stage_flags);
-    shader_code              = GetVulkanConvertShaderCode(convertRoute, &shader_code_size);
+    GetVulkanConvertDescriptorSchema(convertRoute, descriptor_bindings, descriptor_pool_sizes);
+    cvkGetDescriptorSetLayoutSupport(device,
+                                     NULL,
+                                     (VkDescriptorSetLayoutCreateFlags)0,
+                                     MAX_CONVERT_DESCRIPTOR_BINDING_COUNT,
+                                     descriptor_bindings,
+                                     NULL,
+                                     &descriptor_support);
+    LOGASSERT(VK_TRUE == descriptor_support.supported);
+    shader_code  = GetVulkanConvertShaderCode(convertRoute, &shader_code_size);
+    needs_buffer = (VK_NULL_HANDLE == pDestinationImage->vk.externalBuffer);
+    if (needs_buffer)
+    {
+        LOGASSERT(VK_FORMAT_G8_B8R8_2PLANE_420_UNORM == pDestinationImage->vk.format);
+        plane_count = cvkCalculateFormatPlaneLayouts(pDestinationImage->vk.format,
+                                                     width,
+                                                     height,
+                                                     1,
+                                                     1,
+                                                     outputWordSize,
+                                                     plane_offsets,
+                                                     plane_strides,
+                                                     plane_extents,
+                                                     &destination_buffer_size);
+        LOGASSERT(NV12_PLANE_COUNT == plane_count);
+        LOGASSERT(UINT32_MAX >= plane_offsets[NV12_UV_PLANE_INDEX]);
+    }
     for (image_index = 0; image_index < imageCount; ++image_index)
     {
-        Gfx_Vulkan_SetupCommandPool(device,
-                                    NULL,
-                                    (VkCommandPoolCreateFlags)0,
-                                    queueFamilyIndex,
-                                    NULL,
-                                    VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-                                    1,
-                                    pAllocator,
-                                    &pCommandPool[image_index],
-                                    &pCommandBuffer[image_index]);
-        Gfx_Vulkan_SetupCommandPool(device, NULL, (VkCommandPoolCreateFlags)0, queueFamilyIndex, NULL, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1, pAllocator, &upload_command_pool, &upload_command_buffer);
-        Gfx_Vulkan_CreateFence(device, NULL, (VkFenceCreateFlags)VK_FENCE_CREATE_SIGNALED_BIT, pAllocator, &pCompletionFence[image_index]);
-        if (VK_NULL_HANDLE != pDestinationImage->vk.externalBuffer)
+        cvkSetupCommandPool(device,
+                            NULL,
+                            (VkCommandPoolCreateFlags)0,
+                            queueFamilyIndex,
+                            NULL,
+                            VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                            1,
+                            pAllocator,
+                            &pCommandPool[image_index],
+                            &pCommandBuffer[image_index]);
+        cvkSetupCommandPool(device,
+                            NULL,
+                            (VkCommandPoolCreateFlags)0,
+                            queueFamilyIndex,
+                            NULL,
+                            VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+                            1,
+                            pAllocator,
+                            &upload_command_pool,
+                            &upload_command_buffer);
+        cvkCreateFence(device,
+                       NULL,
+                       (VkFenceCreateFlags)VK_FENCE_CREATE_SIGNALED_BIT,
+                       pAllocator,
+                       &pCompletionFence[image_index]);
+        if (FALSE == needs_buffer)
         {
             pDestinationBuffer[image_index] = pDestinationImage->vk.externalBuffer;
             pDestinationMemory[image_index] = pDestinationImage->vk.externalBufferMemory;
@@ -609,105 +667,112 @@ static void CreateVulkanConvertSwapchainResources(VkPhysicalDevice             p
         }
         else
         {
-            Gfx_Vulkan_SetupPlaneBuffer(physicalDevice,
-                                        device,
-                                        NULL,
-                                        (VkBufferCreateFlags)0,
-                                        pDestinationImage->vk.format,
-                                        width,
-                                        height,
-                                        outputWordSize,
-                                        (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | (VkFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
-                                        VK_SHARING_MODE_EXCLUSIVE,
-                                        0,
-                                        NULL,
-                                        NULL,
-                                        (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                        pAllocator,
-                                        &pDestinationBuffer[image_index],
-                                        &pDestinationMemory[image_index],
-                                        &destination_buffer_size,
-                                        &pYStride[image_index],
-                                        &pUvOffset[image_index],
-                                        &v_offset,
-                                        &pUvStride[image_index]);
+            cvkSetupBuffer(physicalDevice,
+                           device,
+                           NULL,
+                           (VkBufferCreateFlags)0,
+                           destination_buffer_size,
+                           (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+                                                (VkFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT),
+                           VK_SHARING_MODE_EXCLUSIVE,
+                           0,
+                           NULL,
+                           (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                           NULL,
+                           pAllocator,
+                           &pDestinationBuffer[image_index],
+                           &pDestinationMemory[image_index]);
+            pYStride[image_index]  = plane_strides[NV12_Y_PLANE_INDEX];
+            pUvOffset[image_index] = (uint32_t)plane_offsets[NV12_UV_PLANE_INDEX];
+            pUvStride[image_index] = plane_strides[NV12_UV_PLANE_INDEX];
         }
-        image_create_info.hint                = GFX_IMAGE_HINT_VULKAN;
-        image_create_info.kind                = GFX_IMAGE_KIND_STORAGE;
-        image_create_info.width               = width;
-        image_create_info.height              = height;
-        image_create_info.platformCreateInfo  = NULL;
-        image_create_info.va.dpy              = NULL;
-        image_create_info.va.format           = 0;
-        image_create_info.va.pixelFormat      = 0;
-        image_create_info.vk.physicalDevice   = physicalDevice;
-        image_create_info.vk.device           = device;
-        image_create_info.vk.queue            = queue;
-        image_create_info.vk.pAllocator       = pAllocator;
-        image_create_info.vk.format           = sourceFormat;
-        image_create_info.vk.usage            = (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_SAMPLED_BIT | (VkFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-        image_create_info.vk.commandPool      = upload_command_pool;
-        image_create_info.vk.commandBuffer    = upload_command_buffer;
+        image_create_info.hint               = GFX_IMAGE_HINT_VULKAN;
+        image_create_info.kind               = GFX_IMAGE_KIND_STORAGE;
+        image_create_info.width              = width;
+        image_create_info.height             = height;
+        image_create_info.platformCreateInfo = NULL;
+        image_create_info.va.dpy             = NULL;
+        image_create_info.va.format          = 0;
+        image_create_info.va.pixelFormat     = 0;
+        image_create_info.vk.physicalDevice  = physicalDevice;
+        image_create_info.vk.device          = device;
+        image_create_info.vk.queue           = queue;
+        image_create_info.vk.pAllocator      = pAllocator;
+        image_create_info.vk.format          = sourceFormat;
+        image_create_info.vk.usage =
+            (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_SAMPLED_BIT | (VkFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+        image_create_info.vk.commandPool   = upload_command_pool;
+        image_create_info.vk.commandBuffer = upload_command_buffer;
         Gfx_Image_Create(&ppBackingImages[image_index], &image_create_info);
-        Gfx_Vulkan_CreateFence(device, NULL, (VkFenceCreateFlags)0, pAllocator, &ppBackingImages[image_index]->vk.uploadFence);
-        Gfx_Vulkan_CreateSemaphore(device, NULL, (VkSemaphoreCreateFlags)0, pAllocator, &ppBackingImages[image_index]->vk.uploadSemaphore);
-        Gfx_Vulkan_CreateDescriptorSet(device,
-                                       NULL,
-                                       (VkDescriptorSetLayoutCreateFlags)0,
-                                       descriptor_binding_count,
-                                       descriptor_bindings,
-                                       descriptor_types,
-                                       descriptor_counts,
-                                       descriptor_stage_flags,
-                                       NULL,
-                                       NULL,
-                                       (VkDescriptorPoolCreateFlags)0,
-                                       pAllocator,
-                                       &pDescriptorSetLayout[image_index],
-                                       &pDescriptorPool[image_index],
-                                       &pDescriptorSet[image_index]);
-        Gfx_Vulkan_UpdateImageDescriptorSet(device,
-                                            NULL,
-                                            pDescriptorSet[image_index],
-                                            descriptor_bindings[NV12_CONVERT_INPUT_IMAGE_BINDING],
-                                            0,
-                                            descriptor_types[NV12_CONVERT_INPUT_IMAGE_BINDING],
-                                            VK_NULL_HANDLE,
-                                            ppBackingImages[image_index]->vk.view,
-                                            VK_IMAGE_LAYOUT_GENERAL);
-        Gfx_Vulkan_UpdateBufferDescriptorSet(device,
-                                             NULL,
-                                             pDescriptorSet[image_index],
-                                             descriptor_bindings[NV12_CONVERT_OUTPUT_BUFFER_BINDING],
-                                             0,
-                                             descriptor_types[NV12_CONVERT_OUTPUT_BUFFER_BINDING],
-                                             pDestinationBuffer[image_index],
-                                             VK_NO_OFFSET,
-                                             VK_WHOLE_SIZE);
-        Gfx_Vulkan_SetupComputePipeline(device,
-                                        NULL,
-                                        (VkPipelineLayoutCreateFlags)0,
-                                        1,
-                                        &pDescriptorSetLayout[image_index],
-                                        VK_NO_OFFSET,
-                                        sizeof(Nv12PushConstants_t),
-                                        NULL,
-                                        (VkShaderModuleCreateFlags)0,
-                                        shader_code_size,
-                                        shader_code,
-                                        VK_NULL_HANDLE,
-                                        NULL,
-                                        (VkPipelineCreateFlags)0,
-                                        NULL,
-                                        (VkPipelineShaderStageCreateFlags)0,
-                                        "main",
-                                        NULL,
-                                        VK_NULL_HANDLE,
-                                        0,
-                                        pAllocator,
-                                        &pShaderModule[image_index],
-                                        &pPipelineLayout[image_index],
-                                        &pPipeline[image_index]);
+        cvkCreateFence(device, NULL, (VkFenceCreateFlags)0, pAllocator, &ppBackingImages[image_index]->vk.uploadFence);
+        cvkCreateSemaphore(device,
+                           NULL,
+                           (VkSemaphoreCreateFlags)0,
+                           pAllocator,
+                           &ppBackingImages[image_index]->vk.uploadSemaphore);
+        cvkCreateDescriptorSetLayout(device,
+                                     NULL,
+                                     (VkDescriptorSetLayoutCreateFlags)0,
+                                     MAX_CONVERT_DESCRIPTOR_BINDING_COUNT,
+                                     descriptor_bindings,
+                                     pAllocator,
+                                     &pDescriptorSetLayout[image_index]);
+        cvkCreateDescriptorPool(device,
+                                NULL,
+                                (VkDescriptorPoolCreateFlags)0,
+                                1,
+                                MAX_CONVERT_DESCRIPTOR_BINDING_COUNT,
+                                descriptor_pool_sizes,
+                                pAllocator,
+                                &pDescriptorPool[image_index]);
+        cvkAllocateDescriptorSets(device,
+                                  NULL,
+                                  pDescriptorPool[image_index],
+                                  1,
+                                  &pDescriptorSetLayout[image_index],
+                                  &pDescriptorSet[image_index]);
+        cvkUpdateImageDescriptorSet(device,
+                                    VK_NULL_HANDLE,
+                                    ppBackingImages[image_index]->vk.view,
+                                    VK_IMAGE_LAYOUT_GENERAL,
+                                    NULL,
+                                    pDescriptorSet[image_index],
+                                    descriptor_bindings[NV12_CONVERT_INPUT_IMAGE_BINDING].binding,
+                                    0,
+                                    descriptor_bindings[NV12_CONVERT_INPUT_IMAGE_BINDING].descriptorType);
+        cvkUpdateBufferDescriptorSet(device,
+                                     pDestinationBuffer[image_index],
+                                     VK_NO_OFFSET,
+                                     VK_WHOLE_SIZE,
+                                     NULL,
+                                     pDescriptorSet[image_index],
+                                     descriptor_bindings[NV12_CONVERT_OUTPUT_BUFFER_BINDING].binding,
+                                     0,
+                                     descriptor_bindings[NV12_CONVERT_OUTPUT_BUFFER_BINDING].descriptorType);
+        CVK_CHECK(cvkSetupComputePipeline(device,
+                                          NULL,
+                                          shader_code_size,
+                                          shader_code,
+                                          NULL,
+                                          NULL,
+                                          1,
+                                          &pDescriptorSetLayout[image_index],
+                                          VK_NO_OFFSET,
+                                          sizeof(Nv12PushConstants_t),
+                                          VK_NULL_HANDLE,
+                                          NULL,
+                                          (VkPipelineCreateFlags)0,
+                                          VK_NULL_HANDLE,
+                                          0,
+                                          (VkShaderModuleCreateFlags)0,
+                                          (VkPipelineLayoutCreateFlags)0,
+                                          NULL,
+                                          (VkPipelineShaderStageCreateFlags)0,
+                                          "main",
+                                          pAllocator,
+                                          &pShaderModule[image_index],
+                                          &pPipelineLayout[image_index],
+                                          &pPipeline[image_index]));
     }
 }
 
@@ -720,15 +785,17 @@ static void ValidateCreateInfo(const Gfx_Swapchain_CreateInfo_t* pCreateInfo)
 {
     LOGASSERT(GFX_SWAPCHAIN_KIND_CONVERT == pCreateInfo->kind);
     LOGASSERT(GFX_SWAPCHAIN_HINT_VULKAN == pCreateInfo->hint);
-    LOGASSERT((GFX_IMAGE_FORMAT_RGBA8 == pCreateInfo->imageFormat) || (GFX_IMAGE_FORMAT_BGRA8 == pCreateInfo->imageFormat));
+    LOGASSERT((GFX_IMAGE_FORMAT_RGBA8 == pCreateInfo->imageFormat) ||
+              (GFX_IMAGE_FORMAT_BGRA8 == pCreateInfo->imageFormat));
     LOGASSERT(NULL != pCreateInfo->surface);
     LOGASSERT((0 != pCreateInfo->width) && (0 != pCreateInfo->height));
     LOGASSERT(0 != pCreateInfo->imageCount);
-    LOGASSERT(VK_MAX_SWAPCHAIN_IMAGES >= pCreateInfo->imageCount);
+    LOGASSERT(CVK_MAX_SWAPCHAIN_IMAGES >= pCreateInfo->imageCount);
 
     LOGASSERT(GFX_SURFACE_KIND_STORAGE == pCreateInfo->surface->kind);
     LOGASSERT(GFX_SURFACE_PIXELFORMAT_NV12 == pCreateInfo->surface->pixelFormat);
-    LOGASSERT((pCreateInfo->width == pCreateInfo->surface->width) && (pCreateInfo->height == pCreateInfo->surface->height));
+    LOGASSERT((pCreateInfo->width == pCreateInfo->surface->width) &&
+              (pCreateInfo->height == pCreateInfo->surface->height));
     LOGASSERT(0 == (pCreateInfo->surface->width & 1u));
     LOGASSERT(0 == (pCreateInfo->surface->height & 1u));
 }
@@ -745,21 +812,21 @@ static void CreateVulkanConvertSwapchain(Gfx_Swapchain_t* swapchain, const Gfx_S
     VkFormat              source_format;
     ConvertRoute_t        convert_route;
     uint32_t              output_word_size;
-    Gfx_Image_t*          images[VK_MAX_SWAPCHAIN_IMAGES];
-    VkCommandPool         command_pool[VK_MAX_SWAPCHAIN_IMAGES];
-    VkCommandBuffer       command_buffer[VK_MAX_SWAPCHAIN_IMAGES];
-    VkFence               completion_fence[VK_MAX_SWAPCHAIN_IMAGES];
-    VkBuffer              destination_buffer[VK_MAX_SWAPCHAIN_IMAGES];
-    VkDeviceMemory        destination_memory[VK_MAX_SWAPCHAIN_IMAGES];
-    uint32_t              y_stride[VK_MAX_SWAPCHAIN_IMAGES];
-    uint32_t              uv_offset[VK_MAX_SWAPCHAIN_IMAGES];
-    uint32_t              uv_stride[VK_MAX_SWAPCHAIN_IMAGES];
-    VkDescriptorSetLayout descriptor_set_layout[VK_MAX_SWAPCHAIN_IMAGES];
-    VkDescriptorPool      descriptor_pool[VK_MAX_SWAPCHAIN_IMAGES];
-    VkDescriptorSet       descriptor_set[VK_MAX_SWAPCHAIN_IMAGES];
-    VkShaderModule        shader_module[VK_MAX_SWAPCHAIN_IMAGES];
-    VkPipelineLayout      pipeline_layout[VK_MAX_SWAPCHAIN_IMAGES];
-    VkPipeline            pipeline[VK_MAX_SWAPCHAIN_IMAGES];
+    Gfx_Image_t*          images[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkCommandPool         command_pool[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkCommandBuffer       command_buffer[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkFence               completion_fence[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkBuffer              destination_buffer[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkDeviceMemory        destination_memory[CVK_MAX_SWAPCHAIN_IMAGES];
+    uint32_t              y_stride[CVK_MAX_SWAPCHAIN_IMAGES];
+    uint32_t              uv_offset[CVK_MAX_SWAPCHAIN_IMAGES];
+    uint32_t              uv_stride[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkDescriptorSetLayout descriptor_set_layout[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkDescriptorPool      descriptor_pool[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkDescriptorSet       descriptor_set[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkShaderModule        shader_module[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkPipelineLayout      pipeline_layout[CVK_MAX_SWAPCHAIN_IMAGES];
+    VkPipeline            pipeline[CVK_MAX_SWAPCHAIN_IMAGES];
     uint32_t              image_index;
 
     source_format    = GetVulkanImageFormat(pCreateInfo->imageFormat);
@@ -883,7 +950,10 @@ static void AcquireNextImage(Gfx_Swapchain_t* swapchain, uint64_t timeout, Gfx_I
         {
             if (SLOT_STATE_SUBMITTED == swapchain->states[image_index])
             {
-                Gfx_Vulkan_WaitForFence(swapchain->surface->vk.device, swapchain->imageResources[image_index].completionFence, timeout);
+                CVK_CHECK(cvkWaitForFence(swapchain->surface->vk.device,
+                                          swapchain->imageResources[image_index].completionFence,
+                                          VK_TRUE,
+                                          timeout));
             }
             swapchain->states[image_index]           = SLOT_STATE_ACQUIRED;
             swapchain->images[image_index]->acquired = TRUE;
@@ -956,26 +1026,63 @@ static void DispatchVulkanConvertImage(VkDevice         device,
 
     if (FALSE == uploadSubmitted)
     {
-        Gfx_Vulkan_EndCommandBuffer(uploadCommandBuffer);
-        Gfx_Vulkan_ResetFence(uploadDevice, uploadFence);
-        Gfx_Vulkan_QueueSubmitCommandBuffer(uploadQueue, NULL, 0, NULL, NULL, uploadCommandBuffer, 1, &uploadSemaphore, uploadFence);
+        cvkEndCommandBuffer(uploadCommandBuffer);
+        cvkResetFence(uploadDevice, uploadFence);
+        cvkQueueSubmitCommandBuffer(uploadQueue,
+                                    NULL,
+                                    0,
+                                    NULL,
+                                    NULL,
+                                    1,
+                                    &uploadSemaphore,
+                                    uploadFence,
+                                    uploadCommandBuffer);
     }
-    Gfx_Vulkan_ResetCommandPool(device, commandPool, (VkCommandPoolResetFlags)0);
-    Gfx_Vulkan_BeginCommandBuffer(commandBuffer, NULL, (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+    cvkResetCommandPool(device, commandPool, (VkCommandPoolResetFlags)0);
+    cvkBeginCommandBuffer(commandBuffer,
+                          NULL,
+                          (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+                          NULL);
 
     if ((destinationHasExternalBuffer) && (FALSE == destinationRequiresHostCopy))
     {
-        Gfx_Vulkan_CmdAcquireComputeWriteBufferFromExternal(commandBuffer, (VkDependencyFlags)0, NULL, queueFamilyIndex, destinationBuffer, VK_NO_OFFSET, VK_WHOLE_SIZE);
+        cvkCmdAcquireBufferFromExternal(commandBuffer,
+                                        NULL,
+                                        VK_ACCESS_SHADER_WRITE_BIT,
+                                        queueFamilyIndex,
+                                        destinationBuffer,
+                                        VK_NO_OFFSET,
+                                        VK_WHOLE_SIZE,
+                                        VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                        (VkDependencyFlags)0);
     }
     else if (destinationLayoutInitialized)
     {
         if (destinationRequiresHostCopy)
         {
-            Gfx_Vulkan_CmdAcquireComputeWriteBufferFromHostRead(commandBuffer, (VkDependencyFlags)0, NULL, destinationBuffer, VK_NO_OFFSET, VK_WHOLE_SIZE);
+            cvkCmdBufferBarrier(commandBuffer,
+                                NULL,
+                                VK_ACCESS_HOST_READ_BIT,
+                                VK_ACCESS_SHADER_WRITE_BIT,
+                                destinationBuffer,
+                                VK_NO_OFFSET,
+                                VK_WHOLE_SIZE,
+                                VK_PIPELINE_STAGE_HOST_BIT,
+                                VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                (VkDependencyFlags)0);
         }
         else
         {
-            Gfx_Vulkan_CmdAcquireComputeWriteBufferFromTransferRead(commandBuffer, (VkDependencyFlags)0, NULL, destinationBuffer, VK_NO_OFFSET, VK_WHOLE_SIZE);
+            cvkCmdBufferBarrier(commandBuffer,
+                                NULL,
+                                VK_ACCESS_TRANSFER_READ_BIT,
+                                VK_ACCESS_SHADER_WRITE_BIT,
+                                destinationBuffer,
+                                VK_NO_OFFSET,
+                                VK_WHOLE_SIZE,
+                                VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                (VkDependencyFlags)0);
         }
     }
     switch (convertRoute)
@@ -999,20 +1106,20 @@ static void DispatchVulkanConvertImage(VkDevice         device,
         items_per_invocation.height  = NV12_CONVERT_PIXELS_PER_INVOCATION_Y;
         local_size.width             = NV12_CONVERT_LOCAL_SIZE_X;
         local_size.height            = NV12_CONVERT_LOCAL_SIZE_Y;
-        Gfx_Vulkan_CmdDispatchComputeItems2D(commandBuffer,
-                                             pipeline,
-                                             pipelineLayout,
-                                             0,
-                                             1,
-                                             &descriptorSet,
-                                             0,
-                                             NULL,
-                                             0,
-                                             (uint32_t)sizeof(push_constants),
-                                             &push_constants,
-                                             item_count,
-                                             items_per_invocation,
-                                             local_size);
+        cvkCmdDispatchComputeItems2D(commandBuffer,
+                                     pipeline,
+                                     pipelineLayout,
+                                     0,
+                                     1,
+                                     &descriptorSet,
+                                     0,
+                                     NULL,
+                                     0,
+                                     (uint32_t)sizeof(push_constants),
+                                     &push_constants,
+                                     item_count,
+                                     items_per_invocation,
+                                     local_size);
         break;
     }
 
@@ -1025,43 +1132,60 @@ static void DispatchVulkanConvertImage(VkDevice         device,
         destination_image_offset.y       = 0;
         destination_image_extent.width   = destinationWidth;
         destination_image_extent.height  = destinationHeight;
-        destination_image_subresource    = Gfx_Vulkan_GetFormatBaseSubresourceLayers(destinationFormat);
+        destination_image_subresource    = cvkGetFormatBaseSubresourceLayers(destinationFormat);
         destination_image_initial_layout = VK_IMAGE_LAYOUT_UNDEFINED;
         if (destinationLayoutInitialized)
         {
             destination_image_initial_layout = VK_IMAGE_LAYOUT_GENERAL;
         }
-        Gfx_Vulkan_CmdTransferComputeBufferToExternalImage2D(commandBuffer,
-                                                             (VkDependencyFlags)0,
-                                                             NULL,
-                                                             destinationBuffer,
-                                                             VK_NO_OFFSET,
-                                                             outputWordSize,
-                                                             destinationImage,
-                                                             destinationFormat,
-                                                             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                                             destination_image_offset,
-                                                             destination_image_extent,
-                                                             destination_image_subresource,
-                                                             NULL,
-                                                             destination_image_initial_layout,
-                                                             NULL,
-                                                             VK_IMAGE_LAYOUT_GENERAL,
-                                                             queueFamilyIndex);
+        cvkCmdTransferComputeBufferToExternalImage2D(commandBuffer,
+                                                     (VkDependencyFlags)0,
+                                                     NULL,
+                                                     destinationBuffer,
+                                                     VK_NO_OFFSET,
+                                                     outputWordSize,
+                                                     destinationImage,
+                                                     destinationFormat,
+                                                     VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                                     destination_image_subresource,
+                                                     NULL,
+                                                     destination_image_initial_layout,
+                                                     NULL,
+                                                     VK_IMAGE_LAYOUT_GENERAL,
+                                                     queueFamilyIndex,
+                                                     destination_image_offset,
+                                                     destination_image_extent);
     }
     else
     {
         if (destinationRequiresHostCopy)
         {
-            Gfx_Vulkan_CmdReleaseComputeBufferToHostRead(commandBuffer, (VkDependencyFlags)0, NULL, destinationBuffer, VK_NO_OFFSET, VK_WHOLE_SIZE);
+            cvkCmdBufferBarrier(commandBuffer,
+                                NULL,
+                                VK_ACCESS_SHADER_WRITE_BIT,
+                                VK_ACCESS_HOST_READ_BIT,
+                                destinationBuffer,
+                                VK_NO_OFFSET,
+                                VK_WHOLE_SIZE,
+                                VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                VK_PIPELINE_STAGE_HOST_BIT,
+                                (VkDependencyFlags)0);
         }
         else
         {
-            Gfx_Vulkan_CmdReleaseComputeBufferToExternal(commandBuffer, (VkDependencyFlags)0, NULL, queueFamilyIndex, destinationBuffer, VK_NO_OFFSET, VK_WHOLE_SIZE);
+            cvkCmdReleaseBufferToExternal(commandBuffer,
+                                          NULL,
+                                          VK_ACCESS_SHADER_WRITE_BIT,
+                                          queueFamilyIndex,
+                                          destinationBuffer,
+                                          VK_NO_OFFSET,
+                                          VK_WHOLE_SIZE,
+                                          VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                          (VkDependencyFlags)0);
         }
     }
-    Gfx_Vulkan_EndCommandBuffer(commandBuffer);
-    Gfx_Vulkan_ResetFence(device, completionFence);
+    cvkEndCommandBuffer(commandBuffer);
+    cvkResetFence(device, completionFence);
     wait_semaphore_count       = 1;
     wait_semaphores[0]         = uploadSemaphore;
     wait_stage_masks[0]        = (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -1078,8 +1202,8 @@ static void DispatchVulkanConvertImage(VkDevice         device,
             wait_semaphore_values[wait_semaphore_count] = (*externalSemaphoreValue);
             wait_semaphore_count++;
         }
-        signal_semaphore_count     = 1;
-        signal_semaphores[0]       = externalSemaphore;
+        signal_semaphore_count = 1;
+        signal_semaphores[0]   = externalSemaphore;
 
         (*externalSemaphoreValue)++;
 

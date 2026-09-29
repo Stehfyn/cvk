@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "ggp/cvk_ggp.h"
+#include "cvk/cvk.h"
+#include "cvk/ggp/cvk_ggp.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_ggp.h>
 
 void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNext, GgpFrameToken frameToken)
 {

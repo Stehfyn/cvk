@@ -1,5 +1,5 @@
 /* Format layouts and copy regions need no Vulkan loader or GPU. */
-#include "cvk.h"
+#include "cvk/cvk.h"
 #include <stdio.h>
 
 #define CHECK(expression)                                                                                                                                                                              \

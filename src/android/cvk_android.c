@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "android/cvk_android.h"
+#include "cvk/cvk.h"
+#include "cvk/android/cvk_android.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_android.h>
+#include <vulkan/vulkan_core.h>
 
 void cvkInitAndroidHardwareBufferFormatProperties2ANDROID(VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo, void* pNext)
 {

@@ -42,10 +42,11 @@ typedef enum Gfx_Surface_Kind_e
  */
 typedef enum Gfx_Surface_PixelFormat_e
 {
-    GFX_SURFACE_PIXELFORMAT_YUV420P, ///< Three-plane 4:2:0 Y, U, and V layout.
-    GFX_SURFACE_PIXELFORMAT_NV12,    ///< 4:2:0 Y plane followed by interleaved UV samples.
-    GFX_SURFACE_PIXELFORMAT_RGBA8,   ///< Interleaved red, green, blue, alpha bytes.
-    GFX_SURFACE_PIXELFORMAT_BGRA8,   ///< Interleaved blue, green, red, alpha bytes.
+    GFX_SURFACE_PIXELFORMAT_YUV420P,   ///< Three-plane 4:2:0 Y, U, and V layout.
+    GFX_SURFACE_PIXELFORMAT_NV12,      ///< 4:2:0 Y plane followed by interleaved UV samples.
+    GFX_SURFACE_PIXELFORMAT_RGBA8,     ///< Interleaved red, green, blue, alpha bytes.
+    GFX_SURFACE_PIXELFORMAT_BGRA8,     ///< Interleaved blue, green, red, alpha bytes.
+    GFX_SURFACE_PIXELFORMAT_UNDEFINED, ///< Presentation targets have no shared-storage pixel layout.
 } Gfx_Surface_PixelFormat_t;
 
 /*************************************************************************************************/
@@ -62,16 +63,16 @@ typedef enum Gfx_Surface_PixelFormat_e
  */
 typedef struct Gfx_Surface_CreateInfo_s
 {
-    Gfx_Surface_Kind_t           kind;                   ///< Presentation or storage role.
-    Gfx_Surface_PixelFormat_t    pixelFormat;            ///< Storage pixel layout; ignored for presentation.
-    const Gfx_Display_t*         pDisplay;               ///< Display used only by presentation surfaces; otherwise NULL.
-    VADisplay                    dpy;                    ///< Initialized VA display required by storage surfaces.
-    VkInstance                   instance;               ///< Instance used to create the native surface.
-    VkPhysicalDevice             physicalDevice;         ///< Physical device supporting the selected queue and interop.
-    VkDevice                     device;                 ///< Logical device owning surface resources.
-    VkQueue                      queue;                  ///< Queue used for image transfers and synchronization.
-    uint32_t                     queueFamilyIndex;       ///< Family index of queue; must not be VK_INVALID.
-    uint32_t                     directDisplayIndex;     ///< Vulkan display enumeration index for direct presentation.
+    Gfx_Surface_Kind_t           kind;               ///< Presentation or storage role.
+    Gfx_Surface_PixelFormat_t    pixelFormat;        ///< Storage pixel layout; ignored for presentation.
+    const Gfx_Display_t*         pDisplay;           ///< Display used only by presentation surfaces; otherwise NULL.
+    VADisplay                    dpy;                ///< Initialized VA display required by storage surfaces.
+    VkInstance                   instance;           ///< Instance used to create the native surface.
+    VkPhysicalDevice             physicalDevice;     ///< Physical device supporting the selected queue and interop.
+    VkDevice                     device;             ///< Logical device owning surface resources.
+    VkQueue                      queue;              ///< Queue used for image transfers and synchronization.
+    uint32_t                     queueFamilyIndex;   ///< Family index of queue; must not be VK_INVALID.
+    uint32_t                     directDisplayIndex; ///< Vulkan display enumeration index for direct presentation.
     uint32_t                     directDisplayModeIndex; ///< Mode enumeration index within the selected direct display.
     const VkAllocationCallbacks* pAllocator;             ///< Must be NULL; custom Vulkan allocation is unsupported.
     uint32_t                     width;                  ///< Storage width in pixels; zero for presentation surfaces.
@@ -94,15 +95,15 @@ typedef struct Gfx_Surface_s
     } va;                         ///< VA representation used by shared-storage surfaces.
     struct
     {
-        VkPhysicalDevice             physicalDevice;   ///< Physical device backing the surface's resources.
-        VkDevice                     device;           ///< Logical device owning Vulkan resources.
-        VkQueue                      queue;            ///< Queue used for operations on the surface's images.
-        VkFence                      completionFence;  ///< Borrowed fence for the latest Vulkan writes to this storage target.
-        VkSurfaceKHR                 surface;          ///< Native presentation surface, or VK_NULL_HANDLE for storage.
-        uint32_t                     queueFamilyIndex; ///< Family index of queue.
-        VkFormat                     format;           ///< Storage format; VK_FORMAT_UNDEFINED for presentation.
-        const VkAllocationCallbacks* pAllocator;       ///< NULL; surfaces use the default Vulkan allocator.
-    } vk;                                              ///< Vulkan representation common to both surface kinds.
+        VkPhysicalDevice physicalDevice;   ///< Physical device backing the surface's resources.
+        VkDevice         device;           ///< Logical device owning Vulkan resources.
+        VkQueue          queue;            ///< Queue used for operations on the surface's images.
+        VkFence          completionFence;  ///< Borrowed fence for the latest Vulkan writes to this storage target.
+        VkSurfaceKHR     surface;          ///< Native presentation surface, or VK_NULL_HANDLE for storage.
+        uint32_t         queueFamilyIndex; ///< Family index of queue.
+        VkFormat         format;           ///< Storage format; VK_FORMAT_UNDEFINED for presentation.
+        const VkAllocationCallbacks* pAllocator; ///< NULL; surfaces use the default Vulkan allocator.
+    } vk;                                        ///< Vulkan representation common to both surface kinds.
     bool_t   writePending; ///< Submitted writes still require synchronization before the target is read or reused.
     bool_t   readPending;  ///< A consumer still holds the target for reading.
     uint32_t width;        ///< Surface width in pixels.
@@ -112,8 +113,8 @@ typedef struct Gfx_Surface_s
         Gfx_Image_t* readImage;  ///< Image view through which consumers read the target.
         Gfx_Image_t* writeImage; ///< Image view through which producers write the target.
     } target;                    ///< Storage image views; both pointers are NULL for presentation.
-    Gfx_Image_t* acquiredImage; ///< Read view published by Release; NULL before the first release.
-    void*        platform;      ///< Platform-specific persistent interop state.
+    Gfx_Image_t* acquiredImage;  ///< Read view published by Release; NULL before the first release.
+    void*        platform;       ///< Platform-specific persistent interop state.
 } Gfx_Surface_t;
 
 /*=================================================================================================
@@ -139,7 +140,7 @@ typedef struct Gfx_Surface_s
  * \param[out] ppSurface          Receives a non-NULL surface retained for process lifetime
  * \param[in]  pCreateInfo        Non-NULL configuration satisfying the selected surface contract
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Surface_Create(Gfx_Surface_t** ppSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -154,7 +155,7 @@ void Gfx_Surface_Create(Gfx_Surface_t** ppSurface, const Gfx_Surface_CreateInfo_
  *
  * \param[in,out] pSurface        Storage surface with initialized target images and no active reader
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Surface_Acquire(Gfx_Surface_t* pSurface);
 
@@ -169,7 +170,7 @@ void Gfx_Surface_Acquire(Gfx_Surface_t* pSurface);
  *
  * \param[in,out] pSurface        Storage surface with submitted writes and writePending set
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Surface_Release(Gfx_Surface_t* pSurface);
 

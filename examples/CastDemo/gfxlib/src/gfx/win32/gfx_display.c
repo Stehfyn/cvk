@@ -61,7 +61,7 @@ static LRESULT CALLBACK ProcessWindowMessage(HWND window, UINT message, WPARAM w
  *
  * \param[in] pCreateInfo        Non-NULL configuration selecting a supported display kind
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -72,7 +72,7 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
  * \param[out] pDisplay           Receives client dimensions, module handle, and window handle
  * \param[in]  pCreateInfo        Requested client extent
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -83,7 +83,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
  * \param[out] pDisplay           Zero-initialized display storage to initialize as running
  * \param[in]  pCreateInfo        Valid display-kind selection
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -132,7 +132,8 @@ static LRESULT CALLBACK ProcessWindowMessage(HWND window, UINT message, WPARAM w
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo)
 {
     LOGASSERT(NULL != pCreateInfo);
-    LOGASSERT((GFX_DISPLAY_KIND_WINDOWED == pCreateInfo->kind) || (GFX_DISPLAY_KIND_DIRECT == pCreateInfo->kind) || (GFX_DISPLAY_KIND_HEADLESS == pCreateInfo->kind));
+    LOGASSERT((GFX_DISPLAY_KIND_WINDOWED == pCreateInfo->kind) || (GFX_DISPLAY_KIND_DIRECT == pCreateInfo->kind) ||
+              (GFX_DISPLAY_KIND_HEADLESS == pCreateInfo->kind));
     LOGASSERT(0 != pCreateInfo->width);
     LOGASSERT(0 != pCreateInfo->height);
 }
@@ -144,10 +145,10 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo)
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo)
 {
-    int  window_class_registered;
-    BOOL rectangle_adjusted;
-    BOOL window_updated;
-    BOOL rectangle_queried;
+    int         window_class_registered;
+    BOOL        rectangle_adjusted;
+    BOOL        window_updated;
+    BOOL        rectangle_queried;
     WNDCLASSEXW window_class;
     RECT        client_rectangle;
     RECT        window_rectangle;
@@ -167,7 +168,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
     window_class.hCursor       = LoadCursorW(NULL, MAKEINTRESOURCEW(ARROW_CURSOR_RESOURCE_ID));
     window_class.lpszClassName = c_displayWindowClassName;
     window_class_atom          = RegisterClassExW(&window_class);
-    window_class_registered = (0 != window_class_atom) || (ERROR_CLASS_ALREADY_EXISTS == GetLastError());
+    window_class_registered    = (0 != window_class_atom) || (ERROR_CLASS_ALREADY_EXISTS == GetLastError());
     LOGASSERT(window_class_registered);
 
     window_style            = WS_OVERLAPPEDWINDOW;
@@ -175,7 +176,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
     window_rectangle.top    = 0;
     window_rectangle.right  = (LONG)pCreateInfo->width;
     window_rectangle.bottom = (LONG)pCreateInfo->height;
-    rectangle_adjusted = AdjustWindowRectEx(&window_rectangle, window_style, FALSE, 0);
+    rectangle_adjusted      = AdjustWindowRectEx(&window_rectangle, window_style, FALSE, 0);
     LOGASSERT(FALSE != rectangle_adjusted);
     window = CreateWindowExW(0,
                              c_displayWindowClassName,

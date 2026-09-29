@@ -3,9 +3,14 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "ubm/cvk_ubm.h"
+#include "cvk/cvk.h"
+#include "cvk/ubm/cvk_ubm.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <ubm.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_ubm.h>
 
 void cvkInitUbmSurfaceCreateInfoSEC(VkUbmSurfaceCreateInfoSEC* pInfo, const void* pNext, VkUbmSurfaceCreateFlagsSEC flags, struct ubm_device* device, struct ubm_surface* surface)
 {

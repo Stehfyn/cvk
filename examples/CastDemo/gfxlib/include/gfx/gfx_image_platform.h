@@ -27,20 +27,22 @@
  */
 typedef struct Gfx_Image_Platform_CreateInfo_s
 {
-    void**                             sharedHandle;               ///< Native texture handle storage used by VA.
-    void*                              sharedImageResource;        ///< Native image resource imported directly by VA.
-    void*                              sharedImageHandle;          ///< Native image allocation handle imported by Vulkan.
-    VkExternalMemoryHandleTypeFlagBits sharedImageHandleType;      ///< External-memory handle type identifying sharedImageHandle.
-    VkDeviceSize                       sharedImageAllocationSize;  ///< Complete heap allocation size in bytes; ignored for D3D12 resource handles.
-    bool_t                             transferBufferHostCopy;     ///< TRUE to use the mapped host-copy fallback.
-    VkDeviceSize                       transferBufferSize;         ///< Transfer-buffer allocation size.
-    void*                              sharedTransferBufferHandle; ///< Native transfer-buffer handle imported by Vulkan.
-    void*                              sharedFenceHandle;          ///< Native fence handle imported by Vulkan.
-    uint32_t                           yStride;                    ///< Luma or packed-pixel row pitch in bytes.
-    uint64_t                           uvOffset;                   ///< Second plane byte offset; zero for single-plane storage.
-    uint32_t                           uvStride;                   ///< Second plane row pitch; zero for single-plane storage.
-    void**                             ppVulkanTransferBytes;      ///< Receives the persistent Vulkan fallback mapping.
-    void*                              drmPrimeDescriptor;         ///< DMA-BUF descriptor used for export and import.
+    void** sharedHandle;        ///< Native texture handle storage used by VA.
+    void*  sharedImageResource; ///< Native image resource imported directly by VA.
+    void*  sharedImageHandle;   ///< Native image allocation handle imported by Vulkan.
+    VkExternalMemoryHandleTypeFlagBits
+        sharedImageHandleType; ///< External-memory handle type identifying sharedImageHandle.
+    VkDeviceSize
+           sharedImageAllocationSize; ///< Complete heap allocation size in bytes; ignored for D3D12 resource handles.
+    bool_t transferBufferHostCopy;    ///< TRUE to use the mapped host-copy fallback.
+    VkDeviceSize transferBufferSize;  ///< Transfer-buffer allocation size.
+    void*        sharedTransferBufferHandle; ///< Native transfer-buffer handle imported by Vulkan.
+    void*        sharedFenceHandle;          ///< Native fence handle imported by Vulkan.
+    uint32_t     yStride;                    ///< Luma or packed-pixel row pitch in bytes.
+    uint64_t     uvOffset;                   ///< Second plane byte offset; zero for single-plane storage.
+    uint32_t     uvStride;                   ///< Second plane row pitch; zero for single-plane storage.
+    void**       ppVulkanTransferBytes;      ///< Receives the persistent Vulkan fallback mapping.
+    void*        drmPrimeDescriptor;         ///< DMA-BUF descriptor used for export and import.
 } Gfx_Image_Platform_CreateInfo_t;
 
 /*=================================================================================================

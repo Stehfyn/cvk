@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "directfb/cvk_directfb.h"
+#include "cvk/cvk.h"
+#include "cvk/directfb/cvk_directfb.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_directfb.h>
 
 void cvkInitDirectFBSurfaceCreateInfo(VkDirectFBSurfaceCreateInfoEXT* pInfo, const void* pNext, VkDirectFBSurfaceCreateFlagsEXT flags, IDirectFB* dfb, IDirectFBSurface* surface)
 {

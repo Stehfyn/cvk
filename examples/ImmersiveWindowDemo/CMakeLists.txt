@@ -1,14 +1,4 @@
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/cdx/CMakeLists.txt")
-    message(FATAL_ERROR "Initialize the cdx submodule: git submodule update --init external/cdx")
-endif()
-
-# Scope the upstream example option so its target does not collide with this port.
-function(cvk_add_cdx)
-    set(CDX_BUILD_EXAMPLES OFF)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/external/cdx ${PROJECT_BINARY_DIR}/external/cdx EXCLUDE_FROM_ALL)
-endfunction()
-cvk_add_cdx()
-
+# The root project provides the shared pinned cdx dependency for both examples.
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 find_program(CVK_GLSLC glslc HINTS "$ENV{VULKAN_SDK}/Bin" REQUIRED)
 set(reference_dir "${PROJECT_SOURCE_DIR}/external/cdx/examples/ImmersiveWindowDemo")

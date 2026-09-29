@@ -39,7 +39,10 @@ else()
 endif()
 add_library(cast-formats STATIC
     cast_http.c cast_http.h
+    utl/utl_defines.h
     utl/utl_mpeg4.c utl/utl_mpeg4.h
+    utl/utl_expgolomb.c utl/utl_expgolomb.h
+    utl/utl_h264.c utl/utl_h264.h
     utl/utl_matroska.c utl/utl_matroska.h
     utl/utl_mpeg4systems.c utl/utl_mpeg4systems.h
     utl/utl_mpeg4audio.c utl/utl_mpeg4audio.h
@@ -80,6 +83,7 @@ set_source_files_properties(mp4_demux.c mp4_mux.c mp4_index.c PROPERTIES COMPILE
 target_include_directories(cast-formats PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 add_dependencies(cast-formats cast-console-ansi)
 target_link_libraries(cast-formats PUBLIC crt cast-console-imports)
+add_subdirectory(gfxlib)
 if(MSVC)
     target_compile_options(cast-formats PRIVATE /GS- /Zl)
 endif()

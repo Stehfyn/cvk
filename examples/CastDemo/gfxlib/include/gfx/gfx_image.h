@@ -9,7 +9,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include "gfx/gfx_vulkan.h"
+#include "cvk/cvk.h"
 #include "os/os_types.h"
 
 #include <stddef.h>
@@ -77,38 +77,40 @@ typedef struct Gfx_Image_s
     } va;                      ///< VA-API representation; valid when hint is VA-API.
     struct
     {
-        VkDevice             device;                                                    ///< Logical device owning every Vulkan handle below.
-        VkQueue              queue;                                                     ///< Queue matching commandPool for uploads and synchronous readback.
-        VkCommandPool        commandPool;                                               ///< Reusable pool for upload or interop commands.
-        VkCommandBuffer      commandBuffer;                                             ///< Reusable primary command buffer allocated from commandPool.
-        VkFence              uploadFence;                                               ///< Signals completion of submitted writes to the image.
-        VkSemaphore          uploadSemaphore;                                           ///< Signals submitted image writes to a subsequent GPU consumer.
-        VkFence              readbackFence;                                             ///< Completion of CPU readback submissions.
-        VkImage              image;                                                     ///< Native image; VK_NULL_HANDLE for buffer-backed interop.
-        VkDeviceMemory       memory;                                                    ///< First allocation bound to image; VK_NULL_HANDLE for buffer-backed interop.
-        VkBuffer             externalBuffer;                                            ///< Linear pixel storage for interop, including the host-copy fallback.
-        VkDeviceMemory       externalBufferMemory;                                      ///< Memory bound to externalBuffer.
-        VkDeviceSize         externalBufferSize;                                        ///< Size of externalBuffer in bytes.
-        bool_t               externalBufferHostCopy;                                    ///< TRUE when externalBuffer is a host-visible interop fallback.
-        uint32_t             externalYStride;                                           ///< Luma or packed-pixel row pitch in externalBuffer, in bytes.
-        uint32_t             externalUvOffset;                                          ///< Second plane byte offset in externalBuffer; zero for single-plane storage.
-        uint32_t             externalUvStride;                                          ///< Second plane row pitch in externalBuffer; zero for single-plane storage.
-        VkDeviceMemory       additionalMemories[VK_MAX_DRM_FORMAT_MODIFIER_PLANES - 1]; ///< Non-primary DRM plane allocations.
-        uint32_t             memoryCount;                                               ///< Number of image memory allocations, including memory.
-        VkBuffer             uploadBuffer;                                              ///< Staging buffer for transfers between host memory and image.
-        VkDeviceMemory       uploadMemory;                                              ///< Coherent host-visible memory bound to uploadBuffer.
-        void*                pUploadData;                                               ///< Persistently mapped address of uploadMemory.
-        VkImageView          view;                                                      ///< Shader-visible view of image.
-        VkSemaphore          externalSemaphore;                                         ///< Timeline semaphore shared with the paired API.
-        uint64_t             externalSemaphoreValue;                                    ///< Most recently queued signal value on the shared timeline.
-        VkFormat             format;                                                    ///< Pixel format of the Vulkan image or external buffer.
-        VkExtent3D           extent;                                                    ///< Pixel extent of the Vulkan image or external buffer.
-        size_t               uploadByteCount;                                           ///< Packed pixel byte count required for Vulkan STORAGE reads and writes.
-        VkPipelineStageFlags readyStageMask;                                            ///< Stage mask describing the image's current GENERAL state.
-        VkAccessFlags        readyAccessMask;                                           ///< Access mask describing the image's current GENERAL state.
-        bool_t               layoutInitialized;                                         ///< TRUE after image first transitions out of UNDEFINED.
-        bool_t               uploadSubmitted;                                           ///< TRUE when submitted writes require a wait on uploadSemaphore before the image is consumed.
-    } vk;                                                                               ///< Vulkan representation; valid when hint is Vulkan.
+        VkDevice        device;          ///< Logical device owning every Vulkan handle below.
+        VkQueue         queue;           ///< Queue matching commandPool for uploads and synchronous readback.
+        VkCommandPool   commandPool;     ///< Reusable pool for upload or interop commands.
+        VkCommandBuffer commandBuffer;   ///< Reusable primary command buffer allocated from commandPool.
+        VkFence         uploadFence;     ///< Signals completion of submitted writes to the image.
+        VkSemaphore     uploadSemaphore; ///< Signals submitted image writes to a subsequent GPU consumer.
+        VkFence         readbackFence;   ///< Completion of CPU readback submissions.
+        VkImage         image;           ///< Native image; VK_NULL_HANDLE for buffer-backed interop.
+        VkDeviceMemory  memory;          ///< First allocation bound to image; VK_NULL_HANDLE for buffer-backed interop.
+        VkBuffer        externalBuffer;  ///< Linear pixel storage for interop, including the host-copy fallback.
+        VkDeviceMemory  externalBufferMemory;   ///< Memory bound to externalBuffer.
+        VkDeviceSize    externalBufferSize;     ///< Size of externalBuffer in bytes.
+        bool_t          externalBufferHostCopy; ///< TRUE when externalBuffer is a host-visible interop fallback.
+        uint32_t        externalYStride;        ///< Luma or packed-pixel row pitch in externalBuffer, in bytes.
+        uint32_t externalUvOffset; ///< Second plane byte offset in externalBuffer; zero for single-plane storage.
+        uint32_t externalUvStride; ///< Second plane row pitch in externalBuffer; zero for single-plane storage.
+        VkDeviceMemory
+                 additionalMemories[CVK_MAX_DRM_FORMAT_MODIFIER_PLANES - 1]; ///< Non-primary DRM plane allocations.
+        uint32_t memoryCount;                        ///< Number of image memory allocations, including memory.
+        VkBuffer uploadBuffer;                       ///< Staging buffer for transfers between host memory and image.
+        VkDeviceMemory       uploadMemory;           ///< Coherent host-visible memory bound to uploadBuffer.
+        void*                pUploadData;            ///< Persistently mapped address of uploadMemory.
+        VkImageView          view;                   ///< Shader-visible view of image.
+        VkSemaphore          externalSemaphore;      ///< Timeline semaphore shared with the paired API.
+        uint64_t             externalSemaphoreValue; ///< Most recently queued signal value on the shared timeline.
+        VkFormat             format;                 ///< Pixel format of the Vulkan image or external buffer.
+        VkExtent3D           extent;                 ///< Pixel extent of the Vulkan image or external buffer.
+        size_t               uploadByteCount; ///< Packed pixel byte count required for Vulkan STORAGE reads and writes.
+        VkPipelineStageFlags readyStageMask;  ///< Stage mask describing the image's current GENERAL state.
+        VkAccessFlags        readyAccessMask; ///< Access mask describing the image's current GENERAL state.
+        bool_t               layoutInitialized; ///< TRUE after image first transitions out of UNDEFINED.
+        bool_t
+            uploadSubmitted; ///< TRUE when submitted writes require a wait on uploadSemaphore before the image is consumed.
+    } vk;                    ///< Vulkan representation; valid when hint is Vulkan.
 } Gfx_Image_t;
 
 /*************************************************************************************************/
@@ -129,14 +131,14 @@ typedef struct Gfx_Image_CreateInfo_s
     } va;                      ///< VA-API creation parameters.
     struct
     {
-        VkPhysicalDevice             physicalDevice;           ///< Device used for memory-type selection.
-        VkDevice                     device;                   ///< Logical device owning the image.
-        VkQueue                      queue;                    ///< Queue matching commandPool; required for local-storage readback.
-        const VkAllocationCallbacks* pAllocator;               ///< Vulkan allocator, or NULL.
-        VkFormat                     format;                   ///< Native Vulkan image format.
-        VkImageUsageFlags            usage;                    ///< STORAGE requires TRANSFER_DST_BIT; STORAGE_BIT or SAMPLED_BIT also creates a view.
-        VkCommandPool                commandPool;              ///< Borrowed upload command pool for local storage.
-        VkCommandBuffer              commandBuffer;            ///< Borrowed upload command buffer for local storage.
+        VkPhysicalDevice             physicalDevice; ///< Device used for memory-type selection.
+        VkDevice                     device;         ///< Logical device owning the image.
+        VkQueue                      queue;      ///< Queue matching commandPool; required for local-storage readback.
+        const VkAllocationCallbacks* pAllocator; ///< Vulkan allocator, or NULL.
+        VkFormat                     format;     ///< Native Vulkan image format.
+        VkImageUsageFlags usage; ///< STORAGE requires TRANSFER_DST_BIT; STORAGE_BIT or SAMPLED_BIT also creates a view.
+        VkCommandPool     commandPool;                         ///< Borrowed upload command pool for local storage.
+        VkCommandBuffer   commandBuffer;                       ///< Borrowed upload command buffer for local storage.
     } vk;                                                      ///< Vulkan creation parameters.
     const Gfx_Image_Platform_CreateInfo_t* platformCreateInfo; ///< Required for IMPORT/EXPORT; ignored for STORAGE.
 } Gfx_Image_CreateInfo_t;
@@ -161,16 +163,19 @@ typedef struct Gfx_Image_CreateInfo_s
  *  IMPORT/EXPORT requires platformCreateInfo and platform-supported formats and handles.
  *  Linux supports VA and Vulkan imports and exports. Windows supports VA imports and exports and Vulkan imports.
  *  Shared storage must exist before importing it; Vulkan EXPORT is unsupported on Windows.
- *  VA STORAGE retains a derived image for CPU access. VA IMPORT/EXPORT does not derive an image.
+ *  VA STORAGE retains a derived image and its validated packed-plane geometry for CPU access.
+ *  VA IMPORT/EXPORT does not derive an image.
  *  Vulkan STORAGE requires transfer-destination usage and adds transfer-source usage for readback.
  *  Its queue, command pool, and command buffer are borrowed from the caller.
  *  Devices, shared resources, and borrowed command objects must outlive the image.
  *  There is no image destruction API; created resources are retained for process lifetime.
+ *  Construction belongs to application initialization. The image pointer identifies its complete
+ *  private owner allocation; callers shall not copy the object or replace its native storage metadata.
  *
  * \param[out] image      Receives the allocated image; initialized by this function
  * \param[in]  createInfo Backend, sharing role, extent, and native creation parameters
  *
- * \retval None
+ * \retval None   No result value.
  */
 void Gfx_Image_Create(Gfx_Image_t** image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -186,12 +191,13 @@ void Gfx_Image_Create(Gfx_Image_t** image, const Gfx_Image_CreateInfo_t* createI
  *  and their command buffer is reopened afterward. Already submitted uploads are waited on.
  *  Other work using the image or its borrowed command pool must be complete before this call.
  *  The caller must exclusively own the acquired image and the Vulkan queue and command objects it uses.
+ *  VA image geometry is retained from construction; native padding is excluded from the output.
  *
  * \param[in,out] image   Non-NULL acquired image
  * \param[out]    dst     Non-NULL destination storage filled during this call
  * \param[in]     dstSize Destination size in bytes
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Image_ReadMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -205,12 +211,13 @@ void Gfx_Image_ReadMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
  *  into the persistent derived image; srcSize must hold those planes and fit uint32_t.
  *  The image must be acquired with no pending write. Previous GPU use of the Vulkan image and its
  *  borrowed command pool must be complete; the caller must exclusively own those command objects.
+ *  VA image geometry is retained from construction; native row and plane padding remain unchanged.
  *
  * \param[in,out] image   Non-NULL acquired image with no pending upload
  * \param[in]     src     Non-NULL source storage copied during this call
  * \param[in]     srcSize Number of source bytes
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Image_WriteMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 

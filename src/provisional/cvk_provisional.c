@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "provisional/cvk_provisional.h"
+#include "cvk/cvk.h"
+#include "cvk/provisional/cvk_provisional.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_beta.h>
+#include <vulkan/vulkan_core.h>
 
 void cvkInitAccelerationStructureDenseGeometryFormatTrianglesDataAMDX(VkAccelerationStructureDenseGeometryFormatTrianglesDataAMDX* pInfo,
                                                                       const void*                                                  pNext,

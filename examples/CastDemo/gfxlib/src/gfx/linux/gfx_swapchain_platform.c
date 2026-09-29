@@ -6,6 +6,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "cvk/cvk.h"
 #include "gfx/gfx_swapchain_platform.h"
 
 /*=================================================================================================
@@ -55,16 +56,18 @@ void Gfx_Swapchain_Platform_QueueSubmit(VkQueue                     queue,
                                         const uint64_t*             pSignalSemaphoreValues,
                                         VkFence                     fence)
 {
-    Gfx_Vulkan_QueueSubmitTimelineSemaphore(queue,
-                                            pNext,
-                                            waitSemaphoreCount,
-                                            pWaitSemaphores,
-                                            pWaitDstStageMasks,
-                                            pWaitSemaphoreValues,
-                                            1,
-                                            &commandBuffer,
-                                            signalSemaphoreCount,
-                                            pSignalSemaphores,
-                                            pSignalSemaphoreValues,
-                                            fence);
+    cvkQueueSubmitInfoWithTimelineSemaphoreInfo(queue,
+                                                pNext,
+                                                waitSemaphoreCount,
+                                                pWaitSemaphoreValues,
+                                                signalSemaphoreCount,
+                                                pSignalSemaphoreValues,
+                                                waitSemaphoreCount,
+                                                pWaitSemaphores,
+                                                pWaitDstStageMasks,
+                                                1,
+                                                &commandBuffer,
+                                                signalSemaphoreCount,
+                                                pSignalSemaphores,
+                                                fence);
 }

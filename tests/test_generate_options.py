@@ -59,7 +59,7 @@ class GeneratorOptionsTests(unittest.TestCase):
             self.assertIn("cvkParseJson", source)
             self.assertNotIn("volk.h", source)
             self.assertNotRegex(source, r"\bvk[A-Z]\w*\s*\(")
-            self.assertIn('#include "cvk_json.h"' if platform else '#include "cvk.h"', header)
+            self.assertIn('#include "cvk/cvk_json.h"' if platform else '#include "cvk/cvk.h"', header)
         for function in ("cvkParseJsonDocument", "cvkParsePipelineJson", "cvkCreatePipelineFromJson"):
             self.assertIn(function, gen.json_header())
             self.assertIn(function, gen.json_source())
@@ -70,6 +70,61 @@ class GeneratorOptionsTests(unittest.TestCase):
         gen = self.variants[False]
         self.assertEqual(gen.sigs["cvkCmdDrawMeshTasks"][1][0].name, "commandBuffer")
         self.assertEqual(gen.sigs["cvkAcquireDrmDisplay"][1][0].name, "physicalDevice")
+
+    def test_output_array_conveniences_use_caller_workspace(self):
+        gen = self.variants[False]
+        for command, array, extension in gen.output_array_pairs():
+            name = gen.output_array_name(command, array, extension)
+            with self.subTest(function=name):
+                parameters = gen.sigs[name][1]
+                names = [parameter.name for parameter in parameters]
+                workspace = next(parameter for parameter in parameters if parameter.name == array.name)
+                capacity = gen.capacity_name(array.name)
+                self.assertEqual(workspace.text, f"{array.type} {array.name}[{capacity}]")
+                extender = "p" + gen.struct_short(extension)
+                self.assertEqual(names.index(extender), names.index(array.name) + 1)
+                body = next(body for bodies in gen.defs.values() for body in bodies
+                            if body.startswith(f"void {name}("))
+                statements = body[body.index("{"):]
+                self.assertNotRegex(statements, rf"\b{array.type}\s+\w+\s*\[")
+                self.assertIn(f"{array.name}[index]", statements)
+                self.assertIn(f"&{extender}[index]", statements)
+        stereo = gen.sigs["cvkGetDisplayModeStereoPropertiesNV"][1]
+        self.assertEqual([parameter.name for parameter in stereo],
+                         ["physicalDevice", "display", "pPropertyCount", "pProperties", "pDisplayModeStereoPropertiesNV"])
+
+    def test_extension_queries_do_not_hide_large_workspaces(self):
+        gen = self.variants[False]
+        for name in ("cvkGetInstanceExtensionSupport", "cvkGetPhysicalDeviceExtensionSupport",
+                     "cvkCreateDebugInstance", "cvkGetPhysicalDeviceByPciBusInfo", "cvkSetupDeviceQueue"):
+            with self.subTest(function=name):
+                parameters = gen.sigs[name][1]
+                workspace = next(parameter for parameter in parameters if parameter.name == "pProperties")
+                self.assertEqual(workspace.text, "VkExtensionProperties pProperties[CVK_MAX_PROPERTIES]")
+        self.assertNotRegex(gen.source(), r"(?m)^\s+VkExtensionProperties\s+\w+\[CVK_MAX_PROPERTIES\];")
+
+    def test_enumeration_results_stay_within_the_prepared_extent(self):
+        gen = self.variants[False]
+        checked = set()
+        for bodies in gen.defs.values():
+            for body in bodies:
+                capture = re.search(r"capacity\s*=\s*\(\*(p\w+)\);", body)
+                if capture is None:
+                    continue
+                count = capture.group(1)
+                statements = body[body.index("{"):]
+                calls = list(re.finditer(r"\bvk[A-Z]\w*\([^;]+;", statements))
+                self.assertEqual(len(calls), 2, body[:body.index("{")])
+                self.assertIn(", NULL)", calls[0].group())
+                self.assertIn(count, calls[1].group())
+                self.assertLess(statements.index("capacity ="), calls[1].start())
+                self.assertIn(f"CVK_ASSERT(capacity >= (*{count}));", statements[calls[1].end():])
+                self.assertNotRegex(statements, rf"index < \(\*{count}\)")
+                checked.add(re.search(r"\b(cvk\w+)\(", body).group(1))
+        self.assertTrue({"cvkGetPhysicalDeviceQueueFamilyVideoProperties",
+                         "cvkGetPhysicalDeviceQueueFamilyProperties2",
+                         "cvkEnumerateInstanceExtensionProperties",
+                         "cvkGetDisplayModeStereoPropertiesNV"} <= checked)
 
     def test_bound_color_mask_has_explicit_flag_types(self):
         gen = self.variants[False]
@@ -90,7 +145,7 @@ class GeneratorOptionsTests(unittest.TestCase):
         self.assertIn("#include <vulkan/vulkan_core.h>", gen.header())
         self.assertNotIn("volk.h", gen.header())
         self.assertNotIn("__cplusplus", gen.header())
-        self.assertTrue(gen.source().index("#include <volk.h>") < gen.source().index('#include "cvk.h"'))
+        self.assertTrue(gen.source().index("#include <volk.h>") < gen.source().index('#include "cvk/cvk.h"'))
         for platform in gen.decls:
             if platform:
                 self.assertNotIn("volk.h", gen.platform_header(platform))

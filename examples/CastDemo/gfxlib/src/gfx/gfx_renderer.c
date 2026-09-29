@@ -6,10 +6,10 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "cvk/cvk.h"
 #include "gfx/gfx_renderer.h"
 
 #include "gfx/gfx_image.h"
-#include "gfx/gfx_vulkan.h"
 #include "os/os_assert.h"
 #include "os/os_malloc.h"
 
@@ -53,33 +53,33 @@ typedef struct RenderQuerySlot_t
  */
 struct Gfx_Renderer_t
 {
-    Gfx_Renderer_Hint_t          hint;                                ///< Active rendering backend.
-    Gfx_Image_t*                 pTargetImage;                        ///< Acquired destination retained only for the active frame.
-    uint32_t                     width;                               ///< Offscreen target width.
-    uint32_t                     height;                              ///< Offscreen target height.
-    VkPhysicalDevice             physicalDevice;                      ///< Device used for target memory selection.
-    VkDevice                     device;                              ///< Logical device owning renderer resources.
-    VkQueue                      queue;                               ///< Queue receiving completed render frames.
-    uint32_t                     queueFamilyIndex;                    ///< Queue family supporting timestamp queries.
-    const VkAllocationCallbacks* pAllocator;                          ///< Optional Vulkan allocation callbacks.
-    VkImage                      targetImage;                         ///< Offscreen image written by render operations.
-    VkDeviceMemory               targetMemory;                        ///< Device-local storage bound to targetImage.
-    VkImageView                  targetView;                          ///< Storage view bound to the renderer program.
-    VkDescriptorSetLayout        descriptorSetLayout;                 ///< Renderer-program descriptor layout.
-    VkDescriptorPool             descriptorPool;                      ///< Pool retaining descriptorSet.
-    VkDescriptorSet              descriptorSet;                       ///< Immutable descriptor of targetView.
-    VkShaderModule               shaderModule;                        ///< Procedural renderer program.
-    VkPipelineLayout             pipelineLayout;                      ///< Descriptor and push-constant interface.
-    VkPipeline                   pipeline;                            ///< Compute pipeline recording render operations.
-    VkQueryPool                  queryPool;                           ///< Timestamp pairs measuring renderer GPU work.
-    RenderQuerySlot_t            querySlots[VK_MAX_SWAPCHAIN_IMAGES]; ///< Per-image query ownership.
-    uint32_t                     activeQuerySlot;                     ///< Query slot recording the active frame.
-    uint64_t                     timestampMask;                       ///< Mask for the queue family's valid timestamp bits.
-    float                        timestampPeriod;                     ///< Nanoseconds represented by one timestamp tick.
-    Gfx_Renderer_Statistics_t    statistics;                          ///< Cumulative collected GPU execution time.
-    bool_t                       targetInitialized;                   ///< TRUE after targetImage leaves UNDEFINED.
-    bool_t                       renderRecorded;                      ///< TRUE after the active frame records its render operation.
-    bool_t                       frameActive;                         ///< TRUE between BeginFrame() and EndFrame().
+    Gfx_Renderer_Hint_t          hint;                ///< Active rendering backend.
+    Gfx_Image_t*                 pTargetImage;        ///< Acquired destination retained only for the active frame.
+    uint32_t                     width;               ///< Offscreen target width.
+    uint32_t                     height;              ///< Offscreen target height.
+    VkPhysicalDevice             physicalDevice;      ///< Device used for target memory selection.
+    VkDevice                     device;              ///< Logical device owning renderer resources.
+    VkQueue                      queue;               ///< Queue receiving completed render frames.
+    uint32_t                     queueFamilyIndex;    ///< Queue family supporting timestamp queries.
+    const VkAllocationCallbacks* pAllocator;          ///< Optional Vulkan allocation callbacks.
+    VkImage                      targetImage;         ///< Offscreen image written by render operations.
+    VkDeviceMemory               targetMemory;        ///< Device-local storage bound to targetImage.
+    VkImageView                  targetView;          ///< Storage view bound to the renderer program.
+    VkDescriptorSetLayout        descriptorSetLayout; ///< Renderer-program descriptor layout.
+    VkDescriptorPool             descriptorPool;      ///< Pool retaining descriptorSet.
+    VkDescriptorSet              descriptorSet;       ///< Immutable descriptor of targetView.
+    VkShaderModule               shaderModule;        ///< Procedural renderer program.
+    VkPipelineLayout             pipelineLayout;      ///< Descriptor and push-constant interface.
+    VkPipeline                   pipeline;            ///< Compute pipeline recording render operations.
+    VkQueryPool                  queryPool;           ///< Timestamp pairs measuring renderer GPU work.
+    RenderQuerySlot_t            querySlots[CVK_MAX_SWAPCHAIN_IMAGES]; ///< Per-image query ownership.
+    uint32_t                     activeQuerySlot;                      ///< Query slot recording the active frame.
+    uint64_t                     timestampMask;     ///< Mask for the queue family's valid timestamp bits.
+    float                        timestampPeriod;   ///< Nanoseconds represented by one timestamp tick.
+    Gfx_Renderer_Statistics_t    statistics;        ///< Cumulative collected GPU execution time.
+    bool_t                       targetInitialized; ///< TRUE after targetImage leaves UNDEFINED.
+    bool_t                       renderRecorded;    ///< TRUE after the active frame records its render operation.
+    bool_t                       frameActive;       ///< TRUE between BeginFrame() and EndFrame().
 };
 
 /*=================================================================================================
@@ -100,7 +100,7 @@ struct Gfx_Renderer_t
  *
  * \param[in] pCreateInfo        Complete renderer specification
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Renderer_CreateInfo_t* pCreateInfo);
 
@@ -111,7 +111,7 @@ static void ValidateCreateInfo(const Gfx_Renderer_CreateInfo_t* pCreateInfo);
  * \param[out] pRenderer         Zero-initialized renderer storage
  * \param[in]  pCreateInfo       Validated renderer specification
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateRenderer(Gfx_Renderer_t* pRenderer, const Gfx_Renderer_CreateInfo_t* pCreateInfo);
 
@@ -133,7 +133,7 @@ static uint32_t GetQuerySlot(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pImage);
  * \param[in,out] pRenderer      Initialized renderer
  * \param[in]     slotIndex      Timestamp slot to collect when pending
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CollectQuerySlot(Gfx_Renderer_t* pRenderer, uint32_t slotIndex);
 
@@ -143,7 +143,7 @@ static void CollectQuerySlot(Gfx_Renderer_t* pRenderer, uint32_t slotIndex);
  *
  * \param[in,out] pRenderer      Idle renderer receiving the acquired destination image
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImage);
 
@@ -154,7 +154,7 @@ static void BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImage);
  * \param[in,out] pRenderer      Renderer recording an active frame
  * \param[in]     frameIndex     Animation frame supplied to the render program
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void RenderFrame(Gfx_Renderer_t* pRenderer, uint32_t frameIndex);
 
@@ -164,7 +164,7 @@ static void RenderFrame(Gfx_Renderer_t* pRenderer, uint32_t frameIndex);
  *
  * \param[in,out] pRenderer      Active renderer containing recorded render work
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void EndFrame(Gfx_Renderer_t* pRenderer);
 
@@ -175,7 +175,7 @@ static void EndFrame(Gfx_Renderer_t* pRenderer);
  * \param[in,out] pRenderer      Idle renderer whose query results are collected
  * \param[out]    pStatistics    Receives a cumulative renderer-lifetime snapshot
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void GetStatistics(Gfx_Renderer_t* pRenderer, Gfx_Renderer_Statistics_t* pStatistics);
 
@@ -209,14 +209,14 @@ static uint32_t GetQuerySlot(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pImage)
 {
     uint32_t slot_index;
 
-    for (slot_index = 0; slot_index < VK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
+    for (slot_index = 0; slot_index < CVK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
     {
         if (pImage == pRenderer->querySlots[slot_index].pImage)
         {
             return slot_index;
         }
     }
-    for (slot_index = 0; slot_index < VK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
+    for (slot_index = 0; slot_index < CVK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
     {
         if (NULL == pRenderer->querySlots[slot_index].pImage)
         {
@@ -224,7 +224,7 @@ static uint32_t GetQuerySlot(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pImage)
             return slot_index;
         }
     }
-    for (slot_index = 0; slot_index < VK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
+    for (slot_index = 0; slot_index < CVK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
     {
         if (FALSE == pRenderer->querySlots[slot_index].pending)
         {
@@ -249,7 +249,12 @@ static void CollectQuerySlot(Gfx_Renderer_t* pRenderer, uint32_t slotIndex)
     {
         return;
     }
-    Gfx_Vulkan_GetQueryPoolResults64(pRenderer->device, pRenderer->queryPool, slotIndex * RENDER_QUERY_COUNT, RENDER_QUERY_COUNT, (VkQueryResultFlags)VK_QUERY_RESULT_WAIT_BIT, timestamps);
+    CVK_CHECK(cvkGetQueryPoolResults64(pRenderer->device,
+                                       pRenderer->queryPool,
+                                       slotIndex * RENDER_QUERY_COUNT,
+                                       RENDER_QUERY_COUNT,
+                                       (VkQueryResultFlags)VK_QUERY_RESULT_WAIT_BIT,
+                                       timestamps));
     elapsed_ticks = (timestamps[RENDER_QUERY_END] - timestamps[RENDER_QUERY_BEGIN]) & pRenderer->timestampMask;
     pRenderer->statistics.gpuTimeNanoseconds += (uint64_t)((double)elapsed_ticks * (double)pRenderer->timestampPeriod);
     ++pRenderer->statistics.frameCount;
@@ -264,109 +269,138 @@ static void CollectQuerySlot(Gfx_Renderer_t* pRenderer, uint32_t slotIndex)
  */
 static void CreateRenderer(Gfx_Renderer_t* pRenderer, const Gfx_Renderer_CreateInfo_t* pCreateInfo)
 {
-    VkExtent3D                  target_extent;
-    VkComponentMapping          components;
-    VkImageSubresourceRange     target_range;
-    uint32_t                    descriptor_binding;
-    VkDescriptorType            descriptor_type;
-    uint32_t                    descriptor_count;
-    VkShaderStageFlags          descriptor_stage_flags;
-    VkQueueFamilyProperties     queue_families[VK_MAX_QUEUE_FAMILIES];
-    VkPhysicalDeviceProperties2 properties;
-    uint32_t                    queue_family_count;
-    uint32_t                    timestamp_valid_bits;
+    VkExtent3D                   target_extent;
+    VkComponentMapping           components;
+    VkImageSubresourceRange      target_range;
+    VkDescriptorSetLayoutBinding descriptor_binding;
+    VkDescriptorPoolSize         descriptor_pool_size;
+    VkDescriptorSetLayoutSupport descriptor_support;
+    VkQueueFamilyProperties      queue_families[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
+    VkPhysicalDeviceProperties2  properties;
+    uint32_t                     queue_family_count;
+    uint32_t                     timestamp_valid_bits;
 
     ValidateCreateInfo(pCreateInfo);
+    cvkGetPhysicalDeviceQueueFamilyProperties(pCreateInfo->vk.physicalDevice, &queue_family_count, queue_families);
+    LOGASSERT(pCreateInfo->vk.queueFamilyIndex < queue_family_count);
+    timestamp_valid_bits = queue_families[pCreateInfo->vk.queueFamilyIndex].timestampValidBits;
+    LOGASSERT(0 != timestamp_valid_bits);
+    cvkGetPhysicalDeviceProperties2(pCreateInfo->vk.physicalDevice, NULL, &properties);
+    cvkInitDescriptorSetLayoutBinding(&descriptor_binding,
+                                      RENDER_TARGET_BINDING,
+                                      VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+                                      1,
+                                      (VkShaderStageFlags)VK_SHADER_STAGE_COMPUTE_BIT,
+                                      NULL);
+    cvkInitDescriptorPoolSize(&descriptor_pool_size, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1);
+    cvkGetDescriptorSetLayoutSupport(pCreateInfo->vk.device,
+                                     NULL,
+                                     (VkDescriptorSetLayoutCreateFlags)0,
+                                     1,
+                                     &descriptor_binding,
+                                     NULL,
+                                     &descriptor_support);
+    LOGASSERT(VK_TRUE == descriptor_support.supported);
     target_extent.width  = pCreateInfo->width;
     target_extent.height = pCreateInfo->height;
     target_extent.depth  = 1;
-    Gfx_Vulkan_SetupImage(pCreateInfo->vk.physicalDevice,
-                          pCreateInfo->vk.device,
-                          NULL,
-                          (VkImageCreateFlags)0,
-                          VK_IMAGE_TYPE_2D,
-                          VK_FORMAT_R8G8B8A8_UNORM,
-                          target_extent,
-                          1,
-                          1,
-                          VK_SAMPLE_COUNT_1_BIT,
-                          VK_IMAGE_TILING_OPTIMAL,
-                          (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_STORAGE_BIT | (VkFlags)VK_IMAGE_USAGE_TRANSFER_SRC_BIT),
-                          VK_SHARING_MODE_EXCLUSIVE,
-                          0,
-                          NULL,
-                          VK_IMAGE_LAYOUT_UNDEFINED,
-                          NULL,
-                          (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                          pCreateInfo->vk.pAllocator,
-                          &pRenderer->targetImage,
-                          &pRenderer->targetMemory);
+    cvkSetupImage(pCreateInfo->vk.physicalDevice,
+                  pCreateInfo->vk.device,
+                  NULL,
+                  (VkImageCreateFlags)0,
+                  VK_IMAGE_TYPE_2D,
+                  VK_FORMAT_R8G8B8A8_UNORM,
+                  target_extent,
+                  1,
+                  1,
+                  VK_SAMPLE_COUNT_1_BIT,
+                  VK_IMAGE_TILING_OPTIMAL,
+                  (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_STORAGE_BIT | (VkFlags)VK_IMAGE_USAGE_TRANSFER_SRC_BIT),
+                  VK_SHARING_MODE_EXCLUSIVE,
+                  0,
+                  NULL,
+                  VK_IMAGE_LAYOUT_UNDEFINED,
+                  (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                  NULL,
+                  pCreateInfo->vk.pAllocator,
+                  &pRenderer->targetImage,
+                  &pRenderer->targetMemory);
     components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
     components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
     components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
     components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-    target_range = Gfx_Vulkan_GetFormatBaseSubresourceRange(VK_FORMAT_R8G8B8A8_UNORM);
-    Gfx_Vulkan_CreateImageView(pCreateInfo->vk.device,
-                               NULL,
-                               (VkImageViewCreateFlags)0,
-                               pRenderer->targetImage,
-                               VK_IMAGE_VIEW_TYPE_2D,
-                               VK_FORMAT_R8G8B8A8_UNORM,
-                               components,
-                               target_range,
-                               pCreateInfo->vk.pAllocator,
-                               &pRenderer->targetView);
+    target_range = cvkGetFormatBaseSubresourceRange(VK_FORMAT_R8G8B8A8_UNORM);
+    cvkCreateImageView(pCreateInfo->vk.device,
+                       NULL,
+                       (VkImageViewCreateFlags)0,
+                       pRenderer->targetImage,
+                       VK_IMAGE_VIEW_TYPE_2D,
+                       VK_FORMAT_R8G8B8A8_UNORM,
+                       components,
+                       target_range,
+                       pCreateInfo->vk.pAllocator,
+                       &pRenderer->targetView);
 
-    descriptor_binding     = RENDER_TARGET_BINDING;
-    descriptor_type        = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-    descriptor_count       = 1;
-    descriptor_stage_flags = (VkShaderStageFlags)VK_SHADER_STAGE_COMPUTE_BIT;
-    Gfx_Vulkan_CreateDescriptorSet(pCreateInfo->vk.device,
-                                   NULL,
-                                   (VkDescriptorSetLayoutCreateFlags)0,
-                                   1,
-                                   &descriptor_binding,
-                                   &descriptor_type,
-                                   &descriptor_count,
-                                   &descriptor_stage_flags,
-                                   NULL,
-                                   NULL,
-                                   (VkDescriptorPoolCreateFlags)0,
-                                   pCreateInfo->vk.pAllocator,
-                                   &pRenderer->descriptorSetLayout,
-                                   &pRenderer->descriptorPool,
-                                   &pRenderer->descriptorSet);
-    Gfx_Vulkan_UpdateImageDescriptorSet(pCreateInfo->vk.device, NULL, pRenderer->descriptorSet, descriptor_binding, 0, descriptor_type, VK_NULL_HANDLE, pRenderer->targetView, VK_IMAGE_LAYOUT_GENERAL);
-    Gfx_Vulkan_SetupComputePipeline(pCreateInfo->vk.device,
-                                    NULL,
-                                    (VkPipelineLayoutCreateFlags)0,
-                                    1,
-                                    &pRenderer->descriptorSetLayout,
-                                    0,
-                                    sizeof(RenderPushConstants_t),
-                                    NULL,
-                                    (VkShaderModuleCreateFlags)0,
-                                    sizeof(c_renderPatternSpirv),
-                                    c_renderPatternSpirv,
-                                    VK_NULL_HANDLE,
-                                    NULL,
-                                    (VkPipelineCreateFlags)0,
-                                    NULL,
-                                    (VkPipelineShaderStageCreateFlags)0,
-                                    "main",
-                                    NULL,
-                                    VK_NULL_HANDLE,
-                                    0,
-                                    pCreateInfo->vk.pAllocator,
-                                    &pRenderer->shaderModule,
-                                    &pRenderer->pipelineLayout,
-                                    &pRenderer->pipeline);
-    queue_family_count = Gfx_Vulkan_GetPhysicalDeviceQueueFamilyProperties(pCreateInfo->vk.physicalDevice, queue_families);
-    LOGASSERT(pCreateInfo->vk.queueFamilyIndex < queue_family_count);
-    timestamp_valid_bits = queue_families[pCreateInfo->vk.queueFamilyIndex].timestampValidBits;
-    LOGASSERT(0 != timestamp_valid_bits);
-    Gfx_Vulkan_GetPhysicalDeviceProperties2(pCreateInfo->vk.physicalDevice, NULL, &properties);
-    Gfx_Vulkan_CreateQueryPool64(pCreateInfo->vk.device, NULL, (VkQueryPoolCreateFlags)0, VK_MAX_SWAPCHAIN_IMAGES * RENDER_QUERY_COUNT, pCreateInfo->vk.pAllocator, &pRenderer->queryPool);
+    cvkCreateDescriptorSetLayout(pCreateInfo->vk.device,
+                                 NULL,
+                                 (VkDescriptorSetLayoutCreateFlags)0,
+                                 1,
+                                 &descriptor_binding,
+                                 pCreateInfo->vk.pAllocator,
+                                 &pRenderer->descriptorSetLayout);
+    cvkCreateDescriptorPool(pCreateInfo->vk.device,
+                            NULL,
+                            (VkDescriptorPoolCreateFlags)0,
+                            1,
+                            1,
+                            &descriptor_pool_size,
+                            pCreateInfo->vk.pAllocator,
+                            &pRenderer->descriptorPool);
+    cvkAllocateDescriptorSets(pCreateInfo->vk.device,
+                              NULL,
+                              pRenderer->descriptorPool,
+                              1,
+                              &pRenderer->descriptorSetLayout,
+                              &pRenderer->descriptorSet);
+    cvkUpdateImageDescriptorSet(pCreateInfo->vk.device,
+                                VK_NULL_HANDLE,
+                                pRenderer->targetView,
+                                VK_IMAGE_LAYOUT_GENERAL,
+                                NULL,
+                                pRenderer->descriptorSet,
+                                descriptor_binding.binding,
+                                0,
+                                descriptor_binding.descriptorType);
+    CVK_CHECK(cvkSetupComputePipeline(pCreateInfo->vk.device,
+                                      NULL,
+                                      sizeof(c_renderPatternSpirv),
+                                      c_renderPatternSpirv,
+                                      NULL,
+                                      NULL,
+                                      1,
+                                      &pRenderer->descriptorSetLayout,
+                                      0,
+                                      sizeof(RenderPushConstants_t),
+                                      VK_NULL_HANDLE,
+                                      NULL,
+                                      (VkPipelineCreateFlags)0,
+                                      VK_NULL_HANDLE,
+                                      0,
+                                      (VkShaderModuleCreateFlags)0,
+                                      (VkPipelineLayoutCreateFlags)0,
+                                      NULL,
+                                      (VkPipelineShaderStageCreateFlags)0,
+                                      "main",
+                                      pCreateInfo->vk.pAllocator,
+                                      &pRenderer->shaderModule,
+                                      &pRenderer->pipelineLayout,
+                                      &pRenderer->pipeline));
+    cvkCreateTimestampQueryPool(pCreateInfo->vk.device,
+                                NULL,
+                                (VkQueryPoolCreateFlags)0,
+                                CVK_MAX_SWAPCHAIN_IMAGES * RENDER_QUERY_COUNT,
+                                pCreateInfo->vk.pAllocator,
+                                &pRenderer->queryPool);
     pRenderer->hint             = pCreateInfo->hint;
     pRenderer->width            = pCreateInfo->width;
     pRenderer->height           = pCreateInfo->height;
@@ -406,25 +440,31 @@ static void BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImage)
 
     pRenderer->activeQuerySlot = GetQuerySlot(pRenderer, pTargetImage);
     CollectQuerySlot(pRenderer, pRenderer->activeQuerySlot);
-    Gfx_Vulkan_ResetCommandPool(pTargetImage->vk.device, pTargetImage->vk.commandPool, (VkCommandPoolResetFlags)0);
-    Gfx_Vulkan_BeginCommandBuffer(pTargetImage->vk.commandBuffer, NULL, (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+    cvkResetCommandPool(pTargetImage->vk.device, pTargetImage->vk.commandPool, (VkCommandPoolResetFlags)0);
+    cvkBeginCommandBuffer(pTargetImage->vk.commandBuffer,
+                          NULL,
+                          (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+                          NULL);
     first_query = pRenderer->activeQuerySlot * RENDER_QUERY_COUNT;
-    Gfx_Vulkan_CmdResetQueryPool(pTargetImage->vk.commandBuffer, pRenderer->queryPool, first_query, RENDER_QUERY_COUNT);
-    Gfx_Vulkan_CmdWriteTimestamp(pTargetImage->vk.commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, pRenderer->queryPool, first_query + RENDER_QUERY_BEGIN);
+    cvkCmdResetQueryPool(pTargetImage->vk.commandBuffer, pRenderer->queryPool, first_query, RENDER_QUERY_COUNT);
+    cvkCmdWriteTimestamp(pTargetImage->vk.commandBuffer,
+                         VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                         pRenderer->queryPool,
+                         first_query + RENDER_QUERY_BEGIN);
     if (FALSE == pRenderer->targetInitialized)
     {
-        target_range = Gfx_Vulkan_GetFormatBaseSubresourceRange(VK_FORMAT_R8G8B8A8_UNORM);
-        Gfx_Vulkan_CmdImageBarrier(pTargetImage->vk.commandBuffer,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                   (VkDependencyFlags)0,
-                                   NULL,
-                                   (VkAccessFlags)0,
-                                   (VkAccessFlags)VK_ACCESS_SHADER_WRITE_BIT,
-                                   VK_IMAGE_LAYOUT_UNDEFINED,
-                                   VK_IMAGE_LAYOUT_GENERAL,
-                                   pRenderer->targetImage,
-                                   target_range);
+        target_range = cvkGetFormatBaseSubresourceRange(VK_FORMAT_R8G8B8A8_UNORM);
+        cvkCmdImageBarrier(pTargetImage->vk.commandBuffer,
+                           NULL,
+                           (VkAccessFlags)0,
+                           (VkAccessFlags)VK_ACCESS_SHADER_WRITE_BIT,
+                           VK_IMAGE_LAYOUT_UNDEFINED,
+                           VK_IMAGE_LAYOUT_GENERAL,
+                           pRenderer->targetImage,
+                           target_range,
+                           (VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                           (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                           (VkDependencyFlags)0);
     }
     pRenderer->pTargetImage   = pTargetImage;
     pRenderer->renderRecorded = FALSE;
@@ -455,20 +495,20 @@ static void RenderFrame(Gfx_Renderer_t* pRenderer, uint32_t frameIndex)
     items_per_invocation.height = 1;
     local_size.width            = RENDER_LOCAL_SIZE_X;
     local_size.height           = RENDER_LOCAL_SIZE_Y;
-    Gfx_Vulkan_CmdDispatchComputeItems2D(pRenderer->pTargetImage->vk.commandBuffer,
-                                         pRenderer->pipeline,
-                                         pRenderer->pipelineLayout,
-                                         0,
-                                         1,
-                                         &pRenderer->descriptorSet,
-                                         0,
-                                         NULL,
-                                         0,
-                                         sizeof(push_constants),
-                                         &push_constants,
-                                         item_count,
-                                         items_per_invocation,
-                                         local_size);
+    cvkCmdDispatchComputeItems2D(pRenderer->pTargetImage->vk.commandBuffer,
+                                 pRenderer->pipeline,
+                                 pRenderer->pipelineLayout,
+                                 0,
+                                 1,
+                                 &pRenderer->descriptorSet,
+                                 0,
+                                 NULL,
+                                 0,
+                                 sizeof(push_constants),
+                                 &push_constants,
+                                 item_count,
+                                 items_per_invocation,
+                                 local_size);
     pRenderer->renderRecorded = TRUE;
 }
 
@@ -508,53 +548,64 @@ static void EndFrame(Gfx_Renderer_t* pRenderer)
         destination_access_mask = (VkAccessFlags)0;
         destination_layout      = VK_IMAGE_LAYOUT_UNDEFINED;
     }
-    source_subresource        = Gfx_Vulkan_GetFormatBaseSubresourceLayers(VK_FORMAT_R8G8B8A8_UNORM);
-    destination_subresource   = Gfx_Vulkan_GetFormatBaseSubresourceLayers(target_image->vk.format);
+    source_subresource        = cvkGetFormatBaseSubresourceLayers(VK_FORMAT_R8G8B8A8_UNORM);
+    destination_subresource   = cvkGetFormatBaseSubresourceLayers(target_image->vk.format);
     image_offset.x            = 0;
     image_offset.y            = 0;
     source_extent.width       = pRenderer->width;
     source_extent.height      = pRenderer->height;
     destination_extent.width  = target_image->vk.extent.width;
     destination_extent.height = target_image->vk.extent.height;
-    Gfx_Vulkan_CmdTransferBlitImage2D(target_image->vk.commandBuffer,
-                                      (VkDependencyFlags)0,
-                                      NULL,
-                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                      (VkAccessFlags)VK_ACCESS_SHADER_WRITE_BIT,
-                                      VK_IMAGE_LAYOUT_GENERAL,
-                                      VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                                      pRenderer->targetImage,
-                                      source_subresource,
-                                      image_offset,
-                                      source_extent,
-                                      NULL,
-                                      destination_stage_mask,
-                                      destination_access_mask,
-                                      destination_layout,
-                                      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                      target_image->vk.image,
-                                      destination_subresource,
-                                      image_offset,
-                                      destination_extent,
-                                      VK_FILTER_NEAREST,
-                                      NULL,
-                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                      (VkAccessFlags)VK_ACCESS_SHADER_WRITE_BIT,
-                                      VK_IMAGE_LAYOUT_GENERAL,
-                                      NULL,
-                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-                                      (VkAccessFlags)0,
-                                      VK_IMAGE_LAYOUT_GENERAL);
-    Gfx_Vulkan_CmdWriteTimestamp(target_image->vk.commandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, pRenderer->queryPool, (pRenderer->activeQuerySlot * RENDER_QUERY_COUNT) + RENDER_QUERY_END);
-    Gfx_Vulkan_EndCommandBuffer(target_image->vk.commandBuffer);
-    Gfx_Vulkan_ResetFence(target_image->vk.device, target_image->vk.uploadFence);
-    Gfx_Vulkan_QueueSubmitCommandBuffer(target_image->vk.queue, NULL, 0, NULL, NULL, target_image->vk.commandBuffer, 1, &target_image->vk.uploadSemaphore, target_image->vk.uploadFence);
-    pRenderer->targetInitialized                              = TRUE;
-    target_image->vk.layoutInitialized                        = TRUE;
-    target_image->vk.readyStageMask                           = (VkPipelineStageFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    target_image->vk.readyAccessMask                          = (VkAccessFlags)0;
-    target_image->vk.uploadSubmitted                          = TRUE;
-    target_image->uploadPending                               = TRUE;
+    cvkCmdTransferBlitImage2D(target_image->vk.commandBuffer,
+                              (VkDependencyFlags)0,
+                              NULL,
+                              (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                              (VkAccessFlags)VK_ACCESS_SHADER_WRITE_BIT,
+                              VK_IMAGE_LAYOUT_GENERAL,
+                              VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                              pRenderer->targetImage,
+                              source_subresource,
+                              NULL,
+                              destination_stage_mask,
+                              destination_access_mask,
+                              destination_layout,
+                              VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                              target_image->vk.image,
+                              destination_subresource,
+                              VK_FILTER_NEAREST,
+                              NULL,
+                              (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                              (VkAccessFlags)VK_ACCESS_SHADER_WRITE_BIT,
+                              VK_IMAGE_LAYOUT_GENERAL,
+                              NULL,
+                              (VkPipelineStageFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                              (VkAccessFlags)0,
+                              VK_IMAGE_LAYOUT_GENERAL,
+                              image_offset,
+                              source_extent,
+                              image_offset,
+                              destination_extent);
+    cvkCmdWriteTimestamp(target_image->vk.commandBuffer,
+                         VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+                         pRenderer->queryPool,
+                         (pRenderer->activeQuerySlot * RENDER_QUERY_COUNT) + RENDER_QUERY_END);
+    cvkEndCommandBuffer(target_image->vk.commandBuffer);
+    cvkResetFence(target_image->vk.device, target_image->vk.uploadFence);
+    cvkQueueSubmitCommandBuffer(target_image->vk.queue,
+                                NULL,
+                                0,
+                                NULL,
+                                NULL,
+                                1,
+                                &target_image->vk.uploadSemaphore,
+                                target_image->vk.uploadFence,
+                                target_image->vk.commandBuffer);
+    pRenderer->targetInitialized       = TRUE;
+    target_image->vk.layoutInitialized = TRUE;
+    target_image->vk.readyStageMask    = (VkPipelineStageFlags)VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    target_image->vk.readyAccessMask   = (VkAccessFlags)0;
+    target_image->vk.uploadSubmitted   = TRUE;
+    target_image->uploadPending        = TRUE;
     pRenderer->querySlots[pRenderer->activeQuerySlot].pending = TRUE;
     pRenderer->pTargetImage                                   = NULL;
     pRenderer->frameActive                                    = FALSE;
@@ -573,7 +624,7 @@ static void GetStatistics(Gfx_Renderer_t* pRenderer, Gfx_Renderer_Statistics_t* 
     LOGASSERT(NULL != pStatistics);
     LOGASSERT(FALSE == pRenderer->frameActive);
 
-    for (slot_index = 0; slot_index < VK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
+    for (slot_index = 0; slot_index < CVK_MAX_SWAPCHAIN_IMAGES; ++slot_index)
     {
         CollectQuerySlot(pRenderer, slot_index);
     }

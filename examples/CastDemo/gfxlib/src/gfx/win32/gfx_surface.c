@@ -6,14 +6,16 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "cvk/cvk.h"
+#include "cvk/win32/cvk_win32.h"
+#include "crt/crt_memory.h"
 #include "os/os_assert.h"
 #include "os/os_malloc.h"
 #include "gfx/gfx_display_internal.h"
 #include "gfx/gfx_image.h"
 #include "gfx/gfx_image_platform.h"
 #include "gfx/gfx_surface.h"
-#include "gfx/gfx_vaapi.h"
-#include "gfx/gfx_vulkan.h"
+#include "gfx/gfx_surface_internal.h"
 #include "utl/utl_defines.h"
 
 #include <d3d12.h>
@@ -30,7 +32,11 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define HRCHECK(expression) (CheckHresult((expression), #expression, __FILE__, __LINE__)) ///< Makes a failed D3D12 operation fatal at its call site.
+#define HRCHECK(expression)                                                                                            \
+    (CheckHresult((expression),                                                                                        \
+                  #expression,                                                                                         \
+                  __FILE__,                                                                                            \
+                  __LINE__)) ///< Makes a failed D3D12 operation fatal at its call site.
 
 /*=================================================================================================
 ** 3.2 Types
@@ -55,27 +61,28 @@ _Static_assert(sizeof(LUID) == VK_LUID_SIZE, "DXGI and Vulkan LUID sizes must ma
  */
 typedef struct D3D12SharedSurface_s
 {
-    D3D12InteropKind_t                 interopKind;                ///< Selected shared-image, transfer-buffer, or host-buffer path.
-    ID3D12Device*                      d3d12Device;                ///< D3D12 device on the matched adapter.
-    ID3D12Heap*                        d3d12Heap;                  ///< Shared heap backing a directly imported placed texture.
-    ID3D12Resource*                    d3d12Resource;              ///< Texture backing the surface's native image storage.
-    ID3D12Resource*                    d3d12TransferBuffer;        ///< Linear copy source; shared with Vulkan or filled by the host-copy fallback.
-    ID3D12CommandQueue*                d3d12CopyQueue;             ///< Queue copying the linear buffer into the texture.
-    ID3D12CommandAllocator*            d3d12CopyAllocator;         ///< Reusable allocator for d3d12CopyList.
-    ID3D12GraphicsCommandList*         d3d12CopyList;              ///< Re-recorded buffer-to-texture copy commands.
-    ID3D12Fence*                       d3d12Fence;                 ///< Fence shared by Vulkan writes and D3D12 copies, or used only for host-copy completion.
-    HANDLE                             sharedHandle;               ///< NT handle used by VA to import a committed texture.
-    HANDLE                             sharedImageHandle;          ///< D3D12 heap or resource handle imported as a Vulkan image.
-    HANDLE                             sharedTransferBufferHandle; ///< NT handle exporting d3d12TransferBuffer to Vulkan.
-    HANDLE                             sharedFenceHandle;          ///< NT handle exporting d3d12Fence to Vulkan.
-    VkExternalMemoryHandleTypeFlagBits sharedImageHandleType;      ///< Handle type matching sharedImageHandle.
-    VkDeviceSize                       sharedImageAllocationSize;  ///< Complete shared heap size; zero for resource handles.
-    uint64_t                           copyFenceValue;             ///< Pending native copy completion, or zero.
-    HANDLE                             fenceEvent;                 ///< Auto-reset event used for synchronous fence waits.
-    D3D12_PLACED_SUBRESOURCE_FOOTPRINT copyFootprints[2];          ///< Linear luma and chroma copy layouts.
-    UINT64                             transferBufferSize;         ///< Required transfer-buffer allocation size in bytes.
-    void*                              d3d12TransferBytes;         ///< Persistently mapped D3D12 upload memory used by the host-copy fallback.
-    void*                              vkTransferBytes;            ///< Persistently mapped Vulkan memory used by the host-copy fallback.
+    D3D12InteropKind_t interopKind;   ///< Selected shared-image, transfer-buffer, or host-buffer path.
+    ID3D12Device*      d3d12Device;   ///< D3D12 device on the matched adapter.
+    ID3D12Heap*        d3d12Heap;     ///< Shared heap backing a directly imported placed texture.
+    ID3D12Resource*    d3d12Resource; ///< Texture backing the surface's native image storage.
+    ID3D12Resource*
+        d3d12TransferBuffer; ///< Linear copy source; shared with Vulkan or filled by the host-copy fallback.
+    ID3D12CommandQueue*        d3d12CopyQueue;     ///< Queue copying the linear buffer into the texture.
+    ID3D12CommandAllocator*    d3d12CopyAllocator; ///< Reusable allocator for d3d12CopyList.
+    ID3D12GraphicsCommandList* d3d12CopyList;      ///< Re-recorded buffer-to-texture copy commands.
+    ID3D12Fence* d3d12Fence; ///< Fence shared by Vulkan writes and D3D12 copies, or used only for host-copy completion.
+    HANDLE       sharedHandle;               ///< NT handle used by VA to import a committed texture.
+    HANDLE       sharedImageHandle;          ///< D3D12 heap or resource handle imported as a Vulkan image.
+    HANDLE       sharedTransferBufferHandle; ///< NT handle exporting d3d12TransferBuffer to Vulkan.
+    HANDLE       sharedFenceHandle;          ///< NT handle exporting d3d12Fence to Vulkan.
+    VkExternalMemoryHandleTypeFlagBits sharedImageHandleType; ///< Handle type matching sharedImageHandle.
+    VkDeviceSize sharedImageAllocationSize;                   ///< Complete shared heap size; zero for resource handles.
+    uint64_t     copyFenceValue;                              ///< Pending native copy completion, or zero.
+    HANDLE       fenceEvent;                                  ///< Auto-reset event used for synchronous fence waits.
+    D3D12_PLACED_SUBRESOURCE_FOOTPRINT copyFootprints[2];     ///< Linear luma and chroma copy layouts.
+    UINT64                             transferBufferSize;    ///< Required transfer-buffer allocation size in bytes.
+    void* d3d12TransferBytes; ///< Persistently mapped D3D12 upload memory used by the host-copy fallback.
+    void* vkTransferBytes;    ///< Persistently mapped Vulkan memory used by the host-copy fallback.
 } D3D12SharedSurface_t;
 
 /*=================================================================================================
@@ -127,28 +134,6 @@ static const D3D12_HEAP_PROPERTIES c_d3d12UploadHeapProps = {
 
 /*************************************************************************************************/
 /**
- * \brief Creates a Vulkan presentation surface for an existing Win32 window.
- *
- * \param[in]  instance   Vulkan instance with VK_KHR_win32_surface enabled
- * \param[in]  pNext      Extension chain for VkWin32SurfaceCreateInfoKHR, or NULL
- * \param[in]  flags      Win32 surface creation flags
- * \param[in]  hinstance  Module instance owning hwnd
- * \param[in]  hwnd       Valid native window handle
- * \param[in]  pAllocator Vulkan allocator, or NULL
- * \param[out] pSurface   Receives the created surface handle
- *
- * \retval    None
- */
-static void CreateSurfaceWin32(VkInstance                   instance,
-                               const void*                  pNext,
-                               VkWin32SurfaceCreateFlagsKHR flags,
-                               HINSTANCE                    hinstance,
-                               HWND                         hwnd,
-                               const VkAllocationCallbacks* pAllocator,
-                               VkSurfaceKHR*                pSurface);
-
-/*************************************************************************************************/
-/**
  * \brief Converts a failed D3D12 HRESULT into a source-located fatal diagnostic.
  *
  * \param[in] hr                 Result to test; successful values return without side effects
@@ -156,7 +141,7 @@ static void CreateSurfaceWin32(VkInstance                   instance,
  * \param[in] file              Source file containing the check
  * \param[in] line               One-based source line containing the check
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CheckHresult(HRESULT hr, const char* expression, const char* file, int line);
 
@@ -170,9 +155,13 @@ static void CheckHresult(HRESULT hr, const char* expression, const char* file, i
  * \param[in] description        Null-terminated diagnostic text
  * \param[in] context            Unused callback context
  *
- * \retval None
+ * \retval None   No result value.
  */
-static void __stdcall MessageCallbackD3D12(D3D12_MESSAGE_CATEGORY category, D3D12_MESSAGE_SEVERITY severity, D3D12_MESSAGE_ID id, const char* description, void* context);
+static void __stdcall MessageCallbackD3D12(D3D12_MESSAGE_CATEGORY category,
+                                           D3D12_MESSAGE_SEVERITY severity,
+                                           D3D12_MESSAGE_ID       id,
+                                           const char*            description,
+                                           void*                  context);
 
 /*************************************************************************************************/
 /**
@@ -235,7 +224,10 @@ static uint32_t GetVaapiPixelFormat(Gfx_Surface_PixelFormat_t pixelFormat);
  *
  * \return Initialized D3D12 texture resource description.
  */
-static D3D12_RESOURCE_DESC GetTextureDescD3D12(DXGI_FORMAT dxgiFormat, uint32_t width, uint32_t height, D3D12_RESOURCE_FLAGS flags);
+static D3D12_RESOURCE_DESC GetTextureDescD3D12(DXGI_FORMAT          dxgiFormat,
+                                               uint32_t             width,
+                                               uint32_t             height,
+                                               D3D12_RESOURCE_FLAGS flags);
 
 /*************************************************************************************************/
 /**
@@ -258,7 +250,10 @@ static D3D12_RESOURCE_DESC GetTransferBufferDescD3D12(uint64_t size);
  *
  * \return Maximum of the resource requirement and minimumSize, rounded up to the D3D12 heap alignment.
  */
-static uint64_t GetAlignedHeapSizeD3D12(ID3D12Device* d3d12Device, const D3D12_RESOURCE_DESC* resourceDesc, uint64_t minimumSize, uint64_t* heapAlignment);
+static uint64_t GetAlignedHeapSizeD3D12(ID3D12Device*              d3d12Device,
+                                        const D3D12_RESOURCE_DESC* resourceDesc,
+                                        uint64_t                   minimumSize,
+                                        uint64_t*                  heapAlignment);
 
 /*************************************************************************************************/
 /**
@@ -270,7 +265,7 @@ static uint64_t GetAlignedHeapSizeD3D12(ID3D12Device* d3d12Device, const D3D12_R
  * \param[out] interopKind                    Receives the selected interop path
  * \param[out] externalMemoryHandleType       Receives heap or resource type for direct import
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void SelectVulkanSurfaceInteropD3D12(VkPhysicalDevice                    physicalDevice,
                                             VkFormat                            format,
@@ -309,7 +304,7 @@ static void SelectVulkanSurfaceInteropD3D12(VkPhysicalDevice                    
  * \param[out] d3d12TransferBytes          Receives the optional mapped D3D12 transfer buffer
  * \param[out] interopKind                  Receives the selected interop path
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                         dxgiFormat,
                                               LUID                                vkDeviceLuid,
@@ -352,7 +347,7 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
  * \param[in] d3d12Fence              Fence signaled after the queued copy
  * \param[in] completionFenceValue     Fence value signaled after the queued copy
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CopySurfaceTransferBufferToReadImageD3D12(ID3D12CommandQueue*                       d3d12CopyQueue,
                                                       ID3D12CommandAllocator*                   d3d12CopyAllocator,
@@ -370,7 +365,7 @@ static void CopySurfaceTransferBufferToReadImageD3D12(ID3D12CommandQueue*       
  *
  * \param[in] createInfo        Non-NULL surface configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -381,20 +376,9 @@ static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* createInfo);
  * \param[out] surface       Receives the native surface and window dimensions
  * \param[in]  createInfo    Valid windowed presentation configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateWindowedPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
-
-/*************************************************************************************************/
-/**
- * \brief Creates and initializes a direct-display presentation surface.
- *
- * \param[out] surface       Receives the native surface and selected mode dimensions
- * \param[in]  createInfo    Valid direct-display presentation configuration
- *
- * \retval    None
- */
-static void CreateDirectPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
 
 /*************************************************************************************************/
 /**
@@ -403,7 +387,7 @@ static void CreateDirectPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface
  * \param[out] surface       Receives the native surface and requested dimensions
  * \param[in]  createInfo    Valid headless presentation configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateHeadlessPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -414,9 +398,9 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
  * \param[out] surface           Receives common state and the windowed, direct, or headless VkSurfaceKHR
  * \param[in]  createInfo        Valid present-surface configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
-static void CreatePresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
+static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo);
 
 /*************************************************************************************************/
 /**
@@ -425,7 +409,7 @@ static void CreatePresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
  * \param[out] surface           Receives initialized VA state, D3D12 allocation, and backend image handles
  * \param[in]  createInfo        Storage format, dimensions, and matching VA/Vulkan device contexts
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -436,9 +420,9 @@ static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
  * \param[out] surface           Zero-initialized surface storage to construct
  * \param[in]  createInfo        Presentation or storage creation parameters
  *
- * \retval    None
+ * \retval    None   No result value.
  */
-static void CreateSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
+static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo);
 
 /*************************************************************************************************/
 /**
@@ -446,7 +430,7 @@ static void CreateSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t
  *
  * \param[in,out] surface        Storage surface with no active reader
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void AcquireSurface(Gfx_Surface_t* surface);
 
@@ -456,45 +440,13 @@ static void AcquireSurface(Gfx_Surface_t* surface);
  *
  * \param[in,out] surface        Storage surface with submitted writes and writePending set
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ReleaseSurface(Gfx_Surface_t* surface);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateSurfaceWin32(VkInstance                   instance,
-                               const void*                  pNext,
-                               VkWin32SurfaceCreateFlagsKHR flags,
-                               HINSTANCE                    hinstance,
-                               HWND                         hwnd,
-                               const VkAllocationCallbacks* pAllocator,
-                               VkSurfaceKHR*                pSurface)
-{
-    VkWin32SurfaceCreateInfoKHR create_info;
-
-    LOGASSERT(VK_NULL_HANDLE != instance);
-    LOGASSERT(NULL != hinstance);
-    LOGASSERT(NULL != hwnd);
-    LOGASSERT(NULL != pSurface);
-
-    (void)memset(&create_info, 0, sizeof(create_info));
-    create_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    create_info.pNext     = pNext;
-    create_info.flags     = flags;
-    create_info.hinstance = hinstance;
-    create_info.hwnd      = hwnd;
-    LOGASSERT(NULL != vkCreateWin32SurfaceKHR);
-    (*pSurface) = VK_NULL_HANDLE;
-    VKCHECK(vkCreateWin32SurfaceKHR(instance, &create_info, pAllocator, pSurface));
-    LOGASSERT(VK_NULL_HANDLE != (*pSurface));
-}
 
 /*************************************************************************************************/
 /**
@@ -510,8 +462,13 @@ static void CheckHresult(HRESULT hr, const char* expression, const char* file, i
         DWORD length;
 
         system_message[0] = '\0';
-        length =
-            FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, (DWORD)hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), system_message, (DWORD)sizeof(system_message), NULL);
+        length            = FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                           NULL,
+                                           (DWORD)hr,
+                                           MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                           system_message,
+                                           (DWORD)sizeof(system_message),
+                                           NULL);
         while (0 != length && ('\r' == system_message[length - 1] || '\n' == system_message[length - 1]))
         {
             system_message[--length] = '\0';
@@ -536,7 +493,11 @@ static void CheckHresult(HRESULT hr, const char* expression, const char* file, i
  * \par Details:
  *  None
  */
-static void __stdcall MessageCallbackD3D12(D3D12_MESSAGE_CATEGORY category, D3D12_MESSAGE_SEVERITY severity, D3D12_MESSAGE_ID id, const char* description, void* context)
+static void __stdcall MessageCallbackD3D12(D3D12_MESSAGE_CATEGORY category,
+                                           D3D12_MESSAGE_SEVERITY severity,
+                                           D3D12_MESSAGE_ID       id,
+                                           const char*            description,
+                                           void*                  context)
 {
     (void)context;
     LOGSTART(stderr);
@@ -667,7 +628,10 @@ static uint32_t GetVaapiPixelFormat(Gfx_Surface_PixelFormat_t pixelFormat)
  * \par Details:
  *  None
  */
-static D3D12_RESOURCE_DESC GetTextureDescD3D12(DXGI_FORMAT dxgiFormat, uint32_t width, uint32_t height, D3D12_RESOURCE_FLAGS flags)
+static D3D12_RESOURCE_DESC GetTextureDescD3D12(DXGI_FORMAT          dxgiFormat,
+                                               uint32_t             width,
+                                               uint32_t             height,
+                                               D3D12_RESOURCE_FLAGS flags)
 {
     D3D12_RESOURCE_DESC texture_desc;
 
@@ -715,7 +679,10 @@ static D3D12_RESOURCE_DESC GetTransferBufferDescD3D12(uint64_t size)
  * \par Details:
  *  None
  */
-static uint64_t GetAlignedHeapSizeD3D12(ID3D12Device* d3d12Device, const D3D12_RESOURCE_DESC* resourceDesc, uint64_t minimumSize, uint64_t* heapAlignment)
+static uint64_t GetAlignedHeapSizeD3D12(ID3D12Device*              d3d12Device,
+                                        const D3D12_RESOURCE_DESC* resourceDesc,
+                                        uint64_t                   minimumSize,
+                                        uint64_t*                  heapAlignment)
 {
     D3D12_RESOURCE_ALLOCATION_INFO allocation_info;
     uint64_t                       aligned_heap_size;
@@ -770,40 +737,43 @@ static void SelectVulkanSurfaceInteropD3D12(VkPhysicalDevice                    
                                             D3D12InteropKind_t*                 interopKind,
                                             VkExternalMemoryHandleTypeFlagBits* externalMemoryHandleType)
 {
-    bool_t buffer_dedicated_only;
-    bool_t buffer_import_supported;
-    bool_t heap_dedicated_only;
-    bool_t heap_import_supported;
-    bool_t resource_dedicated_only;
-    bool_t resource_import_supported;
+    VkBool32 buffer_dedicated_only;
+    bool_t   buffer_import_supported;
+    VkBool32 heap_dedicated_only;
+    bool_t   heap_import_supported;
+    VkBool32 resource_dedicated_only;
+    bool_t   resource_import_supported;
 
     LOGASSERT(NULL != interopKind);
     LOGASSERT(NULL != externalMemoryHandleType);
 
-    heap_import_supported = Gfx_Vulkan_GetPhysicalDeviceExternalImageImportSupport(physicalDevice,
-                                                                                   NULL,
-                                                                                   (VkImageCreateFlags)0,
-                                                                                   VK_IMAGE_TYPE_2D,
-                                                                                   format,
-                                                                                   VK_IMAGE_TILING_OPTIMAL,
-                                                                                   usage,
-                                                                                   VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT,
-                                                                                   &heap_dedicated_only);
-    resource_import_supported = Gfx_Vulkan_GetPhysicalDeviceExternalImageImportSupport(physicalDevice,
-                                                                                       NULL,
-                                                                                       (VkImageCreateFlags)0,
-                                                                                       VK_IMAGE_TYPE_2D,
-                                                                                       format,
-                                                                                       VK_IMAGE_TILING_OPTIMAL,
-                                                                                       usage,
-                                                                                       VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT,
-                                                                                       &resource_dedicated_only);
-    buffer_import_supported = Gfx_Vulkan_GetPhysicalDeviceExternalBufferImportSupport(physicalDevice,
-                                                                                      NULL,
-                                                                                      (VkBufferCreateFlags)0,
-                                                                                      (VkBufferUsageFlags)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                                                                                      VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT,
-                                                                                      &buffer_dedicated_only);
+    heap_import_supported =
+        (VK_TRUE == cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
+                                                                   VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT,
+                                                                   format,
+                                                                   VK_IMAGE_TYPE_2D,
+                                                                   VK_IMAGE_TILING_OPTIMAL,
+                                                                   usage,
+                                                                   (VkImageCreateFlags)0,
+                                                                   NULL,
+                                                                   &heap_dedicated_only));
+    resource_import_supported =
+        (VK_TRUE == cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
+                                                                   VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT,
+                                                                   format,
+                                                                   VK_IMAGE_TYPE_2D,
+                                                                   VK_IMAGE_TILING_OPTIMAL,
+                                                                   usage,
+                                                                   (VkImageCreateFlags)0,
+                                                                   NULL,
+                                                                   &resource_dedicated_only));
+    buffer_import_supported = (VK_TRUE == cvkGetPhysicalDeviceExternalBufferImportSupport(
+                                              physicalDevice,
+                                              NULL,
+                                              (VkBufferCreateFlags)0,
+                                              (VkBufferUsageFlags)VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                              VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT,
+                                              &buffer_dedicated_only));
 
     if (heap_import_supported && (!heap_dedicated_only))
     {
@@ -888,14 +858,21 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
     if (SUCCEEDED(ID3D12Device_QueryInterface((*d3d12Device), &IID_ID3D12InfoQueue1, (void**)&info_queue)))
     {
         LOGASSERT(NULL != info_queue);
-        HRCHECK(ID3D12InfoQueue1_RegisterMessageCallback(info_queue, MessageCallbackD3D12, D3D12_MESSAGE_CALLBACK_IGNORE_FILTERS, NULL, &callback_cookie));
+        HRCHECK(ID3D12InfoQueue1_RegisterMessageCallback(info_queue,
+                                                         MessageCallbackD3D12,
+                                                         D3D12_MESSAGE_CALLBACK_IGNORE_FILTERS,
+                                                         NULL,
+                                                         &callback_cookie));
         ID3D12InfoQueue1_Release(info_queue);
     }
 
     format_support.Format   = dxgiFormat;
     format_support.Support1 = D3D12_FORMAT_SUPPORT1_NONE;
     format_support.Support2 = D3D12_FORMAT_SUPPORT2_NONE;
-    HRCHECK(ID3D12Device_CheckFeatureSupport((*d3d12Device), D3D12_FEATURE_FORMAT_SUPPORT, &format_support, sizeof(format_support)));
+    HRCHECK(ID3D12Device_CheckFeatureSupport((*d3d12Device),
+                                             D3D12_FEATURE_FORMAT_SUPPORT,
+                                             &format_support,
+                                             sizeof(format_support)));
     LOGASSERT(format_support.Support1 & D3D12_FORMAT_SUPPORT1_TEXTURE2D);
 
     image_usage = (VkImageUsageFlags)VK_IMAGE_USAGE_TRANSFER_DST_BIT;
@@ -923,34 +900,41 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
 
         if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT == (*sharedImageHandleType))
         {
-            VkExtent3D           extent;
-            uint64_t             size_in_bytes;
-            uint64_t             heap_alignment;
-            D3D12_HEAP_DESC      shared_heap_desc;
-            VkMemoryRequirements requirements;
+            VkExtent3D                      extent;
+            uint64_t                        size_in_bytes;
+            uint64_t                        heap_alignment;
+            D3D12_HEAP_DESC                 shared_heap_desc;
+            VkExternalMemoryImageCreateInfo external_info;
+            VkImageCreateInfo               image_info;
+            VkMemoryRequirements2           requirements;
 
             extent.width  = width;
             extent.height = height;
             extent.depth  = 1;
-            Gfx_Vulkan_GetExternalImageMemoryRequirements(device,
-                                                          NULL,
-                                                          VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT,
-                                                          (VkImageCreateFlags)0,
-                                                          VK_IMAGE_TYPE_2D,
-                                                          vkFormat,
-                                                          extent,
-                                                          1,
-                                                          1,
-                                                          VK_SAMPLE_COUNT_1_BIT,
-                                                          VK_IMAGE_TILING_OPTIMAL,
-                                                          image_usage,
-                                                          VK_SHARING_MODE_EXCLUSIVE,
-                                                          0,
-                                                          NULL,
-                                                          VK_IMAGE_LAYOUT_UNDEFINED,
-                                                          VK_IMAGE_ASPECT_NONE,
-                                                          &requirements);
-            size_in_bytes = GetAlignedHeapSizeD3D12((*d3d12Device), &texture_desc, requirements.size, &heap_alignment);
+            cvkInitExternalMemoryImageCreateInfo(
+                &external_info,
+                NULL,
+                (VkExternalMemoryHandleTypeFlags)VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT);
+            cvkInitImageCreateInfo(&image_info,
+                                   &external_info,
+                                   (VkImageCreateFlags)0,
+                                   VK_IMAGE_TYPE_2D,
+                                   vkFormat,
+                                   extent,
+                                   1,
+                                   1,
+                                   VK_SAMPLE_COUNT_1_BIT,
+                                   VK_IMAGE_TILING_OPTIMAL,
+                                   image_usage,
+                                   VK_SHARING_MODE_EXCLUSIVE,
+                                   0,
+                                   NULL,
+                                   VK_IMAGE_LAYOUT_UNDEFINED);
+            cvkGetDeviceImageMemoryRequirements(device, NULL, &image_info, VK_IMAGE_ASPECT_NONE, NULL, &requirements);
+            size_in_bytes = GetAlignedHeapSizeD3D12((*d3d12Device),
+                                                    &texture_desc,
+                                                    requirements.memoryRequirements.size,
+                                                    &heap_alignment);
 
             shared_heap_desc.SizeInBytes = size_in_bytes;
             shared_heap_desc.Properties  = c_d3d12DefaultHeapProps;
@@ -959,9 +943,21 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
 
             HRCHECK(ID3D12Device_CreateHeap((*d3d12Device), &shared_heap_desc, &IID_ID3D12Heap, (void**)d3d12Heap));
             LOGASSERT(NULL != (*d3d12Heap));
-            HRCHECK(ID3D12Device_CreatePlacedResource((*d3d12Device), (*d3d12Heap), 0, &texture_desc, D3D12_RESOURCE_STATE_COMMON, NULL, &IID_ID3D12Resource, (void**)d3d12Resource));
+            HRCHECK(ID3D12Device_CreatePlacedResource((*d3d12Device),
+                                                      (*d3d12Heap),
+                                                      0,
+                                                      &texture_desc,
+                                                      D3D12_RESOURCE_STATE_COMMON,
+                                                      NULL,
+                                                      &IID_ID3D12Resource,
+                                                      (void**)d3d12Resource));
             LOGASSERT(NULL != (*d3d12Resource));
-            HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12Heap), NULL, GENERIC_ALL, NULL, sharedImageHandle));
+            HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                    (ID3D12DeviceChild*)(*d3d12Heap),
+                                                    NULL,
+                                                    GENERIC_ALL,
+                                                    NULL,
+                                                    sharedImageHandle));
             LOGASSERT(NULL != (*sharedImageHandle));
 
             (*sharedImageAllocationSize) = size_in_bytes;
@@ -983,9 +979,19 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
                                                          &IID_ID3D12Resource,
                                                          (void**)d3d12Resource));
             LOGASSERT(NULL != (*d3d12Resource));
-            HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12Resource), NULL, GENERIC_ALL, NULL, sharedHandle));
+            HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                    (ID3D12DeviceChild*)(*d3d12Resource),
+                                                    NULL,
+                                                    GENERIC_ALL,
+                                                    NULL,
+                                                    sharedHandle));
             LOGASSERT(NULL != (*sharedHandle));
-            HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12Resource), NULL, GENERIC_ALL, NULL, sharedImageHandle));
+            HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                    (ID3D12DeviceChild*)(*d3d12Resource),
+                                                    NULL,
+                                                    GENERIC_ALL,
+                                                    NULL,
+                                                    sharedImageHandle));
             LOGASSERT(NULL != (*sharedImageHandle));
 
             LOGSTART(stdout);
@@ -996,9 +1002,21 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
     }
     case D3D12_INTEROP_TRANSFER_BUFFER:
     {
-        texture_desc = GetTextureDescD3D12(dxgiFormat, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS);
+        texture_desc = GetTextureDescD3D12(dxgiFormat,
+                                           width,
+                                           height,
+                                           D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET |
+                                               D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS);
 
-        ID3D12Device_GetCopyableFootprints((*d3d12Device), &texture_desc, 0, (UINT)COUNT_OF(row_counts), 0, copyFootprints, row_counts, row_sizes, transferBufferSize);
+        ID3D12Device_GetCopyableFootprints((*d3d12Device),
+                                           &texture_desc,
+                                           0,
+                                           (UINT)COUNT_OF(row_counts),
+                                           0,
+                                           copyFootprints,
+                                           row_counts,
+                                           row_sizes,
+                                           transferBufferSize);
 
         HRCHECK(ID3D12Device_CreateCommittedResource((*d3d12Device),
                                                      &c_d3d12DefaultHeapProps,
@@ -1022,22 +1040,50 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
                                                      (void**)d3d12TransferBuffer));
         LOGASSERT(NULL != (*d3d12TransferBuffer));
 
-        HRCHECK(ID3D12Device_CreateCommandQueue((*d3d12Device), &c_d3d12CopyQueueDesc, &IID_ID3D12CommandQueue, (void**)d3d12CopyQueue));
+        HRCHECK(ID3D12Device_CreateCommandQueue((*d3d12Device),
+                                                &c_d3d12CopyQueueDesc,
+                                                &IID_ID3D12CommandQueue,
+                                                (void**)d3d12CopyQueue));
         LOGASSERT(NULL != (*d3d12CopyQueue));
-        HRCHECK(ID3D12Device_CreateCommandAllocator((*d3d12Device), D3D12_COMMAND_LIST_TYPE_COPY, &IID_ID3D12CommandAllocator, (void**)d3d12CopyAllocator));
+        HRCHECK(ID3D12Device_CreateCommandAllocator((*d3d12Device),
+                                                    D3D12_COMMAND_LIST_TYPE_COPY,
+                                                    &IID_ID3D12CommandAllocator,
+                                                    (void**)d3d12CopyAllocator));
         LOGASSERT(NULL != (*d3d12CopyAllocator));
-        HRCHECK(ID3D12Device_CreateCommandList((*d3d12Device), 0, D3D12_COMMAND_LIST_TYPE_COPY, (*d3d12CopyAllocator), NULL, &IID_ID3D12GraphicsCommandList, (void**)d3d12CopyList));
+        HRCHECK(ID3D12Device_CreateCommandList((*d3d12Device),
+                                               0,
+                                               D3D12_COMMAND_LIST_TYPE_COPY,
+                                               (*d3d12CopyAllocator),
+                                               NULL,
+                                               &IID_ID3D12GraphicsCommandList,
+                                               (void**)d3d12CopyList));
         LOGASSERT(NULL != (*d3d12CopyList));
 
         HRCHECK(ID3D12GraphicsCommandList_Close((*d3d12CopyList)));
 
-        HRCHECK(ID3D12Device_CreateFence((*d3d12Device), 0, D3D12_FENCE_FLAG_SHARED, &IID_ID3D12Fence, (void**)d3d12Fence));
+        HRCHECK(
+            ID3D12Device_CreateFence((*d3d12Device), 0, D3D12_FENCE_FLAG_SHARED, &IID_ID3D12Fence, (void**)d3d12Fence));
         LOGASSERT(NULL != (*d3d12Fence));
-        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12Resource), NULL, GENERIC_ALL, NULL, sharedHandle));
+        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                (ID3D12DeviceChild*)(*d3d12Resource),
+                                                NULL,
+                                                GENERIC_ALL,
+                                                NULL,
+                                                sharedHandle));
         LOGASSERT(NULL != (*sharedHandle));
-        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12TransferBuffer), NULL, GENERIC_ALL, NULL, sharedTransferBufferHandle));
+        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                (ID3D12DeviceChild*)(*d3d12TransferBuffer),
+                                                NULL,
+                                                GENERIC_ALL,
+                                                NULL,
+                                                sharedTransferBufferHandle));
         LOGASSERT(NULL != (*sharedTransferBufferHandle));
-        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12Fence), NULL, GENERIC_ALL, NULL, sharedFenceHandle));
+        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                (ID3D12DeviceChild*)(*d3d12Fence),
+                                                NULL,
+                                                GENERIC_ALL,
+                                                NULL,
+                                                sharedFenceHandle));
         LOGASSERT(NULL != (*sharedFenceHandle));
 
         (*fenceEvent) = CreateEventA(NULL, FALSE, FALSE, NULL);
@@ -1050,9 +1096,21 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
     }
     case D3D12_INTEROP_HOST_BUFFER:
     {
-        texture_desc = GetTextureDescD3D12(dxgiFormat, width, height, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS);
+        texture_desc = GetTextureDescD3D12(dxgiFormat,
+                                           width,
+                                           height,
+                                           D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET |
+                                               D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS);
 
-        ID3D12Device_GetCopyableFootprints((*d3d12Device), &texture_desc, 0, (UINT)COUNT_OF(row_counts), 0, copyFootprints, row_counts, row_sizes, transferBufferSize);
+        ID3D12Device_GetCopyableFootprints((*d3d12Device),
+                                           &texture_desc,
+                                           0,
+                                           (UINT)COUNT_OF(row_counts),
+                                           0,
+                                           copyFootprints,
+                                           row_counts,
+                                           row_sizes,
+                                           transferBufferSize);
 
         transfer_buffer_desc = GetTransferBufferDescD3D12((*transferBufferSize));
 
@@ -1074,18 +1132,36 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
                                                      &IID_ID3D12Resource,
                                                      (void**)d3d12TransferBuffer));
         LOGASSERT(NULL != (*d3d12TransferBuffer));
-        HRCHECK(ID3D12Device_CreateCommandQueue((*d3d12Device), &c_d3d12CopyQueueDesc, &IID_ID3D12CommandQueue, (void**)d3d12CopyQueue));
+        HRCHECK(ID3D12Device_CreateCommandQueue((*d3d12Device),
+                                                &c_d3d12CopyQueueDesc,
+                                                &IID_ID3D12CommandQueue,
+                                                (void**)d3d12CopyQueue));
         LOGASSERT(NULL != (*d3d12CopyQueue));
-        HRCHECK(ID3D12Device_CreateCommandAllocator((*d3d12Device), D3D12_COMMAND_LIST_TYPE_COPY, &IID_ID3D12CommandAllocator, (void**)d3d12CopyAllocator));
+        HRCHECK(ID3D12Device_CreateCommandAllocator((*d3d12Device),
+                                                    D3D12_COMMAND_LIST_TYPE_COPY,
+                                                    &IID_ID3D12CommandAllocator,
+                                                    (void**)d3d12CopyAllocator));
         LOGASSERT(NULL != (*d3d12CopyAllocator));
-        HRCHECK(ID3D12Device_CreateCommandList((*d3d12Device), 0, D3D12_COMMAND_LIST_TYPE_COPY, (*d3d12CopyAllocator), NULL, &IID_ID3D12GraphicsCommandList, (void**)d3d12CopyList));
+        HRCHECK(ID3D12Device_CreateCommandList((*d3d12Device),
+                                               0,
+                                               D3D12_COMMAND_LIST_TYPE_COPY,
+                                               (*d3d12CopyAllocator),
+                                               NULL,
+                                               &IID_ID3D12GraphicsCommandList,
+                                               (void**)d3d12CopyList));
         LOGASSERT(NULL != (*d3d12CopyList));
 
         HRCHECK(ID3D12GraphicsCommandList_Close((*d3d12CopyList)));
 
-        HRCHECK(ID3D12Device_CreateFence((*d3d12Device), 0, D3D12_FENCE_FLAG_NONE, &IID_ID3D12Fence, (void**)d3d12Fence));
+        HRCHECK(
+            ID3D12Device_CreateFence((*d3d12Device), 0, D3D12_FENCE_FLAG_NONE, &IID_ID3D12Fence, (void**)d3d12Fence));
         LOGASSERT(NULL != (*d3d12Fence));
-        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device), (ID3D12DeviceChild*)(*d3d12Resource), NULL, GENERIC_ALL, NULL, sharedHandle));
+        HRCHECK(ID3D12Device_CreateSharedHandle((*d3d12Device),
+                                                (ID3D12DeviceChild*)(*d3d12Resource),
+                                                NULL,
+                                                GENERIC_ALL,
+                                                NULL,
+                                                sharedHandle));
         LOGASSERT(NULL != (*sharedHandle));
         HRCHECK(ID3D12Resource_Map((*d3d12TransferBuffer), 0, NULL, d3d12TransferBytes));
         LOGASSERT(NULL != (*d3d12TransferBytes));
@@ -1166,9 +1242,12 @@ static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* createInfo)
         LOGASSERT(0 == createInfo->height);
         return;
     }
-    LOGASSERT((GFX_SURFACE_PIXELFORMAT_YUV420P == createInfo->pixelFormat) || (GFX_SURFACE_PIXELFORMAT_NV12 == createInfo->pixelFormat) || (GFX_SURFACE_PIXELFORMAT_RGBA8 == createInfo->pixelFormat) ||
+    LOGASSERT((GFX_SURFACE_PIXELFORMAT_YUV420P == createInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_NV12 == createInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_RGBA8 == createInfo->pixelFormat) ||
               (GFX_SURFACE_PIXELFORMAT_BGRA8 == createInfo->pixelFormat));
-    LOGASSERT((GFX_SURFACE_PIXELFORMAT_RGBA8 == createInfo->pixelFormat) || (GFX_SURFACE_PIXELFORMAT_BGRA8 == createInfo->pixelFormat) ||
+    LOGASSERT((GFX_SURFACE_PIXELFORMAT_RGBA8 == createInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_BGRA8 == createInfo->pixelFormat) ||
               ((0 == (createInfo->width & 1u)) && (0 == (createInfo->height & 1u))));
     LOGASSERT(NULL == createInfo->pDisplay);
     LOGASSERT((0 != createInfo->width) && (0 != createInfo->height));
@@ -1184,13 +1263,13 @@ static void CreateWindowedPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
 {
     VkSurfaceKHR vk_surface;
 
-    CreateSurfaceWin32(createInfo->instance,
-                       NULL,
-                       (VkWin32SurfaceCreateFlagsKHR)0,
-                       (HINSTANCE)createInfo->pDisplay->nativeDisplay,
-                       (HWND)createInfo->pDisplay->nativeWindow,
-                       createInfo->pAllocator,
-                       &vk_surface);
+    cvkCreateWin32Surface(createInfo->instance,
+                          NULL,
+                          (VkWin32SurfaceCreateFlagsKHR)0,
+                          (HINSTANCE)createInfo->pDisplay->nativeDisplay,
+                          (HWND)createInfo->pDisplay->nativeWindow,
+                          createInfo->pAllocator,
+                          &vk_surface);
 
     surface->kind                = createInfo->kind;
     surface->va.dpy              = NULL;
@@ -1205,46 +1284,6 @@ static void CreateWindowedPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
     surface->vk.pAllocator       = createInfo->pAllocator;
     surface->width               = createInfo->pDisplay->width;
     surface->height              = createInfo->pDisplay->height;
-    surface->target.readImage    = NULL;
-    surface->target.writeImage   = NULL;
-    surface->acquiredImage       = NULL;
-    surface->platform            = NULL;
-    surface->vk.completionFence  = VK_NULL_HANDLE;
-    surface->writePending        = FALSE;
-    surface->readPending         = FALSE;
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateDirectPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo)
-{
-    VkExtent2D   image_extent;
-    VkSurfaceKHR vk_surface;
-
-    Gfx_Vulkan_CreateDirectDisplaySurface(createInfo->physicalDevice,
-                                          createInfo->instance,
-                                          createInfo->directDisplayIndex,
-                                          createInfo->directDisplayModeIndex,
-                                          createInfo->pAllocator,
-                                          &image_extent,
-                                          &vk_surface);
-
-    surface->kind                = createInfo->kind;
-    surface->va.dpy              = NULL;
-    surface->va.format           = 0;
-    surface->va.pixelFormat      = 0;
-    surface->vk.physicalDevice   = createInfo->physicalDevice;
-    surface->vk.device           = createInfo->device;
-    surface->vk.queue            = createInfo->queue;
-    surface->vk.surface          = vk_surface;
-    surface->vk.queueFamilyIndex = createInfo->queueFamilyIndex;
-    surface->vk.format           = VK_FORMAT_UNDEFINED;
-    surface->vk.pAllocator       = createInfo->pAllocator;
-    surface->width               = image_extent.width;
-    surface->height              = image_extent.height;
     surface->target.readImage    = NULL;
     surface->target.writeImage   = NULL;
     surface->acquiredImage       = NULL;
@@ -1263,7 +1302,11 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
 {
     VkSurfaceKHR vk_surface;
 
-    Gfx_Vulkan_CreateHeadlessSurface(createInfo->instance, NULL, (VkHeadlessSurfaceCreateFlagsEXT)0, createInfo->pAllocator, &vk_surface);
+    cvkCreateHeadlessSurface(createInfo->instance,
+                             NULL,
+                             (VkHeadlessSurfaceCreateFlagsEXT)0,
+                             createInfo->pAllocator,
+                             &vk_surface);
 
     surface->kind                = createInfo->kind;
     surface->va.dpy              = NULL;
@@ -1292,8 +1335,13 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
  * \par Details:
  *  None
  */
-static void CreatePresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo)
+static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo)
 {
+    Gfx_Surface_t* surface;
+
+    LOGASSERT(NULL != storage);
+    surface = &storage->surface;
+
     switch (createInfo->pDisplay->kind)
     {
     case GFX_DISPLAY_KIND_WINDOWED:
@@ -1301,7 +1349,7 @@ static void CreatePresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
         break;
 
     case GFX_DISPLAY_KIND_DIRECT:
-        CreateDirectPresentSurface(surface, createInfo);
+        Gfx_Surface_InitializeDirect(storage, createInfo);
         break;
 
     case GFX_DISPLAY_KIND_HEADLESS:
@@ -1324,7 +1372,7 @@ static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
     Gfx_Image_CreateInfo_t          va_image_create_info;
     Gfx_Image_CreateInfo_t          vk_image_create_info;
     Gfx_Image_Platform_CreateInfo_t platform_create_info;
-    VkBool32                        luid_supported;
+    VkPhysicalDeviceIDProperties    device_identity;
     LUID                            vk_device_luid;
     DXGI_FORMAT                     dxgi_format;
     uint32_t                        va_format;
@@ -1333,10 +1381,11 @@ static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
     Gfx_Image_t*                    read_image;
     Gfx_Image_t*                    write_image;
 
-    shared_surface = (D3D12SharedSurface_t*)OS_CALLOC(sizeof(D3D12SharedSurface_t));
+    cvkGetPhysicalDeviceIDProperties(createInfo->physicalDevice, NULL, &device_identity);
+    LOGASSERT(VK_TRUE == device_identity.deviceLUIDValid);
+    CRT_Memory_Copy(&vk_device_luid, device_identity.deviceLUID, VK_LUID_SIZE);
 
-    luid_supported = Gfx_Vulkan_GetPhysicalDeviceLuid(createInfo->physicalDevice, (uint8_t*)&vk_device_luid);
-    LOGASSERT(VK_TRUE == luid_supported);
+    shared_surface = (D3D12SharedSurface_t*)OS_CALLOC(sizeof(D3D12SharedSurface_t));
 
     dxgi_format     = GetDxgiFormat(createInfo->pixelFormat);
     va_format       = GetVaapiFormat(createInfo->pixelFormat);
@@ -1464,14 +1513,19 @@ static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
  * \par Details:
  *  None
  */
-static void CreateSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo)
+static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo)
 {
+    Gfx_Surface_t* surface;
+
+    LOGASSERT(NULL != storage);
+    surface = &storage->surface;
+
     ValidateCreateInfo(createInfo);
 
     switch (createInfo->kind)
     {
     case GFX_SURFACE_KIND_PRESENT:
-        CreatePresentSurface(surface, createInfo);
+        CreatePresentSurface(storage, createInfo);
         break;
 
     case GFX_SURFACE_KIND_STORAGE:
@@ -1503,19 +1557,21 @@ static void AcquireSurface(Gfx_Surface_t* surface)
         {
         case D3D12_INTEROP_IMAGE:
         {
-            Gfx_Vulkan_WaitForFence(surface->vk.device, surface->vk.completionFence, VK_INFINITE);
+            CVK_CHECK(cvkWaitForFence(surface->vk.device, surface->vk.completionFence, VK_TRUE, UINT64_MAX));
 
             surface->target.writeImage->uploadPending = FALSE;
             break;
         }
         case D3D12_INTEROP_HOST_BUFFER:
         {
-            Gfx_Vulkan_WaitForFence(surface->vk.device, surface->vk.completionFence, VK_INFINITE);
+            CVK_CHECK(cvkWaitForFence(surface->vk.device, surface->vk.completionFence, VK_TRUE, UINT64_MAX));
 
             LOGASSERT(NULL != shared_surface->vkTransferBytes);
             LOGASSERT(NULL != shared_surface->d3d12TransferBytes);
 
-            (void)memcpy(shared_surface->d3d12TransferBytes, shared_surface->vkTransferBytes, (size_t)shared_surface->transferBufferSize);
+            (void)memcpy(shared_surface->d3d12TransferBytes,
+                         shared_surface->vkTransferBytes,
+                         (size_t)shared_surface->transferBufferSize);
 
             surface->target.writeImage->vk.externalSemaphoreValue += 1;
 
@@ -1542,7 +1598,9 @@ static void AcquireSurface(Gfx_Surface_t* surface)
     {
         bool_t signaled;
 
-        HRCHECK(ID3D12Fence_SetEventOnCompletion(shared_surface->d3d12Fence, shared_surface->copyFenceValue, shared_surface->fenceEvent));
+        HRCHECK(ID3D12Fence_SetEventOnCompletion(shared_surface->d3d12Fence,
+                                                 shared_surface->copyFenceValue,
+                                                 shared_surface->fenceEvent));
         signaled = (WAIT_OBJECT_0 == WaitForSingleObject(shared_surface->fenceEvent, INFINITE));
         LOGASSERT(signaled);
 
@@ -1574,7 +1632,9 @@ static void ReleaseSurface(Gfx_Surface_t* surface)
         {
             LOGASSERT(0 != surface->target.writeImage->vk.externalSemaphoreValue);
 
-            HRCHECK(ID3D12CommandQueue_Wait(shared_surface->d3d12CopyQueue, shared_surface->d3d12Fence, surface->target.writeImage->vk.externalSemaphoreValue));
+            HRCHECK(ID3D12CommandQueue_Wait(shared_surface->d3d12CopyQueue,
+                                            shared_surface->d3d12Fence,
+                                            surface->target.writeImage->vk.externalSemaphoreValue));
 
             surface->target.writeImage->vk.externalSemaphoreValue += 1;
 
@@ -1613,11 +1673,14 @@ static void ReleaseSurface(Gfx_Surface_t* surface)
  */
 void Gfx_Surface_Create(Gfx_Surface_t** surface, const Gfx_Surface_CreateInfo_t* createInfo)
 {
+    Gfx_Surface_Storage_t* storage;
+
     LOGASSERT(NULL != surface);
     LOGASSERT(NULL != createInfo);
 
-    (*surface) = (Gfx_Surface_t*)OS_CALLOC(sizeof(Gfx_Surface_t));
-    CreateSurface((*surface), createInfo);
+    storage = (Gfx_Surface_Storage_t*)OS_CALLOC(sizeof(Gfx_Surface_Storage_t));
+    CreateSurface(storage, createInfo);
+    (*surface) = &storage->surface;
 }
 
 /*************************************************************************************************/

@@ -6,8 +6,9 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-
 #include "gfx/gfx_adapter.h"
+#include "cdx12.h"
+#include "cdxgi.h"
 
 #include "os/os_assert.h"
 #include "os/os_malloc.h"
@@ -30,8 +31,16 @@
 
 #define ADAPTER_NAME_CAPACITY      (256u)  ///< UTF-8 adapter-name capacity including the terminator.
 #define DXGI_MESSAGE_BYTE_CAPACITY (4096u) ///< Stack capacity for one serialized DXGI debug message.
-#define DXGICHECK(expression)          (CheckDxgiResult((expression), #expression, __FILE__, __LINE__)) ///< Makes a failed DXGI operation fatal at its call site.
-#define HRCHECK(expression)           (CheckHresult((expression), #expression, __FILE__, __LINE__))    ///< Checks D3D12 and diagnostic calls without draining the DXGI queue.
+#define DXGICHECK(expression)                                                                                          \
+    (CheckDxgiResult((expression),                                                                                     \
+                     #expression,                                                                                      \
+                     __FILE__,                                                                                         \
+                     __LINE__)) ///< Makes a failed DXGI operation fatal at its call site.
+#define HRCHECK(expression)                                                                                            \
+    (CheckHresult((expression),                                                                                        \
+                  #expression,                                                                                         \
+                  __FILE__,                                                                                            \
+                  __LINE__)) ///< Checks D3D12 and diagnostic calls without draining the DXGI queue.
 
 /*=================================================================================================
 ** 3.2 Types
@@ -43,7 +52,7 @@
  */
 typedef union DxgiMessageStorage_u
 {
-    uint64_t alignment;                             ///< Forces alignment suitable for DXGI_INFO_QUEUE_MESSAGE.
+    uint64_t alignment;                         ///< Forces alignment suitable for DXGI_INFO_QUEUE_MESSAGE.
     byte_t   bytes[DXGI_MESSAGE_BYTE_CAPACITY]; ///< Serialized message storage.
 } DxgiMessageStorage_t;
 
@@ -76,7 +85,7 @@ static IDXGIInfoQueue* g_dxgi_info_queue        = NULL;
 /**
  * \brief Enables the D3D12 debug layer and all DRED diagnostics.
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void EnableD3d12DebugLogging(void);
 
@@ -94,7 +103,7 @@ static const char* GetDxgiMessageSeverityName(DXGI_INFO_QUEUE_MESSAGE_SEVERITY s
 /**
  * \brief Serializes, prints, and clears every queued DXGI diagnostic.
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ReportDxgiMessages(void);
 
@@ -102,7 +111,7 @@ static void ReportDxgiMessages(void);
 /**
  * \brief Initializes the process DXGI diagnostic queue.
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void InitializeDxgiDebug(void);
 
@@ -123,7 +132,7 @@ static UINT GetDxgiFactoryFlags(void);
  * \param[in] pFile              Source file reported to Os_LogFatal
  * \param[in] line               Source line reported to Os_LogFatal
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CheckDxgiResult(HRESULT hr, const char* pExpression, const char* pFile, int line);
 
@@ -136,7 +145,7 @@ static void CheckDxgiResult(HRESULT hr, const char* pExpression, const char* pFi
  * \param[in] pFile              Source file reported to Os_LogFatal
  * \param[in] line               Source line reported to Os_LogFatal
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CheckHresult(HRESULT hr, const char* pExpression, const char* pFile, int line);
 
@@ -155,16 +164,21 @@ static void EnableD3d12DebugLogging(void)
     ID3D12DeviceRemovedExtendedDataSettings1* dred_settings;
 
     debug = NULL;
-    HRCHECK(D3D12GetDebugInterface(&IID_ID3D12Debug, (void**)&debug));
-    ID3D12Debug_EnableDebugLayer(debug);
-    ID3D12Debug_Release(debug);
+    HRCHECK(cdx12GetDebugInterfaceAsDebug(&debug));
+    cdx12DebugEnableDebugLayer(debug);
+    (void)cdx12UnknownRelease((IUnknown*)debug);
 
     dred_settings = NULL;
-    HRCHECK(D3D12GetDebugInterface(&IID_ID3D12DeviceRemovedExtendedDataSettings1, (void**)&dred_settings));
-    ID3D12DeviceRemovedExtendedDataSettings1_SetAutoBreadcrumbsEnablement(dred_settings, D3D12_DRED_ENABLEMENT_FORCED_ON);
-    ID3D12DeviceRemovedExtendedDataSettings1_SetPageFaultEnablement(dred_settings, D3D12_DRED_ENABLEMENT_FORCED_ON);
-    ID3D12DeviceRemovedExtendedDataSettings1_SetBreadcrumbContextEnablement(dred_settings, D3D12_DRED_ENABLEMENT_FORCED_ON);
-    ID3D12DeviceRemovedExtendedDataSettings1_Release(dred_settings);
+    HRCHECK(cdx12GetDebugInterfaceAsDeviceRemovedExtendedDataSettings1(&dred_settings));
+    cdx12DeviceRemovedExtendedDataSettingsSetAutoBreadcrumbsEnablement(
+        (ID3D12DeviceRemovedExtendedDataSettings*)dred_settings,
+        D3D12_DRED_ENABLEMENT_FORCED_ON);
+    cdx12DeviceRemovedExtendedDataSettingsSetPageFaultEnablement(
+        (ID3D12DeviceRemovedExtendedDataSettings*)dred_settings,
+        D3D12_DRED_ENABLEMENT_FORCED_ON);
+    cdx12DeviceRemovedExtendedDataSettingsSetBreadcrumbContextEnablement(dred_settings,
+                                                                         D3D12_DRED_ENABLEMENT_FORCED_ON);
+    (void)cdx12UnknownRelease((IUnknown*)dred_settings);
 }
 
 /*************************************************************************************************/
@@ -206,18 +220,18 @@ static void ReportDxgiMessages(void)
     {
         return;
     }
-    message_count = IDXGIInfoQueue_GetNumStoredMessagesAllowedByRetrievalFilters(g_dxgi_info_queue, DXGI_DEBUG_ALL);
+    message_count = cdxgiInfoQueueGetNumStoredMessagesAllowedByRetrievalFilters(g_dxgi_info_queue, DXGI_DEBUG_ALL);
     for (message_index = 0; message_index < message_count; ++message_index)
     {
         DXGI_INFO_QUEUE_MESSAGE* message;
         size_t                   message_size;
 
         message_size = sizeof(message_storage.bytes);
-        HRCHECK(IDXGIInfoQueue_GetMessage(g_dxgi_info_queue, DXGI_DEBUG_ALL, message_index, NULL, &message_size));
+        HRCHECK(cdxgiInfoQueueGetMessage(g_dxgi_info_queue, DXGI_DEBUG_ALL, message_index, NULL, &message_size));
         LOGASSERT(sizeof(message_storage.bytes) >= message_size);
 
         message = (DXGI_INFO_QUEUE_MESSAGE*)message_storage.bytes;
-        HRCHECK(IDXGIInfoQueue_GetMessage(g_dxgi_info_queue, DXGI_DEBUG_ALL, message_index, message, &message_size));
+        HRCHECK(cdxgiInfoQueueGetMessage(g_dxgi_info_queue, DXGI_DEBUG_ALL, message_index, message, &message_size));
         LOGSTART(stderr);
         LOGPRINTS("DXGI ");
         LOGPRINTS(GetDxgiMessageSeverityName(message->Severity));
@@ -230,7 +244,7 @@ static void ReportDxgiMessages(void)
         LOGPRINTS("\n");
         LOGEND();
     }
-    IDXGIInfoQueue_ClearStoredMessages(g_dxgi_info_queue, DXGI_DEBUG_ALL);
+    cdxgiInfoQueueClearStoredMessages(g_dxgi_info_queue, DXGI_DEBUG_ALL);
 }
 
 /*************************************************************************************************/
@@ -242,8 +256,8 @@ static void InitializeDxgiDebug(void)
 {
     if (FALSE == g_dxgi_debug_initialized)
     {
-        HRCHECK(DXGIGetDebugInterface1(0, &IID_IDXGIInfoQueue, (void**)&g_dxgi_info_queue));
-        IDXGIInfoQueue_SetMuteDebugOutput(g_dxgi_info_queue, DXGI_DEBUG_ALL, TRUE);
+        HRCHECK(cdxgiGetDebugInterface1AsInfoQueue(0, &g_dxgi_info_queue));
+        cdxgiInfoQueueSetMuteDebugOutput(g_dxgi_info_queue, DXGI_DEBUG_ALL, TRUE);
         g_dxgi_debug_initialized = TRUE;
     }
 }
@@ -322,7 +336,7 @@ void Gfx_Adapter_Enumerate(Gfx_Adapter_t** adapters, size_t adapterCapacity, siz
     EnableD3d12DebugLogging();
     InitializeDxgiDebug();
     factory = NULL;
-    DXGICHECK(CreateDXGIFactory2(GetDxgiFactoryFlags(), &IID_IDXGIFactory6, (void**)&factory));
+    cdxgiCreateFactory2AsFactory6(GetDxgiFactoryFlags(), &factory);
     LOGASSERT(NULL != factory);
 
     (*adapterCount) = 0;
@@ -333,30 +347,40 @@ void Gfx_Adapter_Enumerate(Gfx_Adapter_t** adapters, size_t adapterCapacity, siz
         HRESULT            hr;
 
         adapter = NULL;
-        hr      = IDXGIFactory6_EnumAdapterByGpuPreference(factory, ordinal, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, &IID_IDXGIAdapter1, (void**)&adapter);
+        hr      = cdxgiFactoryEnumAdapterByGpuPreferenceAsAdapter1(factory,
+                                                                   ordinal,
+                                                                   DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+                                                                   &adapter);
         if (DXGI_ERROR_NOT_FOUND == hr)
         {
             break;
         }
         DXGICHECK(hr);
         (void)memset(&description, 0, sizeof(description));
-        DXGICHECK(IDXGIAdapter1_GetDesc1(adapter, &description));
+        cdxgiAdapterGetDesc1(adapter, &description);
         if (0 == (description.Flags & DXGI_ADAPTER_FLAG_SOFTWARE))
         {
             Gfx_Adapter_t* output;
 
             output = (Gfx_Adapter_t*)OS_CALLOC(sizeof((*output)));
             (void)memcpy(&output->id, &description.AdapterLuid, sizeof(description.AdapterLuid));
-            if (0 == WideCharToMultiByte(CP_UTF8, 0, description.Description, -1, output->name, (int)sizeof(output->name), NULL, NULL))
+            if (0 == WideCharToMultiByte(CP_UTF8,
+                                         0,
+                                         description.Description,
+                                         -1,
+                                         output->name,
+                                         (int)sizeof(output->name),
+                                         NULL,
+                                         NULL))
             {
                 (void)strcpy_s(output->name, sizeof(output->name), "<unprintable adapter>");
             }
             adapters[(*adapterCount)] = output;
             ++(*adapterCount);
         }
-        IDXGIAdapter1_Release(adapter);
+        (void)cdxgiUnknownRelease((IUnknown*)adapter);
     }
-    IDXGIFactory6_Release(factory);
+    (void)cdxgiUnknownRelease((IUnknown*)factory);
 }
 
 /*************************************************************************************************/

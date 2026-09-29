@@ -101,42 +101,40 @@
       ]
     },
     "cvkGetInstanceExtensionSupport": {
-      "brief": "Reports whether the instance supports every required extension.",
+      "brief": "Reports whether the instance supports every required extension using caller-owned enumeration workspace.",
       "ret": "VkBool32",
       "steps": [
         {
           "call": "cvkEnumerateInstanceExtensionProperties",
           "local": {
-            "pPropertyCount": "property_count",
-            "pProperties": "properties"
+            "pPropertyCount": "property_count"
           }
         },
         {
           "call": "cvkGetExtensionsSupport",
           "bind": {
             "propertyCount": "property_count",
-            "pProperties": "properties"
+            "pProperties": "pProperties"
           },
           "return": true
         }
       ]
     },
     "cvkGetPhysicalDeviceExtensionSupport": {
-      "brief": "Reports whether a physical device supports every required extension.",
+      "brief": "Reports whether a physical device supports every required extension using caller-owned enumeration workspace.",
       "ret": "VkBool32",
       "steps": [
         {
           "call": "cvkEnumerateDeviceExtensionProperties",
           "local": {
-            "pPropertyCount": "property_count",
-            "pProperties": "properties"
+            "pPropertyCount": "property_count"
           }
         },
         {
           "call": "cvkGetExtensionsSupport",
           "bind": {
             "propertyCount": "property_count",
-            "pProperties": "properties"
+            "pProperties": "pProperties"
           },
           "return": true
         }
@@ -3219,6 +3217,7 @@
         {
           "call": "cvkGetPhysicalDeviceQueueFamilyVideoProperties",
           "local": {
+            "pQueueFamilyProperties": "queue_family_properties",
             "pQueueFamilyVideoProperties": "queue_family_video_properties"
           },
           "into": "queue_family_property_count"

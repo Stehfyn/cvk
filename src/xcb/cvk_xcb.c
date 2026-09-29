@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "xcb/cvk_xcb.h"
+#include "cvk/cvk.h"
+#include "cvk/xcb/cvk_xcb.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_xcb.h>
 
 void cvkInitXcbSurfaceCreateInfo(VkXcbSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXcbSurfaceCreateFlagsKHR flags, xcb_connection_t* connection, xcb_window_t window)
 {

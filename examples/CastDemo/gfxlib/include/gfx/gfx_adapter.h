@@ -48,7 +48,7 @@ typedef struct Gfx_Adapter_t Gfx_Adapter_t;
  * \param[in]  adapterCapacity   Number of pointer slots available in adapters; must be nonzero
  * \param[out] adapterCount      Number of adapter pointers written
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Adapter_Enumerate(Gfx_Adapter_t** adapters, size_t adapterCapacity, size_t* adapterCount);
 

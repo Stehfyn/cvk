@@ -6,7 +6,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#define _POSIX_C_SOURCE          (200809L) ///< Exposes POSIX.1-2008 interfaces used by this translation unit.
+#define _POSIX_C_SOURCE (200809L) ///< Exposes POSIX.1-2008 interfaces used by this translation unit.
 
 #include "gfx/gfx_adapter.h"
 
@@ -86,7 +86,8 @@ static uint64_t PackPciAddress(uint32_t domain, uint32_t bus, uint32_t device, u
     LOGASSERT(UINT8_MAX >= device);
     LOGASSERT(UINT8_MAX >= function);
 
-    return ((uint64_t)domain << PCI_DOMAIN_SHIFT) | ((uint64_t)bus << PCI_BUS_SHIFT) | ((uint64_t)device << PCI_DEVICE_SHIFT) | function;
+    return ((uint64_t)domain << PCI_DOMAIN_SHIFT) | ((uint64_t)bus << PCI_BUS_SHIFT) |
+           ((uint64_t)device << PCI_DEVICE_SHIFT) | function;
 }
 
 /*=================================================================================================
@@ -131,7 +132,8 @@ void Gfx_Adapter_Enumerate(Gfx_Adapter_t** adapters, size_t adapterCapacity, siz
             continue;
         }
         device = NULL;
-        if (0 != drmGetDevice2(fd, 0, &device) || NULL == device || DRM_BUS_PCI != device->bustype || NULL == device->businfo.pci)
+        if (0 != drmGetDevice2(fd, 0, &device) || NULL == device || DRM_BUS_PCI != device->bustype ||
+            NULL == device->businfo.pci)
         {
             if (NULL != device)
             {
@@ -145,7 +147,10 @@ void Gfx_Adapter_Enumerate(Gfx_Adapter_t** adapters, size_t adapterCapacity, siz
 
         adapter = (Gfx_Adapter_t*)OS_CALLOC(sizeof((*adapter)));
         (void)memcpy(adapter->name, render_nodes.gl_pathv[node_index], path_length + 1u);
-        adapter->id               = PackPciAddress(device->businfo.pci->domain, device->businfo.pci->bus, device->businfo.pci->dev, device->businfo.pci->func);
+        adapter->id               = PackPciAddress(device->businfo.pci->domain,
+                                                   device->businfo.pci->bus,
+                                                   device->businfo.pci->dev,
+                                                   device->businfo.pci->func);
         adapters[(*adapterCount)] = adapter;
         ++(*adapterCount);
         drmFreeDevice(&device);

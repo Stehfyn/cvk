@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "metal/cvk_metal.h"
+#include "cvk/cvk.h"
+#include "cvk/metal/cvk_metal.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_metal.h>
 
 void cvkInitExportMetalBufferInfo(VkExportMetalBufferInfoEXT* pInfo, const void* pNext, VkDeviceMemory memory, MTLBuffer_id mtlBuffer)
 {

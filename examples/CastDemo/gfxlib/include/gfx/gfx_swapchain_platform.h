@@ -9,7 +9,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include "gfx/gfx_vulkan.h"
+#include "cvk/cvk.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -49,7 +49,7 @@
  * \param[in] pSignalSemaphoreValues D3D12 fence or timeline values parallel to the signal semaphores
  * \param[in] fence                 Submission completion fence, or VK_NULL_HANDLE
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Swapchain_Platform_QueueSubmit(VkQueue                     queue,
                                         const void*                 pNext,

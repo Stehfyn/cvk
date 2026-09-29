@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "fuchsia/cvk_fuchsia.h"
+#include "cvk/cvk.h"
+#include "cvk/fuchsia/cvk_fuchsia.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_fuchsia.h>
 
 void cvkInitBufferCollectionBufferCreateInfoFUCHSIA(VkBufferCollectionBufferCreateInfoFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
 {

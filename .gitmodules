@@ -13,3 +13,9 @@
 [submodule "external/cdx"]
 	path = external/cdx
 	url = https://github.com/Stehfyn/cdx.git
+[submodule "external/cva"]
+	path = external/cva
+	url = https://github.com/Stehfyn/cva.git
+[submodule "external/libva"]
+	path = external/libva
+	url = https://github.com/intel/libva.git

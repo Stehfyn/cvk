@@ -6,6 +6,8 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "cvk/cvk.h"
+#include "cvk/xlib/cvk_xlib.h"
 #include <X11/Xlib.h>
 #include <string.h>
 
@@ -15,9 +17,8 @@
 #include "gfx/gfx_image.h"
 #include "gfx/gfx_image_platform.h"
 #include "gfx/gfx_surface.h"
+#include "gfx/gfx_surface_internal.h"
 #include <va/va_drmcommon.h>
-#include "gfx/gfx_vulkan.h"
-#include "gfx/gfx_vaapi.h"
 #include "utl/utl_defines.h"
 
 /*=================================================================================================
@@ -50,41 +51,6 @@ typedef struct DMABufSharedSurface_t
 /*=================================================================================================
 ** 3.5 Static function prototypes
 **===============================================================================================*/
-
-/*************************************************************************************************/
-/**
- * \brief Creates a Vulkan presentation surface for the supplied Xlib display and window.
- *
- * \param[in]  instance    Vulkan instance
- * \param[in]  pCreateInfo Surface creation parameters
- * \param[in]  pAllocator  Optional allocation callbacks
- * \param[out] pSurface    Receives the surface
- *
- * \retval    None
- */
-static void CreateSurfaceXlib(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
-
-/*************************************************************************************************/
-/**
- * \brief Creates a persistent Vulkan surface for an existing Xlib window.
- *
- * \param[in]  instance   Vulkan instance with VK_KHR_xlib_surface enabled
- * \param[in]  pNext      Extension chain for VkXlibSurfaceCreateInfoKHR, or NULL
- * \param[in]  flags      Xlib surface creation flags
- * \param[in]  dpy        Open X display connection
- * \param[in]  window     Valid X window on dpy
- * \param[in]  pAllocator Vulkan allocator, or NULL
- * \param[out] pSurface   Receives the created surface handle
- *
- * \retval    None
- */
-static void CreateSurfaceInfoXlib(VkInstance                   instance,
-                                  const void*                  pNext,
-                                  VkXlibSurfaceCreateFlagsKHR  flags,
-                                  Display*                     dpy,
-                                  Window                       window,
-                                  const VkAllocationCallbacks* pAllocator,
-                                  VkSurfaceKHR*                pSurface);
 
 /*************************************************************************************************/
 /**
@@ -122,7 +88,7 @@ static uint32_t GetVaapiPixelFormat(Gfx_Surface_PixelFormat_t pixelFormat);
  *
  * \param[in] pCreateInfo        Non-NULL surface configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -133,20 +99,9 @@ static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* pCreateInfo);
  * \param[out] pSurface       Receives the native surface and window dimensions
  * \param[in]  pCreateInfo    Valid windowed presentation configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateWindowedPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
-
-/*************************************************************************************************/
-/**
- * \brief Creates and initializes a direct-display presentation surface.
- *
- * \param[out] pSurface       Receives the native surface and selected mode dimensions
- * \param[in]  pCreateInfo    Valid direct-display presentation configuration
- *
- * \retval    None
- */
-static void CreateDirectPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
 /*************************************************************************************************/
 /**
@@ -155,7 +110,7 @@ static void CreateDirectPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surfac
  * \param[out] pSurface       Receives the native surface and requested dimensions
  * \param[in]  pCreateInfo    Valid headless presentation configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateHeadlessPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -166,9 +121,9 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
  * \param[out] pSurface        Presentation surface receiving the native VkSurfaceKHR and resolved extent
  * \param[in] pCreateInfo      Validated display and Vulkan instance configuration
  *
- * \retval    None
+ * \retval    None   No result value.
  */
-static void CreatePresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
+static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
 /*************************************************************************************************/
 /**
@@ -177,7 +132,7 @@ static void CreatePresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_Crea
  * \param[out] pSurface        Storage surface receiving VA state, PRIME metadata, and logical images
  * \param[in] pCreateInfo      Storage format, dimensions, and matching VA/Vulkan device contexts
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateStorageSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -188,9 +143,9 @@ static void CreateStorageSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_Crea
  * \param[out] pSurface        Zero-initialized destination
  * \param[in] pCreateInfo      Kind-specific creation request
  *
- * \retval    None
+ * \retval    None   No result value.
  */
-static void CreateSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
+static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
 /*************************************************************************************************/
 /**
@@ -198,7 +153,7 @@ static void CreateSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_
  *
  * \param[in,out] pSurface Storage surface with no active reader
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void AcquireSurface(Gfx_Surface_t* pSurface);
 
@@ -208,59 +163,13 @@ static void AcquireSurface(Gfx_Surface_t* pSurface);
  *
  * \param[in,out] pSurface Storage surface with submitted writes and writePending set
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void ReleaseSurface(Gfx_Surface_t* pSurface);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateSurfaceXlib(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
-{
-    LOGASSERT(VK_NULL_HANDLE != instance);
-    LOGASSERT(NULL != pCreateInfo);
-    LOGASSERT(NULL != pSurface);
-
-    LOGASSERT(NULL != vkCreateXlibSurfaceKHR);
-    (*pSurface) = VK_NULL_HANDLE;
-    VKCHECK(vkCreateXlibSurfaceKHR(instance, pCreateInfo, pAllocator, pSurface));
-    LOGASSERT(VK_NULL_HANDLE != (*pSurface));
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateSurfaceInfoXlib(VkInstance                   instance,
-                                  const void*                  pNext,
-                                  VkXlibSurfaceCreateFlagsKHR  flags,
-                                  Display*                     dpy,
-                                  Window                       window,
-                                  const VkAllocationCallbacks* pAllocator,
-                                  VkSurfaceKHR*                pSurface)
-{
-    VkXlibSurfaceCreateInfoKHR create_info;
-
-    LOGASSERT(VK_NULL_HANDLE != instance);
-    LOGASSERT(NULL != dpy);
-    LOGASSERT(0 != window);
-    LOGASSERT(NULL != pSurface);
-
-    (void)memset(&create_info, 0, sizeof(create_info));
-    create_info.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    create_info.pNext  = pNext;
-    create_info.flags  = flags;
-    create_info.dpy    = dpy;
-    create_info.window = window;
-    CreateSurfaceXlib(instance, &create_info, pAllocator, pSurface);
-}
 
 /*************************************************************************************************/
 /**
@@ -351,9 +260,12 @@ static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* pCreateInfo)
         LOGASSERT(0 == pCreateInfo->height);
         return;
     }
-    LOGASSERT((GFX_SURFACE_PIXELFORMAT_YUV420P == pCreateInfo->pixelFormat) || (GFX_SURFACE_PIXELFORMAT_NV12 == pCreateInfo->pixelFormat) ||
-              (GFX_SURFACE_PIXELFORMAT_RGBA8 == pCreateInfo->pixelFormat) || (GFX_SURFACE_PIXELFORMAT_BGRA8 == pCreateInfo->pixelFormat));
-    LOGASSERT((GFX_SURFACE_PIXELFORMAT_RGBA8 == pCreateInfo->pixelFormat) || (GFX_SURFACE_PIXELFORMAT_BGRA8 == pCreateInfo->pixelFormat) ||
+    LOGASSERT((GFX_SURFACE_PIXELFORMAT_YUV420P == pCreateInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_NV12 == pCreateInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_RGBA8 == pCreateInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_BGRA8 == pCreateInfo->pixelFormat));
+    LOGASSERT((GFX_SURFACE_PIXELFORMAT_RGBA8 == pCreateInfo->pixelFormat) ||
+              (GFX_SURFACE_PIXELFORMAT_BGRA8 == pCreateInfo->pixelFormat) ||
               ((0 == (pCreateInfo->width & 1u)) && (0 == (pCreateInfo->height & 1u))));
     LOGASSERT(NULL == pCreateInfo->pDisplay);
     LOGASSERT((0 != pCreateInfo->width) && (0 != pCreateInfo->height));
@@ -373,7 +285,13 @@ static void CreateWindowedPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
     dpy = (Display*)pCreateInfo->pDisplay->nativeDisplay;
     LOGASSERT(NULL != dpy);
 
-    CreateSurfaceInfoXlib(pCreateInfo->instance, NULL, (VkXlibSurfaceCreateFlagsKHR)0, dpy, (Window)pCreateInfo->pDisplay->nativeWindow, pCreateInfo->pAllocator, &surface);
+    cvkCreateXlibSurface(pCreateInfo->instance,
+                         NULL,
+                         (VkXlibSurfaceCreateFlagsKHR)0,
+                         dpy,
+                         (Window)pCreateInfo->pDisplay->nativeWindow,
+                         pCreateInfo->pAllocator,
+                         &surface);
 
     pSurface->kind                = pCreateInfo->kind;
     pSurface->va.dpy              = NULL;
@@ -388,46 +306,6 @@ static void CreateWindowedPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
     pSurface->vk.pAllocator       = pCreateInfo->pAllocator;
     pSurface->width               = pCreateInfo->pDisplay->width;
     pSurface->height              = pCreateInfo->pDisplay->height;
-    pSurface->target.readImage    = NULL;
-    pSurface->target.writeImage   = NULL;
-    pSurface->acquiredImage       = NULL;
-    pSurface->platform            = NULL;
-    pSurface->vk.completionFence  = VK_NULL_HANDLE;
-    pSurface->writePending        = FALSE;
-    pSurface->readPending         = FALSE;
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateDirectPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo)
-{
-    VkExtent2D   image_extent;
-    VkSurfaceKHR surface;
-
-    Gfx_Vulkan_CreateDirectDisplaySurface(pCreateInfo->physicalDevice,
-                                          pCreateInfo->instance,
-                                          pCreateInfo->directDisplayIndex,
-                                          pCreateInfo->directDisplayModeIndex,
-                                          pCreateInfo->pAllocator,
-                                          &image_extent,
-                                          &surface);
-
-    pSurface->kind                = pCreateInfo->kind;
-    pSurface->va.dpy              = NULL;
-    pSurface->va.format           = 0;
-    pSurface->va.pixelFormat      = 0;
-    pSurface->vk.physicalDevice   = pCreateInfo->physicalDevice;
-    pSurface->vk.device           = pCreateInfo->device;
-    pSurface->vk.queue            = pCreateInfo->queue;
-    pSurface->vk.surface          = surface;
-    pSurface->vk.queueFamilyIndex = pCreateInfo->queueFamilyIndex;
-    pSurface->vk.format           = VK_FORMAT_UNDEFINED;
-    pSurface->vk.pAllocator       = pCreateInfo->pAllocator;
-    pSurface->width               = image_extent.width;
-    pSurface->height              = image_extent.height;
     pSurface->target.readImage    = NULL;
     pSurface->target.writeImage   = NULL;
     pSurface->acquiredImage       = NULL;
@@ -446,7 +324,11 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
 {
     VkSurfaceKHR surface;
 
-    Gfx_Vulkan_CreateHeadlessSurface(pCreateInfo->instance, NULL, (VkHeadlessSurfaceCreateFlagsEXT)0, pCreateInfo->pAllocator, &surface);
+    cvkCreateHeadlessSurface(pCreateInfo->instance,
+                             NULL,
+                             (VkHeadlessSurfaceCreateFlagsEXT)0,
+                             pCreateInfo->pAllocator,
+                             &surface);
 
     pSurface->kind                = pCreateInfo->kind;
     pSurface->va.dpy              = NULL;
@@ -475,8 +357,13 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
  * \par Details:
  *  None
  */
-static void CreatePresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo)
+static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* pCreateInfo)
 {
+    Gfx_Surface_t* pSurface;
+
+    LOGASSERT(NULL != storage);
+    pSurface = &storage->surface;
+
     switch (pCreateInfo->pDisplay->kind)
     {
     case GFX_DISPLAY_KIND_WINDOWED:
@@ -484,7 +371,7 @@ static void CreatePresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_Crea
         break;
 
     case GFX_DISPLAY_KIND_DIRECT:
-        CreateDirectPresentSurface(pSurface, pCreateInfo);
+        Gfx_Surface_InitializeDirect(storage, pCreateInfo);
         break;
 
     case GFX_DISPLAY_KIND_HEADLESS:
@@ -605,14 +492,19 @@ static void CreateStorageSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_Crea
  * \par Details:
  *  None
  */
-static void CreateSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo)
+static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* pCreateInfo)
 {
+    Gfx_Surface_t* pSurface;
+
+    LOGASSERT(NULL != storage);
+    pSurface = &storage->surface;
+
     ValidateCreateInfo(pCreateInfo);
 
     switch (pCreateInfo->kind)
     {
     case GFX_SURFACE_KIND_PRESENT:
-        CreatePresentSurface(pSurface, pCreateInfo);
+        CreatePresentSurface(storage, pCreateInfo);
         break;
 
     case GFX_SURFACE_KIND_STORAGE:
@@ -634,7 +526,7 @@ static void AcquireSurface(Gfx_Surface_t* pSurface)
     LOGASSERT(GFX_SURFACE_KIND_STORAGE == pSurface->kind);
     if (pSurface->writePending)
     {
-        Gfx_Vulkan_WaitForFence(pSurface->vk.device, pSurface->vk.completionFence, VK_INFINITE);
+        CVK_CHECK(cvkWaitForFence(pSurface->vk.device, pSurface->vk.completionFence, VK_TRUE, UINT64_MAX));
         pSurface->target.writeImage->uploadPending = FALSE;
     }
     pSurface->writePending = FALSE;
@@ -665,11 +557,14 @@ static void ReleaseSurface(Gfx_Surface_t* pSurface)
  */
 void Gfx_Surface_Create(Gfx_Surface_t** ppSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo)
 {
+    Gfx_Surface_Storage_t* storage;
+
     LOGASSERT(NULL != ppSurface);
     LOGASSERT(NULL != pCreateInfo);
 
-    (*ppSurface) = (Gfx_Surface_t*)OS_CALLOC(sizeof(Gfx_Surface_t));
-    CreateSurface((*ppSurface), pCreateInfo);
+    storage = (Gfx_Surface_Storage_t*)OS_CALLOC(sizeof(Gfx_Surface_Storage_t));
+    CreateSurface(storage, pCreateInfo);
+    (*ppSurface) = &storage->surface;
 }
 
 /*************************************************************************************************/

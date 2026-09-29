@@ -53,6 +53,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeve
  * \param[in]  pfnUserCallback          Callback receiving the messages, for example cvkWriteDebugUtilsMessage
  * \param[in]  pUserData                Context passed to the callback
  * \param[in]  pAllocator               Optional allocation callbacks, or NULL
+ * \param[out] pProperties              Caller-owned CVK_MAX_PROPERTIES enumeration workspace
  * \param[out] pInstance                Receives the created VkInstance
  * \param[out] pMessenger               Receives the created VkDebugUtilsMessengerEXT
  *
@@ -70,6 +71,7 @@ void cvkCreateDebugInstance(const void*                          pNext,
                             PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
                             void*                                pUserData,
                             const VkAllocationCallbacks*         pAllocator,
+                            VkExtensionProperties                pProperties[CVK_MAX_PROPERTIES],
                             VkInstance*                          pInstance,
                             VkDebugUtilsMessengerEXT*            pMessenger)
 {
@@ -88,7 +90,7 @@ void cvkCreateDebugInstance(const void*                          pNext,
     extensions[extension_count++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME;
 
     /* capability: every extension must be supported; nothing is dropped silently */
-    supported = cvkGetInstanceExtensionSupport(NULL, extension_count, extensions);
+    supported = cvkGetInstanceExtensionSupport(NULL, extension_count, extensions, pProperties);
     CVK_ASSERT(supported);
 
     /* create with the messenger info chained, so creation itself is reported */
@@ -154,10 +156,16 @@ VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t p
  * \param[in] pciBus       PCI bus of the adapter
  * \param[in] pciDevice    PCI device of the adapter
  * \param[in] pciFunction  PCI function of the adapter
+ * \param[out] pProperties Caller-owned CVK_MAX_PROPERTIES enumeration workspace, reused per device
  *
  * \return The matching physical device, or VK_NULL_HANDLE when none matches.
  */
-VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t pciDomain, uint32_t pciBus, uint32_t pciDevice, uint32_t pciFunction)
+VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance,
+                                               uint32_t pciDomain,
+                                               uint32_t pciBus,
+                                               uint32_t pciDevice,
+                                               uint32_t pciFunction,
+                                               VkExtensionProperties pProperties[CVK_MAX_PROPERTIES])
 {
     VkPhysicalDevice                        physical_devices[CVK_MAX_PHYSICAL_DEVICES];
     VkPhysicalDevicePCIBusInfoPropertiesEXT physical_device_pci_bus_info_properties;
@@ -167,7 +175,7 @@ VkPhysicalDevice cvkGetPhysicalDeviceByPciBusInfo(VkInstance instance, uint32_t 
     cvkEnumeratePhysicalDevices(instance, &physical_device_count, physical_devices);
     for (physical_device_index = 0; physical_device_index < physical_device_count; ++physical_device_index)
     {
-        if (cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, (const char* const[]){ VK_EXT_PCI_BUS_INFO_EXTENSION_NAME }))
+        if (cvkGetPhysicalDeviceExtensionSupport(physical_devices[physical_device_index], NULL, 1, (const char* const[]){ VK_EXT_PCI_BUS_INFO_EXTENSION_NAME }, pProperties))
         {
             cvkGetPhysicalDevicePCIBusInfoProperties(physical_devices[physical_device_index], NULL, &physical_device_pci_bus_info_properties);
             if ((pciDomain == physical_device_pci_bus_info_properties.pciDomain) && (pciBus == physical_device_pci_bus_info_properties.pciBus) &&

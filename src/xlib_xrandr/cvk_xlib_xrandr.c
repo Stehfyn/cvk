@@ -3,9 +3,12 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "xlib_xrandr/cvk_xlib_xrandr.h"
+#include "cvk/cvk.h"
+#include "cvk/xlib_xrandr/cvk_xlib_xrandr.h"
 #include <volk.h>
-#include <string.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_xlib_xrandr.h>
 
 void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display)
 {

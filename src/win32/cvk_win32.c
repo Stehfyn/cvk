@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "win32/cvk_win32.h"
+#include "cvk/cvk.h"
+#include "cvk/win32/cvk_win32.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_win32.h>
 
 void cvkInitD3D12FenceSubmitInfo(VkD3D12FenceSubmitInfoKHR* pInfo,
                                  const void*                pNext,
@@ -331,7 +335,10 @@ void cvkGetPhysicalDeviceSurfacePresentModes2(VkPhysicalDevice physicalDevice,
                                               uint32_t*        pPresentModeCount,
                                               VkPresentModeKHR pPresentModes[CVK_MAX_PRESENT_MODES])
 {
-    VkPhysicalDeviceSurfaceInfo2KHR surface_info =
+    VkPhysicalDeviceSurfaceInfo2KHR surface_info;
+    uint32_t                        capacity;
+
+    surface_info = (VkPhysicalDeviceSurfaceInfo2KHR)
     {
         .sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
         .pNext   = pNext,
@@ -341,9 +348,12 @@ void cvkGetPhysicalDeviceSurfacePresentModes2(VkPhysicalDevice physicalDevice,
     (*pPresentModeCount) = 0;
 
     CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, &surface_info, pPresentModeCount, NULL));
-    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= (*pPresentModeCount));
+
+    capacity = (*pPresentModeCount);
+    CVK_ASSERT(CVK_MAX_PRESENT_MODES >= capacity);
 
     CVK_CHECK(vkGetPhysicalDeviceSurfacePresentModes2EXT(physicalDevice, &surface_info, pPresentModeCount, pPresentModes));
+    CVK_ASSERT(capacity >= (*pPresentModeCount));
 }
 VkBool32 cvkGetPhysicalDeviceWin32PresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex)
 {
@@ -1095,6 +1105,12 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     VkBool32                         dedicated;
     uint32_t                         external_memory_type_bits;
     uint32_t                         memory_type_index;
+    VkDeviceSize                     allocation_size;
+    VkBool32                         is_d3d11_texture;
+    VkBool32                         is_d3d11_texture_kmt;
+    VkBool32                         is_d3d12_resource;
+    VkBool32                         is_texture_import;
+    VkBool32                         ignores_allocation_size;
 
     /* capability: the handle type must be importable for this image description */
     importable = cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
@@ -1132,7 +1148,23 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     /* requirements, with dedicated requirements chained */
     cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
     cvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
-    CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    /* VkMemoryAllocateInfo: D3D texture/resource imports ignore allocationSize.
+     * Heap and opaque imports retain their supplied native allocation extent.
+     * https://docs.vulkan.org/refpages/latest/refpages/source/VkMemoryAllocateInfo.html */
+    allocation_size         = allocationSize;
+    is_d3d11_texture        = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT == handleType;
+    is_d3d11_texture_kmt    = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT == handleType;
+    is_d3d12_resource       = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT == handleType;
+    is_texture_import       = is_d3d11_texture || is_d3d11_texture_kmt;
+    ignores_allocation_size = is_texture_import || is_d3d12_resource;
+    if (ignores_allocation_size)
+    {
+        allocation_size = memory_requirements.memoryRequirements.size;
+    }
+    else
+    {
+        CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    }
 
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
@@ -1153,7 +1185,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 
         allocate_next = &memory_dedicated_allocate_info;
     }
-    cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
+    cvkAllocateMemory(device, allocate_next, allocation_size, memory_type_index, pAllocator, pMemory);
 
     /* bind */
     cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
@@ -1187,6 +1219,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     VkBool32                         dedicated;
     uint32_t                         external_memory_type_bits;
     uint32_t                         memory_type_index;
+    VkDeviceSize                     allocation_size;
 
     /* capability: the handle type must be importable for this buffer description */
     importable = cvkGetPhysicalDeviceExternalBufferImportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
@@ -1217,7 +1250,16 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     /* requirements, with dedicated requirements chained */
     cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
     cvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
-    CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    /* VkMemoryAllocateInfo ignores allocationSize for D3D12 resource imports. */
+    allocation_size = allocationSize;
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT == handleType)
+    {
+        allocation_size = memory_requirements.memoryRequirements.size;
+    }
+    else
+    {
+        CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    }
 
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
@@ -1238,7 +1280,7 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
 
         allocate_next = &memory_dedicated_allocate_info;
     }
-    cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
+    cvkAllocateMemory(device, allocate_next, allocation_size, memory_type_index, pAllocator, pMemory);
 
     /* bind */
     cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);

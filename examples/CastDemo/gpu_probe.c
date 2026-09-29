@@ -17,7 +17,7 @@
 
 #include <vulkan/vulkan.h>
 #include <volk.h>
-#include "cvk.h"
+#include "cvk/cvk.h"
 #include "gpu_probe.h"
 #include "crt/crt_memory.h"
 #include "os/os_assert.h"
@@ -56,6 +56,8 @@ typedef struct GpuProbe_Storage_s
     VkPhysicalDevice        devices[CVK_MAX_PHYSICAL_DEVICES];         ///< Fixed enumeration output.
     VkExtensionProperties   extensions[CVK_MAX_PROPERTIES];            ///< Reused per-device extension output.
     VkQueueFamilyProperties families[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Reused queue metadata.
+    VkQueueFamilyProperties2
+        videoFamilies[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Base workspace for the codec-property query.
     VkQueueFamilyVideoPropertiesKHR
         video[CVK_MAX_QUEUE_FAMILY_PROPERTIES]; ///< Codec operations linked into family records.
 } GpuProbe_Storage_t;
@@ -509,7 +511,10 @@ static FORCE_INLINE bool_t ReadFamilies(GpuProbe_t* probe, VkPhysicalDevice phys
     complete = TRUE;
     if (support->video)
     {
-        cvkGetPhysicalDeviceQueueFamilyVideoProperties(physical, &video_count, storage->video);
+        cvkGetPhysicalDeviceQueueFamilyVideoProperties(physical,
+                                                      &video_count,
+                                                      storage->videoFamilies,
+                                                      storage->video);
         complete = CheckCapacity(probe, video_count == storage->familyCount);
         if (complete)
         {

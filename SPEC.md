@@ -48,28 +48,37 @@ Core JSON numeric readers accept platform API constant names using their typed r
 values, without including native SDK headers. Platform sources expose their Vulkan
 extension declarations before including Volk so its dispatch declarations are complete.
 
-**Rule zero: the outputs are never edited by hand.** Any defect in `include/cvk.h` or
+**Rule zero: the outputs are never edited by hand.** Any defect in `include/cvk/cvk.h` or
 `src/cvk.c` is a defect in a rule here or in `scripts/generate.py`. Fix the rule, regenerate,
 re-verify. A commit that changes the outputs without changing the generator or the policy is
 wrong by definition.
 
-- `include/cvk.h`, `src/cvk.c`: core profile, free of platform conditionals.
-- `include/cvk_json.h`, `src/cvk_json.c`: JSON types, reader, generated parsers, and
-  pipeline helpers, separate from the core pair. The JSON header includes `cvk.h`.
-  Platform parsers use `include/<platform>/cvk_<platform>_json.h` and matching sources;
-  those headers include `cvk_json.h` and the platform headers. The same layout applies
+- `include/cvk/cvk.h`, `src/cvk.c`: core profile, free of platform conditionals.
+- `include/cvk/cvk_json.h`, `src/cvk_json.c`: JSON types, reader, generated parsers, and
+  pipeline helpers, separate from the core pair. The JSON header includes `cvk/cvk.h`.
+  Platform parsers use `include/cvk/<platform>/cvk_<platform>_json.h` and matching sources;
+  those headers include `cvk/cvk_json.h` and the platform headers. The same layout applies
   to `scvk`. CMake builds these sources into the corresponding profile library.
-- `include/scvk.h`, `src/scvk.c` (and platform pairs): the Vulkan SC profile, a standalone
+- `include/scvk/scvk.h`, `src/scvk.c` (and platform pairs): the Vulkan SC profile, a standalone
   library from `scvk.policy.json` (which extends `cvk.policy.json`: api `vulkansc`, its
   registry, core `VKSC_VERSION_1_0`, every SC-supported extension, prefix `scvk` applied to
   every identifier). The same rules over another registry: a composition naming a command,
   constant, or type the profile lacks is dropped there (`missing: drop`), and a protocol file
   may declare the variant it belongs to (`Profile: vulkan` on the format protocols, whose
   utility-library tables describe formats the SC headers lack).
-- `include/<platform>/cvk_<platform>.h`, `src/<platform>/cvk_<platform>.c` per registry
-  platform, each including `cvk.h` and its native and Vulkan platform headers. The same
+- `include/cvk/<platform>/cvk_<platform>.h`, `src/<platform>/cvk_<platform>.c` per registry
+  platform, each including `cvk/cvk.h` and its native and Vulkan platform headers. The same
   layout applies to `scvk` and the `posix` protocol pair; sources include their headers
-  as `<platform>/<prefix>_<platform>.h` relative to the public `include/` directory.
+  as `<prefix>/<platform>/<prefix>_<platform>.h` relative to the public `include/` directory.
+The core header is `<prefix>/<prefix>.h`; consumers never add a profile subdirectory
+  as an include root. All generated and application includes use this namespace,
+  including Python's generated C adapters. No flat forwarding headers are emitted.
+- Generated implementations directly include the provider headers for their used
+  imported types. The registry's `requires` relationships select codec and native
+  SDK headers; fixed-width C types select `<stdint.h>`. Platform sources include
+  their native Vulkan declarations and the selected profile's core header.
+  These remain external headers; the owned implementation remains fully analyzed.
+
 - Tier 3 protocols are folded into the platform pairs from `scripts/protocols/` (section 8b).
 - `doc_comments` controls emitted Doxygen blocks (section 9); the shared policy disables them.
 
@@ -122,7 +131,7 @@ Other parameters remain in registry order, transformed by role:
 | output handle | out-pointer; asserted non-null before, `!= VK_NULL_HANDLE` after |
 | output sType struct (`P`) | `void* p<Stem>Next` immediately before the out-pointer. The wrapper fills a local named after the parameter (`support`, `memory_requirements`) with `sType`/`pNext`, passes it, and copies it to the out-pointer after the call; the caller's struct is never written before the call. Each struct fill is its own block |
 | output POD struct / scalar | out-pointer verbatim |
-| two-call enumeration | count pointer removed; function returns `uint32_t`; array becomes `T p<Name>[CVK_MAX_<NAME>]`. The local count is declared without an initializer, then assigned zero after input-struct initialization, immediately before the count query |
+| two-call enumeration | returns `void`, writing the result through its count pointer; array becomes `T p<Name>[CVK_MAX_<NAME>]`. The count is assigned zero immediately before the count query. A separate local retains the queried capacity, bounds preparation, and is checked against the returned count after the fill |
 | non-`VkResult` return | passed through |
 
 When more than one struct is filled (two `I`, or `I` and `P`), each `pNext` is `p<Stem>Next`
@@ -134,6 +143,13 @@ function returns `void` and `CVK_CHECK` aborts on any other value. Otherwise the
 returns `VkResult`, aborts if the value is negative (all `VK_ERROR_*` are negative), and hands
 the informational code back. Enumerations abort on `VK_INCOMPLETE` because the capacity is
 asserted first.
+
+Enumeration capacity and result count remain distinct even when the native API uses
+one in/out pointer for both. The queried capacity bounds every prepared output-chain
+element. The fill may reduce the count; its final count must not exceed that saved
+capacity before any caller consumes it. This follows the input-capacity/output-count
+contract of [vkGetPhysicalDeviceQueueFamilyProperties](https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceQueueFamilyProperties.html)
+and applies to the generated enumeration family, including extender arrays.
 
 Dispatch (policy): every wrapper calls its `vkCommand` entry point directly. The Vulkan
 profile includes `<volk.h>` privately in its implementation files and uses Volk's global
@@ -326,13 +342,29 @@ the returned size. A caller who also wants the base struct calls the base query.
 **Extenders on the element struct of an enumeration** (`VkQueueFamilyVideoPropertiesKHR` on
 `VkQueueFamilyProperties2`) follow the same replacement rule on the enumeration's name
 (`cvkGetPhysicalDeviceQueueFamilyVideoProperties`, `cvkGetPhysicalDeviceQueueFamilyGlobalPriorityProperties`)
-and the same signature shape as the enumeration: the base element array becomes a local, the
-extender array `p<ExtenderStruct>[CVK_MAX_<Base>]` is the out-parameter, every element is
-chained before the second call, and the count is returned. The run must match the enumeration's
+and retain the enumeration's count and base-array parameters. The caller supplies the
+base array as contiguous native workspace, followed by the extender output array
+`p<ExtenderStruct>[CVK_MAX_<Base>]`. Both arrays must hold the declared capacity and be
+disjoint. Every active base element is initialized and chained to its corresponding
+extender before the fill call; the count is written through the count output. Base
+storage is never a hidden local array, heap allocation, global or TLS object. Callers
+with a persistent query owner may retain both arrays there. This is a source/API change
+for output-array conveniences; callers must supply the added base-array argument.
+The video queue-family selector's policy chain explicitly owns its smaller bounded
+base and video arrays rather than hiding storage in the called query. The run must match the enumeration's
 name exactly: an enumeration naming its subject in the plural (`SurfaceFormats2` for
 `VkSurfaceFormat2KHR`) takes the With form on the tier-0 name
 (`cvkGetPhysicalDeviceSurfaceFormats2WithImageCompressionProperties`), since replacing the run
 would drop the subject.
+
+Instance and device extension-support compositions likewise require the caller's
+`VkExtensionProperties pProperties[CVK_MAX_PROPERTIES]` workspace. Their debug-instance,
+PCI-device lookup and device-queue construction compositions pass that workspace through;
+they must not hide another fixed-capacity extension array in a deeper call frame.
+The parameter is scratch output, reused between native enumeration calls. This retains
+the full configured enumeration capacity without heap allocation, globals or large
+implicit stack frames. Public callers of these CVK compositions must supply the new
+workspace argument; gfxlib's retained public signatures are unaffected.
 
 ## 7. Tier 1': specializations
 
@@ -417,8 +449,9 @@ the given flags; both return `VK_INVALID` if none, and `cvk.h` defines `VK_INVAL
 Seeded chains: `cvkGetPhysicalDevice{,Compatible}MemoryTypeIndex` (memory properties, then the
 exact or the covering selector), `cvkGetPhysicalDeviceExternalImage{Import,Export}Support`
 (external format query â†’ `VkBool32` for the feature bit, `pDedicatedOnly` out),
-`cvkGet{Instance,PhysicalDevice}ExtensionSupport` and `cvkGetPhysicalDeviceQueueFamilyIndex`
-(enumeration into a fixed-capacity local, then the fixed selector), `cvkSetupDeviceQueue`
+`cvkGet{Instance,PhysicalDevice}ExtensionSupport` (enumeration into caller-owned
+workspace, then the fixed selector) and `cvkGetPhysicalDeviceQueueFamilyIndex`
+(enumeration into a bounded queue-family local, then the fixed selector), `cvkSetupDeviceQueue`
 (extension support asserted, one queue create info built, device created, queue retrieved),
 `cvkCmd{Image,Buffer}QueueOwnershipBarrier` (builder, then `cvkCmdPipelineBarrier` with one
 barrier), `cvkQueueSubmitCommandBuffer`, `cvkSetupCommandPool`, `cvkCreateComputePipelineLayout`,

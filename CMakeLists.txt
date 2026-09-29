@@ -24,6 +24,8 @@ if(WIN32)
     cvk_external_directory("${CMAKE_CURRENT_SOURCE_DIR}/external/cdx")
 endif()
 
+include(cmake/Cva.cmake)
+
 # Generate every platform, but compile only those selected for the target SDK.
 set(cvk_default_platforms "")
 if(WIN32)
@@ -111,6 +113,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     endforeach()
 endif()
 add_compile_options($<$<COMPILE_LANG_AND_ID:C,MSVC>:/O2> $<$<COMPILE_LANG_AND_ID:C,MSVC>:/Ob3>)
+add_compile_options("$<$<COMPILE_LANG_AND_ID:C,MSVC>:/external:W0;/external:env:INCLUDE;/analyze:external->")
 add_compile_options($<$<COMPILE_LANG_AND_ID:C,GNU,Clang,AppleClang>:-O3>)
 # Prefer full LTO for this generated, monolithic source: it can discard unreachable
 # wrapper families before optimizing them, and exposes every live tier for inlining.
@@ -140,7 +143,7 @@ if(Python3_Interpreter_FOUND)
 endif()
 
 # Everything under include/ and src/ is generated. Core is platform-free; each platform has
-# its own generated pair that includes cvk.h. Tier 3 protocols (scripts/protocols/) are folded
+# its own generated pair that includes cvk/cvk.h. Tier 3 protocols (scripts/protocols/) are folded
 # into the platform pairs by the generator; "posix" is the pair for descriptor protocols.
 set(CVK_SOURCES src/cvk.c src/cvk_json.c ${cvk_platform_sources})
 

@@ -1,6 +1,6 @@
 /* Exercise real Volk loading with mock entry points; no installed loader or GPU. */
 #include <volk.h>
-#include "cvk.h"
+#include "cvk/cvk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

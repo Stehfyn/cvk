@@ -9,9 +9,10 @@
 
 #include <vulkan/vulkan.h>
 #include <volk.h>
-#include "cvk.h"
+#include "cvk/cvk.h"
 
 #include "gpu_device.h"
+#include "os/os_types.h"
 
 /*************************************************************************************************/
 /**
@@ -33,25 +34,6 @@ static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
     va_end(arguments);
 }
 
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Searches the advertised extension names for an exact match.
- */
-static int HasExtension(const VkExtensionProperties* pExtensions, uint32_t count, const char* pName)
-{
-    uint32_t i;
-
-    for (i = 0; i < count; ++i)
-    {
-        if (0 == strcmp(pExtensions[i].extensionName, pName))
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 #ifndef NDEBUG
 /*************************************************************************************************/
 /**
@@ -59,7 +41,10 @@ static int HasExtension(const VkExtensionProperties* pExtensions, uint32_t count
  *  Writes the validation message to stderr and returns without requesting that
  *  Vulkan abort the originating call.
  */
-static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* data, void* user)
+static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlagBitsEXT      severity,
+                                                 VkDebugUtilsMessageTypeFlagsEXT             type,
+                                                 const VkDebugUtilsMessengerCallbackDataEXT* data,
+                                                 void*                                       user)
 {
     (void)severity;
     (void)type;
@@ -92,10 +77,33 @@ GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_
     uint32_t                                 queue_count;
     uint32_t                                 required_count;
     uint32_t                                 i;
-    int                                      decode_family;
-    int                                      encode_family;
-    int                                      transfer_family;
-    int                                      transfer_family2;
+    VkPhysicalDeviceProperties               properties;
+    bool_t                                   supports_api;
+    bool_t                                   supports_sync2;
+    bool_t                                   supports_extensions;
+    uint32_t                                 decode_family;
+    uint32_t                                 encode_family;
+    uint32_t                                 transfer_family;
+    uint32_t                                 transfer_family2;
+    bool_t                                   has_decode;
+    bool_t                                   has_encode;
+    bool_t                                   has_transfer;
+    bool_t                                   supports_decode;
+    bool_t                                   supports_encode;
+    bool_t                                   supports_video;
+    bool_t                                   supports_queues;
+    bool_t                                   distinct_transfer;
+    bool_t                                   decode_uses_transfer;
+    bool_t                                   decode_uses_transfer2;
+    bool_t                                   decode_has_queue;
+    bool_t                                   create_decode;
+    bool_t                                   encode_uses_transfer;
+    bool_t                                   encode_uses_transfer2;
+    bool_t                                   encode_uses_decode;
+    bool_t                                   encode_shares_decode;
+    bool_t                                   encode_shares_transfer;
+    bool_t                                   encode_has_queue;
+    bool_t                                   create_encode;
 
     pDevice = (GpuDevice*)calloc(1, sizeof(*pDevice));
     if (NULL == pDevice)
@@ -109,7 +117,7 @@ GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_
     pDevice->hasDecode = needDecode;
     pDevice->hasEncode = needEncode;
 
-    required_count             = 0;
+    required_count               = 0;
     extensions[required_count++] = VK_KHR_VIDEO_QUEUE_EXTENSION_NAME;
     if (needDecode)
     {
@@ -136,84 +144,116 @@ GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_
 
         cvkCreateInstance(NULL, 0, &app, 1, layers, 1, instanceExtensions, NULL, &pDevice->instance);
         volkLoadInstance(pDevice->instance);
-        cvkCreateDebugUtilsMessenger(pDevice->instance,
-                                     NULL,
-                                     0,
-                                     (VkDebugUtilsMessageSeverityFlagsEXT)((VkFlags)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | (VkFlags)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT),
-                                     (VkDebugUtilsMessageTypeFlagsEXT)((VkFlags)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | (VkFlags)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT),
-                                     Validation,
-                                     NULL,
-                                     NULL,
-                                     &pDevice->messenger);
+        cvkCreateDebugUtilsMessenger(
+            pDevice->instance,
+            NULL,
+            0,
+            (VkDebugUtilsMessageSeverityFlagsEXT)((VkFlags)VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                                  (VkFlags)VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT),
+            (VkDebugUtilsMessageTypeFlagsEXT)((VkFlags)VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                              (VkFlags)VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT),
+            Validation,
+            NULL,
+            NULL,
+            &pDevice->messenger);
     }
 #else
     cvkCreateInstance(NULL, 0, &app, 0, NULL, 0, NULL, NULL, &pDevice->instance);
     volkLoadInstance(pDevice->instance);
 #endif
 
-    decode_family    = -1;
-    encode_family    = -1;
-    transfer_family  = -1;
-    transfer_family2 = -1;
+    decode_family    = VK_INVALID;
+    encode_family    = VK_INVALID;
+    transfer_family  = VK_INVALID;
+    transfer_family2 = VK_INVALID;
     cvkEnumeratePhysicalDevices(pDevice->instance, &device_count, devices);
     for (i = 0; i < device_count; ++i)
     {
         uint32_t f;
-        int      ok;
 
-        cvkEnumerateDeviceExtensionProperties(devices[i], NULL, &extension_count, device_extensions);
-        ok              = 1;
-        for (f = 0; f < required_count; ++f)
-        {
-            if (!HasExtension(device_extensions, extension_count, extensions[f]))
-            {
-                ok = 0;
-                break;
-            }
-        }
-        if (!ok)
+        cvkGetPhysicalDeviceProperties(devices[i], &properties);
+        supports_api = (VK_API_VERSION_1_3 <= properties.apiVersion);
+        if (!supports_api)
         {
             continue;
         }
-        decode_family    = -1;
-        encode_family    = -1;
-        transfer_family  = -1;
-        transfer_family2 = -1;
-        cvkGetPhysicalDeviceQueueFamilyProperties(devices[i], &family_count, families);
-        for (f = 0; f < family_count; ++f)
+        cvkGetPhysicalDeviceSynchronization2Features(devices[i], NULL, &sync2);
+        supports_sync2 = (VK_TRUE == sync2.synchronization2);
+        if (!supports_sync2)
         {
-            const VkQueueFlags flags = families[f].queueFlags;
-
-            if ((flags & (VkQueueFlags)VK_QUEUE_VIDEO_DECODE_BIT_KHR) && decode_family < 0)
-            {
-                decode_family = (int)f;
-            }
-            if ((flags & (VkQueueFlags)VK_QUEUE_VIDEO_ENCODE_BIT_KHR) && encode_family < 0)
-            {
-                encode_family = (int)f;
-            }
-            if ((flags & (VkQueueFlags)((VkFlags)VK_QUEUE_GRAPHICS_BIT | (VkFlags)VK_QUEUE_TRANSFER_BIT)) && transfer_family < 0)
-            {
-                transfer_family = (int)f;
-            }
+            continue;
+        }
+        cvkEnumerateDeviceExtensionProperties(devices[i], NULL, &extension_count, device_extensions);
+        supports_extensions =
+            (VK_TRUE == cvkGetExtensionsSupport(extension_count, device_extensions, required_count, extensions));
+        if (!supports_extensions)
+        {
+            continue;
+        }
+        decode_family    = VK_INVALID;
+        encode_family    = VK_INVALID;
+        transfer_family2 = VK_INVALID;
+        if (needDecode)
+        {
+            decode_family =
+                cvkGetPhysicalDeviceVideoQueueFamilyIndex(devices[i], VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR);
+        }
+        if (needEncode)
+        {
+            encode_family =
+                cvkGetPhysicalDeviceVideoQueueFamilyIndex(devices[i], VK_VIDEO_CODEC_OPERATION_ENCODE_H264_BIT_KHR);
+        }
+        cvkGetPhysicalDeviceQueueFamilyProperties(devices[i], &family_count, families);
+        transfer_family = cvkGetQueueFamilyIndex(family_count, families, VK_QUEUE_TRANSFER_BIT);
+        if (VK_INVALID == transfer_family)
+        {
+            transfer_family = cvkGetQueueFamilyIndex(family_count, families, VK_QUEUE_GRAPHICS_BIT);
+        }
+        if (VK_INVALID == transfer_family)
+        {
+            transfer_family = cvkGetQueueFamilyIndex(family_count, families, VK_QUEUE_COMPUTE_BIT);
         }
         /* A second, independent transfer queue so decode read-back and encode upload run in
         ** parallel. Prefer a dedicated transfer-only family (a DMA engine); else any other transfer
         ** family; else fall back to the first transfer family. */
         for (f = 0; f < family_count; ++f)
         {
-            const VkQueueFlags flags = families[f].queueFlags;
+            VkQueueFlags flags;
+            bool_t       is_primary;
+            bool_t       has_graphics;
+            bool_t       has_compute;
+            bool_t       has_explicit_transfer;
+            bool_t       has_implicit_transfer;
+            bool_t       can_transfer;
+            bool_t       use_family;
+            bool_t       needs_secondary;
+            bool_t       is_dedicated;
+            bool_t       prefer_family;
 
-            if ((int)f == transfer_family || !(flags & (VkQueueFlags)VK_QUEUE_TRANSFER_BIT))
+            flags                 = families[f].queueFlags;
+            is_primary            = (f == transfer_family);
+            has_graphics          = !!(flags & VK_QUEUE_GRAPHICS_BIT);
+            has_compute           = !!(flags & VK_QUEUE_COMPUTE_BIT);
+            has_explicit_transfer = !!(flags & VK_QUEUE_TRANSFER_BIT);
+            has_implicit_transfer = has_graphics || has_compute;
+            can_transfer          = has_explicit_transfer || has_implicit_transfer;
+            use_family            = !is_primary && can_transfer;
+            needs_secondary       = (VK_INVALID == transfer_family2);
+            is_dedicated          = !has_implicit_transfer;
+            prefer_family         = needs_secondary || is_dedicated;
+            if (use_family && prefer_family)
             {
-                continue;
-            }
-            if (transfer_family2 < 0 || !(flags & (VkQueueFlags)((VkFlags)VK_QUEUE_GRAPHICS_BIT | (VkFlags)VK_QUEUE_COMPUTE_BIT)))
-            {
-                transfer_family2 = (int)f; /* keep improving toward a dedicated transfer-only family */
+                transfer_family2 = f;
             }
         }
-        if ((needDecode && decode_family < 0) || (needEncode && encode_family < 0) || transfer_family < 0)
+        has_decode      = (VK_INVALID != decode_family);
+        has_encode      = (VK_INVALID != encode_family);
+        has_transfer    = (VK_INVALID != transfer_family);
+        supports_decode = !needDecode || has_decode;
+        supports_encode = !needEncode || has_encode;
+        supports_video  = supports_decode && supports_encode;
+        supports_queues = supports_video && has_transfer;
+        if (!supports_queues)
         {
             continue;
         }
@@ -222,34 +262,57 @@ GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_
     }
     if (VK_NULL_HANDLE == pDevice->physical)
     {
-        Report(pReport, reportCapacity, "no Vulkan device with the requested video queues\n");
+        Report(pReport, reportCapacity, "no Vulkan 1.3 device with synchronization2 and the requested video queues\n");
         GpuDevice_Destroy(pDevice);
         return NULL;
     }
-    pDevice->decodeFamily    = (uint32_t)(decode_family >= 0 ? decode_family : 0);
-    pDevice->encodeFamily    = (uint32_t)(encode_family >= 0 ? encode_family : 0);
-    pDevice->transferFamily  = (uint32_t)transfer_family;
-    pDevice->transferFamily2 = (uint32_t)(transfer_family2 >= 0 ? transfer_family2 : transfer_family);
+    pDevice->decodeFamily    = decode_family;
+    pDevice->encodeFamily    = encode_family;
+    pDevice->transferFamily  = transfer_family;
+    pDevice->transferFamily2 = (VK_INVALID != transfer_family2) ? transfer_family2 : transfer_family;
 
     /* One VkDeviceQueueCreateInfo per distinct family among the ones we use. */
     priority    = 1.0f;
     queue_count = 0;
     cvkInitDeviceQueueCreateInfo(&queue_infos[queue_count++], NULL, 0, pDevice->transferFamily, 1, &priority);
-    if (pDevice->transferFamily2 != pDevice->transferFamily)
+    distinct_transfer = (pDevice->transferFamily2 != pDevice->transferFamily);
+    if (distinct_transfer)
     {
         cvkInitDeviceQueueCreateInfo(&queue_infos[queue_count++], NULL, 0, pDevice->transferFamily2, 1, &priority);
     }
-    if (needDecode && pDevice->decodeFamily != pDevice->transferFamily && pDevice->decodeFamily != pDevice->transferFamily2)
+    decode_uses_transfer  = (pDevice->decodeFamily == pDevice->transferFamily);
+    decode_uses_transfer2 = (pDevice->decodeFamily == pDevice->transferFamily2);
+    decode_has_queue      = decode_uses_transfer || decode_uses_transfer2;
+    create_decode         = needDecode && !decode_has_queue;
+    if (create_decode)
     {
         cvkInitDeviceQueueCreateInfo(&queue_infos[queue_count++], NULL, 0, pDevice->decodeFamily, 1, &priority);
     }
-    if (needEncode && pDevice->encodeFamily != pDevice->transferFamily && pDevice->encodeFamily != pDevice->transferFamily2 && pDevice->encodeFamily != pDevice->decodeFamily)
+    encode_uses_transfer   = (pDevice->encodeFamily == pDevice->transferFamily);
+    encode_uses_transfer2  = (pDevice->encodeFamily == pDevice->transferFamily2);
+    encode_uses_decode     = (pDevice->encodeFamily == pDevice->decodeFamily);
+    encode_shares_decode   = needDecode && encode_uses_decode;
+    encode_shares_transfer = encode_uses_transfer || encode_uses_transfer2;
+    encode_has_queue       = encode_shares_decode || encode_shares_transfer;
+    create_encode          = needEncode && !encode_has_queue;
+    if (create_encode)
     {
         cvkInitDeviceQueueCreateInfo(&queue_infos[queue_count++], NULL, 0, pDevice->encodeFamily, 1, &priority);
     }
 
     cvkInitPhysicalDeviceSynchronization2Features(&sync2, NULL, VK_TRUE);
-    cvkCreateDevice(pDevice->physical, &sync2, (VkDeviceCreateFlags)0, queue_count, queue_infos, 0, NULL, required_count, extensions, NULL, NULL, &pDevice->device);
+    cvkCreateDevice(pDevice->physical,
+                    &sync2,
+                    (VkDeviceCreateFlags)0,
+                    queue_count,
+                    queue_infos,
+                    0,
+                    NULL,
+                    required_count,
+                    extensions,
+                    NULL,
+                    NULL,
+                    &pDevice->device);
     volkLoadDevice(pDevice->device);
     if (needDecode)
     {
@@ -262,7 +325,13 @@ GpuDevice* GpuDevice_Create(int needDecode, int needEncode, char* pReport, size_
     cvkGetDeviceQueue(pDevice->device, pDevice->transferFamily, 0, &pDevice->transferQueue);
     cvkGetDeviceQueue(pDevice->device, pDevice->transferFamily2, 0, &pDevice->transferQueue2);
 
-    Report(pReport, reportCapacity, "device ready: decode qf %u, encode qf %u, transfer qf %u/%u\n", pDevice->decodeFamily, pDevice->encodeFamily, pDevice->transferFamily, pDevice->transferFamily2);
+    Report(pReport,
+           reportCapacity,
+           "device ready: decode qf %u, encode qf %u, transfer qf %u/%u\n",
+           pDevice->decodeFamily,
+           pDevice->encodeFamily,
+           pDevice->transferFamily,
+           pDevice->transferFamily2);
     return pDevice;
 }
 

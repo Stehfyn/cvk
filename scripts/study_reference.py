@@ -226,7 +226,7 @@ def main() -> None:
     docs: Dict[str, dict] = {}
     files = REF_FILES
     if os.path.exists(os.path.join(args.ref, "src", "cvk.c")):
-        files = [("generated", "include/cvk.h", "src/cvk.c")]
+        files = [("generated", "include/cvk/cvk.h", "src/cvk.c")]
     for group, hdr, src in files:
         if src and os.path.exists(os.path.join(args.ref, src)):
             fns.update(parse_definitions(os.path.join(args.ref, src), args.prefix, group))

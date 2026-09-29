@@ -3,9 +3,12 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "vi/cvk_vi.h"
+#include "cvk/cvk.h"
+#include "cvk/vi/cvk_vi.h"
 #include <volk.h>
-#include <string.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_vi.h>
 
 void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window)
 {

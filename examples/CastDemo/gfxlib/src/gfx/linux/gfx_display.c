@@ -42,7 +42,7 @@ static const char c_displayWindowName[] = "Vulkan VA zero-copy";
  *
  * \param[in] pCreateInfo        Request for windowed X11, direct-display, or headless operation
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -53,7 +53,7 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
  * \param[out] pDisplay        Display receiving X Display, Window, WM_DELETE_WINDOW atom, and screen extent
  * \param[in] pCreateInfo      Requested window extent
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -64,7 +64,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
  * \param[out] pDisplay        Zero-initialized display marked running
  * \param[in] pCreateInfo      Validated Linux display kind
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void CreateDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -90,7 +90,8 @@ static bool_t ProcessDisplayEvents(Gfx_Display_t* pDisplay);
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo)
 {
     LOGASSERT(NULL != pCreateInfo);
-    LOGASSERT((GFX_DISPLAY_KIND_WINDOWED == pCreateInfo->kind) || (GFX_DISPLAY_KIND_DIRECT == pCreateInfo->kind) || (GFX_DISPLAY_KIND_HEADLESS == pCreateInfo->kind));
+    LOGASSERT((GFX_DISPLAY_KIND_WINDOWED == pCreateInfo->kind) || (GFX_DISPLAY_KIND_DIRECT == pCreateInfo->kind) ||
+              (GFX_DISPLAY_KIND_HEADLESS == pCreateInfo->kind));
     LOGASSERT(0 != pCreateInfo->width);
     LOGASSERT(0 != pCreateInfo->height);
 }
@@ -102,11 +103,11 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo)
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo)
 {
-    int input_selected;
-    int window_named;
-    int protocols_set;
-    int window_mapped;
-    int attributes_queried;
+    int               input_selected;
+    int               window_named;
+    int               protocols_set;
+    int               window_mapped;
+    int               attributes_queried;
     Display*          dpy;
     Window            window;
     Atom              delete_message;
@@ -118,7 +119,15 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
     LOGASSERT(NULL != dpy);
 
     screen = DefaultScreen(dpy);
-    window = XCreateSimpleWindow(dpy, RootWindow(dpy, screen), 0, 0, pCreateInfo->width, pCreateInfo->height, 0, BlackPixel(dpy, screen), BlackPixel(dpy, screen));
+    window = XCreateSimpleWindow(dpy,
+                                 RootWindow(dpy, screen),
+                                 0,
+                                 0,
+                                 pCreateInfo->width,
+                                 pCreateInfo->height,
+                                 0,
+                                 BlackPixel(dpy, screen),
+                                 BlackPixel(dpy, screen));
     LOGASSERT(0 != window);
     input_selected = XSelectInput(dpy, window, StructureNotifyMask | ExposureMask | KeyPressMask);
     LOGASSERT(0 != input_selected);
@@ -186,7 +195,8 @@ static bool_t ProcessDisplayEvents(Gfx_Display_t* pDisplay)
     while (0 != XPending(dpy))
     {
         (void)XNextEvent(dpy, &event);
-        if (DestroyNotify == event.type || (ClientMessage == event.type && (Atom)event.xclient.data.l[0] == (Atom)pDisplay->nativeEvent))
+        if (DestroyNotify == event.type ||
+            (ClientMessage == event.type && (Atom)event.xclient.data.l[0] == (Atom)pDisplay->nativeEvent))
         {
             pDisplay->running = FALSE;
         }

@@ -8,7 +8,7 @@
 
 #include <vulkan/vulkan.h>
 #include <volk.h>
-#include "cvk.h"
+#include "cvk/cvk.h"
 
 #include "gpu_transcode.h"
 #include "os/os_atomic.h"

@@ -59,7 +59,7 @@ flowchart LR
 ```
 
 Platform folders contain functions from the applicable tiers. For example,
-`win32/cvk_win32.h` exposes the tier-3 import protocol as well as Win32 command wrappers;
+`cvk/win32/cvk_win32.h` exposes the tier-3 import protocol as well as Win32 command wrappers;
 the folder does not define another call depth. A tier-1' specialization can also wrap a
 tier-2 composition, as the buffer example below shows.
 
@@ -250,17 +250,19 @@ tier 0/1 functions exist there.
 
 ## 5. What cvk produces
 
-- `cvk.h` / `cvk.c` for tiers 0, 1, 1', and templated tier 2, generated from the Vulkan registry
+- `include/cvk/cvk.h` / `src/cvk.c` for tiers 0, 1, 1', and templated tier 2, generated from the Vulkan registry
   plus a small policy file (naming prefix, `CVK_MAX_*` capacities, which extensions and platforms
   to include, constant-substitution table).
-- `cvk_json.h` / `cvk_json.c` for the JSON reader, generated type parsers, and pipeline
-  JSON helpers; `scvk_json.h` / `scvk_json.c` provide the SC equivalents. JSON callers
+- `include/cvk/cvk_json.h` / `src/cvk_json.c` for the JSON reader, generated type parsers, and pipeline
+  JSON helpers; `include/scvk/scvk_json.h` / `src/scvk_json.c` provide the SC equivalents. JSON callers
   include these headers and link the same `cvk` or `scvk` library. Platform-specific
-  parsers live in matching pairs such as `win32/cvk_win32_json.h` / `.c`.
-- Per-platform headers (`include/xlib/cvk_xlib.h`, `include/win32/cvk_win32.h`) with the same
+  parsers use `cvk/win32/cvk_win32_json.h` with the matching source under `src/win32/`.
+- Per-platform headers (`include/cvk/xlib/cvk_xlib.h`, `include/cvk/win32/cvk_win32.h`) with the same
   tiers restricted to that platform's extensions, and matching sources under `src/<platform>/`.
   The `posix` protocol pair and `scvk` profile use the same layout. Include platform headers
-  as, for example, `#include "win32/cvk_win32.h"` with `include/` on the include path.
+  as, for example, `#include "cvk/win32/cvk_win32.h"` with `include/` on the include path.
+  Core callers use `#include "cvk/cvk.h"`; the standalone SC library uses `scvk/scvk.h`
+  and the `scvk/<platform>/` namespace. CMake exports the shared `include/` root.
   The default `"platforms": "all"` policy emits every category supported by each
   profile's registry, including `provisional/` for beta extensions. Unsupported
   categories produce no empty files; Vulkan SC currently emits Win32, QNX Screen,

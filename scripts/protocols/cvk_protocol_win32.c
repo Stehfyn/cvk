@@ -34,7 +34,7 @@
  * \param[in]  handleType              Win32 external memory handle type being imported
  * \param[in]  handle                  Handle to import, or NULL when name is used
  * \param[in]  name                    Name of the object to import, or NULL when handle is used
- * \param[in]  allocationSize          Size of the external memory object; must cover the image's requirements
+ * \param[in]  allocationSize          Complete external extent for heap/opaque imports; ignored for D3D texture/resource imports
  * \param[in]  requiredProperties      Memory property flags the selected type must cover
  * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
@@ -79,6 +79,12 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     VkBool32                         dedicated;
     uint32_t                         external_memory_type_bits;
     uint32_t                         memory_type_index;
+    VkDeviceSize                     allocation_size;
+    VkBool32                         is_d3d11_texture;
+    VkBool32                         is_d3d11_texture_kmt;
+    VkBool32                         is_d3d12_resource;
+    VkBool32                         is_texture_import;
+    VkBool32                         ignores_allocation_size;
 
     /* capability: the handle type must be importable for this image description */
     importable = cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice, handleType, format, imageType, tiling, usage, flags, NULL, &dedicated);
@@ -109,13 +115,31 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
     if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT != handleType) && (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT != handleType) && (NULL != handle))
     {
         cvkGetMemoryWin32HandleProperties(device, handleType, handle, NULL, &memory_win32_handle_properties);
+
         external_memory_type_bits = memory_win32_handle_properties.memoryTypeBits;
     }
 
     /* requirements, with dedicated requirements chained */
     cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
     cvkGetImageMemoryRequirementsInfo2(device, NULL, (*pImage), &memory_dedicated_requirements, &memory_requirements);
-    CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    /* VkMemoryAllocateInfo: D3D texture/resource imports ignore allocationSize.
+     * Heap and opaque imports retain their supplied native allocation extent.
+     * https://docs.vulkan.org/refpages/latest/refpages/source/VkMemoryAllocateInfo.html */
+    allocation_size = allocationSize;
+    is_d3d11_texture        = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT == handleType;
+    is_d3d11_texture_kmt    = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT == handleType;
+    is_d3d12_resource       = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT == handleType;
+    is_texture_import      = is_d3d11_texture || is_d3d11_texture_kmt;
+    ignores_allocation_size = is_texture_import || is_d3d12_resource;
+    if (ignores_allocation_size)
+    {
+        allocation_size = memory_requirements.memoryRequirements.size;
+    }
+    else
+    {
+        CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    }
+
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
         dedicated = VK_TRUE;
@@ -127,13 +151,15 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 
     /* allocate: import info heads the caller's chain, dedicated info in front when required; the handle stays caller-owned */
     cvkInitImportMemoryWin32HandleInfo(&import_memory_win32_handle_info, pMemoryNext, handleType, handle, name);
+
     allocate_next = &import_memory_win32_handle_info;
     if (dedicated)
     {
         cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_win32_handle_info, (*pImage), VK_NULL_HANDLE);
+
         allocate_next = &memory_dedicated_allocate_info;
     }
-    cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
+    cvkAllocateMemory(device, allocate_next, allocation_size, memory_type_index, pAllocator, pMemory);
 
     /* bind */
     cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
@@ -163,7 +189,7 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
  * \param[in]  handleType              Win32 external memory handle type being imported
  * \param[in]  handle                  Handle to import, or NULL when name is used
  * \param[in]  name                    Name of the object to import, or NULL when handle is used
- * \param[in]  allocationSize          Size of the external memory object; must cover the buffer's requirements
+ * \param[in]  allocationSize          Complete external extent for heap/opaque imports; ignored for D3D12 resource imports
  * \param[in]  requiredProperties      Memory property flags the selected type must cover
  * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
  * \param[in]  pAllocator              Optional allocation callbacks, or NULL
@@ -201,26 +227,48 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
     VkBool32                         dedicated;
     uint32_t                         external_memory_type_bits;
     uint32_t                         memory_type_index;
+    VkDeviceSize                     allocation_size;
 
     /* capability: the handle type must be importable for this buffer description */
     importable = cvkGetPhysicalDeviceExternalBufferImportSupport(physicalDevice, NULL, flags, usage, handleType, &dedicated);
     CVK_ASSERT(importable);
 
     /* create, with the handle type declared */
-    cvkCreateBufferWithExternalMemoryInfo(device, pBufferNext, (VkExternalMemoryHandleTypeFlags)handleType, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
+    cvkCreateBufferWithExternalMemoryInfo(device,
+                                          pBufferNext,
+                                          (VkExternalMemoryHandleTypeFlags)handleType,
+                                          flags,
+                                          size,
+                                          usage,
+                                          sharingMode,
+                                          queueFamilyIndexCount,
+                                          pQueueFamilyIndices,
+                                          pAllocator,
+                                          pBuffer);
 
     /* constraint: the handle's memory types; opaque Win32 handle types may not be queried and allow every type */
     external_memory_type_bits = UINT32_MAX;
     if ((VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT != handleType) && (VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT != handleType) && (NULL != handle))
     {
         cvkGetMemoryWin32HandleProperties(device, handleType, handle, NULL, &memory_win32_handle_properties);
+
         external_memory_type_bits = memory_win32_handle_properties.memoryTypeBits;
     }
 
     /* requirements, with dedicated requirements chained */
     cvkInitMemoryDedicatedRequirements(&memory_dedicated_requirements, NULL);
     cvkGetBufferMemoryRequirementsInfo2(device, NULL, (*pBuffer), &memory_dedicated_requirements, &memory_requirements);
-    CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    /* VkMemoryAllocateInfo ignores allocationSize for D3D12 resource imports. */
+    allocation_size = allocationSize;
+    if (VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT == handleType)
+    {
+        allocation_size = memory_requirements.memoryRequirements.size;
+    }
+    else
+    {
+        CVK_ASSERT(allocationSize >= memory_requirements.memoryRequirements.size);
+    }
+
     if (memory_dedicated_requirements.requiresDedicatedAllocation)
     {
         dedicated = VK_TRUE;
@@ -232,13 +280,15 @@ void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevic
 
     /* allocate: import info heads the caller's chain, dedicated info in front when required; the handle stays caller-owned */
     cvkInitImportMemoryWin32HandleInfo(&import_memory_win32_handle_info, pMemoryNext, handleType, handle, name);
+
     allocate_next = &import_memory_win32_handle_info;
     if (dedicated)
     {
         cvkInitMemoryDedicatedAllocateInfo(&memory_dedicated_allocate_info, &import_memory_win32_handle_info, VK_NULL_HANDLE, (*pBuffer));
+
         allocate_next = &memory_dedicated_allocate_info;
     }
-    cvkAllocateMemory(device, allocate_next, allocationSize, memory_type_index, pAllocator, pMemory);
+    cvkAllocateMemory(device, allocate_next, allocation_size, memory_type_index, pAllocator, pMemory);
 
     /* bind */
     cvkBindBufferMemory(device, (*pBuffer), (*pMemory), VK_NO_OFFSET);

@@ -3,9 +3,12 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "ios/cvk_ios.h"
+#include "cvk/cvk.h"
+#include "cvk/ios/cvk_ios.h"
 #include <volk.h>
-#include <string.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_ios.h>
 
 void cvkInitIOSSurfaceCreateInfoMVK(VkIOSSurfaceCreateInfoMVK* pInfo, const void* pNext, VkIOSSurfaceCreateFlagsMVK flags, const void* pView)
 {

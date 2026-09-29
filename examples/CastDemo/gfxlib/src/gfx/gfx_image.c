@@ -6,15 +6,16 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "cvk/cvk.h"
+#include "cva.h"
 #include "gfx/gfx_image.h"
 #include "gfx/gfx_image_platform.h"
-#include "gfx/gfx_vaapi.h"
-#include "gfx/gfx_vaapi_platform.h"
-#include "gfx/gfx_vulkan.h"
-#include "gfx/gfx_vulkan_platform.h"
+#include "gfx/gfx_image_internal.h"
+#include "gfx/gfx_image_layout.h"
 #include "os/os_assert.h"
 #include "os/os_malloc.h"
 
+#include <stdio.h>
 #include <string.h>
 
 /*=================================================================================================
@@ -23,9 +24,27 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
+#define DIAGNOSTIC_RECORD_LIMIT   (256) ///< Maximum native diagnostic records examined per synchronization.
+#define DIAGNOSTIC_RECORD_END     (-1)  ///< libva va.h: terminating VASurfaceDecodeMBErrors status.
+#define DIAGNOSTIC_RECORD_PRESENT (1)   ///< libva va.h: hardware supplied detailed record fields.
+
 /*=================================================================================================
 ** 3.2 Types
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \brief Startup image owner retaining validated VA transfer geometry alongside its public state.
+ *
+ * \par Details:
+ *  image is the first member so the public pointer identifies its owning allocation.
+ *  Only Gfx_Image_Create constructs storage images; callers shall not copy or fabricate owners.
+ */
+typedef struct Gfx_Image_Storage_s
+{
+    Gfx_Image_t        image;  ///< Public image state at the start of its owning allocation.
+    Gfx_Image_Layout_t layout; ///< Immutable geometry for VA STORAGE images; unused by other kinds.
+} Gfx_Image_Storage_t;
 
 /*=================================================================================================
 ** 3.3 External global variables
@@ -41,7 +60,54 @@
 
 /*************************************************************************************************/
 /**
+ * \brief Reports a bounded sequence of optional VA surface diagnostics for an image.
+ *
+ * \par Requirements:
+ *  - 001 Image shall retain a valid display and surface during the native query and reporting.
+ *  - 002 The configured cva query shall return every specified diagnostic failure to this caller.
+ *  - 003 Failed queries shall not expose or inspect native output pointers.
+ *  - 004 At most DIAGNOSTIC_RECORD_LIMIT records shall be examined; reaching the limit shall be reported.
+ *  - 005 Optional diagnostics shall not replace the original synchronization result.
+ *
+ * \par Details:
+ *  The driver owns the returned sentinel-terminated records. Its allocation behavior and the
+ *  imported logging backend still require adaptation to the complete initialization-only goal.
+ *
+ * \param[in] image   VA image whose pending work was synchronized
+ * \param[in] status  Original success, decode-error or hardware-busy result
+ *
+ * \retval None   No result value.
+ */
+static void ReportVaImageDiagnostics(const Gfx_Image_t* image, VAStatus status);
+
+/*************************************************************************************************/
+/**
+ * \brief Synchronizes a VA image while preserving its primary completion result.
+ *
+ * \par Requirements:
+ *  - 001 Image shall contain a valid display and surface; invalid construction shall assert.
+ *  - 002 Native operations shall use cva; optional diagnostics shall use its configured result policy.
+ *  - 003 Final status checking shall use the synchronization result, not the diagnostic query result.
+ *
+ * \par Details:
+ *  This retains the existing synchronous image-transfer contract. Converting the owning
+ *  image/surface workflow to bounded completion remains required by the complete goal.
+ *
+ * \param[in] image   VA image exclusively owned by its caller
+ *
+ * \retval None   No result value.
+ */
+static void SynchronizeVaImage(const Gfx_Image_t* image);
+
+/*************************************************************************************************/
+/**
  * \brief Reads packed pixels from a VA storage image after synchronizing its surface.
+ *
+ * \par Requirements:
+ *  - 001 Image shall be an acquired STORAGE owner returned by Gfx_Image_Create.
+ *  - 002 Destination shall be disjoint from native storage and cover the cached packed extent.
+ *  - 003 Capacity shall be checked before native synchronization or mapping.
+ *  - 004 Each successful mapping shall be followed by exactly one unmap after copying active rows.
  *
  * \par Details:
  *  Reuses the existing derived image and leaves acquired and uploadPending unchanged.
@@ -50,7 +116,7 @@
  * \param[out]    dst     Destination receiving tightly packed image planes without native row padding
  * \param[in]     dstSize Destination capacity in bytes; must fit uint32_t and hold all packed planes
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void ReadVaapiImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -67,7 +133,7 @@ static void ReadVaapiImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize
  * \param[out]    dst     Destination receiving the current image pixels, including GPU changes
  * \param[in]     dstSize Packed pixel byte count; must equal uploadByteCount
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void ReadVulkanImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -78,7 +144,7 @@ static void ReadVulkanImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSiz
  * \param[in] image Image that must be acquired and have no unconsumed write
  * \param[in] src   Non-null source pixel storage
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void ValidateWriteMemory(const Gfx_Image_t* image, const void* src);
 
@@ -90,7 +156,7 @@ static void ValidateWriteMemory(const Gfx_Image_t* image, const void* src);
  * \param[in]     src     Packed source pixels
  * \param[in]     srcSize Source capacity in bytes; must hold all packed planes and fit uint32_t
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void WriteVaapiImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 
@@ -102,7 +168,7 @@ static void WriteVaapiImageMemory(Gfx_Image_t* image, const void* src, uint64_t 
  * \param[in]     src     Source pixels copied into coherent staging memory
  * \param[in]     srcSize Packed pixel byte count; must equal uploadByteCount
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void WriteVulkanImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 
@@ -112,7 +178,7 @@ static void WriteVulkanImageMemory(Gfx_Image_t* image, const void* src, uint64_t
  *
  * \param[in] createInfo Non-NULL creation parameters with nonzero dimensions, a recognized hint and kind, and interop inputs when required
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void ValidateCreateInfo(const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -126,9 +192,13 @@ static void ValidateCreateInfo(const Gfx_Image_CreateInfo_t* createInfo);
  * \param[in]  surfaceId Native VA surface containing the pixels
  * \param[in]  imageView Persistent derived view for STORAGE; a zeroed VAImage for IMPORT/EXPORT
  *
- * \retval None
+ * \retval None   No result value.
  */
-static void InitVaapiImage(Gfx_Image_t* image, Gfx_Image_Kind_t kind, VADisplay dpy, VASurfaceID surfaceId, VAImage imageView);
+static void InitVaapiImage(Gfx_Image_t*     image,
+                           Gfx_Image_Kind_t kind,
+                           VADisplay        dpy,
+                           VASurfaceID      surfaceId,
+                           VAImage          imageView);
 
 /*************************************************************************************************/
 /**
@@ -150,7 +220,7 @@ static void InitVaapiImage(Gfx_Image_t* image, Gfx_Image_Kind_t kind, VADisplay 
  * \param[out] pReadbackFence Receives the unsignaled readback fence
  * \param[out] pStagingSize   Receives the staging buffer size in bytes
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void CreateVulkanStorageImageResources(VkPhysicalDevice             physicalDevice,
                                               VkDevice                     device,
@@ -175,31 +245,9 @@ static void CreateVulkanStorageImageResources(VkPhysicalDevice             physi
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo STORAGE configuration with an initialized VA display, render-target format, and pixel fourcc
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void CreateVaapiStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
-
-/*************************************************************************************************/
-/**
- * \brief Imports native storage into VA.
- *
- * \param[out] image      Zero-initialized image receiving the imported surface
- * \param[in]  createInfo Validated VA import configuration
- *
- * \retval None
- */
-static void CreateVaapiImportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
-
-/*************************************************************************************************/
-/**
- * \brief Creates an exportable VA surface.
- *
- * \param[out] image      Zero-initialized image receiving the exported surface
- * \param[in]  createInfo Validated VA export configuration
- *
- * \retval None
- */
-static void CreateVaapiExportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
 /*************************************************************************************************/
 /**
@@ -221,7 +269,7 @@ static void CreateVaapiExportImage(Gfx_Image_t* image, const Gfx_Image_CreateInf
  * \param[in]  externalYStride          Luma or packed-pixel row pitch in bytes
  * \param[in]  externalUvOffset         Second plane byte offset; zero for single-plane storage
  * \param[in]  externalUvStride         Second plane row pitch; zero for single-plane storage
- * \param[in]  additionalMemories       Array of VK_MAX_DRM_FORMAT_MODIFIER_PLANES - 1 handles, or NULL for all-null slots
+ * \param[in]  additionalMemories       Array of CVK_MAX_DRM_FORMAT_MODIFIER_PLANES - 1 handles, or NULL for all-null slots
  * \param[in]  memoryCount              Number of image memory allocations, including memory
  * \param[in]  uploadBuffer             STORAGE staging buffer; VK_NULL_HANDLE for interop
  * \param[in]  uploadMemory             Coherent staging memory; VK_NULL_HANDLE for interop
@@ -233,7 +281,7 @@ static void CreateVaapiExportImage(Gfx_Image_t* image, const Gfx_Image_CreateInf
  * \param[in]  height                   Image height in pixels
  * \param[in]  uploadByteCount          Packed STORAGE staging size in bytes; zero for interop
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void InitVulkanImage(Gfx_Image_t*          image,
                             Gfx_Image_Kind_t      kind,
@@ -273,31 +321,9 @@ static void InitVulkanImage(Gfx_Image_t*          image,
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo STORAGE configuration with transfer-destination usage and a queue matching the borrowed command pool and buffer
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void CreateVulkanStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
-
-/*************************************************************************************************/
-/**
- * \brief Imports native memory into Vulkan.
- *
- * \param[out] image      Zero-initialized image receiving the imported resources
- * \param[in]  createInfo Validated Vulkan import configuration
- *
- * \retval None
- */
-static void CreateVulkanImportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
-
-/*************************************************************************************************/
-/**
- * \brief Exports Vulkan storage.
- *
- * \param[out] image      Zero-initialized image receiving the exported resources
- * \param[in]  createInfo Validated Vulkan export configuration
- *
- * \retval None
- */
-static void CreateVulkanExportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
 /*************************************************************************************************/
 /**
@@ -306,7 +332,7 @@ static void CreateVulkanExportImage(Gfx_Image_t* image, const Gfx_Image_CreateIn
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo Validated backend, image kind, extent, and native creation inputs
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void CreateVaapiImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -317,7 +343,7 @@ static void CreateVaapiImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* c
  * \param[out] image      Allocated image receiving its native representation and backend state
  * \param[in]  createInfo Validated backend, image kind, extent, and native creation inputs
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void CreateVulkanImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -328,7 +354,7 @@ static void CreateVulkanImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* 
  * \param[out] image      Allocated image initialized by the selected concrete creation function
  * \param[in]  createInfo Image backend, sharing kind, dimensions, and native creation parameters
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void CreateImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -340,7 +366,7 @@ static void CreateImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* create
  * \param[out]    dst     Non-NULL destination storage filled before the function returns
  * \param[in]     dstSize Destination capacity satisfying the selected backend's size requirements
  *
- * \retval None
+ * \retval None   No result value.
  */
 static void ReadImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -352,7 +378,7 @@ static void ReadImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
  * \param[in]     src     Source pixel bytes
  * \param[in]     srcSize Source capacity satisfying the selected backend's size requirements
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 static void WriteImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 
@@ -363,17 +389,141 @@ static void WriteImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSi
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  cva's configured optional-query policy returns native failure statuses. Failed output is
+ *  discarded before inspection. A native sentinel ends traversal before any further record load.
+ */
+static void ReportVaImageDiagnostics(const Gfx_Image_t* image, VAStatus status)
+{
+    void*                          error_info;
+    VAStatus                       query_status;
+    bool_t                         query_succeeded;
+    bool_t                         has_records;
+    bool_t                         can_report;
+    const VASurfaceDecodeMBErrors* surface_error;
+    uint32_t                       record_index;
+    bool_t                         is_terminal;
+    bool_t                         has_details;
+    bool_t                         reached_limit;
+    bool_t                         synchronization_failed;
+
+    error_info      = NULL;
+    query_status    = cvaQuerySurfaceError(image->va.dpy, image->va.surfaceId, status, &error_info);
+    query_succeeded = (VA_STATUS_SUCCESS == query_status);
+    if (FALSE == query_succeeded)
+    {
+        error_info = NULL;
+    }
+    has_records = (NULL != error_info);
+    can_report  = query_succeeded && has_records;
+    if (can_report)
+    {
+        surface_error = (const VASurfaceDecodeMBErrors*)error_info;
+        for (record_index = 0; record_index < DIAGNOSTIC_RECORD_LIMIT; ++record_index)
+        {
+            is_terminal = (DIAGNOSTIC_RECORD_END == surface_error->status);
+            has_details = (DIAGNOSTIC_RECORD_PRESENT == surface_error->status);
+            if (is_terminal)
+            {
+                break;
+            }
+            if (has_details)
+            {
+                LOGSTART(stderr);
+                LOGPRINTS("VA-API surface ");
+                LOGPRINTU((uint64_t)image->va.surfaceId);
+                LOGPRINTS(" diagnostic: type=");
+                LOGPRINTI((int64_t)surface_error->decode_error_type);
+                LOGPRINTS(" start_mb=");
+                LOGPRINTU((uint64_t)surface_error->start_mb);
+                LOGPRINTS(" end_mb=");
+                LOGPRINTU((uint64_t)surface_error->end_mb);
+                LOGPRINTS(" num_mb=");
+                LOGPRINTU((uint64_t)surface_error->num_mb);
+                LOGPRINTS("\n");
+                LOGEND();
+            }
+            ++surface_error;
+        }
+        reached_limit = (DIAGNOSTIC_RECORD_LIMIT == record_index);
+        if (reached_limit)
+        {
+            LOGSTART(stderr);
+            LOGPRINTS("VA-API surface ");
+            LOGPRINTU((uint64_t)image->va.surfaceId);
+            LOGPRINTS(" diagnostic record limit reached\n");
+            LOGEND();
+        }
+    }
+    else if (FALSE == query_succeeded)
+    {
+        synchronization_failed = (VA_STATUS_SUCCESS != status);
+        if (synchronization_failed)
+        {
+            LOGSTART(stderr);
+            LOGPRINTS("VA-API surface ");
+            LOGPRINTU((uint64_t)image->va.surfaceId);
+            LOGPRINTS(" diagnostics unavailable: ");
+            LOGPRINTS(cvaErrorStr(query_status));
+            LOGPRINTS("\n");
+            LOGEND();
+        }
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Only the three libva-defined synchronization outcomes permit the diagnostic query.
+ *  The primary result remains live until the final cva status check.
+ */
+static void SynchronizeVaImage(const Gfx_Image_t* image)
+{
+    VAStatus status;
+    bool_t   is_complete;
+    bool_t   decoding_failed;
+    bool_t   hardware_busy;
+    bool_t   can_query;
+
+    LOGASSERT(NULL != image);
+    LOGASSERT(NULL != image->va.dpy);
+    LOGASSERT(VA_INVALID_SURFACE != image->va.surfaceId);
+
+    status          = cvaSyncSurface(image->va.dpy, image->va.surfaceId);
+    is_complete     = (VA_STATUS_SUCCESS == status);
+    decoding_failed = (VA_STATUS_ERROR_DECODING_ERROR == status);
+    hardware_busy   = (VA_STATUS_ERROR_HW_BUSY == status);
+    can_query       = is_complete || decoding_failed || hardware_busy;
+    if (can_query)
+    {
+        ReportVaImageDiagnostics(image, status);
+    }
+    cvaCheckStatus(status, "cvaSyncSurface(image->va.dpy, image->va.surfaceId)", __FILE__, __LINE__);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  None
  */
 static void ReadVaapiImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize)
 {
+    const Gfx_Image_Storage_t* storage;
+    void*                      mapped;
+
     LOGASSERT(GFX_IMAGE_KIND_STORAGE == image->kind);
     LOGASSERT(NULL != image->va.dpy);
     LOGASSERT(VA_INVALID_SURFACE != image->va.surfaceId);
     LOGASSERT(dstSize <= (uint64_t)UINT32_MAX);
 
-    Gfx_Vaapi_SyncSurface(image->va.dpy, image->va.surfaceId);
-    Gfx_Vaapi_ReadImageMemory(image->va.dpy, &image->va.image, dst, (uint32_t)dstSize);
+    storage = (const Gfx_Image_Storage_t*)image;
+    LOGASSERT(storage->layout.packedByteCount <= dstSize);
+
+    SynchronizeVaImage(image);
+    mapped = NULL;
+    cvaMapBuffer2(image->va.dpy, image->va.image.buf, &mapped, VA_MAPBUFFER_FLAG_READ);
+    LOGASSERT(NULL != mapped);
+    Gfx_Image_ReadLayout(&storage->layout, dst, dstSize, mapped);
+    cvaUnmapBuffer(image->va.dpy, image->va.image.buf);
 }
 
 /*************************************************************************************************/
@@ -401,47 +551,59 @@ static void ReadVulkanImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSiz
 
     if (image->vk.uploadSubmitted)
     {
-        Gfx_Vulkan_WaitForFence(image->vk.device, image->vk.uploadFence, VK_INFINITE);
+        CVK_CHECK(cvkWaitForFence(image->vk.device, image->vk.uploadFence, VK_TRUE, UINT64_MAX));
     }
     if ((FALSE == image->uploadPending) || (image->vk.uploadSubmitted))
     {
-        Gfx_Vulkan_ResetCommandPool(image->vk.device, image->vk.commandPool, (VkCommandPoolResetFlags)0);
-        Gfx_Vulkan_BeginCommandBuffer(image->vk.commandBuffer, NULL, (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+        cvkResetCommandPool(image->vk.device, image->vk.commandPool, (VkCommandPoolResetFlags)0);
+        cvkBeginCommandBuffer(image->vk.commandBuffer,
+                              NULL,
+                              (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+                              NULL);
     }
     image_offset.x      = 0;
     image_offset.y      = 0;
     image_extent.width  = image->vk.extent.width;
     image_extent.height = image->vk.extent.height;
-    image_subresource   = Gfx_Vulkan_GetFormatBaseSubresourceLayers(image->vk.format);
-    Gfx_Vulkan_CmdTransferImageToBuffer2D(image->vk.commandBuffer,
-                                          (VkDependencyFlags)0,
-                                          NULL,
-                                          (VkPipelineStageFlags)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                                          (VkAccessFlags)((VkFlags)VK_ACCESS_MEMORY_READ_BIT | (VkFlags)VK_ACCESS_MEMORY_WRITE_BIT),
-                                          VK_IMAGE_LAYOUT_GENERAL,
-                                          image->vk.image,
-                                          image->vk.format,
-                                          VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                                          image_offset,
-                                          image_extent,
-                                          image_subresource,
-                                          NULL,
-                                          (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT | (VkFlags)VK_PIPELINE_STAGE_HOST_BIT),
-                                          (VkAccessFlags)((VkFlags)VK_ACCESS_MEMORY_READ_BIT | (VkFlags)VK_ACCESS_MEMORY_WRITE_BIT),
-                                          image->vk.uploadBuffer,
-                                          VK_NO_OFFSET,
-                                          1,
-                                          NULL,
-                                          (VkPipelineStageFlags)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-                                          (VkAccessFlags)((VkFlags)VK_ACCESS_MEMORY_READ_BIT | (VkFlags)VK_ACCESS_MEMORY_WRITE_BIT),
-                                          VK_IMAGE_LAYOUT_GENERAL,
-                                          NULL,
-                                          (VkPipelineStageFlags)VK_PIPELINE_STAGE_HOST_BIT,
-                                          (VkAccessFlags)VK_ACCESS_HOST_READ_BIT);
-    Gfx_Vulkan_EndCommandBuffer(image->vk.commandBuffer);
-    Gfx_Vulkan_ResetFence(image->vk.device, image->vk.readbackFence);
-    Gfx_Vulkan_QueueSubmitCommandBuffer(image->vk.queue, NULL, 0, NULL, NULL, image->vk.commandBuffer, 0, NULL, image->vk.readbackFence);
-    Gfx_Vulkan_WaitForFence(image->vk.device, image->vk.readbackFence, UINT64_MAX);
+    image_subresource   = cvkGetFormatBaseSubresourceLayers(image->vk.format);
+    cvkCmdTransferImageToBuffer2D(
+        image->vk.commandBuffer,
+        (VkDependencyFlags)0,
+        NULL,
+        (VkPipelineStageFlags)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        (VkAccessFlags)((VkFlags)VK_ACCESS_MEMORY_READ_BIT | (VkFlags)VK_ACCESS_MEMORY_WRITE_BIT),
+        VK_IMAGE_LAYOUT_GENERAL,
+        image->vk.image,
+        image->vk.format,
+        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+        image_subresource,
+        NULL,
+        (VkPipelineStageFlags)((VkFlags)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT | (VkFlags)VK_PIPELINE_STAGE_HOST_BIT),
+        (VkAccessFlags)((VkFlags)VK_ACCESS_MEMORY_READ_BIT | (VkFlags)VK_ACCESS_MEMORY_WRITE_BIT),
+        image->vk.uploadBuffer,
+        VK_NO_OFFSET,
+        1,
+        NULL,
+        (VkPipelineStageFlags)VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+        (VkAccessFlags)((VkFlags)VK_ACCESS_MEMORY_READ_BIT | (VkFlags)VK_ACCESS_MEMORY_WRITE_BIT),
+        VK_IMAGE_LAYOUT_GENERAL,
+        NULL,
+        (VkPipelineStageFlags)VK_PIPELINE_STAGE_HOST_BIT,
+        (VkAccessFlags)VK_ACCESS_HOST_READ_BIT,
+        image_offset,
+        image_extent);
+    cvkEndCommandBuffer(image->vk.commandBuffer);
+    cvkResetFence(image->vk.device, image->vk.readbackFence);
+    cvkQueueSubmitCommandBuffer(image->vk.queue,
+                                NULL,
+                                0,
+                                NULL,
+                                NULL,
+                                0,
+                                NULL,
+                                image->vk.readbackFence,
+                                image->vk.commandBuffer);
+    CVK_CHECK(cvkWaitForFence(image->vk.device, image->vk.readbackFence, VK_TRUE, UINT64_MAX));
     LOGASSERT(NULL != image->vk.pUploadData);
     (void)memcpy(dst, image->vk.pUploadData, (size_t)dstSize);
     image->vk.layoutInitialized = TRUE;
@@ -450,8 +612,11 @@ static void ReadVulkanImageMemory(Gfx_Image_t* image, void* dst, uint64_t dstSiz
 
     if ((image->uploadPending) && (FALSE == image->vk.uploadSubmitted))
     {
-        Gfx_Vulkan_ResetCommandPool(image->vk.device, image->vk.commandPool, (VkCommandPoolResetFlags)0);
-        Gfx_Vulkan_BeginCommandBuffer(image->vk.commandBuffer, NULL, (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+        cvkResetCommandPool(image->vk.device, image->vk.commandPool, (VkCommandPoolResetFlags)0);
+        cvkBeginCommandBuffer(image->vk.commandBuffer,
+                              NULL,
+                              (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+                              NULL);
     }
 }
 
@@ -475,13 +640,23 @@ static void ValidateWriteMemory(const Gfx_Image_t* image, const void* src)
  */
 static void WriteVaapiImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize)
 {
+    const Gfx_Image_Storage_t* storage;
+    void*                      mapped;
+
     LOGASSERT(GFX_IMAGE_KIND_STORAGE == image->kind);
     LOGASSERT(NULL != image->va.dpy);
     LOGASSERT(VA_INVALID_SURFACE != image->va.surfaceId);
     LOGASSERT(srcSize <= (uint64_t)UINT32_MAX);
 
-    Gfx_Vaapi_SyncSurface(image->va.dpy, image->va.surfaceId);
-    Gfx_Vaapi_WriteImageMemory(image->va.dpy, &image->va.image, src, (uint32_t)srcSize);
+    storage = (const Gfx_Image_Storage_t*)image;
+    LOGASSERT(storage->layout.packedByteCount <= srcSize);
+
+    SynchronizeVaImage(image);
+    mapped = NULL;
+    cvaMapBuffer2(image->va.dpy, image->va.image.buf, &mapped, VA_MAPBUFFER_FLAG_WRITE);
+    LOGASSERT(NULL != mapped);
+    Gfx_Image_WriteLayout(&storage->layout, src, srcSize, mapped);
+    cvaUnmapBuffer(image->va.dpy, image->va.image.buf);
     image->uploadPending = TRUE;
 }
 
@@ -515,13 +690,16 @@ static void WriteVulkanImageMemory(Gfx_Image_t* image, const void* src, uint64_t
     LOGASSERT(NULL != image->vk.pUploadData);
     (void)memcpy(image->vk.pUploadData, src, (size_t)srcSize);
 
-    Gfx_Vulkan_ResetCommandPool(image->vk.device, image->vk.commandPool, (VkCommandPoolResetFlags)0);
-    Gfx_Vulkan_BeginCommandBuffer(image->vk.commandBuffer, NULL, (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
+    cvkResetCommandPool(image->vk.device, image->vk.commandPool, (VkCommandPoolResetFlags)0);
+    cvkBeginCommandBuffer(image->vk.commandBuffer,
+                          NULL,
+                          (VkCommandBufferUsageFlags)VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+                          NULL);
     vk_image_offset.x      = 0;
     vk_image_offset.y      = 0;
     vk_image_extent.width  = image->vk.extent.width;
     vk_image_extent.height = image->vk.extent.height;
-    vk_image_subresource   = Gfx_Vulkan_GetFormatBaseSubresourceLayers(image->vk.format);
+    vk_image_subresource   = cvkGetFormatBaseSubresourceLayers(image->vk.format);
     if (image->vk.layoutInitialized)
     {
         vk_image_src_stage_mask  = (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -534,28 +712,28 @@ static void WriteVulkanImageMemory(Gfx_Image_t* image, const void* src, uint64_t
         vk_image_src_access_mask = (VkAccessFlags)0;
         vk_initial_image_layout  = VK_IMAGE_LAYOUT_UNDEFINED;
     }
-    Gfx_Vulkan_CmdTransferBufferToImage2D(image->vk.commandBuffer,
-                                          (VkDependencyFlags)0,
-                                          NULL,
-                                          (VkPipelineStageFlags)VK_PIPELINE_STAGE_HOST_BIT,
-                                          (VkAccessFlags)VK_ACCESS_HOST_WRITE_BIT,
-                                          image->vk.uploadBuffer,
-                                          VK_NO_OFFSET,
-                                          1,
-                                          image->vk.image,
-                                          image->vk.format,
-                                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                          vk_image_offset,
-                                          vk_image_extent,
-                                          vk_image_subresource,
-                                          NULL,
-                                          vk_image_src_stage_mask,
-                                          vk_image_src_access_mask,
-                                          vk_initial_image_layout,
-                                          NULL,
-                                          (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-                                          (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                          VK_IMAGE_LAYOUT_GENERAL);
+    cvkCmdTransferBufferToImage2D(image->vk.commandBuffer,
+                                  (VkDependencyFlags)0,
+                                  NULL,
+                                  (VkPipelineStageFlags)VK_PIPELINE_STAGE_HOST_BIT,
+                                  (VkAccessFlags)VK_ACCESS_HOST_WRITE_BIT,
+                                  image->vk.uploadBuffer,
+                                  VK_NO_OFFSET,
+                                  1,
+                                  image->vk.image,
+                                  image->vk.format,
+                                  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                  vk_image_subresource,
+                                  NULL,
+                                  vk_image_src_stage_mask,
+                                  vk_image_src_access_mask,
+                                  vk_initial_image_layout,
+                                  NULL,
+                                  (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+                                  (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                                  VK_IMAGE_LAYOUT_GENERAL,
+                                  vk_image_offset,
+                                  vk_image_extent);
     image->vk.readyStageMask  = (VkPipelineStageFlags)VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
     image->vk.readyAccessMask = (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT;
     image->uploadPending      = TRUE;
@@ -571,7 +749,8 @@ static void ValidateCreateInfo(const Gfx_Image_CreateInfo_t* createInfo)
     LOGASSERT(NULL != createInfo);
     LOGASSERT(0 != createInfo->width && 0 != createInfo->height);
     LOGASSERT(GFX_IMAGE_HINT_VAAPI == createInfo->hint || GFX_IMAGE_HINT_VULKAN == createInfo->hint);
-    LOGASSERT(GFX_IMAGE_KIND_IMPORT == createInfo->kind || GFX_IMAGE_KIND_EXPORT == createInfo->kind || GFX_IMAGE_KIND_STORAGE == createInfo->kind);
+    LOGASSERT(GFX_IMAGE_KIND_IMPORT == createInfo->kind || GFX_IMAGE_KIND_EXPORT == createInfo->kind ||
+              GFX_IMAGE_KIND_STORAGE == createInfo->kind);
     if (GFX_IMAGE_KIND_STORAGE != createInfo->kind)
     {
         LOGASSERT(NULL != createInfo->platformCreateInfo);
@@ -583,7 +762,11 @@ static void ValidateCreateInfo(const Gfx_Image_CreateInfo_t* createInfo)
  * \par Details:
  *  None
  */
-static void InitVaapiImage(Gfx_Image_t* image, Gfx_Image_Kind_t kind, VADisplay dpy, VASurfaceID surfaceId, VAImage imageView)
+static void InitVaapiImage(Gfx_Image_t*     image,
+                           Gfx_Image_Kind_t kind,
+                           VADisplay        dpy,
+                           VASurfaceID      surfaceId,
+                           VAImage          imageView)
 {
     uint32_t memory_index;
 
@@ -639,61 +822,21 @@ static void InitVaapiImage(Gfx_Image_t* image, Gfx_Image_Kind_t kind, VADisplay 
  */
 static void CreateVaapiStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo)
 {
-    VASurfaceID va_surface_id;
-    VAImage     va_image_view;
+    VASurfaceID          va_surface_id;
+    VAImage              va_image_view;
+    Gfx_Image_Storage_t* storage;
 
-    Gfx_Vaapi_CreateSurface(createInfo->va.dpy, createInfo->va.format, createInfo->va.pixelFormat, createInfo->width, createInfo->height, &va_surface_id);
-    Gfx_Vaapi_DeriveImage(createInfo->va.dpy, va_surface_id, &va_image_view);
-
-    InitVaapiImage(image, createInfo->kind, createInfo->va.dpy, va_surface_id, va_image_view);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateVaapiImportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo)
-{
-    VASurfaceID va_surface_id;
-    VAImage     va_image_view;
-
-    Gfx_Vaapi_Platform_ImportSurface(createInfo->va.dpy,
+    cvaCreateSurfacesWithPixelFormat(createInfo->va.dpy,
                                      createInfo->va.format,
-                                     createInfo->va.pixelFormat,
                                      createInfo->width,
                                      createInfo->height,
-                                     createInfo->platformCreateInfo->sharedImageResource,
-                                     createInfo->platformCreateInfo->sharedHandle,
-                                     createInfo->platformCreateInfo->drmPrimeDescriptor,
-                                     &va_surface_id);
+                                     &va_surface_id,
+                                     1,
+                                     createInfo->va.pixelFormat);
+    cvaDeriveImage(createInfo->va.dpy, va_surface_id, &va_image_view);
 
-    (void)memset(&va_image_view, 0, sizeof(va_image_view));
-
-    InitVaapiImage(image, createInfo->kind, createInfo->va.dpy, va_surface_id, va_image_view);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateVaapiExportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo)
-{
-    VASurfaceID va_surface_id;
-    VAImage     va_image_view;
-
-    Gfx_Vaapi_Platform_CreateExportedSurface(createInfo->va.dpy,
-                                             createInfo->va.format,
-                                             createInfo->va.pixelFormat,
-                                             createInfo->width,
-                                             createInfo->height,
-                                             createInfo->platformCreateInfo->sharedHandle,
-                                             createInfo->platformCreateInfo->drmPrimeDescriptor,
-                                             &va_surface_id);
-
-    (void)memset(&va_image_view, 0, sizeof(va_image_view));
-
+    storage = (Gfx_Image_Storage_t*)image;
+    Gfx_Image_InitializeLayout(&storage->layout, &va_image_view);
     InitVaapiImage(image, createInfo->kind, createInfo->va.dpy, va_surface_id, va_image_view);
 }
 
@@ -822,54 +965,69 @@ static void CreateVulkanStorageImageResources(VkPhysicalDevice             physi
     image_extent.height = height;
     image_extent.depth  = 1;
 
-    staging_size = Gfx_Vulkan_GetFormatSize(image_extent.width, image_extent.height, format);
+    staging_size = cvkGetFormatSize(format, image_extent.width, image_extent.height);
     image_usage  = usage | (VkImageUsageFlags)VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-    components   = c_vkIdentityComponentMapping;
-    view_range   = Gfx_Vulkan_GetFormatBaseSubresourceRange(format);
+    cvkInitComponentMapping(&components,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY,
+                            VK_COMPONENT_SWIZZLE_IDENTITY);
+    view_range = cvkGetFormatBaseSubresourceRange(format);
     LOGASSERT((VkDeviceSize)(size_t)staging_size == staging_size);
 
-    Gfx_Vulkan_SetupBuffer(physicalDevice,
-                           device,
-                           NULL,
-                           (VkBufferCreateFlags)0,
-                           staging_size,
-                           (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT | (VkFlags)VK_BUFFER_USAGE_TRANSFER_DST_BIT),
-                           VK_SHARING_MODE_EXCLUSIVE,
-                           0,
-                           NULL,
-                           NULL,
-                           (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
-                           pAllocator,
-                           pUploadBuffer,
-                           pUploadMemory);
-    Gfx_Vulkan_MapMemory(device, (*pUploadMemory), VK_NO_OFFSET, staging_size, (VkMemoryMapFlags)0, ppUploadData);
-    Gfx_Vulkan_SetupImage(physicalDevice,
-                          device,
-                          NULL,
-                          (VkImageCreateFlags)0,
-                          VK_IMAGE_TYPE_2D,
-                          format,
-                          image_extent,
-                          1,
-                          1,
-                          VK_SAMPLE_COUNT_1_BIT,
-                          VK_IMAGE_TILING_OPTIMAL,
-                          image_usage,
-                          VK_SHARING_MODE_EXCLUSIVE,
-                          0,
-                          NULL,
-                          VK_IMAGE_LAYOUT_UNDEFINED,
-                          NULL,
-                          (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                          pAllocator,
-                          image,
-                          pMemory);
+    cvkSetupBuffer(
+        physicalDevice,
+        device,
+        NULL,
+        (VkBufferCreateFlags)0,
+        staging_size,
+        (VkBufferUsageFlags)((VkFlags)VK_BUFFER_USAGE_TRANSFER_SRC_BIT | (VkFlags)VK_BUFFER_USAGE_TRANSFER_DST_BIT),
+        VK_SHARING_MODE_EXCLUSIVE,
+        0,
+        NULL,
+        (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+        NULL,
+        pAllocator,
+        pUploadBuffer,
+        pUploadMemory);
+    cvkMapMemory(device, (*pUploadMemory), VK_NO_OFFSET, staging_size, (VkMemoryMapFlags)0, ppUploadData);
+    cvkSetupImage(physicalDevice,
+                  device,
+                  NULL,
+                  (VkImageCreateFlags)0,
+                  VK_IMAGE_TYPE_2D,
+                  format,
+                  image_extent,
+                  1,
+                  1,
+                  VK_SAMPLE_COUNT_1_BIT,
+                  VK_IMAGE_TILING_OPTIMAL,
+                  image_usage,
+                  VK_SHARING_MODE_EXCLUSIVE,
+                  0,
+                  NULL,
+                  VK_IMAGE_LAYOUT_UNDEFINED,
+                  (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                  NULL,
+                  pAllocator,
+                  image,
+                  pMemory);
     (*pView) = VK_NULL_HANDLE;
     if (usage & (VkImageUsageFlags)((VkFlags)VK_IMAGE_USAGE_STORAGE_BIT | (VkFlags)VK_IMAGE_USAGE_SAMPLED_BIT))
     {
-        Gfx_Vulkan_CreateImageView(device, NULL, (VkImageViewCreateFlags)0, (*image), VK_IMAGE_VIEW_TYPE_2D, format, components, view_range, pAllocator, pView);
+        cvkCreateImageView(device,
+                           NULL,
+                           (VkImageViewCreateFlags)0,
+                           (*image),
+                           VK_IMAGE_VIEW_TYPE_2D,
+                           format,
+                           components,
+                           view_range,
+                           pAllocator,
+                           pView);
     }
-    Gfx_Vulkan_CreateFence(device, NULL, (VkFenceCreateFlags)0, pAllocator, pReadbackFence);
+    cvkCreateFence(device, NULL, (VkFenceCreateFlags)0, pAllocator, pReadbackFence);
     (*pStagingSize) = staging_size;
 }
 
@@ -943,159 +1101,6 @@ static void CreateVulkanStorageImage(Gfx_Image_t* image, const Gfx_Image_CreateI
  * \par Details:
  *  None
  */
-static void CreateVulkanImportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo)
-{
-    VkExtent3D     vk_extent;
-    VkImage        vk_image;
-    VkDeviceMemory vk_memories[VK_MAX_DRM_FORMAT_MODIFIER_PLANES];
-    uint32_t       vk_memory_count;
-    VkBuffer       vk_external_buffer;
-    VkDeviceMemory vk_external_buffer_memory;
-    VkDeviceSize   vk_external_buffer_size;
-    bool_t         external_buffer_host_copy;
-    uint32_t       external_y_stride;
-    uint32_t       external_uv_offset;
-    uint32_t       external_uv_stride;
-    VkSemaphore    vk_external_semaphore;
-
-    vk_extent.width  = createInfo->width;
-    vk_extent.height = createInfo->height;
-    vk_extent.depth  = 1;
-    Gfx_Vulkan_Platform_ImportImage(createInfo->vk.physicalDevice,
-                                    createInfo->vk.device,
-                                    createInfo->vk.format,
-                                    vk_extent,
-                                    createInfo->vk.usage,
-                                    createInfo->platformCreateInfo->drmPrimeDescriptor,
-                                    createInfo->platformCreateInfo->sharedImageHandle,
-                                    createInfo->platformCreateInfo->sharedImageHandleType,
-                                    createInfo->platformCreateInfo->sharedImageAllocationSize,
-                                    createInfo->platformCreateInfo->transferBufferHostCopy,
-                                    createInfo->platformCreateInfo->transferBufferSize,
-                                    createInfo->platformCreateInfo->sharedTransferBufferHandle,
-                                    createInfo->platformCreateInfo->sharedFenceHandle,
-                                    createInfo->platformCreateInfo->yStride,
-                                    createInfo->platformCreateInfo->uvOffset,
-                                    createInfo->platformCreateInfo->uvStride,
-                                    createInfo->platformCreateInfo->ppVulkanTransferBytes,
-                                    createInfo->vk.pAllocator,
-                                    &vk_image,
-                                    vk_memories,
-                                    &vk_memory_count,
-                                    &vk_external_buffer,
-                                    &vk_external_buffer_memory,
-                                    &vk_external_buffer_size,
-                                    &external_buffer_host_copy,
-                                    &external_y_stride,
-                                    &external_uv_offset,
-                                    &external_uv_stride,
-                                    &vk_external_semaphore);
-
-    InitVulkanImage(image,
-                    createInfo->kind,
-                    createInfo->vk.device,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    vk_image,
-                    vk_memories[0],
-                    vk_external_buffer,
-                    vk_external_buffer_memory,
-                    vk_external_buffer_size,
-                    external_buffer_host_copy,
-                    external_y_stride,
-                    external_uv_offset,
-                    external_uv_stride,
-                    &vk_memories[1],
-                    vk_memory_count,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    NULL,
-                    VK_NULL_HANDLE,
-                    vk_external_semaphore,
-                    createInfo->vk.format,
-                    createInfo->width,
-                    createInfo->height,
-                    0);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
-static void CreateVulkanExportImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo)
-{
-    VkExtent3D     vk_extent;
-    VkImage        vk_image;
-    VkDeviceMemory vk_memories[VK_MAX_DRM_FORMAT_MODIFIER_PLANES];
-    uint32_t       vk_memory_count;
-    VkBuffer       vk_external_buffer;
-    VkDeviceMemory vk_external_buffer_memory;
-    VkDeviceSize   vk_external_buffer_size;
-    bool_t         external_buffer_host_copy;
-    uint32_t       external_y_stride;
-    uint32_t       external_uv_offset;
-    uint32_t       external_uv_stride;
-    VkSemaphore    vk_external_semaphore;
-
-    vk_extent.width  = createInfo->width;
-    vk_extent.height = createInfo->height;
-    vk_extent.depth  = 1;
-    Gfx_Vulkan_Platform_ExportImage(createInfo->vk.physicalDevice,
-                                    createInfo->vk.device,
-                                    createInfo->vk.format,
-                                    vk_extent,
-                                    createInfo->vk.usage,
-                                    createInfo->platformCreateInfo->drmPrimeDescriptor,
-                                    createInfo->vk.pAllocator,
-                                    &vk_image,
-                                    vk_memories,
-                                    &vk_memory_count,
-                                    &vk_external_buffer,
-                                    &vk_external_buffer_memory,
-                                    &vk_external_buffer_size,
-                                    &external_buffer_host_copy,
-                                    &external_y_stride,
-                                    &external_uv_offset,
-                                    &external_uv_stride,
-                                    &vk_external_semaphore);
-
-    InitVulkanImage(image,
-                    createInfo->kind,
-                    createInfo->vk.device,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    vk_image,
-                    vk_memories[0],
-                    vk_external_buffer,
-                    vk_external_buffer_memory,
-                    vk_external_buffer_size,
-                    external_buffer_host_copy,
-                    external_y_stride,
-                    external_uv_offset,
-                    external_uv_stride,
-                    &vk_memories[1],
-                    vk_memory_count,
-                    VK_NULL_HANDLE,
-                    VK_NULL_HANDLE,
-                    NULL,
-                    VK_NULL_HANDLE,
-                    vk_external_semaphore,
-                    createInfo->vk.format,
-                    createInfo->width,
-                    createInfo->height,
-                    0);
-}
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  None
- */
 static void CreateVaapiImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo)
 {
     switch (createInfo->kind)
@@ -1105,11 +1110,11 @@ static void CreateVaapiImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* c
         break;
 
     case GFX_IMAGE_KIND_IMPORT:
-        CreateVaapiImportImage(image, createInfo);
+        Gfx_Image_InitializeShared(image, createInfo);
         break;
 
     case GFX_IMAGE_KIND_EXPORT:
-        CreateVaapiExportImage(image, createInfo);
+        Gfx_Image_InitializeShared(image, createInfo);
         break;
 
     default:
@@ -1131,11 +1136,11 @@ static void CreateVulkanImage(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* 
         break;
 
     case GFX_IMAGE_KIND_IMPORT:
-        CreateVulkanImportImage(image, createInfo);
+        Gfx_Image_InitializeShared(image, createInfo);
         break;
 
     case GFX_IMAGE_KIND_EXPORT:
-        CreateVulkanExportImage(image, createInfo);
+        Gfx_Image_InitializeShared(image, createInfo);
         break;
 
     default:
@@ -1228,11 +1233,14 @@ static void WriteImageMemory(Gfx_Image_t* image, const void* src, uint64_t srcSi
  */
 void Gfx_Image_Create(Gfx_Image_t** image, const Gfx_Image_CreateInfo_t* createInfo)
 {
+    Gfx_Image_Storage_t* storage;
+
     LOGASSERT(NULL != image);
     LOGASSERT(NULL != createInfo);
 
-    (*image) = (Gfx_Image_t*)OS_CALLOC(sizeof(Gfx_Image_t));
-    CreateImage((*image), createInfo);
+    storage = (Gfx_Image_Storage_t*)OS_CALLOC(sizeof(Gfx_Image_Storage_t));
+    CreateImage(&storage->image, createInfo);
+    (*image) = &storage->image;
 }
 
 /*************************************************************************************************/

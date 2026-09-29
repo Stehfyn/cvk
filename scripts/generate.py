@@ -573,8 +573,8 @@ class Generator:
 
     def emit_tier0(self, cmd: Command, out_ext: Optional[Struct] = None) -> None:
         """Tier 0 (SPEC.md section 4). With `out_ext`, the output-array extender form
-        (section 6): the enumeration's element array is a local with the extender chained to
-        every element, and the extender array is the out-parameter."""
+        (section 6): the caller supplies the base and extender arrays. This avoids hidden
+        fixed-capacity stack storage while retaining the native two-call protocol."""
         reg = self.reg
         roles = self.roles(cmd)
         if out_ext is not None:
@@ -665,13 +665,16 @@ class Generator:
                 cap = dict((id(q), c) for q, c in enum_arrays)[id(p)]
                 elem = p.full_type.rstrip("*").strip()
                 if out_ext is not None and reg.struct_of(p.type) is not None and out_ext.name in [e.name for e in reg.extenders_of(p.type)]:
-                    # The base array stays a local; the extender array is the out-parameter.
+                    # Both arrays belong to the caller. The base array provides the native
+                    # contiguous workspace, so large enumeration capacities never grow this frame.
                     ext_param = "p" + self.struct_short(out_ext)
+                    params.append(EmittedParam(f"{elem} {p.name}[{cap}]", p.name,
+                                              f"Caller-owned base workspace of {cap} entries, disjoint from the extender array", True))
+                    pre.append(f"CVK_ASSERT(NULL != {p.name});")
                     params.append(EmittedParam(f"{out_ext.name} {ext_param}[{cap}]", ext_param, f"Receives up to {cap} entries of {out_ext.name}, one per element", True))
                     pre.append(f"CVK_ASSERT(NULL != {ext_param});")
-                    locals_.append(f"{elem} {snake(p.name)}[{cap}];")
                     ext_arrays[p.name] = ext_param
-                    call_args.append(snake(p.name))
+                    call_args.append(p.name)
                 else:
                     params.append(EmittedParam(f"{elem} {p.name}[{cap}]", p.name, f"Receives up to {cap} entries", True))
                     pre.append(f"CVK_ASSERT(NULL != {p.name});")
@@ -691,7 +694,7 @@ class Generator:
         # Call expression and result policy.
         fn = cmd.name
         call = f"{fn}({', '.join(call_args)})"
-        enum_args = {ext_arrays.get(q.name) and snake(q.name) or q.name for q, _ in enum_arrays}
+        enum_args = {q.name for q, _ in enum_arrays}
 
         informational = [c for c in cmd.successcodes if c not in ("VK_SUCCESS",) and self.enum_value_in_profile(c)]
         recoverable = [c for c in cmd.errorcodes if c in self.recoverable and self.enum_value_in_profile(c)] if not enum_count else []
@@ -702,6 +705,9 @@ class Generator:
         if enum_count:
             # The count is an out-parameter (listed before the array in the signature); the wrapper
             # runs the two-call sequence and writes the entry count through it, returning void.
+            # Retain the input extent independently: the native fill overwrites the count pointer.
+            # The returned extent must never expose entries outside the initialized prefix.
+            body.insert(0, "uint32_t capacity;")
             count_ref = f"(*{enum_count.name})"
             first = f"{fn}({', '.join('NULL' if a in enum_args else a for a in call_args)})"
             body += ["", f"{count_ref} = 0;", ""]
@@ -709,14 +715,15 @@ class Generator:
                 body.append(f"CVK_CHECK({first});")
             else:
                 body.append(f"{first};")
+            body.append(f"capacity = {count_ref};")
             for q, cap in enum_arrays:
-                body.append(f"CVK_ASSERT({cap} >= {count_ref});")
+                body.append(f"CVK_ASSERT({cap} >= capacity);")
                 s = reg.struct_of(q.type)
                 if s and s.stype:
-                    arr = snake(q.name) if q.name in ext_arrays else q.name
+                    arr = q.name
                     if "uint32_t index;" not in body:
                         body.insert(0, "uint32_t index;")
-                    body.append(f"for (index = 0; index < {count_ref}; ++index)")
+                    body.append("for (index = 0; index < capacity; ++index)")
                     body.append("{")
                     if q.name in ext_arrays:
                         ext_param = ext_arrays[q.name]
@@ -733,6 +740,7 @@ class Generator:
                 body.append(f"CVK_CHECK({call});")
             else:
                 body.append(f"{call};")
+            body.append(f"CVK_ASSERT(capacity >= {count_ref});")
             body += post
         elif cmd.return_type == "VkResult" and (informational or recoverable):
             # Result policy: an informational success code or a recoverable error (policy list:
@@ -2295,7 +2303,7 @@ class Generator:
         "screen": ["<screen/screen.h>", "<vulkan/vulkan_screen.h>"],
         "ubm": ["<vulkan/vulkan_ubm.h>"],
         "vi": ["<vulkan/vulkan_vi.h>"],
-        "win32": ["<windows.h>", "<vulkan/vulkan_win32.h>"],
+        "win32": ["<Windows.h>", "<vulkan/vulkan_win32.h>"],
         "xlib": ["<X11/Xlib.h>", "<vulkan/vulkan_xlib.h>"],
         "xlib_xrandr": ["<X11/Xlib.h>", "<X11/extensions/Xrandr.h>", "<vulkan/vulkan_xlib_xrandr.h>"],
         "xcb": ["<xcb/xcb.h>", "<vulkan/vulkan_xcb.h>"],
@@ -2373,26 +2381,45 @@ class Generator:
         decls = "\n".join(self.decls[plat])
         return self.finish_header(f"#ifndef {guard}\n#define {guard}\n\n"
                 "/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
-                f"#include \"cvk.h\"\n{includes}\n\n"
+                f"#include \"cvk/cvk.h\"\n{includes}\n\n"
                 f"{self.prototype_block(decls)}\n\n#endif /* {guard} */\n")
 
     def platform_source(self, plat: str) -> str:
         defs = "\n".join(self.defs[plat])
-        includes = "".join(f"#include {i}\n" for i in self.PLATFORM_SOURCE_INCLUDES.get(plat, []))
+        # The public platform header supplies its native SDK prerequisites. Keep explicit
+        # protocol dependencies and directly used Vulkan declarations in the implementation.
+        required = set(self.PLATFORM_SOURCE_INCLUDES.get(plat, []))
+        required.update(self.direct_type_headers(defs) - set(self.PLATFORM_INCLUDES[plat]))
+        required.update(header for header in self.PLATFORM_INCLUDES[plat] if header.startswith("<vulkan/"))
+        required.add(self.vk_header)
+        if re.search(r"\b(?:memcpy|memmove|memcmp|memset|str\w*)\s*\(", defs):
+            required.add("<string.h>")
+        includes = "".join(f"#include {i}\n" for i in sorted(required))
         # Expose this platform's extensions before Volk declares their dispatch pointers.
         # In particular, the pinned Volk does not include vulkan_ubm.h itself.
         preamble = "#ifndef VK_NO_PROTOTYPES\n#define VK_NO_PROTOTYPES\n#endif\n" if self.loader_header else ""
         return ("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
-                f"{preamble}#include \"{plat}/cvk_{plat}.h\"\n{self.loader_include()}"
-                f"#include <string.h>\n{includes}\n{defs}\n")
+                f"{preamble}#include \"cvk/cvk.h\"\n#include \"cvk/{plat}/cvk_{plat}.h\"\n{self.loader_include()}"
+                f"{includes}\n{defs}\n")
 
     def loader_include(self) -> str:
         # Volk must suppress Vulkan prototypes before the public core header is read.
         return f"#include {self.loader_header}\n" if self.loader_header else ""
 
+    def direct_type_headers(self, source: str) -> Set[str]:
+        """Include the providers of used imported types, instead of relying on transitive headers."""
+        code = re.sub(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'', " ", source, flags=re.S)
+        tokens = set(re.findall(r"\b[A-Za-z_]\w*\b", code))
+        headers = {f"<{self.reg.type_headers[name]}>" for name in tokens & self.reg.type_headers.keys()}
+        if any(re.fullmatch(r"u?int(?:8|16|32|64|ptr)_t|U?INT(?:8|16|32|64|PTR)_(?:MAX|MIN|C)", name) for name in tokens):
+            headers.add("<stdint.h>")
+        if tokens & {"VKAPI_ATTR", "VKAPI_CALL", "VKAPI_PTR"}:
+            headers.add("<vulkan/vk_platform.h>")
+        return headers
+
     def json_header(self, plat: str = "") -> str:
         guard = f"CVK_{plat.upper() + '_' if plat else ''}JSON_H"
-        includes = '#include "cvk_json.h"\n' if plat else '#include "cvk.h"\n'
+        includes = '#include "cvk/cvk_json.h"\n' if plat else '#include "cvk/cvk.h"\n'
         if plat:
             includes += "".join(f"#include {i}\n" for i in self.PLATFORM_INCLUDES[plat])
         fragments = "\n\n".join(self.json_fragments) if not plat else ""
@@ -2402,9 +2429,10 @@ class Generator:
                 f"{includes}\n{fragments}\n\n{declarations}\n\n#endif /* {guard} */\n")
 
     def json_source(self, plat: str = "") -> str:
-        header = f"{plat}/cvk_{plat}_json.h" if plat else "cvk_json.h"
-        includes = "".join(f"#include {i}\n" for i in self.json_source_includes.get(plat, []))
+        header = f"cvk/{plat}/cvk_{plat}_json.h" if plat else "cvk/cvk_json.h"
         definitions = "\n".join(self.json_defs[plat])
+        required = set(self.json_source_includes.get(plat, [])) | self.direct_type_headers(definitions)
+        includes = "".join(f"#include {i}\n" for i in sorted(required))
         return ("/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */\n\n"
                 f'#include "{header}"\n#include <string.h>\n{includes}\n{definitions}\n')
 
@@ -2448,13 +2476,17 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 """)
 
     def source(self) -> str:
+        definitions = "\n".join(self.defs[""])
+        required = set(self.PLATFORM_SOURCE_INCLUDES.get("", [])) | self.direct_type_headers(definitions)
+        required -= {"<stdio.h>", "<stdlib.h>", "<string.h>", self.vk_header}
         return f"""/* Generated by scripts/generate.py from the Vulkan registry. Do not edit. */
 
-{self.loader_include()}#include "cvk.h"
+{self.loader_include()}#include "cvk/cvk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-{"".join(f"#include {i}{chr(10)}" for i in self.PLATFORM_SOURCE_INCLUDES.get("", []) if i not in ("<stdio.h>", "<stdlib.h>", "<string.h>"))}
+#include {self.vk_header}
+{"".join(f"#include {i}{chr(10)}" for i in sorted(required))}
 void cvkFatal(const char* pExpression, const char* pFile, int line)
 {{
     (void)fprintf(stderr, "%s:%d: cvk fatal: %s\\n", pFile, line, pExpression);
@@ -2469,7 +2501,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
     }}
 }}
 
-{chr(10).join(self.defs[""])}
+{definitions}
 """
 
 def load_policy(path: str) -> dict:
@@ -2490,7 +2522,7 @@ def brand(text: str, prefix: str) -> str:
     a standalone library (scvk.h/scvk.c for Vulkan SC)."""
     if prefix == "cvk":
         return text
-    text = re.sub(r"(?<![A-Za-z0-9_])cvk(?=[A-Z_.\s\"])", prefix, text)
+    text = re.sub(r"(?<![A-Za-z0-9_])cvk(?=[A-Z_./\s\"])", prefix, text)
     text = re.sub(r"(?<![A-Za-z0-9_])CVK_", prefix.upper() + "_", text)
     text = text.replace("PFN_cvk", "PFN_" + prefix)
     return text
@@ -2512,16 +2544,17 @@ def main() -> None:
         for e in g.errors:
             print("error:", e)
         sys.exit(1)
-    os.makedirs(os.path.join(args.out_dir, "include"), exist_ok=True)
-    os.makedirs(os.path.join(args.out_dir, "src"), exist_ok=True)
     px = g.prefix
-    with open(os.path.join(args.out_dir, "include", f"{px}.h"), "w", encoding="utf-8", newline="\n") as f:
+    include_dir = os.path.join(args.out_dir, "include", px)
+    os.makedirs(include_dir, exist_ok=True)
+    os.makedirs(os.path.join(args.out_dir, "src"), exist_ok=True)
+    with open(os.path.join(include_dir, f"{px}.h"), "w", encoding="utf-8", newline="\n") as f:
         f.write(brand(g.header(), px))
     with open(os.path.join(args.out_dir, "src", f"{px}.c"), "w", encoding="utf-8", newline="\n") as f:
         f.write(brand(g.source(), px))
-    outputs = [os.path.join(args.out_dir, "include", f"{px}.h"), os.path.join(args.out_dir, "src", f"{px}.c")]
+    outputs = [os.path.join(include_dir, f"{px}.h"), os.path.join(args.out_dir, "src", f"{px}.c")]
     for plat in sorted(k for k in g.decls if k):
-        hp = os.path.join(args.out_dir, "include", plat, f"{px}_{plat}.h")
+        hp = os.path.join(include_dir, plat, f"{px}_{plat}.h")
         cp = os.path.join(args.out_dir, "src", plat, f"{px}_{plat}.c")
         os.makedirs(os.path.dirname(hp), exist_ok=True)
         os.makedirs(os.path.dirname(cp), exist_ok=True)
@@ -2532,7 +2565,7 @@ def main() -> None:
         outputs += [hp, cp]
     for plat in sorted(g.json_decls):
         stem = f"{px}_{plat}_json" if plat else f"{px}_json"
-        hp = os.path.join(args.out_dir, "include", plat, stem + ".h")
+        hp = os.path.join(include_dir, plat, stem + ".h")
         cp = os.path.join(args.out_dir, "src", plat, stem + ".c")
         os.makedirs(os.path.dirname(hp), exist_ok=True)
         os.makedirs(os.path.dirname(cp), exist_ok=True)

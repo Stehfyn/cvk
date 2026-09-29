@@ -3,9 +3,12 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "macos/cvk_macos.h"
+#include "cvk/cvk.h"
+#include "cvk/macos/cvk_macos.h"
 #include <volk.h>
-#include <string.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_macos.h>
 
 void cvkInitMacOSSurfaceCreateInfoMVK(VkMacOSSurfaceCreateInfoMVK* pInfo, const void* pNext, VkMacOSSurfaceCreateFlagsMVK flags, const void* pView)
 {

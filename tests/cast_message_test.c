@@ -1,6 +1,6 @@
 /* CASTV2 framing, HTTP range parsing and receiver-status JSON checks; no network, no Vulkan. */
 #include "utl/utl_castv2.h"
-#include "cvk_json.h"
+#include "cvk/cvk_json.h"
 #include "media_server.h"
 #include "mp4_index.h"
 

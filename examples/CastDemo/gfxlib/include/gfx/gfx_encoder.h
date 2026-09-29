@@ -91,62 +91,62 @@ typedef enum Gfx_Encoder_PackedHeader_e
  */
 typedef struct Gfx_Encoder_CreateInfo_s
 {
-    Gfx_Surface_t*            surface;                          ///< Input surface; must outlive the encoder and satisfy its format requirements.
-    Gfx_Encoder_H264Profile_t h264Profile;                      ///< Requested profile or automatic selection.
-    Gfx_Encoder_Entrypoint_t  entrypoint;                       ///< Normal or low-power slice entrypoint.
-    uint32_t                  frameRateNumerator;               ///< Nonzero frame-rate numerator, at most UINT16_MAX.
-    uint32_t                  frameRateDenominator;             ///< Nonzero frame-rate denominator, at most UINT16_MAX.
-    uint32_t                  intraPeriod;                      ///< Pictures between intra pictures; zero disables periodic intra.
-    uint32_t                  intraIdrPeriod;                   ///< Pictures between IDR pictures; at most UINT16_MAX.
-    uint32_t                  ipPeriod;                         ///< Nonzero display-order distance between I/P pictures.
-    uint32_t                  sliceCount;                       ///< 1..GFX_ENCODER_MAX_SLICES slices per picture, not exceeding its macroblock count.
-    uint32_t                  targetBitRate;                    ///< Rate-control target in bits per second, or zero when unused.
-    uint32_t                  maximumBitRate;                   ///< Rate-control ceiling in bits per second, or zero when unused.
-    Gfx_Encoder_RateControl_t rateControl;                      ///< Base rate-control algorithm.
-    bool_t                    macroblockRateControl;            ///< Add VA macroblock-level rate control.
-    bool_t                    parallelRateControl;              ///< Add VA parallel rate control.
-    uint32_t                  rateControlWindowMilliseconds;    ///< Sliding rate-control window duration.
-    uint32_t                  initialQuantizationParameter;     ///< Initial QP supplied to rate control.
-    uint32_t                  minimumQuantizationParameter;     ///< Minimum QP supplied to rate control.
-    uint32_t                  maximumQuantizationParameter;     ///< Maximum QP supplied to rate control.
-    uint32_t                  basicUnitSize;                    ///< Macroblocks in one rate-control basic unit.
-    bool_t                    resetRateControl;                 ///< Reset backend rate-control history at creation.
-    bool_t                    disableFrameSkip;                 ///< Prohibit frame skipping by rate control.
-    bool_t                    disableBitStuffing;               ///< Prohibit filler-bit insertion.
-    uint8_t                   macroblockRateControlMode;        ///< VA macroblock mode in the inclusive range 0..2.
-    uint8_t                   temporalLayer;                    ///< Temporal-layer identifier supplied to rate control.
-    bool_t                    constantFrameSizeIntraFrames;     ///< Include intra pictures in constant-size control.
-    bool_t                    enableDynamicScaling;             ///< Permit rate control to scale frames dynamically.
-    uint8_t                   frameToleranceMode;               ///< VA frame-size tolerance mode in the range 0..2.
-    uint32_t                  intelligentConstantQualityFactor; ///< ICQ quality factor when ICQ rate control is selected.
-    uint32_t                  qualityFactor;                    ///< Backend quality factor for quality-based modes.
-    uint32_t                  targetFrameSize;                  ///< Per-picture coded-size target in bytes.
-    uint32_t                  packedHeaders;                    ///< Bitwise OR of Gfx_Encoder_PackedHeader_t flags.
-    uint32_t                  maxReferenceFrames;               ///< Maximum decoded-picture-buffer occupancy.
-    uint32_t                  quantizationParameter;            ///< Base picture QP in the H.264 range 0..51.
-    bool_t                    interlaced;                       ///< Allow frame/field coding instead of requiring progressive frames.
-    bool_t                    mbAdaptiveFrameField;             ///< Enable MBAFF; valid only for interlaced encoding.
-    bool_t                    fixedFrameRate;                   ///< Set fixed_frame_rate_flag in VUI parameters.
-    uint32_t                  sampleAspectRatioWidth;           ///< SAR numerator; zero with height omits SAR signaling.
-    uint32_t                  sampleAspectRatioHeight;          ///< SAR denominator; zero with width omits SAR signaling.
-    bool_t                    restrictMotionVectors;            ///< Signal VUI motion-vector length restrictions.
-    uint32_t                  maxMotionVectorLengthHorizontal;  ///< Nonzero maximum horizontal magnitude in quarter-pel units.
-    uint32_t                  maxMotionVectorLengthVertical;    ///< Nonzero maximum vertical magnitude in quarter-pel units.
-    bool_t                    useCabac;                         ///< Use CABAC instead of CAVLC entropy coding.
-    bool_t                    useWeightedPrediction;            ///< Enable weighted prediction for P pictures.
-    uint8_t                   weightedBipredIdc;                ///< H.264 weighted_bipred_idc value in the range 0..2.
-    bool_t                    constrainedIntraPrediction;       ///< Restrict intra prediction to intra-coded neighbors.
-    bool_t                    use8x8Transform;                  ///< Enable the High-profile 8-by-8 transform.
-    bool_t                    redundantPictures;                ///< Enable redundant-picture syntax.
-    bool_t                    picOrderPresent;                  ///< Include picture-order fields in slice headers.
-    const uint8_t*            scalingList4x4;                   ///< Six concatenated 16-element lists, or NULL for defaults.
-    const uint8_t*            scalingList8x8;                   ///< Two concatenated 64-element lists, or NULL for defaults.
-    int8_t                    chromaQpIndexOffset;              ///< First H.264 chroma QP offset in the range -12..12.
-    int8_t                    secondChromaQpIndexOffset;        ///< Second H.264 chroma QP offset in the range -12..12.
-    uint8_t                   cabacInitIdc;                     ///< CABAC initialization table selector in the range 0..2.
-    bool_t                    enableDeblocking;                 ///< Enable the in-loop deblocking filter.
-    int8_t                    deblockingAlphaOffsetDiv2;        ///< Slice alpha offset divided by two, in the range -6..6.
-    int8_t                    deblockingBetaOffsetDiv2;         ///< Slice beta offset divided by two, in the range -6..6.
+    Gfx_Surface_t*            surface; ///< Input surface; must outlive the encoder and satisfy its format requirements.
+    Gfx_Encoder_H264Profile_t h264Profile;          ///< Requested profile or automatic selection.
+    Gfx_Encoder_Entrypoint_t  entrypoint;           ///< Normal or low-power slice entrypoint.
+    uint32_t                  frameRateNumerator;   ///< Nonzero frame-rate numerator, at most UINT16_MAX.
+    uint32_t                  frameRateDenominator; ///< Nonzero frame-rate denominator, at most UINT16_MAX.
+    uint32_t                  intraPeriod;          ///< Pictures between intra pictures; zero disables periodic intra.
+    uint32_t                  intraIdrPeriod;       ///< Pictures between IDR pictures; at most UINT16_MAX.
+    uint32_t                  ipPeriod;             ///< Nonzero display-order distance between I/P pictures.
+    uint32_t sliceCount;     ///< 1..GFX_ENCODER_MAX_SLICES slices per picture, not exceeding its macroblock count.
+    uint32_t targetBitRate;  ///< Rate-control target in bits per second, or zero when unused.
+    uint32_t maximumBitRate; ///< Rate-control ceiling in bits per second, or zero when unused.
+    Gfx_Encoder_RateControl_t rateControl;                   ///< Base rate-control algorithm.
+    bool_t                    macroblockRateControl;         ///< Add VA macroblock-level rate control.
+    bool_t                    parallelRateControl;           ///< Add VA parallel rate control.
+    uint32_t                  rateControlWindowMilliseconds; ///< Sliding rate-control window duration.
+    uint32_t                  initialQuantizationParameter;  ///< Initial QP supplied to rate control.
+    uint32_t                  minimumQuantizationParameter;  ///< Minimum QP supplied to rate control.
+    uint32_t                  maximumQuantizationParameter;  ///< Maximum QP supplied to rate control.
+    uint32_t                  basicUnitSize;                 ///< Macroblocks in one rate-control basic unit.
+    bool_t                    resetRateControl;              ///< Reset backend rate-control history at creation.
+    bool_t                    disableFrameSkip;              ///< Prohibit frame skipping by rate control.
+    bool_t                    disableBitStuffing;            ///< Prohibit filler-bit insertion.
+    uint8_t                   macroblockRateControlMode;     ///< VA macroblock mode in the inclusive range 0..2.
+    uint8_t                   temporalLayer;                 ///< Temporal-layer identifier supplied to rate control.
+    bool_t                    constantFrameSizeIntraFrames;  ///< Include intra pictures in constant-size control.
+    bool_t                    enableDynamicScaling;          ///< Permit rate control to scale frames dynamically.
+    uint8_t                   frameToleranceMode;            ///< VA frame-size tolerance mode in the range 0..2.
+    uint32_t       intelligentConstantQualityFactor;         ///< ICQ quality factor when ICQ rate control is selected.
+    uint32_t       qualityFactor;                            ///< Backend quality factor for quality-based modes.
+    uint32_t       targetFrameSize;                          ///< Per-picture coded-size target in bytes.
+    uint32_t       packedHeaders;                            ///< Bitwise OR of Gfx_Encoder_PackedHeader_t flags.
+    uint32_t       maxReferenceFrames;                       ///< Maximum decoded-picture-buffer occupancy.
+    uint32_t       quantizationParameter;                    ///< Base picture QP in the H.264 range 0..51.
+    bool_t         interlaced;              ///< Allow frame/field coding instead of requiring progressive frames.
+    bool_t         mbAdaptiveFrameField;    ///< Enable MBAFF; valid only for interlaced encoding.
+    bool_t         fixedFrameRate;          ///< Set fixed_frame_rate_flag in VUI parameters.
+    uint32_t       sampleAspectRatioWidth;  ///< SAR numerator; zero with height omits SAR signaling.
+    uint32_t       sampleAspectRatioHeight; ///< SAR denominator; zero with width omits SAR signaling.
+    bool_t         restrictMotionVectors;   ///< Signal VUI motion-vector length restrictions.
+    uint32_t       maxMotionVectorLengthHorizontal; ///< Nonzero maximum horizontal magnitude in quarter-pel units.
+    uint32_t       maxMotionVectorLengthVertical;   ///< Nonzero maximum vertical magnitude in quarter-pel units.
+    bool_t         useCabac;                        ///< Use CABAC instead of CAVLC entropy coding.
+    bool_t         useWeightedPrediction;           ///< Enable weighted prediction for P pictures.
+    uint8_t        weightedBipredIdc;               ///< H.264 weighted_bipred_idc value in the range 0..2.
+    bool_t         constrainedIntraPrediction;      ///< Restrict intra prediction to intra-coded neighbors.
+    bool_t         use8x8Transform;                 ///< Enable the High-profile 8-by-8 transform.
+    bool_t         redundantPictures;               ///< Enable redundant-picture syntax.
+    bool_t         picOrderPresent;                 ///< Include picture-order fields in slice headers.
+    const uint8_t* scalingList4x4;                  ///< Six concatenated 16-element lists, or NULL for defaults.
+    const uint8_t* scalingList8x8;                  ///< Two concatenated 64-element lists, or NULL for defaults.
+    int8_t         chromaQpIndexOffset;             ///< First H.264 chroma QP offset in the range -12..12.
+    int8_t         secondChromaQpIndexOffset;       ///< Second H.264 chroma QP offset in the range -12..12.
+    uint8_t        cabacInitIdc;                    ///< CABAC initialization table selector in the range 0..2.
+    bool_t         enableDeblocking;                ///< Enable the in-loop deblocking filter.
+    int8_t         deblockingAlphaOffsetDiv2;       ///< Slice alpha offset divided by two, in the range -6..6.
+    int8_t         deblockingBetaOffsetDiv2;        ///< Slice beta offset divided by two, in the range -6..6.
 } Gfx_Encoder_CreateInfo_t;
 
 /*************************************************************************************************/
@@ -159,12 +159,12 @@ typedef struct Gfx_Encoder_CreateInfo_s
  */
 typedef struct Gfx_Encoder_EncodeInfo_s
 {
-    uint32_t                 frameIndex;                          ///< Absolute display-order index; frame_num and POC restart at each IDR.
-    Utl_H264_PictureType_t   pictureType;                         ///< IDR, I, P, or B picture selection.
-    Utl_H264_FieldMode_t     fieldMode;                           ///< Frame, top-field, or bottom-field selection.
-    bool_t                   referencePicture;                    ///< Retain the reconstruction in the decoded picture buffer.
-    Utl_H264_ReferenceType_t referenceType;                       ///< Short- or long-term status when retained.
-    int8_t                   quantizationParameterDelta;          ///< Signed slice QP adjustment from the configured base QP.
+    uint32_t                 frameIndex;       ///< Absolute display-order index; frame_num and POC restart at each IDR.
+    Utl_H264_PictureType_t   pictureType;      ///< IDR, I, P, or B picture selection.
+    Utl_H264_FieldMode_t     fieldMode;        ///< Frame, top-field, or bottom-field selection.
+    bool_t                   referencePicture; ///< Retain the reconstruction in the decoded picture buffer.
+    Utl_H264_ReferenceType_t referenceType;    ///< Short- or long-term status when retained.
+    int8_t                   quantizationParameterDelta; ///< Signed slice QP adjustment from the configured base QP.
     bool_t                   directSpatialMotionVectorPrediction; ///< Select spatial direct prediction for B pictures.
     uint8_t                  lumaLog2WeightDenominator;           ///< Base-two denominator exponent for luma weights.
     uint8_t                  chromaLog2WeightDenominator;         ///< Base-two denominator exponent for chroma weights.
@@ -173,14 +173,14 @@ typedef struct Gfx_Encoder_EncodeInfo_s
     const int16_t*           list0LumaOffsets;                    ///< Luma offsets parallel to list0LumaWeights.
     bool_t                   list0ChromaWeightsEnabled;           ///< Use explicit list-0 chroma weights and offsets.
     const int16_t*           list0ChromaWeights;                  ///< Interleaved Cb/Cr weights per list-0 reference.
-    const int16_t*           list0ChromaOffsets;                  ///< Interleaved Cb/Cr offsets parallel to the weights.
-    bool_t                   list1LumaWeightsEnabled;             ///< Use explicit list-1 luma weights and offsets.
-    const int16_t*           list1LumaWeights;                    ///< One luma weight per active list-1 reference.
-    const int16_t*           list1LumaOffsets;                    ///< Luma offsets parallel to list1LumaWeights.
-    bool_t                   list1ChromaWeightsEnabled;           ///< Use explicit list-1 chroma weights and offsets.
-    const int16_t*           list1ChromaWeights;                  ///< Interleaved Cb/Cr weights per list-1 reference.
-    const int16_t*           list1ChromaOffsets;                  ///< Interleaved Cb/Cr offsets parallel to the weights.
-    bool_t                   lastFrame;                           ///< Append end-of-sequence and end-of-stream NAL units.
+    const int16_t*           list0ChromaOffsets;        ///< Interleaved Cb/Cr offsets parallel to the weights.
+    bool_t                   list1LumaWeightsEnabled;   ///< Use explicit list-1 luma weights and offsets.
+    const int16_t*           list1LumaWeights;          ///< One luma weight per active list-1 reference.
+    const int16_t*           list1LumaOffsets;          ///< Luma offsets parallel to list1LumaWeights.
+    bool_t                   list1ChromaWeightsEnabled; ///< Use explicit list-1 chroma weights and offsets.
+    const int16_t*           list1ChromaWeights;        ///< Interleaved Cb/Cr weights per list-1 reference.
+    const int16_t*           list1ChromaOffsets;        ///< Interleaved Cb/Cr offsets parallel to the weights.
+    bool_t                   lastFrame;                 ///< Append end-of-sequence and end-of-stream NAL units.
 } Gfx_Encoder_EncodeInfo_t;
 
 /*************************************************************************************************/
@@ -208,7 +208,7 @@ typedef struct Gfx_Encoder_s Gfx_Encoder_t;
  * \param[out] encoder          Receives a non-NULL encoder retained for process lifetime
  * \param[in]  createInfo        Non-NULL stream configuration; pointed-to auxiliary arrays are copied
  *
- * \retval    None
+ * \retval    None   No result value.
  */
 void Gfx_Encoder_Create(Gfx_Encoder_t** encoder, Gfx_Encoder_CreateInfo_t* createInfo);
 
@@ -231,15 +231,26 @@ bool_t Gfx_Encoder_Encode(Gfx_Encoder_t* encoder, const Gfx_Encoder_EncodeInfo_t
 
 /*************************************************************************************************/
 /**
- * \brief Waits for submitted encoding work, collects its output, and releases the input surface.
+ * \brief Polls submitted encoding work, collects complete output, and releases the input surface.
  *
- * \param[in,out] encoder        Non-NULL encoder with a pending Encode() submission
+ * \par Requirements:
+ *  - 001 Required pointers shall be non-NULL; missing pointers shall assert.
+ *  - 002 The caller shall exclusively own the initialized encoder for the duration of the call.
+ *  - 003 Hardware completion shall be polled without requesting an indefinite wait.
+ *  - 004 Destination storage shall be disjoint from the encoder, codedSize and native mapped storage.
+ *  - 005 A busy encoder shall retain its submission for a subsequent Status() call.
+ *  - 006 An undersized destination shall be unchanged and shall retain the access unit for retry.
+ *  - 007 Invalid encoded output shall be discarded without changing the destination.
+ *  - 008 An encoding failure shall require an IDR picture before further inter-picture encoding.
+ *  - 009 UINT64_MAX shall distinguish discarded output from pending work and insufficient capacity.
+ *
+ * \param[in,out] encoder        Non-NULL initialized encoder
  * \param[out]    codedBytes     Caller-owned destination used only during this call
- * \param[in]     codedCapacity  Destination capacity in bytes, in the range 1..UINT32_MAX; must fit the access unit
- * \param[out]    codedSize      Receives the number of copied bytes, or zero when no access unit is pending
+ * \param[in]     codedCapacity  Destination capacity in bytes, in the range 1..UINT32_MAX
+ * \param[out]    codedSize      Copied/required bytes, zero when unavailable, UINT64_MAX on encode failure
  *
- * \retval TRUE                   A completed access unit is available
- * \retval FALSE                  No access unit is pending
+ * \retval TRUE   A complete access unit was copied.
+ * \retval FALSE  No output was copied; codedSize distinguishes unavailable, capacity and failure.
  */
 bool_t Gfx_Encoder_Status(Gfx_Encoder_t* encoder, void* codedBytes, uint64_t codedCapacity, uint64_t* codedSize);
 

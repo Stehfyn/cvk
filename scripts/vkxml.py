@@ -153,6 +153,7 @@ class Registry:
     constants: Dict[str, str] = field(default_factory=dict)               # API constant name -> C type (VK_SUBPASS_EXTERNAL -> uint32_t)
     constant_values: Dict[str, str] = field(default_factory=dict)         # API constant name -> registry C expression
     bitmask_bases: Dict[str, str] = field(default_factory=dict)           # canonical flags type -> VkFlags or VkFlags64
+    type_headers: Dict[str, str] = field(default_factory=dict)            # imported type -> provider header named by requires
 
     def feature_closure(self, name: str) -> Set[str]:
         """Every public version a version includes: VK_VERSION_1_4 -> 1_0..1_4,
@@ -202,11 +203,19 @@ class Registry:
         enums: Dict[str, List[str]] = {}
         bitmasks: Dict[str, Optional[str]] = {}
         bitmask_bases: Dict[str, str] = {}
+        type_headers: Dict[str, str] = {}
+        header_names = {t.get("name") for t in root.findall("types/type")
+                        if api_ok(t) and t.get("category") == "include"}
 
         for t in root.findall("types/type"):
             if not api_ok(t):
                 continue
             cat = t.get("category")
+            required = t.get("requires")
+            if required in header_names:
+                name = t.get("name") or t.findtext("name")
+                if name:
+                    type_headers[name] = {"vk_platform": "vulkan/vk_platform.h", "windows.h": "Windows.h"}.get(required, required)
             if cat == "handle":
                 name = t.get("name") or t.findtext("name")
                 if t.get("alias"):
@@ -440,6 +449,7 @@ class Registry:
             enum_provenance=enum_provenance, type_provenance=type_provenance, enum_extends=enum_extends,
             type_aliases=type_aliases, type_feature=type_feature, removed=removed_types | removed_enums | removed_commands,
             enums64=enums64, constants=constants, constant_values=constant_values, bitmask_bases=bitmask_bases,
+            type_headers=type_headers,
         )
 
     @staticmethod

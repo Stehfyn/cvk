@@ -1,5 +1,5 @@
 /* Integer parsing checks; no Vulkan loader is initialized. */
-#include "cvk_json.h"
+#include "cvk/cvk_json.h"
 #include <stdio.h>
 #include <string.h>
 

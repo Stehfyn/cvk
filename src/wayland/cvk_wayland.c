@@ -3,9 +3,13 @@
 #ifndef VK_NO_PROTOTYPES
 #define VK_NO_PROTOTYPES
 #endif
-#include "wayland/cvk_wayland.h"
+#include "cvk/cvk.h"
+#include "cvk/wayland/cvk_wayland.h"
 #include <volk.h>
-#include <string.h>
+#include <stdint.h>
+#include <vulkan/vk_platform.h>
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_wayland.h>
 
 void cvkInitWaylandSurfaceCreateInfo(VkWaylandSurfaceCreateInfoKHR* pInfo, const void* pNext, VkWaylandSurfaceCreateFlagsKHR flags, struct wl_display* display, struct wl_surface* surface)
 {
