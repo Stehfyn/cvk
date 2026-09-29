@@ -533,7 +533,7 @@ static void RecordCopyCommands(VideoRenderer* r)
     cvkInitExtent2D(&extent, r->converted.width, r->converted.height);
     for (frameIndex = 0; frameIndex < VIDEO_RENDERER_FRAMES; ++frameIndex)
     {
-        command = r->copyCommands[frameIndex];
+        command          = r->copyCommands[frameIndex];
         sampledImages[0] = r->ring[frameIndex].planes[0].image;
         sampledImages[1] = r->ring[frameIndex].planes[1].image;
         cvkResetCommandBuffer(command, (VkCommandBufferResetFlags)0);
@@ -700,7 +700,7 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
     cvkInitExtent2D(&backingExtent, r->output.width, r->output.height);
     for (frameIndex = 0; frameIndex < VIDEO_RENDERER_FRAMES; ++frameIndex)
     {
-        command = r->drawCommands[frameIndex];
+        command          = r->drawCommands[frameIndex];
         sampledImages[0] = r->ring[frameIndex].planes[0].image;
         sampledImages[1] = r->ring[frameIndex].planes[1].image;
         cvkResetCommandBuffer(command, (VkCommandBufferResetFlags)0);
@@ -714,23 +714,23 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
                                                colorRange,
                                                (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
         cvkCmdTransitionSampledImageToColorAttachment(command,
-                                                       VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                                       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                                       r->converted.image,
-                                                       colorRange,
-                                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+                                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                                      r->converted.image,
+                                                      colorRange,
+                                                      (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
         cvkCmdExecuteFullscreenQuadRenderPassToSampledImage(command,
-                                                             r->converted.image,
-                                                             colorRange,
-                                                             VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                                             VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                                             (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                                             r->renderPass,
-                                                             r->converted.framebuffer,
-                                                             sourceExtent,
-                                                             r->pipelines[VIDEO_PASS_NV12],
-                                                             r->layouts[VIDEO_PASS_NV12],
-                                                             r->frames[frameIndex]);
+                                                            r->converted.image,
+                                                            colorRange,
+                                                            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                                            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                            (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                                                            r->renderPass,
+                                                            r->converted.framebuffer,
+                                                            sourceExtent,
+                                                            r->pipelines[VIDEO_PASS_NV12],
+                                                            r->layouts[VIDEO_PASS_NV12],
+                                                            r->frames[frameIndex]);
         cvkCmdReleaseSampledImagesToExternal(command,
                                              VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
                                              VK_IMAGE_LAYOUT_GENERAL,
@@ -775,7 +775,7 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
                                                          contentExtent,
                                                          0.0F);
     cvkEndCommandBuffer(command);
-    r->recordedWidth = width;
+    r->recordedWidth  = width;
     r->recordedHeight = height;
 }
 
@@ -804,16 +804,16 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     cdx11UnknownQueryInterfaceAsTexture2D((IUnknown*)backBuffer, &texture);
     cdx11Texture2DGetDesc(texture, &desc);
     cdxgiUnknownRelease((IUnknown*)texture);
-    contentFitsBackBuffer = (width <= desc.Width) && (height <= desc.Height);
+    contentFitsBackBuffer   = (width <= desc.Width) && (height <= desc.Height);
     outputMatchesBackBuffer = (r->output.width == desc.Width) && (r->output.height == desc.Height);
     CVK_ASSERT(contentFitsBackBuffer);
     CVK_ASSERT(outputMatchesBackBuffer);
     /* Hover, activation and the old-geometry resize latch often repaint the
     ** same video at the same size. Keep the scaled pixels as well as the NV12
     ** conversion, so these paints only copy and draw the caption. */
-    contentWidthChanged = (width != r->outputWidth);
+    contentWidthChanged  = (width != r->outputWidth);
     contentHeightChanged = (height != r->outputHeight);
-    redraw = convert || contentWidthChanged || contentHeightChanged;
+    redraw               = convert || contentWidthChanged || contentHeightChanged;
     if (redraw)
     {
         drawCommandsOutdated = (width != r->recordedWidth) || (height != r->recordedHeight);
@@ -821,7 +821,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         {
             RecordDrawCommands(r, width, height);
         }
-        command = convert ? r->drawCommands[frame_index] : r->scaleCommand;
+        command  = convert ? r->drawCommands[frame_index] : r->scaleCommand;
         syncs[0] = r->output.memory;
         syncs[1] = r->ring[frame_index].planes[0].memory;
         syncs[2] = r->ring[frame_index].planes[1].memory;
@@ -849,22 +849,22 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
 
 void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y, int slot)
 {
-    uint32_t       frame_index;
-    VkResult       result;
-    VkDeviceMemory syncs[3];
-    uint64_t       acquireKeys[3] = {0, 0, 0};
-    uint64_t       releaseKeys[3] = {1, 0, 0};
-    uint32_t       timeouts[3]    = {INFINITE, INFINITE, INFINITE};
-    UINT           width          = r->converted.width;
-    UINT           height         = r->converted.height;
-    D3D11_BOX      source         = {0, 0, 0, width, height, 1};
+    uint32_t        frame_index;
+    VkResult        result;
+    VkDeviceMemory  syncs[3];
+    uint64_t        acquireKeys[3] = {0, 0, 0};
+    uint64_t        releaseKeys[3] = {1, 0, 0};
+    uint32_t        timeouts[3]    = {INFINITE, INFINITE, INFINITE};
+    UINT            width          = r->converted.width;
+    UINT            height         = r->converted.height;
+    D3D11_BOX       source         = {0, 0, 0, width, height, 1};
     VkCommandBuffer command;
-    bool_t         frameFitsOutput;
+    bool_t          frameFitsOutput;
 
-    frame_index = FrameIndex(slot);
+    frame_index     = FrameIndex(slot);
     frameFitsOutput = (width <= r->output.width) && (height <= r->output.height);
     CVK_ASSERT(frameFitsOutput);
-    command = r->copyCommands[frame_index];
+    command  = r->copyCommands[frame_index];
     syncs[0] = r->output.memory;
     syncs[1] = r->ring[frame_index].planes[0].memory;
     syncs[2] = r->ring[frame_index].planes[1].memory;

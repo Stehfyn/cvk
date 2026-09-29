@@ -10,6 +10,7 @@
 #include "os/win32/os_text.h"
 #include <stdint.h>
 #ifdef CVK_DEMO_VALIDATION
+#include "os/os_assert.h"
 #include "utl/utl_decimal.h"
 #include "os/os_types.h"
 #endif
@@ -543,6 +544,19 @@ extern FORCE_INLINE void VideoStream_GetInfo(const VideoStream* pStream, VideoIn
     *pInfo = pStream->info;
 }
 
+#ifdef CVK_DEMO_VALIDATION
+static void ValidateDecodedDevice(VideoStream* stream, ID3D11Texture2D* texture)
+{
+    ID3D11Device* decodedDevice;
+    bool_t        decoderUsesRenderDevice;
+
+    cdx11DeviceChildGetDevice((ID3D11DeviceChild*)texture, &decodedDevice);
+    decoderUsesRenderDevice = (decodedDevice == stream->pDevice);
+    LOGASSERT(decoderUsesRenderDevice);
+    cdxgiUnknownRelease((IUnknown*)decodedDevice);
+}
+#endif
+
 /* Copies a decoded sample into a ring slot: from the decoder's texture array when the sample
 ** carries a DXGI buffer, otherwise by uploading the 2-D system-memory buffer. */
 static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
@@ -566,6 +580,8 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         {
             D3D11_TEXTURE2D_DESC desc;
             LPCTSTR              binding;
+
+            ValidateDecodedDevice(pStream, pTexture);
             cdx11Texture2DGetDesc(pTexture, &desc);
             binding = TEXT("no\n");
             if (desc.BindFlags & D3D11_BIND_DECODER)

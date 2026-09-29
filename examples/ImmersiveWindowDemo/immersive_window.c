@@ -37,6 +37,7 @@
 #include <dxgi.h>
 #include <dxgi1_2.h>
 #include <dxgi1_3.h>
+#include <dxgi1_6.h>
 #include <dxgicommon.h>
 #include <dxgiformat.h>
 #include <debugapi.h>
@@ -419,8 +420,8 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     static const D3D_FEATURE_LEVEL levels[] = {D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0, D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0};
     D3D_FEATURE_LEVEL level;
     D2D1_FACTORY_OPTIONS options = {D2D1_DEBUG_LEVEL_NONE};
-    IDXGIAdapter* adapter;
-    IDXGIFactory2* factory;
+    IDXGIAdapter1* adapter;
+    IDXGIFactory6* factory;
     IDXGISwapChain1* swapChain;
     IDXGISwapChain2* swapChain2 = NULL;
     ID3D11Device* d3dDevice = NULL;
@@ -430,6 +431,7 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     DXGI_SAMPLE_DESC sample = {1, 0};
     RECT client = {0};
     HRESULT interface_result;
+    HRESULT device_result;
     bool_t has_width;
     bool_t has_height;
     BOOL got_client_rect;
@@ -451,10 +453,11 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     pw->szClient.cy = has_height ? client.bottom : 1;
     pw->fFrameDirty = TRUE;
     SetupFonts(pw);
-    (void)cdx11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceFlags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION,
-                            &d3dDevice, &level, &pw->pD3D11DeviceContext);
+    cdxgiCreateFactory1AsFactory6(&factory);
+    cdxgiFactoryGetMinimumPowerAdapter(factory, &adapter);
+    device_result = cdx11CreateDevice((IDXGIAdapter*)adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, deviceFlags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &d3dDevice, &level, &pw->pD3D11DeviceContext);
     pw->pD3D11Device = d3dDevice;
-    Check((NULL != d3dDevice) && (NULL != pw->pD3D11DeviceContext), TEXT("D3D11CreateDevice"));
+    Check(SUCCEEDED(device_result) && (NULL != d3dDevice) && (NULL != pw->pD3D11DeviceContext), TEXT("D3D11CreateDevice"));
 #ifndef NDEBUG
     cdx11DeviceGetDebug(d3dDevice, &pw->pD3D11Debug);
     options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
@@ -468,8 +471,6 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     SetupBrushes(pw);
     LoadAppIcon(hWnd, pw);
 
-    cdxgiDeviceGetAdapter((IDXGIDevice*)dxgiDevice, &adapter);
-    cdxgiObjectGetParentAsFactory2((IDXGIObject*)adapter, &factory);
     desktop = GetDC(NULL);
     desktop_available = (NULL != desktop);
     LOGASSERT(desktop_available);
@@ -479,10 +480,21 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     Check(desktop_released, TEXT("release primary desktop DC"));
     desktop_size_valid = (0 < desktop_width) && (0 < desktop_height);
     Check(desktop_size_valid, TEXT("primary desktop size"));
-    cdxgiFactoryCreateSwapChainForComposition(factory, (IUnknown*)d3dDevice,
-        (UINT)desktop_width, (UINT)desktop_height, DXGI_FORMAT_B8G8R8A8_UNORM, FALSE, sample,
-        DXGI_USAGE_RENDER_TARGET_OUTPUT, 2, DXGI_SCALING_STRETCH, DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
-        DXGI_ALPHA_MODE_IGNORE, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT, NULL, &swapChain);
+    cdxgiFactoryCreateSwapChainForComposition((IDXGIFactory2*)factory,
+                                              (IUnknown*)d3dDevice,
+                                              (UINT)desktop_width,
+                                              (UINT)desktop_height,
+                                              DXGI_FORMAT_B8G8R8A8_UNORM,
+                                              FALSE,
+                                              sample,
+                                              DXGI_USAGE_RENDER_TARGET_OUTPUT,
+                                              2,
+                                              DXGI_SCALING_STRETCH,
+                                              DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
+                                              DXGI_ALPHA_MODE_IGNORE,
+                                              DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT,
+                                              NULL,
+                                              &swapChain);
     cdxgiFactoryMakeWindowAssociation((IDXGIFactory*)factory, hWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
     cdxgiSwapChainGetBufferAsSurface((IDXGISwapChain*)swapChain, 0, &surface);
     cd2dDeviceContextCreateTargetBitmapFromSurface(pw->pD2D1DeviceContext, surface, DXGI_FORMAT_B8G8R8A8_UNORM, &pw->pTargetBitmap);
