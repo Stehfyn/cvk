@@ -16,8 +16,9 @@ foreach(shader fullscreen.vert nv12.frag bicubic.frag)
 endforeach()
 
 add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers})
-target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" "${reference_dir}"
+target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(immersive-video SYSTEM PUBLIC "${reference_dir}")
 target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf PRIVATE d3dcompiler)
 target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)
 option(CVK_DEMO_VALIDATION "Enable Vulkan validation in ImmersiveWindowDemo" OFF)
@@ -33,18 +34,11 @@ set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/bi
 set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ImmersiveWindowDemo)
 target_link_libraries(ImmersiveWindowDemo PRIVATE immersive-video cdcomp cd2d cdw
     dwmapi uxtheme gdi32 user32 shell32 comctl32 ole32 uuid)
-if(MSVC)
-    target_compile_options(immersive-video PRIVATE /W4)
-    target_compile_options(ImmersiveWindowDemo PRIVATE /W4)
-else()
-    target_compile_options(immersive-video PRIVATE -Wall -Wextra)
-    target_compile_options(ImmersiveWindowDemo PRIVATE -Wall -Wextra)
-endif()
-
 # Optional real-GPU comparison against the pinned reference implementation.
 set(CVK_DEMO_TEST_VIDEO "" CACHE FILEPATH "Video fixture for the optional CDX/CVK pixel comparison")
 if(CVK_DEMO_TEST_VIDEO)
     add_library(immersive-reference-video STATIC "${reference_dir}/video.c")
+    cvk_external_target(immersive-reference-video)
     target_link_libraries(immersive-reference-video PUBLIC cdx11 cdxgi cmf d3dcompiler)
     target_compile_definitions(immersive-reference-video PRIVATE
         VideoStream_Open=ReferenceVideoStream_Open VideoStream_Close=ReferenceVideoStream_Close

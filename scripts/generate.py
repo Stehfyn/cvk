@@ -2791,20 +2791,20 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
     def diagnostic_source(self) -> str:
         with open(os.path.join(self.PROTOCOL_DIR, "internal", "diagnostics.c"), encoding="utf-8") as stream:
             source = stream.read()
-        if not self.doc_comments:
-            source = re.sub(r"/\*\*.*?\*/\s*", "", source, flags=re.S)
+        # Retain the authored implementation contracts, like cvkCheckResult's
+        # Details block, independently of optional registry API documentation.
         return source
 
     @staticmethod
     def source_include(header: str) -> str:
         if header == "<vulkan/utility/vk_format_utils.h>":
-            # /external:W0 does not cover MSVC backend C47xx diagnostics.
+            # /external:W0 does not cover every MSVC backend diagnostic.
             # The user excludes external-library warnings, but owned definitions
             # must retain the original warning state after this include.
             return """/* Preserve the external-library boundary during MSVC code generation. */
 #if defined(_MSC_VER) && !defined(__clang__)
 #pragma warning(push)
-#pragma warning(disable: 4710)
+#pragma warning(disable: 4710 5045)
 #endif
 #include <vulkan/utility/vk_format_utils.h>
 #if defined(_MSC_VER) && !defined(__clang__)

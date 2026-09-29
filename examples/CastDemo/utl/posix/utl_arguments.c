@@ -61,23 +61,36 @@ extern FORCE_INLINE bool_t Utl_Arguments_Read(uint32_t*              unitCount,
 {
     bool_t                        has_records;
     bool_t                        found;
+    bool_t                        is_empty;
+    bool_t                        has_storage;
+    bool_t                        fits_output;
+    Utl_Arguments_Record_t        absent;
     const Utl_Arguments_Record_t* record;
+    const uint16_t*               units;
+    uint32_t                      count;
     uint32_t                      remaining;
 
     LOGASSERT(NULL != unitCount);
     LOGASSERT(NULL != output);
     LOGASSERT(NULL != arguments);
-    has_records = (0 == arguments->recordCount) || (NULL != arguments->records);
+    is_empty    = (0 == arguments->recordCount);
+    has_storage = (NULL != arguments->records);
+    has_records = is_empty || has_storage;
     LOGASSERT(has_records);
-    found = (argumentIndex < arguments->recordCount);
+    absent.units     = NULL;
+    absent.unitCount = 0;
+    found            = (argumentIndex < arguments->recordCount);
+    record           = found ? &arguments->records[argumentIndex] : &absent;
+    units            = record->units;
+    count            = record->unitCount;
+    fits_output      = (count <= capacity);
     if (found)
     {
-        record = &arguments->records[argumentIndex];
-        LOGASSERT(NULL != record->units);
-        found = (record->unitCount <= capacity);
+        LOGASSERT(NULL != units);
+        found = fits_output;
         if (found)
         {
-            remaining = record->unitCount;
+            remaining = count;
             for (;;)
             {
                 if (0 == remaining)
@@ -85,9 +98,9 @@ extern FORCE_INLINE bool_t Utl_Arguments_Read(uint32_t*              unitCount,
                     break;
                 }
                 --remaining;
-                output[remaining] = record->units[remaining];
+                output[remaining] = units[remaining];
             }
-            (*unitCount) = record->unitCount;
+            (*unitCount) = count;
         }
     }
     return found;

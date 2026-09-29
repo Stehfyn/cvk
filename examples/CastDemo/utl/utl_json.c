@@ -1696,14 +1696,22 @@ static FORCE_INLINE bool_t ReadJsonStringBody(JsonCursor_t* cursor, Utl_Json_Tex
 static FORCE_INLINE bool_t ReadJsonLiteral(JsonCursor_t* cursor, Utl_Json_Text_t literal)
 {
     uint32_t remaining;
+    uint32_t count;
+    int32_t  comparison;
+    bool_t   complete;
+    bool_t   matches;
     bool_t   valid;
 
     remaining = cursor->text.byteCount - cursor->offset;
-    valid     = (literal.byteCount <= remaining);
-    if (valid)
+    count     = remaining;
+    if (literal.byteCount < count)
     {
-        valid = (0 == CRT_Memory_Compare(cursor->text.data + cursor->offset, literal.data, literal.byteCount));
+        count = literal.byteCount;
     }
+    comparison = CRT_Memory_Compare(cursor->text.data + cursor->offset, literal.data, count);
+    complete   = (count == literal.byteCount);
+    matches    = (0 == comparison);
+    valid      = complete && matches;
     if (valid)
     {
         cursor->offset += literal.byteCount;
@@ -2008,7 +2016,7 @@ extern FORCE_INLINE void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
  * \par Details:
  *  Record contents are initialized only when a value occupies them.
  */
-void Utl_Json_InitializeReader(Utl_Json_Reader_t* reader, Utl_Json_Value_t* values, uint32_t capacity)
+extern FORCE_INLINE void Utl_Json_InitializeReader(Utl_Json_Reader_t* reader, Utl_Json_Value_t* values, uint32_t capacity)
 {
     LOGASSERT(NULL != reader);
     LOGASSERT(NULL != values);
@@ -2036,7 +2044,7 @@ extern FORCE_INLINE uint32_t Utl_Json_GetByteCount(const Utl_Json_Writer_t* writ
  * \par Details:
  *  None
  */
-Utl_Json_Status_t Utl_Json_GetStatus(const Utl_Json_Writer_t* writer)
+extern FORCE_INLINE Utl_Json_Status_t Utl_Json_GetStatus(const Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return writer->status;
@@ -2111,7 +2119,7 @@ extern FORCE_INLINE bool_t Utl_Json_IsComplete(const Utl_Json_Writer_t* writer)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_IsNumber(Utl_Json_Text_t text)
+extern FORCE_INLINE bool_t Utl_Json_IsNumber(Utl_Json_Text_t text)
 {
     JsonCursor_t cursor;
     bool_t       has_storage;
@@ -2174,7 +2182,7 @@ bool_t Utl_Json_IsNumber(Utl_Json_Text_t text)
  * \par Details:
  *  None
  */
-Utl_Json_ReadStatus_t Utl_Json_GetReadStatus(const Utl_Json_Reader_t* reader)
+extern FORCE_INLINE Utl_Json_ReadStatus_t Utl_Json_GetReadStatus(const Utl_Json_Reader_t* reader)
 {
     LOGASSERT(NULL != reader);
     return reader->status;
@@ -2185,7 +2193,7 @@ Utl_Json_ReadStatus_t Utl_Json_GetReadStatus(const Utl_Json_Reader_t* reader)
  * \par Details:
  *  None
  */
-uint32_t Utl_Json_GetReadByteCount(const Utl_Json_Reader_t* reader)
+extern FORCE_INLINE uint32_t Utl_Json_GetReadByteCount(const Utl_Json_Reader_t* reader)
 {
     LOGASSERT(NULL != reader);
     return reader->offset;
@@ -2196,7 +2204,7 @@ uint32_t Utl_Json_GetReadByteCount(const Utl_Json_Reader_t* reader)
  * \par Details:
  *  Failed reads cannot expose partially initialized value records.
  */
-const Utl_Json_Value_t* Utl_Json_GetRoot(const Utl_Json_Reader_t* reader)
+extern FORCE_INLINE const Utl_Json_Value_t* Utl_Json_GetRoot(const Utl_Json_Reader_t* reader)
 {
     const Utl_Json_Value_t* root;
     LOGASSERT(NULL != reader);
@@ -2213,7 +2221,7 @@ const Utl_Json_Value_t* Utl_Json_GetRoot(const Utl_Json_Reader_t* reader)
  * \par Details:
  *  The caller supplies a value borrowed from this reader, or NULL for an absent optional array.
  */
-const Utl_Json_Value_t* Utl_Json_GetElement(const Utl_Json_Reader_t* reader,
+extern FORCE_INLINE const Utl_Json_Value_t* Utl_Json_GetElement(const Utl_Json_Reader_t* reader,
                                             const Utl_Json_Value_t*  array,
                                             uint32_t                 index)
 {
@@ -2256,7 +2264,7 @@ const Utl_Json_Value_t* Utl_Json_GetElement(const Utl_Json_Reader_t* reader,
  *  prefix may be discarded only when a negative decimal shift removes zeros.
  *  Signed range is checked before narrowing, with INT64_MIN handled separately.
  */
-bool_t Utl_Json_GetInt64(int64_t* result, const Utl_Json_Value_t* value)
+extern FORCE_INLINE bool_t Utl_Json_GetInt64(int64_t* result, const Utl_Json_Value_t* value)
 {
     bool_t        has_value;
     bool_t        is_number;
@@ -2676,7 +2684,7 @@ bool_t Utl_Json_WriteString(Utl_Json_Writer_t* writer, Utl_Json_Text_t text)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_WriteNumber(Utl_Json_Writer_t* writer, Utl_Json_Text_t number)
+extern FORCE_INLINE bool_t Utl_Json_WriteNumber(Utl_Json_Writer_t* writer, Utl_Json_Text_t number)
 {
     bool_t already_complete;
     bool_t accepted;
@@ -2828,7 +2836,7 @@ extern FORCE_INLINE bool_t Utl_Json_WriteBoolean(Utl_Json_Writer_t* writer, bool
  * \par Details:
  *  None
  */
-bool_t Utl_Json_WriteNull(Utl_Json_Writer_t* writer)
+extern FORCE_INLINE bool_t Utl_Json_WriteNull(Utl_Json_Writer_t* writer)
 {
     Utl_Json_Text_t text;
     bool_t          accepted;

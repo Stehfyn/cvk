@@ -336,12 +336,4 @@ foreach(target cast-session CastDemo CastDemoCli cvk-cast-message-test cvk-cast-
     endif()
 endforeach()
 
-# Include every owned CastDemo target, its test programs and CVK.
-# Volk and other external libraries use the user's separate external warning policy.
-# Visual Studio uses its native analysis integration; Ninja/Make use C_CLANG_TIDY.
-include(BuildPolicy.cmake)
-cast_apply_directory_policy("${CMAKE_CURRENT_SOURCE_DIR}")
-cast_apply_build_policy(cvk)
-if(TARGET cvk-platform)
-    cast_apply_build_policy(cvk-platform)
-endif()
+# The root project applies the required build policy to all owned targets.

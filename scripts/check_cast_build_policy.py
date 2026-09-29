@@ -17,12 +17,19 @@ def main():
     parser.add_argument("--build", type=Path, default=root / "build/windows-msvc-2026")
     args = parser.parse_args()
     build = args.build.resolve()
-    owned = sorted((build / "examples/CastDemo").rglob("*.vcxproj"))
-    owned.append(build / "cvk.vcxproj")
-    owned.append(build / "cvk-platform.vcxproj")
-    external = sorted((build / "external/cdx").rglob("*.vcxproj"))
-    external.append(build / "external/volk/volk.vcxproj")
-    external.append(build / "cva.vcxproj")
+    owned = []
+    external = []
+    for path in sorted(build.rglob("*.vcxproj")):
+        if path.is_relative_to(build / "CMakeFiles"):
+            continue
+        sources = [Path(item.get("Include"))
+                   for item in ET.parse(path).findall(".//m:ClCompile[@Include]", NS)
+                   if item.get("Include", "").lower().endswith(".c")]
+        if sources:
+            category = external if all(source.is_relative_to(root / "external") or
+                                       source.is_relative_to(build / "external")
+                                       for source in sources) else owned
+            category.append(path)
     failures = []
     counts = {"owned": 0, "external": 0}
 
@@ -59,7 +66,7 @@ def main():
 
     # Inspect the effective Clang configuration, including built-in defaults.
     policy = root / "examples/CastDemo/.clang-tidy"
-    generated_policy = build / "examples/CastDemo/cvk-generated.clang-tidy"
+    generated_policy = build / "cvk-generated.clang-tidy"
     generated_checks = (
         "readability-non-const-parameter",
         "bugprone-invalid-enum-default-initialization",
@@ -135,7 +142,8 @@ def main():
                         options = source.find("m:PREfastAdditionalOptions", NS)
                         require(options is not None and options.text == "$(PREfastAdditionalOptions)", path,
                                 "native analysis diagnostics must remain visible without a rewrite target")
-                is_generated = path in (build / "cvk.vcxproj", build / "cvk-platform.vcxproj")
+                is_generated = path in (build / "cvk.vcxproj", build / "cvk-platform.vcxproj",
+                                        build / "scvk.vcxproj")
                 expected_policy = generated_policy if is_generated else policy
                 analysis_options = tree.findtext(".//m:ClangTidyToolExeAdditionalOptions", default="", namespaces=NS)
                 require(expected_policy.as_posix() in analysis_options.replace("\\", "/"), path,

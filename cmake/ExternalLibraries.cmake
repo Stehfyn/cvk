@@ -1,7 +1,7 @@
 # Dependencies keep their upstream sources and are excluded from owned-code diagnostics.
 # SYSTEM propagates header classification without changing diagnostics in consumers.
 function(cvk_external_target target)
-    set_target_properties(${target} PROPERTIES SYSTEM TRUE)
+    set_target_properties(${target} PROPERTIES SYSTEM TRUE CVK_EXTERNAL TRUE)
     get_target_property(target_type ${target} TYPE)
     if(NOT target_type STREQUAL "INTERFACE_LIBRARY" AND NOT target_type STREQUAL "UTILITY")
         set_target_properties(${target} PROPERTIES

@@ -54,12 +54,28 @@ typedef char char_t; ///< Character in a terminated execution-character-set stri
 ** 3.5 Static function prototypes
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \brief Formats a signed source line in caller-owned storage.
+ *
+ * \param[out] pDigits   Storage for SCVK_DIAGNOSTIC_CAPACITY characters.
+ * \param[in]  line      Source line to format.
+ *
+ * \retval    char_t*    Start of the terminated decimal string inside pDigits.
+ */
 static SCVK_FORCE_INLINE char_t* scvkFormatDiagnosticLine(char_t pDigits[SCVK_DIAGNOSTIC_CAPACITY], int line);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Forming the magnitude through -(line + 1) also represents INT_MIN without
+ *  signed overflow. Every uint64_t needs at most twenty decimal digits; the
+ *  fixed buffer additionally reserves a sign and a terminator.
+ */
 static SCVK_FORCE_INLINE char_t* scvkFormatDiagnosticLine(char_t pDigits[SCVK_DIAGNOSTIC_CAPACITY], int line)
 {
     char_t*  cursor;
@@ -101,6 +117,12 @@ static SCVK_FORCE_INLINE char_t* scvkFormatDiagnosticLine(char_t pDigits[SCVK_DI
 ** 5. PUBLIC FUNCTIONS
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The diagnostic uses only automatic formatting storage and preserves the
+ *  execution character set of __FILE__ and the stringized expression.
+ */
 SCVK_NORETURN void scvkFatal(const char* pExpression, const char* pFile, int line)
 {
     char_t  digits[SCVK_DIAGNOSTIC_CAPACITY];

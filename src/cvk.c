@@ -26,7 +26,15 @@
 #include <vk_video/vulkan_video_codec_h265std_encode.h>
 #include <vk_video/vulkan_video_codec_vp9std.h>
 #include <vk_video/vulkan_video_codec_vp9std_decode.h>
+/* Preserve the external-library boundary during MSVC code generation. */
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning(push)
+#pragma warning(disable : 4710 5045)
+#endif
 #include <vulkan/utility/vk_format_utils.h>
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning(pop)
+#endif
 #include <vulkan/vk_platform.h>
 
 /*=================================================================================================
@@ -67,12 +75,28 @@ typedef char char_t; ///< Character in a terminated execution-character-set stri
 ** 3.5 Static function prototypes
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \brief Formats a signed source line in caller-owned storage.
+ *
+ * \param[out] pDigits   Storage for CVK_DIAGNOSTIC_CAPACITY characters.
+ * \param[in]  line      Source line to format.
+ *
+ * \retval    char_t*    Start of the terminated decimal string inside pDigits.
+ */
 static CVK_FORCE_INLINE char_t* cvkFormatDiagnosticLine(char_t pDigits[CVK_DIAGNOSTIC_CAPACITY], int line);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Forming the magnitude through -(line + 1) also represents INT_MIN without
+ *  signed overflow. Every uint64_t needs at most twenty decimal digits; the
+ *  fixed buffer additionally reserves a sign and a terminator.
+ */
 static CVK_FORCE_INLINE char_t* cvkFormatDiagnosticLine(char_t pDigits[CVK_DIAGNOSTIC_CAPACITY], int line)
 {
     char_t*  cursor;
@@ -114,6 +138,12 @@ static CVK_FORCE_INLINE char_t* cvkFormatDiagnosticLine(char_t pDigits[CVK_DIAGN
 ** 5. PUBLIC FUNCTIONS
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The diagnostic uses only automatic formatting storage and preserves the
+ *  execution character set of __FILE__ and the stringized expression.
+ */
 CVK_NORETURN void cvkFatal(const char* pExpression, const char* pFile, int line)
 {
     char_t  digits[CVK_DIAGNOSTIC_CAPACITY];

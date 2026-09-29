@@ -42,9 +42,8 @@ if(WIN32)
     # export scanner cannot read. Never export Volk's mutable dispatch data.
     target_sources(cvk-python PRIVATE "${cvk_python_package}/_exports.def")
 endif()
-target_include_directories(cvk-python PRIVATE "${PROJECT_SOURCE_DIR}/include"
-    "${PROJECT_SOURCE_DIR}/external/Vulkan-Utility-Libraries/include")
-target_link_libraries(cvk-python PRIVATE volk::volk)
+target_include_directories(cvk-python PRIVATE "${PROJECT_SOURCE_DIR}/include")
+target_link_libraries(cvk-python PRIVATE volk::volk cvk-vulkan-utility-headers)
 set_target_properties(volk PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(cvk-python PROPERTIES
     OUTPUT_NAME _cvk PREFIX ""

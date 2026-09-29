@@ -84,6 +84,12 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   The user also explicitly requires ignoring warnings from external libraries.
   Keep Volk as a pinned external library and mark dependency/SDK headers as external.
   This explicitly includes Vulkan core, utility, video and SC header families.
+  `/external:W0` does not cover every MSVC backend diagnostic. The generated
+  utility-header include therefore pushes the warning state, disables C4710 and
+  C5045 only while reading the external `vk_format_utils.h` definitions, and pops
+  the state before any owned definition. This implements the existing external
+  exclusion; it is not an owned-code exception. No project-wide C4710 or C5045
+  suppression, `/QSpectre`, or optimization barrier is permitted.
   Consume the user's pinned `external/cdx` submodule for applicable DirectX work
   inside gfxlib, using the existing GitHub Desktop/Git Credential Manager credentials.
   The user also authorizes external `cva`. Their subsequent instruction is to
