@@ -46,6 +46,7 @@
 #include "bicubic_frag.h"
 #include "nv12_pipeline_json.h"
 #include "bicubic_pipeline_json.h"
+#include "plane_copy_hlsl.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -207,7 +208,7 @@ static void CreateDevice(VideoRenderer* r)
                                  NULL,
                                  &r->messenger);
 #endif
-    cdxgiUnknownQueryInterface((IUnknown*)r->d3d, &IID_IDXGIDevice, (void**)&dxgi);
+    cdxgiUnknownQueryInterfaceAsDevice((IUnknown*)r->d3d, &dxgi);
     cdxgiDeviceGetAdapter(dxgi, &adapter);
     cdxgiAdapterGetDesc(adapter, &desc);
     cdxgiUnknownRelease((IUnknown*)adapter);
@@ -282,8 +283,8 @@ static void CreateSharedImage(VideoRenderer* r, Image* image, UINT width, UINT h
                                D3D11_RESOURCE_MISC_SHARED_NTHANDLE | D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX,
                                NULL,
                                &image->texture);
-    cdxgiUnknownQueryInterface((IUnknown*)image->texture, &IID_IDXGIKeyedMutex, (void**)&image->mutex);
-    cdxgiUnknownQueryInterface((IUnknown*)image->texture, &IID_IDXGIResource1, (void**)&resource);
+    cdxgiUnknownQueryInterfaceAsKeyedMutex((IUnknown*)image->texture, &image->mutex);
+    cdxgiUnknownQueryInterfaceAsResource1((IUnknown*)image->texture, &resource);
     cdxgiResourceCreateReadWriteSharedHandle(resource, &handle);
     cdxgiUnknownRelease((IUnknown*)resource);
     cvkImportD3D11Texture2D(r->physical, r->device, format, extent, usage, handle, &image->image, &image->memory);
@@ -334,27 +335,37 @@ static void DestroyFrame(VideoRenderer* r, Frame* frame)
 
 /* Copy each NV12 plane without filtering or color conversion. D3D resolves its
 ** native plane layout; Vulkan receives ordinary R8/RG8 images. No CPU readback. */
+static ID3DBlob* CompilePlaneCopyShader(const char* entry, const char* profile, LPCTSTR message)
+{
+    ID3DBlob* code;
+
+    if (FAILED(D3DCompile(plane_copy_hlsl,
+                          sizeof(plane_copy_hlsl) - 1,
+                          NULL,
+                          NULL,
+                          NULL,
+                          entry,
+                          profile,
+                          D3DCOMPILE_OPTIMIZATION_LEVEL3,
+                          0,
+                          &code,
+                          NULL)))
+    {
+        Fail(message);
+    }
+    return code;
+}
+
 static FORCE_INLINE void CreatePlaneCopyShaders(VideoRenderer* r)
 {
-    static const char source[] = "float4 VS(uint id : SV_VertexID) : SV_Position {"
-                                 "float2 p = float2((id << 1) & 2, id & 2);"
-                                 "return float4(p * float2(2, -2) + float2(-1, 1), 0, 1); }"
-                                 "Texture2D<float2> plane : register(t0);"
-                                 "float4 PS(float4 p : SV_Position) : SV_Target {"
-                                 "return float4(plane.Load(int3(int2(p.xy), 0)), 0, 1); }";
-    ID3DBlob*         code;
-    if (FAILED(D3DCompile(source, sizeof(source) - 1, NULL, NULL, NULL, "VS", "vs_5_0", D3DCOMPILE_OPTIMIZATION_LEVEL3, 0, &code, NULL)))
-    {
-        Fail(TEXT("Cannot compile the video plane copy vertex shader."));
-    }
-    cdx11DeviceCreateVertexShader(r->d3d, code->lpVtbl->GetBufferPointer(code), code->lpVtbl->GetBufferSize(code), NULL, &r->copyVertex);
-    cdxgiUnknownRelease((IUnknown*)code);
-    if (FAILED(D3DCompile(source, sizeof(source) - 1, NULL, NULL, NULL, "PS", "ps_5_0", D3DCOMPILE_OPTIMIZATION_LEVEL3, 0, &code, NULL)))
-    {
-        Fail(TEXT("Cannot compile the video plane copy pixel shader."));
-    }
-    cdx11DeviceCreatePixelShader(r->d3d, code->lpVtbl->GetBufferPointer(code), code->lpVtbl->GetBufferSize(code), NULL, &r->copyPixel);
-    cdxgiUnknownRelease((IUnknown*)code);
+    ID3DBlob* code;
+
+    code = CompilePlaneCopyShader("VS", "vs_5_0", TEXT("Cannot compile the video plane copy vertex shader."));
+    cdx11SetupVertexShaderFromBlob(r->d3d, code, &r->copyVertex);
+    cdxgiUnknownReleaseSafe((IUnknown*)code);
+    code = CompilePlaneCopyShader("PS", "ps_5_0", TEXT("Cannot compile the video plane copy pixel shader."));
+    cdx11SetupPixelShaderFromBlob(r->d3d, code, &r->copyPixel);
+    cdxgiUnknownReleaseSafe((IUnknown*)code);
 }
 
 enum
@@ -465,12 +476,10 @@ static FORCE_INLINE void CreateFramePlane(VideoRenderer*                renderer
                                           DXGI_FORMAT                   dxgi_format)
 {
     CreateSharedImage(renderer, plane, width, height, vk_format, dxgi_format, FALSE);
-    cdx11DeviceCreateTexture2DShaderResourceView(renderer->d3d,
-                                                  (ID3D11Resource*)frame->texture,
-                                                  0,
-                                                  1,
-                                                  dxgi_format,
-                                                  view);
+    cdx11DeviceCreateWholeTexture2DShaderResourceView(renderer->d3d,
+                                                       (ID3D11Resource*)frame->texture,
+                                                       dxgi_format,
+                                                       view);
     cdx11DeviceCreateTexture2DRenderTargetView(renderer->d3d,
                                                 (ID3D11Resource*)plane->texture,
                                                 0,
@@ -600,59 +609,51 @@ extern FORCE_INLINE void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
     cdxgiKeyedMutexAcquireSync(r->ring[frame_index].planes[1].mutex, 0, INFINITE);
 }
 
-/*************************************************************************************************/
-/**
- * \par Details:
- *  Draws one selected upload plane through its already resolved views.
- */
-static FORCE_INLINE void DrawUploadPlane(VideoRenderer*               renderer,
-                                         const Image*                  image,
-                                         ID3D11ShaderResourceView**   view,
-                                         ID3D11RenderTargetView**     target)
-{
-    D3D11_VIEWPORT viewport = {0, 0, (FLOAT)image->width, (FLOAT)image->height, 0, 1};
-
-    cdx11DeviceContextRSSetViewports(renderer->context, 1, &viewport);
-    cdx11DeviceContextPSSetShaderResources(renderer->context, 0, 1, view);
-    cdx11DeviceContextOMSetRenderTargets(renderer->context, 1, target, NULL);
-    cdx11DeviceContextDraw(renderer->context, 3, 0);
-}
-
 void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
 {
     Frame*                    frame = &r->ring[FrameIndex(slot)];
-    ID3D11ShaderResourceView* none  = NULL;
-    cdx11DeviceContextIASetInputLayout(r->context, NULL);
-    cdx11DeviceContextIASetPrimitiveTopology(r->context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    cdx11DeviceContextVSSetShader(r->context, r->copyVertex, NULL, 0);
-    cdx11DeviceContextGSSetShader(r->context, NULL, NULL, 0);
-    cdx11DeviceContextPSSetShader(r->context, r->copyPixel, NULL, 0);
-    cdx11DeviceContextRSSetState(r->context, NULL);
-    cdx11DeviceContextOMSetBlendState(r->context, NULL, NULL, UINT_MAX);
-    cdx11DeviceContextOMSetDepthStencilState(r->context, NULL, 0);
-    DrawUploadPlane(r, &frame->planes[0], &frame->views[0], &frame->targets[0]);
-    DrawUploadPlane(r, &frame->planes[1], &frame->views[1], &frame->targets[1]);
-    cdx11DeviceContextPSSetShaderResources(r->context, 0, 1, &none);
-    cdx11DeviceContextOMSetRenderTargets(r->context, 0, NULL, NULL);
+    cdx11DeviceContextTransferMultiplanarTexture(r->context,
+                                                 r->copyVertex,
+                                                 r->copyPixel,
+                                                 frame->views[0],
+                                                 frame->targets[0],
+                                                 frame->views[1],
+                                                 frame->targets[1],
+                                                 frame->planes[0].width,
+                                                 frame->planes[0].height);
     cdxgiKeyedMutexReleaseSync(frame->planes[0].mutex, 0);
     cdxgiKeyedMutexReleaseSync(frame->planes[1].mutex, 0);
     cdx11DeviceContextFlush(r->context);
 }
 
-static void RenderPass(VideoRenderer* r, Image* target, VideoPass pass, VkDescriptorSet set, UINT width, UINT height)
+static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UINT width, UINT height)
 {
-    VkExtent2D extent = {target->width, target->height};
+    VkExtent2D extent = {r->output.width, r->output.height};
+    VkRect2D   area   = {{0, 0}, extent};
 
+    cvkCmdBeginExternalRenderPass(r->command,
+                                  NULL,
+                                  (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                  VK_IMAGE_LAYOUT_GENERAL,
+                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                  r->family,
+                                  r->output.image,
+                                  colorRange,
+                                  (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                  (VkDependencyFlags)0,
+                                  NULL,
+                                  r->renderPass,
+                                  r->output.framebuffer,
+                                  area,
+                                  0,
+                                  NULL,
+                                  VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(r->command, extent);
     if (VIDEO_PASS_NV12 == pass)
     {
-        cvkCmdExecuteGraphicsRenderPass(r->command,
-                                     r->renderPass,
-                                     target->framebuffer,
-                                     extent,
-                                     r->pipelines[pass],
-                                     r->layouts[pass],
-                                     set,
-                                     4);
+        cvkCmdBindGraphicsPipeline(r->command, r->pipelines[pass]);
+        cvkCmdBindGraphicsDescriptorSets(r->command, r->layouts[pass], 0, 1, &set, 0, NULL);
+        cvkCmdDraw(r->command, 4, 1, 0, 0);
     }
     else
     {
@@ -661,21 +662,36 @@ static void RenderPass(VideoRenderer* r, Image* target, VideoPass pass, VkDescri
             1.0F / (float)height,
             1.0F,
             0.0F,
-            (float)target->width / (float)width,
-            (float)target->height / (float)height
+            (float)r->output.width / (float)width,
+            (float)r->output.height / (float)height
         };
 
-        cvkCmdExecuteGraphicsRenderPassWithPushConstants(r->command,
-                                                      r->renderPass,
-                                                      target->framebuffer,
-                                                      extent,
-                                                      r->pipelines[pass],
-                                                      r->layouts[pass],
-                                                      set,
-                                                      4,
-                                                      sizeof(constants),
-                                                      constants);
+        cvkCmdDrawGraphicsVertices(r->command,
+                                   r->pipelines[pass],
+                                   r->layouts[pass],
+                                   0,
+                                   1,
+                                   &set,
+                                   0,
+                                   NULL,
+                                   4,
+                                   1,
+                                   0,
+                                   0,
+                                   0,
+                                   sizeof(constants),
+                                   constants);
     }
+    cvkCmdEndExternalRenderPass(r->command,
+                                NULL,
+                                (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                VK_IMAGE_LAYOUT_GENERAL,
+                                r->family,
+                                r->output.image,
+                                colorRange,
+                                (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                (VkDependencyFlags)0);
 }
 
 void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int slot, BOOL convert, UINT width, UINT height)
@@ -694,7 +710,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
 
     frame_index = FrameIndex(slot);
     cdx11ViewGetResource((ID3D11View*)target, &backBuffer);
-    cdxgiUnknownQueryInterface((IUnknown*)backBuffer, &IID_ID3D11Texture2D, (void**)&texture);
+    cdx11UnknownQueryInterfaceAsTexture2D((IUnknown*)backBuffer, &texture);
     cdx11Texture2DGetDesc(texture, &desc);
     cdxgiUnknownRelease((IUnknown*)texture);
     CVK_ASSERT(width <= desc.Width && height <= desc.Height);
@@ -715,6 +731,8 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         cvkBeginOneTimeCommandBuffer(r->command, NULL);
         if (convert)
         {
+            VkExtent2D convertedExtent = {r->converted.width, r->converted.height};
+
             cvkCmdAcquireImageFromExternal(r->command,
                                            NULL,
                                            (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
@@ -763,7 +781,14 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
                                    (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                                    (VkDependencyFlags)0);
             }
-            RenderPass(r, &r->converted, VIDEO_PASS_NV12, r->frames[frame_index], r->converted.width, r->converted.height);
+            cvkCmdExecuteGraphicsRenderPass(r->command,
+                                            r->renderPass,
+                                            r->converted.framebuffer,
+                                            convertedExtent,
+                                            r->pipelines[VIDEO_PASS_NV12],
+                                            r->layouts[VIDEO_PASS_NV12],
+                                            r->frames[frame_index],
+                                            4);
             cvkCmdImageBarrier(r->command,
                                NULL,
                                (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
@@ -797,27 +822,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
                                          (VkDependencyFlags)0);
             r->convertedInitialized = TRUE;
         }
-        cvkCmdAcquireImageFromExternal(r->command,
-                                       NULL,
-                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                       VK_IMAGE_LAYOUT_GENERAL,
-                                       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                       r->family,
-                                       r->output.image,
-                                       colorRange,
-                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                       (VkDependencyFlags)0);
-        RenderPass(r, &r->output, VIDEO_PASS_BICUBIC, r->scale, width, height);
-        cvkCmdReleaseImageToExternal(r->command,
-                                     NULL,
-                                     (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                     VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                     VK_IMAGE_LAYOUT_GENERAL,
-                                     r->family,
-                                     r->output.image,
-                                     colorRange,
-                                     (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                     (VkDependencyFlags)0);
+        RenderPass(r, VIDEO_PASS_BICUBIC, r->scale, width, height);
         cvkEndCommandBuffer(r->command);
         syncs[0] = r->output.memory;
         syncs[1] = r->ring[frame_index].planes[0].memory;
@@ -885,27 +890,7 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
                                    colorRange,
                                    (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                                    (VkDependencyFlags)0);
-    cvkCmdAcquireImageFromExternal(r->command,
-                                   NULL,
-                                   (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                   VK_IMAGE_LAYOUT_GENERAL,
-                                   VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                   r->family,
-                                   r->output.image,
-                                   colorRange,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                   (VkDependencyFlags)0);
-    RenderPass(r, &r->output, VIDEO_PASS_NV12, r->frames[frame_index], width, height);
-    cvkCmdReleaseImageToExternal(r->command,
-                                 NULL,
-                                 (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                 VK_IMAGE_LAYOUT_GENERAL,
-                                 r->family,
-                                 r->output.image,
-                                 colorRange,
-                                 (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                 (VkDependencyFlags)0);
+    RenderPass(r, VIDEO_PASS_NV12, r->frames[frame_index], width, height);
     cvkCmdReleaseImageToExternal(r->command,
                                  NULL,
                                  (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,

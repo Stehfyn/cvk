@@ -198,6 +198,7 @@ class Generator:
         self.json_workers: Dict[str, List[str]] = defaultdict(list)
         self.json_worker_decls: List[str] = []
         self.json_callback_names: Set[str] = set()
+        self.json_private_types: Dict[str, List[str]] = defaultdict(list)
         self.json_private_decls: Dict[str, List[str]] = defaultdict(list)
         self.json_names: Set[str] = set()
         self.json_source_includes: Dict[str, List[str]] = defaultdict(list)
@@ -2123,6 +2124,12 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             includes = self.json_source_includes if is_json else self.PLATFORM_SOURCE_INCLUDES
             if inc not in includes.setdefault(plat, []):
                 includes[plat].append(inc)
+        if is_json:
+            for m in re.finditer(r"(/\*\*(?=\s)(?:(?!\*/).)*\*/\s*)?^(typedef\s+(?:struct|enum)\s+\w+\s*\{[^{}]*\}\s*\w+\s*;)", text, flags=re.S | re.M):
+                doc, declaration = m.group(1) or "", m.group(2)
+                prof = re.search(r"\\par Profile:\s*(\w+)", doc)
+                if not prof or prof.group(1) == self.api:
+                    self.json_private_types[plat].append(doc + declaration)
         for m in re.finditer(r"(/\*\*(?=\s)(?:(?!\*/).)*\*/\s*)?^(\w[\w\s\*]*?\s+(cvk\w+)\s*\((.*?)\))\s*\{", text, flags=re.S | re.M):
             doc, sig, name, plist = m.group(1) or "", m.group(2), m.group(3), m.group(4)
             depth, i, quote = 1, m.end(), ""
@@ -2668,7 +2675,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         elif part == "structs":
             definitions = helpers + "\n\n" + "\n".join(self.json_workers[""] + self.json_struct_defs)
         elif not plat:
-            declarations = "\n".join(self.json_private_decls[""])
+            declarations = "\n".join(self.json_private_types[""] + self.json_private_decls[""])
             definitions = "\n".join(self.json_defs[""])
             definitions = re.sub(r"(?m)^(static CVK_FORCE_INLINE[^;{]+\n\{)",
                                  lambda match: "/*************************************************************************************************/\n"

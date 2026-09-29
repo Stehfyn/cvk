@@ -2,6 +2,103 @@
 ** into the generated cvk.h/.c. Composed from the generated surface only. */
 
 /**
+ * \brief Acquires an externally owned image and begins a render pass using it.
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] pBarrierNext Optional image barrier extension chain.
+ * \param[in] dstAccessMask Access required by the render pass.
+ * \param[in] externalLayout Layout held by the external owner.
+ * \param[in] renderLayout Layout required when the render pass begins.
+ * \param[in] queueFamilyIndex Queue family recording the pass.
+ * \param[in] image Externally owned attachment image.
+ * \param[in] subresourceRange Attachment subresources to acquire.
+ * \param[in] dstStageMask Stage requiring the acquired image.
+ * \param[in] dependencyFlags Image barrier dependency flags.
+ * \param[in] pRenderPassNext Optional render pass begin extension chain.
+ * \param[in] renderPass Render pass to begin.
+ * \param[in] framebuffer Target framebuffer.
+ * \param[in] renderArea Render area.
+ * \param[in] clearValueCount Number of clear values.
+ * \param[in] pClearValues Clear values, or NULL when the count is zero.
+ * \param[in] contents Subpass contents mode.
+ * \retval None
+ */
+void cvkCmdBeginExternalRenderPass(VkCommandBuffer         commandBuffer,
+                                   const void*             pBarrierNext,
+                                   VkAccessFlags           dstAccessMask,
+                                   VkImageLayout           externalLayout,
+                                   VkImageLayout           renderLayout,
+                                   uint32_t                queueFamilyIndex,
+                                   VkImage                 image,
+                                   VkImageSubresourceRange subresourceRange,
+                                   VkPipelineStageFlags    dstStageMask,
+                                   VkDependencyFlags       dependencyFlags,
+                                   const void*             pRenderPassNext,
+                                   VkRenderPass            renderPass,
+                                   VkFramebuffer           framebuffer,
+                                   VkRect2D                renderArea,
+                                   uint32_t                clearValueCount,
+                                   const VkClearValue*     pClearValues,
+                                   VkSubpassContents       contents)
+{
+    cvkCmdAcquireImageFromExternal(commandBuffer,
+                                   pBarrierNext,
+                                   dstAccessMask,
+                                   externalLayout,
+                                   renderLayout,
+                                   queueFamilyIndex,
+                                   image,
+                                   subresourceRange,
+                                   dstStageMask,
+                                   dependencyFlags);
+    cvkCmdBeginRenderPass(commandBuffer,
+                          pRenderPassNext,
+                          renderPass,
+                          framebuffer,
+                          renderArea,
+                          clearValueCount,
+                          pClearValues,
+                          contents);
+}
+
+/**
+ * \brief Ends a render pass and releases its attachment image to an external owner.
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] pBarrierNext Optional image barrier extension chain.
+ * \param[in] srcAccessMask Access performed by the render pass.
+ * \param[in] renderLayout Layout left by the render pass.
+ * \param[in] externalLayout Layout required by the external owner.
+ * \param[in] queueFamilyIndex Queue family recording the pass.
+ * \param[in] image Externally owned attachment image.
+ * \param[in] subresourceRange Attachment subresources to release.
+ * \param[in] srcStageMask Stage that accessed the image.
+ * \param[in] dependencyFlags Image barrier dependency flags.
+ * \retval None
+ */
+void cvkCmdEndExternalRenderPass(VkCommandBuffer         commandBuffer,
+                                 const void*             pBarrierNext,
+                                 VkAccessFlags           srcAccessMask,
+                                 VkImageLayout           renderLayout,
+                                 VkImageLayout           externalLayout,
+                                 uint32_t                queueFamilyIndex,
+                                 VkImage                 image,
+                                 VkImageSubresourceRange subresourceRange,
+                                 VkPipelineStageFlags    srcStageMask,
+                                 VkDependencyFlags       dependencyFlags)
+{
+    cvkCmdEndRenderPass(commandBuffer);
+    cvkCmdReleaseImageToExternal(commandBuffer,
+                                 pBarrierNext,
+                                 srcAccessMask,
+                                 renderLayout,
+                                 externalLayout,
+                                 queueFamilyIndex,
+                                 image,
+                                 subresourceRange,
+                                 srcStageMask,
+                                 dependencyFlags);
+}
+
+/**
  * \brief Records a graphics render pass that draws non-indexed vertices without push constants.
  * \param[in] commandBuffer Command buffer recording the pass.
  * \param[in] renderPass Render pass to begin.

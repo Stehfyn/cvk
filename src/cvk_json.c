@@ -7,6 +7,19 @@
 #include <string.h>
 #include <vulkan/vulkan_core.h>
 
+/**
+ * \brief Handles supplied to a graphics pipeline JSON by the caller.
+ * \par Profile: vulkan
+ */
+typedef struct cvkGraphicsPipelineJsonHandles
+{
+    uint64_t       vertexId;
+    uint64_t       fragmentId;
+    uint64_t       renderPassId;
+    VkShaderModule vertex;
+    VkShaderModule fragment;
+    VkRenderPass   renderPass;
+} cvkGraphicsPipelineJsonHandles;
 static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
