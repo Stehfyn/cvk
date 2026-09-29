@@ -3,8 +3,10 @@
 import copy
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +47,76 @@ class GeneratorOptionsTests(unittest.TestCase):
                 self.assertNotIn("/**", off.platform_header(platform))
         for platform in off.json_decls:
             self.assertNotIn("/**", off.json_header(platform))
+
+    @unittest.skipUnless(shutil.which("clang"), "clang is required for diagnostic boundary checks")
+    def test_diagnostic_line_signed_boundaries(self):
+        source = r'''
+#include "cvk/cvk.h"
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+'''
+        source += self.variants[True].diagnostic_source()
+        source += r'''
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Compare signed extremes and decimal transitions against the host formatter.
+ */
+int main(void)
+{
+    int32_t lines[9];
+    char_t  actual[CVK_DIAGNOSTIC_CAPACITY + 2];
+    char_t  expected[CVK_DIAGNOSTIC_CAPACITY];
+    char_t* text;
+    uint32_t index;
+    int32_t length;
+    int32_t result;
+    bool_t  fits;
+    bool_t  matches;
+    bool_t  guards_match;
+    bool_t  is_valid;
+
+    lines[0] = INT_MIN;
+    lines[1] = INT_MAX;
+    lines[2] = 0;
+    lines[3] = -1;
+    lines[4] = 1;
+    lines[5] = 9;
+    lines[6] = 10;
+    lines[7] = 99;
+    lines[8] = 100;
+    result   = 0;
+    for (index = 0; index < VK_COUNT_OF(lines); ++index)
+    {
+        actual[0] = CVK_DIAGNOSTIC_CHAR_MINUS;
+        actual[CVK_DIAGNOSTIC_CAPACITY + 1] = CVK_DIAGNOSTIC_CHAR_MINUS;
+        text         = cvkFormatDiagnosticLine(actual + 1, lines[index]);
+        length       = snprintf(expected, sizeof(expected), "%d", lines[index]);
+        fits         = (0 < length);
+        matches      = (0 == strcmp(text, expected));
+        guards_match = (actual[0] == actual[CVK_DIAGNOSTIC_CAPACITY + 1]);
+        is_valid     = fits && matches && guards_match;
+        if (!is_valid)
+        {
+            result = 1;
+            break;
+        }
+    }
+    return result;
+}
+'''
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            fixture = directory / "diagnostic.c"
+            executable = directory / "diagnostic.exe"
+            fixture.write_text(source, encoding="utf-8")
+            subprocess.run([shutil.which("clang"), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
+                            "-I", str(ROOT / "include"), "-I", str(ROOT / "external/Vulkan-Headers/include"),
+                            str(fixture), "-o", str(executable)], check=True)
+            subprocess.run([str(executable)], check=True)
 
     def test_json_api_is_separate_from_core_and_platform_wrappers(self):
         gen = self.variants[False]

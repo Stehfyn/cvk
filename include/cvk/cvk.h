@@ -19,7 +19,6 @@
 #define CVK_FORCE_INLINE __attribute__((always_inline)) inline
 #endif
 
-/* Fatal diagnostics. Override CVK_ASSERT before including to change the policy. */
 CVK_NORETURN void cvkFatal(const char* pExpression, const char* pFile, int line);
 void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile, int line);
 

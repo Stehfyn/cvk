@@ -27,8 +27,8 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   reducing any required diagnostic coverage. The user explicitly rejected added
   scheduler configuration and `scripts/run_clang_tidy.py`; that script is deleted.
   Do not recreate it or add scheduler/resource-manager overrides.
-- Do not change generated CVK functions or their generator to resolve this build.
-  The user explicitly rejected that approach. The attempted array-copy, output
+- The user initially prohibited changing generated CVK functions or their generator.
+  The attempted array-copy, output
   initialization and output-publication generator edits were reverted, including
   regenerated output and the associated generator-test edits. The user subsequently
   chose "Preserve generated code; allow narrowly scoped diagnostic exceptions."
@@ -45,7 +45,15 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   have been removed; only the initial five generated-code categories above remain.
   Native `/Wall /WX` permits only C4820, including generated code. The user also
   rejected additional assertion-related C5045 exceptions. Generated-source and
-  generator immutability remains mandatory; unresolved findings remain build failures.
+  generator immutability was subsequently superseded by the explicit approvals
+  below; unresolved findings remain build failures.
+- The user subsequently selected "Allow generator fixes and matching regenerated
+  output" for the reviewed generated-JSON fixes. Apply changes to the generator
+  and templates, then regenerate matching CVK and SC output. Preserve public
+  signatures and parameter names except for the separately approved native-handle
+  resolver contract correction. The user selected "Allow the handle contract
+  correction": numeric JSON IDs remain separate and the resolver writes native
+  handle values. Neither approval permits additional diagnostic exceptions.
 - Preserve existing parameter names. Diagnostic findings do not authorize renaming
   parameters in CVK or its clients. Resolve client misuse through correct contracts
   and call sequencing instead of changing library parameter names.

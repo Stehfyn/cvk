@@ -19,7 +19,6 @@
 #define SCVK_FORCE_INLINE __attribute__((always_inline)) inline
 #endif
 
-/* Fatal diagnostics. Override SCVK_ASSERT before including to change the policy. */
 SCVK_NORETURN void scvkFatal(const char* pExpression, const char* pFile, int line);
 void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile, int line);
 
