@@ -240,8 +240,8 @@ static int CheckDemoPipeline(const char* path, VkBool32 scaled)
     CHECK(1 == pipeline.descriptorSetLayoutCount);
     CHECK((scaled ? 1U : 2U) == pipeline.pDescriptorSetLayoutCreateInfos[0].bindingCount);
     CHECK(1 == pipeline.samplerCount);
-    CHECK(scaled == pipeline.pSamplerCreateInfos[0].anisotropyEnable);
-    CHECK((scaled ? 16.0F : 1.0F) == pipeline.pSamplerCreateInfos[0].maxAnisotropy);
+    CHECK(VK_FALSE == pipeline.pSamplerCreateInfos[0].anisotropyEnable);
+    CHECK(1.0F == pipeline.pSamplerCreateInfos[0].maxAnisotropy);
     CHECK(1000.0F == pipeline.pSamplerCreateInfos[0].maxLod);
     CHECK((scaled ? 1U : 0U) == pipeline.pipelineLayoutCreateInfo.pushConstantRangeCount);
     if (scaled)

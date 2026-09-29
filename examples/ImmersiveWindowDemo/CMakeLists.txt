@@ -3,7 +3,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 find_program(CVK_GLSLC glslc HINTS "$ENV{VULKAN_SDK}/Bin" REQUIRED)
 set(reference_dir "${PROJECT_SOURCE_DIR}/external/cdx/examples/ImmersiveWindowDemo")
 set(shader_headers)
-foreach(shader fullscreen.vert nv12.frag bicubic.frag)
+foreach(shader fullscreen.vert nv12.frag)
     string(REPLACE "." "_" symbol ${shader})
     set(output "${CMAKE_CURRENT_BINARY_DIR}/${symbol}.h")
     add_custom_command(OUTPUT "${output}"
@@ -15,16 +15,12 @@ foreach(shader fullscreen.vert nv12.frag bicubic.frag)
     list(APPEND shader_headers "${output}")
 endforeach()
 
-set(pipeline_headers)
-foreach(pipeline nv12 bicubic)
-    set(output "${CMAKE_CURRENT_BINARY_DIR}/${pipeline}_pipeline_json.h")
-    add_custom_command(OUTPUT "${output}"
-        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/embed_text.py"
-                "${CMAKE_CURRENT_SOURCE_DIR}/shaders/${pipeline}.pipeline.json"
-                "${output}" "${pipeline}_pipeline_json"
-        DEPENDS "shaders/${pipeline}.pipeline.json" embed_text.py VERBATIM)
-    list(APPEND pipeline_headers "${output}")
-endforeach()
+set(pipeline_header "${CMAKE_CURRENT_BINARY_DIR}/nv12_pipeline_json.h")
+add_custom_command(OUTPUT "${pipeline_header}"
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/embed_text.py"
+            "${CMAKE_CURRENT_SOURCE_DIR}/shaders/nv12.pipeline.json"
+            "${pipeline_header}" "nv12_pipeline_json"
+    DEPENDS shaders/nv12.pipeline.json embed_text.py VERBATIM)
 
 set(plane_shader_header "${CMAKE_CURRENT_BINARY_DIR}/plane_copy_hlsl.h")
 add_custom_command(OUTPUT "${plane_shader_header}"
@@ -33,7 +29,7 @@ add_custom_command(OUTPUT "${plane_shader_header}"
             "${plane_shader_header}" "plane_copy_hlsl"
     DEPENDS shaders/plane_copy.hlsl embed_text.py VERBATIM)
 
-add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers} ${pipeline_headers} "${plane_shader_header}")
+add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers} "${pipeline_header}" "${plane_shader_header}")
 if(MSVC)
     target_compile_options(immersive-video PRIVATE /GS- /Zl /wd4711)
 endif()
@@ -56,8 +52,8 @@ endif()
 add_executable(ImmersiveWindowDemo WIN32 demo.c immersive_window.c
     "${PROJECT_SOURCE_DIR}/examples/CastDemo/os/win32/os_entry.c" presentation.h
     "${reference_dir}/immersive_window.h"
-    shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag shaders/plane_copy.hlsl)
-set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag shaders/plane_copy.hlsl
+    shaders/fullscreen.vert shaders/nv12.frag shaders/plane_copy.hlsl)
+set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/plane_copy.hlsl
     PROPERTIES HEADER_FILE_ONLY TRUE)
 set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ImmersiveWindowDemo)
 target_link_libraries(ImmersiveWindowDemo PRIVATE immersive-video cdcomp cd2d cdw

@@ -12891,37 +12891,37 @@ extern SCVK_FORCE_INLINE void scvkSetupScratchBuffer(VkPhysicalDevice           
                                  pBuffer,
                                  pMemory);
 }
-extern SCVK_FORCE_INLINE void scvkCmdBeginExternalRenderPass(VkCommandBuffer         commandBuffer,
-                                                             const void*             pBarrierNext,
-                                                             VkAccessFlags           dstAccessMask,
-                                                             VkImageLayout           externalLayout,
-                                                             VkImageLayout           renderLayout,
-                                                             uint32_t                queueFamilyIndex,
-                                                             VkImage                 image,
-                                                             VkImageSubresourceRange subresourceRange,
-                                                             VkPipelineStageFlags    dstStageMask,
-                                                             VkDependencyFlags       dependencyFlags,
-                                                             const void*             pRenderPassNext,
-                                                             VkRenderPass            renderPass,
-                                                             VkFramebuffer           framebuffer,
-                                                             VkRect2D                renderArea,
-                                                             uint32_t                clearValueCount,
-                                                             const VkClearValue*     pClearValues,
-                                                             VkSubpassContents       contents)
+extern SCVK_FORCE_INLINE void scvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                    const void*             pBarrierNext,
+                                                                    VkAccessFlags           dstAccessMask,
+                                                                    VkImageLayout           externalLayout,
+                                                                    VkImageLayout           renderLayout,
+                                                                    uint32_t                queueFamilyIndex,
+                                                                    VkImage                 image,
+                                                                    VkImageSubresourceRange subresourceRange,
+                                                                    VkPipelineStageFlags    dstStageMask,
+                                                                    VkDependencyFlags       dependencyFlags,
+                                                                    const void*             pRenderPassNext,
+                                                                    VkRenderPass            renderPass,
+                                                                    VkFramebuffer           framebuffer,
+                                                                    VkRect2D                renderArea,
+                                                                    uint32_t                clearValueCount,
+                                                                    const VkClearValue*     pClearValues,
+                                                                    VkSubpassContents       contents)
 {
     scvkCmdAcquireImageFromExternal(commandBuffer, pBarrierNext, dstAccessMask, externalLayout, renderLayout, queueFamilyIndex, image, subresourceRange, dstStageMask, dependencyFlags);
     scvkCmdBeginRenderPass(commandBuffer, pRenderPassNext, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
-extern SCVK_FORCE_INLINE void scvkCmdEndExternalRenderPass(VkCommandBuffer         commandBuffer,
-                                                           const void*             pBarrierNext,
-                                                           VkAccessFlags           srcAccessMask,
-                                                           VkImageLayout           renderLayout,
-                                                           VkImageLayout           externalLayout,
-                                                           uint32_t                queueFamilyIndex,
-                                                           VkImage                 image,
-                                                           VkImageSubresourceRange subresourceRange,
-                                                           VkPipelineStageFlags    srcStageMask,
-                                                           VkDependencyFlags       dependencyFlags)
+extern SCVK_FORCE_INLINE void scvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                  const void*             pBarrierNext,
+                                                                  VkAccessFlags           srcAccessMask,
+                                                                  VkImageLayout           renderLayout,
+                                                                  VkImageLayout           externalLayout,
+                                                                  uint32_t                queueFamilyIndex,
+                                                                  VkImage                 image,
+                                                                  VkImageSubresourceRange subresourceRange,
+                                                                  VkPipelineStageFlags    srcStageMask,
+                                                                  VkDependencyFlags       dependencyFlags)
 {
     scvkCmdEndRenderPass(commandBuffer);
     scvkCmdReleaseImageToExternal(commandBuffer, pBarrierNext, srcAccessMask, renderLayout, externalLayout, queueFamilyIndex, image, subresourceRange, srcStageMask, dependencyFlags);

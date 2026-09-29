@@ -50188,37 +50188,37 @@ extern CVK_FORCE_INLINE void cvkCmdBindTaskMeshShadingShaders(VkCommandBuffer co
 
     cvkCmdBindShaders(commandBuffer, VK_COUNT_OF(stages), stages, shaders);
 }
-extern CVK_FORCE_INLINE void cvkCmdBeginExternalRenderPass(VkCommandBuffer         commandBuffer,
-                                                           const void*             pBarrierNext,
-                                                           VkAccessFlags           dstAccessMask,
-                                                           VkImageLayout           externalLayout,
-                                                           VkImageLayout           renderLayout,
-                                                           uint32_t                queueFamilyIndex,
-                                                           VkImage                 image,
-                                                           VkImageSubresourceRange subresourceRange,
-                                                           VkPipelineStageFlags    dstStageMask,
-                                                           VkDependencyFlags       dependencyFlags,
-                                                           const void*             pRenderPassNext,
-                                                           VkRenderPass            renderPass,
-                                                           VkFramebuffer           framebuffer,
-                                                           VkRect2D                renderArea,
-                                                           uint32_t                clearValueCount,
-                                                           const VkClearValue*     pClearValues,
-                                                           VkSubpassContents       contents)
+extern CVK_FORCE_INLINE void cvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                  const void*             pBarrierNext,
+                                                                  VkAccessFlags           dstAccessMask,
+                                                                  VkImageLayout           externalLayout,
+                                                                  VkImageLayout           renderLayout,
+                                                                  uint32_t                queueFamilyIndex,
+                                                                  VkImage                 image,
+                                                                  VkImageSubresourceRange subresourceRange,
+                                                                  VkPipelineStageFlags    dstStageMask,
+                                                                  VkDependencyFlags       dependencyFlags,
+                                                                  const void*             pRenderPassNext,
+                                                                  VkRenderPass            renderPass,
+                                                                  VkFramebuffer           framebuffer,
+                                                                  VkRect2D                renderArea,
+                                                                  uint32_t                clearValueCount,
+                                                                  const VkClearValue*     pClearValues,
+                                                                  VkSubpassContents       contents)
 {
     cvkCmdAcquireImageFromExternal(commandBuffer, pBarrierNext, dstAccessMask, externalLayout, renderLayout, queueFamilyIndex, image, subresourceRange, dstStageMask, dependencyFlags);
     cvkCmdBeginRenderPass(commandBuffer, pRenderPassNext, renderPass, framebuffer, renderArea, clearValueCount, pClearValues, contents);
 }
-extern CVK_FORCE_INLINE void cvkCmdEndExternalRenderPass(VkCommandBuffer         commandBuffer,
-                                                         const void*             pBarrierNext,
-                                                         VkAccessFlags           srcAccessMask,
-                                                         VkImageLayout           renderLayout,
-                                                         VkImageLayout           externalLayout,
-                                                         uint32_t                queueFamilyIndex,
-                                                         VkImage                 image,
-                                                         VkImageSubresourceRange subresourceRange,
-                                                         VkPipelineStageFlags    srcStageMask,
-                                                         VkDependencyFlags       dependencyFlags)
+extern CVK_FORCE_INLINE void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                const void*             pBarrierNext,
+                                                                VkAccessFlags           srcAccessMask,
+                                                                VkImageLayout           renderLayout,
+                                                                VkImageLayout           externalLayout,
+                                                                uint32_t                queueFamilyIndex,
+                                                                VkImage                 image,
+                                                                VkImageSubresourceRange subresourceRange,
+                                                                VkPipelineStageFlags    srcStageMask,
+                                                                VkDependencyFlags       dependencyFlags)
 {
     cvkCmdEndRenderPass(commandBuffer);
     cvkCmdReleaseImageToExternal(commandBuffer, pBarrierNext, srcAccessMask, renderLayout, externalLayout, queueFamilyIndex, image, subresourceRange, srcStageMask, dependencyFlags);

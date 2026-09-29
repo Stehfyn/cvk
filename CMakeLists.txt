@@ -201,6 +201,7 @@ if(TARGET cvk-platform)
     target_link_libraries(cvk PRIVATE cvk-platform)
 endif()
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(cvk PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/assets/bicubic)
 # Only the header-only format utilities are needed; keep their C++ libraries out of the build.
 target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk cvk-vulkan-utility-headers vk-diagnostic)
 target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
@@ -219,7 +220,7 @@ endif()
 add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json
     ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/nv12.pipeline.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/bicubic.pipeline.json)
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/bicubic/bicubic.pipeline.json)
 
 add_executable(cvk-volk-dispatch-test tests/volk_dispatch_test.c)
 target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk vk-diagnostic)

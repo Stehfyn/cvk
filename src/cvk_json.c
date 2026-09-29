@@ -3,6 +3,9 @@
 #include "cvk/cvk_json.h"
 #include "cvk/cvk.h"
 #include "cvk/internal/cvk_json_work.h"
+#include <cvk_bicubic_frag.inc>
+#include <cvk_bicubic_pipeline_json.inc>
+#include <cvk_fullscreen_vert.inc>
 #include <stdint.h>
 #include <string.h>
 #include <vulkan/vulkan_core.h>
@@ -20,6 +23,13 @@ typedef struct cvkGraphicsPipelineJsonHandles
     VkShaderModule fragment;
     VkRenderPass   renderPass;
 } cvkGraphicsPipelineJsonHandles;
+typedef struct cvkBicubicScalingConstants
+{
+    float texelSize[2];
+    float blend;
+    float padding;
+    float sampleScale[2];
+} cvkBicubicScalingConstants;
 static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
@@ -1737,6 +1747,56 @@ extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJson(VkDevice         
     cvkCreateGraphicsPipelineFromJsonWithModules(device, pipelineCache, pJsonText, jsonLength, pJsonValues, jsonValueCapacity, pArena, vertex, fragment, externalRenderPass, pAllocator, pObjects);
     cvkDestroyShaderModule(device, fragment, pAllocator);
     cvkDestroyShaderModule(device, vertex, pAllocator);
+}
+extern CVK_FORCE_INLINE void cvkCreateBicubicScalingPipeline(VkDevice                     device,
+                                                             VkPipelineCache              pipelineCache,
+                                                             cvkJsonValue*                pJsonValues,
+                                                             uint32_t                     jsonValueCapacity,
+                                                             cvkArena*                    pArena,
+                                                             VkRenderPass                 renderPass,
+                                                             const VkAllocationCallbacks* pAllocator,
+                                                             cvkPipelineJsonObjects*      pObjects)
+{
+    CVK_ASSERT(VK_NULL_HANDLE != renderPass);
+
+    cvkCreateGraphicsPipelineFromJson(device,
+                                      pipelineCache,
+                                      cvk_bicubic_pipeline_json,
+                                      sizeof(cvk_bicubic_pipeline_json) - 1,
+                                      pJsonValues,
+                                      jsonValueCapacity,
+                                      pArena,
+                                      sizeof(cvk_fullscreen_vert),
+                                      cvk_fullscreen_vert,
+                                      sizeof(cvk_bicubic_frag),
+                                      cvk_bicubic_frag,
+                                      renderPass,
+                                      pAllocator,
+                                      pObjects);
+}
+extern CVK_FORCE_INLINE void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer  commandBuffer,
+                                                                        VkPipeline       pipeline,
+                                                                        VkPipelineLayout layout,
+                                                                        VkDescriptorSet  descriptorSet,
+                                                                        VkExtent2D       sourceExtent,
+                                                                        VkExtent2D       contentExtent,
+                                                                        VkExtent2D       backingExtent,
+                                                                        float            blend)
+{
+    cvkBicubicScalingConstants constants;
+
+    CVK_ASSERT((0 != sourceExtent.width) && (0 != sourceExtent.height));
+    CVK_ASSERT((0 != contentExtent.width) && (0 != contentExtent.height));
+    CVK_ASSERT((0.0F <= blend) && (1.0F >= blend));
+
+    constants.texelSize[0]   = 1.0F / (float)sourceExtent.width;
+    constants.texelSize[1]   = 1.0F / (float)sourceExtent.height;
+    constants.blend          = blend;
+    constants.padding        = 0.0F;
+    constants.sampleScale[0] = (float)backingExtent.width / (float)contentExtent.width;
+    constants.sampleScale[1] = (float)backingExtent.height / (float)contentExtent.height;
+
+    cvkCmdDrawFullscreenQuadWithPushConstants(commandBuffer, pipeline, layout, 0, 1, &descriptorSet, 0, NULL, 0, sizeof(constants), &constants);
 }
 /*************************************************************************************************/
 /**

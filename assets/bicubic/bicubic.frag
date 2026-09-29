@@ -33,13 +33,15 @@ void main()
     vec3 bicubicColor = vec3(0.0);
     float totalWeight = 0.0;
     vec2 coord = texcoord * sampleScale;
-    vec2 baseCoord = coord - texelSize * 0.5;
+    vec2 pixel = coord / texelSize - 0.5;
+    vec2 basePixel = floor(pixel);
+    vec2 fraction = pixel - basePixel;
     for (int j = -1; j <= 2; ++j)
     {
         for (int i = -1; i <= 2; ++i)
         {
-            float weight = cubic(float(i)) * cubic(float(j));
-            bicubicColor += texture(inputImage, baseCoord + vec2(i, j) * texelSize).rgb * weight;
+            float weight = cubic(float(i) - fraction.x) * cubic(float(j) - fraction.y);
+            bicubicColor += texture(inputImage, (basePixel + vec2(i, j) + 0.5) * texelSize).rgb * weight;
             totalWeight += weight;
         }
     }

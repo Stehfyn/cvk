@@ -38,14 +38,11 @@
 #include "os/win32/os_text.h"
 #include <stringapiset.h>
 #include <WinNls.h>
-#include <stdio.h>
 #endif
 
 #include "fullscreen_vert.h"
 #include "nv12_frag.h"
-#include "bicubic_frag.h"
 #include "nv12_pipeline_json.h"
-#include "bicubic_pipeline_json.h"
 #include "plane_copy_hlsl.h"
 
 /*=================================================================================================
@@ -53,8 +50,6 @@
 **
 ** 3.1 Macros
 **===============================================================================================*/
-
-#define VIDEO_SAMPLER_ANISOTROPY (16.0F) ///< Reference bicubic sampler's required anisotropy.
 
 /*=================================================================================================
 ** 3.2 Types
@@ -240,12 +235,6 @@ static void CreateDevice(VideoRenderer* r)
     {
         Fail(TEXT("No Vulkan graphics queue on the window's adapter."));
     }
-    cvkGetPhysicalDeviceFeatures(r->physical, &features);
-    if (!features.samplerAnisotropy || properties.properties.limits.maxSamplerAnisotropy < VIDEO_SAMPLER_ANISOTROPY)
-    {
-        Fail(TEXT("The reference video sampler requires 16x anisotropic filtering."));
-    }
-    features = (VkPhysicalDeviceFeatures){.samplerAnisotropy = VK_TRUE};
     cvkInitDeviceQueueCreateInfo(&queue, NULL, (VkDeviceQueueCreateFlags)0, r->family, 1, &priority);
     cvkCreateDevice(r->physical, NULL, (VkDeviceCreateFlags)0, 1, &queue, 0, NULL, VK_COUNT_OF(required), required, &features, NULL, &r->device);
     volkLoadDevice(r->device);
@@ -381,7 +370,7 @@ typedef struct PipelineScratch
     cvkPipelineJsonObjects objects;
 } PipelineScratch;
 
-static void CreatePipeline(VideoRenderer* r, VideoPass pass, const uint32_t* fragment, size_t size, const char* json, size_t jsonSize, VkRenderPass externalRenderPass)
+static void CreatePipeline(VideoRenderer* r, VideoPass pass)
 {
     PipelineScratch* scratch = (PipelineScratch*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*scratch));
     cvkArena         arena;
@@ -392,23 +381,34 @@ static void CreatePipeline(VideoRenderer* r, VideoPass pass, const uint32_t* fra
     }
     arena = (cvkArena){scratch->storage, sizeof(scratch->storage), 0};
 
-    cvkCreateGraphicsPipelineFromJson(r->device,
-                                      VK_NULL_HANDLE,
-                                      json,
-                                      jsonSize,
-                                      scratch->values,
-                                      VK_COUNT_OF(scratch->values),
-                                      &arena,
-                                      sizeof(fullscreen_vert),
-                                      fullscreen_vert,
-                                      size,
-                                      fragment,
-                                      externalRenderPass,
-                                      NULL,
-                                      &scratch->objects);
     if (VIDEO_PASS_NV12 == pass)
     {
+        cvkCreateGraphicsPipelineFromJson(r->device,
+                                          VK_NULL_HANDLE,
+                                          nv12_pipeline_json,
+                                          sizeof(nv12_pipeline_json) - 1,
+                                          scratch->values,
+                                          VK_COUNT_OF(scratch->values),
+                                          &arena,
+                                          sizeof(fullscreen_vert),
+                                          fullscreen_vert,
+                                          sizeof(nv12_frag),
+                                          nv12_frag,
+                                          VK_NULL_HANDLE,
+                                          NULL,
+                                          &scratch->objects);
         r->renderPass = scratch->objects.renderPass;
+    }
+    else
+    {
+        cvkCreateBicubicScalingPipeline(r->device,
+                                        VK_NULL_HANDLE,
+                                        scratch->values,
+                                        VK_COUNT_OF(scratch->values),
+                                        &arena,
+                                        r->renderPass,
+                                        NULL,
+                                        &scratch->objects);
     }
     r->setLayouts[pass] = scratch->objects.descriptorSetLayouts[0];
     r->samplers[pass]   = scratch->objects.samplers[0];
@@ -421,20 +421,8 @@ static void CreatePasses(VideoRenderer* r)
 {
     int index;
 
-    CreatePipeline(r,
-                   VIDEO_PASS_NV12,
-                   nv12_frag,
-                   sizeof(nv12_frag),
-                   nv12_pipeline_json,
-                   sizeof(nv12_pipeline_json) - 1,
-                   VK_NULL_HANDLE);
-    CreatePipeline(r,
-                   VIDEO_PASS_BICUBIC,
-                   bicubic_frag,
-                   sizeof(bicubic_frag),
-                   bicubic_pipeline_json,
-                   sizeof(bicubic_pipeline_json) - 1,
-                   r->renderPass);
+    CreatePipeline(r, VIDEO_PASS_NV12);
+    CreatePipeline(r, VIDEO_PASS_BICUBIC);
     cvkCreateSingleTypeDescriptorPool(r->device, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, (VIDEO_RENDERER_FRAMES * 2) + 1, NULL, (VkDescriptorPoolCreateFlags)0, VIDEO_RENDERER_FRAMES + 1, NULL, &r->descriptors);
     for (index = 0; index < VIDEO_RENDERER_FRAMES; ++index)
     {
@@ -631,23 +619,23 @@ static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UI
     VkExtent2D extent = {r->output.width, r->output.height};
     VkRect2D   area   = {{0, 0}, extent};
 
-    cvkCmdBeginExternalRenderPass(r->command,
-                                  NULL,
-                                  (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                  VK_IMAGE_LAYOUT_GENERAL,
-                                  VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                  r->family,
-                                  r->output.image,
-                                  colorRange,
-                                  (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                  (VkDependencyFlags)0,
-                                  NULL,
-                                  r->renderPass,
-                                  r->output.framebuffer,
-                                  area,
-                                  0,
-                                  NULL,
-                                  VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdBeginRenderPassOnExternalImage(r->command,
+                                         NULL,
+                                         (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                         VK_IMAGE_LAYOUT_GENERAL,
+                                         VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                         r->family,
+                                         r->output.image,
+                                         colorRange,
+                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                         (VkDependencyFlags)0,
+                                         NULL,
+                                         r->renderPass,
+                                         r->output.framebuffer,
+                                         area,
+                                         0,
+                                         NULL,
+                                         VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewportAndScissor2D(r->command, extent);
     if (VIDEO_PASS_NV12 == pass)
     {
@@ -657,37 +645,28 @@ static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UI
     }
     else // VIDEO_PASS_BICUBIC
     {
-        float constants[] = {
-            1.0F / (float)width,
-            1.0F / (float)height,
-            1.0F,
-            0.0F,
-            (float)r->output.width / (float)width,
-            (float)r->output.height / (float)height
-        };
+        VkExtent2D sourceExtent  = {r->converted.width, r->converted.height};
+        VkExtent2D contentExtent = {width, height};
 
-        cvkCmdDrawFullscreenQuadWithPushConstants(r->command,
-                                                  r->pipelines[pass],
-                                                  r->layouts[pass],
-                                                  0,
-                                                  1,
-                                                  &set,
-                                                  0,
-                                                  NULL,
-                                                  0,
-                                                  sizeof(constants),
-                                                  constants);
+        cvkCmdDrawFullscreenQuadWithBicubicScaling(r->command,
+                                                    r->pipelines[pass],
+                                                    r->layouts[pass],
+                                                    set,
+                                                    sourceExtent,
+                                                    contentExtent,
+                                                    extent,
+                                                    0.0F);
     }
-    cvkCmdEndExternalRenderPass(r->command,
-                                NULL,
-                                (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                VK_IMAGE_LAYOUT_GENERAL,
-                                r->family,
-                                r->output.image,
-                                colorRange,
-                                (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                (VkDependencyFlags)0);
+    cvkCmdEndRenderPassOnExternalImage(r->command,
+                                       NULL,
+                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                       VK_IMAGE_LAYOUT_GENERAL,
+                                       r->family,
+                                       r->output.image,
+                                       colorRange,
+                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                       (VkDependencyFlags)0);
 }
 
 void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int slot, BOOL convert, UINT width, UINT height)

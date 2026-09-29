@@ -24,6 +24,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--policy", action="append", help="policy file; repeat for every profile (default: cvk and scvk)")
     args = ap.parse_args()
+    subprocess.run([sys.executable, os.path.join(REPO_ROOT, "scripts", "embed_bicubic_assets.py"),
+                    "--check"], check=True, cwd=REPO_ROOT)
     policies = args.policy or [os.path.join(REPO_ROOT, "cvk.policy.json"), os.path.join(REPO_ROOT, "scvk.policy.json")]
     with tempfile.TemporaryDirectory() as tmp:
         for policy in policies:

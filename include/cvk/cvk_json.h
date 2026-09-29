@@ -2120,6 +2120,8 @@ void cvkCreatePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, c
 
 void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, VkShaderModule vertex, VkShaderModule fragment, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 void cvkCreateGraphicsPipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, size_t vertexCodeSize, const uint32_t* pVertexCode, size_t fragmentCodeSize, const uint32_t* pFragmentCode, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
+void cvkCreateBicubicScalingPipeline(VkDevice device, VkPipelineCache pipelineCache, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
+void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, VkExtent2D sourceExtent, VkExtent2D contentExtent, VkExtent2D backingExtent, float blend);
 /* clang-format on */
 
 #endif /* CVK_JSON_H */
