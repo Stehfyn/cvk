@@ -620,7 +620,7 @@ static FORCE_INLINE void InitializeSearchHead(Utl_Http_Head_t*         head,
  * \par Details:
  *  Target storage is borrowed until every size/write call is complete.
  */
-void Utl_Ssdp_InitializeSearch(Utl_Ssdp_Search_t* search, Utl_Http_Text_t target, uint32_t maximumWait)
+extern FORCE_INLINE void Utl_Ssdp_InitializeSearch(Utl_Ssdp_Search_t* search, Utl_Http_Text_t target, uint32_t maximumWait)
 {
     LOGASSERT(NULL != search);
     LOGASSERT(Utl_Ssdp_IsTarget(target));
@@ -682,7 +682,7 @@ bool_t Utl_Ssdp_IsTarget(Utl_Http_Text_t target)
  * \par Details:
  *  The count includes the final blank line and excludes any C string terminator.
  */
-uint32_t Utl_Ssdp_GetSearchByteCount(const Utl_Ssdp_Search_t* search)
+extern FORCE_INLINE uint32_t Utl_Ssdp_GetSearchByteCount(const Utl_Ssdp_Search_t* search)
 {
     bool_t           valid_target;
     bool_t           valid_wait;
@@ -908,7 +908,7 @@ bool_t Utl_Ssdp_ReadResponse(Utl_Ssdp_Response_t* response, const Utl_Http_Head_
  *  The writer first validates and measures the complete head. It never appends a
  *  C terminator or partially publishes a datagram on capacity failure.
  */
-uint32_t Utl_Ssdp_WriteSearch(const Utl_Ssdp_Search_t* search, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Ssdp_WriteSearch(const Utl_Ssdp_Search_t* search, byte_t* buffer, uint32_t capacity)
 {
     uint32_t         required;
     bool_t           fits;

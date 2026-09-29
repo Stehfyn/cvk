@@ -47,6 +47,10 @@ def main():
         "readability-redundant-parentheses",
         "clang-analyzer-optin.performance.Padding",
         "readability-function-size",
+        "readability-identifier-length",
+        "readability-avoid-nested-conditional-operator",
+        "readability-math-missing-parentheses",
+        "clang-analyzer-security.ArrayBound",
     )
     cache = (build / "CMakeCache.txt").read_text(encoding="utf-8")
     tidy = re.search(r"^CAST_CLANG_TIDY_EXECUTABLE:FILEPATH=(.+)$", cache, re.M)

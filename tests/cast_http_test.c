@@ -551,6 +551,7 @@ static void CheckFraming(void)
     bool_t                 accepted;
     uint32_t               count;
     byte_t                 output[HTTP_TEST_RESPONSE_CAPACITY];
+    Utl_Http_Result_t      result;
 
     for (index = 0; index < (sizeof(c_framing) / sizeof(c_framing[0])); ++index)
     {
@@ -582,9 +583,10 @@ static void CheckFraming(void)
                       framing.hasOtherTransferCoding,
                   __LINE__);
         }
-        count = Utl_Http_WriteHead(&head, output, sizeof(output));
+        count  = Utl_Http_WriteHead(&head, output, sizeof(output));
+        result = Utl_Http_ReadHead(&head, vector->kind, output, count);
         Check(0 < count, __LINE__);
-        Check(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&head, vector->kind, output, count), __LINE__);
+        Check(UTL_HTTP_COMPLETE == result, __LINE__);
         Check(count == head.byteCount, __LINE__);
         Check(accepted == Utl_Http_DeriveFraming(&framing, &head, method), __LINE__);
     }

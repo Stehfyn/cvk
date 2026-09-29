@@ -2182,7 +2182,7 @@ extern FORCE_INLINE bool_t Utl_Xml_GetElementTextByteCount(const Utl_Xml_Node_t*
  * \par Details:
  *  The published node count bounds traversal even under a violated caller model contract.
  */
-const Utl_Xml_Node_t* Utl_Xml_FindSibling(const Utl_Xml_Document_t* document,
+extern FORCE_INLINE const Utl_Xml_Node_t* Utl_Xml_FindSibling(const Utl_Xml_Document_t* document,
                                           const Utl_Xml_Node_t*     first,
                                           Utl_Xml_Name_t            name)
 {

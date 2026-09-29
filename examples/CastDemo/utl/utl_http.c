@@ -158,15 +158,16 @@ static FORCE_INLINE uint32_t GetWhitespaceEnd(const byte_t* buffer, uint32_t byt
  * \brief Derives the end of a contiguous HTTP token.
  *
  * \par Requirements:
- *  - 001 The cursor shall lie within the readable text span.
+ *  - 001 Positions at or beyond the input end shall resolve to the input end without a read.
  *  - 002 Only tchar bytes shall advance the cursor; a delimiter shall remain unread.
  *
- * \param[in] text     Counted text
- * \param[in] cursor   First candidate token byte
+ * \param[in] text        Readable token bytes, NULL permitted for an empty span
+ * \param[in] byteCount   Readable byte extent
+ * \param[in] cursor      First candidate token byte
  *
- * \retval    cursor..text.byteCount   First non-token position or the input end.
+ * \retval    0..byteCount   First non-token position or the input end.
  */
-static FORCE_INLINE uint32_t GetTokenEnd(Utl_Http_Text_t text, uint32_t cursor);
+static FORCE_INLINE uint32_t GetTokenEnd(const byte_t* text, uint32_t byteCount, uint32_t cursor);
 
 /*************************************************************************************************/
 /**
@@ -401,17 +402,18 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
  * \brief Reads a token or quoted-string parameter value.
  *
  * \par Requirements:
- *  - 001 The cursor shall identify an available value byte in a field already checked for controls.
+ *  - 001 The field shall already be checked for controls; absent value bytes shall fail without advancing.
  *  - 002 Quoted pairs shall consume exactly one escaped byte.
  *  - 003 A token shall contain at least one tchar; a quoted value shall have a closing quote.
  *
- * \param[in] text         Counted field value
+ * \param[in] text         Readable field value bytes
+ * \param[in] byteCount    Readable byte extent
  * \param[in,out] cursor   First value byte, advanced over valid syntax
  *
  * \retval    TRUE    A token or complete quoted string was read.
  * \retval    FALSE   The value is absent or incomplete.
  */
-static FORCE_INLINE bool_t ReadParameterValue(Utl_Http_Text_t text, uint32_t* cursor);
+static FORCE_INLINE bool_t ReadParameterValue(const byte_t* text, uint32_t byteCount, uint32_t* cursor);
 
 /*************************************************************************************************/
 /**
@@ -580,37 +582,46 @@ static FORCE_INLINE bool_t IsTokenByte(byte_t value)
     bool_t is_digit;
     bool_t is_upper;
     bool_t is_lower;
+    bool_t is_exclamation;
+    bool_t is_hash;
+    bool_t is_dollar;
+    bool_t is_percent;
+    bool_t is_ampersand;
+    bool_t is_apostrophe;
+    bool_t is_asterisk;
+    bool_t is_plus;
+    bool_t is_hyphen;
+    bool_t is_dot;
+    bool_t is_caret;
+    bool_t is_underscore;
+    bool_t is_backtick;
+    bool_t is_pipe;
+    bool_t is_tilde;
+    bool_t is_punctuation;
     bool_t is_token;
 
-    is_digit = (UTL_HTTP_CHAR_DIGIT_FIRST <= value) && (UTL_HTTP_CHAR_DIGIT_LAST >= value);
-    is_upper = (UTL_HTTP_CHAR_UPPER_FIRST <= value) && (UTL_HTTP_CHAR_UPPER_LAST >= value);
-    is_lower = (UTL_HTTP_CHAR_LOWER_FIRST <= value) && (UTL_HTTP_CHAR_LOWER_LAST >= value);
-    is_token = is_digit || is_upper || is_lower;
-    if (!is_token)
-    {
-        switch (value)
-        {
-        case UTL_HTTP_CHAR_EXCLAMATION:
-        case UTL_HTTP_CHAR_HASH:
-        case UTL_HTTP_CHAR_DOLLAR:
-        case UTL_HTTP_CHAR_PERCENT:
-        case UTL_HTTP_CHAR_AMP:
-        case UTL_HTTP_CHAR_APOSTROPHE:
-        case UTL_HTTP_CHAR_ASTERISK:
-        case UTL_HTTP_CHAR_PLUS:
-        case UTL_HTTP_CHAR_HYPHEN:
-        case UTL_HTTP_CHAR_DOT:
-        case UTL_HTTP_CHAR_CARET:
-        case UTL_HTTP_CHAR_UNDERSCORE:
-        case UTL_HTTP_CHAR_BACKTICK:
-        case UTL_HTTP_CHAR_PIPE:
-        case UTL_HTTP_CHAR_TILDE:
-            is_token = TRUE;
-            break;
-        default:
-            break;
-        }
-    }
+    is_digit       = (UTL_HTTP_CHAR_DIGIT_FIRST <= value) && (UTL_HTTP_CHAR_DIGIT_LAST >= value);
+    is_upper       = (UTL_HTTP_CHAR_UPPER_FIRST <= value) && (UTL_HTTP_CHAR_UPPER_LAST >= value);
+    is_lower       = (UTL_HTTP_CHAR_LOWER_FIRST <= value) && (UTL_HTTP_CHAR_LOWER_LAST >= value);
+    is_exclamation = (UTL_HTTP_CHAR_EXCLAMATION == value);
+    is_hash        = (UTL_HTTP_CHAR_HASH == value);
+    is_dollar      = (UTL_HTTP_CHAR_DOLLAR == value);
+    is_percent     = (UTL_HTTP_CHAR_PERCENT == value);
+    is_ampersand   = (UTL_HTTP_CHAR_AMP == value);
+    is_apostrophe  = (UTL_HTTP_CHAR_APOSTROPHE == value);
+    is_asterisk    = (UTL_HTTP_CHAR_ASTERISK == value);
+    is_plus        = (UTL_HTTP_CHAR_PLUS == value);
+    is_hyphen      = (UTL_HTTP_CHAR_HYPHEN == value);
+    is_dot         = (UTL_HTTP_CHAR_DOT == value);
+    is_caret       = (UTL_HTTP_CHAR_CARET == value);
+    is_underscore  = (UTL_HTTP_CHAR_UNDERSCORE == value);
+    is_backtick    = (UTL_HTTP_CHAR_BACKTICK == value);
+    is_pipe        = (UTL_HTTP_CHAR_PIPE == value);
+    is_tilde       = (UTL_HTTP_CHAR_TILDE == value);
+    is_punctuation = is_exclamation || is_hash || is_dollar || is_percent || is_ampersand || is_apostrophe ||
+                     is_asterisk || is_plus || is_hyphen || is_dot || is_caret || is_underscore || is_backtick ||
+                     is_pipe || is_tilde;
+    is_token       = is_digit || is_upper || is_lower || is_punctuation;
     return is_token;
 }
 
@@ -660,20 +671,33 @@ static FORCE_INLINE uint32_t GetWhitespaceEnd(const byte_t* buffer, uint32_t byt
 /*************************************************************************************************/
 /**
  * \par Details:
- *  The initial cursor is returned when no token byte is present.
+ *  End-of-input is a normal scan result. A cursor beyond the span resolves to its end.
  */
-static FORCE_INLINE uint32_t GetTokenEnd(Utl_Http_Text_t text, uint32_t cursor)
+static FORCE_INLINE uint32_t GetTokenEnd(const byte_t* text, uint32_t byteCount, uint32_t cursor)
 {
+    bool_t has_byte;
     bool_t is_token;
 
-    LOGASSERT(cursor <= text.byteCount);
-    for (; cursor < text.byteCount; ++cursor)
+    has_byte = (cursor < byteCount);
+    if (has_byte)
     {
-        is_token = IsTokenByte(text.data[cursor]);
-        if (!is_token)
+        for (;;)
         {
-            break;
+            is_token = IsTokenByte(text[cursor]);
+            if (!is_token)
+            {
+                break;
+            }
+            ++cursor;
+            if (cursor == byteCount)
+            {
+                break;
+            }
         }
+    }
+    else
+    {
+        cursor = byteCount;
     }
     return cursor;
 }
@@ -910,26 +934,30 @@ static FORCE_INLINE bool_t ReadField(Utl_Http_Field_t* field, Utl_Http_Text_t li
 {
     bool_t           is_valid;
     uint32_t         index;
+    bool_t           has_name;
+    bool_t           has_separator;
+    bool_t           has_field;
+    uint32_t         index_mask;
+    uint32_t         safe_index;
     Utl_Http_Field_t result;
 
-    is_valid = FALSE;
-    for (index = 0; index < line.byteCount; ++index)
+    is_valid      = FALSE;
+    index         = GetTokenEnd(line.data, line.byteCount, 0);
+    has_name      = (0 < index);
+    has_separator = (index < line.byteCount);
+    has_field     = has_name && has_separator;
+    index_mask    = (uint32_t)0 - (uint32_t)has_field;
+    safe_index    = index & index_mask;
+    if (has_field)
     {
-        if (!IsTokenByte((byte_t)line.data[index]))
-        {
-            break;
-        }
-    }
-    if ((0 < index) && (index < line.byteCount))
-    {
-        is_valid = (UTL_HTTP_CHAR_COLON == line.data[index]);
+        is_valid = (UTL_HTTP_CHAR_COLON == line.data[safe_index]);
     }
     if (is_valid)
     {
         result.name.data       = line.data;
-        result.name.byteCount  = index;
-        result.value.data      = line.data + index + 1;
-        result.value.byteCount = line.byteCount - index - 1;
+        result.name.byteCount  = safe_index;
+        result.value.data      = line.data + safe_index + 1;
+        result.value.byteCount = line.byteCount - safe_index - 1;
         result.value           = Trim(result.value);
         is_valid               = Utl_Http_IsFieldValue(result.value);
         if (is_valid)
@@ -1302,9 +1330,10 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
  * \par Details:
  *  The enclosing parameter reader validates the delimiter after this value.
  */
-static FORCE_INLINE bool_t ReadParameterValue(Utl_Http_Text_t text, uint32_t* cursor)
+static FORCE_INLINE bool_t ReadParameterValue(const byte_t* text, uint32_t byteCount, uint32_t* cursor)
 {
     uint32_t offset;
+    bool_t   valid_offset;
     uint32_t start;
     bool_t   is_quoted;
     bool_t   is_valid;
@@ -1312,18 +1341,18 @@ static FORCE_INLINE bool_t ReadParameterValue(Utl_Http_Text_t text, uint32_t* cu
     bool_t   is_escape;
 
     LOGASSERT(NULL != cursor);
-    LOGASSERT(*cursor < text.byteCount);
-    offset    = *cursor;
-    start     = offset;
-    is_quoted = (UTL_HTTP_CHAR_QUOTE == text.data[offset]);
-    is_valid  = FALSE;
+    offset       = *cursor;
+    valid_offset = (offset < byteCount);
+    start        = offset;
+    is_quoted    = valid_offset && (UTL_HTTP_CHAR_QUOTE == text[offset]);
+    is_valid     = FALSE;
     if (is_quoted)
     {
         ++offset;
-        for (; offset < text.byteCount; ++offset)
+        for (; offset < byteCount; ++offset)
         {
-            is_quote_end = (UTL_HTTP_CHAR_QUOTE == text.data[offset]);
-            is_escape    = (UTL_HTTP_CHAR_BACKSLASH == text.data[offset]);
+            is_quote_end = (UTL_HTTP_CHAR_QUOTE == text[offset]);
+            is_escape    = (UTL_HTTP_CHAR_BACKSLASH == text[offset]);
             if (is_quote_end)
             {
                 ++offset;
@@ -1333,16 +1362,16 @@ static FORCE_INLINE bool_t ReadParameterValue(Utl_Http_Text_t text, uint32_t* cu
             if (is_escape)
             {
                 ++offset;
-                if (offset == text.byteCount)
+                if (offset == byteCount)
                 {
                     break;
                 }
             }
         }
     }
-    else
+    else if (valid_offset)
     {
-        offset   = GetTokenEnd(text, offset);
+        offset   = GetTokenEnd(text, byteCount, offset);
         is_valid = (start < offset);
     }
     if (is_valid)
@@ -1378,7 +1407,7 @@ static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor,
         }
         cursor = GetWhitespaceEnd(text.data, text.byteCount, cursor + 1);
         start  = cursor;
-        cursor = GetTokenEnd(text, cursor);
+        cursor = GetTokenEnd(text.data, text.byteCount, cursor);
         if (start == cursor)
         {
             is_valid = FALSE;
@@ -1401,7 +1430,7 @@ static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor,
             is_valid = FALSE;
             break;
         }
-        is_valid = ReadParameterValue(text, &cursor);
+        is_valid = ReadParameterValue(text.data, text.byteCount, &cursor);
         if (!is_valid)
         {
             break;
@@ -1448,7 +1477,7 @@ static FORCE_INLINE bool_t ReadFramingMember(HttpFramingFields_t* fields, Utl_Ht
     }
     else
     {
-        consumed         = GetTokenEnd(member, 0);
+        consumed         = GetTokenEnd(member.data, member.byteCount, 0);
         coding.data      = member.data;
         coding.byteCount = consumed;
         is_chunked       = IsEqualLiteral(coding, UTL_HTTP_CODING_CHUNKED, TRUE);
@@ -1549,14 +1578,28 @@ static FORCE_INLINE bool_t ReadFramingFields(HttpFramingFields_t*   fields,
 /*************************************************************************************************/
 /**
  * \par Details:
- *  The remaining counted span is supplied directly to the shared decimal reader.
+ *  Absent input becomes an empty span before the shared decimal reader is called.
+ *  No subtraction or pointer arithmetic uses an unchecked parsing offset.
  */
 static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const byte_t* buffer, uint32_t byteCount, uint32_t* cursor)
 {
-    bool_t   is_valid;
+    uint32_t offset;
+    bool_t   has_byte;
+    uint32_t offset_mask;
+    uint32_t safe_offset;
+    uint32_t remaining;
     uint32_t consumed;
+    bool_t   is_valid;
 
-    is_valid = Utl_Decimal_ReadUint64(value, &consumed, &buffer[(*cursor)], byteCount - (*cursor));
+    LOGASSERT(NULL != value);
+    LOGASSERT(NULL != buffer);
+    LOGASSERT(NULL != cursor);
+    offset      = (*cursor);
+    has_byte    = (offset < byteCount);
+    offset_mask = (uint32_t)0 - (uint32_t)has_byte;
+    safe_offset = offset & offset_mask;
+    remaining   = (byteCount - safe_offset) & offset_mask;
+    is_valid    = Utl_Decimal_ReadUint64(value, &consumed, &buffer[safe_offset], remaining);
     if (is_valid)
     {
         (*cursor) += consumed;
@@ -1578,7 +1621,6 @@ static FORCE_INLINE bool_t ReadContentRangeBounds(Utl_Http_ContentRange_t* conte
 
     LOGASSERT(NULL != content);
     LOGASSERT(NULL != cursor);
-    LOGASSERT(*cursor <= byteCount);
     is_valid = ReadNumber(&content->first, buffer, byteCount, cursor);
     if (is_valid)
     {
@@ -1711,9 +1753,9 @@ static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_
  *  All scan and candidate members reset. Field bytes remain caller-owned scratch.
  */
 extern FORCE_INLINE void Utl_Http_InitializeHeadReader(Utl_Http_HeadReader_t* reader,
-                                   Utl_Http_Kind_t        kind,
-                                   Utl_Http_Field_t*      fields,
-                                   uint32_t               fieldCapacity)
+                                                       Utl_Http_Kind_t        kind,
+                                                       Utl_Http_Field_t*      fields,
+                                                       uint32_t               fieldCapacity)
 {
     bool_t has_slots;
     bool_t valid_kind;
@@ -1846,7 +1888,7 @@ extern FORCE_INLINE bool_t Utl_Http_IsTextEqual(Utl_Http_Text_t left, Utl_Http_T
  * \par Details:
  *  Writers use this query to preflight all data and capacity before modifying output.
  */
-uint32_t Utl_Http_GetHeadByteCount(const Utl_Http_Head_t* head)
+extern FORCE_INLINE uint32_t Utl_Http_GetHeadByteCount(const Utl_Http_Head_t* head)
 {
     bool_t   is_valid;
     uint64_t total;
@@ -2027,8 +2069,8 @@ bool_t Utl_Http_DeriveFraming(Utl_Http_Framing_t* framing, const Utl_Http_Head_t
  *  Offset/count representation avoids underflow for the RFC's satisfiable empty suffix case.
  */
 extern FORCE_INLINE bool_t Utl_Http_ResolveRange(Utl_Http_RangeInterval_t* interval,
-                             const Utl_Http_Range_t*   range,
-                             uint64_t                  representationBytes)
+                                                 const Utl_Http_Range_t*   range,
+                                                 uint64_t                  representationBytes)
 {
     bool_t                   has_arguments;
     bool_t                   is_satisfiable;
@@ -2085,7 +2127,7 @@ extern FORCE_INLINE bool_t Utl_Http_ResolveRange(Utl_Http_RangeInterval_t* inter
  * \par Details:
  *  A uint64_t accumulator includes the prefix and comma separators before narrowing.
  */
-uint32_t Utl_Http_GetRangeByteCount(const Utl_Http_RangeSet_t* request)
+extern FORCE_INLINE uint32_t Utl_Http_GetRangeByteCount(const Utl_Http_RangeSet_t* request)
 {
     bool_t   is_valid;
     uint64_t total;
@@ -2349,9 +2391,9 @@ Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, co
  *  The one-shot entry point uses the same incremental reader and publishes a complete head only.
  */
 extern FORCE_INLINE Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
-                                    Utl_Http_Kind_t  kind,
-                                    const byte_t*    buffer,
-                                    uint32_t         byteCount)
+                                                        Utl_Http_Kind_t  kind,
+                                                        const byte_t*    buffer,
+                                                        uint32_t         byteCount)
 {
     Utl_Http_HeadReader_t reader;
     Utl_Http_Result_t     result;
@@ -2685,7 +2727,9 @@ uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, byte_t* buffer,
  * \par Details:
  *  The same semantic count query is used by standalone sizing and writing.
  */
-extern FORCE_INLINE uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content,
+                                                        byte_t*                        buffer,
+                                                        uint32_t                       capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2737,7 +2781,10 @@ extern FORCE_INLINE uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRa
  *  RFC 9112 section 3.2.1 retains the encoded path and query. Capacity and syntax
  *  are checked before any output write; fragments never enter the request target.
  */
-extern FORCE_INLINE bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url,
+                                                      byte_t*          output,
+                                                      uint32_t         capacity,
+                                                      uint32_t*        byteCount)
 {
     bool_t   valid;
     uint32_t count;

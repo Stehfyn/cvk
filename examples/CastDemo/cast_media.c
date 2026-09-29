@@ -98,7 +98,7 @@ extern FORCE_INLINE void CastMedia_Publish(CastMedia_Channel_t* channel, const c
  * \par Details:
  *  Acquisition transfers one entire typed slot. NULL does not end any existing borrow.
  */
-const CastMedia_t* CastMedia_Take(CastMedia_Channel_t* channel)
+extern FORCE_INLINE const CastMedia_t* CastMedia_Take(CastMedia_Channel_t* channel)
 {
     bool_t             available;
     const CastMedia_t* media;

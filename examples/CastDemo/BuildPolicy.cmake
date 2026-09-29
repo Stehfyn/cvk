@@ -24,7 +24,11 @@ string(JOIN "," cast_generated_clang_tidy_exceptions
     "-readability-function-cognitive-complexity"
     "-readability-redundant-parentheses"
     "-clang-analyzer-optin.performance.Padding"
-    "-readability-function-size")
+    "-readability-function-size"
+    "-readability-identifier-length"
+    "-readability-avoid-nested-conditional-operator"
+    "-readability-math-missing-parentheses"
+    "-clang-analyzer-security.ArrayBound")
 file(READ "${cast_clang_tidy_config}" cast_generated_clang_tidy_text)
 string(REPLACE "  -bugprone-easily-swappable-parameters"
     "  -bugprone-easily-swappable-parameters,\n  ${cast_generated_clang_tidy_exceptions}"

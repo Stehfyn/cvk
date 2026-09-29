@@ -677,7 +677,7 @@ static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* 
  * \par Details:
  *  Only the complete leading UTF-8 signature is skipped. Other encodings fail during cue reading.
  */
-void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount)
+extern FORCE_INLINE void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount)
 {
     bool_t has_source;
     bool_t matches_first;
@@ -709,7 +709,7 @@ void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uin
  * \par Details:
  *  Subtraction follows the established cursor invariant.
  */
-uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_t* reader)
+extern FORCE_INLINE uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_t* reader)
 {
     LOGASSERT(NULL != reader);
     LOGASSERT(reader->offset <= reader->byteCount);
@@ -722,7 +722,7 @@ uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_t* reader)
  * \par Details:
  *  The hours bound precedes multiplication; the remaining fields are independently bounded before addition.
  */
-bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
 {
     Cursor_t cursor;
     Number_t hours;

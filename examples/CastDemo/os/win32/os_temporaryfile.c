@@ -177,7 +177,7 @@ extern FORCE_INLINE uint32_t OS_TemporaryFile_GetError(const OS_TemporaryFile_t*
  * \par Details:
  *  An unavailable owner exposes no new path borrow.
  */
-const uint16_t* OS_TemporaryFile_GetPath(const OS_TemporaryFile_t* file)
+extern FORCE_INLINE const uint16_t* OS_TemporaryFile_GetPath(const OS_TemporaryFile_t* file)
 {
     const uint16_t* path;
 

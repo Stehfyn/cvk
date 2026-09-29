@@ -146,7 +146,7 @@ extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t by
  * \par Details:
  *  Getters do not extend lifetime. The owner excludes closure while any borrower is active.
  */
-void* OS_Memory_GetAddress(const OS_Memory_t* memory)
+extern FORCE_INLINE void* OS_Memory_GetAddress(const OS_Memory_t* memory)
 {
     void* address;
 
