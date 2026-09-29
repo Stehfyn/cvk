@@ -2116,6 +2116,55 @@ void cvkWriteAccelerationStructuresProperties(VkDevice device, uint32_t accelera
 void cvkWriteMicromapsProperties(VkDevice device, uint32_t micromapCount, const VkMicromapEXT* pMicromaps, VkQueryType queryType, size_t dataSize, void* pData, size_t stride);
 void cvkWriteResourceDescriptors(VkDevice device, uint32_t resourceCount, const VkResourceDescriptorInfoEXT* pResources, const VkHostAddressRangeEXT* pDescriptors);
 void cvkWriteSamplerDescriptors(VkDevice device, uint32_t samplerCount, const VkSamplerCreateInfo* pSamplers, const VkHostAddressRangeEXT* pDescriptors);
+void cvkDestroyAccelerationStructureSafe(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyAccelerationStructureSafeNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyBufferSafe(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyBufferViewSafe(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyCommandPoolSafe(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyCuFunctionSafeNVX(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyCuModuleSafeNVX(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDataGraphPipelineSessionSafeARM(VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDebugReportCallbackSafe(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDebugUtilsMessengerSafe(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDeferredOperationSafe(VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDescriptorPoolSafe(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDescriptorSetLayoutSafe(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDescriptorUpdateTemplateSafe(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyDeviceSafe(VkDevice device, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyEventSafe(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyExternalComputeQueueSafeNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyFenceSafe(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyFramebufferSafe(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyGpaSessionSafeAMD(VkDevice device, VkGpaSessionAMD gpaSession, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyImageSafe(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyImageViewSafe(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyIndirectCommandsLayoutSafe(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyIndirectCommandsLayoutSafeNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyIndirectExecutionSetSafe(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyInstanceSafe(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyMicromapSafe(VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyOpticalFlowSessionSafeNV(VkDevice device, VkOpticalFlowSessionNV session, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyPipelineSafe(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyPipelineBinarySafe(VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyPipelineCacheSafe(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyPipelineLayoutSafe(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyPrivateDataSlotSafe(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyQueryPoolSafe(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyRenderPassSafe(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator);
+void cvkDestroySamplerSafe(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator);
+void cvkDestroySamplerYcbcrConversionSafe(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator);
+void cvkDestroySemaphoreSafe(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyShaderSafe(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyShaderInstrumentationSafeARM(VkDevice device, VkShaderInstrumentationARM instrumentation, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyShaderModuleSafe(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator);
+void cvkDestroySurfaceSafe(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator);
+void cvkDestroySwapchainSafe(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyTensorSafeARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyTensorViewSafeARM(VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyValidationCacheSafe(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyVideoSessionSafe(VkDevice device, VkVideoSessionKHR videoSession, const VkAllocationCallbacks* pAllocator);
+void cvkDestroyVideoSessionParametersSafe(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkAllocationCallbacks* pAllocator);
+void cvkFreeMemorySafe(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator);
 void cvkGetAccelerationStructureBuildGeometryInfo(VkDevice device, VkAccelerationStructureBuildTypeKHR buildType, const void* pBuildInfoNext, VkAccelerationStructureTypeKHR type, VkBuildAccelerationStructureFlagsKHR flags, VkBuildAccelerationStructureModeKHR mode, VkAccelerationStructureKHR srcAccelerationStructure, VkAccelerationStructureKHR dstAccelerationStructure, uint32_t geometryCount, const VkAccelerationStructureGeometryKHR* pGeometries, const VkAccelerationStructureGeometryKHR* const* ppGeometries, VkDeviceOrHostAddressKHR scratchData, const uint32_t* pMaxPrimitiveCounts, void* pSizeInfoNext, VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo);
 void cvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements);
 void cvkGetDeviceImageSubresourceInfo(VkDevice device, const void* pInfoNext, const VkImageCreateInfo* pCreateInfo, const VkImageSubresource2* pSubresource, void* pLayoutNext, VkSubresourceLayout2* pLayout);
@@ -3306,6 +3355,8 @@ VkResult cvkCreateTaskShader(VkDevice device, const void* pShaderNext, VkShaderC
 VkResult cvkCreateMeshShader(VkDevice device, const void* pShaderNext, VkShaderCreateFlagsEXT flags, size_t codeSize, const void* pCode, const char* pName, uint32_t setLayoutCount, const VkDescriptorSetLayout* pSetLayouts, uint32_t pushConstantRangeCount, const VkPushConstantRange* pPushConstantRanges, const VkSpecializationInfo* pSpecializationInfo, const VkAllocationCallbacks* pAllocator, VkShaderEXT* pShader);
 void cvkCmdBindMeshShadingShaders(VkCommandBuffer commandBuffer, VkShaderEXT meshShader, VkShaderEXT fragmentShader);
 void cvkCmdBindTaskMeshShadingShaders(VkCommandBuffer commandBuffer, VkShaderEXT taskShader, VkShaderEXT meshShader, VkShaderEXT fragmentShader);
+void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer commandBuffer, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t vertexCount);
+void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer commandBuffer, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t vertexCount, uint32_t pushConstantSize, const void* pPushConstants);
 VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 void cvkCreateDebugInstance(const void* pNext, VkInstanceCreateFlags flags, const VkApplicationInfo* pApplicationInfo, uint32_t enabledLayerCount, const char* const* ppEnabledLayerNames, uint32_t enabledExtensionCount, const char* const* ppEnabledExtensionNames, VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback, void* pUserData, const VkAllocationCallbacks* pAllocator, VkExtensionProperties pProperties[CVK_MAX_PROPERTIES], VkInstance* pInstance, VkDebugUtilsMessengerEXT* pMessenger);
 VkPhysicalDevice cvkGetPhysicalDeviceByLuid(VkInstance instance, const uint8_t pLuid[VK_LUID_SIZE]);
@@ -3317,42 +3368,6 @@ void cvkWriteMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset,
 void cvkReadMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, const void* pRangeNext, void* pData);
 void cvkWriteCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, const void* pData);
 void cvkReadCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void* pData);
-/*=================================================================================================
-** 2. INCLUDE FILES
-**===============================================================================================*/
-
-#include <stdint.h>
-
-/*=================================================================================================
-** 3. DECLARATIONS
-**
-** 3.1 Macros
-**===============================================================================================*/
-
-/*=================================================================================================
-** 3.2 Types
-**===============================================================================================*/
-
-/*=================================================================================================
-** 3.3 External global variables
-**===============================================================================================*/
-
-/*=================================================================================================
-** 3.4 Static global variables
-**===============================================================================================*/
-
-/*=================================================================================================
-** 3.5 Static function prototypes
-**===============================================================================================*/
-
-/*=================================================================================================
-** 4. PRIVATE FUNCTIONS
-**===============================================================================================*/
-
-/*=================================================================================================
-** 5. PUBLIC FUNCTIONS
-**===============================================================================================*/
-
 uint32_t cvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, uint32_t localSize);
 uint32_t cvkGetFormatPlaneCount(VkFormat format);
 VkImageAspectFlagBits cvkGetFormatPlaneAspect(VkFormat format, uint32_t planeIndex);

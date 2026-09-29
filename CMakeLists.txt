@@ -140,7 +140,7 @@ target_include_directories(vk-diagnostic PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pla
 target_link_libraries(vk-diagnostic PRIVATE utl-decimal)
 if(MSVC)
     target_compile_options(utl-decimal PRIVATE /GS- /Zl)
-    target_compile_options(vk-diagnostic PRIVATE /GS- /Zl)
+    target_compile_options(vk-diagnostic PRIVATE /GS- /Zl /wd5045)
 endif()
 
 # Regenerate the core, JSON, and platform pairs from the registries and policies.
@@ -174,6 +174,10 @@ endif()
 # its own generated pair that includes cvk/cvk.h. Tier 3 protocols (scripts/protocols/) are folded
 # into the platform pairs by the generator; "posix" is the pair for descriptor protocols.
 set(cvk_core_sources src/cvk.c src/cvk_json.c src/cvk_json_enums.c src/cvk_json_structs.c)
+if(MSVC)
+    set_source_files_properties(src/cvk_json.c src/cvk_json_enums.c src/cvk_json_structs.c
+        PROPERTIES COMPILE_OPTIONS "/wd4711;/wd5045")
+endif()
 set(CVK_SOURCES ${cvk_core_sources} ${cvk_platform_sources})
 
 if(cvk_platform_sources)
@@ -208,8 +212,14 @@ endif()
 # JSON parsing and mock Volk dispatch need no GPU or installed Vulkan loader.
 enable_testing()
 add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
-target_link_libraries(cvk-pipeline-json-test PRIVATE cvk vk-diagnostic)
-add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json)
+target_link_libraries(cvk-pipeline-json-test PRIVATE cvk volk::volk vk-diagnostic)
+if(MSVC)
+    target_compile_options(cvk-pipeline-json-test PRIVATE /wd4710)
+endif()
+add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/nv12.pipeline.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples/ImmersiveWindowDemo/shaders/bicubic.pipeline.json)
 
 add_executable(cvk-volk-dispatch-test tests/volk_dispatch_test.c)
 target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk vk-diagnostic)

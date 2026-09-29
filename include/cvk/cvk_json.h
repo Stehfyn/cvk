@@ -2084,6 +2084,7 @@ void* cvkParseJsonStructureChain(const cvkJsonContext* pContext, const cvkJsonVa
 
 
 
+
 uint32_t cvkParseJsonValue(cvkJsonReader* pReader);
 uint32_t cvkParseJsonDocument(const char* pText, size_t length, cvkJsonValue* pValues, uint32_t valueCapacity);
 const cvkJsonValue* cvkGetJsonMember(const cvkJsonDocument* pDocument, const cvkJsonValue* pObject, const char* pKey);
@@ -2093,6 +2094,10 @@ VkBool32 cvkIsJsonNull(const cvkJsonValue* pValue);
 uint64_t cvkParseUint64Text(const char* pText);
 uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue);
 int64_t cvkGetJsonInt64(const cvkJsonValue* pValue);
+
+
+
+
 double cvkGetJsonDouble(const cvkJsonValue* pValue);
 VkBool32 cvkGetJsonBool32(const cvkJsonValue* pValue);
 VkBool32 cvkLookupJsonName(const cvkJsonName* pTable, uint32_t tableCount, const char* pName, uint32_t nameLength, uint64_t* pValue);
@@ -2109,8 +2114,12 @@ uint64_t cvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const ui
 uint32_t cvkGetPipelineJsonHandleIndex(uint32_t count, const uint64_t* pIds, uint64_t id);
 
 
+
 void cvkCreatePipelineJsonObjects(VkDevice device, VkPipelineCache pipelineCache, const cvkPipelineJson* pPipeline, const void* pPipelineNext, PFN_cvkResolveJsonHandle resolveExternal, void* pUser, cvkArena* pArena, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 void cvkCreatePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, PFN_cvkResolveJsonHandle resolveExternal, void* pUser, const VkAllocationCallbacks* pAllocator, cvkPipelineJson* pPipeline, cvkPipelineJsonObjects* pObjects);
+
+void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, VkShaderModule vertex, VkShaderModule fragment, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
+void cvkCreateGraphicsPipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, size_t vertexCodeSize, const uint32_t* pVertexCode, size_t fragmentCodeSize, const uint32_t* pFragmentCode, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 /* clang-format on */
 
 #endif /* CVK_JSON_H */

@@ -751,6 +751,7 @@ void* scvkParseJsonStructureChain(const scvkJsonContext* pContext, const scvkJso
 
 
 
+
 uint32_t scvkParseJsonValue(scvkJsonReader* pReader);
 uint32_t scvkParseJsonDocument(const char* pText, size_t length, scvkJsonValue* pValues, uint32_t valueCapacity);
 const scvkJsonValue* scvkGetJsonMember(const scvkJsonDocument* pDocument, const scvkJsonValue* pObject, const char* pKey);
@@ -760,6 +761,10 @@ VkBool32 scvkIsJsonNull(const scvkJsonValue* pValue);
 uint64_t scvkParseUint64Text(const char* pText);
 uint64_t scvkGetJsonUint64(const scvkJsonValue* pValue);
 int64_t scvkGetJsonInt64(const scvkJsonValue* pValue);
+
+
+
+
 double scvkGetJsonDouble(const scvkJsonValue* pValue);
 VkBool32 scvkGetJsonBool32(const scvkJsonValue* pValue);
 VkBool32 scvkLookupJsonName(const scvkJsonName* pTable, uint32_t tableCount, const char* pName, uint32_t nameLength, uint64_t* pValue);
@@ -774,6 +779,7 @@ uint32_t scvkParsePipelineJsonObjectList(const scvkJsonContext* pContext, const 
 void scvkParsePipelineJson(const scvkJsonContext* pContext, scvkPipelineJson* pPipeline);
 uint64_t scvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const uint64_t* pHandles, uint64_t id);
 uint32_t scvkGetPipelineJsonHandleIndex(uint32_t count, const uint64_t* pIds, uint64_t id);
+
 
 
 void scvkCreatePipelineJsonObjects(VkDevice device, VkPipelineCache pipelineCache, const scvkPipelineJson* pPipeline, const void* pPipelineNext, PFN_scvkResolveJsonHandle resolveExternal, void* pUser, scvkArena* pArena, const VkAllocationCallbacks* pAllocator, scvkPipelineJsonObjects* pObjects);

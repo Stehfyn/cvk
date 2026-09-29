@@ -365,6 +365,13 @@ extern CVK_FORCE_INLINE VkResult cvkSetBufferCollectionImageConstraintsFUCHSIA(V
 
     return result;
 }
+extern CVK_FORCE_INLINE void cvkDestroyBufferCollectionSafeFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != collection)
+    {
+        cvkDestroyBufferCollectionFUCHSIA(device, collection, pAllocator);
+    }
+}
 extern CVK_FORCE_INLINE void cvkAllocateImportMemoryBufferCollectionFUCHSIA(VkDevice                     device,
                                                                             const void*                  pNext,
                                                                             VkBufferCollectionFUCHSIA    collection,

@@ -1,6 +1,104 @@
 /* Tier 3 protocols (SPEC.md section 8b): source of truth kept with the generator and folded
 ** into the generated cvk.h/.c. Composed from the generated surface only. */
 
+/**
+ * \brief Records a graphics render pass that draws non-indexed vertices without push constants.
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] renderPass Render pass to begin.
+ * \param[in] framebuffer Target framebuffer.
+ * \param[in] extent Render area, viewport and scissor extent.
+ * \param[in] pipeline Graphics pipeline to bind.
+ * \param[in] layout Pipeline layout for the descriptor set.
+ * \param[in] descriptorSet Descriptor set bound at set zero.
+ * \param[in] vertexCount Number of vertices to draw.
+ * \retval None
+ */
+void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
+                                  VkRenderPass     renderPass,
+                                  VkFramebuffer    framebuffer,
+                                  VkExtent2D       extent,
+                                  VkPipeline       pipeline,
+                                  VkPipelineLayout layout,
+                                  VkDescriptorSet  descriptorSet,
+                                  uint32_t         vertexCount)
+{
+    VkRect2D area = {{0, 0}, extent};
+
+    cvkCmdBeginRenderPass(commandBuffer,
+                          NULL,
+                          renderPass,
+                          framebuffer,
+                          area,
+                          0,
+                          NULL,
+                          VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    cvkCmdBindGraphicsDescriptorSets(commandBuffer,
+                                     layout,
+                                     0,
+                                     1,
+                                     &descriptorSet,
+                                     0,
+                                     NULL);
+    cvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+    cvkCmdEndRenderPass(commandBuffer);
+}
+
+/**
+ * \brief Records a graphics render pass that pushes fragment constants and draws non-indexed vertices.
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] renderPass Render pass to begin.
+ * \param[in] framebuffer Target framebuffer.
+ * \param[in] extent Render area, viewport and scissor extent.
+ * \param[in] pipeline Graphics pipeline to bind.
+ * \param[in] layout Pipeline layout for the descriptor set and push constants.
+ * \param[in] descriptorSet Descriptor set bound at set zero.
+ * \param[in] vertexCount Number of vertices to draw.
+ * \param[in] pushConstantSize Size of the fragment push constants.
+ * \param[in] pPushConstants Fragment push constants.
+ * \retval None
+ */
+void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
+                                                   VkRenderPass     renderPass,
+                                                   VkFramebuffer    framebuffer,
+                                                   VkExtent2D       extent,
+                                                   VkPipeline       pipeline,
+                                                   VkPipelineLayout layout,
+                                                   VkDescriptorSet  descriptorSet,
+                                                   uint32_t         vertexCount,
+                                                   uint32_t         pushConstantSize,
+                                                   const void*      pPushConstants)
+{
+    VkRect2D area = {{0, 0}, extent};
+
+    cvkCmdBeginRenderPass(commandBuffer,
+                          NULL,
+                          renderPass,
+                          framebuffer,
+                          area,
+                          0,
+                          NULL,
+                          VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    cvkCmdDrawGraphicsVertices(commandBuffer,
+                               pipeline,
+                               layout,
+                               0,
+                               1,
+                               &descriptorSet,
+                               0,
+                               NULL,
+                               vertexCount,
+                               1,
+                               0,
+                               0,
+                               0,
+                               pushConstantSize,
+                               pPushConstants);
+    cvkCmdEndRenderPass(commandBuffer);
+}
+
 
 /**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.

@@ -3,12 +3,11 @@
 #include "scvk/scvk_json.h"
 #include "scvk/scvk.h"
 #include "scvk/internal/scvk_json_work.h"
-#include <ctype.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
 #include <vulkan/vulkan_sc_core.h>
 
+static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
  * \param[in,out] pReader Input cursor and bounds.
@@ -63,6 +62,10 @@ static SCVK_FORCE_INLINE uint32_t scvkReadJsonChild(scvkJsonReader* pReader, uin
  * \retval VK_FALSE Another child starts at the cursor.
  */
 static SCVK_FORCE_INLINE VkBool32 scvkReadJsonSeparator(scvkJsonReader* pReader, char close, VkBool32 has_children);
+static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent);
+static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent);
+static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(const char* text);
+static SCVK_FORCE_INLINE double scvkScaleJsonDouble(double value, int32_t exponent);
 /**
  * \brief Reads the pipeline state and its render-pass version.
  * \param[in] pContext Parsing context.
@@ -97,7 +100,17 @@ static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(const scvkPipelineJs
                                                             void*                                  pUser,
                                                             const VkPipelineShaderStageCreateInfo* pSource,
                                                             VkPipelineShaderStageCreateInfo*       pStage);
+static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const scvkPipelineJson* pPipeline, PFN_scvkResolveJsonHandle resolveExternal, void* pUser);
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE VkBool32 scvkIsJsonTextSpace(char value)
+{
+    return (' ' == value) || ('\t' == value) || ('\n' == value) || ('\r' == value) || ('\v' == value) || ('\f' == value);
+}
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -504,7 +517,7 @@ extern SCVK_FORCE_INLINE uint64_t scvkParseUint64Text(const char* pText)
     value    = 0;
     base     = SCVK_JSON_DECIMAL_BASE;
     negative = VK_FALSE;
-    for (; isspace((unsigned char)*pText);)
+    for (; scvkIsJsonTextSpace(*pText);)
     {
         ++pText;
     }
@@ -584,7 +597,7 @@ extern SCVK_FORCE_INLINE int64_t scvkGetJsonInt64(const scvkJsonValue* pValue)
 
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
-    for (; isspace((unsigned char)*text);)
+    for (; scvkIsJsonTextSpace(*text);)
     {
         ++text;
     }
@@ -605,9 +618,143 @@ extern SCVK_FORCE_INLINE int64_t scvkGetJsonInt64(const scvkJsonValue* pValue)
 
     return magnitude > (uint64_t)INT64_MAX ? INT64_MAX : (int64_t)magnitude;
 }
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE void scvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent)
+{
+    enum
+    {
+        SCVK_JSON_DOUBLE_SIGNIFICANT_DIGITS = 17
+    };
+
+    if (fraction && (*pSignificant < SCVK_JSON_DOUBLE_SIGNIFICANT_DIGITS))
+    {
+        --*pExponent;
+    }
+    if ((0 == *pSignificant) && ('0' == digit))
+    {
+        return;
+    }
+    if (*pSignificant < SCVK_JSON_DOUBLE_SIGNIFICANT_DIGITS)
+    {
+        *pNumber = (*pNumber * (double)SCVK_JSON_DECIMAL_BASE) + ((double)digit - (double)'0');
+        ++*pSignificant;
+    }
+    else if (!fraction)
+    {
+        ++*pExponent;
+    }
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE const char* scvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent)
+{
+    uint32_t significant = 0;
+
+    for (; ('0' <= *text) && (*text <= '9'); ++text)
+    {
+        scvkAppendJsonDoubleDigit(*text, VK_FALSE, pNumber, &significant, pExponent);
+    }
+    if ('.' == *text)
+    {
+        ++text;
+        for (; ('0' <= *text) && (*text <= '9'); ++text)
+        {
+            scvkAppendJsonDoubleDigit(*text, VK_TRUE, pNumber, &significant, pExponent);
+        }
+    }
+
+    return text;
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE int32_t scvkParseJsonDoubleExponent(const char* text)
+{
+    int32_t exponent = 0;
+    int32_t sign     = 1;
+    enum
+    {
+        SCVK_JSON_MAX_DECIMAL_EXPONENT = 400
+    };
+
+    if (('e' != *text) && ('E' != *text))
+    {
+        return 0;
+    }
+    ++text;
+    if (('-' == *text) || ('+' == *text))
+    {
+        sign = ('-' == *text) ? -1 : 1;
+        ++text;
+    }
+    for (; ('0' <= *text) && (*text <= '9'); ++text)
+    {
+        if (exponent < SCVK_JSON_MAX_DECIMAL_EXPONENT)
+        {
+            exponent = (exponent * SCVK_JSON_DECIMAL_BASE) + (*text - '0');
+        }
+    }
+
+    return sign * exponent;
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE double scvkScaleJsonDouble(double value, int32_t exponent)
+{
+    int32_t index;
+    enum
+    {
+        SCVK_JSON_MAX_DECIMAL_EXPONENT = 400
+    };
+
+    if (0.0 == value)
+    {
+        return value;
+    }
+    if (exponent > SCVK_JSON_MAX_DECIMAL_EXPONENT)
+    {
+        exponent = SCVK_JSON_MAX_DECIMAL_EXPONENT;
+    }
+    if (exponent < -SCVK_JSON_MAX_DECIMAL_EXPONENT)
+    {
+        exponent = -SCVK_JSON_MAX_DECIMAL_EXPONENT;
+    }
+    if (0 < exponent)
+    {
+        for (index = 0; index < exponent; ++index)
+        {
+            value *= (double)SCVK_JSON_DECIMAL_BASE;
+        }
+    }
+    else
+    {
+        for (index = 0; index > exponent; --index)
+        {
+            value /= (double)SCVK_JSON_DECIMAL_BASE;
+        }
+    }
+
+    return value;
+}
 extern SCVK_FORCE_INLINE double scvkGetJsonDouble(const scvkJsonValue* pValue)
 {
-    char buffer[SCVK_JSON_REAL_TEXT_CAPACITY];
+    char        buffer[SCVK_JSON_REAL_TEXT_CAPACITY];
+    const char* text;
+    double      value;
+    int32_t     exponent;
+    VkBool32    negative;
 
     if ((NULL == pValue) || ((SCVK_JSON_NUMBER != pValue->kind) && (SCVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
     {
@@ -616,8 +763,26 @@ extern SCVK_FORCE_INLINE double scvkGetJsonDouble(const scvkJsonValue* pValue)
     (void)memcpy(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
+    text                       = buffer;
+    for (; scvkIsJsonTextSpace(*text);)
+    {
+        ++text;
+    }
+    negative = ('-' == *text) ? VK_TRUE : VK_FALSE;
+    if (('-' == *text) || ('+' == *text))
+    {
+        ++text;
+    }
+    value    = 0.0;
+    exponent = 0;
 
-    return strtod(buffer, NULL);
+    text = scvkParseJsonDoubleMantissa(text, &value, &exponent);
+
+    exponent += scvkParseJsonDoubleExponent(text);
+
+    value = scvkScaleJsonDouble(value, exponent);
+
+    return negative ? -value : value;
 }
 extern SCVK_FORCE_INLINE VkBool32 scvkGetJsonBool32(const scvkJsonValue* pValue)
 {
@@ -1156,6 +1321,32 @@ static SCVK_FORCE_INLINE void scvkResolvePipelineJsonShader(const scvkPipelineJs
         (void)resolveExternal(pUser, "VkShaderModule", object_id, sizeof(VkShaderModule), (void*)&pStage->module);
     }
 }
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static SCVK_FORCE_INLINE VkRenderPass scvkResolvePipelineJsonRenderPass(const scvkPipelineJson* pPipeline, PFN_scvkResolveJsonHandle resolveExternal, void* pUser)
+{
+    uint64_t     object_id;
+    VkBool32     resolved;
+    VkRenderPass render_pass = VK_NULL_HANDLE;
+
+    if (NULL == resolveExternal)
+    {
+        return VK_NULL_HANDLE;
+    }
+    object_id = scvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pPipeline->graphicsPipelineCreateInfo.renderPass);
+    if (0 == object_id)
+    {
+        return VK_NULL_HANDLE;
+    }
+    resolved = resolveExternal(pUser, "VkRenderPass", object_id, sizeof(VkRenderPass), (void*)&render_pass);
+    SCVK_ASSERT(resolved);
+    SCVK_ASSERT(VK_NULL_HANDLE != render_pass);
+
+    return render_pass;
+}
 extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice                     device,
                                                             VkPipelineCache              pipelineCache,
                                                             const scvkPipelineJson*      pPipeline,
@@ -1166,10 +1357,11 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
                                                             const VkAllocationCallbacks* pAllocator,
                                                             scvkPipelineJsonObjects*     pObjects)
 {
-    uint32_t index;
-    uint32_t inner;
-    uint32_t found;
-    uint64_t object_id;
+    uint32_t     index;
+    uint32_t     inner;
+    uint32_t     found;
+    uint64_t     object_id;
+    VkRenderPass render_pass;
 
     (void)memset(pObjects, 0, sizeof(*pObjects));
     SCVK_ASSERT(SCVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
@@ -1307,6 +1499,12 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
 
         VkPipelineShaderStageCreateInfo* stages = (VkPipelineShaderStageCreateInfo*)scvkAllocateArena(pArena, info->stageCount * sizeof(VkPipelineShaderStageCreateInfo), SCVK_JSON_ARENA_ALIGNMENT);
 
+        render_pass = pObjects->renderPass;
+        if (VK_NULL_HANDLE == render_pass)
+        {
+            render_pass = scvkResolvePipelineJsonRenderPass(pPipeline, resolveExternal, pUser);
+        }
+
         for (inner = 0; inner < info->stageCount; ++inner)
         {
             scvkResolvePipelineJsonShader(pPipeline, resolveExternal, pUser, &info->pStages[inner], &stages[inner]);
@@ -1327,7 +1525,7 @@ extern SCVK_FORCE_INLINE void scvkCreatePipelineJsonObjects(VkDevice            
                                    info->pColorBlendState,
                                    info->pDynamicState,
                                    pObjects->pipelineLayout,
-                                   pObjects->renderPass,
+                                   render_pass,
                                    info->subpass,
                                    VK_NULL_HANDLE,
                                    -1,

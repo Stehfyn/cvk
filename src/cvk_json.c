@@ -3,12 +3,11 @@
 #include "cvk/cvk_json.h"
 #include "cvk/cvk.h"
 #include "cvk/internal/cvk_json_work.h"
-#include <ctype.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
 #include <vulkan/vulkan_core.h>
 
+static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value);
 /**
  * \brief Advances over JSON whitespace.
  * \param[in,out] pReader Input cursor and bounds.
@@ -63,6 +62,10 @@ static CVK_FORCE_INLINE uint32_t cvkReadJsonChild(cvkJsonReader* pReader, uint32
  * \retval VK_FALSE Another child starts at the cursor.
  */
 static CVK_FORCE_INLINE VkBool32 cvkReadJsonSeparator(cvkJsonReader* pReader, char close, VkBool32 has_children);
+static CVK_FORCE_INLINE void cvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent);
+static CVK_FORCE_INLINE const char* cvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent);
+static CVK_FORCE_INLINE int32_t cvkParseJsonDoubleExponent(const char* text);
+static CVK_FORCE_INLINE double cvkScaleJsonDouble(double value, int32_t exponent);
 /**
  * \brief Reads the pipeline state and its render-pass version.
  * \param[in] pContext Parsing context.
@@ -97,7 +100,22 @@ static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*
                                                           void*                                  pUser,
                                                           const VkPipelineShaderStageCreateInfo* pSource,
                                                           VkPipelineShaderStageCreateInfo*       pStage);
+static CVK_FORCE_INLINE VkRenderPass cvkResolvePipelineJsonRenderPass(const cvkPipelineJson* pPipeline, PFN_cvkResolveJsonHandle resolveExternal, void* pUser);
+/**
+ * \brief Resolves caller-owned shader modules and an optional caller-owned render pass.
+ * \par Profile: vulkan
+ */
+static CVK_FORCE_INLINE VkBool32 cvkResolveGraphicsPipelineJsonHandle(void* pUser, const char* pHandleType, uint64_t id, uint32_t handleByteCount, void* pHandle);
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value)
+{
+    return (' ' == value) || ('\t' == value) || ('\n' == value) || ('\r' == value) || ('\v' == value) || ('\f' == value);
+}
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -504,7 +522,7 @@ extern CVK_FORCE_INLINE uint64_t cvkParseUint64Text(const char* pText)
     value    = 0;
     base     = CVK_JSON_DECIMAL_BASE;
     negative = VK_FALSE;
-    for (; isspace((unsigned char)*pText);)
+    for (; cvkIsJsonTextSpace(*pText);)
     {
         ++pText;
     }
@@ -584,7 +602,7 @@ extern CVK_FORCE_INLINE int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
 
     buffer[pValue->textLength] = '\0';
     text                       = buffer;
-    for (; isspace((unsigned char)*text);)
+    for (; cvkIsJsonTextSpace(*text);)
     {
         ++text;
     }
@@ -605,9 +623,143 @@ extern CVK_FORCE_INLINE int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
 
     return magnitude > (uint64_t)INT64_MAX ? INT64_MAX : (int64_t)magnitude;
 }
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE void cvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent)
+{
+    enum
+    {
+        CVK_JSON_DOUBLE_SIGNIFICANT_DIGITS = 17
+    };
+
+    if (fraction && (*pSignificant < CVK_JSON_DOUBLE_SIGNIFICANT_DIGITS))
+    {
+        --*pExponent;
+    }
+    if ((0 == *pSignificant) && ('0' == digit))
+    {
+        return;
+    }
+    if (*pSignificant < CVK_JSON_DOUBLE_SIGNIFICANT_DIGITS)
+    {
+        *pNumber = (*pNumber * (double)CVK_JSON_DECIMAL_BASE) + ((double)digit - (double)'0');
+        ++*pSignificant;
+    }
+    else if (!fraction)
+    {
+        ++*pExponent;
+    }
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE const char* cvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent)
+{
+    uint32_t significant = 0;
+
+    for (; ('0' <= *text) && (*text <= '9'); ++text)
+    {
+        cvkAppendJsonDoubleDigit(*text, VK_FALSE, pNumber, &significant, pExponent);
+    }
+    if ('.' == *text)
+    {
+        ++text;
+        for (; ('0' <= *text) && (*text <= '9'); ++text)
+        {
+            cvkAppendJsonDoubleDigit(*text, VK_TRUE, pNumber, &significant, pExponent);
+        }
+    }
+
+    return text;
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE int32_t cvkParseJsonDoubleExponent(const char* text)
+{
+    int32_t exponent = 0;
+    int32_t sign     = 1;
+    enum
+    {
+        CVK_JSON_MAX_DECIMAL_EXPONENT = 400
+    };
+
+    if (('e' != *text) && ('E' != *text))
+    {
+        return 0;
+    }
+    ++text;
+    if (('-' == *text) || ('+' == *text))
+    {
+        sign = ('-' == *text) ? -1 : 1;
+        ++text;
+    }
+    for (; ('0' <= *text) && (*text <= '9'); ++text)
+    {
+        if (exponent < CVK_JSON_MAX_DECIMAL_EXPONENT)
+        {
+            exponent = (exponent * CVK_JSON_DECIMAL_BASE) + (*text - '0');
+        }
+    }
+
+    return sign * exponent;
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE double cvkScaleJsonDouble(double value, int32_t exponent)
+{
+    int32_t index;
+    enum
+    {
+        CVK_JSON_MAX_DECIMAL_EXPONENT = 400
+    };
+
+    if (0.0 == value)
+    {
+        return value;
+    }
+    if (exponent > CVK_JSON_MAX_DECIMAL_EXPONENT)
+    {
+        exponent = CVK_JSON_MAX_DECIMAL_EXPONENT;
+    }
+    if (exponent < -CVK_JSON_MAX_DECIMAL_EXPONENT)
+    {
+        exponent = -CVK_JSON_MAX_DECIMAL_EXPONENT;
+    }
+    if (0 < exponent)
+    {
+        for (index = 0; index < exponent; ++index)
+        {
+            value *= (double)CVK_JSON_DECIMAL_BASE;
+        }
+    }
+    else
+    {
+        for (index = 0; index > exponent; --index)
+        {
+            value /= (double)CVK_JSON_DECIMAL_BASE;
+        }
+    }
+
+    return value;
+}
 extern CVK_FORCE_INLINE double cvkGetJsonDouble(const cvkJsonValue* pValue)
 {
-    char buffer[CVK_JSON_REAL_TEXT_CAPACITY];
+    char        buffer[CVK_JSON_REAL_TEXT_CAPACITY];
+    const char* text;
+    double      value;
+    int32_t     exponent;
+    VkBool32    negative;
 
     if ((NULL == pValue) || ((CVK_JSON_NUMBER != pValue->kind) && (CVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
     {
@@ -616,8 +768,26 @@ extern CVK_FORCE_INLINE double cvkGetJsonDouble(const cvkJsonValue* pValue)
     (void)memcpy(buffer, pValue->pText, pValue->textLength);
 
     buffer[pValue->textLength] = '\0';
+    text                       = buffer;
+    for (; cvkIsJsonTextSpace(*text);)
+    {
+        ++text;
+    }
+    negative = ('-' == *text) ? VK_TRUE : VK_FALSE;
+    if (('-' == *text) || ('+' == *text))
+    {
+        ++text;
+    }
+    value    = 0.0;
+    exponent = 0;
 
-    return strtod(buffer, NULL);
+    text = cvkParseJsonDoubleMantissa(text, &value, &exponent);
+
+    exponent += cvkParseJsonDoubleExponent(text);
+
+    value = cvkScaleJsonDouble(value, exponent);
+
+    return negative ? -value : value;
 }
 extern CVK_FORCE_INLINE VkBool32 cvkGetJsonBool32(const cvkJsonValue* pValue)
 {
@@ -1156,6 +1326,32 @@ static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*
         (void)resolveExternal(pUser, "VkShaderModule", object_id, sizeof(VkShaderModule), (void*)&pStage->module);
     }
 }
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE VkRenderPass cvkResolvePipelineJsonRenderPass(const cvkPipelineJson* pPipeline, PFN_cvkResolveJsonHandle resolveExternal, void* pUser)
+{
+    uint64_t     object_id;
+    VkBool32     resolved;
+    VkRenderPass render_pass = VK_NULL_HANDLE;
+
+    if (NULL == resolveExternal)
+    {
+        return VK_NULL_HANDLE;
+    }
+    object_id = cvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pPipeline->graphicsPipelineCreateInfo.renderPass);
+    if (0 == object_id)
+    {
+        return VK_NULL_HANDLE;
+    }
+    resolved = resolveExternal(pUser, "VkRenderPass", object_id, sizeof(VkRenderPass), (void*)&render_pass);
+    CVK_ASSERT(resolved);
+    CVK_ASSERT(VK_NULL_HANDLE != render_pass);
+
+    return render_pass;
+}
 extern CVK_FORCE_INLINE void cvkCreatePipelineJsonObjects(VkDevice                     device,
                                                           VkPipelineCache              pipelineCache,
                                                           const cvkPipelineJson*       pPipeline,
@@ -1166,10 +1362,11 @@ extern CVK_FORCE_INLINE void cvkCreatePipelineJsonObjects(VkDevice              
                                                           const VkAllocationCallbacks* pAllocator,
                                                           cvkPipelineJsonObjects*      pObjects)
 {
-    uint32_t index;
-    uint32_t inner;
-    uint32_t found;
-    uint64_t object_id;
+    uint32_t     index;
+    uint32_t     inner;
+    uint32_t     found;
+    uint64_t     object_id;
+    VkRenderPass render_pass;
 
     (void)memset(pObjects, 0, sizeof(*pObjects));
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
@@ -1307,6 +1504,12 @@ extern CVK_FORCE_INLINE void cvkCreatePipelineJsonObjects(VkDevice              
 
         VkPipelineShaderStageCreateInfo* stages = (VkPipelineShaderStageCreateInfo*)cvkAllocateArena(pArena, info->stageCount * sizeof(VkPipelineShaderStageCreateInfo), CVK_JSON_ARENA_ALIGNMENT);
 
+        render_pass = pObjects->renderPass;
+        if (VK_NULL_HANDLE == render_pass)
+        {
+            render_pass = cvkResolvePipelineJsonRenderPass(pPipeline, resolveExternal, pUser);
+        }
+
         for (inner = 0; inner < info->stageCount; ++inner)
         {
             cvkResolvePipelineJsonShader(pPipeline, resolveExternal, pUser, &info->pStages[inner], &stages[inner]);
@@ -1327,7 +1530,7 @@ extern CVK_FORCE_INLINE void cvkCreatePipelineJsonObjects(VkDevice              
                                   info->pColorBlendState,
                                   info->pDynamicState,
                                   pObjects->pipelineLayout,
-                                  pObjects->renderPass,
+                                  render_pass,
                                   info->subpass,
                                   VK_NULL_HANDLE,
                                   -1,
@@ -1378,6 +1581,149 @@ extern CVK_FORCE_INLINE void cvkCreatePipelineFromJson(VkDevice                 
 
     cvkParsePipelineJson(&context, pPipeline);
     cvkCreatePipelineJsonObjects(device, pipelineCache, pPipeline, NULL, resolveExternal, pUser, pArena, pAllocator, pObjects);
+}
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE VkBool32 cvkResolveGraphicsPipelineJsonHandle(void* pUser, const char* pHandleType, uint64_t id, uint32_t handleByteCount, void* pHandle)
+{
+    cvkGraphicsPipelineJsonHandles* handles          = (cvkGraphicsPipelineJsonHandles*)pUser;
+    const char*                     shader_type      = "VkShaderModule";
+    const char*                     render_pass_type = "VkRenderPass";
+    const char*                     left;
+    const char*                     right;
+
+    left  = pHandleType;
+    right = shader_type;
+    while (*left && *left == *right)
+    {
+        ++left;
+        ++right;
+    }
+    if (*left == *right && sizeof(VkShaderModule) == handleByteCount)
+    {
+        if (handles->vertexId == id)
+        {
+            *(VkShaderModule*)pHandle = handles->vertex;
+
+            return VK_TRUE;
+        }
+        if (handles->fragmentId == id)
+        {
+            *(VkShaderModule*)pHandle = handles->fragment;
+
+            return VK_TRUE;
+        }
+    }
+    left  = pHandleType;
+    right = render_pass_type;
+    while (*left && *left == *right)
+    {
+        ++left;
+        ++right;
+    }
+    if (*left == *right && sizeof(VkRenderPass) == handleByteCount && handles->renderPassId == id && VK_NULL_HANDLE != handles->renderPass)
+    {
+        *(VkRenderPass*)pHandle = handles->renderPass;
+
+        return VK_TRUE;
+    }
+
+    return VK_FALSE;
+}
+extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     device,
+                                                                          VkPipelineCache              pipelineCache,
+                                                                          const char*                  pJsonText,
+                                                                          size_t                       jsonLength,
+                                                                          cvkJsonValue*                pJsonValues,
+                                                                          uint32_t                     jsonValueCapacity,
+                                                                          cvkArena*                    pArena,
+                                                                          VkShaderModule               vertex,
+                                                                          VkShaderModule               fragment,
+                                                                          VkRenderPass                 externalRenderPass,
+                                                                          const VkAllocationCallbacks* pAllocator,
+                                                                          cvkPipelineJsonObjects*      pObjects)
+{
+    cvkJsonContext                 context;
+    cvkPipelineJson                pipeline;
+    cvkGraphicsPipelineJsonHandles handles = {0};
+    uint32_t                       index;
+
+    context.document.pValues = pJsonValues;
+
+    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, pJsonValues, jsonValueCapacity);
+
+    context.pArena             = pArena;
+    context.resolveHandle      = NULL;
+    context.pUser              = NULL;
+    context.ppHandleReferences = NULL;
+
+    cvkParsePipelineJson(&context, &pipeline);
+    CVK_ASSERT(VK_PIPELINE_BIND_POINT_GRAPHICS == pipeline.bindPoint);
+    CVK_ASSERT(2 == pipeline.graphicsPipelineCreateInfo.stageCount);
+
+    for (index = 0; index < pipeline.graphicsPipelineCreateInfo.stageCount; ++index)
+    {
+        const VkPipelineShaderStageCreateInfo* stage = &pipeline.graphicsPipelineCreateInfo.pStages[index];
+
+        uint64_t module_id = cvkGetJsonHandleId(pipeline.pHandleReferences, (const void*)&stage->module);
+
+        CVK_ASSERT(0 != module_id);
+
+        if (VK_SHADER_STAGE_VERTEX_BIT == stage->stage)
+        {
+            CVK_ASSERT(0 == handles.vertexId);
+
+            handles.vertexId = module_id;
+        }
+        else if (VK_SHADER_STAGE_FRAGMENT_BIT == stage->stage)
+        {
+            CVK_ASSERT(0 == handles.fragmentId);
+
+            handles.fragmentId = module_id;
+        }
+        else
+        {
+            CVK_ASSERT(VK_FALSE);
+        }
+    }
+    CVK_ASSERT(0 != handles.vertexId);
+    CVK_ASSERT(0 != handles.fragmentId);
+    CVK_ASSERT(handles.vertexId != handles.fragmentId);
+
+    handles.renderPassId = cvkGetJsonHandleId(pipeline.pHandleReferences, (const void*)&pipeline.graphicsPipelineCreateInfo.renderPass);
+
+    handles.vertex     = vertex;
+    handles.fragment   = fragment;
+    handles.renderPass = externalRenderPass;
+
+    cvkCreatePipelineJsonObjects(device, pipelineCache, &pipeline, NULL, cvkResolveGraphicsPipelineJsonHandle, &handles, pArena, pAllocator, pObjects);
+}
+extern CVK_FORCE_INLINE void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
+                                                               VkPipelineCache              pipelineCache,
+                                                               const char*                  pJsonText,
+                                                               size_t                       jsonLength,
+                                                               cvkJsonValue*                pJsonValues,
+                                                               uint32_t                     jsonValueCapacity,
+                                                               cvkArena*                    pArena,
+                                                               size_t                       vertexCodeSize,
+                                                               const uint32_t*              pVertexCode,
+                                                               size_t                       fragmentCodeSize,
+                                                               const uint32_t*              pFragmentCode,
+                                                               VkRenderPass                 externalRenderPass,
+                                                               const VkAllocationCallbacks* pAllocator,
+                                                               cvkPipelineJsonObjects*      pObjects)
+{
+    VkShaderModule vertex;
+    VkShaderModule fragment;
+
+    cvkCreateShaderModule(device, NULL, 0, vertexCodeSize, pVertexCode, pAllocator, &vertex);
+    cvkCreateShaderModule(device, NULL, 0, fragmentCodeSize, pFragmentCode, pAllocator, &fragment);
+    cvkCreateGraphicsPipelineFromJsonWithModules(device, pipelineCache, pJsonText, jsonLength, pJsonValues, jsonValueCapacity, pArena, vertex, fragment, externalRenderPass, pAllocator, pObjects);
+    cvkDestroyShaderModule(device, fragment, pAllocator);
+    cvkDestroyShaderModule(device, vertex, pAllocator);
 }
 /*************************************************************************************************/
 /**

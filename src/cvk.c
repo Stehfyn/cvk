@@ -24088,6 +24088,349 @@ extern CVK_FORCE_INLINE void cvkWriteSamplerDescriptors(VkDevice device, uint32_
 {
     CVK_CHECK(vkWriteSamplerDescriptorsEXT(device, samplerCount, pSamplers, pDescriptors));
 }
+extern CVK_FORCE_INLINE void cvkDestroyAccelerationStructureSafe(VkDevice device, VkAccelerationStructureKHR accelerationStructure, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != accelerationStructure)
+    {
+        cvkDestroyAccelerationStructure(device, accelerationStructure, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyAccelerationStructureSafeNV(VkDevice device, VkAccelerationStructureNV accelerationStructure, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != accelerationStructure)
+    {
+        cvkDestroyAccelerationStructureNV(device, accelerationStructure, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyBufferSafe(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != buffer)
+    {
+        cvkDestroyBuffer(device, buffer, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyBufferViewSafe(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != bufferView)
+    {
+        cvkDestroyBufferView(device, bufferView, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyCommandPoolSafe(VkDevice device, VkCommandPool commandPool, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != commandPool)
+    {
+        cvkDestroyCommandPool(device, commandPool, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyCuFunctionSafeNVX(VkDevice device, VkCuFunctionNVX function, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != function)
+    {
+        cvkDestroyCuFunctionNVX(device, function, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyCuModuleSafeNVX(VkDevice device, VkCuModuleNVX module, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != module)
+    {
+        cvkDestroyCuModuleNVX(device, module, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDataGraphPipelineSessionSafeARM(VkDevice device, VkDataGraphPipelineSessionARM session, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != session)
+    {
+        cvkDestroyDataGraphPipelineSessionARM(device, session, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDebugReportCallbackSafe(VkInstance instance, VkDebugReportCallbackEXT callback, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != callback)
+    {
+        cvkDestroyDebugReportCallback(instance, callback, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDebugUtilsMessengerSafe(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != messenger)
+    {
+        cvkDestroyDebugUtilsMessenger(instance, messenger, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDeferredOperationSafe(VkDevice device, VkDeferredOperationKHR operation, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != operation)
+    {
+        cvkDestroyDeferredOperation(device, operation, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDescriptorPoolSafe(VkDevice device, VkDescriptorPool descriptorPool, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != descriptorPool)
+    {
+        cvkDestroyDescriptorPool(device, descriptorPool, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDescriptorSetLayoutSafe(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != descriptorSetLayout)
+    {
+        cvkDestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDescriptorUpdateTemplateSafe(VkDevice device, VkDescriptorUpdateTemplate descriptorUpdateTemplate, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != descriptorUpdateTemplate)
+    {
+        cvkDestroyDescriptorUpdateTemplate(device, descriptorUpdateTemplate, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyDeviceSafe(VkDevice device, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != device)
+    {
+        cvkDestroyDevice(device, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyEventSafe(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != event)
+    {
+        cvkDestroyEvent(device, event, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyExternalComputeQueueSafeNV(VkDevice device, VkExternalComputeQueueNV externalQueue, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != externalQueue)
+    {
+        cvkDestroyExternalComputeQueueNV(device, externalQueue, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyFenceSafe(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != fence)
+    {
+        cvkDestroyFence(device, fence, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyFramebufferSafe(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != framebuffer)
+    {
+        cvkDestroyFramebuffer(device, framebuffer, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyGpaSessionSafeAMD(VkDevice device, VkGpaSessionAMD gpaSession, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != gpaSession)
+    {
+        cvkDestroyGpaSessionAMD(device, gpaSession, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyImageSafe(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != image)
+    {
+        cvkDestroyImage(device, image, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyImageViewSafe(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != imageView)
+    {
+        cvkDestroyImageView(device, imageView, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyIndirectCommandsLayoutSafe(VkDevice device, VkIndirectCommandsLayoutEXT indirectCommandsLayout, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != indirectCommandsLayout)
+    {
+        cvkDestroyIndirectCommandsLayout(device, indirectCommandsLayout, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyIndirectCommandsLayoutSafeNV(VkDevice device, VkIndirectCommandsLayoutNV indirectCommandsLayout, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != indirectCommandsLayout)
+    {
+        cvkDestroyIndirectCommandsLayoutNV(device, indirectCommandsLayout, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyIndirectExecutionSetSafe(VkDevice device, VkIndirectExecutionSetEXT indirectExecutionSet, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != indirectExecutionSet)
+    {
+        cvkDestroyIndirectExecutionSet(device, indirectExecutionSet, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyInstanceSafe(VkInstance instance, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != instance)
+    {
+        cvkDestroyInstance(instance, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyMicromapSafe(VkDevice device, VkMicromapEXT micromap, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != micromap)
+    {
+        cvkDestroyMicromap(device, micromap, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyOpticalFlowSessionSafeNV(VkDevice device, VkOpticalFlowSessionNV session, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != session)
+    {
+        cvkDestroyOpticalFlowSessionNV(device, session, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyPipelineSafe(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipeline)
+    {
+        cvkDestroyPipeline(device, pipeline, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyPipelineBinarySafe(VkDevice device, VkPipelineBinaryKHR pipelineBinary, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipelineBinary)
+    {
+        cvkDestroyPipelineBinary(device, pipelineBinary, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyPipelineCacheSafe(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipelineCache)
+    {
+        cvkDestroyPipelineCache(device, pipelineCache, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyPipelineLayoutSafe(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipelineLayout)
+    {
+        cvkDestroyPipelineLayout(device, pipelineLayout, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyPrivateDataSlotSafe(VkDevice device, VkPrivateDataSlot privateDataSlot, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != privateDataSlot)
+    {
+        cvkDestroyPrivateDataSlot(device, privateDataSlot, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyQueryPoolSafe(VkDevice device, VkQueryPool queryPool, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != queryPool)
+    {
+        cvkDestroyQueryPool(device, queryPool, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyRenderPassSafe(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != renderPass)
+    {
+        cvkDestroyRenderPass(device, renderPass, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroySamplerSafe(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != sampler)
+    {
+        cvkDestroySampler(device, sampler, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroySamplerYcbcrConversionSafe(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != ycbcrConversion)
+    {
+        cvkDestroySamplerYcbcrConversion(device, ycbcrConversion, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroySemaphoreSafe(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != semaphore)
+    {
+        cvkDestroySemaphore(device, semaphore, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyShaderSafe(VkDevice device, VkShaderEXT shader, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != shader)
+    {
+        cvkDestroyShader(device, shader, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyShaderInstrumentationSafeARM(VkDevice device, VkShaderInstrumentationARM instrumentation, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != instrumentation)
+    {
+        cvkDestroyShaderInstrumentationARM(device, instrumentation, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyShaderModuleSafe(VkDevice device, VkShaderModule shaderModule, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != shaderModule)
+    {
+        cvkDestroyShaderModule(device, shaderModule, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroySurfaceSafe(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != surface)
+    {
+        cvkDestroySurface(instance, surface, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroySwapchainSafe(VkDevice device, VkSwapchainKHR swapchain, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != swapchain)
+    {
+        cvkDestroySwapchain(device, swapchain, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyTensorSafeARM(VkDevice device, VkTensorARM tensor, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != tensor)
+    {
+        cvkDestroyTensorARM(device, tensor, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyTensorViewSafeARM(VkDevice device, VkTensorViewARM tensorView, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != tensorView)
+    {
+        cvkDestroyTensorViewARM(device, tensorView, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyValidationCacheSafe(VkDevice device, VkValidationCacheEXT validationCache, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != validationCache)
+    {
+        cvkDestroyValidationCache(device, validationCache, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyVideoSessionSafe(VkDevice device, VkVideoSessionKHR videoSession, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != videoSession)
+    {
+        cvkDestroyVideoSession(device, videoSession, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyVideoSessionParametersSafe(VkDevice device, VkVideoSessionParametersKHR videoSessionParameters, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != videoSessionParameters)
+    {
+        cvkDestroyVideoSessionParameters(device, videoSessionParameters, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkFreeMemorySafe(VkDevice device, VkDeviceMemory memory, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != memory)
+    {
+        cvkFreeMemory(device, memory, pAllocator);
+    }
+}
 extern CVK_FORCE_INLINE void cvkGetAccelerationStructureBuildGeometryInfo(VkDevice                                         device,
                                                                           VkAccelerationStructureBuildTypeKHR              buildType,
                                                                           const void*                                      pBuildInfoNext,
@@ -49812,6 +50155,42 @@ extern CVK_FORCE_INLINE void cvkCmdBindTaskMeshShadingShaders(VkCommandBuffer co
     shaders[2] = fragmentShader;
 
     cvkCmdBindShaders(commandBuffer, VK_COUNT_OF(stages), stages, shaders);
+}
+extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
+                                                             VkRenderPass     renderPass,
+                                                             VkFramebuffer    framebuffer,
+                                                             VkExtent2D       extent,
+                                                             VkPipeline       pipeline,
+                                                             VkPipelineLayout layout,
+                                                             VkDescriptorSet  descriptorSet,
+                                                             uint32_t         vertexCount)
+{
+    VkRect2D area = {{0, 0}, extent};
+
+    cvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
+    cvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+    cvkCmdEndRenderPass(commandBuffer);
+}
+extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
+                                                                              VkRenderPass     renderPass,
+                                                                              VkFramebuffer    framebuffer,
+                                                                              VkExtent2D       extent,
+                                                                              VkPipeline       pipeline,
+                                                                              VkPipelineLayout layout,
+                                                                              VkDescriptorSet  descriptorSet,
+                                                                              uint32_t         vertexCount,
+                                                                              uint32_t         pushConstantSize,
+                                                                              const void*      pPushConstants)
+{
+    VkRect2D area = {{0, 0}, extent};
+
+    cvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    cvkCmdDrawGraphicsVertices(commandBuffer, pipeline, layout, 0, 1, &descriptorSet, 0, NULL, vertexCount, 1, 0, 0, 0, pushConstantSize, pPushConstants);
+    cvkCmdEndRenderPass(commandBuffer);
 }
 extern CVK_FORCE_INLINE VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                                                  VkDebugUtilsMessageTypeFlagsEXT             messageTypes,

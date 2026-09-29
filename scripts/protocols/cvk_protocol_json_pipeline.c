@@ -324,13 +324,37 @@ static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*
     }
 }
 
+static CVK_FORCE_INLINE VkRenderPass cvkResolvePipelineJsonRenderPass(const cvkPipelineJson* pPipeline,
+                                                                     PFN_cvkResolveJsonHandle resolveExternal,
+                                                                     void* pUser)
+{
+    uint64_t object_id;
+    VkBool32 resolved;
+    VkRenderPass render_pass = VK_NULL_HANDLE;
+
+    if (NULL == resolveExternal)
+    {
+        return VK_NULL_HANDLE;
+    }
+    object_id = cvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pPipeline->graphicsPipelineCreateInfo.renderPass);
+    if (0 == object_id)
+    {
+        return VK_NULL_HANDLE;
+    }
+    resolved = resolveExternal(pUser, "VkRenderPass", object_id, sizeof(VkRenderPass), (void*)&render_pass);
+    CVK_ASSERT(resolved);
+    CVK_ASSERT(VK_NULL_HANDLE != render_pass);
+    return render_pass;
+}
+
 /**
  * \brief Creates the objects a parsed pipeline JSON describes, in dependency order, then the pipeline.
  *
  * \par Details:
  *  Ycbcr conversions, samplers, descriptor set layouts (immutable sampler ids resolved),
  *  the pipeline layout (set layout ids resolved), the render pass (version 1 or 2), and the
- *  pipeline with its layout and render pass resolved, its base pipeline cleared, and its
+ *  pipeline with its layout and render pass resolved (an external render pass stays owned
+ *  by the caller), its base pipeline cleared, and its
  *  shader modules resolved through the caller's resolver ("VkShaderModule", id), which
  *  returns VK_NULL_HANDLE where modules do not exist (Vulkan SC). Ids in extension chains
  *  are not resolved. The pipeline's pNext is pPipelineNext when given (Vulkan SC chains its
@@ -340,7 +364,7 @@ static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson*
  * \param[in]  pipelineCache    Pipeline cache the pipeline is created from, or VK_NULL_HANDLE
  * \param[in]  pPipeline        The parsed pipeline JSON
  * \param[in]  pPipelineNext    Extension chain for the pipeline create info replacing the file's, or NULL
- * \param[in]  resolveExternal  Resolver for handles the file does not define (shader modules), or NULL
+ * \param[in]  resolveExternal  Resolver for handles the file does not define (shader modules and render pass), or NULL
  * \param[in]  pUser            Passed to the resolver
  * \param[in]  pArena           Arena for the resolved arrays
  * \param[in]  pAllocator       Optional allocation callbacks, or NULL
@@ -362,6 +386,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
     uint32_t inner;
     uint32_t found;
     uint64_t object_id;
+    VkRenderPass render_pass;
 
     (void)memset(pObjects, 0, sizeof(*pObjects));
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
@@ -439,6 +464,12 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
         const VkGraphicsPipelineCreateInfo* info   = &pPipeline->graphicsPipelineCreateInfo;
         VkPipelineShaderStageCreateInfo*    stages = (VkPipelineShaderStageCreateInfo*)cvkAllocateArena(pArena, info->stageCount * sizeof(VkPipelineShaderStageCreateInfo), CVK_JSON_ARENA_ALIGNMENT);
 
+        render_pass = pObjects->renderPass;
+        if (VK_NULL_HANDLE == render_pass)
+        {
+            render_pass = cvkResolvePipelineJsonRenderPass(pPipeline, resolveExternal, pUser);
+        }
+
         for (inner = 0; inner < info->stageCount; ++inner)
         {
             cvkResolvePipelineJsonShader(pPipeline,
@@ -463,7 +494,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
                                   info->pColorBlendState,
                                   info->pDynamicState,
                                   pObjects->pipelineLayout,
-                                  pObjects->renderPass,
+                                  render_pass,
                                   info->subpass,
                                   VK_NULL_HANDLE,
                                   -1,
@@ -494,7 +525,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
  * \param[in]  pJsonValues        Storage for the document's values
  * \param[in]  jsonValueCapacity  Capacity of pJsonValues
  * \param[in]  pArena             Arena for the parsed structures and resolved arrays
- * \param[in]  resolveExternal    Resolver for shader modules, or NULL for VK_NULL_HANDLE modules
+ * \param[in]  resolveExternal    Resolver for shader modules and an external render pass, or NULL for VK_NULL_HANDLE modules
  * \param[in]  pUser              Passed to the resolver
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
  * \param[out] pPipeline          Receives the parsed description; numeric IDs are retained in pHandleReferences
@@ -525,6 +556,207 @@ void cvkCreatePipelineFromJson(VkDevice                     device,
     context.ppHandleReferences  = NULL;
     cvkParsePipelineJson(&context, pPipeline);
     cvkCreatePipelineJsonObjects(device, pipelineCache, pPipeline, NULL, resolveExternal, pUser, pArena, pAllocator, pObjects);
+}
+
+/**
+ * \brief Handles supplied to a graphics pipeline JSON by the caller.
+ * \par Profile: vulkan
+ */
+typedef struct cvkGraphicsPipelineJsonHandles
+{
+    uint64_t       vertexId;
+    uint64_t       fragmentId;
+    uint64_t       renderPassId;
+    VkShaderModule vertex;
+    VkShaderModule fragment;
+    VkRenderPass   renderPass;
+} cvkGraphicsPipelineJsonHandles;
+
+/**
+ * \brief Resolves caller-owned shader modules and an optional caller-owned render pass.
+ * \par Profile: vulkan
+ */
+static CVK_FORCE_INLINE VkBool32 cvkResolveGraphicsPipelineJsonHandle(void* pUser,
+                                                                     const char* pHandleType,
+                                                                     uint64_t id,
+                                                                     uint32_t handleByteCount,
+                                                                     void* pHandle)
+{
+    cvkGraphicsPipelineJsonHandles* handles = (cvkGraphicsPipelineJsonHandles*)pUser;
+    const char* shader_type = "VkShaderModule";
+    const char* render_pass_type = "VkRenderPass";
+    const char* left;
+    const char* right;
+
+    left = pHandleType;
+    right = shader_type;
+    while (*left && *left == *right)
+    {
+        ++left;
+        ++right;
+    }
+    if (*left == *right && sizeof(VkShaderModule) == handleByteCount)
+    {
+        if (handles->vertexId == id)
+        {
+            *(VkShaderModule*)pHandle = handles->vertex;
+            return VK_TRUE;
+        }
+        if (handles->fragmentId == id)
+        {
+            *(VkShaderModule*)pHandle = handles->fragment;
+            return VK_TRUE;
+        }
+    }
+    left = pHandleType;
+    right = render_pass_type;
+    while (*left && *left == *right)
+    {
+        ++left;
+        ++right;
+    }
+    if (*left == *right && sizeof(VkRenderPass) == handleByteCount && handles->renderPassId == id && VK_NULL_HANDLE != handles->renderPass)
+    {
+        *(VkRenderPass*)pHandle = handles->renderPass;
+        return VK_TRUE;
+    }
+    return VK_FALSE;
+}
+
+/**
+ * \brief Creates a graphics pipeline from JSON using caller-owned vertex and fragment modules.
+ * \par Profile: vulkan
+ * \par Details:
+ *  The module IDs are taken from the vertex and fragment stages in the JSON. The supplied
+ *  modules and external render pass remain owned by the caller.
+ * \param[in] device Logical device creating the objects.
+ * \param[in] pipelineCache Pipeline cache, or VK_NULL_HANDLE.
+ * \param[in] pJsonText Pipeline JSON text.
+ * \param[in] jsonLength Byte length of the text.
+ * \param[in] pJsonValues Storage for the document's values.
+ * \param[in] jsonValueCapacity Capacity of pJsonValues.
+ * \param[in] pArena Arena for parsed structures and resolved arrays.
+ * \param[in] vertex Caller-owned vertex shader module.
+ * \param[in] fragment Caller-owned fragment shader module.
+ * \param[in] externalRenderPass Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
+ * \param[in] pAllocator Optional allocation callbacks, or NULL.
+ * \param[out] pObjects Receives the created JSON objects.
+ * \retval None
+ */
+void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice                     device,
+                                                   VkPipelineCache              pipelineCache,
+                                                   const char*                  pJsonText,
+                                                   size_t                       jsonLength,
+                                                   cvkJsonValue*                pJsonValues,
+                                                   uint32_t                     jsonValueCapacity,
+                                                   cvkArena*                    pArena,
+                                                   VkShaderModule               vertex,
+                                                   VkShaderModule               fragment,
+                                                   VkRenderPass                 externalRenderPass,
+                                                   const VkAllocationCallbacks* pAllocator,
+                                                   cvkPipelineJsonObjects*      pObjects)
+{
+    cvkJsonContext context;
+    cvkPipelineJson pipeline;
+    cvkGraphicsPipelineJsonHandles handles = {0};
+    uint32_t index;
+
+    context.document.pValues = pJsonValues;
+    context.document.valueCount = cvkParseJsonDocument(pJsonText, jsonLength, pJsonValues, jsonValueCapacity);
+    context.pArena = pArena;
+    context.resolveHandle = NULL;
+    context.pUser = NULL;
+    context.ppHandleReferences = NULL;
+    cvkParsePipelineJson(&context, &pipeline);
+    CVK_ASSERT(VK_PIPELINE_BIND_POINT_GRAPHICS == pipeline.bindPoint);
+    CVK_ASSERT(2 == pipeline.graphicsPipelineCreateInfo.stageCount);
+    for (index = 0; index < pipeline.graphicsPipelineCreateInfo.stageCount; ++index)
+    {
+        const VkPipelineShaderStageCreateInfo* stage = &pipeline.graphicsPipelineCreateInfo.pStages[index];
+        uint64_t module_id = cvkGetJsonHandleId(pipeline.pHandleReferences, (const void*)&stage->module);
+
+        CVK_ASSERT(0 != module_id);
+        if (VK_SHADER_STAGE_VERTEX_BIT == stage->stage)
+        {
+            CVK_ASSERT(0 == handles.vertexId);
+            handles.vertexId = module_id;
+        }
+        else if (VK_SHADER_STAGE_FRAGMENT_BIT == stage->stage)
+        {
+            CVK_ASSERT(0 == handles.fragmentId);
+            handles.fragmentId = module_id;
+        }
+        else
+        {
+            CVK_ASSERT(VK_FALSE);
+        }
+    }
+    CVK_ASSERT(0 != handles.vertexId);
+    CVK_ASSERT(0 != handles.fragmentId);
+    CVK_ASSERT(handles.vertexId != handles.fragmentId);
+    handles.renderPassId = cvkGetJsonHandleId(pipeline.pHandleReferences, (const void*)&pipeline.graphicsPipelineCreateInfo.renderPass);
+    handles.vertex = vertex;
+    handles.fragment = fragment;
+    handles.renderPass = externalRenderPass;
+    cvkCreatePipelineJsonObjects(device, pipelineCache, &pipeline, NULL, cvkResolveGraphicsPipelineJsonHandle, &handles, pArena, pAllocator, pObjects);
+}
+
+/**
+ * \brief Creates a graphics pipeline from JSON and temporary vertex and fragment SPIR-V modules.
+ * \par Profile: vulkan
+ * \par Details:
+ *  The shader modules are destroyed after pipeline creation. Use
+ *  cvkCreateGraphicsPipelineFromJsonWithModules to retain or reuse caller-owned modules.
+ * \param[in] device Logical device creating the objects.
+ * \param[in] pipelineCache Pipeline cache, or VK_NULL_HANDLE.
+ * \param[in] pJsonText Pipeline JSON text.
+ * \param[in] jsonLength Byte length of the text.
+ * \param[in] pJsonValues Storage for the document's values.
+ * \param[in] jsonValueCapacity Capacity of pJsonValues.
+ * \param[in] pArena Arena for parsed structures and resolved arrays.
+ * \param[in] vertexCodeSize Vertex SPIR-V byte length.
+ * \param[in] pVertexCode Vertex SPIR-V words.
+ * \param[in] fragmentCodeSize Fragment SPIR-V byte length.
+ * \param[in] pFragmentCode Fragment SPIR-V words.
+ * \param[in] externalRenderPass Caller-owned render pass if the JSON omits one, or VK_NULL_HANDLE.
+ * \param[in] pAllocator Optional allocation callbacks, or NULL.
+ * \param[out] pObjects Receives the created JSON objects.
+ * \retval None
+ */
+void cvkCreateGraphicsPipelineFromJson(VkDevice                     device,
+                                       VkPipelineCache              pipelineCache,
+                                       const char*                  pJsonText,
+                                       size_t                       jsonLength,
+                                       cvkJsonValue*                pJsonValues,
+                                       uint32_t                     jsonValueCapacity,
+                                       cvkArena*                    pArena,
+                                       size_t                       vertexCodeSize,
+                                       const uint32_t*              pVertexCode,
+                                       size_t                       fragmentCodeSize,
+                                       const uint32_t*              pFragmentCode,
+                                       VkRenderPass                 externalRenderPass,
+                                       const VkAllocationCallbacks* pAllocator,
+                                       cvkPipelineJsonObjects*      pObjects)
+{
+    VkShaderModule vertex;
+    VkShaderModule fragment;
+
+    cvkCreateShaderModule(device, NULL, 0, vertexCodeSize, pVertexCode, pAllocator, &vertex);
+    cvkCreateShaderModule(device, NULL, 0, fragmentCodeSize, pFragmentCode, pAllocator, &fragment);
+    cvkCreateGraphicsPipelineFromJsonWithModules(device,
+                                                 pipelineCache,
+                                                 pJsonText,
+                                                 jsonLength,
+                                                 pJsonValues,
+                                                 jsonValueCapacity,
+                                                 pArena,
+                                                 vertex,
+                                                 fragment,
+                                                 externalRenderPass,
+                                                 pAllocator,
+                                                 pObjects);
+    cvkDestroyShaderModule(device, fragment, pAllocator);
+    cvkDestroyShaderModule(device, vertex, pAllocator);
 }
 
 /**

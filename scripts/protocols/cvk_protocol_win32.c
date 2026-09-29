@@ -166,6 +166,168 @@ void cvkImportWin32HandleImage(VkPhysicalDevice                   physicalDevice
 }
 
 /**
+ * \brief Imports a Win32 memory handle as a new 2D image.
+ *
+ * \par Details:
+ *  Uses cvkImportWin32HandleImage with VK_IMAGE_TYPE_2D and an extent depth of one.
+ *  The handle remains owned by the caller.
+ *
+ * \param[in]  physicalDevice          Physical device the image is created for
+ * \param[in]  device                  Logical device owning the image and memory
+ * \param[in]  pImageNext              Optional extension chain for VkImageCreateInfo, or NULL
+ * \param[in]  flags                   VkImageCreateInfo::flags
+ * \param[in]  format                  VkImageCreateInfo::format
+ * \param[in]  mipLevels               VkImageCreateInfo::mipLevels
+ * \param[in]  arrayLayers             VkImageCreateInfo::arrayLayers
+ * \param[in]  samples                 VkImageCreateInfo::samples
+ * \param[in]  tiling                  VkImageCreateInfo::tiling
+ * \param[in]  usage                   VkImageCreateInfo::usage
+ * \param[in]  sharingMode             VkImageCreateInfo::sharingMode
+ * \param[in]  queueFamilyIndexCount   VkImageCreateInfo::queueFamilyIndexCount
+ * \param[in]  pQueueFamilyIndices     VkImageCreateInfo::pQueueFamilyIndices
+ * \param[in]  initialLayout           VkImageCreateInfo::initialLayout
+ * \param[in]  extent2D                Image width and height
+ * \param[in]  handleType              Win32 external memory handle type being imported
+ * \param[in]  handle                  Handle to import, or NULL when name is used
+ * \param[in]  name                    Name of the object to import, or NULL when handle is used
+ * \param[in]  allocationSize          Complete external extent for heap/opaque imports; ignored for D3D texture/resource imports
+ * \param[in]  requiredProperties      Memory property flags the selected type must cover
+ * \param[in]  pMemoryNext             Optional extension chain behind the import info, or NULL
+ * \param[in]  pAllocator              Optional allocation callbacks, or NULL
+ * \param[out] pImage                  Receives the created VkImage
+ * \param[out] pMemory                 Receives the imported VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkImportWin32HandleImage2D(VkPhysicalDevice                   physicalDevice,
+                                 VkDevice                           device,
+                                 const void*                        pImageNext,
+                                 VkImageCreateFlags                 flags,
+                                 VkFormat                           format,
+                                 uint32_t                           mipLevels,
+                                 uint32_t                           arrayLayers,
+                                 VkSampleCountFlagBits              samples,
+                                 VkImageTiling                      tiling,
+                                 VkImageUsageFlags                  usage,
+                                 VkSharingMode                      sharingMode,
+                                 uint32_t                           queueFamilyIndexCount,
+                                 const uint32_t*                    pQueueFamilyIndices,
+                                 VkImageLayout                      initialLayout,
+                                 VkExtent2D                         extent2D,
+                                 VkExternalMemoryHandleTypeFlagBits handleType,
+                                 HANDLE                             handle,
+                                 LPCWSTR                            name,
+                                 VkDeviceSize                       allocationSize,
+                                 VkMemoryPropertyFlags              requiredProperties,
+                                 const void*                        pMemoryNext,
+                                 const VkAllocationCallbacks*       pAllocator,
+                                 VkImage*                           pImage,
+                                 VkDeviceMemory*                    pMemory)
+{
+    VkExtent3D extent;
+
+    cvkInitExtent3D(&extent, extent2D.width, extent2D.height, 1);
+    cvkImportWin32HandleImage(physicalDevice,
+                              device,
+                              pImageNext,
+                              flags,
+                              VK_IMAGE_TYPE_2D,
+                              format,
+                              extent,
+                              mipLevels,
+                              arrayLayers,
+                              samples,
+                              tiling,
+                              usage,
+                              sharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              initialLayout,
+                              handleType,
+                              handle,
+                              name,
+                              allocationSize,
+                              requiredProperties,
+                              pMemoryNext,
+                              pAllocator,
+                              pImage,
+                              pMemory);
+}
+
+/**
+ * \brief Reports whether a D3D11 texture can be imported as an optimal 2D Vulkan image.
+ *
+ * \par Profile: vulkan
+ *
+ * \param[in] physicalDevice   Physical device to query
+ * \param[in] format           Vulkan image format
+ * \param[in] usage            Vulkan image usage
+ *
+ * \retval VK_TRUE  The image description supports D3D11 texture import
+ * \retval VK_FALSE The image description does not support D3D11 texture import
+ */
+VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physicalDevice, VkFormat format, VkImageUsageFlags usage)
+{
+    VkBool32 dedicated_only;
+
+    return cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
+                                                          VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT,
+                                                          format,
+                                                          VK_IMAGE_TYPE_2D,
+                                                          VK_IMAGE_TILING_OPTIMAL,
+                                                          usage,
+                                                          0,
+                                                          NULL,
+                                                          &dedicated_only);
+}
+
+/**
+ * \brief Imports a shared D3D11 texture as a device-local 2D Vulkan image.
+ *
+ * \par Details:
+ *  Uses one mip level, one array layer, one sample, optimal tiling, exclusive sharing,
+ *  and an undefined initial layout. The handle remains owned by the caller.
+ *
+ * \param[in]  physicalDevice   Physical device the image is created for
+ * \param[in]  device           Logical device owning the image and memory
+ * \param[in]  format           Vulkan image format
+ * \param[in]  extent2D         Image width and height
+ * \param[in]  usage            Vulkan image usage
+ * \param[in]  handle           Shared D3D11 texture handle to import
+ * \param[out] pImage           Receives the created VkImage
+ * \param[out] pMemory          Receives the imported VkDeviceMemory
+ *
+ * \retval None
+ */
+void cvkImportD3D11Texture2D(VkPhysicalDevice physicalDevice, VkDevice device, VkFormat format, VkExtent2D extent2D, VkImageUsageFlags usage, HANDLE handle, VkImage* pImage, VkDeviceMemory* pMemory)
+{
+    cvkImportWin32HandleImage2D(physicalDevice,
+                                device,
+                                NULL,
+                                0,
+                                format,
+                                1,
+                                1,
+                                VK_SAMPLE_COUNT_1_BIT,
+                                VK_IMAGE_TILING_OPTIMAL,
+                                usage,
+                                VK_SHARING_MODE_EXCLUSIVE,
+                                0,
+                                NULL,
+                                VK_IMAGE_LAYOUT_UNDEFINED,
+                                extent2D,
+                                VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT,
+                                handle,
+                                NULL,
+                                0,
+                                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                NULL,
+                                NULL,
+                                pImage,
+                                pMemory);
+}
+
+/**
  * \brief Imports a Win32 memory handle as a new buffer.
  *
  * \par Details:

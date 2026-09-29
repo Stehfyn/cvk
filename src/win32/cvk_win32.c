@@ -1204,6 +1204,108 @@ extern CVK_FORCE_INLINE void cvkImportWin32HandleImage(VkPhysicalDevice         
     /* bind */
     cvkBindImageMemory(device, (*pImage), (*pMemory), VK_NO_OFFSET);
 }
+extern CVK_FORCE_INLINE void cvkImportWin32HandleImage2D(VkPhysicalDevice                   physicalDevice,
+                                                         VkDevice                           device,
+                                                         const void*                        pImageNext,
+                                                         VkImageCreateFlags                 flags,
+                                                         VkFormat                           format,
+                                                         uint32_t                           mipLevels,
+                                                         uint32_t                           arrayLayers,
+                                                         VkSampleCountFlagBits              samples,
+                                                         VkImageTiling                      tiling,
+                                                         VkImageUsageFlags                  usage,
+                                                         VkSharingMode                      sharingMode,
+                                                         uint32_t                           queueFamilyIndexCount,
+                                                         const uint32_t*                    pQueueFamilyIndices,
+                                                         VkImageLayout                      initialLayout,
+                                                         VkExtent2D                         extent2D,
+                                                         VkExternalMemoryHandleTypeFlagBits handleType,
+                                                         HANDLE                             handle,
+                                                         LPCWSTR                            name,
+                                                         VkDeviceSize                       allocationSize,
+                                                         VkMemoryPropertyFlags              requiredProperties,
+                                                         const void*                        pMemoryNext,
+                                                         const VkAllocationCallbacks*       pAllocator,
+                                                         VkImage*                           pImage,
+                                                         VkDeviceMemory*                    pMemory)
+{
+    VkExtent3D extent;
+
+    cvkInitExtent3D(&extent, extent2D.width, extent2D.height, 1);
+    cvkImportWin32HandleImage(physicalDevice,
+                              device,
+                              pImageNext,
+                              flags,
+                              VK_IMAGE_TYPE_2D,
+                              format,
+                              extent,
+                              mipLevels,
+                              arrayLayers,
+                              samples,
+                              tiling,
+                              usage,
+                              sharingMode,
+                              queueFamilyIndexCount,
+                              pQueueFamilyIndices,
+                              initialLayout,
+                              handleType,
+                              handle,
+                              name,
+                              allocationSize,
+                              requiredProperties,
+                              pMemoryNext,
+                              pAllocator,
+                              pImage,
+                              pMemory);
+}
+extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceD3D11Texture2DImportSupport(VkPhysicalDevice physicalDevice, VkFormat format, VkImageUsageFlags usage)
+{
+    VkBool32 dedicated_only;
+
+    return cvkGetPhysicalDeviceExternalImageImportSupport(physicalDevice,
+                                                          VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT,
+                                                          format,
+                                                          VK_IMAGE_TYPE_2D,
+                                                          VK_IMAGE_TILING_OPTIMAL,
+                                                          usage,
+                                                          0,
+                                                          NULL,
+                                                          &dedicated_only);
+}
+extern CVK_FORCE_INLINE void cvkImportD3D11Texture2D(VkPhysicalDevice  physicalDevice,
+                                                     VkDevice          device,
+                                                     VkFormat          format,
+                                                     VkExtent2D        extent2D,
+                                                     VkImageUsageFlags usage,
+                                                     HANDLE            handle,
+                                                     VkImage*          pImage,
+                                                     VkDeviceMemory*   pMemory)
+{
+    cvkImportWin32HandleImage2D(physicalDevice,
+                                device,
+                                NULL,
+                                0,
+                                format,
+                                1,
+                                1,
+                                VK_SAMPLE_COUNT_1_BIT,
+                                VK_IMAGE_TILING_OPTIMAL,
+                                usage,
+                                VK_SHARING_MODE_EXCLUSIVE,
+                                0,
+                                NULL,
+                                VK_IMAGE_LAYOUT_UNDEFINED,
+                                extent2D,
+                                VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT,
+                                handle,
+                                NULL,
+                                0,
+                                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                NULL,
+                                NULL,
+                                pImage,
+                                pMemory);
+}
 extern CVK_FORCE_INLINE void cvkImportWin32HandleBuffer(VkPhysicalDevice                   physicalDevice,
                                                         VkDevice                           device,
                                                         const void*                        pBufferNext,

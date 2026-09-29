@@ -15,9 +15,20 @@ foreach(shader fullscreen.vert nv12.frag bicubic.frag)
     list(APPEND shader_headers "${output}")
 endforeach()
 
-add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers})
+set(pipeline_headers)
+foreach(pipeline nv12 bicubic)
+    set(output "${CMAKE_CURRENT_BINARY_DIR}/${pipeline}_pipeline_json.h")
+    add_custom_command(OUTPUT "${output}"
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/embed_text.py"
+                "${CMAKE_CURRENT_SOURCE_DIR}/shaders/${pipeline}.pipeline.json"
+                "${output}" "${pipeline}_pipeline_json"
+        DEPENDS "shaders/${pipeline}.pipeline.json" embed_text.py VERBATIM)
+    list(APPEND pipeline_headers "${output}")
+endforeach()
+
+add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers} ${pipeline_headers})
 if(MSVC)
-    target_compile_options(immersive-video PRIVATE /GS- /Zl)
+    target_compile_options(immersive-video PRIVATE /GS- /Zl /wd4711)
 endif()
 target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

@@ -812,6 +812,31 @@ class Generator:
         self.sigs[name] = (ret, params)
         self.place(plats, doc + sig + ";", sig + "\n{\n" + indent("\n".join(align_assignments(body))) + "\n}")
 
+    def emit_safe_destroy(self, cmd: Command) -> None:
+        """Guard destroy and single-allocation free wrappers before forwarding."""
+        if not (cmd.name.startswith("vkDestroy") or cmd.name == "vkFreeMemory"):
+            return
+        base_name = self.cmd_name(cmd)
+        if base_name not in self.sigs:
+            return
+        ret, params = self.sigs[base_name]
+        if ret != "void" or len(params) not in (2, 3) or params[-1].name != "pAllocator":
+            self.errors.append(f"cannot generate a safe destroy wrapper for {cmd.name}")
+            return
+        handle = params[-2]
+        if not handle.text.startswith("Vk") or "*" in handle.text:
+            self.errors.append(f"cannot identify the destroyed handle for {cmd.name}")
+            return
+        name = self.register(base_name + "Safe", cmd.name + ":safe")
+        verb = "Frees" if cmd.name == "vkFreeMemory" else "Destroys"
+        doc = self.doc_block(f"{verb} the {handle.name} when it is not VK_NULL_HANDLE.", params, ret, None, [])
+        sig = self.signature(ret, name, params)
+        args = ", ".join(p.name for p in params)
+        body = f"if (VK_NULL_HANDLE != {handle.name})\n{{\n    {base_name}({args});\n}}"
+        self.sigs[name] = (ret, params)
+        self.place(self.platforms_for(cmd.extensions, cmd.core_version),
+                   doc + sig + ";", sig + "\n{\n" + indent(body) + "\n}")
+
     def param_doc(self, p: Param, role: str) -> str:
         if p.name == "pAllocator":
             return "Optional allocation callbacks, or NULL"
@@ -2098,7 +2123,7 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             includes = self.json_source_includes if is_json else self.PLATFORM_SOURCE_INCLUDES
             if inc not in includes.setdefault(plat, []):
                 includes[plat].append(inc)
-        for m in re.finditer(r"(/\*\*(?=\s).*?\*/\s*)?^(\w[\w\s\*]*?\s+(cvk\w+)\s*\((.*?)\))\s*\{", text, flags=re.S | re.M):
+        for m in re.finditer(r"(/\*\*(?=\s)(?:(?!\*/).)*\*/\s*)?^(\w[\w\s\*]*?\s+(cvk\w+)\s*\((.*?)\))\s*\{", text, flags=re.S | re.M):
             doc, sig, name, plist = m.group(1) or "", m.group(2), m.group(3), m.group(4)
             depth, i, quote = 1, m.end(), ""
             while i < len(text) and depth:
@@ -2370,6 +2395,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             self.emit_json_parsers()
         for cmd in self.cmds:
             self.emit_tier0(cmd)
+        for cmd in self.cmds:
+            self.emit_safe_destroy(cmd)
         for cmd in self.cmds:
             ip = self.flip_param(cmd)
             if ip is not None:

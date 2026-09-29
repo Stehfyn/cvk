@@ -436,6 +436,20 @@ extern CVK_FORCE_INLINE void cvkGetExecutionGraphPipelineScratchSizeAMDX(VkDevic
 
     (*pSizeInfo) = size_info;
 }
+extern CVK_FORCE_INLINE void cvkDestroyCudaFunctionSafeNV(VkDevice device, VkCudaFunctionNV function, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != function)
+    {
+        cvkDestroyCudaFunctionNV(device, function, pAllocator);
+    }
+}
+extern CVK_FORCE_INLINE void cvkDestroyCudaModuleSafeNV(VkDevice device, VkCudaModuleNV module, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != module)
+    {
+        cvkDestroyCudaModuleNV(device, module, pAllocator);
+    }
+}
 extern CVK_FORCE_INLINE VkResult cvkCreateExecutionGraphPipelineInfoAMDX(VkDevice                               device,
                                                                          VkPipelineCache                        pipelineCache,
                                                                          const void*                            pNext,

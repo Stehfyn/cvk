@@ -7158,6 +7158,139 @@ scvkWaitSemaphores(VkDevice device, const void* pNext, VkSemaphoreWaitFlags flag
 
     return result;
 }
+extern SCVK_FORCE_INLINE void scvkDestroyBufferSafe(VkDevice device, VkBuffer buffer, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != buffer)
+    {
+        scvkDestroyBuffer(device, buffer, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyBufferViewSafe(VkDevice device, VkBufferView bufferView, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != bufferView)
+    {
+        scvkDestroyBufferView(device, bufferView, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyDebugUtilsMessengerSafe(VkInstance instance, VkDebugUtilsMessengerEXT messenger, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != messenger)
+    {
+        scvkDestroyDebugUtilsMessenger(instance, messenger, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyDescriptorSetLayoutSafe(VkDevice device, VkDescriptorSetLayout descriptorSetLayout, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != descriptorSetLayout)
+    {
+        scvkDestroyDescriptorSetLayout(device, descriptorSetLayout, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyDeviceSafe(VkDevice device, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != device)
+    {
+        scvkDestroyDevice(device, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyEventSafe(VkDevice device, VkEvent event, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != event)
+    {
+        scvkDestroyEvent(device, event, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyFenceSafe(VkDevice device, VkFence fence, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != fence)
+    {
+        scvkDestroyFence(device, fence, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyFramebufferSafe(VkDevice device, VkFramebuffer framebuffer, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != framebuffer)
+    {
+        scvkDestroyFramebuffer(device, framebuffer, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyImageSafe(VkDevice device, VkImage image, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != image)
+    {
+        scvkDestroyImage(device, image, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyImageViewSafe(VkDevice device, VkImageView imageView, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != imageView)
+    {
+        scvkDestroyImageView(device, imageView, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyInstanceSafe(VkInstance instance, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != instance)
+    {
+        scvkDestroyInstance(instance, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyPipelineSafe(VkDevice device, VkPipeline pipeline, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipeline)
+    {
+        scvkDestroyPipeline(device, pipeline, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyPipelineCacheSafe(VkDevice device, VkPipelineCache pipelineCache, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipelineCache)
+    {
+        scvkDestroyPipelineCache(device, pipelineCache, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyPipelineLayoutSafe(VkDevice device, VkPipelineLayout pipelineLayout, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != pipelineLayout)
+    {
+        scvkDestroyPipelineLayout(device, pipelineLayout, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroyRenderPassSafe(VkDevice device, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != renderPass)
+    {
+        scvkDestroyRenderPass(device, renderPass, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroySamplerSafe(VkDevice device, VkSampler sampler, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != sampler)
+    {
+        scvkDestroySampler(device, sampler, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroySamplerYcbcrConversionSafe(VkDevice device, VkSamplerYcbcrConversion ycbcrConversion, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != ycbcrConversion)
+    {
+        scvkDestroySamplerYcbcrConversion(device, ycbcrConversion, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroySemaphoreSafe(VkDevice device, VkSemaphore semaphore, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != semaphore)
+    {
+        scvkDestroySemaphore(device, semaphore, pAllocator);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkDestroySurfaceSafe(VkInstance instance, VkSurfaceKHR surface, const VkAllocationCallbacks* pAllocator)
+{
+    if (VK_NULL_HANDLE != surface)
+    {
+        scvkDestroySurface(instance, surface, pAllocator);
+    }
+}
 extern SCVK_FORCE_INLINE void scvkGetBufferMemoryRequirementsInfo2(VkDevice device, const void* pInfoNext, VkBuffer buffer, void* pMemoryRequirementsNext, VkMemoryRequirements2* pMemoryRequirements)
 {
     VkBufferMemoryRequirementsInfo2 info =
@@ -12725,6 +12858,42 @@ extern SCVK_FORCE_INLINE void scvkSetupScratchBuffer(VkPhysicalDevice           
                                  pAllocator,
                                  pBuffer,
                                  pMemory);
+}
+extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
+                                                               VkRenderPass     renderPass,
+                                                               VkFramebuffer    framebuffer,
+                                                               VkExtent2D       extent,
+                                                               VkPipeline       pipeline,
+                                                               VkPipelineLayout layout,
+                                                               VkDescriptorSet  descriptorSet,
+                                                               uint32_t         vertexCount)
+{
+    VkRect2D area = {{0, 0}, extent};
+
+    scvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
+    scvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    scvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    scvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
+    scvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+    scvkCmdEndRenderPass(commandBuffer);
+}
+extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
+                                                                                VkRenderPass     renderPass,
+                                                                                VkFramebuffer    framebuffer,
+                                                                                VkExtent2D       extent,
+                                                                                VkPipeline       pipeline,
+                                                                                VkPipelineLayout layout,
+                                                                                VkDescriptorSet  descriptorSet,
+                                                                                uint32_t         vertexCount,
+                                                                                uint32_t         pushConstantSize,
+                                                                                const void*      pPushConstants)
+{
+    VkRect2D area = {{0, 0}, extent};
+
+    scvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
+    scvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    scvkCmdDrawGraphicsVertices(commandBuffer, pipeline, layout, 0, 1, &descriptorSet, 0, NULL, vertexCount, 1, 0, 0, 0, pushConstantSize, pPushConstants);
+    scvkCmdEndRenderPass(commandBuffer);
 }
 extern SCVK_FORCE_INLINE VKAPI_ATTR VkBool32 VKAPI_CALL scvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,
                                                                                    VkDebugUtilsMessageTypeFlagsEXT             messageTypes,

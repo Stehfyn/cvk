@@ -2,8 +2,10 @@
 ** lookups the generated parsers (cvkParseJson*) use. Source of truth kept with the generator
 ** and folded into the generated cvk_json.h/cvk_json.c. Composed from the generated surface only. */
 
-#include <stdlib.h>
-#include <ctype.h>
+static CVK_FORCE_INLINE VkBool32 cvkIsJsonTextSpace(char value)
+{
+    return (' ' == value) || ('\t' == value) || ('\n' == value) || ('\r' == value) || ('\v' == value) || ('\f' == value);
+}
 
 /**
  * \brief Advances over JSON whitespace.
@@ -466,7 +468,7 @@ uint64_t cvkParseUint64Text(const char* pText)
     value = 0;
     base = CVK_JSON_DECIMAL_BASE;
     negative = VK_FALSE;
-    for (; isspace((unsigned char)*pText);)
+    for (; cvkIsJsonTextSpace(*pText);)
     {
         ++pText;
     }
@@ -556,7 +558,7 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     (void)memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     text = buffer;
-    for (; isspace((unsigned char)*text);)
+    for (; cvkIsJsonTextSpace(*text);)
     {
         ++text;
     }
@@ -577,6 +579,117 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     return magnitude > (uint64_t)INT64_MAX ? INT64_MAX : (int64_t)magnitude;
 }
 
+static CVK_FORCE_INLINE void cvkAppendJsonDoubleDigit(char digit, VkBool32 fraction, double* pNumber, uint32_t* pSignificant, int32_t* pExponent)
+{
+    enum
+    {
+        CVK_JSON_DOUBLE_SIGNIFICANT_DIGITS = 17
+    };
+
+    if (fraction && (*pSignificant < CVK_JSON_DOUBLE_SIGNIFICANT_DIGITS))
+    {
+        --*pExponent;
+    }
+    if ((0 == *pSignificant) && ('0' == digit))
+    {
+        return;
+    }
+    if (*pSignificant < CVK_JSON_DOUBLE_SIGNIFICANT_DIGITS)
+    {
+        *pNumber = (*pNumber * (double)CVK_JSON_DECIMAL_BASE) + ((double)digit - (double)'0');
+        ++*pSignificant;
+    }
+    else if (!fraction)
+    {
+        ++*pExponent;
+    }
+}
+
+static CVK_FORCE_INLINE const char* cvkParseJsonDoubleMantissa(const char* text, double* pNumber, int32_t* pExponent)
+{
+    uint32_t significant = 0;
+
+    for (; ('0' <= *text) && (*text <= '9'); ++text)
+    {
+        cvkAppendJsonDoubleDigit(*text, VK_FALSE, pNumber, &significant, pExponent);
+    }
+    if ('.' == *text)
+    {
+        ++text;
+        for (; ('0' <= *text) && (*text <= '9'); ++text)
+        {
+            cvkAppendJsonDoubleDigit(*text, VK_TRUE, pNumber, &significant, pExponent);
+        }
+    }
+    return text;
+}
+
+static CVK_FORCE_INLINE int32_t cvkParseJsonDoubleExponent(const char* text)
+{
+    int32_t exponent = 0;
+    int32_t sign = 1;
+    enum
+    {
+        CVK_JSON_MAX_DECIMAL_EXPONENT = 400
+    };
+
+    if (('e' != *text) && ('E' != *text))
+    {
+        return 0;
+    }
+    ++text;
+    if (('-' == *text) || ('+' == *text))
+    {
+        sign = ('-' == *text) ? -1 : 1;
+        ++text;
+    }
+    for (; ('0' <= *text) && (*text <= '9'); ++text)
+    {
+        if (exponent < CVK_JSON_MAX_DECIMAL_EXPONENT)
+        {
+            exponent = (exponent * CVK_JSON_DECIMAL_BASE) + (*text - '0');
+        }
+    }
+    return sign * exponent;
+}
+
+static CVK_FORCE_INLINE double cvkScaleJsonDouble(double value, int32_t exponent)
+{
+    int32_t index;
+    enum
+    {
+        CVK_JSON_MAX_DECIMAL_EXPONENT = 400
+    };
+
+    if (0.0 == value)
+    {
+        return value;
+    }
+    if (exponent > CVK_JSON_MAX_DECIMAL_EXPONENT)
+    {
+        exponent = CVK_JSON_MAX_DECIMAL_EXPONENT;
+    }
+    if (exponent < -CVK_JSON_MAX_DECIMAL_EXPONENT)
+    {
+        exponent = -CVK_JSON_MAX_DECIMAL_EXPONENT;
+    }
+    if (0 < exponent)
+    {
+        for (index = 0; index < exponent; ++index)
+        {
+            value *= (double)CVK_JSON_DECIMAL_BASE;
+        }
+    }
+    else
+    {
+        for (index = 0; index > exponent; --index)
+        {
+            value /= (double)CVK_JSON_DECIMAL_BASE;
+        }
+    }
+    return value;
+}
+
 /**
  * \brief Reads a number as a double.
  *
@@ -587,6 +700,10 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
 double cvkGetJsonDouble(const cvkJsonValue* pValue)
 {
     char buffer[CVK_JSON_REAL_TEXT_CAPACITY];
+    const char* text;
+    double value;
+    int32_t exponent;
+    VkBool32 negative;
 
     if ((NULL == pValue) || ((CVK_JSON_NUMBER != pValue->kind) && (CVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
     {
@@ -594,7 +711,22 @@ double cvkGetJsonDouble(const cvkJsonValue* pValue)
     }
     (void)memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
-    return strtod(buffer, NULL);
+    text = buffer;
+    for (; cvkIsJsonTextSpace(*text);)
+    {
+        ++text;
+    }
+    negative = ('-' == *text) ? VK_TRUE : VK_FALSE;
+    if (('-' == *text) || ('+' == *text))
+    {
+        ++text;
+    }
+    value = 0.0;
+    exponent = 0;
+    text = cvkParseJsonDoubleMantissa(text, &value, &exponent);
+    exponent += cvkParseJsonDoubleExponent(text);
+    value = cvkScaleJsonDouble(value, exponent);
+    return negative ? -value : value;
 }
 
 /**
