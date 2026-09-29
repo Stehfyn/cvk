@@ -11,7 +11,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_fuchsia.h>
 
-void cvkInitBufferCollectionBufferCreateInfoFUCHSIA(VkBufferCollectionBufferCreateInfoFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
+extern CVK_FORCE_INLINE void cvkInitBufferCollectionBufferCreateInfoFUCHSIA(VkBufferCollectionBufferCreateInfoFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
 {
     (*pInfo) = (VkBufferCollectionBufferCreateInfoFUCHSIA)
     {
@@ -21,13 +21,13 @@ void cvkInitBufferCollectionBufferCreateInfoFUCHSIA(VkBufferCollectionBufferCrea
         .index      = index
     };
 }
-void cvkInitBufferCollectionConstraintsInfoFUCHSIA(VkBufferCollectionConstraintsInfoFUCHSIA* pInfo,
-                                                   const void*                               pNext,
-                                                   uint32_t                                  minBufferCount,
-                                                   uint32_t                                  maxBufferCount,
-                                                   uint32_t                                  minBufferCountForCamping,
-                                                   uint32_t                                  minBufferCountForDedicatedSlack,
-                                                   uint32_t                                  minBufferCountForSharedSlack)
+extern CVK_FORCE_INLINE void cvkInitBufferCollectionConstraintsInfoFUCHSIA(VkBufferCollectionConstraintsInfoFUCHSIA* pInfo,
+                                                                           const void*                               pNext,
+                                                                           uint32_t                                  minBufferCount,
+                                                                           uint32_t                                  maxBufferCount,
+                                                                           uint32_t                                  minBufferCountForCamping,
+                                                                           uint32_t                                  minBufferCountForDedicatedSlack,
+                                                                           uint32_t                                  minBufferCountForSharedSlack)
 {
     (*pInfo) = (VkBufferCollectionConstraintsInfoFUCHSIA)
     {
@@ -40,7 +40,7 @@ void cvkInitBufferCollectionConstraintsInfoFUCHSIA(VkBufferCollectionConstraints
         .minBufferCountForSharedSlack    = minBufferCountForSharedSlack
     };
 }
-void cvkInitBufferCollectionCreateInfoFUCHSIA(VkBufferCollectionCreateInfoFUCHSIA* pInfo, const void* pNext, zx_handle_t collectionToken)
+extern CVK_FORCE_INLINE void cvkInitBufferCollectionCreateInfoFUCHSIA(VkBufferCollectionCreateInfoFUCHSIA* pInfo, const void* pNext, zx_handle_t collectionToken)
 {
     (*pInfo) = (VkBufferCollectionCreateInfoFUCHSIA)
     {
@@ -49,7 +49,7 @@ void cvkInitBufferCollectionCreateInfoFUCHSIA(VkBufferCollectionCreateInfoFUCHSI
         .collectionToken = collectionToken
     };
 }
-void cvkInitBufferCollectionImageCreateInfoFUCHSIA(VkBufferCollectionImageCreateInfoFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
+extern CVK_FORCE_INLINE void cvkInitBufferCollectionImageCreateInfoFUCHSIA(VkBufferCollectionImageCreateInfoFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
 {
     (*pInfo) = (VkBufferCollectionImageCreateInfoFUCHSIA)
     {
@@ -59,16 +59,16 @@ void cvkInitBufferCollectionImageCreateInfoFUCHSIA(VkBufferCollectionImageCreate
         .index      = index
     };
 }
-void cvkInitBufferCollectionPropertiesFUCHSIA(VkBufferCollectionPropertiesFUCHSIA* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitBufferCollectionPropertiesFUCHSIA(VkBufferCollectionPropertiesFUCHSIA* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_BUFFER_COLLECTION_PROPERTIES_FUCHSIA;
     pInfo->pNext = pNext;
 }
-void cvkInitBufferConstraintsInfoFUCHSIA(VkBufferConstraintsInfoFUCHSIA*          pInfo,
-                                         const void*                              pNext,
-                                         VkBufferCreateInfo                       createInfo,
-                                         VkFormatFeatureFlags                     requiredFormatFeatures,
-                                         VkBufferCollectionConstraintsInfoFUCHSIA bufferCollectionConstraints)
+extern CVK_FORCE_INLINE void cvkInitBufferConstraintsInfoFUCHSIA(VkBufferConstraintsInfoFUCHSIA*          pInfo,
+                                                                 const void*                              pNext,
+                                                                 VkBufferCreateInfo                       createInfo,
+                                                                 VkFormatFeatureFlags                     requiredFormatFeatures,
+                                                                 VkBufferCollectionConstraintsInfoFUCHSIA bufferCollectionConstraints)
 {
     (*pInfo) = (VkBufferConstraintsInfoFUCHSIA)
     {
@@ -79,12 +79,12 @@ void cvkInitBufferConstraintsInfoFUCHSIA(VkBufferConstraintsInfoFUCHSIA*        
         .bufferCollectionConstraints = bufferCollectionConstraints
     };
 }
-void cvkInitImageConstraintsInfoFUCHSIA(VkImageConstraintsInfoFUCHSIA*             pInfo,
-                                        const void*                                pNext,
-                                        uint32_t                                   formatConstraintsCount,
-                                        const VkImageFormatConstraintsInfoFUCHSIA* pFormatConstraints,
-                                        VkBufferCollectionConstraintsInfoFUCHSIA   bufferCollectionConstraints,
-                                        VkImageConstraintsInfoFlagsFUCHSIA         flags)
+extern CVK_FORCE_INLINE void cvkInitImageConstraintsInfoFUCHSIA(VkImageConstraintsInfoFUCHSIA*             pInfo,
+                                                                const void*                                pNext,
+                                                                uint32_t                                   formatConstraintsCount,
+                                                                const VkImageFormatConstraintsInfoFUCHSIA* pFormatConstraints,
+                                                                VkBufferCollectionConstraintsInfoFUCHSIA   bufferCollectionConstraints,
+                                                                VkImageConstraintsInfoFlagsFUCHSIA         flags)
 {
     (*pInfo) = (VkImageConstraintsInfoFUCHSIA)
     {
@@ -96,14 +96,14 @@ void cvkInitImageConstraintsInfoFUCHSIA(VkImageConstraintsInfoFUCHSIA*          
         .flags                       = flags
     };
 }
-void cvkInitImageFormatConstraintsInfoFUCHSIA(VkImageFormatConstraintsInfoFUCHSIA* pInfo,
-                                              const void*                          pNext,
-                                              VkImageCreateInfo                    imageCreateInfo,
-                                              VkFormatFeatureFlags                 requiredFormatFeatures,
-                                              VkImageFormatConstraintsFlagsFUCHSIA flags,
-                                              uint64_t                             sysmemPixelFormat,
-                                              uint32_t                             colorSpaceCount,
-                                              const VkSysmemColorSpaceFUCHSIA*     pColorSpaces)
+extern CVK_FORCE_INLINE void cvkInitImageFormatConstraintsInfoFUCHSIA(VkImageFormatConstraintsInfoFUCHSIA* pInfo,
+                                                                      const void*                          pNext,
+                                                                      VkImageCreateInfo                    imageCreateInfo,
+                                                                      VkFormatFeatureFlags                 requiredFormatFeatures,
+                                                                      VkImageFormatConstraintsFlagsFUCHSIA flags,
+                                                                      uint64_t                             sysmemPixelFormat,
+                                                                      uint32_t                             colorSpaceCount,
+                                                                      const VkSysmemColorSpaceFUCHSIA*     pColorSpaces)
 {
     (*pInfo) = (VkImageFormatConstraintsInfoFUCHSIA)
     {
@@ -117,7 +117,10 @@ void cvkInitImageFormatConstraintsInfoFUCHSIA(VkImageFormatConstraintsInfoFUCHSI
         .pColorSpaces           = pColorSpaces
     };
 }
-void cvkInitImagePipeSurfaceCreateInfoFUCHSIA(VkImagePipeSurfaceCreateInfoFUCHSIA* pInfo, const void* pNext, VkImagePipeSurfaceCreateFlagsFUCHSIA flags, zx_handle_t imagePipeHandle)
+extern CVK_FORCE_INLINE void cvkInitImagePipeSurfaceCreateInfoFUCHSIA(VkImagePipeSurfaceCreateInfoFUCHSIA* pInfo,
+                                                                      const void*                          pNext,
+                                                                      VkImagePipeSurfaceCreateFlagsFUCHSIA flags,
+                                                                      zx_handle_t                          imagePipeHandle)
 {
     (*pInfo) = (VkImagePipeSurfaceCreateInfoFUCHSIA)
     {
@@ -127,7 +130,7 @@ void cvkInitImagePipeSurfaceCreateInfoFUCHSIA(VkImagePipeSurfaceCreateInfoFUCHSI
         .imagePipeHandle = imagePipeHandle
     };
 }
-void cvkInitImportMemoryBufferCollectionFUCHSIA(VkImportMemoryBufferCollectionFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
+extern CVK_FORCE_INLINE void cvkInitImportMemoryBufferCollectionFUCHSIA(VkImportMemoryBufferCollectionFUCHSIA* pInfo, const void* pNext, VkBufferCollectionFUCHSIA collection, uint32_t index)
 {
     (*pInfo) = (VkImportMemoryBufferCollectionFUCHSIA)
     {
@@ -137,7 +140,10 @@ void cvkInitImportMemoryBufferCollectionFUCHSIA(VkImportMemoryBufferCollectionFU
         .index      = index
     };
 }
-void cvkInitImportMemoryZirconHandleInfoFUCHSIA(VkImportMemoryZirconHandleInfoFUCHSIA* pInfo, const void* pNext, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t handle)
+extern CVK_FORCE_INLINE void cvkInitImportMemoryZirconHandleInfoFUCHSIA(VkImportMemoryZirconHandleInfoFUCHSIA* pInfo,
+                                                                        const void*                            pNext,
+                                                                        VkExternalMemoryHandleTypeFlagBits     handleType,
+                                                                        zx_handle_t                            handle)
 {
     (*pInfo) = (VkImportMemoryZirconHandleInfoFUCHSIA)
     {
@@ -147,12 +153,12 @@ void cvkInitImportMemoryZirconHandleInfoFUCHSIA(VkImportMemoryZirconHandleInfoFU
         .handle     = handle
     };
 }
-void cvkInitImportSemaphoreZirconHandleInfoFUCHSIA(VkImportSemaphoreZirconHandleInfoFUCHSIA* pInfo,
-                                                   const void*                               pNext,
-                                                   VkSemaphore                               semaphore,
-                                                   VkSemaphoreImportFlags                    flags,
-                                                   VkExternalSemaphoreHandleTypeFlagBits     handleType,
-                                                   zx_handle_t                               zirconHandle)
+extern CVK_FORCE_INLINE void cvkInitImportSemaphoreZirconHandleInfoFUCHSIA(VkImportSemaphoreZirconHandleInfoFUCHSIA* pInfo,
+                                                                           const void*                               pNext,
+                                                                           VkSemaphore                               semaphore,
+                                                                           VkSemaphoreImportFlags                    flags,
+                                                                           VkExternalSemaphoreHandleTypeFlagBits     handleType,
+                                                                           zx_handle_t                               zirconHandle)
 {
     (*pInfo) = (VkImportSemaphoreZirconHandleInfoFUCHSIA)
     {
@@ -164,7 +170,7 @@ void cvkInitImportSemaphoreZirconHandleInfoFUCHSIA(VkImportSemaphoreZirconHandle
         .zirconHandle = zirconHandle
     };
 }
-void cvkInitMemoryGetZirconHandleInfoFUCHSIA(VkMemoryGetZirconHandleInfoFUCHSIA* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
+extern CVK_FORCE_INLINE void cvkInitMemoryGetZirconHandleInfoFUCHSIA(VkMemoryGetZirconHandleInfoFUCHSIA* pInfo, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType)
 {
     (*pInfo) = (VkMemoryGetZirconHandleInfoFUCHSIA)
     {
@@ -174,12 +180,15 @@ void cvkInitMemoryGetZirconHandleInfoFUCHSIA(VkMemoryGetZirconHandleInfoFUCHSIA*
         .handleType = handleType
     };
 }
-void cvkInitMemoryZirconHandlePropertiesFUCHSIA(VkMemoryZirconHandlePropertiesFUCHSIA* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitMemoryZirconHandlePropertiesFUCHSIA(VkMemoryZirconHandlePropertiesFUCHSIA* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_MEMORY_ZIRCON_HANDLE_PROPERTIES_FUCHSIA;
     pInfo->pNext = pNext;
 }
-void cvkInitSemaphoreGetZirconHandleInfoFUCHSIA(VkSemaphoreGetZirconHandleInfoFUCHSIA* pInfo, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType)
+extern CVK_FORCE_INLINE void cvkInitSemaphoreGetZirconHandleInfoFUCHSIA(VkSemaphoreGetZirconHandleInfoFUCHSIA* pInfo,
+                                                                        const void*                            pNext,
+                                                                        VkSemaphore                            semaphore,
+                                                                        VkExternalSemaphoreHandleTypeFlagBits  handleType)
 {
     (*pInfo) = (VkSemaphoreGetZirconHandleInfoFUCHSIA)
     {
@@ -189,7 +198,7 @@ void cvkInitSemaphoreGetZirconHandleInfoFUCHSIA(VkSemaphoreGetZirconHandleInfoFU
         .handleType = handleType
     };
 }
-void cvkInitSysmemColorSpaceFUCHSIA(VkSysmemColorSpaceFUCHSIA* pInfo, const void* pNext, uint32_t colorSpace)
+extern CVK_FORCE_INLINE void cvkInitSysmemColorSpaceFUCHSIA(VkSysmemColorSpaceFUCHSIA* pInfo, const void* pNext, uint32_t colorSpace)
 {
     (*pInfo) = (VkSysmemColorSpaceFUCHSIA)
     {
@@ -198,7 +207,11 @@ void cvkInitSysmemColorSpaceFUCHSIA(VkSysmemColorSpaceFUCHSIA* pInfo, const void
         .colorSpace = colorSpace
     };
 }
-void cvkCreateBufferCollectionFUCHSIA(VkDevice device, const void* pNext, zx_handle_t collectionToken, const VkAllocationCallbacks* pAllocator, VkBufferCollectionFUCHSIA* pCollection)
+extern CVK_FORCE_INLINE void cvkCreateBufferCollectionFUCHSIA(VkDevice                     device,
+                                                              const void*                  pNext,
+                                                              zx_handle_t                  collectionToken,
+                                                              const VkAllocationCallbacks* pAllocator,
+                                                              VkBufferCollectionFUCHSIA*   pCollection)
 {
     VkBufferCollectionCreateInfoFUCHSIA create_info =
     {
@@ -210,12 +223,12 @@ void cvkCreateBufferCollectionFUCHSIA(VkDevice device, const void* pNext, zx_han
     CVK_CHECK(vkCreateBufferCollectionFUCHSIA(device, &create_info, pAllocator, pCollection));
     CVK_ASSERT(VK_NULL_HANDLE != (*pCollection));
 }
-void cvkCreateImagePipeSurfaceFUCHSIA(VkInstance                           instance,
-                                      const void*                          pNext,
-                                      VkImagePipeSurfaceCreateFlagsFUCHSIA flags,
-                                      zx_handle_t                          imagePipeHandle,
-                                      const VkAllocationCallbacks*         pAllocator,
-                                      VkSurfaceKHR*                        pSurface)
+extern CVK_FORCE_INLINE void cvkCreateImagePipeSurfaceFUCHSIA(VkInstance                           instance,
+                                                              const void*                          pNext,
+                                                              VkImagePipeSurfaceCreateFlagsFUCHSIA flags,
+                                                              zx_handle_t                          imagePipeHandle,
+                                                              const VkAllocationCallbacks*         pAllocator,
+                                                              VkSurfaceKHR*                        pSurface)
 {
     VkImagePipeSurfaceCreateInfoFUCHSIA create_info =
     {
@@ -228,11 +241,11 @@ void cvkCreateImagePipeSurfaceFUCHSIA(VkInstance                           insta
     CVK_CHECK(vkCreateImagePipeSurfaceFUCHSIA(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-void cvkDestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkAllocationCallbacks* pAllocator)
+extern CVK_FORCE_INLINE void cvkDestroyBufferCollectionFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, const VkAllocationCallbacks* pAllocator)
 {
     vkDestroyBufferCollectionFUCHSIA(device, collection, pAllocator);
 }
-void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, void* pNext, VkBufferCollectionPropertiesFUCHSIA* pProperties)
+extern CVK_FORCE_INLINE void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollectionFUCHSIA collection, void* pNext, VkBufferCollectionPropertiesFUCHSIA* pProperties)
 {
     VkBufferCollectionPropertiesFUCHSIA properties =
     {
@@ -244,7 +257,7 @@ void cvkGetBufferCollectionPropertiesFUCHSIA(VkDevice device, VkBufferCollection
 
     (*pProperties) = properties;
 }
-void cvkGetMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t* pZirconHandle)
+extern CVK_FORCE_INLINE void cvkGetMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkDeviceMemory memory, VkExternalMemoryHandleTypeFlagBits handleType, zx_handle_t* pZirconHandle)
 {
     VkMemoryGetZirconHandleInfoFUCHSIA get_zircon_handle_info =
     {
@@ -256,11 +269,11 @@ void cvkGetMemoryZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkDevic
 
     CVK_CHECK(vkGetMemoryZirconHandleFUCHSIA(device, &get_zircon_handle_info, pZirconHandle));
 }
-void cvkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice                               device,
-                                               VkExternalMemoryHandleTypeFlagBits     handleType,
-                                               zx_handle_t                            zirconHandle,
-                                               void*                                  pNext,
-                                               VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties)
+extern CVK_FORCE_INLINE void cvkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice                               device,
+                                                                       VkExternalMemoryHandleTypeFlagBits     handleType,
+                                                                       zx_handle_t                            zirconHandle,
+                                                                       void*                                  pNext,
+                                                                       VkMemoryZirconHandlePropertiesFUCHSIA* pMemoryZirconHandleProperties)
 {
     VkMemoryZirconHandlePropertiesFUCHSIA memory_zircon_handle_properties =
     {
@@ -272,7 +285,7 @@ void cvkGetMemoryZirconHandlePropertiesFUCHSIA(VkDevice                         
 
     (*pMemoryZirconHandleProperties) = memory_zircon_handle_properties;
 }
-void cvkGetSemaphoreZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, zx_handle_t* pZirconHandle)
+extern CVK_FORCE_INLINE void cvkGetSemaphoreZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkSemaphore semaphore, VkExternalSemaphoreHandleTypeFlagBits handleType, zx_handle_t* pZirconHandle)
 {
     VkSemaphoreGetZirconHandleInfoFUCHSIA get_zircon_handle_info =
     {
@@ -284,12 +297,12 @@ void cvkGetSemaphoreZirconHandleFUCHSIA(VkDevice device, const void* pNext, VkSe
 
     CVK_CHECK(vkGetSemaphoreZirconHandleFUCHSIA(device, &get_zircon_handle_info, pZirconHandle));
 }
-void cvkImportSemaphoreZirconHandleFUCHSIA(VkDevice                              device,
-                                           const void*                           pNext,
-                                           VkSemaphore                           semaphore,
-                                           VkSemaphoreImportFlags                flags,
-                                           VkExternalSemaphoreHandleTypeFlagBits handleType,
-                                           zx_handle_t                           zirconHandle)
+extern CVK_FORCE_INLINE void cvkImportSemaphoreZirconHandleFUCHSIA(VkDevice                              device,
+                                                                   const void*                           pNext,
+                                                                   VkSemaphore                           semaphore,
+                                                                   VkSemaphoreImportFlags                flags,
+                                                                   VkExternalSemaphoreHandleTypeFlagBits handleType,
+                                                                   zx_handle_t                           zirconHandle)
 {
     VkImportSemaphoreZirconHandleInfoFUCHSIA import_semaphore_zircon_handle_info =
     {
@@ -303,12 +316,12 @@ void cvkImportSemaphoreZirconHandleFUCHSIA(VkDevice                             
 
     CVK_CHECK(vkImportSemaphoreZirconHandleFUCHSIA(device, &import_semaphore_zircon_handle_info));
 }
-VkResult cvkSetBufferCollectionBufferConstraintsFUCHSIA(VkDevice                                 device,
-                                                        VkBufferCollectionFUCHSIA                collection,
-                                                        const void*                              pNext,
-                                                        VkBufferCreateInfo                       createInfo,
-                                                        VkFormatFeatureFlags                     requiredFormatFeatures,
-                                                        VkBufferCollectionConstraintsInfoFUCHSIA bufferCollectionConstraints)
+extern CVK_FORCE_INLINE VkResult cvkSetBufferCollectionBufferConstraintsFUCHSIA(VkDevice                                 device,
+                                                                                VkBufferCollectionFUCHSIA                collection,
+                                                                                const void*                              pNext,
+                                                                                VkBufferCreateInfo                       createInfo,
+                                                                                VkFormatFeatureFlags                     requiredFormatFeatures,
+                                                                                VkBufferCollectionConstraintsInfoFUCHSIA bufferCollectionConstraints)
 {
     VkBufferConstraintsInfoFUCHSIA buffer_constraints_info;
     VkResult                       result;
@@ -323,17 +336,17 @@ VkResult cvkSetBufferCollectionBufferConstraintsFUCHSIA(VkDevice                
     };
 
     result = vkSetBufferCollectionBufferConstraintsFUCHSIA(device, collection, &buffer_constraints_info);
-    CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
+    CVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
 
     return result;
 }
-VkResult cvkSetBufferCollectionImageConstraintsFUCHSIA(VkDevice                                   device,
-                                                       VkBufferCollectionFUCHSIA                  collection,
-                                                       const void*                                pNext,
-                                                       uint32_t                                   formatConstraintsCount,
-                                                       const VkImageFormatConstraintsInfoFUCHSIA* pFormatConstraints,
-                                                       VkBufferCollectionConstraintsInfoFUCHSIA   bufferCollectionConstraints,
-                                                       VkImageConstraintsInfoFlagsFUCHSIA         flags)
+extern CVK_FORCE_INLINE VkResult cvkSetBufferCollectionImageConstraintsFUCHSIA(VkDevice                                   device,
+                                                                               VkBufferCollectionFUCHSIA                  collection,
+                                                                               const void*                                pNext,
+                                                                               uint32_t                                   formatConstraintsCount,
+                                                                               const VkImageFormatConstraintsInfoFUCHSIA* pFormatConstraints,
+                                                                               VkBufferCollectionConstraintsInfoFUCHSIA   bufferCollectionConstraints,
+                                                                               VkImageConstraintsInfoFlagsFUCHSIA         flags)
 {
     VkImageConstraintsInfoFUCHSIA image_constraints_info;
     VkResult                      result;
@@ -349,18 +362,18 @@ VkResult cvkSetBufferCollectionImageConstraintsFUCHSIA(VkDevice                 
     };
 
     result = vkSetBufferCollectionImageConstraintsFUCHSIA(device, collection, &image_constraints_info);
-    CVK_ASSERT((0 <= result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
+    CVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_FORMAT_NOT_SUPPORTED == result));
 
     return result;
 }
-void cvkAllocateImportMemoryBufferCollectionFUCHSIA(VkDevice                     device,
-                                                    const void*                  pNext,
-                                                    VkBufferCollectionFUCHSIA    collection,
-                                                    uint32_t                     index,
-                                                    VkDeviceSize                 allocationSize,
-                                                    uint32_t                     memoryTypeIndex,
-                                                    const VkAllocationCallbacks* pAllocator,
-                                                    VkDeviceMemory*              pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateImportMemoryBufferCollectionFUCHSIA(VkDevice                     device,
+                                                                            const void*                  pNext,
+                                                                            VkBufferCollectionFUCHSIA    collection,
+                                                                            uint32_t                     index,
+                                                                            VkDeviceSize                 allocationSize,
+                                                                            uint32_t                     memoryTypeIndex,
+                                                                            const VkAllocationCallbacks* pAllocator,
+                                                                            VkDeviceMemory*              pMemory)
 {
     VkImportMemoryBufferCollectionFUCHSIA import_memory_buffer_collection =
     {
@@ -372,14 +385,14 @@ void cvkAllocateImportMemoryBufferCollectionFUCHSIA(VkDevice                    
 
     cvkAllocateMemory(device, &import_memory_buffer_collection, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkAllocateImportMemoryZirconHandleFUCHSIA(VkDevice                           device,
-                                                const void*                        pNext,
-                                                VkExternalMemoryHandleTypeFlagBits handleType,
-                                                zx_handle_t                        handle,
-                                                VkDeviceSize                       allocationSize,
-                                                uint32_t                           memoryTypeIndex,
-                                                const VkAllocationCallbacks*       pAllocator,
-                                                VkDeviceMemory*                    pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateImportMemoryZirconHandleFUCHSIA(VkDevice                           device,
+                                                                        const void*                        pNext,
+                                                                        VkExternalMemoryHandleTypeFlagBits handleType,
+                                                                        zx_handle_t                        handle,
+                                                                        VkDeviceSize                       allocationSize,
+                                                                        uint32_t                           memoryTypeIndex,
+                                                                        const VkAllocationCallbacks*       pAllocator,
+                                                                        VkDeviceMemory*                    pMemory)
 {
     VkImportMemoryZirconHandleInfoFUCHSIA handle_info =
     {
@@ -391,18 +404,18 @@ void cvkAllocateImportMemoryZirconHandleFUCHSIA(VkDevice                        
 
     cvkAllocateMemory(device, &handle_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(VkDevice                     device,
-                                                    const void*                  pNext,
-                                                    VkBufferCollectionFUCHSIA    collection,
-                                                    uint32_t                     index,
-                                                    VkBufferCreateFlags          flags,
-                                                    VkDeviceSize                 size,
-                                                    VkBufferUsageFlags           usage,
-                                                    VkSharingMode                sharingMode,
-                                                    uint32_t                     queueFamilyIndexCount,
-                                                    const uint32_t*              pQueueFamilyIndices,
-                                                    const VkAllocationCallbacks* pAllocator,
-                                                    VkBuffer*                    pBuffer)
+extern CVK_FORCE_INLINE void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(VkDevice                     device,
+                                                                            const void*                  pNext,
+                                                                            VkBufferCollectionFUCHSIA    collection,
+                                                                            uint32_t                     index,
+                                                                            VkBufferCreateFlags          flags,
+                                                                            VkDeviceSize                 size,
+                                                                            VkBufferUsageFlags           usage,
+                                                                            VkSharingMode                sharingMode,
+                                                                            uint32_t                     queueFamilyIndexCount,
+                                                                            const uint32_t*              pQueueFamilyIndices,
+                                                                            const VkAllocationCallbacks* pAllocator,
+                                                                            VkBuffer*                    pBuffer)
 {
     VkBufferCollectionBufferCreateInfoFUCHSIA create_info =
     {
@@ -414,25 +427,25 @@ void cvkCreateBufferWithBufferCollectionInfoFUCHSIA(VkDevice                    
 
     cvkCreateBuffer(device, &create_info, flags, size, usage, sharingMode, queueFamilyIndexCount, pQueueFamilyIndices, pAllocator, pBuffer);
 }
-void cvkCreateImageWithBufferCollectionInfoFUCHSIA(VkDevice                     device,
-                                                   const void*                  pNext,
-                                                   VkBufferCollectionFUCHSIA    collection,
-                                                   uint32_t                     index,
-                                                   VkImageCreateFlags           flags,
-                                                   VkImageType                  imageType,
-                                                   VkFormat                     format,
-                                                   VkExtent3D                   extent,
-                                                   uint32_t                     mipLevels,
-                                                   uint32_t                     arrayLayers,
-                                                   VkSampleCountFlagBits        samples,
-                                                   VkImageTiling                tiling,
-                                                   VkImageUsageFlags            usage,
-                                                   VkSharingMode                sharingMode,
-                                                   uint32_t                     queueFamilyIndexCount,
-                                                   const uint32_t*              pQueueFamilyIndices,
-                                                   VkImageLayout                initialLayout,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkImage*                     pImage)
+extern CVK_FORCE_INLINE void cvkCreateImageWithBufferCollectionInfoFUCHSIA(VkDevice                     device,
+                                                                           const void*                  pNext,
+                                                                           VkBufferCollectionFUCHSIA    collection,
+                                                                           uint32_t                     index,
+                                                                           VkImageCreateFlags           flags,
+                                                                           VkImageType                  imageType,
+                                                                           VkFormat                     format,
+                                                                           VkExtent3D                   extent,
+                                                                           uint32_t                     mipLevels,
+                                                                           uint32_t                     arrayLayers,
+                                                                           VkSampleCountFlagBits        samples,
+                                                                           VkImageTiling                tiling,
+                                                                           VkImageUsageFlags            usage,
+                                                                           VkSharingMode                sharingMode,
+                                                                           uint32_t                     queueFamilyIndexCount,
+                                                                           const uint32_t*              pQueueFamilyIndices,
+                                                                           VkImageLayout                initialLayout,
+                                                                           const VkAllocationCallbacks* pAllocator,
+                                                                           VkImage*                     pImage)
 {
     VkBufferCollectionImageCreateInfoFUCHSIA create_info =
     {

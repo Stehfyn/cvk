@@ -215,9 +215,10 @@ int main(void)
     CHECK(memcmp(transform.matrix, matrix, sizeof(matrix)) == 0);
 '''
                 source = Path(tmp) / "builders.c"
+                extents = "\n".join(f"#define {name} ({value})" for name, value in gen.array_extents.items())
                 source.write_text(f"#include {gen.vk_header}\n#include <string.h>\n#include <stdio.h>\n"
                                   '#define CHECK(x) do { if (!(x)) { fprintf(stderr, "line %d: %s\\n", __LINE__, #x); return 1; } } while (0)\n'
-                                  + "\n".join(definitions) + "\nint main(void) {\n" + body + "return 0;\n}\n", encoding="utf-8")
+                                  + extents + "\n" + "\n".join(definitions) + "\nint main(void) {\n" + body + "return 0;\n}\n", encoding="utf-8")
                 exe = Path(tmp) / "builders.exe"
                 headers = ROOT / "external" / ("Vulkan-Headers" if profile == "cvk" else "VulkanSC-Headers") / "include"
                 subprocess.run(["clang", "-std=c99", "-Wall", "-Wextra", "-pedantic-errors", "-isystem", str(headers),

@@ -7,8 +7,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/* Compiler contracts used by the generated implementation. */
+#ifdef __clang__
+#define SCVK_NORETURN     __attribute__((noreturn))
+#define SCVK_FORCE_INLINE __attribute__((always_inline))
+#elif defined(_MSC_VER)
+#define SCVK_NORETURN     __declspec(noreturn)
+#define SCVK_FORCE_INLINE __forceinline
+#else
+#define SCVK_NORETURN     __attribute__((noreturn))
+#define SCVK_FORCE_INLINE __attribute__((always_inline)) inline
+#endif
+
 /* Fatal diagnostics. Override SCVK_ASSERT before including to change the policy. */
-void scvkFatal(const char* pExpression, const char* pFile, int line);
+SCVK_NORETURN void scvkFatal(const char* pExpression, const char* pFile, int line);
 void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile, int line);
 
 #ifndef SCVK_ASSERT

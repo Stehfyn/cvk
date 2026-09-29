@@ -19,6 +19,7 @@ def main():
     build = args.build.resolve()
     owned = sorted((build / "examples/CastDemo").rglob("*.vcxproj"))
     owned.append(build / "cvk.vcxproj")
+    owned.append(build / "cvk-platform.vcxproj")
     external = sorted((build / "external/cdx").rglob("*.vcxproj"))
     external.append(build / "external/volk/volk.vcxproj")
     external.append(build / "cva.vcxproj")
@@ -30,6 +31,32 @@ def main():
             label = path.relative_to(build) if path.is_relative_to(build) else path.relative_to(root)
             failures.append(f"{label}: {message}")
 
+    for removed in (root / "scripts/run_clang_tidy.py",
+                    root / "examples/CastDemo/BuildPolicy.targets"):
+        require(not removed.exists(), removed, "custom analysis runners and build hooks must remain absent")
+
+    core_project = build / "cvk.vcxproj"
+    platform_project = build / "cvk-platform.vcxproj"
+    if core_project.is_file() and platform_project.is_file():
+        core_tree = ET.parse(core_project)
+        platform_tree = ET.parse(platform_project)
+        def compiled_paths(tree):
+            return {Path(item.get("Include")) for item in tree.findall(".//m:ClCompile[@Include]", NS)}
+        core_sources = compiled_paths(core_tree)
+        platform_sources = compiled_paths(platform_tree)
+        references = {Path(item.get("Include"))
+                      for item in core_tree.findall(".//m:ProjectReference", NS)}
+        require(platform_project in references, core_project,
+                "platform compilation and analysis must precede core compilation and analysis")
+        require(core_sources == {root / "src/cvk.c", root / "src/cvk_json.c",
+                                 root / "src/cvk_json_enums.c", root / "src/cvk_json_structs.c"}, core_project,
+                "the core project must compile exactly the generated core pair")
+        require(bool(platform_sources) and not (core_sources & platform_sources), platform_project,
+                "platform sources must compile once, separately from the core pair")
+        objects = core_tree.findall(".//m:Object[@Include]", NS)
+        require(len(objects) == len(platform_sources), core_project,
+                "the cvk archive must retain every generated platform object")
+
     # Inspect the effective Clang configuration, including built-in defaults.
     policy = root / "examples/CastDemo/.clang-tidy"
     generated_policy = build / "examples/CastDemo/cvk-generated.clang-tidy"
@@ -37,20 +64,6 @@ def main():
         "readability-non-const-parameter",
         "bugprone-invalid-enum-default-initialization",
         "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
-        "misc-include-cleaner",
-        "readability-magic-numbers",
-        "misc-no-recursion",
-        "performance-no-int-to-ptr",
-        "clang-analyzer-optin.core.EnumCastOutOfRange",
-        "readability-redundant-casting",
-        "readability-function-cognitive-complexity",
-        "readability-redundant-parentheses",
-        "clang-analyzer-optin.performance.Padding",
-        "readability-function-size",
-        "readability-identifier-length",
-        "readability-avoid-nested-conditional-operator",
-        "readability-math-missing-parentheses",
-        "clang-analyzer-security.ArrayBound",
     )
     cache = (build / "CMakeCache.txt").read_text(encoding="utf-8")
     tidy = re.search(r"^CAST_CLANG_TIDY_EXECUTABLE:FILEPATH=(.+)$", cache, re.M)
@@ -65,6 +78,8 @@ def main():
                 "only the approved compiler-padding, documentation and raw C buffer exceptions are permitted")
         require("-bugprone-easily-swappable-parameters" in config, policy,
                 "the approved adjacent-parameter exception must be effective")
+        require("-clang-analyzer-optin.performance.Padding" in config, policy,
+                "the approved compiler-padding exception must cover the analyzer diagnostic")
         for option, expected in (("MinimumParameterNameLength", 1),
                                  ("MinimumVariableNameLength", 3),
                                  ("MinimumLoopCounterNameLength", 2)):
@@ -77,8 +92,7 @@ def main():
         extra = re.search(r"^ExtraArgs:\n((?:[ \t]+[^\n]*\n)+)", generated_config, re.M)
         options = re.findall(r"^[ \t]+-[ \t]+['\"]?([^'\"\s]+)", extra[1], re.M) if extra else []
         require(options == ["-Wno-padded", "-Wno-documentation", "-Wno-unsafe-buffer-usage",
-                            "-Wno-missing-noreturn", "-Wno-implicit-int-enum-cast",
-                            "-Wno-bad-function-cast"], generated_policy,
+                            "-Wno-missing-noreturn", "-Wno-implicit-int-enum-cast"], generated_policy,
                 "generated CVK compiler exceptions exceed the approved set")
         original_checks = re.search(r"^Checks: +([^\n]+)", config, re.M)
         effective_checks = re.search(r"^Checks: +([^\n]+)", generated_config, re.M)
@@ -99,13 +113,29 @@ def main():
             if not any(item.get("Include", "").lower().endswith(".c") for item in sources):
                 continue
             counts[category] += 1
+            for setting in ("UseMultiToolTask", "UseMsbuildResourceManager", "EnforceProcessCountAcrossBuilds",
+                            "MultiProcSchedulerName", "MultiProcMaxCount"):
+                require(tree.find(f".//m:{setting}", namespaces=NS) is None, path,
+                        f"{setting} must not add a scheduler override")
+            require(tree.findtext(".//m:MaxNumberOfProcesses", namespaces=NS) ==
+                    "0", path,
+                    "clang-tidy must use the host processor count")
+            require(tree.find(".//m:ForceImportAfterCppTargets", namespaces=NS) is None, path,
+                    "analysis must not import custom build hooks")
             is_owned = category == "owned"
             enabled = "true" if is_owned else "false"
             for setting in ("RunCodeAnalysis", "EnableMicrosoftCodeAnalysis", "EnableClangTidyCodeAnalysis"):
                 require(tree.findtext(f".//m:{setting}", namespaces=NS) == enabled,
                         path, f"{setting} must be {enabled}")
             if is_owned:
-                is_generated = path == build / "cvk.vcxproj"
+                for source in sources:
+                    if source.get("Include", "").lower().endswith(".c"):
+                        require(source.findtext("m:MinimalRebuild", namespaces=NS) == "false", path,
+                                "owned sources must disable obsolete minimal rebuild")
+                        options = source.find("m:PREfastAdditionalOptions", NS)
+                        require(options is not None and options.text == "$(PREfastAdditionalOptions)", path,
+                                "native analysis diagnostics must remain visible without a rewrite target")
+                is_generated = path in (build / "cvk.vcxproj", build / "cvk-platform.vcxproj")
                 expected_policy = generated_policy if is_generated else policy
                 analysis_options = tree.findtext(".//m:ClangTidyToolExeAdditionalOptions", default="", namespaces=NS)
                 require(expected_policy.as_posix() in analysis_options.replace("\\", "/"), path,

@@ -12,7 +12,11 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ubm.h>
 
-void cvkInitUbmSurfaceCreateInfoSEC(VkUbmSurfaceCreateInfoSEC* pInfo, const void* pNext, VkUbmSurfaceCreateFlagsSEC flags, struct ubm_device* device, struct ubm_surface* surface)
+extern CVK_FORCE_INLINE void cvkInitUbmSurfaceCreateInfoSEC(VkUbmSurfaceCreateInfoSEC* pInfo,
+                                                            const void*                pNext,
+                                                            VkUbmSurfaceCreateFlagsSEC flags,
+                                                            struct ubm_device*         device,
+                                                            struct ubm_surface*        surface)
 {
     (*pInfo) = (VkUbmSurfaceCreateInfoSEC)
     {
@@ -23,13 +27,13 @@ void cvkInitUbmSurfaceCreateInfoSEC(VkUbmSurfaceCreateInfoSEC* pInfo, const void
         .surface = surface
     };
 }
-void cvkCreateUbmSurfaceSEC(VkInstance                   instance,
-                            const void*                  pNext,
-                            VkUbmSurfaceCreateFlagsSEC   flags,
-                            struct ubm_device*           device,
-                            struct ubm_surface*          surface,
-                            const VkAllocationCallbacks* pAllocator,
-                            VkSurfaceKHR*                pSurface)
+extern CVK_FORCE_INLINE void cvkCreateUbmSurfaceSEC(VkInstance                   instance,
+                                                    const void*                  pNext,
+                                                    VkUbmSurfaceCreateFlagsSEC   flags,
+                                                    struct ubm_device*           device,
+                                                    struct ubm_surface*          surface,
+                                                    const VkAllocationCallbacks* pAllocator,
+                                                    VkSurfaceKHR*                pSurface)
 {
     VkUbmSurfaceCreateInfoSEC create_info =
     {
@@ -43,7 +47,7 @@ void cvkCreateUbmSurfaceSEC(VkInstance                   instance,
     CVK_CHECK(vkCreateUbmSurfaceSEC(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-VkBool32 cvkGetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct ubm_device* device)
+extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceUbmPresentationSupportSEC(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, struct ubm_device* device)
 {
     return vkGetPhysicalDeviceUbmPresentationSupportSEC(physicalDevice, queueFamilyIndex, device);
 }

@@ -84,9 +84,8 @@ typedef enum Utl_Srt_ReadResult_e
 /** \brief Caller-owned cursor over stable complete UTF-8 input. */
 typedef struct Utl_Srt_Reader_s
 {
-    const byte_t* input;     ///< Borrowed storage, NULL only for empty input.
-    uint32_t      byteCount; ///< Complete readable extent.
-    uint32_t      offset;    ///< Next unconsumed byte, within byteCount.
+    Utl_Srt_Span_t remaining; ///< Borrowed unconsumed source, advanced only after a complete parse.
+    uint32_t       offset;    ///< Consumed bytes from the original source, including its signature.
 } Utl_Srt_Reader_t;
 
 /*=================================================================================================
@@ -129,7 +128,7 @@ void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uin
  *
  * \par Requirements:
  *  - 001 The caller shall supply an initialized reader and retain its borrowed source.
- *  - 002 Cursor invariants shall assert before subtraction; no source byte shall be read.
+ *  - 002 A missing reader shall assert; the retained span count shall be returned without reading source bytes.
  *
  * \param[in] reader   Required initialized cursor
  *

@@ -140,7 +140,7 @@ static FORCE_INLINE void WriteEncoded(byte_t* buffer, uint32_t byteCount, uint64
  *  Width detection and decoding are bounded by eight bytes. The marker is kept
  *  separately from its data mask so ID readers can validate the original encoding.
  */
-bool_t Utl_Matroska_ReadVint(Utl_Matroska_Vint_t* value, const byte_t* buffer, uint64_t byteCount)
+extern FORCE_INLINE bool_t Utl_Matroska_ReadVint(Utl_Matroska_Vint_t* value, const byte_t* buffer, uint64_t byteCount)
 {
     bool_t              has_output;
     bool_t              has_input;
@@ -209,10 +209,10 @@ bool_t Utl_Matroska_ReadVint(Utl_Matroska_Vint_t* value, const byte_t* buffer, u
  *  Size parsing starts only after the ID width is known to fit. Known payloads
  *  are checked using subtraction so their declared size cannot wrap an end offset.
  */
-bool_t Utl_Matroska_ReadElementHeader(Utl_Matroska_ElementHeader_t* header,
-                                      const byte_t*                 buffer,
-                                      uint64_t                      byteCount,
-                                      uint64_t                      remaining)
+extern FORCE_INLINE bool_t Utl_Matroska_ReadElementHeader(Utl_Matroska_ElementHeader_t* header,
+                                                          const byte_t*                 buffer,
+                                                          uint64_t                      byteCount,
+                                                          uint64_t                      remaining)
 {
     Utl_Matroska_Vint_t          identifier;
     Utl_Matroska_Vint_t          size;
@@ -290,7 +290,9 @@ bool_t Utl_Matroska_ReadElementHeader(Utl_Matroska_ElementHeader_t* header,
  *  The selected size width is preserved for round trips and streaming headers.
  *  The unknown sentinel is generated independently of the caller's payload size.
  */
-uint32_t Utl_Matroska_WriteElementHeader(const Utl_Matroska_ElementHeader_t* header, byte_t* buffer, uint64_t capacity)
+extern FORCE_INLINE uint32_t Utl_Matroska_WriteElementHeader(const Utl_Matroska_ElementHeader_t* header,
+                                                             byte_t*                             buffer,
+                                                             uint64_t                            capacity)
 {
     uint32_t written;
     bool_t   has_header;

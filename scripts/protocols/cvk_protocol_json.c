@@ -6,154 +6,339 @@
 #include <ctype.h>
 
 /**
- * \brief Parses one JSON value at the reader's cursor into the reader's value array and returns its index.
- *
- * \par Details:
- *  Recursive descent over objects, arrays, strings, numbers, and literals. Strings keep their
- *  escapes as written; numbers keep their text. Malformed input or a full value array is fatal.
- *
- * \param[in,out] pReader  Reader state: cursor, end, value array, capacity, count
- *
- * \retval Index of the parsed value in the reader's value array
+ * \brief Advances over JSON whitespace.
+ * \param[in,out] pReader Input cursor and bounds.
+ * \retval None
  */
-uint32_t cvkParseJsonValue(cvkJsonReader* pReader)
+static CVK_FORCE_INLINE void cvkSkipJsonSpace(cvkJsonReader* pReader)
 {
-    uint32_t      index;
-    uint32_t      previous;
-    uint32_t      child;
-    const char*   p;
-    cvkJsonValue* value;
+    char character;
+    VkBool32 is_space;
+    for (; pReader->pCursor < pReader->pEnd; ++pReader->pCursor)
+    {
+        character = *pReader->pCursor;
+        is_space  = (CVK_JSON_SPACE == character) || (CVK_JSON_TAB == character);
+        is_space  = is_space || (CVK_JSON_LF == character) || (CVK_JSON_CR == character);
+        if (!is_space)
+        {
+            break;
+        }
+    }
+}
 
-    while ((pReader->pCursor < pReader->pEnd) && ((' ' == *pReader->pCursor) || ('\t' == *pReader->pCursor) || ('\n' == *pReader->pCursor) || ('\r' == *pReader->pCursor)))
+/**
+ * \brief Consumes at least one decimal digit.
+ * \param[in,out] pReader Input cursor and bounds.
+ * \retval None
+ */
+static CVK_FORCE_INLINE void cvkReadJsonDigits(cvkJsonReader* pReader)
+{
+    const char* first;
+    char character;
+    VkBool32 is_digit;
+    first = pReader->pCursor;
+    for (; pReader->pCursor < pReader->pEnd; ++pReader->pCursor)
+    {
+        character = *pReader->pCursor;
+        is_digit  = (CVK_JSON_ZERO <= character) && (character <= CVK_JSON_NINE);
+        if (!is_digit)
+        {
+            break;
+        }
+    }
+    CVK_ASSERT(first < pReader->pCursor);
+}
+
+/**
+ * \brief Consumes a JSON number according to its integer, fraction and exponent grammar.
+ * \param[in,out] pReader Input cursor and bounds.
+ * \retval None
+ */
+static CVK_FORCE_INLINE void cvkReadJsonNumber(cvkJsonReader* pReader)
+{
+    char character;
+    VkBool32 has_input;
+    VkBool32 is_exponent;
+    if (CVK_JSON_MINUS == *pReader->pCursor)
     {
         ++pReader->pCursor;
     }
     CVK_ASSERT(pReader->pCursor < pReader->pEnd);
-    CVK_ASSERT(pReader->valueCount < pReader->valueCapacity);
-    index                = pReader->valueCount++;
-    value                = &pReader->pValues[index];
-    value->kind          = CVK_JSON_NULL;
-    value->pText         = NULL;
-    value->textLength    = 0;
-    value->pKey          = NULL;
-    value->keyLength     = 0;
-    value->childCount    = 0;
-    value->firstChild    = CVK_JSON_NONE;
-    value->nextSibling   = CVK_JSON_NONE;
-    p                    = pReader->pCursor;
-    if ('{' == *p || '[' == *p)
+    if (CVK_JSON_ZERO == *pReader->pCursor)
     {
-        const char close = ('{' == *p) ? '}' : ']';
-
-        value->kind      = ('{' == *p) ? CVK_JSON_OBJECT : CVK_JSON_ARRAY;
-        pReader->pCursor = p + 1;
-        previous         = CVK_JSON_NONE;
-        for (;;)
+        ++pReader->pCursor;
+    }
+    else
+    {
+        cvkReadJsonDigits(pReader);
+    }
+    has_input = pReader->pCursor < pReader->pEnd;
+    if (has_input && (CVK_JSON_DOT == *pReader->pCursor))
+    {
+        ++pReader->pCursor;
+        cvkReadJsonDigits(pReader);
+    }
+    has_input = pReader->pCursor < pReader->pEnd;
+    if (has_input)
+    {
+        character   = *pReader->pCursor;
+        is_exponent = (CVK_JSON_EXPONENT_LOWER == character) || (CVK_JSON_EXPONENT_UPPER == character);
+        if (is_exponent)
         {
-            while ((pReader->pCursor < pReader->pEnd) && ((' ' == *pReader->pCursor) || ('\t' == *pReader->pCursor) || ('\n' == *pReader->pCursor) || ('\r' == *pReader->pCursor)))
-            {
-                ++pReader->pCursor;
-            }
-            CVK_ASSERT(pReader->pCursor < pReader->pEnd);
-            if (close == *pReader->pCursor)
-            {
-                ++pReader->pCursor;
-                break;
-            }
-            if (CVK_JSON_OBJECT == value->kind)
-            {
-                const char* key;
-                const char* key_end;
-
-                CVK_ASSERT('"' == *pReader->pCursor);
-                key     = pReader->pCursor + 1;
-                key_end = key;
-                while ((key_end < pReader->pEnd) && ('"' != *key_end))
-                {
-                    key_end += ('\\' == *key_end) ? 2 : 1;
-                }
-                CVK_ASSERT(key_end < pReader->pEnd);
-                pReader->pCursor = key_end + 1;
-                while ((pReader->pCursor < pReader->pEnd) && ((' ' == *pReader->pCursor) || ('\t' == *pReader->pCursor) || ('\n' == *pReader->pCursor) || ('\r' == *pReader->pCursor)))
-                {
-                    ++pReader->pCursor;
-                }
-                CVK_ASSERT((pReader->pCursor < pReader->pEnd) && (':' == *pReader->pCursor));
-                ++pReader->pCursor;
-                child                              = cvkParseJsonValue(pReader);
-                pReader->pValues[child].pKey       = key;
-                pReader->pValues[child].keyLength  = (uint32_t)(key_end - key);
-            }
-            else
-            {
-                child = cvkParseJsonValue(pReader);
-            }
-            value = &pReader->pValues[index]; /* the value array is stable, the pointer is re-read for clarity */
-            if (CVK_JSON_NONE == previous)
-            {
-                value->firstChild = child;
-            }
-            else
-            {
-                pReader->pValues[previous].nextSibling = child;
-            }
-            previous = child;
-            ++value->childCount;
-            while ((pReader->pCursor < pReader->pEnd) && ((' ' == *pReader->pCursor) || ('\t' == *pReader->pCursor) || ('\n' == *pReader->pCursor) || ('\r' == *pReader->pCursor)))
-            {
-                ++pReader->pCursor;
-            }
-            CVK_ASSERT(pReader->pCursor < pReader->pEnd);
-            if (',' == *pReader->pCursor)
-            {
-                ++pReader->pCursor;
-                continue;
-            }
-            CVK_ASSERT(close == *pReader->pCursor);
             ++pReader->pCursor;
+            CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+            character = *pReader->pCursor;
+            if ((CVK_JSON_PLUS == character) || (CVK_JSON_MINUS == character))
+            {
+                ++pReader->pCursor;
+            }
+            cvkReadJsonDigits(pReader);
+        }
+    }
+}
+
+/**
+ * \brief Reads a quoted span while preserving its escape spelling.
+ * \param[in,out] pReader Input cursor at the opening quote.
+ * \param[out] pLength Receives the length excluding quotes.
+ * \retval Other The start of the quoted content.
+ */
+static CVK_FORCE_INLINE const char* cvkReadJsonQuoted(cvkJsonReader* pReader,
+                                                     uint32_t* pLength)
+{
+    const char* first;
+    char character;
+    VkBool32 is_quote;
+    CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+    CVK_ASSERT(CVK_JSON_QUOTE == *pReader->pCursor);
+    ++pReader->pCursor;
+    first = pReader->pCursor;
+    for (;;)
+    {
+        CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+        character = *pReader->pCursor;
+        is_quote  = CVK_JSON_QUOTE == character;
+        if (is_quote)
+        {
             break;
         }
-        return index;
-    }
-    if ('"' == *p)
-    {
-        const char* end = p + 1;
-
-        while ((end < pReader->pEnd) && ('"' != *end))
+        CVK_ASSERT(CVK_JSON_CONTROL_LIMIT <= (uint8_t)character);
+        if (CVK_JSON_ESCAPE == character)
         {
-            end += ('\\' == *end) ? 2 : 1;
+            ++pReader->pCursor;
+            CVK_ASSERT(pReader->pCursor < pReader->pEnd);
         }
-        CVK_ASSERT(end < pReader->pEnd);
-        value->kind       = CVK_JSON_STRING;
-        value->pText      = p + 1;
-        value->textLength = (uint32_t)(end - (p + 1));
-        pReader->pCursor  = end + 1;
-        return index;
+        ++pReader->pCursor;
     }
-    if ('t' == *p || 'f' == *p || 'n' == *p)
-    {
-        const char*  literal = ('t' == *p) ? "true" : (('f' == *p) ? "false" : "null");
-        const size_t length  = strlen(literal);
+    *pLength = (uint32_t)(pReader->pCursor - first);
+    ++pReader->pCursor;
+    return first;
+}
 
-        CVK_ASSERT(((size_t)(pReader->pEnd - p) >= length) && (0 == memcmp(p, literal, length)));
-        value->kind      = ('t' == *p) ? CVK_JSON_TRUE : (('f' == *p) ? CVK_JSON_FALSE : CVK_JSON_NULL);
-        pReader->pCursor = p + length;
-        return index;
+/**
+ * \brief Consumes a literal and records its kind.
+ * \param[in,out] pReader Input cursor and bounds.
+ * \param[out] pValue Value receiving the literal kind.
+ * \retval None
+ */
+static CVK_FORCE_INLINE void cvkReadJsonLiteral(cvkJsonReader* pReader,
+                                               cvkJsonValue* pValue)
+{
+    const char* literal;
+    uint32_t length;
+    switch (*pReader->pCursor)
+    {
+        case CVK_JSON_TRUE_FIRST:
+            literal = CVK_JSON_TRUE_TEXT;
+            length = sizeof(CVK_JSON_TRUE_TEXT) - 1;
+            pValue->kind = CVK_JSON_TRUE;
+            break;
+        case CVK_JSON_FALSE_FIRST:
+            literal = CVK_JSON_FALSE_TEXT;
+            length = sizeof(CVK_JSON_FALSE_TEXT) - 1;
+            pValue->kind = CVK_JSON_FALSE;
+            break;
+        default:
+            literal = CVK_JSON_NULL_TEXT;
+            length = sizeof(CVK_JSON_NULL_TEXT) - 1;
+            pValue->kind = CVK_JSON_NULL;
+            break;
     }
-    {
-        const char* end = p;
+    CVK_ASSERT(length <= (uint64_t)(pReader->pEnd - pReader->pCursor));
+    CVK_ASSERT(0 == memcmp(pReader->pCursor, literal, length));
+    pReader->pCursor += length;
+}
 
-        while ((end < pReader->pEnd) && (('-' == *end) || ('+' == *end) || ('.' == *end) || ('e' == *end) || ('E' == *end) || (('0' <= *end) && ('9' >= *end))))
+/**
+ * \brief Appends one token; containers are opened without descending into them.
+ * \param[in,out] pReader Input and caller-owned value storage.
+ * \retval Other The new value index.
+ */
+static CVK_FORCE_INLINE uint32_t cvkReadJsonToken(cvkJsonReader* pReader)
+{
+    cvkJsonValue* value;
+    uint32_t index;
+    cvkSkipJsonSpace(pReader);
+    CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+    CVK_ASSERT(pReader->valueCount < pReader->valueCapacity);
+    index = pReader->valueCount;
+    ++pReader->valueCount;
+    value = &pReader->pValues[index];
+    (void)memset(value, 0, sizeof(*value));
+    value->firstChild  = CVK_JSON_NONE;
+    value->nextSibling = CVK_JSON_NONE;
+    switch (*pReader->pCursor)
+    {
+        case CVK_JSON_OBJECT_OPEN:
+            value->kind = CVK_JSON_OBJECT;
+            ++pReader->pCursor;
+            break;
+        case CVK_JSON_ARRAY_OPEN:
+            value->kind = CVK_JSON_ARRAY;
+            ++pReader->pCursor;
+            break;
+        case CVK_JSON_QUOTE:
+            value->kind = CVK_JSON_STRING;
+            value->pText = cvkReadJsonQuoted(pReader, &value->textLength);
+            break;
+        case CVK_JSON_TRUE_FIRST:
+        case CVK_JSON_FALSE_FIRST:
+        case CVK_JSON_NULL_FIRST:
+            cvkReadJsonLiteral(pReader, value);
+            break;
+        default:
+            value->kind = CVK_JSON_NUMBER;
+            value->pText = pReader->pCursor;
+            cvkReadJsonNumber(pReader);
+            value->textLength = (uint32_t)(pReader->pCursor - value->pText);
+            break;
+    }
+    return index;
+}
+
+/**
+ * \brief Appends a child and its object key, linking it to the active container.
+ * \param[in,out] pReader Input and caller-owned value storage.
+ * \param[in] parent Active container index.
+ * \retval Other The new child index.
+ */
+static CVK_FORCE_INLINE uint32_t cvkReadJsonChild(cvkJsonReader* pReader,
+                                                uint32_t parent)
+{
+    const char* key;
+    uint32_t key_length;
+    uint32_t child;
+    uint32_t previous;
+    key = NULL;
+    key_length = 0;
+    if (CVK_JSON_OBJECT == pReader->pValues[parent].kind)
+    {
+        key = cvkReadJsonQuoted(pReader, &key_length);
+        cvkSkipJsonSpace(pReader);
+        CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+        CVK_ASSERT(CVK_JSON_COLON == *pReader->pCursor);
+        ++pReader->pCursor;
+    }
+    child = cvkReadJsonToken(pReader);
+    pReader->pValues[child].pKey = key;
+    pReader->pValues[child].keyLength = key_length;
+    pReader->pValues[child].nextSibling = parent;
+    previous = pReader->pValues[parent].firstChild;
+    if (CVK_JSON_NONE != previous)
+    {
+        pReader->pValues[previous].nextSibling = child;
+    }
+    pReader->pValues[parent].firstChild = child;
+    ++pReader->pValues[parent].childCount;
+    return child;
+}
+
+/**
+ * \brief Consumes a container separator and checks whether the next token closes it.
+ * \param[in,out] pReader Input cursor and bounds.
+ * \param[in] close Closing delimiter for the active container.
+ * \param[in] has_children Whether a preceding value requires a separator.
+ * \retval VK_TRUE A closing delimiter is next.
+ * \retval VK_FALSE Another child starts at the cursor.
+ */
+static CVK_FORCE_INLINE VkBool32 cvkReadJsonSeparator(cvkJsonReader* pReader,
+                                                      char close,
+                                                      VkBool32 has_children)
+{
+    VkBool32 has_comma;
+    VkBool32 is_close;
+    VkBool32 can_start;
+
+    cvkSkipJsonSpace(pReader);
+    CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+    has_comma = CVK_JSON_COMMA == *pReader->pCursor;
+    if (has_children && has_comma)
+    {
+        ++pReader->pCursor;
+        cvkSkipJsonSpace(pReader);
+        CVK_ASSERT(pReader->pCursor < pReader->pEnd);
+        CVK_ASSERT(close != *pReader->pCursor);
+    }
+    is_close = close == *pReader->pCursor;
+    can_start = !has_children || has_comma;
+    CVK_ASSERT(is_close || can_start);
+    return is_close;
+}
+
+/**
+ * \brief Parses one JSON value into caller-owned storage using an iterative traversal.
+ * \par Details:
+ *  Open containers temporarily store their parent and last-child indices in their
+ *  links. Closing a container restores the public first-child and sibling links.
+ *  Neither depth-dependent stack storage nor allocation is required.
+ * \param[in,out] pReader Reader state and caller-owned values.
+ * \retval Other The parsed root index.
+ */
+uint32_t cvkParseJsonValue(cvkJsonReader* pReader)
+{
+    uint32_t root;
+    uint32_t active;
+    uint32_t parent;
+    uint32_t child;
+    cvkJsonValue* value;
+    char close;
+    VkBool32 is_container;
+    VkBool32 has_children;
+    VkBool32 is_close;
+    root = cvkReadJsonToken(pReader);
+    value = &pReader->pValues[root];
+    is_container = (CVK_JSON_ARRAY == value->kind) || (CVK_JSON_OBJECT == value->kind);
+    active = is_container ? root : CVK_JSON_NONE;
+    for (; CVK_JSON_NONE != active;)
+    {
+        value = &pReader->pValues[active];
+        close = (CVK_JSON_OBJECT == value->kind) ? CVK_JSON_OBJECT_CLOSE : CVK_JSON_ARRAY_CLOSE;
+        has_children = 0 < value->childCount;
+        is_close = cvkReadJsonSeparator(pReader, close, has_children);
+        if (is_close)
         {
-            ++end;
+            ++pReader->pCursor;
+            parent = value->nextSibling;
+            value->firstChild = has_children ? active + 1 : CVK_JSON_NONE;
+            value->nextSibling = CVK_JSON_NONE;
+            active = parent;
         }
-        CVK_ASSERT(end > p);
-        value->kind       = CVK_JSON_NUMBER;
-        value->pText      = p;
-        value->textLength = (uint32_t)(end - p);
-        pReader->pCursor  = end;
-        return index;
+        else
+        {
+            child = cvkReadJsonChild(pReader, active);
+            value = &pReader->pValues[child];
+            is_container = (CVK_JSON_ARRAY == value->kind) || (CVK_JSON_OBJECT == value->kind);
+            if (is_container)
+            {
+                active = child;
+            }
+            else
+            {
+                value->nextSibling = CVK_JSON_NONE;
+            }
+        }
     }
+    return root;
 }
 
 /**
@@ -178,10 +363,7 @@ uint32_t cvkParseJsonDocument(const char* pText, size_t length, cvkJsonValue* pV
     reader.valueCount    = 0;
     root                 = cvkParseJsonValue(&reader);
     CVK_ASSERT(0 == root);
-    while ((reader.pCursor < reader.pEnd) && ((' ' == *reader.pCursor) || ('\t' == *reader.pCursor) || ('\n' == *reader.pCursor) || ('\r' == *reader.pCursor)))
-    {
-        ++reader.pCursor;
-    }
+    cvkSkipJsonSpace(&reader);
     CVK_ASSERT(reader.pCursor == reader.pEnd);
     return reader.valueCount;
 }
@@ -282,9 +464,9 @@ uint64_t cvkParseUint64Text(const char* pText)
     VkBool32 negative;
 
     value = 0;
-    base = 10;
+    base = CVK_JSON_DECIMAL_BASE;
     negative = VK_FALSE;
-    while (isspace((unsigned char)*pText))
+    for (; isspace((unsigned char)*pText);)
     {
         ++pText;
     }
@@ -295,15 +477,15 @@ uint64_t cvkParseUint64Text(const char* pText)
     }
     if ('0' == *pText)
     {
-        base = 8;
+        base = CVK_JSON_OCTAL_BASE;
         ++pText;
         if (('x' == *pText) || ('X' == *pText))
         {
-            base = 16;
+            base = CVK_JSON_HEXADECIMAL_BASE;
             ++pText;
         }
     }
-    while ('\0' != *pText)
+    for (; '\0' != *pText;)
     {
         if (('0' <= *pText) && (*pText <= '9'))
         {
@@ -311,11 +493,11 @@ uint64_t cvkParseUint64Text(const char* pText)
         }
         else if (('a' <= *pText) && (*pText <= 'f'))
         {
-            digit = (uint32_t)(*pText - 'a') + 10;
+            digit = (uint32_t)(*pText - 'a') + CVK_JSON_DECIMAL_BASE;
         }
         else if (('A' <= *pText) && (*pText <= 'F'))
         {
-            digit = (uint32_t)(*pText - 'A') + 10;
+            digit = (uint32_t)(*pText - 'A') + CVK_JSON_DECIMAL_BASE;
         }
         else
         {
@@ -329,7 +511,7 @@ uint64_t cvkParseUint64Text(const char* pText)
         {
             return UINT64_MAX;
         }
-        value = value * base + digit;
+        value = (value * base) + digit;
         ++pText;
     }
     return negative ? (uint64_t)0 - value : value;
@@ -342,7 +524,7 @@ uint64_t cvkParseUint64Text(const char* pText)
  */
 uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
 {
-    char buffer[32];
+    char buffer[CVK_JSON_INTEGER_TEXT_CAPACITY];
 
     if ((NULL == pValue) || ((CVK_JSON_NUMBER != pValue->kind) && (CVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
     {
@@ -362,7 +544,7 @@ uint64_t cvkGetJsonUint64(const cvkJsonValue* pValue)
  */
 int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
 {
-    char buffer[32];
+    char buffer[CVK_JSON_INTEGER_TEXT_CAPACITY];
     const char* text;
     uint64_t magnitude;
     VkBool32 negative;
@@ -374,7 +556,7 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
     (void)memcpy(buffer, pValue->pText, pValue->textLength);
     buffer[pValue->textLength] = '\0';
     text = buffer;
-    while (isspace((unsigned char)*text))
+    for (; isspace((unsigned char)*text);)
     {
         ++text;
     }
@@ -404,7 +586,7 @@ int64_t cvkGetJsonInt64(const cvkJsonValue* pValue)
  */
 double cvkGetJsonDouble(const cvkJsonValue* pValue)
 {
-    char buffer[64];
+    char buffer[CVK_JSON_REAL_TEXT_CAPACITY];
 
     if ((NULL == pValue) || ((CVK_JSON_NUMBER != pValue->kind) && (CVK_JSON_STRING != pValue->kind)) || (pValue->textLength >= sizeof(buffer)))
     {
@@ -506,7 +688,7 @@ uint64_t cvkParseJsonEnumerant(const cvkJsonValue* pValue, const cvkJsonName* pT
 uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable, uint32_t tableCount)
 {
     uint64_t    flags = 0;
-    const char* p;
+    const char* cursor;
     const char* end;
 
     if ((NULL == pValue) || (CVK_JSON_NULL == pValue->kind))
@@ -518,24 +700,24 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
         return cvkGetJsonUint64(pValue);
     }
     CVK_ASSERT(CVK_JSON_STRING == pValue->kind);
-    p   = pValue->pText;
-    end = p + pValue->textLength;
-    while (p < end)
+    cursor   = pValue->pText;
+    end = cursor + pValue->textLength;
+    for (; cursor < end;)
     {
         const char* token;
         const char* token_end;
         uint64_t    bit;
 
-        while ((p < end) && ((' ' == *p) || ('|' == *p)))
+        for (; (cursor < end) && ((' ' == *cursor) || ('|' == *cursor));)
         {
-            ++p;
+            ++cursor;
         }
-        token = p;
-        while ((p < end) && (' ' != *p) && ('|' != *p))
+        token = cursor;
+        for (; (cursor < end) && (' ' != *cursor) && ('|' != *cursor);)
         {
-            ++p;
+            ++cursor;
         }
-        token_end = p;
+        token_end = cursor;
         if (token_end == token)
         {
             break;
@@ -550,7 +732,7 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
         }
         else
         {
-            char buffer[32];
+            char buffer[CVK_JSON_INTEGER_TEXT_CAPACITY];
 
             CVK_ASSERT((size_t)(token_end - token) < sizeof(buffer));
             (void)memcpy(buffer, token, (size_t)(token_end - token));
@@ -572,16 +754,31 @@ uint64_t cvkParseJsonFlags(const cvkJsonValue* pValue, const cvkJsonName* pTable
  */
 void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 {
-    size_t offset;
+    uint64_t offset;
+    uint64_t padding;
+    uint64_t remaining;
+    void* storage;
 
-    if (0 == size)
+    CVK_ASSERT(NULL != pArena);
+    CVK_ASSERT(NULL != pArena->pBase);
+    CVK_ASSERT(0 < alignment);
+    CVK_ASSERT(0 == (alignment & (alignment - 1)));
+    CVK_ASSERT(pArena->used <= pArena->size);
+    storage = NULL;
+    if (0 < size)
     {
-        return NULL;
+        offset = pArena->used;
+        padding = (uintptr_t)(pArena->pBase + offset) % alignment;
+        padding = (alignment - padding) % alignment;
+        remaining = pArena->size - offset;
+        CVK_ASSERT(padding <= remaining);
+        remaining -= padding;
+        CVK_ASSERT(size <= remaining);
+        offset += padding;
+        storage = pArena->pBase + offset;
+        pArena->used = offset + size;
     }
-    offset = (pArena->used + alignment - 1) & ~(alignment - 1);
-    CVK_ASSERT(offset + size <= pArena->size);
-    pArena->used = offset + size;
-    return pArena->pBase + offset;
+    return storage;
 }
 
 /**
@@ -595,55 +792,119 @@ void* cvkAllocateArena(cvkArena* pArena, size_t size, size_t alignment)
 char* cvkCopyJsonString(cvkArena* pArena, const cvkJsonValue* pValue)
 {
     char*    out;
-    uint32_t i;
-    uint32_t n = 0;
+    uint32_t index;
+    uint32_t written = 0;
 
     if (cvkIsJsonNull(pValue) || (CVK_JSON_STRING != pValue->kind))
     {
         return NULL;
     }
     out = (char*)cvkAllocateArena(pArena, (size_t)pValue->textLength + 1, 1);
-    for (i = 0; i < pValue->textLength; ++i)
+    for (index = 0; index < pValue->textLength; ++index)
     {
-        char c = pValue->pText[i];
+        char character = pValue->pText[index];
 
-        if (('\\' == c) && (i + 1 < pValue->textLength))
+        if (('\\' == character) && (index + 1 < pValue->textLength))
         {
-            c = pValue->pText[++i];
-            switch (c)
+            character = pValue->pText[++index];
+            switch (character)
             {
-                case 'n': c = '\n'; break;
-                case 't': c = '\t'; break;
-                case 'r': c = '\r'; break;
-                case 'b': c = '\b'; break;
-                case 'f': c = '\f'; break;
-                case 'u': c = '?'; i += 4; break;
+                case 'n': character = '\n'; break;
+                case 't': character = '\t'; break;
+                case 'r': character = '\r'; break;
+                case 'b': character = '\b'; break;
+                case 'f': character = '\f'; break;
+                case 'u': character = '?'; index += 4; break;
                 default: break;
             }
         }
-        out[n++] = c;
+        out[written++] = character;
     }
-    out[n] = '\0';
+    out[written] = '\0';
     return out;
 }
 
 /**
- * \brief Resolves a handle written to JSON: a number is an object id given to the context's resolver, an empty string or null is VK_NULL_HANDLE.
+ * \brief Returns the JSON object ID recorded for a native handle field.
  *
- * \param[in]  pContext     Parsing context; without a resolver the id itself is the handle value
- * \param[in]  pHandleType  Vulkan handle type name ("VkPipelineLayout")
- * \param[in]  pValue       The value
+ * \param[in] pReferences First reference, or NULL for an empty list.
+ * \param[in] pHandle Address of the native handle field.
  *
- * \retval The handle as an integer
+ * \retval 0 No reference was recorded.
+ * \retval Other The JSON object ID.
  */
-uint64_t cvkResolveJsonHandle(const cvkJsonContext* pContext, const char* pHandleType, const cvkJsonValue* pValue)
+uint64_t cvkGetJsonHandleId(const cvkJsonHandleReference* pReferences,
+                          const void*                   pHandle)
 {
-    uint64_t id;
+    uint64_t object_id;
 
-    if (cvkIsJsonNull(pValue) || ((CVK_JSON_STRING == pValue->kind) && (0 == pValue->textLength)))
+    object_id = 0;
+    for (; NULL != pReferences; pReferences = pReferences->pNext)
     {
-        return 0;
+        if (pReferences->pHandle == pHandle)
+        {
+            object_id = pReferences->id;
+            break;
+        }
     }
-    id = cvkGetJsonUint64(pValue);
-    return (NULL != pContext->resolveHandle) ? pContext->resolveHandle(pContext->pUser, pHandleType, id) : id;
+    return object_id;
+}
+
+/**
+ * \brief Resolves an object ID into native handle storage and records the ID separately.
+ *
+ * \par Details:
+ *  The caller initializes the native handle to VK_NULL_HANDLE. A resolver writes
+ *  that exact native type and leaves it unchanged on failure. Deferred resolution
+ *  requires a caller-owned reference-list head. Records use the caller's arena.
+ *
+ * \param[in] pContext Parsing context and optional native resolver.
+ * \param[in] pHandleType Vulkan handle type name.
+ * \param[in] pValue JSON object ID, or null for the null handle.
+ * \param[in] handleByteCount Byte extent of the native handle type.
+ * \param[in,out] pHandle Native handle object, initially VK_NULL_HANDLE.
+ *
+ * \retval VK_TRUE The ID was null or resolved to a native handle.
+ * \retval VK_FALSE The reference remains unresolved and its handle stays null.
+ */
+VkBool32 cvkResolveJsonHandle(const cvkJsonContext* pContext,
+                             const char*           pHandleType,
+                             const cvkJsonValue*    pValue,
+                             uint32_t              handleByteCount,
+                             void*                 pHandle)
+{
+    cvkJsonHandleReference* reference;
+    uint64_t                object_id;
+    VkBool32                resolved;
+
+    CVK_ASSERT(NULL != pContext);
+    CVK_ASSERT(NULL != pHandleType);
+    CVK_ASSERT(NULL != pHandle);
+    CVK_ASSERT(0 < handleByteCount);
+    object_id       = cvkGetJsonUint64(pValue);
+    resolved = (0 == object_id);
+    if (0 != object_id)
+    {
+        if (NULL != pContext->ppHandleReferences)
+        {
+            reference = (cvkJsonHandleReference*)cvkAllocateArena(pContext->pArena,
+                                                                 sizeof(*reference),
+                                                                 CVK_JSON_ARENA_ALIGNMENT);
+            reference->pNext       = *pContext->ppHandleReferences;
+            reference->pHandleType = pHandleType;
+            reference->pHandle     = pHandle;
+            reference->id          = object_id;
+            *pContext->ppHandleReferences = reference;
+        }
+        if (NULL != pContext->resolveHandle)
+        {
+            resolved = pContext->resolveHandle(pContext->pUser,
+                                               pHandleType,
+                                               object_id,
+                                               handleByteCount,
+                                               pHandle);
+        }
+        CVK_ASSERT(resolved || (NULL != pContext->ppHandleReferences));
+    }
+    return resolved;
 }

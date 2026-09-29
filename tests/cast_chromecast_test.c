@@ -750,13 +750,12 @@ static FORCE_INLINE void CheckCommand(TestContext_t*                  context,
     uint32_t count;
     uint32_t capacity;
 
-    LOGASSERT(byteCount < TEST_OUTPUT_CAPACITY);
     count = Utl_Chromecast_GetCommandByteCount(command);
     LOGASSERT(byteCount == count);
     CRT_Memory_Set(context->output, TEST_SENTINEL, sizeof(context->output));
     count = Utl_Chromecast_WriteCommand(command, context->output, byteCount);
     LOGASSERT(byteCount == count);
-    LOGASSERT(0 == CRT_Memory_Compare(context->output, expected, count));
+    LOGASSERT(0 == CRT_Memory_Compare(context->output, expected, byteCount));
     LOGASSERT(TEST_SENTINEL == context->output[byteCount]);
     CRT_Memory_Set(context->original, TEST_SENTINEL, sizeof(context->original));
     for (capacity = 0; capacity < byteCount; ++capacity)
@@ -767,6 +766,7 @@ static FORCE_INLINE void CheckCommand(TestContext_t*                  context,
         LOGASSERT(0 == CRT_Memory_Compare(context->output, context->original, sizeof(context->output)));
     }
     LOGASSERT(0 == Utl_Chromecast_WriteCommand(command, NULL, byteCount));
+    LOGASSERT(byteCount < TEST_OUTPUT_CAPACITY);
 }
 
 /*************************************************************************************************/
@@ -944,8 +944,8 @@ static FORCE_INLINE void CheckNamespaces(void)
  */
 static FORCE_INLINE void CheckCountedRoute(TestContext_t* context)
 {
-    Utl_Json_Text_t      encoded;
-    uint32_t             decoded_count;
+    Utl_Json_Text_t encoded;
+    uint32_t        decoded_count;
     byte_t               route[sizeof(TEST_ROUTE_DECODED)];
     Utl_CastV2_Message_t message;
     uint32_t             frame_count;
@@ -976,8 +976,8 @@ static FORCE_INLINE void CheckCountedRoute(TestContext_t* context)
     LOGASSERT(0 == CRT_Memory_Compare(context->output, TEST_ROUTE_FRAME, frame_count));
     LOGASSERT(TEST_SENTINEL == context->output[sizeof(TEST_ROUTE_FRAME) - 1]);
     LOGASSERT(Utl_CastV2_ReadMessage(&decoded,
-              &context->output[UTL_CASTV2_HEADER_BYTES],
-              frame_count - UTL_CASTV2_HEADER_BYTES));
+                                     &context->output[UTL_CASTV2_HEADER_BYTES],
+                                     frame_count - UTL_CASTV2_HEADER_BYTES));
     LOGASSERT(decoded_count == decoded.destination.byteCount);
     LOGASSERT(0 == CRT_Memory_Compare(decoded.destination.data, TEST_ROUTE_DECODED, decoded_count));
 }

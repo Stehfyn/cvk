@@ -319,10 +319,14 @@ static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* 
  */
 static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input, uint32_t byteCount)
 {
+    bool_t has_input;
+    bool_t is_empty;
     bool_t has_source;
 
     LOGASSERT(NULL != cursor);
-    has_source = (NULL != input) || (0 == byteCount);
+    has_input  = (NULL != input);
+    is_empty   = (0 == byteCount);
+    has_source = has_input || is_empty;
     LOGASSERT(has_source);
     cursor->input     = input;
     cursor->byteCount = byteCount;
@@ -412,8 +416,8 @@ static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* form
             cursor->valid = valid_width && valid_value;
             if (cursor->valid)
             {
-                number->value  = value;
-                number->digits = digits;
+                number->value   = value;
+                number->digits  = digits;
                 cursor->offset += digits;
             }
         }
@@ -540,7 +544,8 @@ static FORCE_INLINE bool_t ReadNonemptyLine(Cursor_t* cursor, Line_t* line)
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Every offset addition follows a remaining-byte check or a successful counted parse.
+ *  The arrow comparison consumes only the available prefix. Its full width and
+ *  contents are validated before the ending timestamp is parsed.
  */
 static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cue_t* cue)
 {
@@ -549,7 +554,10 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
     uint32_t last;
     bool_t   valid;
     uint32_t remaining;
+    uint32_t arrow_bytes;
     int32_t  comparison;
+    bool_t   complete_arrow;
+    bool_t   matches_arrow;
 
     first  = 0;
     offset = 0;
@@ -557,14 +565,17 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
     valid  = Utl_Srt_ReadTimestamp(&cue->start, &first, line->data, line->byteCount);
     if (valid)
     {
-        remaining = line->byteCount - first;
-        valid     = (sizeof(SRT_ARROW) - 1 <= remaining);
-        if (valid)
+        remaining   = line->byteCount - first;
+        arrow_bytes = remaining;
+        if (sizeof(SRT_ARROW) - 1 < arrow_bytes)
         {
-            comparison = CRT_Memory_Compare(line->data + first, SRT_ARROW, sizeof(SRT_ARROW) - 1);
-            valid      = (0 == comparison);
-            offset     = first + (uint32_t)(sizeof(SRT_ARROW) - 1);
+            arrow_bytes = sizeof(SRT_ARROW) - 1;
         }
+        comparison     = CRT_Memory_Compare(line->data + first, SRT_ARROW, arrow_bytes);
+        complete_arrow = (sizeof(SRT_ARROW) - 1 == arrow_bytes);
+        matches_arrow  = (0 == comparison);
+        valid          = complete_arrow && matches_arrow;
+        offset         = first + arrow_bytes;
     }
     if (valid)
     {
@@ -577,8 +588,8 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
     if (valid)
     {
         offset                         += last;
-        cue->timingExtension.data      = line->data + offset;
-        cue->timingExtension.byteCount = line->byteCount - offset;
+        cue->timingExtension.data       = line->data + offset;
+        cue->timingExtension.byteCount  = line->byteCount - offset;
     }
 
     return valid;
@@ -679,6 +690,8 @@ static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* 
  */
 extern FORCE_INLINE void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount)
 {
+    bool_t has_input;
+    bool_t is_empty;
     bool_t has_source;
     bool_t matches_first;
     bool_t matches_second;
@@ -686,11 +699,13 @@ extern FORCE_INLINE void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, cons
     bool_t has_signature;
 
     LOGASSERT(NULL != reader);
-    has_source = (NULL != input) || (0 == byteCount);
+    has_input  = (NULL != input);
+    is_empty   = (0 == byteCount);
+    has_source = has_input || is_empty;
     LOGASSERT(has_source);
-    reader->input     = input;
-    reader->byteCount = byteCount;
-    reader->offset    = 0;
+    reader->remaining.data      = input;
+    reader->remaining.byteCount = byteCount;
+    reader->offset              = 0;
     if (SRT_SIGNATURE_BYTES <= byteCount)
     {
         matches_first  = (SRT_SIGNATURE_FIRST == (byte_t)input[0]);
@@ -699,7 +714,9 @@ extern FORCE_INLINE void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, cons
         has_signature  = matches_first && matches_second && matches_last;
         if (has_signature)
         {
-            reader->offset = SRT_SIGNATURE_BYTES;
+            reader->remaining.data      += SRT_SIGNATURE_BYTES;
+            reader->remaining.byteCount -= SRT_SIGNATURE_BYTES;
+            reader->offset               = SRT_SIGNATURE_BYTES;
         }
     }
 }
@@ -707,14 +724,14 @@ extern FORCE_INLINE void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, cons
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Subtraction follows the established cursor invariant.
+ *  Initialization and successful reads retain the unconsumed span directly.
+ *  This query performs no offset arithmetic or source access.
  */
 extern FORCE_INLINE uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_t* reader)
 {
     LOGASSERT(NULL != reader);
-    LOGASSERT(reader->offset <= reader->byteCount);
 
-    return reader->byteCount - reader->offset;
+    return reader->remaining.byteCount;
 }
 
 /*************************************************************************************************/
@@ -722,7 +739,10 @@ extern FORCE_INLINE uint32_t Utl_Srt_GetRemainingByteCount(const Utl_Srt_Reader_
  * \par Details:
  *  The hours bound precedes multiplication; the remaining fields are independently bounded before addition.
  */
-extern FORCE_INLINE bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time,
+                                                 uint32_t*       bytesRead,
+                                                 const byte_t*   input,
+                                                 uint32_t        byteCount)
 {
     Cursor_t cursor;
     Number_t hours;
@@ -755,8 +775,8 @@ extern FORCE_INLINE bool_t Utl_Srt_ReadTimestamp(Utl_Srt_Time_t* time, uint32_t*
     ReadNumber(&cursor, &c_fractionFormat, &fraction);
     if (cursor.valid)
     {
-        base      = hours.value * SRT_MILLISECONDS_PER_HOUR;
-        remainder = (minutes.value * SRT_MILLISECONDS_PER_MINUTE) + (seconds.value * SRT_MILLISECONDS_PER_SECOND) +
+        base         = hours.value * SRT_MILLISECONDS_PER_HOUR;
+        remainder    = (minutes.value * SRT_MILLISECONDS_PER_MINUTE) + (seconds.value * SRT_MILLISECONDS_PER_SECOND) +
                        fraction.value;
         fits         = (base <= UINT64_MAX - remainder);
         cursor.valid = fits;
@@ -784,15 +804,15 @@ Utl_Srt_ReadResult_t Utl_Srt_ReadCue(Utl_Srt_Reader_t* reader, Utl_Srt_Cue_t* cu
     Line_t               first;
     Utl_Srt_ReadResult_t result;
     Utl_Srt_Cue_t        staged;
+    bool_t               committed;
+    bool_t               consumed;
 
     LOGASSERT(NULL != reader);
     LOGASSERT(NULL != cue);
 
-    LOGASSERT(reader->offset <= reader->byteCount);
-    InitializeCursor(&cursor, reader->input, reader->byteCount);
-    cursor.offset = reader->offset;
-    present       = ReadNonemptyLine(&cursor, &first);
-    result        = UTL_SRT_READ_INVALID;
+    InitializeCursor(&cursor, reader->remaining.data, reader->remaining.byteCount);
+    present = ReadNonemptyLine(&cursor, &first);
+    result  = UTL_SRT_READ_INVALID;
     if (cursor.valid)
     {
         if (present)
@@ -806,15 +826,21 @@ Utl_Srt_ReadResult_t Utl_Srt_ReadCue(Utl_Srt_Reader_t* reader, Utl_Srt_Cue_t* cu
             if (cursor.valid)
             {
                 PublishCue(cue, &staged);
-                reader->offset = cursor.offset;
-                result         = UTL_SRT_READ_CUE;
+                result = UTL_SRT_READ_CUE;
             }
         }
         else
         {
-            reader->offset = cursor.offset;
-            result         = UTL_SRT_READ_END;
+            result = UTL_SRT_READ_END;
         }
+    }
+    committed = (UTL_SRT_READ_INVALID != result);
+    consumed  = (0 < cursor.offset);
+    if (committed && consumed)
+    {
+        reader->remaining.data      += cursor.offset;
+        reader->remaining.byteCount -= cursor.offset;
+        reader->offset              += cursor.offset;
     }
 
     return result;

@@ -1010,8 +1010,8 @@ static FORCE_INLINE bool_t ReadExponent(JsonCursor_t* cursor)
 static FORCE_INLINE bool_t Reserve(Utl_Json_Writer_t* writer, uint64_t bytes)
 {
     bool_t fits;
-    LOGASSERT(writer->used <= writer->capacity);
     fits = (bytes <= writer->capacity - writer->used);
+    LOGASSERT(writer->used <= writer->capacity);
     if (!fits)
     {
         writer->status = UTL_JSON_OUTPUT_EXHAUSTED;
@@ -1452,7 +1452,7 @@ static FORCE_INLINE bool_t ReadJsonEscape(JsonCursor_t* cursor, uint32_t* value)
     if (valid)
     {
         cursor->offset += used;
-        *value         = result;
+        *value          = result;
     }
     return valid;
 }
@@ -1495,7 +1495,7 @@ static FORCE_INLINE bool_t ReadJsonCharacter(JsonCursor_t* cursor, uint32_t* sca
                 if (valid)
                 {
                     cursor->offset += used;
-                    *scalar        = result;
+                    *scalar         = result;
                 }
             }
         }
@@ -1980,10 +1980,10 @@ static FORCE_INLINE void ReadJsonContainerStep(JsonParser_t* parser)
  *  None
  */
 extern FORCE_INLINE void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
-                               Utl_Json_Frame_t*  frames,
-                               uint32_t           frameCapacity,
-                               byte_t*            buffer,
-                               uint32_t           capacity)
+                                                   Utl_Json_Frame_t*  frames,
+                                                   uint32_t           frameCapacity,
+                                                   byte_t*            buffer,
+                                                   uint32_t           capacity)
 {
     bool_t has_frames;
     bool_t scalar_only;
@@ -2716,8 +2716,8 @@ extern FORCE_INLINE bool_t Utl_Json_WriteUint64(Utl_Json_Writer_t* writer, uint6
     LOGASSERT(NULL != writer);
     number.data      = digits;
     number.byteCount = Utl_Decimal_WriteUint64(value, digits, sizeof(digits));
+    accepted         = WriteLiteral(writer, number);
     LOGASSERT(0 < number.byteCount);
-    accepted = WriteLiteral(writer, number);
     return accepted;
 }
 
@@ -2756,8 +2756,8 @@ extern FORCE_INLINE bool_t Utl_Json_WriteInt64(Utl_Json_Writer_t* writer, int64_
     digit_count      = Utl_Decimal_WriteUint64(magnitude, digits + prefix_count, JSON_UINT64_BYTES);
     number.data      = digits;
     number.byteCount = prefix_count + digit_count;
+    accepted         = WriteLiteral(writer, number);
     LOGASSERT(0 < digit_count);
-    accepted = WriteLiteral(writer, number);
     return accepted;
 }
 
@@ -2772,6 +2772,7 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
     uint32_t        index;
     uint32_t        count;
     byte_t          digits[JSON_FIXED_BYTES];
+    bool_t          has_digits;
     uint64_t        fraction;
     uint64_t        divisor;
     Utl_Json_Text_t number;
@@ -2783,8 +2784,8 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
     {
         scale *= JSON_DECIMAL_BASE;
     }
-    count = Utl_Decimal_WriteUint64(value.coefficient / scale, digits, sizeof(digits));
-    LOGASSERT(0 < count);
+    count      = Utl_Decimal_WriteUint64(value.coefficient / scale, digits, sizeof(digits));
+    has_digits = (0 < count);
     if (0 < value.fractionDigits)
     {
         digits[count] = JSON_POINT;
@@ -2794,7 +2795,7 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
         for (index = 0; index < value.fractionDigits; ++index)
         {
             divisor       /= JSON_DECIMAL_BASE;
-            digits[count] = (byte_t)(JSON_DIGIT_ZERO + (fraction / divisor));
+            digits[count]  = (byte_t)(JSON_DIGIT_ZERO + (fraction / divisor));
             ++count;
             fraction %= divisor;
         }
@@ -2802,6 +2803,7 @@ extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_
     number.data      = digits;
     number.byteCount = count;
     accepted         = WriteLiteral(writer, number);
+    LOGASSERT(has_digits);
     return accepted;
 }
 

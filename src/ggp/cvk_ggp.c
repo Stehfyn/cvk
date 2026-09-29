@@ -11,7 +11,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ggp.h>
 
-void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNext, GgpFrameToken frameToken)
+extern CVK_FORCE_INLINE void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNext, GgpFrameToken frameToken)
 {
     (*pInfo) = (VkPresentFrameTokenGGP)
     {
@@ -20,7 +20,10 @@ void cvkInitPresentFrameTokenGGP(VkPresentFrameTokenGGP* pInfo, const void* pNex
         .frameToken = frameToken
     };
 }
-void cvkInitStreamDescriptorSurfaceCreateInfoGGP(VkStreamDescriptorSurfaceCreateInfoGGP* pInfo, const void* pNext, VkStreamDescriptorSurfaceCreateFlagsGGP flags, GgpStreamDescriptor streamDescriptor)
+extern CVK_FORCE_INLINE void cvkInitStreamDescriptorSurfaceCreateInfoGGP(VkStreamDescriptorSurfaceCreateInfoGGP* pInfo,
+                                                                         const void*                             pNext,
+                                                                         VkStreamDescriptorSurfaceCreateFlagsGGP flags,
+                                                                         GgpStreamDescriptor                     streamDescriptor)
 {
     (*pInfo) = (VkStreamDescriptorSurfaceCreateInfoGGP)
     {
@@ -30,12 +33,12 @@ void cvkInitStreamDescriptorSurfaceCreateInfoGGP(VkStreamDescriptorSurfaceCreate
         .streamDescriptor = streamDescriptor
     };
 }
-void cvkCreateStreamDescriptorSurfaceGGP(VkInstance                              instance,
-                                         const void*                             pNext,
-                                         VkStreamDescriptorSurfaceCreateFlagsGGP flags,
-                                         GgpStreamDescriptor                     streamDescriptor,
-                                         const VkAllocationCallbacks*            pAllocator,
-                                         VkSurfaceKHR*                           pSurface)
+extern CVK_FORCE_INLINE void cvkCreateStreamDescriptorSurfaceGGP(VkInstance                              instance,
+                                                                 const void*                             pNext,
+                                                                 VkStreamDescriptorSurfaceCreateFlagsGGP flags,
+                                                                 GgpStreamDescriptor                     streamDescriptor,
+                                                                 const VkAllocationCallbacks*            pAllocator,
+                                                                 VkSurfaceKHR*                           pSurface)
 {
     VkStreamDescriptorSurfaceCreateInfoGGP create_info =
     {
@@ -48,15 +51,15 @@ void cvkCreateStreamDescriptorSurfaceGGP(VkInstance                             
     CVK_CHECK(vkCreateStreamDescriptorSurfaceGGP(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-VkResult cvkQueuePresentWithFrameTokenInfoGGP(VkQueue               queue,
-                                              const void*           pNext,
-                                              GgpFrameToken         frameToken,
-                                              uint32_t              waitSemaphoreCount,
-                                              const VkSemaphore*    pWaitSemaphores,
-                                              uint32_t              swapchainCount,
-                                              const VkSwapchainKHR* pSwapchains,
-                                              const uint32_t*       pImageIndices,
-                                              VkResult*             pResults)
+extern CVK_FORCE_INLINE VkResult cvkQueuePresentWithFrameTokenInfoGGP(VkQueue               queue,
+                                                                      const void*           pNext,
+                                                                      GgpFrameToken         frameToken,
+                                                                      uint32_t              waitSemaphoreCount,
+                                                                      const VkSemaphore*    pWaitSemaphores,
+                                                                      uint32_t              swapchainCount,
+                                                                      const VkSwapchainKHR* pSwapchains,
+                                                                      const uint32_t*       pImageIndices,
+                                                                      VkResult*             pResults)
 {
     VkPresentFrameTokenGGP present_frame_token =
     {

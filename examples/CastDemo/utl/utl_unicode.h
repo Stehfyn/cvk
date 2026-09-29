@@ -65,10 +65,9 @@ typedef enum Utl_Unicode_ReadResult_e
  */
 typedef struct Utl_Unicode_Reader_s
 {
-    const byte_t*          data;      ///< Borrowed bytes retained for every read.
-    uint32_t               byteCount; ///< Readable source extent.
-    uint32_t               offset;    ///< Next byte, never beyond byteCount.
-    Utl_Unicode_Encoding_t encoding;  ///< Encoding selected during initialization.
+    const byte_t*          next;               ///< First unconsumed borrowed byte, NULL only for empty input.
+    uint32_t               remainingByteCount; ///< Readable extent starting at next.
+    Utl_Unicode_Encoding_t encoding;           ///< Encoding selected during initialization.
 } Utl_Unicode_Reader_t;
 
 /*=================================================================================================

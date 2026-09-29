@@ -411,7 +411,9 @@ static FORCE_INLINE void CheckFailures(void)
     uint32_t prefix;
     const char_t         nul_payload[]  = "00:00:01,000 --> 00:00:02,000\nA\0B";
     const char_t         late_invalid[] = "00:00:01,000 --> 00:00:02,000\nfirst\n\norphan\n\n";
-    uint32_t offset;
+    uint32_t      offset;
+    const byte_t* remaining;
+    uint32_t      remaining_bytes;
 
     for (index = 0; index < sizeof(c_invalidCues) / sizeof(const char_t*); ++index)
     {
@@ -445,15 +447,21 @@ static FORCE_INLINE void CheckFailures(void)
     Utl_Srt_InitializeReader(&reader, (const byte_t*)late_invalid, sizeof(late_invalid) - 1);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_CUE == result);
-    offset = reader.offset;
+    offset          = reader.offset;
+    remaining       = reader.remaining.data;
+    remaining_bytes = reader.remaining.byteCount;
     InitializeMarker(&cue);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_INVALID == result);
     LOGASSERT(offset == reader.offset);
+    LOGASSERT(remaining == reader.remaining.data);
+    LOGASSERT(remaining_bytes == Utl_Srt_GetRemainingByteCount(&reader));
     CheckMarker(&cue);
     result = Utl_Srt_ReadCue(&reader, &cue);
     LOGASSERT(UTL_SRT_READ_INVALID == result);
     LOGASSERT(offset == reader.offset);
+    LOGASSERT(remaining == reader.remaining.data);
+    LOGASSERT(remaining_bytes == Utl_Srt_GetRemainingByteCount(&reader));
     CheckMarker(&cue);
 }
 

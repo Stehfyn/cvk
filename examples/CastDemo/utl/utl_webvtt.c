@@ -332,27 +332,26 @@ static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Subtraction uses the established used-within-capacity invariant; no count
- *  addition occurs until remaining capacity has been checked.
+ *  The copy receives a zero extent when the fragment does not fit. The retained
+ *  count advances by that same bounded extent; failure leaves all output intact.
  */
 static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint32_t byteCount)
 {
-    bool_t fits;
-    bool_t writing;
+    bool_t   fits;
+    uint32_t copied;
+    bool_t   writing;
 
     if (writer->valid)
     {
-        fits          = (byteCount <= writer->capacity - writer->used);
-        writer->valid = fits;
-        if (fits)
+        fits    = (byteCount <= writer->capacity - writer->used);
+        copied  = fits ? byteCount : 0;
+        writing = (NULL != writer->output);
+        if (writing)
         {
-            writing = (NULL != writer->output);
-            if (writing)
-            {
-                CRT_Memory_Copy(writer->output + writer->used, input, byteCount);
-            }
-            writer->used += byteCount;
+            CRT_Memory_Copy(writer->output + writer->used, input, copied);
         }
+        writer->used  += copied;
+        writer->valid  = fits;
     }
 }
 
@@ -398,12 +397,12 @@ static FORCE_INLINE void AppendNumber(Writer_t* writer, const Number_t* number)
     LOGASSERT(WEBVTT_FRACTION_DIGITS >= number->width);
 
     count = Utl_Decimal_WriteUint64(number->value, digits, sizeof(digits));
-    LOGASSERT(0 < count);
     for (padding = count; padding < number->width; ++padding)
     {
         AppendByte(writer, WEBVTT_CHAR_ZERO);
     }
     AppendBytes(writer, digits, count);
+    LOGASSERT(0 < count);
 }
 
 /*************************************************************************************************/
@@ -480,8 +479,8 @@ static FORCE_INLINE void AppendScalar(Writer_t* writer, uint32_t scalar)
         else
         {
             count = Utl_Unicode_WriteUtf8(scalar, encoded, sizeof(encoded));
-            LOGASSERT(0 < count);
             AppendBytes(writer, (const byte_t*)encoded, count);
+            LOGASSERT(0 < count);
         }
         break;
     }
@@ -600,8 +599,8 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
         reader->valid = Utl_Decimal_ReadUint64(value, &count, reader->input + reader->offset, available);
         if (reader->valid)
         {
-            width_valid    = (!fixed_width) || (count == width);
-            reader->valid  = width_valid;
+            width_valid     = (!fixed_width) || (count == width);
+            reader->valid   = width_valid;
             reader->offset += count;
         }
     }
@@ -697,7 +696,10 @@ uint32_t Utl_WebVtt_GetCueByteCount(const Utl_WebVtt_Cue_t* cue)
  *  The first field is hours only when a second colon follows. Arithmetic is
  *  staged after width/range validation; overflow never wraps into a valid time.
  */
-extern FORCE_INLINE bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_WebVtt_ReadTimestamp(uint64_t*     milliseconds,
+                                                    uint32_t*     bytesRead,
+                                                    const byte_t* input,
+                                                    uint32_t      byteCount)
 {
     Reader_t reader;
     uint64_t first;

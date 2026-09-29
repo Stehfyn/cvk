@@ -1,7 +1,7 @@
 ;=================================================================================================
 ; 1. References
 ;=================================================================================================
-; Microsoft x64 compiler memory-helper ABI. These leaf adapters are linked only
+; Microsoft x64 compiler-helper ABI. These leaf adapters are linked only
 ; into executables that replace the system runtime. Core implementations have
 ; explicit CRT_ names and can be migrated independently of existing CRT callers.
 
@@ -37,10 +37,12 @@ EXTERN CRT_Memory_CompareCore:PROC
 EXTERN CRT_Memory_CopyCore:PROC
 EXTERN CRT_Memory_MoveCore:PROC
 EXTERN CRT_Memory_SetCore:PROC
+EXTERN CRT_Stack_ProbeCore:PROC
 PUBLIC memcmp
 PUBLIC memcpy
 PUBLIC memmove
 PUBLIC memset
+PUBLIC __chkstk
 
 .code
 
@@ -75,5 +77,12 @@ memmove ENDP
 memset PROC
     jmp CRT_Memory_SetCore
 memset ENDP
+
+;*************************************************************************************************
+; Details: Tail dispatch preserves RAX and the original compiler return address.
+; The core probes the pending frame without adjusting the caller's stack.
+__chkstk PROC
+    jmp CRT_Stack_ProbeCore
+__chkstk ENDP
 
 END

@@ -7,8 +7,20 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/* Compiler contracts used by the generated implementation. */
+#ifdef __clang__
+#define CVK_NORETURN     __attribute__((noreturn))
+#define CVK_FORCE_INLINE __attribute__((always_inline))
+#elif defined(_MSC_VER)
+#define CVK_NORETURN     __declspec(noreturn)
+#define CVK_FORCE_INLINE __forceinline
+#else
+#define CVK_NORETURN     __attribute__((noreturn))
+#define CVK_FORCE_INLINE __attribute__((always_inline)) inline
+#endif
+
 /* Fatal diagnostics. Override CVK_ASSERT before including to change the policy. */
-void cvkFatal(const char* pExpression, const char* pFile, int line);
+CVK_NORETURN void cvkFatal(const char* pExpression, const char* pFile, int line);
 void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile, int line);
 
 #ifndef CVK_ASSERT

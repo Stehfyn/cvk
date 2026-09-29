@@ -12,6 +12,7 @@
 
 #include "os/os_compiler.h"
 #include "cast_events.h"
+#include "cast_session.h"
 #include "os/os_assert.h"
 #include "os/os_atomic.h"
 #include "os/os_mailbox.h"
@@ -129,7 +130,7 @@ void CastEvents_Begin(CastEvents_t* events, uint32_t generation)
  * \par Details:
  *  Write only the producer-owned back slot, then exchange ownership with the middle
  *  slot. Terminal reason has one immutable publication and cannot be overwritten.
- *  Cases follow the numeric CastEvent values.
+ *  Supported event categories select their own publication path.
  */
 bool_t CastEvents_Publish(CastEvents_t*     events,
                           uint32_t          generation,
@@ -140,6 +141,9 @@ bool_t CastEvents_Publish(CastEvents_t*     events,
     bool_t   is_current;
     bool_t   can_publish;
     bool_t   accepted;
+    bool_t   is_log;
+    bool_t   is_status;
+    bool_t   is_terminal;
     uint32_t slot;
 
     LOGASSERT(NULL != events);
@@ -149,15 +153,18 @@ bool_t CastEvents_Publish(CastEvents_t*     events,
     accepted    = FALSE;
     if (can_publish)
     {
-        switch (event)
+        is_log      = (CAST_EVENT_LOG == event);
+        is_status   = (CAST_EVENT_STATUS == event);
+        is_terminal = (CAST_EVENT_ENDED == event);
+        if (is_log)
         {
-        case CAST_EVENT_LOG:
             slot = OS_Mailbox_GetWriteIndex(&events->log.channel);
             CopyText(events->log.values[slot], text);
             OS_Mailbox_Publish(&events->log.channel);
             accepted = TRUE;
-            break;
-        case CAST_EVENT_STATUS:
+        }
+        else if (is_status)
+        {
             if (NULL != status)
             {
                 slot = OS_Mailbox_GetWriteIndex(&events->status.channel);
@@ -165,15 +172,17 @@ bool_t CastEvents_Publish(CastEvents_t*     events,
                 OS_Mailbox_Publish(&events->status.channel);
                 accepted = TRUE;
             }
-            break;
-        case CAST_EVENT_ENDED:
+        }
+        else if (is_terminal)
+        {
             CopyText(events->reason, text);
             events->ended = TRUE;
             OS_Atomic_Store32(&events->terminal, CAST_EVENTS_TERMINAL_PENDING);
             accepted = TRUE;
-            break;
-        default:
-            break;
+        }
+        else
+        {
+            /* Unsupported categories cannot publish a payload. */
         }
     }
 

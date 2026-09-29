@@ -10,7 +10,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_vi.h>
 
-void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window)
+extern CVK_FORCE_INLINE void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window)
 {
     (*pInfo) = (VkViSurfaceCreateInfoNN)
     {
@@ -20,7 +20,7 @@ void cvkInitViSurfaceCreateInfoNN(VkViSurfaceCreateInfoNN* pInfo, const void* pN
         .window = window
     };
 }
-void cvkCreateViSurfaceNN(VkInstance instance, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
+extern CVK_FORCE_INLINE void cvkCreateViSurfaceNN(VkInstance instance, const void* pNext, VkViSurfaceCreateFlagsNN flags, void* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
     VkViSurfaceCreateInfoNN create_info =
     {

@@ -140,9 +140,9 @@ static FORCE_INLINE bool_t ReadByteOrderedUtf16(const Utl_Unicode_Reader_t* read
     }
     for (index = 0; index < unit_count; ++index)
     {
-        offset = reader->offset + (index * UNICODE_UTF16_UNIT_BYTES);
-        first  = reader->data[offset];
-        second = reader->data[offset + 1];
+        offset = index * UNICODE_UTF16_UNIT_BYTES;
+        first  = reader->next[offset];
+        second = reader->next[offset + 1];
         if (little_endian)
         {
             units[index] = (uint16_t)(first | (second << UNICODE_BYTE_BITS));
@@ -172,44 +172,69 @@ static FORCE_INLINE bool_t ReadByteOrderedUtf16(const Utl_Unicode_Reader_t* read
  *  selected by this API. The byte-order choice is independent of the host target.
  *  https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-23/
  */
-extern FORCE_INLINE void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader, const byte_t* data, uint32_t byteCount)
+extern FORCE_INLINE void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader,
+                                                      const byte_t*         data,
+                                                      uint32_t              byteCount)
 {
-    bool_t has_source;
-    bool_t has_pair;
-    byte_t first;
-    byte_t second;
-    bool_t little_endian;
-    bool_t big_endian;
-    bool_t utf8_prefix;
-    bool_t has_utf8_signature;
+    bool_t   has_data;
+    bool_t   is_empty;
+    bool_t   has_source;
+    uint32_t signature_bytes;
+    bool_t   has_pair;
+    byte_t   first;
+    byte_t   second;
+    bool_t   first_is_low;
+    bool_t   first_is_high;
+    bool_t   second_is_low;
+    bool_t   second_is_high;
+    bool_t   little_endian;
+    bool_t   big_endian;
+    bool_t   utf8_first;
+    bool_t   utf8_second;
+    bool_t   utf8_prefix;
+    bool_t   utf16_signature;
+    bool_t   has_triple;
+    bool_t   utf8_candidate;
+    bool_t   has_utf8_signature;
 
     LOGASSERT(NULL != reader);
 
-    has_source = (NULL != data) || (0 == byteCount);
+    has_data   = (NULL != data);
+    is_empty   = (0 == byteCount);
+    has_source = has_data || is_empty;
     LOGASSERT(has_source);
-    reader->data      = data;
-    reader->byteCount = byteCount;
-    reader->offset    = 0;
-    reader->encoding  = UTL_UNICODE_UTF8;
-    has_pair          = (UNICODE_UTF16_UNIT_BYTES <= byteCount);
+    reader->next               = data;
+    reader->remainingByteCount = byteCount;
+    reader->encoding           = UTL_UNICODE_UTF8;
+    signature_bytes            = 0;
+    has_pair                   = (UNICODE_UTF16_UNIT_BYTES <= byteCount);
     if (has_pair)
     {
-        first         = data[0];
-        second        = data[1];
-        little_endian = (UNICODE_UTF16_SIGNATURE_LOW == first) && (UNICODE_UTF16_SIGNATURE_HIGH == second);
-        big_endian    = (UNICODE_UTF16_SIGNATURE_HIGH == first) && (UNICODE_UTF16_SIGNATURE_LOW == second);
-        utf8_prefix   = (UNICODE_UTF8_SIGNATURE_FIRST == first) && (UNICODE_UTF8_SIGNATURE_SECOND == second);
-        if (little_endian || big_endian)
+        first           = data[0];
+        second          = data[1];
+        first_is_low    = (UNICODE_UTF16_SIGNATURE_LOW == first);
+        first_is_high   = (UNICODE_UTF16_SIGNATURE_HIGH == first);
+        second_is_low   = (UNICODE_UTF16_SIGNATURE_LOW == second);
+        second_is_high  = (UNICODE_UTF16_SIGNATURE_HIGH == second);
+        little_endian   = first_is_low && second_is_high;
+        big_endian      = first_is_high && second_is_low;
+        utf8_first      = (UNICODE_UTF8_SIGNATURE_FIRST == first);
+        utf8_second     = (UNICODE_UTF8_SIGNATURE_SECOND == second);
+        utf8_prefix     = utf8_first && utf8_second;
+        utf16_signature = little_endian || big_endian;
+        has_triple      = (UNICODE_UTF8_SIGNATURE_BYTES <= byteCount);
+        utf8_candidate  = utf8_prefix && has_triple;
+        if (utf16_signature)
         {
             reader->encoding = little_endian ? UTL_UNICODE_UTF16_LE : UTL_UNICODE_UTF16_BE;
-            reader->offset   = UNICODE_UTF16_UNIT_BYTES;
+            signature_bytes  = UNICODE_UTF16_UNIT_BYTES;
         }
-        else if (utf8_prefix && (UNICODE_UTF8_SIGNATURE_BYTES <= byteCount))
+        else if (utf8_candidate)
         {
             has_utf8_signature = (UNICODE_UTF8_SIGNATURE_LAST == data[UNICODE_UTF8_SIGNATURE_BYTES - 1]);
             if (has_utf8_signature)
             {
-                reader->offset = UNICODE_UTF8_SIGNATURE_BYTES;
+                signature_bytes = UNICODE_UTF8_SIGNATURE_BYTES;
             }
         }
         else
@@ -217,19 +242,24 @@ extern FORCE_INLINE void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* read
             /* Unmarked payload remains UTF-8; ReadScalar diagnoses invalid bytes. */
         }
     }
+    if (0 < signature_bytes)
+    {
+        reader->next               += signature_bytes;
+        reader->remainingByteCount -= signature_bytes;
+    }
 }
 
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Cursor bounds are initialization/read invariants and programmer obligations.
+ *  Initialization and successful scalar reads retain the unconsumed extent.
+ *  This query performs no offset arithmetic or source access.
  */
 extern FORCE_INLINE uint32_t Utl_Unicode_GetRemainingByteCount(const Utl_Unicode_Reader_t* reader)
 {
     LOGASSERT(NULL != reader);
-    LOGASSERT(reader->offset <= reader->byteCount);
 
-    return reader->byteCount - reader->offset;
+    return reader->remainingByteCount;
 }
 
 /*************************************************************************************************/
@@ -415,7 +445,10 @@ bool_t Utl_Unicode_IsValidUtf16(const uint16_t* units, uint32_t unitCount)
  * \par Details:
  *  Lead-byte classification sets the width and minimum scalar before any continuation byte is read.
  */
-extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf8(uint32_t* scalar, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf8(uint32_t*     scalar,
+                                                uint32_t*     bytesRead,
+                                                const byte_t* buffer,
+                                                uint32_t      byteCount)
 {
     bool_t   has_outputs;
     bool_t   has_input;
@@ -498,7 +531,10 @@ extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf8(uint32_t* scalar, uint32_t* byte
  * \par Details:
  *  A surrogate pair contributes ten bits from each unit above the supplementary-plane base.
  */
-extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf16(uint32_t* scalar, uint32_t* unitsRead, const uint16_t* units, uint32_t unitCount)
+extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf16(uint32_t*       scalar,
+                                                 uint32_t*       unitsRead,
+                                                 const uint16_t* units,
+                                                 uint32_t        unitCount)
 {
     bool_t   has_outputs;
     bool_t   has_input;
@@ -552,7 +588,7 @@ extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf16(uint32_t* scalar, uint32_t* uni
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Output and offset are published together only after a complete scalar read.
+ *  Output and the unconsumed span are published together only after a complete scalar read.
  */
 extern FORCE_INLINE Utl_Unicode_ReadResult_t Utl_Unicode_ReadScalar(Utl_Unicode_Reader_t* reader, uint32_t* scalar)
 {
@@ -561,6 +597,8 @@ extern FORCE_INLINE Utl_Unicode_ReadResult_t Utl_Unicode_ReadScalar(Utl_Unicode_
     bool_t                   is_utf8;
     bool_t                   valid;
     Scalar_t                 decoded;
+    bool_t                   little_endian;
+    bool_t                   big_endian;
     bool_t                   is_utf16;
 
     LOGASSERT(NULL != reader);
@@ -573,20 +611,23 @@ extern FORCE_INLINE Utl_Unicode_ReadResult_t Utl_Unicode_ReadScalar(Utl_Unicode_
         is_utf8 = (UTL_UNICODE_UTF8 == reader->encoding);
         if (is_utf8)
         {
-            valid = Utl_Unicode_ReadUtf8(&decoded.value, &decoded.byteCount, reader->data + reader->offset, remaining);
+            valid = Utl_Unicode_ReadUtf8(&decoded.value, &decoded.byteCount, reader->next, remaining);
         }
         else
         {
-            is_utf16 = (UTL_UNICODE_UTF16_LE == reader->encoding) || (UTL_UNICODE_UTF16_BE == reader->encoding);
+            little_endian = (UTL_UNICODE_UTF16_LE == reader->encoding);
+            big_endian    = (UTL_UNICODE_UTF16_BE == reader->encoding);
+            is_utf16      = little_endian || big_endian;
             LOGASSERT(is_utf16);
             valid = ReadByteOrderedUtf16(reader, &decoded);
         }
         result = UTL_UNICODE_READ_INVALID;
         if (valid)
         {
-            reader->offset += decoded.byteCount;
-            (*scalar)       = decoded.value;
-            result          = UTL_UNICODE_READ_SCALAR;
+            reader->next               += decoded.byteCount;
+            reader->remainingByteCount -= decoded.byteCount;
+            (*scalar)                   = decoded.value;
+            result                      = UTL_UNICODE_READ_SCALAR;
         }
     }
 
@@ -618,7 +659,7 @@ extern FORCE_INLINE uint32_t Utl_Unicode_WriteUtf8(uint32_t scalar, byte_t* buff
         value = scalar;
         for (index = width - 1; 0 < index; --index)
         {
-            buffer[index] = (byte_t)(UTF8_CONTINUATION_FIRST | (value & UTF8_CONTINUATION_MASK));
+            buffer[index]   = (byte_t)(UTF8_CONTINUATION_FIRST | (value & UTF8_CONTINUATION_MASK));
             value         >>= UTF8_CONTINUATION_BITS;
         }
         buffer[0] = (byte_t)(c_utf8LeadBits[width - 1] | value);

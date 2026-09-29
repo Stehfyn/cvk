@@ -14,6 +14,42 @@ typedef enum cvkJsonKind
 } cvkJsonKind;
 
 #define CVK_JSON_NONE (UINT32_MAX)
+#define CVK_JSON_ARENA_ALIGNMENT (16)
+
+/* RFC 8259 sections 2 through 7: JSON lexical productions. */
+#define CVK_JSON_SPACE (' ')
+#define CVK_JSON_TAB ('\t')
+#define CVK_JSON_LF ('\n')
+#define CVK_JSON_CR ('\r')
+#define CVK_JSON_ZERO ('0')
+#define CVK_JSON_NINE ('9')
+#define CVK_JSON_MINUS ('-')
+#define CVK_JSON_PLUS ('+')
+#define CVK_JSON_DOT ('.')
+#define CVK_JSON_EXPONENT_LOWER ('e')
+#define CVK_JSON_EXPONENT_UPPER ('E')
+#define CVK_JSON_QUOTE ('"')
+#define CVK_JSON_ESCAPE ('\\')
+#define CVK_JSON_CONTROL_LIMIT (0x20)
+#define CVK_JSON_TRUE_FIRST ('t')
+#define CVK_JSON_FALSE_FIRST ('f')
+#define CVK_JSON_NULL_FIRST ('n')
+#define CVK_JSON_TRUE_TEXT ("true")
+#define CVK_JSON_FALSE_TEXT ("false")
+#define CVK_JSON_NULL_TEXT ("null")
+#define CVK_JSON_OBJECT_OPEN ('{')
+#define CVK_JSON_OBJECT_CLOSE ('}')
+#define CVK_JSON_ARRAY_OPEN ('[')
+#define CVK_JSON_ARRAY_CLOSE (']')
+#define CVK_JSON_COLON (':')
+#define CVK_JSON_COMMA (',')
+
+/* Numeric conversion buffers include the sign and trailing zero. */
+#define CVK_JSON_DECIMAL_BASE (10)
+#define CVK_JSON_OCTAL_BASE (8)
+#define CVK_JSON_HEXADECIMAL_BASE (16)
+#define CVK_JSON_INTEGER_TEXT_CAPACITY (32)
+#define CVK_JSON_REAL_TEXT_CAPACITY (64)
 
 typedef struct cvkJsonValue
 {
@@ -55,23 +91,39 @@ typedef struct cvkArena
     size_t   used;
 } cvkArena;
 
-/* Maps a handle written to JSON as a number (an object id) to a handle; pHandleType names the
-** Vulkan handle type ("VkPipelineLayout"). Returns 0 for an unknown id. */
-typedef uint64_t (*PFN_cvkResolveJsonHandle)(void* pUser, const char* pHandleType, uint64_t id);
+/* Writes a native handle of the named type to pHandle. The caller initializes
+** that typed object to VK_NULL_HANDLE. Failure leaves it unchanged. */
+typedef VkBool32 (*PFN_cvkResolveJsonHandle)(void*       pUser,
+                                          const char* pHandleType,
+                                          uint64_t    id,
+                                          uint32_t    handleByteCount,
+                                          void*       pHandle);
+
+/* Numeric IDs are metadata, never pointer-valued Vulkan handles. The referenced
+** output objects must remain at their parse-time addresses while this list is used. */
+typedef struct cvkJsonHandleReference
+{
+    struct cvkJsonHandleReference* pNext;
+    const char*                   pHandleType;
+    const void*                   pHandle;
+    uint64_t                      id;
+} cvkJsonHandleReference;
 
 typedef struct cvkJsonContext
 {
     cvkJsonDocument          document;
     cvkArena*                pArena;
-    PFN_cvkResolveJsonHandle resolveHandle; /* NULL keeps the ids themselves in the handle fields */
+    PFN_cvkResolveJsonHandle resolveHandle;
     void*                    pUser;
+    cvkJsonHandleReference** ppHandleReferences; /* required for deferred resolution */
 } cvkJsonContext;
 
 /* A Vulkan SC pipeline JSON (the pipeline cache compiler's input), parsed: the objects the
 ** pipeline needs, each with the id the file refers to it by, and the pipeline itself. Handle
-** fields hold the file's ids until cvkCreatePipelineJsonObjects replaces them. */
+** fields hold native handles. Numeric IDs live in pHandleReferences. */
 typedef struct cvkPipelineJson
 {
+    cvkJsonHandleReference*             pHandleReferences;
     VkPipelineBindPoint                 bindPoint;
     VkGraphicsPipelineCreateInfo        graphicsPipelineCreateInfo;
     VkComputePipelineCreateInfo         computePipelineCreateInfo;

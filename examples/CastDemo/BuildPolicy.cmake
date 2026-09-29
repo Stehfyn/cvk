@@ -1,40 +1,25 @@
 # Required owned-code policy. External libraries/headers are excluded by user instruction;
-# MSVC permits only compiler padding. The four later approved Clang exceptions
+# MSVC permits only compiler padding. The explicitly approved Clang exceptions
 # are specified in .clang-tidy; the VS command line retains the same check selection.
 find_program(CAST_CLANG_TIDY_EXECUTABLE NAMES clang-tidy REQUIRED)
 get_filename_component(cast_clang_tidy_directory "${CAST_CLANG_TIDY_EXECUTABLE}" DIRECTORY)
 set(cast_clang_tidy_config "${CMAKE_CURRENT_LIST_DIR}/.clang-tidy")
-set(cast_analysis_targets "${CMAKE_CURRENT_LIST_DIR}/BuildPolicy.targets")
-set(cast_clang_tidy_checks "clang-analyzer-*,bugprone-*,cert-*,concurrency-*,misc-*,performance-*,portability-*,readability-*,-bugprone-easily-swappable-parameters")
+set(cast_clang_tidy_checks "clang-analyzer-*,bugprone-*,cert-*,concurrency-*,misc-*,performance-*,portability-*,readability-*,-clang-analyzer-optin.performance.Padding,-bugprone-easily-swappable-parameters")
 
-# The user requires generated CVK code to remain unchanged and approved only the
-# diagnostic categories reported in that code. Derive its Clang policy from
+# The user approved generator fixes and matching output after the original scoped
+# diagnostic exceptions. Preserve that exception list and derive its policy from
 # the owned policy so future changes to the common checks remain effective.
 set(cast_generated_clang_tidy_config "${CMAKE_CURRENT_BINARY_DIR}/cvk-generated.clang-tidy")
 string(JOIN "," cast_generated_clang_tidy_exceptions
     "-readability-non-const-parameter"
     "-bugprone-invalid-enum-default-initialization"
-    "-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling"
-    "-misc-include-cleaner"
-    "-readability-magic-numbers"
-    "-misc-no-recursion"
-    "-performance-no-int-to-ptr"
-    "-clang-analyzer-optin.core.EnumCastOutOfRange"
-    "-readability-redundant-casting"
-    "-readability-function-cognitive-complexity"
-    "-readability-redundant-parentheses"
-    "-clang-analyzer-optin.performance.Padding"
-    "-readability-function-size"
-    "-readability-identifier-length"
-    "-readability-avoid-nested-conditional-operator"
-    "-readability-math-missing-parentheses"
-    "-clang-analyzer-security.ArrayBound")
+    "-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling")
 file(READ "${cast_clang_tidy_config}" cast_generated_clang_tidy_text)
 string(REPLACE "  -bugprone-easily-swappable-parameters"
     "  -bugprone-easily-swappable-parameters,\n  ${cast_generated_clang_tidy_exceptions}"
     cast_generated_clang_tidy_text "${cast_generated_clang_tidy_text}")
 string(REPLACE "'-Wno-unsafe-buffer-usage']"
-    "'-Wno-unsafe-buffer-usage', '-Wno-missing-noreturn', '-Wno-implicit-int-enum-cast', '-Wno-bad-function-cast']"
+    "'-Wno-unsafe-buffer-usage', '-Wno-missing-noreturn', '-Wno-implicit-int-enum-cast']"
     cast_generated_clang_tidy_text "${cast_generated_clang_tidy_text}")
 file(WRITE "${cast_generated_clang_tidy_config}" "${cast_generated_clang_tidy_text}")
 
@@ -56,20 +41,33 @@ function(cast_apply_build_policy target)
 
     set(target_clang_tidy_config "${cast_clang_tidy_config}")
     set(target_clang_tidy_checks "${cast_clang_tidy_checks}")
-    if(target STREQUAL "cvk")
+    if(target STREQUAL "cvk" OR target STREQUAL "cvk-platform")
         set(target_clang_tidy_config "${cast_generated_clang_tidy_config}")
         string(APPEND target_clang_tidy_checks ",${cast_generated_clang_tidy_exceptions}")
     endif()
 
     target_compile_options(${target} PRIVATE
         "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/Wall;/WX;/wd4820;/external:W0;/external:env:INCLUDE;/analyze:external->")
+    # Native source metadata keeps analysis diagnostics visible and disables the
+    # obsolete minimal-rebuild mode without a target that rewrites build items.
+    get_target_property(target_sources ${target} SOURCES)
+    get_target_property(target_source_directory ${target} SOURCE_DIR)
+    foreach(source IN LISTS target_sources)
+        if(source MATCHES "\\.[cC]$")
+            cmake_path(ABSOLUTE_PATH source BASE_DIRECTORY "${target_source_directory}")
+            # Keep the property reference until MSBuild evaluates the item.
+            # CMake drops a literal empty value instead of emitting metadata.
+            set_property(SOURCE "${source}" TARGET_DIRECTORY ${target} APPEND PROPERTY
+                VS_SETTINGS "MinimalRebuild=false"
+                "PREfastAdditionalOptions=$(PREfastAdditionalOptions)")
+        endif()
+    endforeach()
     set_target_properties(${target} PROPERTIES
         C_CLANG_TIDY "${CAST_CLANG_TIDY_EXECUTABLE};--config-file=${target_clang_tidy_config};--warnings-as-errors=*"
         NO_SYSTEM_FROM_IMPORTED FALSE
         VS_GLOBAL_RunCodeAnalysis true
         VS_GLOBAL_CodeAnalysisRuleSet "AllRules.ruleset"
         VS_GLOBAL_CodeAnalysisTreatWarningsAsErrors true
-        VS_GLOBAL_ForceImportAfterCppTargets "${cast_analysis_targets}"
         VS_GLOBAL_EnableMicrosoftCodeAnalysis true
         VS_GLOBAL_EnableClangTidyCodeAnalysis true
         VS_GLOBAL_ClangTidyToolPath "${cast_clang_tidy_directory}"

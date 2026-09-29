@@ -21,12 +21,12 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
 
     count = ((NULL != pList) && (CVK_JSON_ARRAY == pList->kind)) ? pList->childCount : 0;
     (*ppIds)      = (uint64_t*)cvkAllocateArena(pContext->pArena, count * sizeof(uint64_t), sizeof(uint64_t));
-    (*ppElements) = cvkAllocateArena(pContext->pArena, count * elementSize, 16);
+    (*ppElements) = cvkAllocateArena(pContext->pArena, count * elementSize, CVK_JSON_ARENA_ALIGNMENT);
     for (index = 0; index < count; ++index)
     {
         const cvkJsonValue* entry  = cvkGetJsonElement(&pContext->document, pList, index);
         const cvkJsonValue* member = cvkGetJsonElement(&pContext->document, entry, 0); /* the one member: id -> structure */
-        char                buffer[32];
+        char                buffer[CVK_JSON_INTEGER_TEXT_CAPACITY];
 
         CVK_ASSERT((NULL != member) && (member->keyLength < sizeof(buffer)));
         (void)memcpy(buffer, member->pKey, member->keyLength);
@@ -37,30 +37,19 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
 }
 
 /**
- * \brief Parses a pipeline JSON document into its create infos; handle fields keep the file's object ids.
- *
- * \par Details:
- *  Reads "GraphicsPipelineState" or "ComputePipelineState" with its "Renderpass" (version
- *  from the sType), "DescriptorSetLayouts", "PipelineLayout", "GraphicsPipeline" or
- *  "ComputePipeline", "ShaderFileNames", "Samplers" or "ImmutableSamplers", and
- *  "YcbcrSamplers"; then "EnabledExtensions" and "PipelineUUID". Handles are parsed through
- *  the context's resolver; with none, they hold the ids for cvkCreatePipelineJsonObjects.
- *
- * \param[in]  pContext   Parsing context whose document is the pipeline JSON
- * \param[out] pPipeline  Receives the parsed pipeline description
- *
- * \retval None
+ * \brief Reads the pipeline state and its render-pass version.
+ * \param[in] pContext Parsing context.
+ * \param[in] root Document root.
+ * \param[out] pPipeline Parsed pipeline and render pass.
+ * \retval Other The graphics or compute state object.
  */
-void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipeline)
+static CVK_FORCE_INLINE const cvkJsonValue* cvkReadPipelineJsonState(const cvkJsonContext* pContext,
+                                                                   const cvkJsonValue* root,
+                                                                   cvkPipelineJson* pPipeline)
 {
-    const cvkJsonValue* root = &pContext->document.pValues[0];
     const cvkJsonValue* state;
     const cvkJsonValue* value;
-    const cvkJsonValue* list;
-    void*               elements;
-    uint32_t            index;
 
-    (void)memset(pPipeline, 0, sizeof(*pPipeline));
     state = cvkGetJsonMember(&pContext->document, root, "GraphicsPipelineState");
     if (NULL != state)
     {
@@ -99,69 +88,105 @@ void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipe
         }
     }
 
+    return state;
+}
+
+/**
+ * \brief Parses a pipeline JSON document into its create infos; object IDs are retained separately from native handles.
+ *
+ * \par Details:
+ *  Reads "GraphicsPipelineState" or "ComputePipelineState" with its "Renderpass" (version
+ *  from the sType), "DescriptorSetLayouts", "PipelineLayout", "GraphicsPipeline" or
+ *  "ComputePipeline", "ShaderFileNames", "Samplers" or "ImmutableSamplers", and
+ *  "YcbcrSamplers"; then "EnabledExtensions" and "PipelineUUID". Handles are parsed through
+ *  the context's resolver; with none, native handles stay null and pHandleReferences retains their IDs.
+ *
+ * \param[in]  pContext   Parsing context whose document is the pipeline JSON
+ * \param[out] pPipeline  Receives the parsed pipeline description
+ *
+ * \retval None
+ */
+void cvkParsePipelineJson(const cvkJsonContext* pContext, cvkPipelineJson* pPipeline)
+{
+    cvkJsonContext      context;
+    const cvkJsonContext* parsing;
+    const cvkJsonValue* root;
+    const cvkJsonValue* state;
+    const cvkJsonValue* value;
+    const cvkJsonValue* list;
+    void*               elements;
+    uint32_t            index;
+
+    (void)memset(pPipeline, 0, sizeof(*pPipeline));
+    context                    = *pContext;
+    context.ppHandleReferences = &pPipeline->pHandleReferences;
+    parsing                    = &context;
+    root                       = &parsing->document.pValues[0];
+    state = cvkReadPipelineJsonState(parsing, root, pPipeline);
+
     /* objects by id */
-    list                                 = cvkGetJsonMember(&pContext->document, state, "DescriptorSetLayouts");
-    pPipeline->descriptorSetLayoutCount  = cvkParsePipelineJsonObjectList(pContext, list, sizeof(VkDescriptorSetLayoutCreateInfo), &pPipeline->pDescriptorSetLayoutIds, &elements);
+    list                                 = cvkGetJsonMember(&parsing->document, state, "DescriptorSetLayouts");
+    pPipeline->descriptorSetLayoutCount  = cvkParsePipelineJsonObjectList(parsing, list, sizeof(VkDescriptorSetLayoutCreateInfo), &pPipeline->pDescriptorSetLayoutIds, &elements);
     pPipeline->pDescriptorSetLayoutCreateInfos = (VkDescriptorSetLayoutCreateInfo*)elements;
     for (index = 0; index < pPipeline->descriptorSetLayoutCount; ++index)
     {
-        cvkParseJsonDescriptorSetLayoutCreateInfo(pContext, cvkGetJsonElement(&pContext->document, cvkGetJsonElement(&pContext->document, list, index), 0), &pPipeline->pDescriptorSetLayoutCreateInfos[index]);
+        cvkParseJsonDescriptorSetLayoutCreateInfo(parsing, cvkGetJsonElement(&parsing->document, cvkGetJsonElement(&parsing->document, list, index), 0), &pPipeline->pDescriptorSetLayoutCreateInfos[index]);
     }
-    list = cvkGetJsonMember(&pContext->document, state, "Samplers");
+    list = cvkGetJsonMember(&parsing->document, state, "Samplers");
     if (NULL == list)
     {
-        list = cvkGetJsonMember(&pContext->document, state, "ImmutableSamplers");
+        list = cvkGetJsonMember(&parsing->document, state, "ImmutableSamplers");
     }
-    pPipeline->samplerCount        = cvkParsePipelineJsonObjectList(pContext, list, sizeof(VkSamplerCreateInfo), &pPipeline->pSamplerIds, &elements);
+    pPipeline->samplerCount        = cvkParsePipelineJsonObjectList(parsing, list, sizeof(VkSamplerCreateInfo), &pPipeline->pSamplerIds, &elements);
     pPipeline->pSamplerCreateInfos = (VkSamplerCreateInfo*)elements;
     for (index = 0; index < pPipeline->samplerCount; ++index)
     {
-        cvkParseJsonSamplerCreateInfo(pContext, cvkGetJsonElement(&pContext->document, cvkGetJsonElement(&pContext->document, list, index), 0), &pPipeline->pSamplerCreateInfos[index]);
+        cvkParseJsonSamplerCreateInfo(parsing, cvkGetJsonElement(&parsing->document, cvkGetJsonElement(&parsing->document, list, index), 0), &pPipeline->pSamplerCreateInfos[index]);
     }
-    list                                          = cvkGetJsonMember(&pContext->document, state, "YcbcrSamplers");
-    pPipeline->samplerYcbcrConversionCount        = cvkParsePipelineJsonObjectList(pContext, list, sizeof(VkSamplerYcbcrConversionCreateInfo), &pPipeline->pSamplerYcbcrConversionIds, &elements);
+    list                                          = cvkGetJsonMember(&parsing->document, state, "YcbcrSamplers");
+    pPipeline->samplerYcbcrConversionCount        = cvkParsePipelineJsonObjectList(parsing, list, sizeof(VkSamplerYcbcrConversionCreateInfo), &pPipeline->pSamplerYcbcrConversionIds, &elements);
     pPipeline->pSamplerYcbcrConversionCreateInfos = (VkSamplerYcbcrConversionCreateInfo*)elements;
     for (index = 0; index < pPipeline->samplerYcbcrConversionCount; ++index)
     {
-        cvkParseJsonSamplerYcbcrConversionCreateInfo(pContext, cvkGetJsonElement(&pContext->document, cvkGetJsonElement(&pContext->document, list, index), 0), &pPipeline->pSamplerYcbcrConversionCreateInfos[index]);
+        cvkParseJsonSamplerYcbcrConversionCreateInfo(parsing, cvkGetJsonElement(&parsing->document, cvkGetJsonElement(&parsing->document, list, index), 0), &pPipeline->pSamplerYcbcrConversionCreateInfos[index]);
     }
 
     /* the pipeline layout */
-    value = cvkGetJsonMember(&pContext->document, state, "PipelineLayout");
+    value = cvkGetJsonMember(&parsing->document, state, "PipelineLayout");
     if (!cvkIsJsonNull(value))
     {
         pPipeline->hasPipelineLayout = VK_TRUE;
-        cvkParseJsonPipelineLayoutCreateInfo(pContext, value, &pPipeline->pipelineLayoutCreateInfo);
+        cvkParseJsonPipelineLayoutCreateInfo(parsing, value, &pPipeline->pipelineLayoutCreateInfo);
     }
 
     /* shaders: stage and file name */
-    list                       = cvkGetJsonMember(&pContext->document, state, "ShaderFileNames");
+    list                       = cvkGetJsonMember(&parsing->document, state, "ShaderFileNames");
     pPipeline->shaderCount     = ((NULL != list) && (CVK_JSON_ARRAY == list->kind)) ? list->childCount : 0;
-    pPipeline->pShaderStages   = (VkShaderStageFlagBits*)cvkAllocateArena(pContext->pArena, pPipeline->shaderCount * sizeof(VkShaderStageFlagBits), sizeof(VkShaderStageFlagBits));
-    pPipeline->ppShaderFileNames = (const char**)cvkAllocateArena(pContext->pArena, pPipeline->shaderCount * sizeof(const char*), sizeof(const char*));
+    pPipeline->pShaderStages   = (VkShaderStageFlagBits*)cvkAllocateArena(parsing->pArena, pPipeline->shaderCount * sizeof(VkShaderStageFlagBits), sizeof(VkShaderStageFlagBits));
+    pPipeline->ppShaderFileNames = (const char**)cvkAllocateArena(parsing->pArena, pPipeline->shaderCount * sizeof(const char*), sizeof(const char*));
     for (index = 0; index < pPipeline->shaderCount; ++index)
     {
-        const cvkJsonValue* shader = cvkGetJsonElement(&pContext->document, list, index);
+        const cvkJsonValue* shader = cvkGetJsonElement(&parsing->document, list, index);
 
-        pPipeline->pShaderStages[index]     = cvkParseJsonShaderStageFlagBits(cvkGetJsonMember(&pContext->document, shader, "stage"));
-        pPipeline->ppShaderFileNames[index] = cvkCopyJsonString(pContext->pArena, cvkGetJsonMember(&pContext->document, shader, "filename"));
+        pPipeline->pShaderStages[index]     = cvkParseJsonShaderStageFlagBits(cvkGetJsonMember(&parsing->document, shader, "stage"));
+        pPipeline->ppShaderFileNames[index] = cvkCopyJsonString(parsing->pArena, cvkGetJsonMember(&parsing->document, shader, "filename"));
     }
 
     /* document-level: extensions and the pipeline identifier */
-    list                              = cvkGetJsonMember(&pContext->document, root, "EnabledExtensions");
+    list                              = cvkGetJsonMember(&parsing->document, root, "EnabledExtensions");
     pPipeline->enabledExtensionCount  = ((NULL != list) && (CVK_JSON_ARRAY == list->kind)) ? list->childCount : 0;
-    pPipeline->ppEnabledExtensionNames = (const char**)cvkAllocateArena(pContext->pArena, pPipeline->enabledExtensionCount * sizeof(const char*), sizeof(const char*));
+    pPipeline->ppEnabledExtensionNames = (const char**)cvkAllocateArena(parsing->pArena, pPipeline->enabledExtensionCount * sizeof(const char*), sizeof(const char*));
     for (index = 0; index < pPipeline->enabledExtensionCount; ++index)
     {
-        pPipeline->ppEnabledExtensionNames[index] = cvkCopyJsonString(pContext->pArena, cvkGetJsonElement(&pContext->document, list, index));
+        pPipeline->ppEnabledExtensionNames[index] = cvkCopyJsonString(parsing->pArena, cvkGetJsonElement(&parsing->document, list, index));
     }
-    list = cvkGetJsonMember(&pContext->document, root, "PipelineUUID");
+    list = cvkGetJsonMember(&parsing->document, root, "PipelineUUID");
     if ((NULL != list) && (CVK_JSON_ARRAY == list->kind) && (VK_UUID_SIZE == list->childCount))
     {
         pPipeline->hasPipelineUuid = VK_TRUE;
         for (index = 0; index < VK_UUID_SIZE; ++index)
         {
-            pPipeline->pipelineUuid[index] = (uint8_t)cvkGetJsonUint64(cvkGetJsonElement(&pContext->document, list, index));
+            pPipeline->pipelineUuid[index] = (uint8_t)cvkGetJsonUint64(cvkGetJsonElement(&parsing->document, list, index));
         }
     }
 }
@@ -188,6 +213,114 @@ uint64_t cvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const ui
         }
     }
     return 0;
+}
+
+/**
+ * \brief Finds an object ID in a pipeline object's ID table.
+ * \param[in] count Number of entries.
+ * \param[in] pIds Object IDs.
+ * \param[in] id Requested ID.
+ * \retval VK_INVALID No matching ID.
+ * \retval Other The matching index into a typed handle table.
+ */
+uint32_t cvkGetPipelineJsonHandleIndex(uint32_t        count,
+                                     const uint64_t* pIds,
+                                     uint64_t        id)
+{
+    uint32_t index;
+    uint32_t found;
+
+    found = VK_INVALID;
+    for (index = 0; index < count; ++index)
+    {
+        if (pIds[index] == id)
+        {
+            found = index;
+            break;
+        }
+    }
+    return found;
+}
+
+/**
+ * \brief Copies descriptor bindings and resolves immutable sampler references.
+ * \param[in] pPipeline Parsed description and retained object IDs.
+ * \param[in] pObjects Previously created native samplers.
+ * \param[in] pInfo Descriptor set layout description.
+ * \param[in,out] pArena Caller-owned output storage.
+ * \retval Other Resolved bindings, or NULL for an empty layout.
+ */
+static CVK_FORCE_INLINE VkDescriptorSetLayoutBinding* cvkResolvePipelineJsonBindings(const cvkPipelineJson* pPipeline,
+                                                                                    const cvkPipelineJsonObjects* pObjects,
+                                                                                    const VkDescriptorSetLayoutCreateInfo* pInfo,
+                                                                                    cvkArena* pArena)
+{
+    VkDescriptorSetLayoutBinding* bindings;
+    VkSampler* samplers;
+    uint32_t inner;
+    uint32_t sampler_index;
+    uint32_t found;
+    uint64_t object_id;
+
+    bindings = (VkDescriptorSetLayoutBinding*)cvkAllocateArena(pArena,
+                                                             pInfo->bindingCount * sizeof(*bindings),
+                                                             CVK_JSON_ARENA_ALIGNMENT);
+    for (inner = 0; inner < pInfo->bindingCount; ++inner)
+    {
+        bindings[inner] = pInfo->pBindings[inner];
+        if (NULL != bindings[inner].pImmutableSamplers)
+        {
+            samplers = (VkSampler*)cvkAllocateArena(pArena, bindings[inner].descriptorCount * sizeof(VkSampler), CVK_JSON_ARENA_ALIGNMENT);
+
+            for (sampler_index = 0; sampler_index < bindings[inner].descriptorCount; ++sampler_index)
+            {
+                object_id          = cvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pInfo->pBindings[inner].pImmutableSamplers[sampler_index]);
+                found       = cvkGetPipelineJsonHandleIndex(pObjects->samplerCount, pObjects->samplerIds, object_id);
+                samplers[sampler_index] = pInfo->pBindings[inner].pImmutableSamplers[sampler_index];
+                if (VK_INVALID != found)
+                {
+                    samplers[sampler_index] = pObjects->samplers[found];
+                }
+            }
+            bindings[inner].pImmutableSamplers = samplers;
+        }
+    }
+    return bindings;
+}
+
+/**
+ * \brief Copies one shader stage and resolves its retained module ID.
+ * \param[in] pPipeline Parsed description and retained object IDs.
+ * \param[in] resolveExternal Optional resolver for external native handles.
+ * \param[in,out] pUser Resolver state.
+ * \param[in] pSource Stage with its parse-time address intact.
+ * \param[out] pStage Resolved stage copy.
+ * \retval None
+ */
+static CVK_FORCE_INLINE void cvkResolvePipelineJsonShader(const cvkPipelineJson* pPipeline,
+                                                          PFN_cvkResolveJsonHandle resolveExternal,
+                                                          void* pUser,
+                                                          const VkPipelineShaderStageCreateInfo* pSource,
+                                                          VkPipelineShaderStageCreateInfo* pStage)
+{
+    uint64_t object_id;
+    VkBool32 has_reference;
+    VkBool32 has_resolver;
+    VkBool32 can_resolve;
+
+    *pStage       = *pSource;
+    object_id     = cvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&pSource->module);
+    has_reference = 0 != object_id;
+    has_resolver  = NULL != resolveExternal;
+    can_resolve   = has_reference && has_resolver;
+    if (can_resolve)
+    {
+        (void)resolveExternal(pUser,
+                              "VkShaderModule",
+                              object_id,
+                              sizeof(VkShaderModule),
+                              (void*)&pStage->module);
+    }
 }
 
 /**
@@ -224,10 +357,10 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
                                   const VkAllocationCallbacks* pAllocator,
                                   cvkPipelineJsonObjects*      pObjects)
 {
-    uint64_t sampler_handles[CVK_MAX_PIPELINE_JSON_OBJECTS];
-    uint64_t descriptor_set_layout_handles[CVK_MAX_PIPELINE_JSON_OBJECTS];
     uint32_t index;
     uint32_t inner;
+    uint32_t found;
+    uint64_t object_id;
 
     (void)memset(pObjects, 0, sizeof(*pObjects));
     CVK_ASSERT(CVK_MAX_PIPELINE_JSON_OBJECTS >= pPipeline->samplerYcbcrConversionCount);
@@ -252,7 +385,6 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
 
         pObjects->samplerIds[index] = pPipeline->pSamplerIds[index];
         cvkCreateSampler(device, info->pNext, info->flags, info->magFilter, info->minFilter, info->mipmapMode, info->addressModeU, info->addressModeV, info->addressModeW, info->mipLodBias, info->anisotropyEnable, info->maxAnisotropy, info->compareEnable, info->compareOp, info->minLod, info->maxLod, info->borderColor, info->unnormalizedCoordinates, pAllocator, &pObjects->samplers[index]);
-        sampler_handles[index] = (uint64_t)(uintptr_t)pObjects->samplers[index];
     }
 
     /* descriptor set layouts, immutable sampler ids resolved */
@@ -260,37 +392,28 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
     for (index = 0; index < pPipeline->descriptorSetLayoutCount; ++index)
     {
         const VkDescriptorSetLayoutCreateInfo* info     = &pPipeline->pDescriptorSetLayoutCreateInfos[index];
-        VkDescriptorSetLayoutBinding*          bindings = (VkDescriptorSetLayoutBinding*)cvkAllocateArena(pArena, info->bindingCount * sizeof(VkDescriptorSetLayoutBinding), 8);
+        VkDescriptorSetLayoutBinding* bindings;
 
-        for (inner = 0; inner < info->bindingCount; ++inner)
-        {
-            bindings[inner] = info->pBindings[inner];
-            if (NULL != bindings[inner].pImmutableSamplers)
-            {
-                VkSampler* samplers = (VkSampler*)cvkAllocateArena(pArena, bindings[inner].descriptorCount * sizeof(VkSampler), 8);
-                uint32_t   s;
-
-                for (s = 0; s < bindings[inner].descriptorCount; ++s)
-                {
-                    samplers[s] = (VkSampler)(uintptr_t)cvkGetPipelineJsonHandle(pObjects->samplerCount, pObjects->samplerIds, sampler_handles, (uint64_t)(uintptr_t)info->pBindings[inner].pImmutableSamplers[s]);
-                }
-                bindings[inner].pImmutableSamplers = samplers;
-            }
-        }
+        bindings = cvkResolvePipelineJsonBindings(pPipeline, pObjects, info, pArena);
         pObjects->descriptorSetLayoutIds[index] = pPipeline->pDescriptorSetLayoutIds[index];
         cvkCreateDescriptorSetLayout(device, info->pNext, info->flags, info->bindingCount, bindings, pAllocator, &pObjects->descriptorSetLayouts[index]);
-        descriptor_set_layout_handles[index] = (uint64_t)(uintptr_t)pObjects->descriptorSetLayouts[index];
     }
 
     /* pipeline layout, set layout ids resolved */
     if (pPipeline->hasPipelineLayout)
     {
         const VkPipelineLayoutCreateInfo* info    = &pPipeline->pipelineLayoutCreateInfo;
-        VkDescriptorSetLayout*            layouts = (VkDescriptorSetLayout*)cvkAllocateArena(pArena, info->setLayoutCount * sizeof(VkDescriptorSetLayout), 8);
+        VkDescriptorSetLayout*            layouts = (VkDescriptorSetLayout*)cvkAllocateArena(pArena, info->setLayoutCount * sizeof(VkDescriptorSetLayout), CVK_JSON_ARENA_ALIGNMENT);
 
         for (inner = 0; inner < info->setLayoutCount; ++inner)
         {
-            layouts[inner] = (VkDescriptorSetLayout)(uintptr_t)cvkGetPipelineJsonHandle(pObjects->descriptorSetLayoutCount, pObjects->descriptorSetLayoutIds, descriptor_set_layout_handles, (uint64_t)(uintptr_t)info->pSetLayouts[inner]);
+            object_id             = cvkGetJsonHandleId(pPipeline->pHandleReferences, (const void*)&info->pSetLayouts[inner]);
+            found          = cvkGetPipelineJsonHandleIndex(pObjects->descriptorSetLayoutCount, pObjects->descriptorSetLayoutIds, object_id);
+            layouts[inner] = info->pSetLayouts[inner];
+            if (VK_INVALID != found)
+            {
+                layouts[inner] = pObjects->descriptorSetLayouts[found];
+            }
         }
         cvkCreatePipelineLayout(device, info->pNext, info->flags, info->setLayoutCount, layouts, info->pushConstantRangeCount, info->pPushConstantRanges, pAllocator, &pObjects->pipelineLayout);
     }
@@ -313,12 +436,15 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
     if (VK_PIPELINE_BIND_POINT_GRAPHICS == pPipeline->bindPoint)
     {
         const VkGraphicsPipelineCreateInfo* info   = &pPipeline->graphicsPipelineCreateInfo;
-        VkPipelineShaderStageCreateInfo*    stages = (VkPipelineShaderStageCreateInfo*)cvkAllocateArena(pArena, info->stageCount * sizeof(VkPipelineShaderStageCreateInfo), 8);
+        VkPipelineShaderStageCreateInfo*    stages = (VkPipelineShaderStageCreateInfo*)cvkAllocateArena(pArena, info->stageCount * sizeof(VkPipelineShaderStageCreateInfo), CVK_JSON_ARENA_ALIGNMENT);
 
         for (inner = 0; inner < info->stageCount; ++inner)
         {
-            stages[inner]        = info->pStages[inner];
-            stages[inner].module = (NULL != resolveExternal) ? (VkShaderModule)(uintptr_t)resolveExternal(pUser, "VkShaderModule", (uint64_t)(uintptr_t)info->pStages[inner].module) : VK_NULL_HANDLE;
+            cvkResolvePipelineJsonShader(pPipeline,
+                                         resolveExternal,
+                                         pUser,
+                                         &info->pStages[inner],
+                                         &stages[inner]);
         }
         cvkCreateGraphicsPipeline(device,
                                   pipelineCache,
@@ -346,9 +472,13 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
     else
     {
         const VkComputePipelineCreateInfo* info  = &pPipeline->computePipelineCreateInfo;
-        VkPipelineShaderStageCreateInfo    stage = info->stage;
+        VkPipelineShaderStageCreateInfo    stage;
 
-        stage.module = (NULL != resolveExternal) ? (VkShaderModule)(uintptr_t)resolveExternal(pUser, "VkShaderModule", (uint64_t)(uintptr_t)info->stage.module) : VK_NULL_HANDLE;
+        cvkResolvePipelineJsonShader(pPipeline,
+                                     resolveExternal,
+                                     pUser,
+                                     &info->stage,
+                                     &stage);
         cvkCreateComputePipeline(device, pipelineCache, (NULL != pPipelineNext) ? pPipelineNext : info->pNext, info->flags, stage, pObjects->pipelineLayout, VK_NULL_HANDLE, -1, pAllocator, &pObjects->pipeline);
     }
 }
@@ -366,7 +496,7 @@ void cvkCreatePipelineJsonObjects(VkDevice                     device,
  * \param[in]  resolveExternal    Resolver for shader modules, or NULL for VK_NULL_HANDLE modules
  * \param[in]  pUser              Passed to the resolver
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
- * \param[out] pPipeline          Receives the parsed description; its handle fields hold the file's ids
+ * \param[out] pPipeline          Receives the parsed description; numeric IDs are retained in pHandleReferences
  * \param[out] pObjects           Receives every created handle beside its id
  *
  * \retval None
@@ -391,6 +521,7 @@ void cvkCreatePipelineFromJson(VkDevice                     device,
     context.pArena              = pArena;
     context.resolveHandle       = NULL;
     context.pUser               = NULL;
+    context.ppHandleReferences  = NULL;
     cvkParsePipelineJson(&context, pPipeline);
     cvkCreatePipelineJsonObjects(device, pipelineCache, pPipeline, NULL, resolveExternal, pUser, pArena, pAllocator, pObjects);
 }
@@ -416,7 +547,7 @@ void cvkCreatePipelineFromJson(VkDevice                     device,
  * \param[in]  matchControl       VkPipelineOfflineCreateInfo::matchControl
  * \param[in]  poolEntrySize      VkPipelineOfflineCreateInfo::poolEntrySize
  * \param[in]  pAllocator         Optional allocation callbacks, or NULL
- * \param[out] pPipeline          Receives the parsed description; its handle fields hold the file's ids
+ * \param[out] pPipeline          Receives the parsed description; numeric IDs are retained in pHandleReferences
  * \param[out] pObjects           Receives every created handle beside its id
  *
  * \retval None
@@ -443,6 +574,7 @@ void cvkCreateOfflinePipelineFromJson(VkDevice                     device,
     context.pArena              = pArena;
     context.resolveHandle       = NULL;
     context.pUser               = NULL;
+    context.ppHandleReferences  = NULL;
     cvkParsePipelineJson(&context, pPipeline);
     CVK_ASSERT(pPipeline->hasPipelineUuid);
     file_next = (VK_PIPELINE_BIND_POINT_GRAPHICS == pPipeline->bindPoint) ? pPipeline->graphicsPipelineCreateInfo.pNext : pPipeline->computePipelineCreateInfo.pNext;

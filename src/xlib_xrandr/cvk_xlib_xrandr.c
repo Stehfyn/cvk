@@ -10,11 +10,11 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xlib_xrandr.h>
 
-void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display)
+extern CVK_FORCE_INLINE void cvkAcquireXlibDisplay(VkPhysicalDevice physicalDevice, Display* dpy, VkDisplayKHR display)
 {
     CVK_CHECK(vkAcquireXlibDisplayEXT(physicalDevice, dpy, display));
 }
-void cvkGetRandROutputDisplay(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay)
+extern CVK_FORCE_INLINE void cvkGetRandROutputDisplay(VkPhysicalDevice physicalDevice, Display* dpy, RROutput rrOutput, VkDisplayKHR* pDisplay)
 {
     CVK_CHECK(vkGetRandROutputDisplayEXT(physicalDevice, dpy, rrOutput, pDisplay));
     CVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));

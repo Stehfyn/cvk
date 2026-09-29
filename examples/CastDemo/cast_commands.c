@@ -13,9 +13,13 @@
 
 #include "os/os_compiler.h"
 #include "cast_commands.h"
+#include "cast_session.h"
 #include "os/os_assert.h"
+#include "os/os_queue.h"
+#include "os/os_types.h"
 
 #include <float.h>
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -107,26 +111,25 @@ static FORCE_INLINE bool_t IsPosition(CastCommand command)
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Cases follow the numeric values of CastCommand.
+ *  Transport, position and stop commands form the complete supported set.
  */
 static FORCE_INLINE bool_t IsSupported(CastCommand command)
 {
+    bool_t is_play;
+    bool_t is_pause;
+    bool_t is_toggle;
+    bool_t is_transport;
+    bool_t is_position;
+    bool_t is_stop;
     bool_t is_supported;
 
-    switch (command)
-    {
-    case CAST_COMMAND_PLAY:
-    case CAST_COMMAND_PAUSE:
-    case CAST_COMMAND_TOGGLE:
-    case CAST_COMMAND_SCRUB:
-    case CAST_COMMAND_SEEK:
-    case CAST_COMMAND_STOP:
-        is_supported = TRUE;
-        break;
-    default:
-        is_supported = FALSE;
-        break;
-    }
+    is_play      = (CAST_COMMAND_PLAY == command);
+    is_pause     = (CAST_COMMAND_PAUSE == command);
+    is_toggle    = (CAST_COMMAND_TOGGLE == command);
+    is_transport = is_play || is_pause || is_toggle;
+    is_position  = IsPosition(command);
+    is_stop      = (CAST_COMMAND_STOP == command);
+    is_supported = is_transport || is_position || is_stop;
 
     return is_supported;
 }

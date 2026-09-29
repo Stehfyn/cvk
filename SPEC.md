@@ -621,13 +621,27 @@ themselves. Three pieces:
   `cvk_json.h`): `cvkParseJsonDocument` reads a document into a caller-provided value array with no
   allocation; members and elements are found with `cvkGetJsonMember` and `cvkGetJsonElement`;
   numbers, booleans, and strings are read by kind; `cvkArena` holds what the parsers build;
-  `cvkResolveJsonHandle` maps an id through the context's resolver, or keeps it.
+  `cvkResolveJsonHandle` asks the context's resolver to write the named native
+  handle type into caller-provided storage. The callback receives the object ID,
+  native byte extent and output address, and returns whether it resolved the ID.
+  Failure leaves the initialized null handle unchanged. Numeric IDs are retained
+  separately in `cvkJsonHandleReference` records when `ppHandleReferences` is
+  supplied; unresolved nonzero IDs require this list. Records and their referenced
+  native fields retain their addresses until deferred resolution completes.
 - **Parsers** (derived): `cvkParseJson<Type>` for every enumeration and flag type the
   profile's headers define (name tables from the registry, gated by API variant, version
   closure, extension, and `protect`), and for every structure and union of the profile
   (`memset`, `sType`, then each member by kind; arrays and pointed-to structures allocated
   from the arena; data and function pointers and platform types stay zero);
   `cvkParseJsonStructureChain` dispatches an extension chain object on its `sType`.
+  Structure readers append nested objects to a bounded work stack and drain it
+  iteratively. Scratch reserves one task per document value at the unused end of
+  the caller's arena and is released after parsing; permanent output grows from
+  the front. Document tokenization also uses an iterative traversal. Enum readers
+  return registry-defined native enumerants and reject unrecognized numeric values.
+  The generator emits the reader/protocols, enum readers, and structure readers
+  into separate ordinary C translation units so native build tools can compile
+  and analyze them in parallel without a custom runner or scheduler.
 - **Pipeline** (`cvk_protocol_json_pipeline.c`): `cvkParsePipelineJson` reads a pipeline file
   (render pass by version, id-keyed descriptor set layouts, samplers, Ycbcr conversions, the
   pipeline layout, the pipeline, shader file names, enabled extensions, the pipeline UUID);
@@ -638,6 +652,8 @@ themselves. Three pieces:
   with the caller's match control and pool entry size, modules `VK_NULL_HANDLE`.
   `tests/pipeline_json_test.c` parses `tests/cube.pc.json` (the Khronos SC cube sample's
   pipeline) under CTest.
+  The same test covers repeated/native/unresolved handle references, an unaligned
+  arena base, and deeply nested document links.
 
 ## 9. Documentation phrasing (derived)
 

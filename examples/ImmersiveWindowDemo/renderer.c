@@ -335,6 +335,7 @@ static void CreatePlaneCopyShaders(VideoRenderer* r)
 
 static void CreatePipeline(VideoRenderer* r, int pass, const uint32_t* fragment, size_t size)
 {
+    VkResult result;
     VkShaderModule                         vertex, pixel;
     VkPipelineShaderStageCreateInfo        stages[2]       = {{.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_VERTEX_BIT, .pName = "main"},
                                                               {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_FRAGMENT_BIT, .pName = "main"}};
@@ -369,7 +370,8 @@ static void CreatePipeline(VideoRenderer* r, int pass, const uint32_t* fragment,
     stages[1].module    = pixel;
     pipeline.layout     = r->layouts[pass];
     pipeline.renderPass = r->renderPass;
-    CVK_CHECK(cvkCreateGraphicsPipelines(r->device, VK_NULL_HANDLE, 1, &pipeline, NULL, &r->pipelines[pass]));
+    result = cvkCreateGraphicsPipelines(r->device, VK_NULL_HANDLE, 1, &pipeline, NULL, &r->pipelines[pass]);
+    CVK_ASSERT(VK_SUCCESS == result);
     cvkDestroyShaderModule(r->device, pixel, NULL);
     cvkDestroyShaderModule(r->device, vertex, NULL);
 }
@@ -595,6 +597,7 @@ static void DrawPass(VideoRenderer* r, Image* target, int pass, VkDescriptorSet 
 
 void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int slot, BOOL convert, UINT width, UINT height)
 {
+    VkResult             result;
     ID3D11Resource*      backBuffer;
     ID3D11Texture2D*     texture;
     D3D11_TEXTURE2D_DESC desc;
@@ -680,11 +683,15 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     cdx11DeviceContextFlush(r->context);
     cdxgiUnknownRelease((IUnknown*)backBuffer);
     if (redraw)
-        CVK_CHECK(cvkWaitForFence(r->device, r->fence, VK_TRUE, UINT64_MAX));
+    {
+        result = cvkWaitForFence(r->device, r->fence, VK_TRUE, UINT64_MAX);
+        CVK_ASSERT(VK_SUCCESS == result);
+    }
 }
 
 void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y, int slot)
 {
+    VkResult result;
     VkDeviceMemory syncs[3];
     uint64_t acquireKeys[3] = {0, 0, 0};
     uint64_t releaseKeys[3] = {1, 0, 0};
@@ -719,7 +726,8 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     cdx11DeviceContextCopySubresourceRegion(r->context, (ID3D11Resource*)target, subresource, x, y, 0, (ID3D11Resource*)r->output.texture, 0, &source);
     cdxgiKeyedMutexReleaseSync(r->output.mutex, 0);
     cdx11DeviceContextFlush(r->context);
-    CVK_CHECK(cvkWaitForFence(r->device, r->fence, VK_TRUE, UINT64_MAX));
+    result = cvkWaitForFence(r->device, r->fence, VK_TRUE, UINT64_MAX);
+    CVK_ASSERT(VK_SUCCESS == result);
     r->outputWidth = r->outputHeight = 0;
 }
 

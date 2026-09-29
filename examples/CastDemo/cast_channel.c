@@ -155,6 +155,11 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
     WCHAR           host[256];
     SecBuffer       outBuffer;
     SecBufferDesc   outDesc;
+    bool_t          has_output;
+    bool_t          has_bytes;
+    bool_t          can_send;
+    bool_t          was_sent;
+    DWORD           send_error;
 
     /* Cast receivers use self-signed certificates: no chain validation, no server-name check. */
     ZeroMemory(&credentials, sizeof(credentials));
@@ -186,13 +191,28 @@ static int Handshake(CastChannel* pChannel, const char* pHost, char* pError, siz
         return 0;
     }
     pChannel->haveContext = 1;
-    if (!SendAll(pChannel->socket, outBuffer.pvBuffer, outBuffer.cbBuffer))
+    has_output = NULL != outBuffer.pvBuffer;
+    has_bytes  = 0 < outBuffer.cbBuffer;
+    can_send   = has_output && has_bytes;
+    was_sent   = FALSE;
+    send_error = ERROR_INVALID_DATA;
+    if (can_send)
+    {
+        was_sent = SendAll(pChannel->socket, outBuffer.pvBuffer, outBuffer.cbBuffer);
+        if (!was_sent)
+        {
+            send_error = (DWORD)WSAGetLastError();
+        }
+    }
+    if (has_output)
     {
         FreeContextBuffer(outBuffer.pvBuffer);
-        SetError(pError, errorCapacity, "cannot send the ClientHello", (unsigned long)WSAGetLastError());
+    }
+    if (!was_sent)
+    {
+        SetError(pError, errorCapacity, "cannot send the ClientHello", send_error);
         return 0;
     }
-    FreeContextBuffer(outBuffer.pvBuffer);
 
     pChannel->incomingUsed = 0;
     for (;;)

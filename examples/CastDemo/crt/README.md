@@ -22,6 +22,14 @@ name and four-byte value in read-only storage; it has no C namespace declaration
 or executable code. Forced symbol retention resolves the marker before LTCG; C optimization
 and whole-program optimization remain enabled.
 
+The x64 backend also supplies `CRT_Stack_ProbeCore` and the compiler-mandated
+`__chkstk` adapter. It touches each pending stack page in descending order,
+preserves the compiler's argument registers and frame size, and leaves the
+stack adjustment to the caller. It does not disable compiler stack probing or
+import a system runtime. Stack reservation and commitment still belong to
+process/thread initialization; this helper is not proof that application thread
+stacks are fully committed before interaction.
+
 No heap, startup initializer, locks, waits, I/O, external runtime helpers, or mutable
 global operational state are used by these memory operations. Ordinary compare and
 fill do not promise constant-time secret comparison or guaranteed secure erasure.
@@ -31,6 +39,8 @@ directions, equal pointers, first unsigned-byte differences, zero length, protec
 page boundaries and caller-misuse assertions. A separate native ABI test calls all
 four adapter symbols through volatile function pointers, checking their results
 and the unsigned-byte conversion of negative and wider `memset` values.
+Its volatile multi-page local exercises compiler-emitted stack probing and
+checks every byte through the final partial page.
 Release tests link with `/NODEFAULTLIB`;
 maps/imports must continue to show owned helper definitions and no system CRT.
 

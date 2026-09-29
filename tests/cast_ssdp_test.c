@@ -77,22 +77,27 @@ typedef struct Workspace_s
 **===============================================================================================*/
 
 /** Independent expected protocol fields and datagrams. */
-static const char_t       c_target[]   = "urn:dial-multiscreen-org:service:dial:1";
-static const char_t       c_uuid[]     = "uuid:legacy-receiver";
-static const char_t       c_unknown[]  = "X-unknown";
-static const char_t       c_search[]   = "M-SEARCH * HTTP/1.1\r\n"
-                                         "Host: 239.255.255.250:1900\r\n"
-                                         "MAN: \"ssdp:discover\"\r\n"
-                                         "MX: 2\r\n"
-                                         "ST: urn:dial-multiscreen-org:service:dial:1\r\n\r\n";
-static const char_t       c_response[] = "HTTP/1.1 200 OK\r\n"
-                                         "cAcHe-CoNtRoL: max-age=1800\r\n"
-                                         "EXT:\r\n"
-                                         "LOCATION: http://192.0.2.8:8008/ssdp/device-desc.xml\r\n"
-                                         "SERVER: Test/1 UPnP/1.0 Fixture/1\r\n"
-                                         "ST: urn:dial-multiscreen-org:service:dial:1\r\n"
-                                         "USN: uuid:legacy-receiver::urn:dial-multiscreen-org:service:dial:1\r\n"
-                                         "X-unknown: ignored\r\n\r\n";
+static const char_t       c_target[]        = "urn:dial-multiscreen-org:service:dial:1";
+static const char_t       c_uuid[]          = "uuid:legacy-receiver";
+static const char_t       c_unknown[]       = "X-unknown";
+static const char_t       c_search[]        = "M-SEARCH * HTTP/1.1\r\n"
+                                              "Host: 239.255.255.250:1900\r\n"
+                                              "MAN: \"ssdp:discover\"\r\n"
+                                              "MX: 2\r\n"
+                                              "ST: urn:dial-multiscreen-org:service:dial:1\r\n\r\n";
+static const char_t       c_maximumSearch[] = "M-SEARCH * HTTP/1.1\r\n"
+                                              "Host: 239.255.255.250:1900\r\n"
+                                              "MAN: \"ssdp:discover\"\r\n"
+                                              "MX: 4294967295\r\n"
+                                              "ST: urn:dial-multiscreen-org:service:dial:1\r\n\r\n";
+static const char_t       c_response[]      = "HTTP/1.1 200 OK\r\n"
+                                              "cAcHe-CoNtRoL: max-age=1800\r\n"
+                                              "EXT:\r\n"
+                                              "LOCATION: http://192.0.2.8:8008/ssdp/device-desc.xml\r\n"
+                                              "SERVER: Test/1 UPnP/1.0 Fixture/1\r\n"
+                                              "ST: urn:dial-multiscreen-org:service:dial:1\r\n"
+                                              "USN: uuid:legacy-receiver::urn:dial-multiscreen-org:service:dial:1\r\n"
+                                              "X-unknown: ignored\r\n\r\n";
 
 static const TargetCase_t c_targets[] = {
     {"ssdp:all", sizeof("ssdp:all") - 1, TRUE},
@@ -140,8 +145,8 @@ static const CacheCase_t c_cache[] = {
  * \brief Checks every insufficient search-output capacity.
  *
  * \param[in,out] workspace   Owned output storage
- * \param[in,out] search   Initialized query
- * \param[in,out] expected   Exact encoded extent
+ * \param[in,out] search      Initialized query
+ * \param[in,out] expected    Exact encoded extent
  *
  * \retval    None
  */
@@ -180,8 +185,8 @@ static FORCE_INLINE void ReadFixture(Workspace_t* workspace);
  * \brief Checks expiry directives and preservation on invalid values.
  *
  * \param[in,out] workspace   Owned parsing storage
- * \param[in,out] response   Current result record
- * \param[in,out] before   Last successfully published record
+ * \param[in,out] response    Current result record
+ * \param[in,out] before      Last successfully published record
  *
  * \retval    None
  */
@@ -250,10 +255,10 @@ static FORCE_INLINE void CheckSearch(Workspace_t* workspace)
     Utl_Http_Text_t   target;
     Utl_Ssdp_Search_t search;
     uint32_t          expected;
-    uint32_t          index;
     uint32_t          written;
     Utl_Ssdp_Search_t decoded;
     Utl_Ssdp_Search_t before;
+    uint32_t          index;
     Utl_Http_Result_t result;
 
     target.data      = (const byte_t*)c_target;
@@ -263,16 +268,16 @@ static FORCE_INLINE void CheckSearch(Workspace_t* workspace)
     LOGASSERT(expected == Utl_Ssdp_GetSearchByteCount(&search));
     CheckSearchCapacities(workspace, &search, expected);
     written = Utl_Ssdp_WriteSearch(&search, workspace->output, expected);
-    LOGASSERT(expected == written);
-    LOGASSERT(0 == CRT_Memory_Compare(c_search, workspace->output, written));
-    LOGASSERT(SSDP_TEST_SENTINEL == (byte_t)workspace->output[written]);
+    LOGASSERT(0 == CRT_Memory_Compare(c_search, workspace->output, expected));
+    LOGASSERT(SSDP_TEST_SENTINEL == (byte_t)workspace->output[expected]);
     workspace->head.fields        = workspace->fields;
     workspace->head.fieldCapacity = SSDP_TEST_FIELDS;
     LOGASSERT(UTL_HTTP_COMPLETE ==
-              Utl_Http_ReadHead(&workspace->head, UTL_HTTP_REQUEST, (const byte_t*)workspace->output, written));
+              Utl_Http_ReadHead(&workspace->head, UTL_HTTP_REQUEST, (const byte_t*)workspace->output, expected));
     LOGASSERT(Utl_Ssdp_ReadSearch(&decoded, &workspace->head));
     LOGASSERT(2 == decoded.maximumWait);
     LOGASSERT(Utl_Http_IsTextEqual(target, decoded.target, FALSE));
+    LOGASSERT(expected == written);
 
     before = decoded;
     for (index = 0; index < expected; ++index)
@@ -290,11 +295,14 @@ static FORCE_INLINE void CheckSearch(Workspace_t* workspace)
     }
     search.maximumWait = UINT32_MAX;
     written            = Utl_Ssdp_WriteSearch(&search, workspace->output, sizeof(workspace->output));
-    LOGASSERT(0 < written);
-    LOGASSERT(UTL_HTTP_COMPLETE ==
-              Utl_Http_ReadHead(&workspace->head, UTL_HTTP_REQUEST, (const byte_t*)workspace->output, written));
+    LOGASSERT(0 == CRT_Memory_Compare(c_maximumSearch, workspace->output, sizeof(c_maximumSearch) - 1));
+    LOGASSERT(UTL_HTTP_COMPLETE == Utl_Http_ReadHead(&workspace->head,
+                                                  UTL_HTTP_REQUEST,
+                                                  (const byte_t*)workspace->output,
+                                                  sizeof(c_maximumSearch) - 1));
     LOGASSERT(Utl_Ssdp_ReadSearch(&decoded, &workspace->head));
     LOGASSERT(UINT32_MAX == decoded.maximumWait);
+    LOGASSERT(sizeof(c_maximumSearch) - 1 == written);
     search.maximumWait = 0;
     LOGASSERT(0 == Utl_Ssdp_GetSearchByteCount(&search));
     LOGASSERT(0 == Utl_Ssdp_WriteSearch(&search, workspace->output, sizeof(workspace->output)));
@@ -353,8 +361,8 @@ static FORCE_INLINE void CheckCacheDirectives(Workspace_t*         workspace,
 static FORCE_INLINE void CheckResponsePrefixes(Workspace_t* workspace, Utl_Ssdp_Response_t* response)
 {
     Utl_Ssdp_Response_t before;
-    Utl_Http_Result_t   result;
     uint32_t            index;
+    Utl_Http_Result_t   result;
 
     before = *response;
     for (index = 0; index < (sizeof(c_response) - 1); ++index)

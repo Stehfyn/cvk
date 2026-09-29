@@ -17,7 +17,7 @@
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <winhttp.h>
 #include <winerror.h>
 #include <minwindef.h>
@@ -551,6 +551,8 @@ static FORCE_INLINE bool_t IsNativeHost(const char_t* host, uint32_t byteCount, 
  *  delimiter or unsupported host must never change WinHTTP's interpretation.
  *  WinHTTP requires UTF-16 and preconverted IDN; this adapter currently accepts
  *  ASCII hosts only. All accepted target bytes are validated ASCII URI syntax.
+ *  Validate each count against its destination before bounding the retained
+ *  index. Invalid counts remain failures and cannot publish an endpoint.
  */
 static FORCE_INLINE bool_t ReadLocation(Ssdp_t* discovery, const char_t* location, CastDevice* device)
 {
@@ -561,6 +563,10 @@ static FORCE_INLINE bool_t ReadLocation(Ssdp_t* discovery, const char_t* locatio
     bool_t              valid;
     Utl_Url_t           url;
     Utl_Http_Endpoint_t endpoint;
+    bool_t              fits_device_host;
+    bool_t              fits_native_host;
+    bool_t              fits_host;
+    bool_t              fits_target;
     uint32_t            index;
 
     host_bytes   = 0;
@@ -586,6 +592,15 @@ static FORCE_INLINE bool_t ReadLocation(Ssdp_t* discovery, const char_t* locatio
     }
     if (valid)
     {
+        fits_device_host = (host_bytes < CAST_DEVICE_HOST_BYTES);
+        fits_native_host = (host_bytes < DISCOVERY_HOST_CAPACITY);
+        fits_host        = fits_device_host && fits_native_host;
+        valid            = fits_host;
+        host_bytes      %= DISCOVERY_HOST_CAPACITY;
+        host_bytes      %= CAST_DEVICE_HOST_BYTES;
+    }
+    if (valid)
+    {
         valid = IsNativeHost(device->host, host_bytes, url.hostKind);
     }
     if (valid)
@@ -594,14 +609,19 @@ static FORCE_INLINE bool_t ReadLocation(Ssdp_t* discovery, const char_t* locatio
     }
     if (valid)
     {
-        LOGASSERT(host_bytes < DISCOVERY_HOST_CAPACITY);
+        fits_target   = (target_bytes < DISCOVERY_PATH_CAPACITY);
+        valid         = fits_target;
+        target_bytes %= DISCOVERY_PATH_CAPACITY;
+    }
+    if (valid)
+    {
         for (index = 0; index < host_bytes; ++index)
         {
             state->nativeHost[index] = (WCHAR)(byte_t)device->host[index];
         }
         for (index = 0; index < target_bytes; ++index)
         {
-            state->nativeTarget[index] = (WCHAR)(byte_t)state->target[index];
+            state->nativeTarget[index] = (WCHAR)state->target[index];
         }
         device->host[host_bytes]          = DISCOVERY_TERMINATOR;
         state->nativeHost[host_bytes]     = 0;
@@ -736,7 +756,7 @@ static FORCE_INLINE bool_t HttpGet(Ssdp_t* discovery)
                                                   WINHTTP_NO_REFERER,
                                                   WINHTTP_DEFAULT_ACCEPT_TYPES,
                                                   flags);
-        valid = (NULL != state->requestHandle);
+        valid                = (NULL != state->requestHandle);
         if (!valid)
         {
             error = GetLastError();
@@ -830,8 +850,12 @@ static FORCE_INLINE bool_t DrainSocket(Ssdp_t* discovery)
     empty = FALSE;
     for (index = 0; index < DISCOVERY_DRAIN_LIMIT; ++index)
     {
-        received =
-            recvfrom(discovery->state->socket, (char_t*)discovery->state->response, DISCOVERY_RESPONSE_CAPACITY, 0, NULL, NULL);
+        received = recvfrom(discovery->state->socket,
+                            (char_t*)discovery->state->response,
+                            DISCOVERY_RESPONSE_CAPACITY,
+                            0,
+                            NULL,
+                            NULL);
         if (SOCKET_ERROR == received)
         {
             error = (uint32_t)WSAGetLastError();
@@ -1139,8 +1163,8 @@ bool_t Ssdp_Initialize(Ssdp_t* discovery)
     {
         nonblocking   = 1;
         control_bytes = 0;
-        status        = WSAIoctl(state->socket, FIONBIO, &nonblocking, sizeof(u_long), NULL, 0, &control_bytes, NULL, NULL);
-        ready         = (0 == status);
+        status = WSAIoctl(state->socket, FIONBIO, &nonblocking, sizeof(u_long), NULL, 0, &control_bytes, NULL, NULL);
+        ready  = (0 == status);
         if (!ready)
         {
             error = (uint32_t)WSAGetLastError();
@@ -1154,7 +1178,7 @@ bool_t Ssdp_Initialize(Ssdp_t* discovery)
                                      WINHTTP_NO_PROXY_NAME,
                                      WINHTTP_NO_PROXY_BYPASS,
                                      0);
-        ready = (NULL != state->session);
+        ready          = (NULL != state->session);
         if (!ready)
         {
             error = GetLastError();

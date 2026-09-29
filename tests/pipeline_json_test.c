@@ -16,6 +16,157 @@
         }                                                                      \
     } while (0)
 
+/* A real pointer-valued test handle; no integer-to-pointer encoding is used. */
+struct VkCommandBuffer_T
+{
+    uint32_t marker;
+};
+
+typedef struct JsonHandleFixture
+{
+    VkCommandBuffer commandBuffer;
+    uint32_t calls;
+} JsonHandleFixture;
+
+/**
+ * \brief Resolves the fixture's command-buffer ID into its native handle type.
+ * \param[in,out] pUser Fixture handle and callback count.
+ * \param[in] pHandleType Requested Vulkan handle type.
+ * \param[in] id JSON object ID.
+ * \param[in] handleByteCount Extent of the native output type.
+ * \param[out] pHandle Receives the native handle on success.
+ * \retval VK_TRUE The fixture ID was resolved.
+ * \retval VK_FALSE The ID is unknown; output remains unchanged.
+ */
+static CVK_FORCE_INLINE VkBool32 ResolveFixtureHandle(void* pUser,
+                                                       const char* pHandleType,
+                                                       uint64_t id,
+                                                       uint32_t handleByteCount,
+                                                       void* pHandle);
+
+/**
+ * \brief Checks native handle identity, repeated IDs, nulls and deferred references.
+ * \retval VK_TRUE All handle and arena checks passed.
+ * \retval VK_FALSE A contract check failed.
+ */
+static CVK_FORCE_INLINE VkBool32 CheckHandleReferences(void);
+
+/**
+ * \brief Checks iterative parsing well beyond ordinary native call-stack depth.
+ * \retval VK_TRUE Every container link and scalar value is correct.
+ * \retval VK_FALSE A parsed link or value differs from the fixture.
+ */
+static CVK_FORCE_INLINE VkBool32 CheckDeepDocument(void);
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  None
+ */
+static CVK_FORCE_INLINE VkBool32 ResolveFixtureHandle(void* pUser,
+                                                       const char* pHandleType,
+                                                       uint64_t id,
+                                                       uint32_t handleByteCount,
+                                                       void* pHandle)
+{
+    JsonHandleFixture* fixture;
+    VkBool32 resolved;
+
+    fixture = (JsonHandleFixture*)pUser;
+    ++fixture->calls;
+    resolved = 37 == id;
+    if (resolved)
+    {
+        CVK_ASSERT(0 == strcmp(pHandleType, "VkCommandBuffer"));
+        CVK_ASSERT(sizeof(VkCommandBuffer) == handleByteCount);
+        *(VkCommandBuffer*)pHandle = fixture->commandBuffer;
+    }
+    return resolved;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The arena deliberately begins one byte into its backing storage.
+ */
+static CVK_FORCE_INLINE VkBool32 CheckHandleReferences(void)
+{
+    const char text[] = "{\"commandBufferCount\":4,\"pCommandBuffers\":[37,37,null,99]}";
+    uint8_t storage[4097];
+    cvkJsonValue values[16];
+    cvkJsonHandleReference* references;
+    cvkJsonContext context;
+    cvkArena arena;
+    VkSubmitInfo info;
+    struct VkCommandBuffer_T command_buffer;
+    JsonHandleFixture fixture;
+    VkBool32 passed;
+    uint64_t initial_size;
+
+    command_buffer.marker       = 37;
+    fixture.commandBuffer       = &command_buffer;
+    fixture.calls               = 0;
+    references                  = NULL;
+    arena.pBase                 = storage + 1;
+    arena.used                  = 0;
+    arena.size                  = sizeof(storage) - 1;
+    initial_size                = arena.size;
+    context.document.pValues    = values;
+    context.document.valueCount = cvkParseJsonDocument(text, sizeof(text) - 1, values, VK_COUNT_OF(values));
+    context.pArena              = &arena;
+    context.resolveHandle       = ResolveFixtureHandle;
+    context.pUser               = &fixture;
+    context.ppHandleReferences  = &references;
+    cvkParseJsonSubmitInfo(&context, &values[0], &info);
+    passed = initial_size == arena.size;
+    passed = passed && (3 == fixture.calls);
+    passed = passed && (4 == info.commandBufferCount);
+    passed = passed && (fixture.commandBuffer == info.pCommandBuffers[0]);
+    passed = passed && (fixture.commandBuffer == info.pCommandBuffers[1]);
+    passed = passed && (VK_NULL_HANDLE == info.pCommandBuffers[2]);
+    passed = passed && (VK_NULL_HANDLE == info.pCommandBuffers[3]);
+    passed = passed && (37 == cvkGetJsonHandleId(references, (const void*)&info.pCommandBuffers[0]));
+    passed = passed && (37 == cvkGetJsonHandleId(references, (const void*)&info.pCommandBuffers[1]));
+    passed = passed && (0 == cvkGetJsonHandleId(references, (const void*)&info.pCommandBuffers[2]));
+    passed = passed && (99 == cvkGetJsonHandleId(references, (const void*)&info.pCommandBuffers[3]));
+    passed = passed && (0 == ((uintptr_t)info.pCommandBuffers % CVK_JSON_ARENA_ALIGNMENT));
+    return passed;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Nodes must retain sibling and parent relationships after each container closes.
+ */
+static CVK_FORCE_INLINE VkBool32 CheckDeepDocument(void)
+{
+    enum { DEPTH = 4096, TEXT_CAPACITY = (DEPTH * 2) + 1, VALUE_CAPACITY = DEPTH + 1 };
+    char text[TEXT_CAPACITY];
+    cvkJsonValue values[VALUE_CAPACITY];
+    uint32_t index;
+    uint32_t count;
+    VkBool32 passed;
+
+    for (index = 0; index < DEPTH; ++index)
+    {
+        text[index] = '[';
+        text[TEXT_CAPACITY - index - 1] = ']';
+    }
+    text[DEPTH] = '0';
+    count = cvkParseJsonDocument(text, sizeof(text), values, VK_COUNT_OF(values));
+    passed = VALUE_CAPACITY == count;
+    for (index = 0; index < DEPTH; ++index)
+    {
+        passed = passed && (CVK_JSON_ARRAY == values[index].kind);
+        passed = passed && (1 == values[index].childCount);
+        passed = passed && (index + 1 == values[index].firstChild);
+        passed = passed && (CVK_JSON_NONE == values[index].nextSibling);
+    }
+    passed = passed && (CVK_JSON_NUMBER == values[DEPTH].kind);
+    passed = passed && (0 == cvkGetJsonUint64(&values[DEPTH]));
+    return passed;
+}
+
 int main(int argc, char** argv)
 {
     static char            text[65536];
@@ -28,6 +179,8 @@ int main(int argc, char** argv)
     size_t                 length;
     const VkGraphicsPipelineCreateInfo* graphics;
 
+    CHECK(CheckHandleReferences());
+    CHECK(CheckDeepDocument());
     CHECK(2 == argc);
     file = fopen(argv[1], "rb");
     CHECK(NULL != file);
@@ -43,6 +196,7 @@ int main(int argc, char** argv)
     context.pArena              = &arena;
     context.resolveHandle       = NULL;
     context.pUser               = NULL;
+    context.ppHandleReferences  = NULL;
     cvkParsePipelineJson(&context, &pipeline);
 
     CHECK(VK_PIPELINE_BIND_POINT_GRAPHICS == pipeline.bindPoint);
@@ -69,7 +223,8 @@ int main(int argc, char** argv)
 
     CHECK(pipeline.hasPipelineLayout);
     CHECK(1 == pipeline.pipelineLayoutCreateInfo.setLayoutCount);
-    CHECK((VkDescriptorSetLayout)(uintptr_t)2 == pipeline.pipelineLayoutCreateInfo.pSetLayouts[0]);
+    CHECK(VK_NULL_HANDLE == pipeline.pipelineLayoutCreateInfo.pSetLayouts[0]);
+    CHECK(2 == cvkGetJsonHandleId(pipeline.pHandleReferences, (const void*)&pipeline.pipelineLayoutCreateInfo.pSetLayouts[0]));
     CHECK(0 == pipeline.pipelineLayoutCreateInfo.pushConstantRangeCount);
 
     graphics = &pipeline.graphicsPipelineCreateInfo;
@@ -94,7 +249,8 @@ int main(int argc, char** argv)
     CHECK(0.0f == graphics->pColorBlendState->blendConstants[3]);
     CHECK(2 == graphics->pDynamicState->dynamicStateCount);
     CHECK(VK_DYNAMIC_STATE_SCISSOR == graphics->pDynamicState->pDynamicStates[1]);
-    CHECK((VkPipelineLayout)(uintptr_t)5 == graphics->layout);
+    CHECK(VK_NULL_HANDLE == graphics->layout);
+    CHECK(5 == cvkGetJsonHandleId(pipeline.pHandleReferences, (const void*)&graphics->layout));
     CHECK(VK_NULL_HANDLE == graphics->basePipelineHandle);
 
     CHECK(2 == pipeline.shaderCount);

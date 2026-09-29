@@ -74,20 +74,16 @@ static FORCE_INLINE uint32_t GetFixedByteCount(Utl_Protobuf_WireType_t wireType)
  *
  * \par Requirements:
  *  - 001 The caller shall supply a cleared result with a validated wire type.
- *  - 002 The tag width shall not exceed the readable input span.
+ *  - 002 The caller shall remove the validated tag from the readable input span.
  *  - 003 Each payload access shall remain inside the counted input.
  *
- * \param[in,out] field      Unpublished field result; discarded by the caller on failure
- * \param[in]     buffer     Counted input including its tag
- * \param[in]     byteCount  Readable input bytes
- * \param[in]     tagWidth   Width of the validated tag
- * \retval        TRUE       A complete payload and record width were decoded.
+ * \param[in,out] field       Unpublished field result; discarded by the caller on failure
+ * \param[in]     buffer      Counted payload following its tag
+ * \param[in]     byteCount   Readable input bytes
+ * \retval        TRUE       A complete payload and its width were decoded.
  * \retval        FALSE      The payload is truncated or invalid.
  */
-static FORCE_INLINE bool_t ReadPayload(Utl_Protobuf_Field_t* field,
-                                       const byte_t*         buffer,
-                                       uint32_t              byteCount,
-                                       uint32_t              tagWidth);
+static FORCE_INLINE bool_t ReadPayload(Utl_Protobuf_Field_t* field, const byte_t* buffer, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
@@ -103,14 +99,14 @@ static FORCE_INLINE uint32_t WriteVarint(byte_t* buffer, uint64_t value);
  * \brief Skips the content of an already decoded group-start record.
  *
  * \par Requirements:
- *  - 001 The caller shall supply the cursor after a valid group-start tag.
+ *  - 001 The input span shall start immediately after a valid group-start tag.
  *  - 002 A bounded stack shall validate matching group numbers without recursion.
  *  - 003 Failure shall preserve the caller's cursor.
  *
- * \param[in,out] cursor     Cursor immediately after the opening tag
- * \param[in]     number     Opening field number
- * \param[in]     buffer     Counted input including the opening tag
- * \param[in]     byteCount  Readable input bytes
+ * \param[out]    cursor      Consumed input bytes; unchanged on failure
+ * \param[in]     number      Opening field number
+ * \param[in]     buffer      Counted input following the opening tag
+ * \param[in]     byteCount   Readable input bytes
  * \retval        TRUE       The matching group end was reached.
  * \retval        FALSE      Syntax, input bounds or local nesting capacity failed.
  */
@@ -177,10 +173,7 @@ static FORCE_INLINE uint32_t GetFixedByteCount(Utl_Protobuf_WireType_t wireType)
  *  All widths are compared with the remaining input before cursor arithmetic.
  *  The enclosing field reader publishes this result only after success.
  */
-static FORCE_INLINE bool_t ReadPayload(Utl_Protobuf_Field_t* field,
-                                       const byte_t*         buffer,
-                                       uint32_t              byteCount,
-                                       uint32_t              tagWidth)
+static FORCE_INLINE bool_t ReadPayload(Utl_Protobuf_Field_t* field, const byte_t* buffer, uint32_t byteCount)
 {
     uint32_t cursor;
     uint32_t fixed_bytes;
@@ -195,9 +188,8 @@ static FORCE_INLINE bool_t ReadPayload(Utl_Protobuf_Field_t* field,
 
     LOGASSERT(NULL != field);
     LOGASSERT(NULL != buffer);
-    LOGASSERT(tagWidth <= byteCount);
 
-    cursor      = tagWidth;
+    cursor      = 0;
     fixed_bytes = GetFixedByteCount(field->wireType);
     is_varint   = (UTL_PROTOBUF_VARINT == field->wireType);
     is_bytes    = (UTL_PROTOBUF_BYTES == field->wireType);
@@ -292,8 +284,8 @@ static FORCE_INLINE bool_t SkipGroup(uint32_t* cursor, uint32_t number, const by
     uint32_t             group_numbers[UTL_PROTOBUF_MAX_GROUP_DEPTH];
     uint32_t             depth;
     uint32_t             offset;
-    Utl_Protobuf_Field_t field;
     bool_t               valid;
+    Utl_Protobuf_Field_t field;
     bool_t               starts_group;
     bool_t               ends_group;
     bool_t               has_capacity;
@@ -303,12 +295,11 @@ static FORCE_INLINE bool_t SkipGroup(uint32_t* cursor, uint32_t number, const by
 
     LOGASSERT(NULL != cursor);
     LOGASSERT(NULL != buffer);
-    LOGASSERT(*cursor <= byteCount);
     LOGASSERT(0 < number);
 
     group_numbers[0] = number;
     depth            = 1;
-    offset           = *cursor;
+    offset           = 0;
     for (;;)
     {
         valid = Utl_Protobuf_ReadField(&field, buffer + offset, byteCount - offset);
@@ -373,12 +364,12 @@ extern FORCE_INLINE uint32_t Utl_Protobuf_GetFieldByteCount(const Utl_Protobuf_F
     bool_t   valid;
     uint64_t tag;
     uint64_t total;
-    bool_t   has_payload;
-    bool_t   empty_payload;
-    bool_t   has_bytes;
     bool_t   is_varint;
     bool_t   is_bytes;
     bool_t   is_fixed32;
+    bool_t   empty_payload;
+    bool_t   has_bytes;
+    bool_t   has_payload;
     bool_t   size_fits;
     bool_t   can_publish;
 
@@ -436,7 +427,10 @@ extern FORCE_INLINE uint32_t Utl_Protobuf_GetFieldByteCount(const Utl_Protobuf_F
  *  The tenth-byte check precedes the shift into bit 63. No failed parse publishes
  *  either the accumulated integer or its partial width.
  */
-extern FORCE_INLINE bool_t Utl_Protobuf_ReadVarint(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Protobuf_ReadVarint(uint64_t*     value,
+                                                   uint32_t*     bytesRead,
+                                                   const byte_t* buffer,
+                                                   uint32_t      byteCount)
 {
     bool_t   has_value;
     bool_t   has_count;
@@ -502,7 +496,7 @@ extern FORCE_INLINE bool_t Utl_Protobuf_ReadVarint(uint64_t* value, uint32_t* by
  * \par Details:
  *  Validation is independent from the subsequent bounded write loop.
  */
-uint32_t Utl_Protobuf_WriteVarint(uint64_t value, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Protobuf_WriteVarint(uint64_t value, byte_t* buffer, uint32_t capacity)
 {
     uint32_t width;
     uint32_t written;
@@ -563,10 +557,11 @@ extern FORCE_INLINE bool_t Utl_Protobuf_ReadField(Utl_Protobuf_Field_t* field, c
             result.wireType         = (Utl_Protobuf_WireType_t)wire;
             result.byteCount        = 0;
             result.encodedByteCount = 0;
-            valid                   = ReadPayload(&result, buffer, byteCount, cursor);
+            valid                   = ReadPayload(&result, buffer + cursor, byteCount - cursor);
             if (valid)
             {
-                (*field) = result;
+                result.encodedByteCount += cursor;
+                (*field)                 = result;
             }
         }
     }
@@ -578,7 +573,9 @@ extern FORCE_INLINE bool_t Utl_Protobuf_ReadField(Utl_Protobuf_Field_t* field, c
  * \par Details:
  *  FieldByteCount validates all forms before the writer changes output.
  */
-extern FORCE_INLINE uint32_t Utl_Protobuf_WriteField(const Utl_Protobuf_Field_t* field, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Protobuf_WriteField(const Utl_Protobuf_Field_t* field,
+                                                     byte_t*                     buffer,
+                                                     uint32_t                    capacity)
 {
     uint32_t required;
     uint32_t written;
@@ -657,6 +654,7 @@ extern FORCE_INLINE bool_t Utl_Protobuf_SkipField(uint32_t* bytesRead, const byt
     bool_t               valid;
     Utl_Protobuf_Field_t field;
     uint32_t             cursor;
+    uint32_t             group_bytes;
     bool_t               starts_group;
     bool_t               ends_group;
 
@@ -677,7 +675,9 @@ extern FORCE_INLINE bool_t Utl_Protobuf_SkipField(uint32_t* bytesRead, const byt
         valid        = !ends_group;
         if (starts_group)
         {
-            valid = SkipGroup(&cursor, field.number, buffer, byteCount);
+            group_bytes  = 0;
+            valid        = SkipGroup(&group_bytes, field.number, buffer + cursor, byteCount - cursor);
+            cursor      += group_bytes;
         }
         if (valid)
         {

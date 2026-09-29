@@ -190,23 +190,46 @@ extern FORCE_INLINE uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* ne
 /**
  * \par Details:
  *  ReadInterfaces has validated AF_INET for every published native address.
- *  Copying the native in_addr representation preserves its network-order octets.
+ *  Snapshot a bounded native entry before asserting publication. The mask retains
+ *  a valid storage index even when the caller violates the index contract.
+ *  Named native octets preserve network byte order without an indexed copy call.
  */
-extern FORCE_INLINE void OS_Network_GetInterface(const OS_Network_t* network, uint32_t index, OS_Network_Interface_t* value)
+extern FORCE_INLINE void OS_Network_GetInterface(const OS_Network_t*     network,
+                                                 uint32_t                index,
+                                                 OS_Network_Interface_t* value)
 {
+    bool_t                fits_storage;
+    bool_t                is_published;
+    bool_t                valid_index;
+    uint32_t              index_mask;
+    uint32_t              safe_index;
     const INTERFACE_INFO* entry;
+    IN_ADDR               address;
+    ULONG                 flags;
 
     LOGASSERT(NULL != network);
     LOGASSERT(NULL != value);
     LOGASSERT(network->ready);
-    LOGASSERT(OS_NETWORK_INTERFACE_CAPACITY > index);
-    LOGASSERT(network->state->count > index);
 
-    entry = &network->state->entries[index];
-    CRT_Memory_Copy(value->address, &entry->iiAddress.AddressIn.sin_addr, OS_NETWORK_IPV4_BYTE_COUNT);
-    value->running   = !!(entry->iiFlags & IFF_UP);
-    value->loopback  = !!(entry->iiFlags & IFF_LOOPBACK);
-    value->multicast = !!(entry->iiFlags & IFF_MULTICAST);
+    fits_storage = (OS_NETWORK_INTERFACE_CAPACITY > index);
+    is_published = (network->state->count > index);
+    valid_index  = fits_storage && is_published;
+    index_mask   = 0 - (uint32_t)valid_index;
+    safe_index   = index & index_mask;
+    entry        = &network->state->entries[safe_index];
+    address      = entry->iiAddress.AddressIn.sin_addr;
+    flags        = entry->iiFlags;
+
+    LOGASSERT(fits_storage);
+    LOGASSERT(is_published);
+
+    value->address[0] = address.S_un.S_un_b.s_b1;
+    value->address[1] = address.S_un.S_un_b.s_b2;
+    value->address[2] = address.S_un.S_un_b.s_b3;
+    value->address[3] = address.S_un.S_un_b.s_b4;
+    value->running    = !!(flags & IFF_UP);
+    value->loopback   = !!(flags & IFF_LOOPBACK);
+    value->multicast  = !!(flags & IFF_MULTICAST);
 }
 
 /*************************************************************************************************/
@@ -239,7 +262,7 @@ bool_t OS_Network_ReadInterfaces(OS_Network_t* network)
                                      &bytes,
                                      NULL,
                                      NULL);
-    valid = (0 == status);
+    valid                 = (0 == status);
     if (!valid)
     {
         error = (uint32_t)WSAGetLastError();
@@ -300,7 +323,7 @@ extern FORCE_INLINE bool_t OS_Network_ReadRoute(OS_Network_t* network, OS_Networ
                                            &bytes,
                                            NULL,
                                            NULL);
-    valid = (0 == status);
+    valid                       = (0 == status);
     if (!valid)
     {
         error = (uint32_t)WSAGetLastError();

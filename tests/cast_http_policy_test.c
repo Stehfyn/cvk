@@ -675,19 +675,19 @@ static FORCE_INLINE void CheckResponse(const CastHttp_Response_t* response,
     uint32_t capacity;
     int32_t  compared;
     count = CastHttp_GetResponseByteCount(response);
-    LOGASSERT(expectedBytes == count);
-    LOGASSERT(count < POLICY_TEST_BYTES);
-    for (capacity = 0; capacity < count; ++capacity)
+    for (capacity = 0; capacity < expectedBytes; ++capacity)
     {
         CRT_Memory_Set(g_output, POLICY_TEST_GUARD, sizeof(g_output));
         LOGASSERT(0 == CastHttp_WriteResponse(response, g_output, capacity));
         CheckGuard(0);
     }
     CRT_Memory_Set(g_output, POLICY_TEST_GUARD, sizeof(g_output));
-    LOGASSERT(count == CastHttp_WriteResponse(response, g_output, count));
-    compared = CRT_Memory_Compare(g_output, expected, count);
+    LOGASSERT(expectedBytes == CastHttp_WriteResponse(response, g_output, expectedBytes));
+    compared = CRT_Memory_Compare(g_output, expected, expectedBytes);
     LOGASSERT(0 == compared);
-    CheckGuard(count);
+    CheckGuard(expectedBytes);
+    LOGASSERT(expectedBytes == count);
+    LOGASSERT(count < POLICY_TEST_BYTES);
 }
 
 /*************************************************************************************************/

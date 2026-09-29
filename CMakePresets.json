@@ -26,7 +26,7 @@
     }
   ],
   "buildPresets": [
-    { "name": "windows-msvc-2026", "configurePreset": "windows-msvc-2026", "configuration": "Release" },
+    { "name": "windows-msvc-2026", "configurePreset": "windows-msvc-2026", "configuration": "Release", "jobs": 0 },
     { "name": "linux", "configurePreset": "linux" },
     { "name": "ninja-clang", "configurePreset": "ninja-clang" }
   ]

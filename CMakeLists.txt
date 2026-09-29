@@ -5,6 +5,12 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
+# Visual Studio's documented zero value uses every available logical processor.
+if(CMAKE_GENERATOR MATCHES "^Visual Studio")
+    list(APPEND CMAKE_VS_GLOBALS
+        "MaxNumberOfProcesses=0")
+endif()
+
 # Pinned Vulkan headers and registry (git submodules).
 include(cmake/ExternalLibraries.cmake)
 add_subdirectory(external/Vulkan-Headers EXCLUDE_FROM_ALL SYSTEM)
@@ -151,16 +157,35 @@ endif()
 # Everything under include/ and src/ is generated. Core is platform-free; each platform has
 # its own generated pair that includes cvk/cvk.h. Tier 3 protocols (scripts/protocols/) are folded
 # into the platform pairs by the generator; "posix" is the pair for descriptor protocols.
-set(CVK_SOURCES src/cvk.c src/cvk_json.c ${cvk_platform_sources})
+set(cvk_core_sources src/cvk.c src/cvk_json.c src/cvk_json_enums.c src/cvk_json_structs.c)
+set(CVK_SOURCES ${cvk_core_sources} ${cvk_platform_sources})
 
-add_library(cvk STATIC ${CVK_SOURCES})
+if(cvk_platform_sources)
+    # Validate the generated platform layer before starting core analysis. The
+    # native project dependency propagates failure; every object is built once
+    # and included in the existing cvk archive.
+    add_library(cvk-platform OBJECT ${cvk_platform_sources})
+    target_include_directories(cvk-platform PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(cvk-platform PRIVATE Vulkan::Headers volk::volk cvk-vulkan-utility-headers)
+    target_compile_definitions(cvk-platform PRIVATE VK_NO_PROTOTYPES)
+    if(MSVC)
+        target_compile_options(cvk-platform PRIVATE /Wall /WX /wd4820)
+    else()
+        target_compile_options(cvk-platform PRIVATE -Wall -Wextra -Wpedantic -Werror=implicit-function-declaration)
+    endif()
+endif()
+
+add_library(cvk STATIC ${cvk_core_sources})
+if(TARGET cvk-platform)
+    target_link_libraries(cvk PRIVATE cvk-platform)
+endif()
 target_include_directories(cvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Only the header-only format utilities are needed; keep their C++ libraries out of the build.
 target_link_libraries(cvk PUBLIC Vulkan::Headers PRIVATE volk::volk cvk-vulkan-utility-headers)
 target_compile_definitions(cvk PUBLIC VK_NO_PROTOTYPES)
 
 if(MSVC)
-    target_compile_options(cvk PRIVATE /W4)
+    target_compile_options(cvk PRIVATE /Wall /WX /wd4820)
 else()
     target_compile_options(cvk PRIVATE -Wall -Wextra -Wpedantic -Werror=implicit-function-declaration)
 endif()
@@ -185,7 +210,7 @@ add_test(NAME cvk-format-layouts COMMAND cvk-format-test)
 
 # Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
 # prefix scvk, a standalone library against the SC headers. Format protocols are Vulkan-only.
-set(SCVK_SOURCES src/scvk.c src/scvk_json.c ${scvk_platform_sources})
+set(SCVK_SOURCES src/scvk.c src/scvk_json.c src/scvk_json_enums.c src/scvk_json_structs.c ${scvk_platform_sources})
 add_library(scvk STATIC ${SCVK_SOURCES})
 target_compile_definitions(scvk PRIVATE ${scvk_platform_defines})
 target_include_directories(scvk PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -11,7 +11,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ohos.h>
 
-void cvkInitExternalFormatOHOS(VkExternalFormatOHOS* pInfo, void* pNext, uint64_t externalFormat)
+extern CVK_FORCE_INLINE void cvkInitExternalFormatOHOS(VkExternalFormatOHOS* pInfo, void* pNext, uint64_t externalFormat)
 {
     (*pInfo) = (VkExternalFormatOHOS)
     {
@@ -20,7 +20,7 @@ void cvkInitExternalFormatOHOS(VkExternalFormatOHOS* pInfo, void* pNext, uint64_
         .externalFormat = externalFormat
     };
 }
-void cvkInitImportNativeBufferInfoOHOS(VkImportNativeBufferInfoOHOS* pInfo, const void* pNext, struct OH_NativeBuffer* buffer)
+extern CVK_FORCE_INLINE void cvkInitImportNativeBufferInfoOHOS(VkImportNativeBufferInfoOHOS* pInfo, const void* pNext, struct OH_NativeBuffer* buffer)
 {
     (*pInfo) = (VkImportNativeBufferInfoOHOS)
     {
@@ -29,7 +29,7 @@ void cvkInitImportNativeBufferInfoOHOS(VkImportNativeBufferInfoOHOS* pInfo, cons
         .buffer = buffer
     };
 }
-void cvkInitMemoryGetNativeBufferInfoOHOS(VkMemoryGetNativeBufferInfoOHOS* pInfo, const void* pNext, VkDeviceMemory memory)
+extern CVK_FORCE_INLINE void cvkInitMemoryGetNativeBufferInfoOHOS(VkMemoryGetNativeBufferInfoOHOS* pInfo, const void* pNext, VkDeviceMemory memory)
 {
     (*pInfo) = (VkMemoryGetNativeBufferInfoOHOS)
     {
@@ -38,22 +38,22 @@ void cvkInitMemoryGetNativeBufferInfoOHOS(VkMemoryGetNativeBufferInfoOHOS* pInfo
         .memory = memory
     };
 }
-void cvkInitNativeBufferFormatPropertiesOHOS(VkNativeBufferFormatPropertiesOHOS* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitNativeBufferFormatPropertiesOHOS(VkNativeBufferFormatPropertiesOHOS* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_FORMAT_PROPERTIES_OHOS;
     pInfo->pNext = pNext;
 }
-void cvkInitNativeBufferPropertiesOHOS(VkNativeBufferPropertiesOHOS* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitNativeBufferPropertiesOHOS(VkNativeBufferPropertiesOHOS* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_PROPERTIES_OHOS;
     pInfo->pNext = pNext;
 }
-void cvkInitNativeBufferUsageOHOS(VkNativeBufferUsageOHOS* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitNativeBufferUsageOHOS(VkNativeBufferUsageOHOS* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_USAGE_OHOS;
     pInfo->pNext = pNext;
 }
-void cvkInitSurfaceCreateInfoOHOS(VkSurfaceCreateInfoOHOS* pInfo, const void* pNext, VkSurfaceCreateFlagsOHOS flags, OHNativeWindow* window)
+extern CVK_FORCE_INLINE void cvkInitSurfaceCreateInfoOHOS(VkSurfaceCreateInfoOHOS* pInfo, const void* pNext, VkSurfaceCreateFlagsOHOS flags, OHNativeWindow* window)
 {
     (*pInfo) = (VkSurfaceCreateInfoOHOS)
     {
@@ -63,7 +63,8 @@ void cvkInitSurfaceCreateInfoOHOS(VkSurfaceCreateInfoOHOS* pInfo, const void* pN
         .window = window
     };
 }
-VkResult cvkCreateSurfaceOHOS(VkInstance instance, const void* pNext, VkSurfaceCreateFlagsOHOS flags, OHNativeWindow* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
+extern CVK_FORCE_INLINE VkResult
+cvkCreateSurfaceOHOS(VkInstance instance, const void* pNext, VkSurfaceCreateFlagsOHOS flags, OHNativeWindow* window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
 {
     VkSurfaceCreateInfoOHOS create_info;
     VkResult                result;
@@ -77,7 +78,7 @@ VkResult cvkCreateSurfaceOHOS(VkInstance instance, const void* pNext, VkSurfaceC
     };
 
     result = vkCreateSurfaceOHOS(instance, &create_info, pAllocator, pSurface);
-    CVK_ASSERT((0 <= result) || (VK_ERROR_SURFACE_LOST_KHR == result));
+    CVK_ASSERT((VK_SUCCESS == result) || (VK_ERROR_SURFACE_LOST_KHR == result));
 
     if (0 <= result)
     {
@@ -86,7 +87,7 @@ VkResult cvkCreateSurfaceOHOS(VkInstance instance, const void* pNext, VkSurfaceC
 
     return result;
 }
-void cvkGetMemoryNativeBufferOHOS(VkDevice device, const void* pNext, VkDeviceMemory memory, struct OH_NativeBuffer** pBuffer)
+extern CVK_FORCE_INLINE void cvkGetMemoryNativeBufferOHOS(VkDevice device, const void* pNext, VkDeviceMemory memory, struct OH_NativeBuffer** pBuffer)
 {
     VkMemoryGetNativeBufferInfoOHOS info =
     {
@@ -97,7 +98,7 @@ void cvkGetMemoryNativeBufferOHOS(VkDevice device, const void* pNext, VkDeviceMe
 
     CVK_CHECK(vkGetMemoryNativeBufferOHOS(device, &info, pBuffer));
 }
-void cvkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, void* pNext, VkNativeBufferPropertiesOHOS* pProperties)
+extern CVK_FORCE_INLINE void cvkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, void* pNext, VkNativeBufferPropertiesOHOS* pProperties)
 {
     VkNativeBufferPropertiesOHOS properties =
     {
@@ -109,13 +110,13 @@ void cvkGetNativeBufferPropertiesOHOS(VkDevice device, const struct OH_NativeBuf
 
     (*pProperties) = properties;
 }
-void cvkAllocateImportNativeBufferOHOS(VkDevice                     device,
-                                       const void*                  pNext,
-                                       struct OH_NativeBuffer*      buffer,
-                                       VkDeviceSize                 allocationSize,
-                                       uint32_t                     memoryTypeIndex,
-                                       const VkAllocationCallbacks* pAllocator,
-                                       VkDeviceMemory*              pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateImportNativeBufferOHOS(VkDevice                     device,
+                                                               const void*                  pNext,
+                                                               struct OH_NativeBuffer*      buffer,
+                                                               VkDeviceSize                 allocationSize,
+                                                               uint32_t                     memoryTypeIndex,
+                                                               const VkAllocationCallbacks* pAllocator,
+                                                               VkDeviceMemory*              pMemory)
 {
     VkImportNativeBufferInfoOHOS buffer_info =
     {
@@ -126,24 +127,24 @@ void cvkAllocateImportNativeBufferOHOS(VkDevice                     device,
 
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkCreateImageWithExternalFormatInfoOHOS(VkDevice                     device,
-                                              void*                        pNext,
-                                              uint64_t                     externalFormat,
-                                              VkImageCreateFlags           flags,
-                                              VkImageType                  imageType,
-                                              VkFormat                     format,
-                                              VkExtent3D                   extent,
-                                              uint32_t                     mipLevels,
-                                              uint32_t                     arrayLayers,
-                                              VkSampleCountFlagBits        samples,
-                                              VkImageTiling                tiling,
-                                              VkImageUsageFlags            usage,
-                                              VkSharingMode                sharingMode,
-                                              uint32_t                     queueFamilyIndexCount,
-                                              const uint32_t*              pQueueFamilyIndices,
-                                              VkImageLayout                initialLayout,
-                                              const VkAllocationCallbacks* pAllocator,
-                                              VkImage*                     pImage)
+extern CVK_FORCE_INLINE void cvkCreateImageWithExternalFormatInfoOHOS(VkDevice                     device,
+                                                                      void*                        pNext,
+                                                                      uint64_t                     externalFormat,
+                                                                      VkImageCreateFlags           flags,
+                                                                      VkImageType                  imageType,
+                                                                      VkFormat                     format,
+                                                                      VkExtent3D                   extent,
+                                                                      uint32_t                     mipLevels,
+                                                                      uint32_t                     arrayLayers,
+                                                                      VkSampleCountFlagBits        samples,
+                                                                      VkImageTiling                tiling,
+                                                                      VkImageUsageFlags            usage,
+                                                                      VkSharingMode                sharingMode,
+                                                                      uint32_t                     queueFamilyIndexCount,
+                                                                      const uint32_t*              pQueueFamilyIndices,
+                                                                      VkImageLayout                initialLayout,
+                                                                      const VkAllocationCallbacks* pAllocator,
+                                                                      VkImage*                     pImage)
 {
     VkExternalFormatOHOS external_format =
     {
@@ -170,19 +171,19 @@ void cvkCreateImageWithExternalFormatInfoOHOS(VkDevice                     devic
                    pAllocator,
                    pImage);
 }
-void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(VkDevice                      device,
-                                                               void*                         pNext,
-                                                               uint64_t                      externalFormat,
-                                                               VkFormat                      format,
-                                                               VkSamplerYcbcrModelConversion ycbcrModel,
-                                                               VkSamplerYcbcrRange           ycbcrRange,
-                                                               VkComponentMapping            components,
-                                                               VkChromaLocation              xChromaOffset,
-                                                               VkChromaLocation              yChromaOffset,
-                                                               VkFilter                      chromaFilter,
-                                                               VkBool32                      forceExplicitReconstruction,
-                                                               const VkAllocationCallbacks*  pAllocator,
-                                                               VkSamplerYcbcrConversion*     pYcbcrConversion)
+extern CVK_FORCE_INLINE void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(VkDevice                      device,
+                                                                                       void*                         pNext,
+                                                                                       uint64_t                      externalFormat,
+                                                                                       VkFormat                      format,
+                                                                                       VkSamplerYcbcrModelConversion ycbcrModel,
+                                                                                       VkSamplerYcbcrRange           ycbcrRange,
+                                                                                       VkComponentMapping            components,
+                                                                                       VkChromaLocation              xChromaOffset,
+                                                                                       VkChromaLocation              yChromaOffset,
+                                                                                       VkFilter                      chromaFilter,
+                                                                                       VkBool32                      forceExplicitReconstruction,
+                                                                                       const VkAllocationCallbacks*  pAllocator,
+                                                                                       VkSamplerYcbcrConversion*     pYcbcrConversion)
 {
     VkExternalFormatOHOS external_format =
     {
@@ -204,29 +205,29 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoOHOS(VkDevice         
                                     pAllocator,
                                     pYcbcrConversion);
 }
-VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(VkDevice                                      device,
-                                                             VkPipelineCache                               pipelineCache,
-                                                             void*                                         pNext,
-                                                             uint64_t                                      externalFormat,
-                                                             VkPipelineCreateFlags                         flags,
-                                                             uint32_t                                      stageCount,
-                                                             const VkPipelineShaderStageCreateInfo*        pStages,
-                                                             const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
-                                                             const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
-                                                             const VkPipelineTessellationStateCreateInfo*  pTessellationState,
-                                                             const VkPipelineViewportStateCreateInfo*      pViewportState,
-                                                             const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
-                                                             const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
-                                                             const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
-                                                             const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
-                                                             const VkPipelineDynamicStateCreateInfo*       pDynamicState,
-                                                             VkPipelineLayout                              layout,
-                                                             VkRenderPass                                  renderPass,
-                                                             uint32_t                                      subpass,
-                                                             VkPipeline                                    basePipelineHandle,
-                                                             int32_t                                       basePipelineIndex,
-                                                             const VkAllocationCallbacks*                  pAllocator,
-                                                             VkPipeline*                                   pPipeline)
+extern CVK_FORCE_INLINE VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(VkDevice                                      device,
+                                                                                     VkPipelineCache                               pipelineCache,
+                                                                                     void*                                         pNext,
+                                                                                     uint64_t                                      externalFormat,
+                                                                                     VkPipelineCreateFlags                         flags,
+                                                                                     uint32_t                                      stageCount,
+                                                                                     const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                                     const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                                     const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                                     const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                                     const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                                     const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                                     const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                                     const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                                     const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                                     const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                                     VkPipelineLayout                              layout,
+                                                                                     VkRenderPass                                  renderPass,
+                                                                                     uint32_t                                      subpass,
+                                                                                     VkPipeline                                    basePipelineHandle,
+                                                                                     int32_t                                       basePipelineIndex,
+                                                                                     const VkAllocationCallbacks*                  pAllocator,
+                                                                                     VkPipeline*                                   pPipeline)
 {
     VkExternalFormatOHOS external_format =
     {
@@ -258,7 +259,10 @@ VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoOHOS(VkDevice           
                                      pAllocator,
                                      pPipeline);
 }
-void cvkGetNativeBufferFormatPropertiesOHOS(VkDevice device, const struct OH_NativeBuffer* buffer, void* pNext, VkNativeBufferFormatPropertiesOHOS* pNativeBufferFormatPropertiesOHOS)
+extern CVK_FORCE_INLINE void cvkGetNativeBufferFormatPropertiesOHOS(VkDevice                            device,
+                                                                    const struct OH_NativeBuffer*       buffer,
+                                                                    void*                               pNext,
+                                                                    VkNativeBufferFormatPropertiesOHOS* pNativeBufferFormatPropertiesOHOS)
 {
     VkNativeBufferPropertiesOHOS       properties;
     VkNativeBufferFormatPropertiesOHOS ext_properties =
@@ -271,15 +275,15 @@ void cvkGetNativeBufferFormatPropertiesOHOS(VkDevice device, const struct OH_Nat
 
     (*pNativeBufferFormatPropertiesOHOS) = ext_properties;
 }
-VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNativeBufferUsageOHOS(VkPhysicalDevice         physicalDevice,
-                                                                            const void*              pImageFormatInfoNext,
-                                                                            VkFormat                 format,
-                                                                            VkImageType              type,
-                                                                            VkImageTiling            tiling,
-                                                                            VkImageUsageFlags        usage,
-                                                                            VkImageCreateFlags       flags,
-                                                                            void*                    pNativeBufferUsageOHOSNext,
-                                                                            VkNativeBufferUsageOHOS* pNativeBufferUsageOHOS)
+extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithNativeBufferUsageOHOS(VkPhysicalDevice         physicalDevice,
+                                                                                                    const void*              pImageFormatInfoNext,
+                                                                                                    VkFormat                 format,
+                                                                                                    VkImageType              type,
+                                                                                                    VkImageTiling            tiling,
+                                                                                                    VkImageUsageFlags        usage,
+                                                                                                    VkImageCreateFlags       flags,
+                                                                                                    void*                    pNativeBufferUsageOHOSNext,
+                                                                                                    VkNativeBufferUsageOHOS* pNativeBufferUsageOHOS)
 {
     VkResult                 result;
     VkImageFormatProperties2 image_format_properties;

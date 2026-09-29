@@ -11,7 +11,7 @@
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xlib.h>
 
-void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
+extern CVK_FORCE_INLINE void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window)
 {
     (*pInfo) = (VkXlibSurfaceCreateInfoKHR)
     {
@@ -22,7 +22,13 @@ void cvkInitXlibSurfaceCreateInfo(VkXlibSurfaceCreateInfoKHR* pInfo, const void*
         .window = window
     };
 }
-void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceCreateFlagsKHR flags, Display* dpy, Window window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface)
+extern CVK_FORCE_INLINE void cvkCreateXlibSurface(VkInstance                   instance,
+                                                  const void*                  pNext,
+                                                  VkXlibSurfaceCreateFlagsKHR  flags,
+                                                  Display*                     dpy,
+                                                  Window                       window,
+                                                  const VkAllocationCallbacks* pAllocator,
+                                                  VkSurfaceKHR*                pSurface)
 {
     VkXlibSurfaceCreateInfoKHR create_info =
     {
@@ -36,7 +42,7 @@ void cvkCreateXlibSurface(VkInstance instance, const void* pNext, VkXlibSurfaceC
     CVK_CHECK(vkCreateXlibSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID)
+extern CVK_FORCE_INLINE VkBool32 cvkGetPhysicalDeviceXlibPresentationSupport(VkPhysicalDevice physicalDevice, uint32_t queueFamilyIndex, Display* dpy, VisualID visualID)
 {
     return vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice, queueFamilyIndex, dpy, visualID);
 }

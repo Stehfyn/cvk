@@ -9,8 +9,10 @@
 **===============================================================================================*/
 
 #include "os/os_assert.h"
+#include "os/os_compiler.h"
 #include "os/os_types.h"
 #include <stdint.h>
+#include <string.h>
 #include "os/os_process.h"
 
 /*=================================================================================================
@@ -19,9 +21,10 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define TEST_CAPACITY   (129)
-#define TEST_HIGH_VALUE (0x1A3)
-#define TEST_LOW_BYTE   (0xA3)
+#define TEST_CAPACITY    (129)
+#define TEST_HIGH_VALUE  (0x1A3)
+#define TEST_LOW_BYTE    (0xA3)
+#define TEST_STACK_BYTES (8193)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -41,79 +44,41 @@
 
 /*************************************************************************************************/
 /**
- * \brief Compares two extents through the compiler's x64 ABI.
- *
- * \par Details:
- *  These required symbol spellings are declared only in this native ABI test.
+ * \brief Exercises a compiler-probed automatic stack extent.
  *
  * \par Requirements:
- *  - 001 The linked owned adapter shall preserve native arguments and results.
+ *  - 001 Every byte across multiple pages and the final partial page shall retain its expected value.
+ *  - 002 Volatile storage shall require actual reads and writes in the native compiler ABI test.
  *
- * \param[in] first   Readable first extent
- * \param[in] second   Readable second extent
- * \param[in] byteCount   Readable bytes per input
- *
- * \retval -255..255   First unsigned-byte difference.
+ * \retval None
  */
-int32_t memcmp(const void* first, const void* second, uint64_t byteCount);
-
-/*************************************************************************************************/
-/**
- * \brief Copies disjoint extents through the compiler's x64 ABI.
- *
- * \par Details:
- *  These required symbol spellings are declared only in this native ABI test.
- *
- * \par Requirements:
- *  - 001 The linked owned adapter shall preserve native arguments and results.
- *
- * \param[out] output   Writable extent
- * \param[in] input   Disjoint readable extent
- * \param[in] byteCount   Exact bytes to copy
- *
- * \retval output   Original destination.
- */
-void* memcpy(void* output, const void* input, uint64_t byteCount);
-
-/*************************************************************************************************/
-/**
- * \brief Moves possibly overlapping extents through the compiler's x64 ABI.
- *
- * \par Details:
- *  These required symbol spellings are declared only in this native ABI test.
- *
- * \par Requirements:
- *  - 001 The linked owned adapter shall preserve native arguments and results.
- *
- * \param[out] output   Writable extent
- * \param[in] input   Readable extent
- * \param[in] byteCount   Exact bytes to move
- *
- * \retval output   Original destination.
- */
-void* memmove(void* output, const void* input, uint64_t byteCount);
-
-/*************************************************************************************************/
-/**
- * \brief Fills an extent through the compiler's x64 ABI.
- *
- * \par Details:
- *  These required symbol spellings are declared only in this native ABI test.
- *
- * \par Requirements:
- *  - 001 The linked owned adapter shall preserve native arguments and results.
- *
- * \param[out] output   Writable extent
- * \param[in] value   Int value converted to an unsigned byte
- * \param[in] byteCount   Exact bytes to fill
- *
- * \retval output   Original destination.
- */
-void* memset(void* output, int32_t value, uint64_t byteCount);
+static FORCE_INLINE void CheckStack(void);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The local extent requires compiler-emitted stack probing before either byte loop executes.
+ */
+static FORCE_INLINE void CheckStack(void)
+{
+    uint32_t        index;
+    volatile byte_t stack_bytes[TEST_STACK_BYTES];
+    byte_t          value;
+
+    for (index = 0; index < TEST_STACK_BYTES; ++index)
+    {
+        stack_bytes[index] = (byte_t)index;
+    }
+    for (index = 0; index < TEST_STACK_BYTES; ++index)
+    {
+        value = stack_bytes[index];
+        LOGASSERT((byte_t)index == value);
+    }
+}
 
 /*=================================================================================================
 ** 5. PUBLIC FUNCTIONS
@@ -124,6 +89,10 @@ void* memset(void* output, int32_t value, uint64_t byteCount);
  * \par Details:
  *  Volatile function pointers force calls through the ABI adapter symbols rather than
  *  compiler intrinsic substitution. The target's native size extent is explicitly uint64_t.
+ *  The standard header declares the ABI; /NODEFAULTLIB resolves each symbol to the
+ *  owned assembly implementation, without linking the system C runtime.
+ *  A volatile multi-page local additionally requires the compiler's stack probe;
+ *  writes and reads cover every byte, including the final partial page.
  */
 uint32_t OS_Application_Main(void)
 {
@@ -182,6 +151,8 @@ uint32_t OS_Application_Main(void)
     {
         LOGASSERT((byte_t)index == input[index]);
     }
+
+    CheckStack();
 
     return 0;
 }

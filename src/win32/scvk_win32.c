@@ -7,11 +7,11 @@
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_win32.h>
 
-void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)
+extern SCVK_FORCE_INLINE void scvkAcquireWinrtDisplayNV(VkPhysicalDevice physicalDevice, VkDisplayKHR display)
 {
     SCVK_CHECK(vkAcquireWinrtDisplayNV(physicalDevice, display));
 }
-void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
+extern SCVK_FORCE_INLINE void scvkGetWinrtDisplayNV(VkPhysicalDevice physicalDevice, uint32_t deviceRelativeId, VkDisplayKHR* pDisplay)
 {
     SCVK_CHECK(vkGetWinrtDisplayNV(physicalDevice, deviceRelativeId, pDisplay));
     SCVK_ASSERT(VK_NULL_HANDLE != (*pDisplay));

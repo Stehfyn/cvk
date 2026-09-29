@@ -98,23 +98,26 @@ static FORCE_INLINE void CheckDistinctPaths(void)
     const uint16_t* second;
     uint32_t        first_units;
     uint32_t        second_units;
+    uint32_t        compared_units;
+    bool_t          different_lengths;
+    bool_t          different_units;
     bool_t          distinct;
     int32_t         compared;
 
-    first        = OS_TemporaryFile_GetPath(&g_first);
-    second       = OS_TemporaryFile_GetPath(&g_second);
-    first_units  = Utl_Unicode_GetUtf16StringUnitCount(first, OS_TEMPORARYFILE_PATH_CAPACITY);
-    second_units = Utl_Unicode_GetUtf16StringUnitCount(second, OS_TEMPORARYFILE_PATH_CAPACITY);
+    first           = OS_TemporaryFile_GetPath(&g_first);
+    second          = OS_TemporaryFile_GetPath(&g_second);
+    first_units     = Utl_Unicode_GetUtf16StringUnitCount(first, OS_TEMPORARYFILE_PATH_CAPACITY);
+    second_units    = Utl_Unicode_GetUtf16StringUnitCount(second, OS_TEMPORARYFILE_PATH_CAPACITY);
+    compared_units  = (first_units < second_units) ? first_units : second_units;
+    compared_units %= OS_TEMPORARYFILE_PATH_CAPACITY;
+    compared        = CRT_Memory_Compare(first, second, (uint64_t)compared_units * sizeof(uint16_t));
     LOGASSERT(0 < first_units);
     LOGASSERT(OS_TEMPORARYFILE_PATH_CAPACITY > first_units);
     LOGASSERT(0 < second_units);
     LOGASSERT(OS_TEMPORARYFILE_PATH_CAPACITY > second_units);
-    distinct = (first_units != second_units);
-    if (!distinct)
-    {
-        compared = CRT_Memory_Compare(first, second, ((uint64_t)first_units + 1) * sizeof(uint16_t));
-        distinct = (0 != compared);
-    }
+    different_lengths = (first_units != second_units);
+    different_units   = (0 != compared);
+    distinct          = different_lengths || different_units;
     LOGASSERT(distinct);
     LOGASSERT(first == OS_TemporaryFile_GetPath(&g_first));
     LOGASSERT(second == OS_TemporaryFile_GetPath(&g_second));
@@ -130,6 +133,7 @@ static FORCE_INLINE void CheckRemovalRetry(void)
 {
     const uint16_t* borrowed;
     uint32_t        units;
+    uint32_t        copied_units;
     uint16_t        path[OS_TEMPORARYFILE_PATH_CAPACITY];
     HANDLE          blocker;
     bool_t          closed;
@@ -139,11 +143,12 @@ static FORCE_INLINE void CheckRemovalRetry(void)
     uint32_t        error;
     bool_t          missing;
 
-    borrowed = OS_TemporaryFile_GetPath(&g_first);
-    units    = Utl_Unicode_GetUtf16StringUnitCount(borrowed, OS_TEMPORARYFILE_PATH_CAPACITY);
+    borrowed     = OS_TemporaryFile_GetPath(&g_first);
+    units        = Utl_Unicode_GetUtf16StringUnitCount(borrowed, OS_TEMPORARYFILE_PATH_CAPACITY);
+    copied_units = units % OS_TEMPORARYFILE_PATH_CAPACITY;
+    CRT_Memory_Copy(path, borrowed, (uint64_t)copied_units * sizeof(uint16_t));
+    path[copied_units] = UTL_UNICODE_TERMINATOR;
     LOGASSERT(OS_TEMPORARYFILE_PATH_CAPACITY > units);
-    CRT_Memory_Copy(path, borrowed, (uint64_t)units * sizeof(uint16_t));
-    path[units] = UTL_UNICODE_TERMINATOR;
     blocker =
         CreateFile((LPCTSTR)path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     LOGASSERT(INVALID_HANDLE_VALUE != blocker);

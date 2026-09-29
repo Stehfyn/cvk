@@ -1607,9 +1607,9 @@ uint32_t Utl_Mpeg4_GetMovieFragmentByteCount(const Utl_Mpeg4_MovieFragment_t* fr
  *  None
  */
 extern FORCE_INLINE bool_t Utl_Mpeg4_ReadBoxHeader(Utl_Mpeg4_BoxHeader_t* header,
-                               Utl_Mpeg4_Span_t       bytes,
-                               uint64_t               parentRemaining,
-                               uint64_t               fileRemaining)
+                                                 Utl_Mpeg4_Span_t       bytes,
+                                                 uint64_t              parentRemaining,
+                                                 uint64_t              fileRemaining)
 {
     bool_t                has_prefix;
     bool_t                parent_in_file;
@@ -1621,6 +1621,8 @@ extern FORCE_INLINE bool_t Utl_Mpeg4_ReadBoxHeader(Utl_Mpeg4_BoxHeader_t* header
     bool_t                is_uuid;
     uint32_t              uuid_offset;
     bool_t                has_uuid;
+    uint32_t              uuid_mask;
+    uint32_t              uuid_bytes;
     uint32_t              count;
     bool_t                fits_parent;
 
@@ -1659,14 +1661,14 @@ extern FORCE_INLINE bool_t Utl_Mpeg4_ReadBoxHeader(Utl_Mpeg4_BoxHeader_t* header
         is_uuid = (UTL_MPEG4_BOX_UUID == candidate.type);
         if (is_uuid)
         {
-            uuid_offset = prefix;
+            uuid_offset  = prefix;
             prefix      += UTL_MPEG4_USER_TYPE_BYTES;
-            has_uuid    = (prefix <= bytes.byteCount);
-            valid       = valid && has_uuid;
-            if (has_uuid)
-            {
-                CRT_Memory_Copy(candidate.userType, &bytes.data[uuid_offset], UTL_MPEG4_USER_TYPE_BYTES);
-            }
+            has_uuid     = (prefix <= bytes.byteCount);
+            valid        = valid && has_uuid;
+            uuid_mask    = 0 - (uint32_t)has_uuid;
+            uuid_offset &= uuid_mask;
+            uuid_bytes   = UTL_MPEG4_USER_TYPE_BYTES & uuid_mask;
+            CRT_Memory_Copy(candidate.userType, &bytes.data[uuid_offset], uuid_bytes);
         }
         count       = Utl_Mpeg4_GetBoxHeaderByteCount(&candidate);
         fits_parent = (candidate.byteCount <= parentRemaining);

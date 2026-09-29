@@ -12,6 +12,7 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
+  -clang-analyzer-optin.performance.Padding,
   -bugprone-easily-swappable-parameters
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
@@ -22,6 +23,7 @@ SystemHeaders: false
 # identifier-length checks remain enabled; existing parameter names are preserved.
 # Later approved: raw C buffer usage and existing adjacent same-type parameters.
 # Bounds/path analysis and every other bugprone check remain enabled.
+# Compiler-introduced padding is also reported by this separate analyzer check.
 ExtraArgs: ['-Wno-padded', '-Wno-documentation', '-Wno-unsafe-buffer-usage']
 CheckOptions:
   readability-identifier-length.MinimumParameterNameLength: 1

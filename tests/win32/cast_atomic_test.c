@@ -214,6 +214,7 @@ uint32_t OS_Application_Main(void)
     uint64_t      sum64;
     uint32_t      success32;
     uint64_t      success64;
+    HANDLE        thread;
     DWORD         wait_result;
     uint64_t      expected_sum;
 
@@ -247,13 +248,15 @@ uint32_t OS_Application_Main(void)
     success64 = 0;
     for (index = 0; index < ATOMIC_TEST_THREADS; ++index)
     {
-        wait_result = WaitForSingleObject(group.threads[index], ATOMIC_TEST_TIMEOUT);
+        thread               = group.threads[index];
+        group.threads[index] = NULL;
+        wait_result          = WaitForSingleObject(thread, ATOMIC_TEST_TIMEOUT);
         LOGASSERT(WAIT_OBJECT_0 == wait_result);
         sum32     += group.workers[index].sum32;
         sum64     += group.workers[index].sum64;
         success32 += group.workers[index].success32;
         success64 += group.workers[index].success64;
-        LOGASSERT(CloseHandle(group.threads[index]));
+        LOGASSERT(CloseHandle(thread));
     }
     LOGASSERT(CloseHandle(gate));
     expected_sum = ((uint64_t)ATOMIC_TEST_TOTAL * (ATOMIC_TEST_TOTAL - 1)) / 2;

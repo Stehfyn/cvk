@@ -11,32 +11,32 @@
 #include <vulkan/vulkan_android.h>
 #include <vulkan/vulkan_core.h>
 
-void cvkInitAndroidHardwareBufferFormatProperties2ANDROID(VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferFormatProperties2ANDROID(VkAndroidHardwareBufferFormatProperties2ANDROID* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID;
     pInfo->pNext = pNext;
 }
-void cvkInitAndroidHardwareBufferFormatPropertiesANDROID(VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferFormatPropertiesANDROID(VkAndroidHardwareBufferFormatPropertiesANDROID* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-void cvkInitAndroidHardwareBufferFormatResolvePropertiesANDROID(VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferFormatResolvePropertiesANDROID(VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-void cvkInitAndroidHardwareBufferPropertiesANDROID(VkAndroidHardwareBufferPropertiesANDROID* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferPropertiesANDROID(VkAndroidHardwareBufferPropertiesANDROID* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-void cvkInitAndroidHardwareBufferUsageANDROID(VkAndroidHardwareBufferUsageANDROID* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitAndroidHardwareBufferUsageANDROID(VkAndroidHardwareBufferUsageANDROID* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_USAGE_ANDROID;
     pInfo->pNext = pNext;
 }
-void cvkInitAndroidSurfaceCreateInfo(VkAndroidSurfaceCreateInfoKHR* pInfo, const void* pNext, VkAndroidSurfaceCreateFlagsKHR flags, struct ANativeWindow* window)
+extern CVK_FORCE_INLINE void cvkInitAndroidSurfaceCreateInfo(VkAndroidSurfaceCreateInfoKHR* pInfo, const void* pNext, VkAndroidSurfaceCreateFlagsKHR flags, struct ANativeWindow* window)
 {
     (*pInfo) = (VkAndroidSurfaceCreateInfoKHR)
     {
@@ -46,7 +46,7 @@ void cvkInitAndroidSurfaceCreateInfo(VkAndroidSurfaceCreateInfoKHR* pInfo, const
         .window = window
     };
 }
-void cvkInitExternalFormatANDROID(VkExternalFormatANDROID* pInfo, void* pNext, uint64_t externalFormat)
+extern CVK_FORCE_INLINE void cvkInitExternalFormatANDROID(VkExternalFormatANDROID* pInfo, void* pNext, uint64_t externalFormat)
 {
     (*pInfo) = (VkExternalFormatANDROID)
     {
@@ -55,7 +55,7 @@ void cvkInitExternalFormatANDROID(VkExternalFormatANDROID* pInfo, void* pNext, u
         .externalFormat = externalFormat
     };
 }
-void cvkInitImportAndroidHardwareBufferInfoANDROID(VkImportAndroidHardwareBufferInfoANDROID* pInfo, const void* pNext, struct AHardwareBuffer* buffer)
+extern CVK_FORCE_INLINE void cvkInitImportAndroidHardwareBufferInfoANDROID(VkImportAndroidHardwareBufferInfoANDROID* pInfo, const void* pNext, struct AHardwareBuffer* buffer)
 {
     (*pInfo) = (VkImportAndroidHardwareBufferInfoANDROID)
     {
@@ -64,7 +64,7 @@ void cvkInitImportAndroidHardwareBufferInfoANDROID(VkImportAndroidHardwareBuffer
         .buffer = buffer
     };
 }
-void cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo, const void* pNext, VkDeviceMemory memory)
+extern CVK_FORCE_INLINE void cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(VkMemoryGetAndroidHardwareBufferInfoANDROID* pInfo, const void* pNext, VkDeviceMemory memory)
 {
     (*pInfo) = (VkMemoryGetAndroidHardwareBufferInfoANDROID)
     {
@@ -73,7 +73,7 @@ void cvkInitMemoryGetAndroidHardwareBufferInfoANDROID(VkMemoryGetAndroidHardware
         .memory = memory
     };
 }
-void cvkInitPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo, void* pNext, VkBool32 externalFormatResolve)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pInfo, void* pNext, VkBool32 externalFormatResolve)
 {
     (*pInfo) = (VkPhysicalDeviceExternalFormatResolveFeaturesANDROID)
     {
@@ -82,17 +82,17 @@ void cvkInitPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDeviceE
         .externalFormatResolve = externalFormatResolve
     };
 }
-void cvkInitPhysicalDeviceExternalFormatResolvePropertiesANDROID(VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo, void* pNext)
+extern CVK_FORCE_INLINE void cvkInitPhysicalDeviceExternalFormatResolvePropertiesANDROID(VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pInfo, void* pNext)
 {
     pInfo->sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID;
     pInfo->pNext = pNext;
 }
-void cvkCreateAndroidSurface(VkInstance                     instance,
-                             const void*                    pNext,
-                             VkAndroidSurfaceCreateFlagsKHR flags,
-                             struct ANativeWindow*          window,
-                             const VkAllocationCallbacks*   pAllocator,
-                             VkSurfaceKHR*                  pSurface)
+extern CVK_FORCE_INLINE void cvkCreateAndroidSurface(VkInstance                     instance,
+                                                     const void*                    pNext,
+                                                     VkAndroidSurfaceCreateFlagsKHR flags,
+                                                     struct ANativeWindow*          window,
+                                                     const VkAllocationCallbacks*   pAllocator,
+                                                     VkSurfaceKHR*                  pSurface)
 {
     VkAndroidSurfaceCreateInfoKHR create_info =
     {
@@ -105,7 +105,7 @@ void cvkCreateAndroidSurface(VkInstance                     instance,
     CVK_CHECK(vkCreateAndroidSurfaceKHR(instance, &create_info, pAllocator, pSurface));
     CVK_ASSERT(VK_NULL_HANDLE != (*pSurface));
 }
-void cvkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferPropertiesANDROID* pProperties)
+extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct AHardwareBuffer* buffer, void* pNext, VkAndroidHardwareBufferPropertiesANDROID* pProperties)
 {
     VkAndroidHardwareBufferPropertiesANDROID properties =
     {
@@ -117,7 +117,7 @@ void cvkGetAndroidHardwareBufferPropertiesANDROID(VkDevice device, const struct 
 
     (*pProperties) = properties;
 }
-void cvkGetMemoryAndroidHardwareBufferANDROID(VkDevice device, const void* pNext, VkDeviceMemory memory, struct AHardwareBuffer** pBuffer)
+extern CVK_FORCE_INLINE void cvkGetMemoryAndroidHardwareBufferANDROID(VkDevice device, const void* pNext, VkDeviceMemory memory, struct AHardwareBuffer** pBuffer)
 {
     VkMemoryGetAndroidHardwareBufferInfoANDROID info =
     {
@@ -128,13 +128,13 @@ void cvkGetMemoryAndroidHardwareBufferANDROID(VkDevice device, const void* pNext
 
     CVK_CHECK(vkGetMemoryAndroidHardwareBufferANDROID(device, &info, pBuffer));
 }
-void cvkAllocateImportAndroidHardwareBufferANDROID(VkDevice                     device,
-                                                   const void*                  pNext,
-                                                   struct AHardwareBuffer*      buffer,
-                                                   VkDeviceSize                 allocationSize,
-                                                   uint32_t                     memoryTypeIndex,
-                                                   const VkAllocationCallbacks* pAllocator,
-                                                   VkDeviceMemory*              pMemory)
+extern CVK_FORCE_INLINE void cvkAllocateImportAndroidHardwareBufferANDROID(VkDevice                     device,
+                                                                           const void*                  pNext,
+                                                                           struct AHardwareBuffer*      buffer,
+                                                                           VkDeviceSize                 allocationSize,
+                                                                           uint32_t                     memoryTypeIndex,
+                                                                           const VkAllocationCallbacks* pAllocator,
+                                                                           VkDeviceMemory*              pMemory)
 {
     VkImportAndroidHardwareBufferInfoANDROID buffer_info =
     {
@@ -145,24 +145,24 @@ void cvkAllocateImportAndroidHardwareBufferANDROID(VkDevice                     
 
     cvkAllocateMemory(device, &buffer_info, allocationSize, memoryTypeIndex, pAllocator, pMemory);
 }
-void cvkCreateImageWithExternalFormatInfoANDROID(VkDevice                     device,
-                                                 void*                        pNext,
-                                                 uint64_t                     externalFormat,
-                                                 VkImageCreateFlags           flags,
-                                                 VkImageType                  imageType,
-                                                 VkFormat                     format,
-                                                 VkExtent3D                   extent,
-                                                 uint32_t                     mipLevels,
-                                                 uint32_t                     arrayLayers,
-                                                 VkSampleCountFlagBits        samples,
-                                                 VkImageTiling                tiling,
-                                                 VkImageUsageFlags            usage,
-                                                 VkSharingMode                sharingMode,
-                                                 uint32_t                     queueFamilyIndexCount,
-                                                 const uint32_t*              pQueueFamilyIndices,
-                                                 VkImageLayout                initialLayout,
-                                                 const VkAllocationCallbacks* pAllocator,
-                                                 VkImage*                     pImage)
+extern CVK_FORCE_INLINE void cvkCreateImageWithExternalFormatInfoANDROID(VkDevice                     device,
+                                                                         void*                        pNext,
+                                                                         uint64_t                     externalFormat,
+                                                                         VkImageCreateFlags           flags,
+                                                                         VkImageType                  imageType,
+                                                                         VkFormat                     format,
+                                                                         VkExtent3D                   extent,
+                                                                         uint32_t                     mipLevels,
+                                                                         uint32_t                     arrayLayers,
+                                                                         VkSampleCountFlagBits        samples,
+                                                                         VkImageTiling                tiling,
+                                                                         VkImageUsageFlags            usage,
+                                                                         VkSharingMode                sharingMode,
+                                                                         uint32_t                     queueFamilyIndexCount,
+                                                                         const uint32_t*              pQueueFamilyIndices,
+                                                                         VkImageLayout                initialLayout,
+                                                                         const VkAllocationCallbacks* pAllocator,
+                                                                         VkImage*                     pImage)
 {
     VkExternalFormatANDROID external_format =
     {
@@ -189,19 +189,19 @@ void cvkCreateImageWithExternalFormatInfoANDROID(VkDevice                     de
                    pAllocator,
                    pImage);
 }
-void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(VkDevice                      device,
-                                                                  void*                         pNext,
-                                                                  uint64_t                      externalFormat,
-                                                                  VkFormat                      format,
-                                                                  VkSamplerYcbcrModelConversion ycbcrModel,
-                                                                  VkSamplerYcbcrRange           ycbcrRange,
-                                                                  VkComponentMapping            components,
-                                                                  VkChromaLocation              xChromaOffset,
-                                                                  VkChromaLocation              yChromaOffset,
-                                                                  VkFilter                      chromaFilter,
-                                                                  VkBool32                      forceExplicitReconstruction,
-                                                                  const VkAllocationCallbacks*  pAllocator,
-                                                                  VkSamplerYcbcrConversion*     pYcbcrConversion)
+extern CVK_FORCE_INLINE void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(VkDevice                      device,
+                                                                                          void*                         pNext,
+                                                                                          uint64_t                      externalFormat,
+                                                                                          VkFormat                      format,
+                                                                                          VkSamplerYcbcrModelConversion ycbcrModel,
+                                                                                          VkSamplerYcbcrRange           ycbcrRange,
+                                                                                          VkComponentMapping            components,
+                                                                                          VkChromaLocation              xChromaOffset,
+                                                                                          VkChromaLocation              yChromaOffset,
+                                                                                          VkFilter                      chromaFilter,
+                                                                                          VkBool32                      forceExplicitReconstruction,
+                                                                                          const VkAllocationCallbacks*  pAllocator,
+                                                                                          VkSamplerYcbcrConversion*     pYcbcrConversion)
 {
     VkExternalFormatANDROID external_format =
     {
@@ -223,29 +223,29 @@ void cvkCreateSamplerYcbcrConversionWithExternalFormatInfoANDROID(VkDevice      
                                     pAllocator,
                                     pYcbcrConversion);
 }
-VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoANDROID(VkDevice                                      device,
-                                                                VkPipelineCache                               pipelineCache,
-                                                                void*                                         pNext,
-                                                                uint64_t                                      externalFormat,
-                                                                VkPipelineCreateFlags                         flags,
-                                                                uint32_t                                      stageCount,
-                                                                const VkPipelineShaderStageCreateInfo*        pStages,
-                                                                const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
-                                                                const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
-                                                                const VkPipelineTessellationStateCreateInfo*  pTessellationState,
-                                                                const VkPipelineViewportStateCreateInfo*      pViewportState,
-                                                                const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
-                                                                const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
-                                                                const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
-                                                                const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
-                                                                const VkPipelineDynamicStateCreateInfo*       pDynamicState,
-                                                                VkPipelineLayout                              layout,
-                                                                VkRenderPass                                  renderPass,
-                                                                uint32_t                                      subpass,
-                                                                VkPipeline                                    basePipelineHandle,
-                                                                int32_t                                       basePipelineIndex,
-                                                                const VkAllocationCallbacks*                  pAllocator,
-                                                                VkPipeline*                                   pPipeline)
+extern CVK_FORCE_INLINE VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoANDROID(VkDevice                                      device,
+                                                                                        VkPipelineCache                               pipelineCache,
+                                                                                        void*                                         pNext,
+                                                                                        uint64_t                                      externalFormat,
+                                                                                        VkPipelineCreateFlags                         flags,
+                                                                                        uint32_t                                      stageCount,
+                                                                                        const VkPipelineShaderStageCreateInfo*        pStages,
+                                                                                        const VkPipelineVertexInputStateCreateInfo*   pVertexInputState,
+                                                                                        const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                                                        const VkPipelineTessellationStateCreateInfo*  pTessellationState,
+                                                                                        const VkPipelineViewportStateCreateInfo*      pViewportState,
+                                                                                        const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                                                        const VkPipelineMultisampleStateCreateInfo*   pMultisampleState,
+                                                                                        const VkPipelineDepthStencilStateCreateInfo*  pDepthStencilState,
+                                                                                        const VkPipelineColorBlendStateCreateInfo*    pColorBlendState,
+                                                                                        const VkPipelineDynamicStateCreateInfo*       pDynamicState,
+                                                                                        VkPipelineLayout                              layout,
+                                                                                        VkRenderPass                                  renderPass,
+                                                                                        uint32_t                                      subpass,
+                                                                                        VkPipeline                                    basePipelineHandle,
+                                                                                        int32_t                                       basePipelineIndex,
+                                                                                        const VkAllocationCallbacks*                  pAllocator,
+                                                                                        VkPipeline*                                   pPipeline)
 {
     VkExternalFormatANDROID external_format =
     {
@@ -277,10 +277,10 @@ VkResult cvkCreateGraphicsPipelineWithExternalFormatInfoANDROID(VkDevice        
                                      pAllocator,
                                      pPipeline);
 }
-void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(VkDevice                                         device,
-                                                         const struct AHardwareBuffer*                    buffer,
-                                                         void*                                            pNext,
-                                                         VkAndroidHardwareBufferFormatProperties2ANDROID* pAndroidHardwareBufferFormatProperties2ANDROID)
+extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(VkDevice                                         device,
+                                                                                 const struct AHardwareBuffer*                    buffer,
+                                                                                 void*                                            pNext,
+                                                                                 VkAndroidHardwareBufferFormatProperties2ANDROID* pAndroidHardwareBufferFormatProperties2ANDROID)
 {
     VkAndroidHardwareBufferPropertiesANDROID        properties;
     VkAndroidHardwareBufferFormatProperties2ANDROID ext_properties =
@@ -293,10 +293,10 @@ void cvkGetAndroidHardwareBufferFormatProperties2ANDROID(VkDevice               
 
     (*pAndroidHardwareBufferFormatProperties2ANDROID) = ext_properties;
 }
-void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(VkDevice                                        device,
-                                                        const struct AHardwareBuffer*                   buffer,
-                                                        void*                                           pNext,
-                                                        VkAndroidHardwareBufferFormatPropertiesANDROID* pAndroidHardwareBufferFormatPropertiesANDROID)
+extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(VkDevice                                        device,
+                                                                                const struct AHardwareBuffer*                   buffer,
+                                                                                void*                                           pNext,
+                                                                                VkAndroidHardwareBufferFormatPropertiesANDROID* pAndroidHardwareBufferFormatPropertiesANDROID)
 {
     VkAndroidHardwareBufferPropertiesANDROID       properties;
     VkAndroidHardwareBufferFormatPropertiesANDROID ext_properties =
@@ -309,10 +309,10 @@ void cvkGetAndroidHardwareBufferFormatPropertiesANDROID(VkDevice                
 
     (*pAndroidHardwareBufferFormatPropertiesANDROID) = ext_properties;
 }
-void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(VkDevice                                               device,
-                                                               const struct AHardwareBuffer*                          buffer,
-                                                               void*                                                  pNext,
-                                                               VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pAndroidHardwareBufferFormatResolvePropertiesANDROID)
+extern CVK_FORCE_INLINE void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(VkDevice                                               device,
+                                                                                       const struct AHardwareBuffer*                          buffer,
+                                                                                       void*                                                  pNext,
+                                                                                       VkAndroidHardwareBufferFormatResolvePropertiesANDROID* pAndroidHardwareBufferFormatResolvePropertiesANDROID)
 {
     VkAndroidHardwareBufferPropertiesANDROID              properties;
     VkAndroidHardwareBufferFormatResolvePropertiesANDROID ext_properties =
@@ -325,9 +325,9 @@ void cvkGetAndroidHardwareBufferFormatResolvePropertiesANDROID(VkDevice         
 
     (*pAndroidHardwareBufferFormatResolvePropertiesANDROID) = ext_properties;
 }
-void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDevice                                      physicalDevice,
-                                                              void*                                                 pNext,
-                                                              VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pPhysicalDeviceExternalFormatResolveFeaturesANDROID)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDevice                                      physicalDevice,
+                                                                                      void*                                                 pNext,
+                                                                                      VkPhysicalDeviceExternalFormatResolveFeaturesANDROID* pPhysicalDeviceExternalFormatResolveFeaturesANDROID)
 {
     VkPhysicalDeviceFeatures2                            features;
     VkPhysicalDeviceExternalFormatResolveFeaturesANDROID ext_features =
@@ -340,15 +340,15 @@ void cvkGetPhysicalDeviceExternalFormatResolveFeaturesANDROID(VkPhysicalDevice  
 
     (*pPhysicalDeviceExternalFormatResolveFeaturesANDROID) = ext_features;
 }
-VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsageANDROID(VkPhysicalDevice                     physicalDevice,
-                                                                                        const void*                          pImageFormatInfoNext,
-                                                                                        VkFormat                             format,
-                                                                                        VkImageType                          type,
-                                                                                        VkImageTiling                        tiling,
-                                                                                        VkImageUsageFlags                    usage,
-                                                                                        VkImageCreateFlags                   flags,
-                                                                                        void*                                pAndroidHardwareBufferUsageANDROIDNext,
-                                                                                        VkAndroidHardwareBufferUsageANDROID* pAndroidHardwareBufferUsageANDROID)
+extern CVK_FORCE_INLINE VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsageANDROID(VkPhysicalDevice                     physicalDevice,
+                                                                                                                const void*                          pImageFormatInfoNext,
+                                                                                                                VkFormat                             format,
+                                                                                                                VkImageType                          type,
+                                                                                                                VkImageTiling                        tiling,
+                                                                                                                VkImageUsageFlags                    usage,
+                                                                                                                VkImageCreateFlags                   flags,
+                                                                                                                void*                                pAndroidHardwareBufferUsageANDROIDNext,
+                                                                                                                VkAndroidHardwareBufferUsageANDROID* pAndroidHardwareBufferUsageANDROID)
 {
     VkResult                            result;
     VkImageFormatProperties2            image_format_properties;
@@ -364,9 +364,9 @@ VkResult cvkGetPhysicalDeviceImageFormatPropertiesWithAndroidHardwareBufferUsage
 
     return result;
 }
-void cvkGetPhysicalDeviceExternalFormatResolvePropertiesANDROID(VkPhysicalDevice                                        physicalDevice,
-                                                                void*                                                   pNext,
-                                                                VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pPhysicalDeviceExternalFormatResolvePropertiesANDROID)
+extern CVK_FORCE_INLINE void cvkGetPhysicalDeviceExternalFormatResolvePropertiesANDROID(VkPhysicalDevice                                        physicalDevice,
+                                                                                        void*                                                   pNext,
+                                                                                        VkPhysicalDeviceExternalFormatResolvePropertiesANDROID* pPhysicalDeviceExternalFormatResolvePropertiesANDROID)
 {
     VkPhysicalDeviceProperties2                            properties;
     VkPhysicalDeviceExternalFormatResolvePropertiesANDROID ext_properties =

@@ -224,6 +224,7 @@ static FORCE_INLINE void CheckInvalidReaders(void)
     uint32_t                 index;
     Utl_Unicode_Reader_t     reader;
     uint32_t                 remaining;
+    const byte_t*            next;
     uint32_t                 scalar;
     Utl_Unicode_ReadResult_t result;
 
@@ -231,15 +232,18 @@ static FORCE_INLINE void CheckInvalidReaders(void)
     {
         Utl_Unicode_InitializeReader(&reader, c_invalidText[index].bytes, c_invalidText[index].count);
         remaining = Utl_Unicode_GetRemainingByteCount(&reader);
+        next      = reader.next;
         scalar    = UINT32_MAX;
         result    = Utl_Unicode_ReadScalar(&reader, &scalar);
         LOGASSERT(UTL_UNICODE_READ_INVALID == result);
         LOGASSERT(UINT32_MAX == scalar);
         LOGASSERT(remaining == Utl_Unicode_GetRemainingByteCount(&reader));
+        LOGASSERT(next == reader.next);
         result = Utl_Unicode_ReadScalar(&reader, &scalar);
         LOGASSERT(UTL_UNICODE_READ_INVALID == result);
         LOGASSERT(UINT32_MAX == scalar);
         LOGASSERT(remaining == Utl_Unicode_GetRemainingByteCount(&reader));
+        LOGASSERT(next == reader.next);
     }
     Utl_Unicode_InitializeReader(&reader, NULL, 0);
     scalar = UINT32_MAX;
@@ -314,7 +318,10 @@ static FORCE_INLINE void CheckInvalidTimestamps(void)
         LOGASSERT(UINT64_MAX == value);
         LOGASSERT(UINT32_MAX == consumed);
     }
-    valid = Utl_WebVtt_ReadTimestamp(&value, &consumed, (const byte_t*)"00:01.001 trailing", sizeof("00:01.001 trailing") - 1);
+    valid = Utl_WebVtt_ReadTimestamp(&value,
+                                    &consumed,
+                                    (const byte_t*)"00:01.001 trailing",
+                                    sizeof("00:01.001 trailing") - 1);
     LOGASSERT(valid);
     LOGASSERT(TEXT_TEST_END == value);
     LOGASSERT(sizeof("00:01.001") - 1 == consumed);
@@ -334,9 +341,8 @@ static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* exp
     uint32_t written;
 
     count = Utl_WebVtt_GetCueByteCount(cue);
-    LOGASSERT(byteCount == count);
     CRT_Memory_Set(before, TEXT_TEST_SENTINEL, sizeof(before));
-    for (capacity = 0; capacity < count; ++capacity)
+    for (capacity = 0; capacity < byteCount; ++capacity)
     {
         CRT_Memory_Copy(output, before, sizeof(output));
         written = Utl_WebVtt_WriteCue(cue, output, capacity);
@@ -346,6 +352,7 @@ static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* exp
     written = Utl_WebVtt_WriteCue(cue, output, byteCount);
     LOGASSERT(byteCount == written);
     LOGASSERT(0 == CRT_Memory_Compare(output, expected, byteCount));
+    LOGASSERT(byteCount == count);
 }
 
 /*************************************************************************************************/

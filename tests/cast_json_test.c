@@ -225,6 +225,19 @@ static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test);
 
 /*************************************************************************************************/
 /**
+ * \brief Checks exact-capacity nonrecursive nesting.
+ *
+ * \par Requirements:
+ *  - 001 The supplied record extent shall accept its exact depth and reject one additional level.
+ *
+ * \param[in,out] test   Entry-owned fixture
+ *
+ * \retval None
+ */
+static FORCE_INLINE void CheckReaderDepth(JsonTest_t* test);
+
+/*************************************************************************************************/
+/**
  * \brief Checks decoded names, linked child traversal and bounded nonrecursive nesting.
  *
  * \par Details:
@@ -239,6 +252,19 @@ static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test);
  * \retval None
  */
 static FORCE_INLINE void CheckReaderTree(JsonTest_t* test);
+
+/*************************************************************************************************/
+/**
+ * \brief Checks preservation after invalid escape decoding.
+ *
+ * \par Requirements:
+ *  - 001 Invalid escapes shall preserve both outputs and empty input shall perform no write.
+ *
+ * \param[in,out] test   Entry-owned fixture
+ *
+ * \retval None
+ */
+static FORCE_INLINE void CheckReaderInvalidStrings(JsonTest_t* test);
 
 /*************************************************************************************************/
 /**
@@ -621,6 +647,40 @@ static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test)
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  The exact-capacity input uses one array per caller-owned record; one fewer record must fail.
+ */
+static FORCE_INLINE void CheckReaderDepth(JsonTest_t* test)
+{
+    uint32_t                index;
+    Utl_Json_Text_t         source;
+    const Utl_Json_Value_t* value;
+
+    Utl_Json_InitializeReader(&test->reader, test->values, TEST_READER_VALUES);
+    for (index = 0; index < TEST_READER_VALUES; ++index)
+    {
+        test->output[index]                      = TEST_ARRAY_OPEN;
+        test->output[TEST_READER_VALUES + index] = TEST_ARRAY_CLOSE;
+    }
+    source.data      = test->output;
+    source.byteCount = TEST_READER_VALUES * 2;
+    LOGASSERT(UTL_JSON_READ_COMPLETE == Utl_Json_ReadDocument(&test->reader, source));
+    LOGASSERT(TEST_READER_VALUES == test->reader.valueCount);
+    value = Utl_Json_GetRoot(&test->reader);
+    for (index = 1; index < TEST_READER_VALUES; ++index)
+    {
+        LOGASSERT(1 == value->childCount);
+        value = Utl_Json_GetElement(&test->reader, value, 0);
+        LOGASSERT(NULL != value);
+    }
+    LOGASSERT(0 == value->childCount);
+    Utl_Json_InitializeReader(&test->reader, test->values, TEST_READER_VALUES - 1);
+    LOGASSERT(UTL_JSON_READ_EXHAUSTED == Utl_Json_ReadDocument(&test->reader, source));
+    LOGASSERT(NULL == Utl_Json_GetRoot(&test->reader));
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Nested containers return to the owning parent after closure. A maximum-depth
  *  input contains one array per record and no recursively called C frame.
  */
@@ -629,8 +689,6 @@ static FORCE_INLINE void CheckReaderTree(JsonTest_t* test)
     const Utl_Json_Value_t* root;
     const Utl_Json_Value_t* array;
     const Utl_Json_Value_t* value;
-    uint32_t                index;
-    Utl_Json_Text_t         source;
 
     Utl_Json_InitializeReader(&test->reader, test->values, TEST_READER_VALUES);
     CheckDocument(test, TEST_NESTED, sizeof(TEST_NESTED) - 1, UTL_JSON_READ_COMPLETE);
@@ -662,26 +720,39 @@ static FORCE_INLINE void CheckReaderTree(JsonTest_t* test)
     LOGASSERT(Utl_Json_IsStringEqual(value, Text("PING", sizeof("PING") - 1)));
     LOGASSERT(!Utl_Json_IsStringEqual(value, Text("ping", sizeof("ping") - 1)));
     LOGASSERT(!Utl_Json_IsStringEqual(value, Text("\xFF", sizeof("\xFF") - 1)));
-    for (index = 0; index < TEST_READER_VALUES; ++index)
-    {
-        test->output[index]                      = TEST_ARRAY_OPEN;
-        test->output[TEST_READER_VALUES + index] = TEST_ARRAY_CLOSE;
-    }
-    source.data      = test->output;
-    source.byteCount = TEST_READER_VALUES * 2;
-    LOGASSERT(UTL_JSON_READ_COMPLETE == Utl_Json_ReadDocument(&test->reader, source));
-    LOGASSERT(TEST_READER_VALUES == test->reader.valueCount);
-    value = Utl_Json_GetRoot(&test->reader);
-    for (index = 1; index < TEST_READER_VALUES; ++index)
-    {
-        LOGASSERT(1 == value->childCount);
-        value = Utl_Json_GetElement(&test->reader, value, 0);
-        LOGASSERT(NULL != value);
-    }
-    LOGASSERT(0 == value->childCount);
-    Utl_Json_InitializeReader(&test->reader, test->values, TEST_READER_VALUES - 1);
-    LOGASSERT(UTL_JSON_READ_EXHAUSTED == Utl_Json_ReadDocument(&test->reader, source));
-    LOGASSERT(NULL == Utl_Json_GetRoot(&test->reader));
+    CheckReaderDepth(test);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Rejected escapes preserve the destination and count; the empty extent succeeds without writing.
+ */
+static FORCE_INLINE void CheckReaderInvalidStrings(JsonTest_t* test)
+{
+    uint32_t written;
+
+    CRT_Memory_Copy(test->original, test->output, sizeof(test->output));
+    written = UINT32_MAX;
+    LOGASSERT(
+        !Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\uD800", sizeof("\\uD800") - 1)));
+    LOGASSERT(
+        !Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\uDC00", sizeof("\\uDC00") - 1)));
+    LOGASSERT(
+        !Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\uD800A", sizeof("\\uD800A") - 1)));
+    LOGASSERT(!Utl_Json_ReadString(&written,
+                                   test->output,
+                                   sizeof(test->output),
+                                   Text("\\uD800\\uD800", sizeof("\\uD800\\uD800") - 1)));
+    LOGASSERT(!Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\q", sizeof("\\q") - 1)));
+    LOGASSERT(!Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\xFF", sizeof("\xFF") - 1)));
+    LOGASSERT(UINT32_MAX == written);
+    LOGASSERT(0 == CRT_Memory_Compare(test->output, test->original, sizeof(test->output)));
+    LOGASSERT(!Utl_Json_GetDecodedByteCount(&written, Text("\\uDC00", sizeof("\\uDC00") - 1)));
+    LOGASSERT(UINT32_MAX == written);
+    LOGASSERT(Utl_Json_ReadString(&written, test->output, 0, Text(NULL, 0)));
+    LOGASSERT(0 == written);
+    LOGASSERT(0 == CRT_Memory_Compare(test->output, test->original, sizeof(test->output)));
 }
 
 /*************************************************************************************************/
@@ -699,41 +770,21 @@ static FORCE_INLINE void CheckReaderStrings(JsonTest_t* test)
 
     source = Text(TEST_READ_ESCAPES, sizeof(TEST_READ_ESCAPES) - 1);
     LOGASSERT(Utl_Json_GetDecodedByteCount(&required, source));
-    LOGASSERT(sizeof(TEST_DECODED_ESCAPES) - 1 == required);
     CRT_Memory_Set(test->output, TEST_SENTINEL, sizeof(test->output));
     CRT_Memory_Copy(test->original, test->output, sizeof(test->output));
-    for (capacity = 0; capacity < required; ++capacity)
+    for (capacity = 0; capacity < sizeof(TEST_DECODED_ESCAPES) - 1; ++capacity)
     {
         written = UINT32_MAX;
         LOGASSERT(!Utl_Json_ReadString(&written, test->output, capacity, source));
         LOGASSERT(UINT32_MAX == written);
         LOGASSERT(0 == CRT_Memory_Compare(test->output, test->original, sizeof(test->output)));
     }
-    LOGASSERT(Utl_Json_ReadString(&written, test->output, required, source));
+    LOGASSERT(Utl_Json_ReadString(&written, test->output, sizeof(TEST_DECODED_ESCAPES) - 1, source));
+    LOGASSERT(0 == CRT_Memory_Compare(test->output, TEST_DECODED_ESCAPES, sizeof(TEST_DECODED_ESCAPES) - 1));
+    LOGASSERT(TEST_SENTINEL == test->output[sizeof(TEST_DECODED_ESCAPES) - 1]);
+    LOGASSERT(sizeof(TEST_DECODED_ESCAPES) - 1 == required);
     LOGASSERT(required == written);
-    LOGASSERT(0 == CRT_Memory_Compare(test->output, TEST_DECODED_ESCAPES, required));
-    LOGASSERT(TEST_SENTINEL == test->output[required]);
-    CRT_Memory_Copy(test->original, test->output, sizeof(test->output));
-    written = UINT32_MAX;
-    LOGASSERT(
-        !Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\uD800", sizeof("\\uD800") - 1)));
-    LOGASSERT(
-        !Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\uDC00", sizeof("\\uDC00") - 1)));
-    LOGASSERT(
-        !Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\uD800A", sizeof("\\uD800A") - 1)));
-    LOGASSERT(!Utl_Json_ReadString(&written,
-              test->output,
-              sizeof(test->output),
-              Text("\\uD800\\uD800", sizeof("\\uD800\\uD800") - 1)));
-    LOGASSERT(!Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\\q", sizeof("\\q") - 1)));
-    LOGASSERT(!Utl_Json_ReadString(&written, test->output, sizeof(test->output), Text("\xFF", sizeof("\xFF") - 1)));
-    LOGASSERT(UINT32_MAX == written);
-    LOGASSERT(0 == CRT_Memory_Compare(test->output, test->original, sizeof(test->output)));
-    LOGASSERT(!Utl_Json_GetDecodedByteCount(&written, Text("\\uDC00", sizeof("\\uDC00") - 1)));
-    LOGASSERT(UINT32_MAX == written);
-    LOGASSERT(Utl_Json_ReadString(&written, test->output, 0, Text(NULL, 0)));
-    LOGASSERT(0 == written);
-    LOGASSERT(0 == CRT_Memory_Compare(test->output, test->original, sizeof(test->output)));
+    CheckReaderInvalidStrings(test);
 }
 
 /*************************************************************************************************/

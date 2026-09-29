@@ -20,7 +20,43 @@ typedef enum scvkJsonKind
     SCVK_JSON_OBJECT
 } scvkJsonKind;
 
-#define SCVK_JSON_NONE (UINT32_MAX)
+#define SCVK_JSON_NONE            (UINT32_MAX)
+#define SCVK_JSON_ARENA_ALIGNMENT (16)
+
+/* RFC 8259 sections 2 through 7: JSON lexical productions. */
+#define SCVK_JSON_SPACE          (' ')
+#define SCVK_JSON_TAB            ('\t')
+#define SCVK_JSON_LF             ('\n')
+#define SCVK_JSON_CR             ('\r')
+#define SCVK_JSON_ZERO           ('0')
+#define SCVK_JSON_NINE           ('9')
+#define SCVK_JSON_MINUS          ('-')
+#define SCVK_JSON_PLUS           ('+')
+#define SCVK_JSON_DOT            ('.')
+#define SCVK_JSON_EXPONENT_LOWER ('e')
+#define SCVK_JSON_EXPONENT_UPPER ('E')
+#define SCVK_JSON_QUOTE          ('"')
+#define SCVK_JSON_ESCAPE         ('\\')
+#define SCVK_JSON_CONTROL_LIMIT  (0x20)
+#define SCVK_JSON_TRUE_FIRST     ('t')
+#define SCVK_JSON_FALSE_FIRST    ('f')
+#define SCVK_JSON_NULL_FIRST     ('n')
+#define SCVK_JSON_TRUE_TEXT      ("true")
+#define SCVK_JSON_FALSE_TEXT     ("false")
+#define SCVK_JSON_NULL_TEXT      ("null")
+#define SCVK_JSON_OBJECT_OPEN    ('{')
+#define SCVK_JSON_OBJECT_CLOSE   ('}')
+#define SCVK_JSON_ARRAY_OPEN     ('[')
+#define SCVK_JSON_ARRAY_CLOSE    (']')
+#define SCVK_JSON_COLON          (':')
+#define SCVK_JSON_COMMA          (',')
+
+/* Numeric conversion buffers include the sign and trailing zero. */
+#define SCVK_JSON_DECIMAL_BASE          (10)
+#define SCVK_JSON_OCTAL_BASE            (8)
+#define SCVK_JSON_HEXADECIMAL_BASE      (16)
+#define SCVK_JSON_INTEGER_TEXT_CAPACITY (32)
+#define SCVK_JSON_REAL_TEXT_CAPACITY    (64)
 
 typedef struct scvkJsonValue
 {
@@ -62,23 +98,35 @@ typedef struct scvkArena
     size_t   used;
 } scvkArena;
 
-/* Maps a handle written to JSON as a number (an object id) to a handle; pHandleType names the
-** Vulkan handle type ("VkPipelineLayout"). Returns 0 for an unknown id. */
-typedef uint64_t (*PFN_scvkResolveJsonHandle)(void* pUser, const char* pHandleType, uint64_t id);
+/* Writes a native handle of the named type to pHandle. The caller initializes
+** that typed object to VK_NULL_HANDLE. Failure leaves it unchanged. */
+typedef VkBool32 (*PFN_scvkResolveJsonHandle)(void* pUser, const char* pHandleType, uint64_t id, uint32_t handleByteCount, void* pHandle);
+
+/* Numeric IDs are metadata, never pointer-valued Vulkan handles. The referenced
+** output objects must remain at their parse-time addresses while this list is used. */
+typedef struct scvkJsonHandleReference
+{
+    struct scvkJsonHandleReference* pNext;
+    const char*                     pHandleType;
+    const void*                     pHandle;
+    uint64_t                        id;
+} scvkJsonHandleReference;
 
 typedef struct scvkJsonContext
 {
     scvkJsonDocument          document;
     scvkArena*                pArena;
-    PFN_scvkResolveJsonHandle resolveHandle; /* NULL keeps the ids themselves in the handle fields */
+    PFN_scvkResolveJsonHandle resolveHandle;
     void*                     pUser;
+    scvkJsonHandleReference** ppHandleReferences; /* required for deferred resolution */
 } scvkJsonContext;
 
 /* A Vulkan SC pipeline JSON (the pipeline cache compiler's input), parsed: the objects the
 ** pipeline needs, each with the id the file refers to it by, and the pipeline itself. Handle
-** fields hold the file's ids until scvkCreatePipelineJsonObjects replaces them. */
+** fields hold native handles. Numeric IDs live in pHandleReferences. */
 typedef struct scvkPipelineJson
 {
+    scvkJsonHandleReference*            pHandleReferences;
     VkPipelineBindPoint                 bindPoint;
     VkGraphicsPipelineCreateInfo        graphicsPipelineCreateInfo;
     VkComputePipelineCreateInfo         computePipelineCreateInfo;
@@ -695,6 +743,14 @@ void scvkParseJsonViewport(const scvkJsonContext* pContext, const scvkJsonValue*
 void scvkParseJsonWriteDescriptorSet(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkWriteDescriptorSet* pInfo);
 void scvkParseJsonXYColor(const scvkJsonContext* pContext, const scvkJsonValue* pObject, VkXYColorEXT* pInfo);
 void* scvkParseJsonStructureChain(const scvkJsonContext* pContext, const scvkJsonValue* pObject);
+
+
+
+
+
+
+
+
 uint32_t scvkParseJsonValue(scvkJsonReader* pReader);
 uint32_t scvkParseJsonDocument(const char* pText, size_t length, scvkJsonValue* pValues, uint32_t valueCapacity);
 const scvkJsonValue* scvkGetJsonMember(const scvkJsonDocument* pDocument, const scvkJsonValue* pObject, const char* pKey);
@@ -711,10 +767,15 @@ uint64_t scvkParseJsonEnumerant(const scvkJsonValue* pValue, const scvkJsonName*
 uint64_t scvkParseJsonFlags(const scvkJsonValue* pValue, const scvkJsonName* pTable, uint32_t tableCount);
 void* scvkAllocateArena(scvkArena* pArena, size_t size, size_t alignment);
 char* scvkCopyJsonString(scvkArena* pArena, const scvkJsonValue* pValue);
-uint64_t scvkResolveJsonHandle(const scvkJsonContext* pContext, const char* pHandleType, const scvkJsonValue* pValue);
+uint64_t scvkGetJsonHandleId(const scvkJsonHandleReference* pReferences, const void* pHandle);
+VkBool32 scvkResolveJsonHandle(const scvkJsonContext* pContext, const char* pHandleType, const scvkJsonValue* pValue, uint32_t handleByteCount, void* pHandle);
 uint32_t scvkParsePipelineJsonObjectList(const scvkJsonContext* pContext, const scvkJsonValue* pList, size_t elementSize, uint64_t** ppIds, void** ppElements);
+
 void scvkParsePipelineJson(const scvkJsonContext* pContext, scvkPipelineJson* pPipeline);
 uint64_t scvkGetPipelineJsonHandle(uint32_t count, const uint64_t* pIds, const uint64_t* pHandles, uint64_t id);
+uint32_t scvkGetPipelineJsonHandleIndex(uint32_t count, const uint64_t* pIds, uint64_t id);
+
+
 void scvkCreatePipelineJsonObjects(VkDevice device, VkPipelineCache pipelineCache, const scvkPipelineJson* pPipeline, const void* pPipelineNext, PFN_scvkResolveJsonHandle resolveExternal, void* pUser, scvkArena* pArena, const VkAllocationCallbacks* pAllocator, scvkPipelineJsonObjects* pObjects);
 void scvkCreatePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, scvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, scvkArena* pArena, PFN_scvkResolveJsonHandle resolveExternal, void* pUser, const VkAllocationCallbacks* pAllocator, scvkPipelineJson* pPipeline, scvkPipelineJsonObjects* pObjects);
 void scvkCreateOfflinePipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, scvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, scvkArena* pArena, VkPipelineMatchControl matchControl, VkDeviceSize poolEntrySize, const VkAllocationCallbacks* pAllocator, scvkPipelineJson* pPipeline, scvkPipelineJsonObjects* pObjects);
