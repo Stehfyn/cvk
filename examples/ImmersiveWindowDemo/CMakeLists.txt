@@ -20,20 +20,27 @@ target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(immersive-video SYSTEM PUBLIC "${reference_dir}")
 target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf PRIVATE d3dcompiler)
-target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)
+option(CVK_DEMO_UNICODE "Select Unicode for the generic Win32 demo interfaces" ON)
+if(CVK_DEMO_UNICODE)
+    target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)
+    target_link_libraries(immersive-video PUBLIC cast-text-unicode)
+else()
+    target_link_libraries(immersive-video PUBLIC cast-text-ansi)
+endif()
 option(CVK_DEMO_VALIDATION "Enable Vulkan validation in ImmersiveWindowDemo" OFF)
 if(CVK_DEMO_VALIDATION)
     target_compile_definitions(immersive-video PRIVATE CVK_DEMO_VALIDATION)
 endif()
 
-add_executable(ImmersiveWindowDemo WIN32 demo.c immersive_window.c presentation.h
+add_executable(ImmersiveWindowDemo WIN32 demo.c immersive_window.c
+    "${PROJECT_SOURCE_DIR}/examples/CastDemo/os/win32/os_entry.c" presentation.h
     "${reference_dir}/immersive_window.h"
     shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag)
 set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/bicubic.frag
     PROPERTIES HEADER_FILE_ONLY TRUE)
 set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ImmersiveWindowDemo)
 target_link_libraries(ImmersiveWindowDemo PRIVATE immersive-video cdcomp cd2d cdw
-    dwmapi uxtheme gdi32 user32 shell32 comctl32 ole32 uuid)
+    dwmapi uxtheme gdi32 user32 shell32 comctl32 ole32 uuid cast-no-crt)
 # Optional real-GPU comparison against the pinned reference implementation.
 set(CVK_DEMO_TEST_VIDEO "" CACHE FILEPATH "Video fixture for the optional CDX/CVK pixel comparison")
 if(CVK_DEMO_TEST_VIDEO)

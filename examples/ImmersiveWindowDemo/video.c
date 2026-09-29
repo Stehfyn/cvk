@@ -3,38 +3,57 @@
 ** video passes with cvk. Playback scheduling remains upstream's. */
 
 #include "video.h"
+#include "cdx11.h"
+#include "cdxgi.h"
+#include "cmf.h"
+#include "os/win32/os_text.h"
+#include <stdint.h>
 #ifdef CVK_DEMO_VALIDATION
 #include <stdio.h>
 #endif
 
 #include <d3d10.h>
+#include <d3d11.h>
+#include <mfobjects.h>
+#include <mfreadwrite.h>
+#include <guiddef.h>
+#include <Unknwnbase.h>
+#include <minwindef.h>
+#include <minwinbase.h>
+#include <winnt.h>
+#include <winerror.h>
+#include <WinBase.h>
+#include <basetsd.h>
+#include <memoryapi.h>
+#include <processthreadsapi.h>
+#include <heapapi.h>
+#include <fileapi.h>
+#include <handleapi.h>
+#include <debugapi.h>
+#include <profileapi.h>
 #include "renderer.h"
 
-#include "cdx11.h"
-#include "cdxgi.h"
-#include "cmf.h"
 
-
-
-#define VIDEO_RING      VIDEO_RENDERER_FRAMES /* the frame on screen and the next one, decoded one ahead */
-#define VIDEO_LOW_WATER (VIDEO_RING - 1) /* refill as soon as a slot is free */
+#define VIDEO_MILLISECONDS_PER_SECOND (1000)
+#define VIDEO_RING                    VIDEO_RENDERER_FRAMES /* the frame on screen and the next one, decoded one ahead */
+#define VIDEO_LOW_WATER               (VIDEO_RING - 1)      /* refill as soon as a slot is free */
 
 struct VideoStream
 {
     ID3D11Device*         pDevice;
     ID3D11DeviceContext*  pContext;
     IMFDXGIDeviceManager* pManager;
-    UINT                 resetToken;
-    IMFSourceReader*     pReader;
-    VideoInfo            info;
-    VideoRenderer*       pRenderer;
-    int                  ringHead;
-    int                  ringCount;
-    int                  current;
-    BOOL                 fHaveFrame;
-    BOOL                 fConverted;
+    UINT                  resetToken;
+    IMFSourceReader*      pReader;
+    VideoInfo             info;
+    VideoRenderer*        pRenderer;
+    int                   ringHead;
+    int                   ringCount;
+    int                   current;
+    BOOL                  fHaveFrame;
+    BOOL                  fConverted;
 #ifdef CVK_DEMO_VALIDATION
-    int                  decodePath;
+    int decodePath;
 #endif
 };
 
@@ -47,8 +66,6 @@ struct VideoStream
             (p) = NULL;                                                                                                                                                                                \
         }                                                                                                                                                                                              \
     } while (0)
-
-
 
 static void FillRing(VideoStream* pStream, DWORD budgetMs);
 
@@ -67,7 +84,7 @@ typedef struct ReadResult
 
 static HRESULT STDMETHODCALLTYPE ReadResult_QueryInterface(IUnknown* This, REFIID riid, void** ppv)
 {
-    if (InlineIsEqualGUID(riid, &IID_IUnknown))
+    if (IsEqualGUID(riid, &IID_IUnknown))
     {
         *ppv = This;
         This->lpVtbl->AddRef(This);
@@ -94,7 +111,7 @@ static ULONG STDMETHODCALLTYPE ReadResult_Release(IUnknown* This)
 
 static const IUnknownVtbl g_readResultVtbl = {ReadResult_QueryInterface, ReadResult_AddRef, ReadResult_Release};
 
-#define PREFETCH_WINDOW (16u << 20)
+#define PREFETCH_WINDOW (16 << 20)
 
 typedef struct MappedStream
 {
@@ -102,7 +119,7 @@ typedef struct MappedStream
     LONG                     refs;
     HANDLE                   hFile;
     HANDLE                   hMapping;
-    const BYTE*              pView;
+    BYTE*                    pView;
     ULONGLONG                size;
     volatile LONGLONG        position;
     volatile LONGLONG        prefetched; /* end of the range asked from the OS so far */
@@ -129,21 +146,23 @@ static void MappedStream_Prefetch(MappedStream* s, ULONGLONG from)
 static ULONG MappedStream_Copy(MappedStream* s, BYTE* pb, ULONG cb)
 {
     LONGLONG pos = s->position;
-    ULONG    n;
+    ULONGLONG remaining;
+    ULONG    count;
     if (NULL == s->pView || (ULONGLONG)pos >= s->size)
     {
         return 0;
     }
-    n = (ULONG)min((ULONGLONG)cb, s->size - (ULONGLONG)pos);
+    remaining = s->size - (ULONGLONG)pos;
+    count     = remaining < cb ? (ULONG)remaining : cb;
     MappedStream_Prefetch(s, (ULONGLONG)pos);
-    CopyMemory(pb, s->pView + pos, n);
-    InterlockedExchange64(&s->position, pos + n);
-    return n;
+    CopyMemory(pb, s->pView + pos, count);
+    InterlockedExchange64(&s->position, pos + count);
+    return count;
 }
 
 static HRESULT STDMETHODCALLTYPE MappedStream_QueryInterface(IMFByteStream* This, REFIID riid, void** ppv)
 {
-    if (InlineIsEqualGUID(riid, &IID_IMFByteStream) || InlineIsEqualGUID(riid, &IID_IUnknown))
+    if (IsEqualGUID(riid, &IID_IMFByteStream) || IsEqualGUID(riid, &IID_IUnknown))
     {
         *ppv = This;
         This->lpVtbl->AddRef(This);
@@ -199,19 +218,19 @@ static HRESULT STDMETHODCALLTYPE MappedStream_GetCurrentPosition(IMFByteStream* 
 
 static HRESULT STDMETHODCALLTYPE MappedStream_SetCurrentPosition(IMFByteStream* This, QWORD qwPosition)
 {
-    MappedStream* s = (MappedStream*)This;
-    if (qwPosition > s->size)
+    MappedStream* stream = (MappedStream*)This;
+    if (qwPosition > stream->size)
     {
         return E_INVALIDARG;
     }
-    InterlockedExchange64(&s->position, (LONGLONG)qwPosition);
+    InterlockedExchange64(&stream->position, (LONGLONG)qwPosition);
     return S_OK;
 }
 
 static HRESULT STDMETHODCALLTYPE MappedStream_IsEndOfStream(IMFByteStream* This, BOOL* pfEndOfStream)
 {
-    MappedStream* s = (MappedStream*)This;
-    *pfEndOfStream  = (ULONGLONG)s->position >= s->size;
+    MappedStream* stream = (MappedStream*)This;
+    *pfEndOfStream       = (ULONGLONG)stream->position >= stream->size;
     return S_OK;
 }
 
@@ -255,7 +274,10 @@ static HRESULT STDMETHODCALLTYPE MappedStream_Write(IMFByteStream* This, const B
     (void)This;
     (void)pb;
     (void)cb;
-    (void)pcbWritten;
+    if (NULL != pcbWritten)
+    {
+        *pcbWritten = 0;
+    }
     return E_NOTIMPL;
 }
 
@@ -273,21 +295,24 @@ static HRESULT STDMETHODCALLTYPE MappedStream_EndWrite(IMFByteStream* This, IMFA
 {
     (void)This;
     (void)pResult;
-    (void)pcbWritten;
+    if (NULL != pcbWritten)
+    {
+        *pcbWritten = 0;
+    }
     return E_NOTIMPL;
 }
 
 static HRESULT STDMETHODCALLTYPE MappedStream_Seek(IMFByteStream* This, MFBYTESTREAM_SEEK_ORIGIN SeekOrigin, LONGLONG llSeekOffset, DWORD dwSeekFlags, QWORD* pqwCurrentPosition)
 {
-    MappedStream* s    = (MappedStream*)This;
-    LONGLONG      base = (msoCurrent == SeekOrigin) ? s->position : 0;
-    LONGLONG      pos  = base + llSeekOffset;
+    MappedStream* stream = (MappedStream*)This;
+    LONGLONG      base   = (msoCurrent == SeekOrigin) ? stream->position : 0;
+    LONGLONG      pos    = base + llSeekOffset;
     (void)dwSeekFlags;
-    if (pos < 0 || (ULONGLONG)pos > s->size)
+    if (pos < 0 || (ULONGLONG)pos > stream->size)
     {
         return E_INVALIDARG;
     }
-    InterlockedExchange64(&s->position, pos);
+    InterlockedExchange64(&stream->position, pos);
     if (NULL != pqwCurrentPosition)
     {
         *pqwCurrentPosition = (QWORD)pos;
@@ -303,21 +328,21 @@ static HRESULT STDMETHODCALLTYPE MappedStream_Flush(IMFByteStream* This)
 
 static HRESULT STDMETHODCALLTYPE MappedStream_Close(IMFByteStream* This)
 {
-    MappedStream* s = (MappedStream*)This;
-    if (NULL != s->pView)
+    MappedStream* stream = (MappedStream*)This;
+    if (NULL != stream->pView)
     {
-        UnmapViewOfFile(s->pView);
-        s->pView = NULL;
+        UnmapViewOfFile(stream->pView);
+        stream->pView = NULL;
     }
-    if (NULL != s->hMapping)
+    if (NULL != stream->hMapping)
     {
-        CloseHandle(s->hMapping);
-        s->hMapping = NULL;
+        CloseHandle(stream->hMapping);
+        stream->hMapping = NULL;
     }
-    if (INVALID_HANDLE_VALUE != s->hFile && NULL != s->hFile)
+    if (INVALID_HANDLE_VALUE != stream->hFile && NULL != stream->hFile)
     {
-        CloseHandle(s->hFile);
-        s->hFile = NULL;
+        CloseHandle(stream->hFile);
+        stream->hFile = NULL;
     }
     return S_OK;
 }
@@ -342,32 +367,32 @@ static const IMFByteStreamVtbl g_mappedStreamVtbl = {MappedStream_QueryInterface
                                                      MappedStream_Close};
 
 /* Maps a file read-only and returns it as an IMFByteStream; NULL when it cannot be opened. */
-static IMFByteStream* MappedStream_Create(LPCWSTR pszFile)
+static IMFByteStream* MappedStream_Create(LPCTSTR pszFile)
 {
-    MappedStream* s = (MappedStream*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MappedStream));
+    MappedStream* stream = (MappedStream*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MappedStream));
     LARGE_INTEGER size;
-    if (NULL == s)
+    if (NULL == stream)
     {
         return NULL;
     }
-    s->lpVtbl = &g_mappedStreamVtbl;
-    s->refs   = 1;
-    s->hFile  = CreateFileW(pszFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
-    if (INVALID_HANDLE_VALUE == s->hFile || !GetFileSizeEx(s->hFile, &size) || 0 == size.QuadPart)
+    stream->lpVtbl = &g_mappedStreamVtbl;
+    stream->refs   = 1;
+    stream->hFile  = CreateFile(pszFile, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    if (INVALID_HANDLE_VALUE == stream->hFile || !GetFileSizeEx(stream->hFile, &size) || 0 == size.QuadPart)
     {
-        MappedStream_Release((IMFByteStream*)s);
+        MappedStream_Release((IMFByteStream*)stream);
         return NULL;
     }
-    s->size     = (ULONGLONG)size.QuadPart;
-    s->hMapping = CreateFileMappingW(s->hFile, NULL, PAGE_READONLY, 0, 0, NULL);
-    s->pView    = (NULL != s->hMapping) ? (const BYTE*)MapViewOfFile(s->hMapping, FILE_MAP_READ, 0, 0, 0) : NULL;
-    if (NULL == s->pView)
+    stream->size     = (ULONGLONG)size.QuadPart;
+    stream->hMapping = CreateFileMapping(stream->hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+    stream->pView    = (NULL != stream->hMapping) ? (BYTE*)MapViewOfFile(stream->hMapping, FILE_MAP_READ, 0, 0, 0) : NULL;
+    if (NULL == stream->pView)
     {
-        MappedStream_Release((IMFByteStream*)s);
+        MappedStream_Release((IMFByteStream*)stream);
         return NULL;
     }
-    MappedStream_Prefetch(s, 0);
-    return (IMFByteStream*)s;
+    MappedStream_Prefetch(stream, 0);
+    return (IMFByteStream*)stream;
 }
 
 /* --------------------------------------------------------------------------------- the passes */
@@ -405,14 +430,15 @@ static void ReadInfo(VideoStream* pStream)
     pStream->info.Duration100ns = cmfSourceReaderGetDuration(pStream->pReader);
 }
 
-VideoStream* VideoStream_Open(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LPCWSTR pszFile)
+VideoStream* VideoStream_Open(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LPCTSTR pszFile)
 {
     VideoStream*   pStream;
     IMFAttributes* pAttributes;
     IMFByteStream* pByteStream;
-    HRESULT        hr;
+    HRESULT        result;
+    uint16_t       unicode_file[MAX_PATH];
 
-    if (INVALID_FILE_ATTRIBUTES == GetFileAttributesW(pszFile))
+    if (INVALID_FILE_ATTRIBUTES == GetFileAttributes(pszFile))
     {
         return NULL;
     }
@@ -441,20 +467,27 @@ VideoStream* VideoStream_Open(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     }
     else
     {
-        cmfCreateSourceReaderFromURL(pszFile, pAttributes, &pStream->pReader);
+        /* Media Foundation's URL interface is UTF-16 in both Win32 text modes. */
+        if (!OS_Text_ReadNative(unicode_file, MAX_PATH, pszFile))
+        {
+            RELEASE(pAttributes);
+            VideoStream_Close(pStream);
+            return NULL;
+        }
+        cmfCreateSourceReaderFromURL((LPCWSTR)unicode_file, pAttributes, &pStream->pReader);
     }
     RELEASE(pAttributes);
-    hr = cmfSourceReaderSelectVideoStreamNV12(pStream->pReader);
-    if (FAILED(hr))
+    result = cmfSourceReaderSelectVideoStreamNV12(pStream->pReader);
+    if (FAILED(result))
     {
-        OutputDebugStringA("video: the first video stream cannot deliver NV12\n");
+        OutputDebugString(TEXT("video: the first video stream cannot deliver NV12\n"));
         VideoStream_Close(pStream);
         return NULL;
     }
     ReadInfo(pStream);
     pStream->pRenderer = VideoRenderer_Create(pDevice, pContext);
     CreateFrameTextures(pStream);
-    FillRing(pStream, 1000);
+    FillRing(pStream, VIDEO_MILLISECONDS_PER_SECOND);
     return pStream;
 }
 
@@ -482,8 +515,13 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         {
             D3D11_TEXTURE2D_DESC desc;
             cdx11Texture2DGetDesc(pTexture, &desc);
-            fprintf(stderr, "video: DXGI decoder output %ux%u, format %u, bind flags 0x%X, decoder binding %s\n",
-                desc.Width, desc.Height, desc.Format, desc.BindFlags, (desc.BindFlags & D3D11_BIND_DECODER) ? "yes" : "no");
+            fprintf(stderr,
+                    "video: DXGI decoder output %ux%u, format %u, bind flags 0x%X, decoder binding %s\n",
+                    desc.Width,
+                    desc.Height,
+                    desc.Format,
+                    desc.BindFlags,
+                    (desc.BindFlags & D3D11_BIND_DECODER) ? "yes" : "no");
             pStream->decodePath = 1;
         }
 #endif
@@ -527,21 +565,23 @@ static void FillRing(VideoStream* pStream, DWORD budgetMs)
     LARGE_INTEGER start;
     LARGE_INTEGER now;
     int           decoded = 0;
+    IMFSample*    pSample;
+    DWORD         flags;
+    LONGLONG      timestamp;
+    int           slot;
 
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&start);
-    while (pStream->ringCount < VIDEO_RING)
+    for (; pStream->ringCount < VIDEO_RING;)
     {
         QueryPerformanceCounter(&now);
-        if (decoded > 0 && (ULONGLONG)(now.QuadPart - start.QuadPart) * 1000 >= (ULONGLONG)budgetMs * frequency.QuadPart)
+        if (decoded > 0 && (ULONGLONG)(now.QuadPart - start.QuadPart) * VIDEO_MILLISECONDS_PER_SECOND >= (ULONGLONG)budgetMs * (ULONGLONG)frequency.QuadPart)
         {
             return;
         }
         ++decoded;
-        IMFSample* pSample = NULL;
-        DWORD      flags   = 0;
-        LONGLONG   timestamp;
-        int        slot;
+        pSample = NULL;
+        flags   = 0;
 
         if (FAILED(cmfSourceReaderReadVideoSample(pStream->pReader, &flags, &timestamp, &pSample)))
         {
@@ -611,7 +651,9 @@ void VideoStream_Draw(VideoStream* pStream, ID3D11RenderTargetView* pTarget, UIN
 void VideoStream_CopyFrame(VideoStream* stream, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y)
 {
     if (stream->fHaveFrame)
+    {
         VideoRenderer_CopyFrame(stream->pRenderer, target, subresource, x, y, stream->current);
+    }
 }
 
 void VideoStream_Close(VideoStream* pStream)

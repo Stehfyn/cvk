@@ -3,7 +3,7 @@
 #define IMMERSIVE_VIDEO_H
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <d3d11.h>
 
 typedef struct VideoStream VideoStream;
@@ -17,7 +17,7 @@ typedef struct VideoInfo
     LONGLONG Duration100ns;
 } VideoInfo;
 
-VideoStream* VideoStream_Open(ID3D11Device* device, ID3D11DeviceContext* context, LPCWSTR file);
+VideoStream* VideoStream_Open(ID3D11Device* device, ID3D11DeviceContext* context, LPCTSTR file);
 void VideoStream_GetInfo(const VideoStream* stream, VideoInfo* info);
 BOOL VideoStream_NextFrame(VideoStream* stream);
 void VideoStream_Prefetch(VideoStream* stream, DWORD budgetMs);

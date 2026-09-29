@@ -7,12 +7,52 @@
 #include <d3dcompiler.h>
 #include <volk.h>
 #include "cvk/win32/cvk_win32.h"
+#include "cvk/cvk.h"
+#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan_win32.h>
+#include <stdint.h>
+#include <limits.h>
+#include <d3d11.h>
+#include <d3dcommon.h>
+#include <dxgi.h>
+#include <dxgi1_2.h>
+#include <dxgiformat.h>
+#include <dxgicommon.h>
+#include <minwindef.h>
+#include <minwinbase.h>
+#include <winnt.h>
+#include <Unknwnbase.h>
+#include <winerror.h>
+#include <debugapi.h>
+#include <WinUser.h>
+#include <processthreadsapi.h>
+#include <heapapi.h>
+#include <handleapi.h>
+#include <WinBase.h>
+#ifdef CVK_DEMO_VALIDATION
+#include "os/win32/os_text.h"
+#include <stringapiset.h>
+#include <WinNls.h>
 #include <stdio.h>
+#endif
 #include <string.h>
 
 #include "fullscreen_vert.h"
 #include "nv12_frag.h"
 #include "bicubic_frag.h"
+
+/*=================================================================================================
+** 3. DECLARATIONS
+**
+** 3.1 Macros
+**===============================================================================================*/
+
+#define VIDEO_SAMPLER_ANISOTROPY (16.0F) ///< Reference bicubic sampler's required anisotropy.
+#define VIDEO_SCALE_FLOAT_COUNT  (6)     ///< Two inverse sizes, two biases and two scale factors.
+
+/*=================================================================================================
+** 3.2 Types
+**===============================================================================================*/
 
 typedef struct Image
 {
@@ -30,7 +70,7 @@ typedef struct Frame
     ID3D11Texture2D*          texture;
     ID3D11ShaderResourceView* views[2];
     ID3D11RenderTargetView*   targets[2];
-    Image                    planes[2];
+    Image                     planes[2];
 } Frame;
 
 struct VideoRenderer
@@ -53,8 +93,9 @@ struct VideoRenderer
     VkSampler             samplers[2];
     VkDescriptorSet       frames[VIDEO_RENDERER_FRAMES];
     VkDescriptorSet       scale;
-    ID3D11VertexShader*    copyVertex;
-    ID3D11PixelShader*     copyPixel;
+    VkExtensionProperties extensionProperties[CVK_MAX_PROPERTIES];
+    ID3D11VertexShader*   copyVertex;
+    ID3D11PixelShader*    copyPixel;
     Frame                 ring[VIDEO_RENDERER_FRAMES];
     Image                 converted;
     Image                 output;
@@ -67,48 +108,65 @@ struct VideoRenderer
 
 static const VkImageSubresourceRange colorRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
 
-static void Fail(const char* message)
+static CVK_NORETURN void Fail(LPCTSTR message)
 {
-    fprintf(stderr, "ImmersiveWindowDemo: %s\n", message);
-    OutputDebugStringA(message);
-    MessageBoxA(NULL, message, "ImmersiveWindowDemo", MB_ICONERROR);
+    OutputDebugString(message);
+    MessageBox(NULL, message, TEXT("ImmersiveWindowDemo"), MB_ICONERROR);
     ExitProcess(1);
 }
 
 #ifdef CVK_DEMO_VALIDATION
 static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT* data, void* user)
 {
+    uint16_t unicode[1024];
+    TCHAR native[1024];
+    int required;
+    int written;
+    bool_t fits;
+    bool_t converted;
     (void)severity;
     (void)type;
     (void)user;
     fprintf(stderr, "%s\n", data->pMessage);
-    OutputDebugStringA(data->pMessage);
+    required  = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, data->pMessage, -1, NULL, 0);
+    fits      = 0 < required;
+    converted = fits && (required <= (int)(sizeof(unicode) / sizeof(unicode[0])));
+    if (converted)
+    {
+        written   = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, data->pMessage, -1,
+                                        (LPWSTR)unicode, (int)(sizeof(unicode) / sizeof(unicode[0])));
+        converted = written == required;
+        if (converted)
+        {
+            converted = OS_Text_WriteNative(native, sizeof(native) / sizeof(native[0]), unicode);
+        }
+    }
+    OutputDebugString(converted ? native : TEXT("Vulkan validation message could not be converted"));
     return VK_FALSE;
 }
 #endif
 
 static void CreateDevice(VideoRenderer* r)
 {
-    VkApplicationInfo                              app;
-    VkPhysicalDevice                               devices[CVK_MAX_PHYSICAL_DEVICES];
-    VkQueueFamilyProperties                        families[CVK_MAX_QUEUE_FAMILY_PROPERTIES];
-    VkPhysicalDeviceFeatures                       features = {0};
-    VkPhysicalDeviceProperties2                    properties = {0};
-    VkDeviceQueueCreateInfo                        queue;
-    VkExtensionProperties                          extensions[CVK_MAX_PROPERTIES];
-    const char*                                    required[] = {VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME, VK_KHR_WIN32_KEYED_MUTEX_EXTENSION_NAME};
-    IDXGIDevice*                                   dxgi;
-    IDXGIAdapter*                                  adapter;
-    DXGI_ADAPTER_DESC                              desc;
-    uint32_t                                       count, i, j, extensionCount;
-    float                                          priority = 1.0f;
+    VkApplicationInfo           app;
+    VkPhysicalDeviceFeatures    features = {0};
+    VkPhysicalDeviceProperties2 properties;
+    VkDeviceQueueCreateInfo     queue;
+    const char*                 required[] = {VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME, VK_KHR_WIN32_KEYED_MUTEX_EXTENSION_NAME};
+    IDXGIDevice*                dxgi;
+    IDXGIAdapter*               adapter;
+    DXGI_ADAPTER_DESC           desc;
+    VkBool32                    extensions_supported;
+    float                       priority = 1.0F;
 #ifdef CVK_DEMO_VALIDATION
     const char* layers[]             = {"VK_LAYER_KHRONOS_validation"};
     const char* instanceExtensions[] = {VK_EXT_DEBUG_UTILS_EXTENSION_NAME};
 #endif
 
     if (VK_SUCCESS != volkInitialize())
-        Fail("A Vulkan 1.1 driver is required.");
+    {
+        Fail(TEXT("A Vulkan 1.1 driver is required."));
+    }
     cvkInitApplicationInfo(&app, NULL, "ImmersiveWindowDemo", 1, "cvk", 1, VK_API_VERSION_1_1);
 #ifdef CVK_DEMO_VALIDATION
     cvkCreateInstance(NULL, 0, &app, 1, layers, 1, instanceExtensions, NULL, &r->instance);
@@ -132,44 +190,35 @@ static void CreateDevice(VideoRenderer* r)
     cdxgiAdapterGetDesc(adapter, &desc);
     cdxgiUnknownRelease((IUnknown*)adapter);
     cdxgiUnknownRelease((IUnknown*)dxgi);
-    cvkEnumeratePhysicalDevices(r->instance, &count, devices);
-    for (i = 0; i < count; ++i)
+    r->physical = cvkGetPhysicalDeviceByLuid(r->instance, (const uint8_t*)&desc.AdapterLuid);
+    if (VK_NULL_HANDLE == r->physical)
     {
-        VkPhysicalDeviceIDProperties id;
-        cvkInitPhysicalDeviceIDProperties(&id, NULL);
-        cvkGetPhysicalDeviceProperties2(devices[i], &id, &properties);
-        if (id.deviceLUIDValid && 0 == memcmp(id.deviceLUID, &desc.AdapterLuid, VK_LUID_SIZE))
-        {
-            r->physical = devices[i];
-            break;
-        }
+        Fail(TEXT("The window's graphics adapter must support Vulkan 1.1."));
     }
-    if (!r->physical || properties.properties.apiVersion < VK_API_VERSION_1_1)
-        Fail("The window's graphics adapter must support Vulkan 1.1.");
+    cvkGetPhysicalDeviceProperties2(r->physical, NULL, &properties);
+    if (properties.properties.apiVersion < VK_API_VERSION_1_1)
+    {
+        Fail(TEXT("The window's graphics adapter must support Vulkan 1.1."));
+    }
 #ifdef CVK_DEMO_VALIDATION
     fprintf(stderr, "video: Vulkan adapter %s (vendor 0x%X), matched to D3D11 LUID\n", properties.properties.deviceName, properties.properties.vendorID);
 #endif
-    cvkEnumerateDeviceExtensionProperties(r->physical, NULL, &extensionCount, extensions);
-    for (i = 0; i < VK_COUNT_OF(required); ++i)
+    extensions_supported = cvkGetPhysicalDeviceExtensionSupport(r->physical, NULL, VK_COUNT_OF(required), required, r->extensionProperties);
+    if (!extensions_supported)
     {
-        for (j = 0; j < extensionCount; ++j)
-            if (0 == strcmp(required[i], extensions[j].extensionName))
-                break;
-        if (j == extensionCount)
-            Fail(required[i]);
+        Fail(TEXT("The window's adapter must support Win32 external memory and keyed mutexes."));
     }
-    cvkGetPhysicalDeviceQueueFamilyProperties(r->physical, &count, families);
-    for (i = 0; i < count; ++i)
-        if (families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-            break;
-    if (i == count)
-        Fail("No Vulkan graphics queue on the window's adapter.");
-    r->family = i;
+    r->family = cvkGetPhysicalDeviceGraphicsQueueFamilyIndex(r->physical);
+    if (VK_INVALID == r->family)
+    {
+        Fail(TEXT("No Vulkan graphics queue on the window's adapter."));
+    }
     cvkGetPhysicalDeviceFeatures(r->physical, &features);
-    if (!features.samplerAnisotropy || properties.properties.limits.maxSamplerAnisotropy < 16.0f)
-        Fail("The reference video sampler requires 16x anisotropic filtering.");
-    ZeroMemory(&features, sizeof(features));
-    features.samplerAnisotropy = VK_TRUE;
+    if (!features.samplerAnisotropy || properties.properties.limits.maxSamplerAnisotropy < VIDEO_SAMPLER_ANISOTROPY)
+    {
+        Fail(TEXT("The reference video sampler requires 16x anisotropic filtering."));
+    }
+    features = (VkPhysicalDeviceFeatures){.samplerAnisotropy = VK_TRUE};
     cvkInitDeviceQueueCreateInfo(&queue, NULL, 0, r->family, 1, &priority);
     cvkCreateDevice(r->physical, NULL, 0, 1, &queue, 0, NULL, VK_COUNT_OF(required), required, &features, NULL, &r->device);
     volkLoadDevice(r->device);
@@ -216,7 +265,9 @@ static void CreateSharedImage(VideoRenderer* r, Image* image, UINT width, UINT h
                                                         flags,
                                                         NULL,
                                                         &dedicatedOnly))
-        Fail("The Vulkan driver cannot import the shared video plane or output texture.");
+    {
+        Fail(TEXT("The Vulkan driver cannot import the shared video plane or output texture."));
+    }
     image->width  = width;
     image->height = height;
     cdx11DeviceCreateTexture2D(r->d3d,
@@ -279,35 +330,55 @@ static void DestroyImage(VideoRenderer* r, Image* image)
         cdxgiKeyedMutexReleaseSync(image->mutex, 0);
     }
     if (image->framebuffer)
+    {
         cvkDestroyFramebuffer(r->device, image->framebuffer, NULL);
+    }
     if (image->views[0])
+    {
         cvkDestroyImageView(r->device, image->views[0], NULL);
+    }
     if (image->views[1])
+    {
         cvkDestroyImageView(r->device, image->views[1], NULL);
+    }
     if (image->image)
+    {
         cvkDestroyImage(r->device, image->image, NULL);
+    }
     if (image->memory)
+    {
         cvkFreeMemory(r->device, image->memory, NULL);
+    }
     if (image->mutex)
+    {
         cdxgiUnknownRelease((IUnknown*)image->mutex);
+    }
     if (image->texture)
+    {
         cdxgiUnknownRelease((IUnknown*)image->texture);
+    }
     ZeroMemory(image, sizeof(*image));
 }
 
 static void DestroyFrame(VideoRenderer* r, Frame* frame)
 {
-    int i;
-    for (i = 0; i < 2; ++i)
+    int index;
+    for (index = 0; index < 2; ++index)
     {
-        if (frame->targets[i])
-            cdxgiUnknownRelease((IUnknown*)frame->targets[i]);
-        if (frame->views[i])
-            cdxgiUnknownRelease((IUnknown*)frame->views[i]);
-        DestroyImage(r, &frame->planes[i]);
+        if (frame->targets[index])
+        {
+            cdxgiUnknownRelease((IUnknown*)frame->targets[index]);
+        }
+        if (frame->views[index])
+        {
+            cdxgiUnknownRelease((IUnknown*)frame->views[index]);
+        }
+        DestroyImage(r, &frame->planes[index]);
     }
     if (frame->texture)
+    {
         cdxgiUnknownRelease((IUnknown*)frame->texture);
+    }
     ZeroMemory(frame, sizeof(*frame));
 }
 
@@ -315,28 +386,32 @@ static void DestroyFrame(VideoRenderer* r, Frame* frame)
 ** native plane layout; Vulkan receives ordinary R8/RG8 images. No CPU readback. */
 static void CreatePlaneCopyShaders(VideoRenderer* r)
 {
-    static const char source[] =
-        "float4 VS(uint id : SV_VertexID) : SV_Position {"
-        "float2 p = float2((id << 1) & 2, id & 2);"
-        "return float4(p * float2(2, -2) + float2(-1, 1), 0, 1); }"
-        "Texture2D<float2> plane : register(t0);"
-        "float4 PS(float4 p : SV_Position) : SV_Target {"
-        "return float4(plane.Load(int3(int2(p.xy), 0)), 0, 1); }";
-    ID3DBlob* code;
+    static const char source[] = "float4 VS(uint id : SV_VertexID) : SV_Position {"
+                                 "float2 p = float2((id << 1) & 2, id & 2);"
+                                 "return float4(p * float2(2, -2) + float2(-1, 1), 0, 1); }"
+                                 "Texture2D<float2> plane : register(t0);"
+                                 "float4 PS(float4 p : SV_Position) : SV_Target {"
+                                 "return float4(plane.Load(int3(int2(p.xy), 0)), 0, 1); }";
+    ID3DBlob*         code;
     if (FAILED(D3DCompile(source, sizeof(source) - 1, NULL, NULL, NULL, "VS", "vs_5_0", D3DCOMPILE_OPTIMIZATION_LEVEL3, 0, &code, NULL)))
-        Fail("Cannot compile the video plane copy vertex shader.");
+    {
+        Fail(TEXT("Cannot compile the video plane copy vertex shader."));
+    }
     cdx11DeviceCreateVertexShader(r->d3d, code->lpVtbl->GetBufferPointer(code), code->lpVtbl->GetBufferSize(code), NULL, &r->copyVertex);
     cdxgiUnknownRelease((IUnknown*)code);
     if (FAILED(D3DCompile(source, sizeof(source) - 1, NULL, NULL, NULL, "PS", "ps_5_0", D3DCOMPILE_OPTIMIZATION_LEVEL3, 0, &code, NULL)))
-        Fail("Cannot compile the video plane copy pixel shader.");
+    {
+        Fail(TEXT("Cannot compile the video plane copy pixel shader."));
+    }
     cdx11DeviceCreatePixelShader(r->d3d, code->lpVtbl->GetBufferPointer(code), code->lpVtbl->GetBufferSize(code), NULL, &r->copyPixel);
     cdxgiUnknownRelease((IUnknown*)code);
 }
 
 static void CreatePipeline(VideoRenderer* r, int pass, const uint32_t* fragment, size_t size)
 {
-    VkResult result;
-    VkShaderModule                         vertex, pixel;
+    VkResult                               result;
+    VkShaderModule                         vertex;
+    VkShaderModule                         pixel;
     VkPipelineShaderStageCreateInfo        stages[2]       = {{.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_VERTEX_BIT, .pName = "main"},
                                                               {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, .stage = VK_SHADER_STAGE_FRAGMENT_BIT, .pName = "main"}};
     VkPipelineVertexInputStateCreateInfo   input           = {.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
@@ -346,9 +421,9 @@ static void CreatePipeline(VideoRenderer* r, int pass, const uint32_t* fragment,
                                                               .polygonMode = VK_POLYGON_MODE_FILL,
                                                               .cullMode    = VK_CULL_MODE_NONE,
                                                               .frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE,
-                                                              .lineWidth   = 1.0f};
+                                                              .lineWidth   = 1.0F};
     VkPipelineMultisampleStateCreateInfo   multisample     = {.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT};
-    VkPipelineColorBlendAttachmentState    attachment      = {.colorWriteMask = 15};
+    VkPipelineColorBlendAttachmentState    attachment      = {.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT};
     VkPipelineColorBlendStateCreateInfo    blend           = {.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, .attachmentCount = 1, .pAttachments = &attachment};
     VkDynamicState                         dynamicStates[] = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
     VkPipelineDynamicStateCreateInfo       dynamic         = {.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO, .dynamicStateCount = 2, .pDynamicStates = dynamicStates};
@@ -370,7 +445,7 @@ static void CreatePipeline(VideoRenderer* r, int pass, const uint32_t* fragment,
     stages[1].module    = pixel;
     pipeline.layout     = r->layouts[pass];
     pipeline.renderPass = r->renderPass;
-    result = cvkCreateGraphicsPipelines(r->device, VK_NULL_HANDLE, 1, &pipeline, NULL, &r->pipelines[pass]);
+    result              = cvkCreateGraphicsPipelines(r->device, VK_NULL_HANDLE, 1, &pipeline, NULL, &r->pipelines[pass]);
     CVK_ASSERT(VK_SUCCESS == result);
     cvkDestroyShaderModule(r->device, pixel, NULL);
     cvkDestroyShaderModule(r->device, vertex, NULL);
@@ -390,15 +465,15 @@ static void CreatePasses(VideoRenderer* r)
     VkSubpassDescription         subpass     = {.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, .colorAttachmentCount = 1, .pColorAttachments = &reference};
     VkDescriptorSetLayoutBinding bindings[2] = {{0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL},
                                                 {1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, NULL}};
-    VkPushConstantRange          constants   = {VK_SHADER_STAGE_FRAGMENT_BIT, 0, 6 * sizeof(float)};
-    VkDescriptorPoolSize         poolSize    = {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VIDEO_RENDERER_FRAMES * 2 + 1};
-    int                          i;
+    VkPushConstantRange          constants   = {VK_SHADER_STAGE_FRAGMENT_BIT, 0, VIDEO_SCALE_FLOAT_COUNT * sizeof(float)};
+    VkDescriptorPoolSize         poolSize    = {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, (VIDEO_RENDERER_FRAMES * 2) + 1};
+    int                          index;
 
     cvkCreateRenderPass(r->device, NULL, 0, 1, &attachment, 1, &subpass, 0, NULL, NULL, &r->renderPass);
-    for (i = 0; i < 2; ++i)
+    for (index = 0; index < 2; ++index)
     {
-        cvkCreateDescriptorSetLayout(r->device, NULL, 0, i ? 1 : 2, bindings, NULL, &r->setLayouts[i]);
-        cvkCreatePipelineLayout(r->device, NULL, 0, 1, &r->setLayouts[i], i ? 1 : 0, i ? &constants : NULL, NULL, &r->layouts[i]);
+        cvkCreateDescriptorSetLayout(r->device, NULL, 0, index ? 1 : 2, bindings, NULL, &r->setLayouts[index]);
+        cvkCreatePipelineLayout(r->device, NULL, 0, 1, &r->setLayouts[index], index ? 1 : 0, index ? &constants : NULL, NULL, &r->layouts[index]);
         cvkCreateSampler(r->device,
                          NULL,
                          0,
@@ -409,8 +484,8 @@ static void CreatePasses(VideoRenderer* r)
                          VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
                          VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
                          0,
-                         i ? VK_TRUE : VK_FALSE,
-                         i ? 16.0f : 1.0f,
+                         index ? VK_TRUE : VK_FALSE,
+                         index ? VIDEO_SAMPLER_ANISOTROPY : 1.0F,
                          VK_FALSE,
                          VK_COMPARE_OP_NEVER,
                          0,
@@ -418,11 +493,13 @@ static void CreatePasses(VideoRenderer* r)
                          VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
                          VK_FALSE,
                          NULL,
-                         &r->samplers[i]);
+                         &r->samplers[index]);
     }
     cvkCreateDescriptorPool(r->device, NULL, 0, VIDEO_RENDERER_FRAMES + 1, 1, &poolSize, NULL, &r->descriptors);
-    for (i = 0; i < VIDEO_RENDERER_FRAMES; ++i)
-        cvkAllocateDescriptorSet(r->device, NULL, r->descriptors, r->setLayouts[0], &r->frames[i]);
+    for (index = 0; index < VIDEO_RENDERER_FRAMES; ++index)
+    {
+        cvkAllocateDescriptorSet(r->device, NULL, r->descriptors, r->setLayouts[0], &r->frames[index]);
+    }
     cvkAllocateDescriptorSet(r->device, NULL, r->descriptors, r->setLayouts[1], &r->scale);
     CreatePipeline(r, 0, nv12_frag, sizeof(nv12_frag));
     CreatePipeline(r, 1, bicubic_frag, sizeof(bicubic_frag));
@@ -430,15 +507,17 @@ static void CreatePasses(VideoRenderer* r)
 
 VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID3D11DeviceContext* context)
 {
-    VideoRenderer* r = (VideoRenderer*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*r));
-    if (!r)
-        Fail("Cannot allocate the video renderer.");
-    r->d3d     = device;
-    r->context = context;
-    CreatePlaneCopyShaders(r);
-    CreateDevice(r);
-    CreatePasses(r);
-    return r;
+    VideoRenderer* renderer = (VideoRenderer*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*renderer));
+    if (!renderer)
+    {
+        Fail(TEXT("Cannot allocate the video renderer."));
+    }
+    renderer->d3d     = device;
+    renderer->context = context;
+    CreatePlaneCopyShaders(renderer);
+    CreateDevice(renderer);
+    CreatePasses(renderer);
+    return renderer;
 }
 
 static void WriteImage(VideoRenderer* r, VkDescriptorSet set, uint32_t binding, VkImageView view, VkSampler sampler)
@@ -452,26 +531,24 @@ static void WriteImage(VideoRenderer* r, VkDescriptorSet set, uint32_t binding, 
 void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
 {
     VkExtent3D extent = {width, height, 1};
-    int        i;
+    int        index;
     CVK_ASSERT(width && height && !(width & 1) && !(height & 1));
     cvkDeviceWaitIdle(r->device);
     DestroyImage(r, &r->converted);
-    for (i = 0; i < VIDEO_RENDERER_FRAMES; ++i)
+    for (index = 0; index < VIDEO_RENDERER_FRAMES; ++index)
     {
-        Frame* frame = &r->ring[i];
+        Frame*           frame  = &r->ring[index];
         DXGI_SAMPLE_DESC sample = {1, 0};
-        int plane;
+        int              plane;
         DestroyFrame(r, frame);
-        cdx11DeviceCreateTexture2D(r->d3d, width, height, 1, 1, DXGI_FORMAT_NV12, sample,
-            D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, NULL, &frame->texture);
+        cdx11DeviceCreateTexture2D(r->d3d, width, height, 1, 1, DXGI_FORMAT_NV12, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, NULL, &frame->texture);
         for (plane = 0; plane < 2; ++plane)
         {
             DXGI_FORMAT format = plane ? DXGI_FORMAT_R8G8_UNORM : DXGI_FORMAT_R8_UNORM;
-            CreateSharedImage(r, &frame->planes[plane], width >> plane, height >> plane,
-                plane ? VK_FORMAT_R8G8_UNORM : VK_FORMAT_R8_UNORM, format, FALSE);
+            CreateSharedImage(r, &frame->planes[plane], width >> plane, height >> plane, plane ? VK_FORMAT_R8G8_UNORM : VK_FORMAT_R8_UNORM, format, FALSE);
             cdx11DeviceCreateTexture2DShaderResourceView(r->d3d, (ID3D11Resource*)frame->texture, 0, 1, format, &frame->views[plane]);
             cdx11DeviceCreateTexture2DRenderTargetView(r->d3d, (ID3D11Resource*)frame->planes[plane].texture, 0, format, &frame->targets[plane]);
-            WriteImage(r, r->frames[i], (uint32_t)plane, frame->planes[plane].views[0], r->samplers[0]);
+            WriteImage(r, r->frames[index], (uint32_t)plane, frame->planes[plane].views[0], r->samplers[0]);
         }
     }
     r->converted.width  = width;
@@ -519,9 +596,9 @@ void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
 
 void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
 {
-    Frame* frame = &r->ring[slot];
-    ID3D11ShaderResourceView* none = NULL;
-    int plane;
+    Frame*                    frame = &r->ring[slot];
+    ID3D11ShaderResourceView* none  = NULL;
+    int                       plane;
     cdx11DeviceContextIASetInputLayout(r->context, NULL);
     cdx11DeviceContextIASetPrimitiveTopology(r->context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     cdx11DeviceContextVSSetShader(r->context, r->copyVertex, NULL, 0);
@@ -583,14 +660,16 @@ static void DrawPass(VideoRenderer* r, Image* target, int pass, VkDescriptorSet 
 {
     VkRect2D   area        = {{0, 0}, {target->width, target->height}};
     VkViewport viewport    = {0, 0, (float)target->width, (float)target->height, 0, 1};
-    float      constants[] = {1.0f / (float)width, 1.0f / (float)height, 1.0f, 0.0f, (float)target->width / (float)width, (float)target->height / (float)height};
+    float      constants[] = {1.0F / (float)width, 1.0F / (float)height, 1.0F, 0.0F, (float)target->width / (float)width, (float)target->height / (float)height};
     cvkCmdBeginRenderPass(r->command, NULL, r->renderPass, target->framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewport(r->command, viewport);
     cvkCmdSetScissor(r->command, area);
     cvkCmdBindPipeline(r->command, VK_PIPELINE_BIND_POINT_GRAPHICS, r->pipelines[pass]);
     cvkCmdBindDescriptorSets(r->command, VK_PIPELINE_BIND_POINT_GRAPHICS, r->layouts[pass], 0, 1, &set, 0, NULL);
     if (pass)
+    {
         cvkCmdPushConstants(r->command, r->layouts[pass], VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(constants), constants);
+    }
     cvkCmdDraw(r->command, 4, 1, 0, 0);
     cvkCmdEndRenderPass(r->command);
 }
@@ -691,14 +770,14 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
 
 void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y, int slot)
 {
-    VkResult result;
+    VkResult       result;
     VkDeviceMemory syncs[3];
-    uint64_t acquireKeys[3] = {0, 0, 0};
-    uint64_t releaseKeys[3] = {1, 0, 0};
-    uint32_t timeouts[3] = {INFINITE, INFINITE, INFINITE};
-    UINT width = r->converted.width;
-    UINT height = r->converted.height;
-    D3D11_BOX source = {0, 0, 0, width, height, 1};
+    uint64_t       acquireKeys[3] = {0, 0, 0};
+    uint64_t       releaseKeys[3] = {1, 0, 0};
+    uint32_t       timeouts[3]    = {INFINITE, INFINITE, INFINITE};
+    UINT           width          = r->converted.width;
+    UINT           height         = r->converted.height;
+    D3D11_BOX      source         = {0, 0, 0, width, height, 1};
 
     CVK_ASSERT(slot >= 0 && slot < VIDEO_RENDERER_FRAMES);
     if (r->output.width != width || r->output.height != height)
@@ -733,23 +812,27 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
 
 void VideoRenderer_Destroy(VideoRenderer* r)
 {
-    int i;
+    int index;
     if (!r)
+    {
         return;
+    }
     cvkDeviceWaitIdle(r->device);
     cvkDestroyDescriptorPool(r->device, r->descriptors, NULL);
     DestroyImage(r, &r->output);
     DestroyImage(r, &r->converted);
-    for (i = 0; i < VIDEO_RENDERER_FRAMES; ++i)
-        DestroyFrame(r, &r->ring[i]);
+    for (index = 0; index < VIDEO_RENDERER_FRAMES; ++index)
+    {
+        DestroyFrame(r, &r->ring[index]);
+    }
     cdxgiUnknownRelease((IUnknown*)r->copyPixel);
     cdxgiUnknownRelease((IUnknown*)r->copyVertex);
-    for (i = 0; i < 2; ++i)
+    for (index = 0; index < 2; ++index)
     {
-        cvkDestroyPipeline(r->device, r->pipelines[i], NULL);
-        cvkDestroyPipelineLayout(r->device, r->layouts[i], NULL);
-        cvkDestroyDescriptorSetLayout(r->device, r->setLayouts[i], NULL);
-        cvkDestroySampler(r->device, r->samplers[i], NULL);
+        cvkDestroyPipeline(r->device, r->pipelines[index], NULL);
+        cvkDestroyPipelineLayout(r->device, r->layouts[index], NULL);
+        cvkDestroyDescriptorSetLayout(r->device, r->setLayouts[index], NULL);
+        cvkDestroySampler(r->device, r->samplers[index], NULL);
     }
     cvkDestroyRenderPass(r->device, r->renderPass, NULL);
     cvkDestroyFence(r->device, r->fence, NULL);

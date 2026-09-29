@@ -10,12 +10,26 @@
 #include "immersive_window.h"
 #include "presentation.h"
 #include "video.h"
-
-#include <commctrl.h>
-#include <shellapi.h>
-
-#include "cdx11.h"
-#include "cdxgi.h"
+#include "os/os_process.h"
+#include "os/os_types.h"
+#include "os/win32/os_text.h"
+#include <Windows.h> // IWYU pragma: keep
+#include <basetsd.h>
+#include <windef.h>
+#include <stdint.h>
+#include <d3d11.h>
+#include <CommCtrl.h>
+#include <combaseapi.h>
+#include <debugapi.h>
+#include <libloaderapi.h>
+#include <minwindef.h>
+#include <objbase.h>
+#include <processthreadsapi.h>
+#include <profileapi.h>
+#include <WinBase.h>
+#include <WinUser.h>
+#include <winerror.h>
+#include <winnt.h>
 
 static ID3D11Device*           g_pDevice;
 static ID3D11DeviceContext*    g_pContext;
@@ -34,12 +48,12 @@ static void EnableEfficiencyMode(void)
     power.StateMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED;
     if (!SetProcessInformation(process, ProcessPowerThrottling, &power, sizeof(power)))
     {
-        OutputDebugStringW(L"ImmersiveWindowDemo: Windows did not enable EcoQoS.\n");
+        OutputDebugString(TEXT("ImmersiveWindowDemo: Windows did not enable EcoQoS.\n"));
         return;
     }
     if (!SetPriorityClass(process, IDLE_PRIORITY_CLASS))
     {
-        OutputDebugStringW(L"ImmersiveWindowDemo: Windows did not lower the process priority.\n");
+        OutputDebugString(TEXT("ImmersiveWindowDemo: Windows did not lower the process priority.\n"));
     }
 }
 
@@ -47,25 +61,38 @@ static LARGE_INTEGER g_frequency;
 static LARGE_INTEGER g_start;
 static LONGLONG      g_shown;
 
-#define VIDEO_TIMER 1
+#define VIDEO_TIMER                  (1)
+#define VIDEO_MILLISECONDS_PER_SECOND (1000)
+#define VIDEO_MESSAGE_EXTRA_UNITS   (32)
+#define VIDEO_WINDOW_WIDTH           (1280)
+#define VIDEO_WINDOW_HEIGHT          (720)
 static LARGE_INTEGER g_pauseStart;
 static BOOL g_clockPaused;
 
 static void ArmVideoTimer(HWND hWnd)
 {
     LARGE_INTEGER now;
-    LONGLONG next, remaining;
+    LONGLONG next;
+    LONGLONG remaining;
     UINT delay;
+    UINT bounded_delay;
+    bool_t below_minimum;
     if (NULL == g_pVideo || g_clockPaused || !g_info.FrameRateNumerator || !g_info.FrameRateDenominator)
+    {
         return;
+    }
     QueryPerformanceCounter(&now);
-    next = g_start.QuadPart + (g_shown + 1) * g_frequency.QuadPart * g_info.FrameRateDenominator / g_info.FrameRateNumerator;
-    remaining = max(0, next - now.QuadPart);
-    delay = (UINT)((remaining * 1000 + g_frequency.QuadPart - 1) / g_frequency.QuadPart);
+    next = g_start.QuadPart + (((g_shown + 1) * g_frequency.QuadPart * g_info.FrameRateDenominator) / g_info.FrameRateNumerator);
+    remaining = next > now.QuadPart ? next - now.QuadPart : 0;
+    delay = (UINT)(((remaining * VIDEO_MILLISECONDS_PER_SECOND) + g_frequency.QuadPart - 1) / g_frequency.QuadPart);
+    below_minimum = delay < USER_TIMER_MINIMUM;
+    bounded_delay = below_minimum ? USER_TIMER_MINIMUM : delay;
     /* This timer advances media time, including inside native modal loops.
     ** It does not schedule resizing or the compositor's display refresh. */
-    if (!SetTimer(hWnd, VIDEO_TIMER, max(USER_TIMER_MINIMUM, delay), NULL))
-        PostMessageW(hWnd, WM_CLOSE, 0, 0);
+    if (!SetTimer(hWnd, VIDEO_TIMER, bounded_delay, NULL))
+    {
+        PostMessage(hWnd, WM_CLOSE, 0, 0);
+    }
 }
 
 static void SyncPlaybackClock(HWND hWnd)
@@ -73,7 +100,9 @@ static void SyncPlaybackClock(HWND hWnd)
     BOOL paused = g_fPaused || IsIconic(hWnd);
     LARGE_INTEGER now;
     if (NULL == g_pVideo || paused == g_clockPaused)
+    {
         return;
+    }
     QueryPerformanceCounter(&now);
     if (paused)
     {
@@ -100,7 +129,9 @@ static void AdvanceVideo(HWND hWnd)
     LONGLONG due;
     KillTimer(hWnd, VIDEO_TIMER);
     if (NULL == g_pVideo || g_clockPaused)
+    {
         return;
+    }
     QueryPerformanceCounter(&now);
     due = (now.QuadPart - g_start.QuadPart) * g_info.FrameRateNumerator / (g_frequency.QuadPart * g_info.FrameRateDenominator);
     if (due > g_shown && VideoStream_NextFrame(g_pVideo))
@@ -112,23 +143,35 @@ static void AdvanceVideo(HWND hWnd)
     ArmVideoTimer(hWnd);
 }
 
-static void SetupVideo(HWND hWnd, LPCWSTR pszFile)
+static void SetupVideo(HWND hWnd, LPCTSTR pszFile)
 {
     if (!GetImmersiveDevice(hWnd, &g_pDevice, &g_pContext))
+    {
         return;
+    }
     g_pVideo = VideoStream_Open(g_pDevice, g_pContext, pszFile);
     if (NULL == g_pVideo)
     {
-        WCHAR message[MAX_PATH + 32];
-        lstrcpyW(message, L"Cannot open ");
-        lstrcpynW(message + lstrlenW(message), pszFile, MAX_PATH);
-        MessageBoxW(hWnd, message, L"ImmersiveWindowDemo", MB_ICONWARNING);
+        TCHAR message[MAX_PATH + VIDEO_MESSAGE_EXTRA_UNITS];
+        LPTSTR copied;
+        lstrcpy(message, TEXT("Cannot open "));
+        copied = lstrcpyn(message + lstrlen(message), pszFile, MAX_PATH);
+        if (NULL != copied)
+        {
+            MessageBox(hWnd, message, TEXT("ImmersiveWindowDemo"), MB_ICONWARNING);
+        }
+        else
+        {
+            MessageBox(hWnd, pszFile, TEXT("Cannot open video"), MB_ICONWARNING);
+        }
         return;
     }
     VideoStream_GetInfo(g_pVideo, &g_info);
     SetImmersiveVideo(hWnd, g_info.Width, g_info.Height, DrawVideo);
     if (VideoStream_NextFrame(g_pVideo))
+    {
         UpdateImmersiveVideo(hWnd);
+    }
     QueryPerformanceFrequency(&g_frequency);
     QueryPerformanceCounter(&g_start);
     ArmVideoTimer(hWnd);
@@ -150,7 +193,9 @@ static LRESULT CALLBACK DemoProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
         return 0;
     }
     if (WM_SIZE == uMsg)
+    {
         SyncPlaybackClock(hWnd);
+    }
     if (WM_DESTROY == uMsg)
     {
         KillTimer(hWnd, VIDEO_TIMER);
@@ -168,63 +213,78 @@ static LRESULT CALLBACK DemoProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 }
 
 /* The file: the first command line argument, else demo.mp4 beside the executable. */
-static void ResolveFile(WCHAR* pszFile, int capacity)
+static bool_t ResolveFile(TCHAR* pszFile, int capacity)
 {
-    int     argc = 0;
-    LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    if (NULL != argv && argc > 1)
+    uint16_t argument[MAX_PATH];
+    uint32_t unit_count;
+    bool_t  found;
+    bool_t  converted;
+    LPTSTR  copied;
+    DWORD   length;
+    DWORD   index;
+    int     lastSlash;
+
+    pszFile[0]  = TEXT('\0');
+    copied      = NULL;
+    unit_count  = 0;
+    found       = OS_Process_ReadArgument(&unit_count, argument, MAX_PATH - 1, 1);
+    argument[unit_count] = 0;
+    if (found)
     {
-        lstrcpynW(pszFile, argv[1], capacity);
+        converted = OS_Text_WriteNative(pszFile, (uint32_t)capacity, argument);
+        copied    = converted ? pszFile : NULL;
     }
     else
     {
-        int i;
-        int lastSlash = -1;
-        GetModuleFileNameW(NULL, pszFile, (DWORD)capacity);
-        for (i = 0; 0 != pszFile[i]; ++i)
+        lastSlash = -1;
+        length    = GetModuleFileName(NULL, pszFile, (DWORD)capacity);
+        if (0 < length && length < (DWORD)capacity)
         {
-            if (L'\\' == pszFile[i])
+            for (index = 0; index < length; ++index)
             {
-                lastSlash = i;
+                if (TEXT('\\') == pszFile[index])
+                {
+                    lastSlash = (int)index;
+                }
             }
+            copied = lstrcpyn(pszFile + lastSlash + 1, TEXT("demo.mp4"), capacity - lastSlash - 1);
         }
-        lstrcpynW(pszFile + lastSlash + 1, L"demo.mp4", capacity - lastSlash - 1);
     }
-    if (NULL != argv)
-    {
-        LocalFree(argv);
-    }
+    return NULL != copied;
 }
 
-int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
+static int RunDemo(HINSTANCE hInstance, int nShowCmd)
 {
-    WCHAR   file[MAX_PATH];
+    TCHAR   file[MAX_PATH];
     HWND    hWnd;
-    HRESULT hr;
+    HRESULT result_code;
     MSG     msg;
     BOOL    result;
 
-    (void)hPrevInstance;
-    (void)lpCmdLine;
-
     EnableEfficiencyMode();
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-    hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-    if (FAILED(hr))
+    result_code = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (FAILED(result_code))
     {
         return 1;
     }
     InitImmersiveControls();
-    ResolveFile(file, MAX_PATH);
+    if (!ResolveFile(file, MAX_PATH))
+    {
+        MessageBox(NULL, TEXT("The media path cannot be represented or is too long."),
+                   TEXT("ImmersiveWindowDemo"), MB_ICONERROR);
+        CoUninitialize();
+        return 1;
+    }
 
-    hWnd = CreateWindowExW(WS_EX_NOREDIRECTIONBITMAP,
-                           IMMERSIVE_CLASSW,
-                           L"ImmersiveWindow32 Demo",
+    hWnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP,
+                           IMMERSIVE_CLASS,
+                           TEXT("ImmersiveWindow32 Demo"),
                            BCS_DEBUG | BCS_BLURBEHIND | BCS_CENTERED | BCS_WINDOW,
                            0,
                            0,
-                           1280,
-                           720,
+                           VIDEO_WINDOW_WIDTH,
+                           VIDEO_WINDOW_HEIGHT,
                            NULL,
                            NULL,
                            hInstance,
@@ -238,11 +298,46 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
     ShowWindow(hWnd, nShowCmd);
     UpdateWindow(hWnd);
-    while ((result = GetMessageW(&msg, NULL, 0, 0)) > 0)
+    for (;;)
     {
+        result = GetMessage(&msg, NULL, 0, 0);
+        if (0 >= result)
+        {
+            break;
+        }
         TranslateMessage(&msg);
-        DispatchMessageW(&msg);
+        DispatchMessage(&msg);
     }
     CoUninitialize();
     return result < 0 ? 1 : (int)msg.wParam;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The native GUI entry obtains generic Win32 launch state without a C runtime startup.
+ */
+uint32_t OS_Application_Main(void)
+{
+    STARTUPINFO startup;
+    HINSTANCE   instance;
+    bool_t      has_show_command;
+    int         show_command;
+    int         result;
+
+    startup.cb      = sizeof(startup);
+    instance        = GetModuleHandle(NULL);
+    show_command    = SW_SHOWDEFAULT;
+    GetStartupInfo(&startup);
+    has_show_command = 0 != (startup.dwFlags & STARTF_USESHOWWINDOW);
+    if (has_show_command)
+    {
+        show_command = (int)startup.wShowWindow;
+    }
+    result = 1;
+    if (NULL != instance)
+    {
+        result = RunDemo(instance, show_command);
+    }
+    return (uint32_t)result;
 }

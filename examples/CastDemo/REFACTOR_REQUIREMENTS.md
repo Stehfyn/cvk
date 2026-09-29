@@ -121,6 +121,30 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
 
 These are acceptance requirements, not a claim that the current build passes.
 
+## Whole-solution policy correction (2026-09-29)
+
+The prior policy covered CastDemo and CVK but missed the ImmersiveWindowDemo
+targets, SCVK and the root test programs. Their previous successful targeted
+builds did not establish compliance with the required diagnostics. The `/W4`
+settings have been removed from owned targets. The root project now applies the
+shared policy after all targets are declared, including configurations without
+examples. External targets retain their explicitly separate policy.
+
+The project-policy verifier now discovers every generated C project instead of
+checking a fixed list. It verifies 55 owned and 31 external targets, including
+every configuration of `immersive-video` and `ImmersiveWindowDemo`. This is
+configuration evidence, not build success. The full Release SLNX run in
+`build/whole-slnx-all-owned-release.log` failed. SCVK, root tests and CastDemo
+still have source diagnostics. No complete Debug or Release solution pass is
+established.
+
+`immersive-video` subsequently passes its native Release compilation and
+Clang-Tidy checks in `build/immersive-strict-video-release.log`; the dependent
+GUI fails later in that same log. Its renderer uses CVK device, extension and
+queue queries. The bounded extension-query storage lives in the existing
+renderer object rather than a 136 KB automatic buffer. This does not close the
+separate lifecycle, allocation, GUI convention or full application requirements.
+
 The user additionally requires Valgrind checks and fully sanitized validation.
 Provide reproducible sanitizer and Valgrind build/run configurations, preserving
 the strict compiler and analysis requirements. Cover production code, fixtures,
