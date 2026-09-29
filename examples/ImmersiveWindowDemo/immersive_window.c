@@ -13,6 +13,7 @@
 #include "presentation.h"
 #include "os/win32/os_text.h"
 #include "os/os_compiler.h"
+#include "os/os_assert.h"
 #include "os/os_types.h"
 
 #include <Windows.h> // IWYU pragma: keep
@@ -471,7 +472,7 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     cdxgiObjectGetParentAsFactory2((IDXGIObject*)adapter, &factory);
     desktop = GetDC(NULL);
     desktop_available = (NULL != desktop);
-    Check(desktop_available, TEXT("primary desktop DC"));
+    LOGASSERT(desktop_available);
     desktop_width = GetDeviceCaps(desktop, DESKTOPHORZRES);
     desktop_height = GetDeviceCaps(desktop, DESKTOPVERTRES);
     desktop_released = (0 != ReleaseDC(NULL, desktop));
