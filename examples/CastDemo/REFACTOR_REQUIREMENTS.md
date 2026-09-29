@@ -282,6 +282,13 @@ failure/teardown paths. OS and third-party boundaries are included in the eviden
 they cannot be assumed exempt because the allocation is outside CastDemo's source.
 Read-only file mapping also creates resources and needs lifecycle evidence.
 
+Cast channel frame and TLS record buffers are now reserved during
+`CastSession_Initialize` and reused across connections. This does **not** close
+the reconnect allocation defect: `ConnectTcp` still calls `getaddrinfo`.
+SChannel handshake output now uses startup-owned storage bounded by the
+package's queried maximum token size. The provider's credential/context
+operations also need allocation evidence before this path can satisfy the goal.
+
 Moving a blocking operation or allocator to another thread does not make that
 operation realtime or allocation-free. UI handlers need bounded work, background
 processing needs bounded storage and scheduling, and gain must update the running
@@ -510,7 +517,7 @@ build while any applicable requirement remains unverified.
 - One discovery worker is initialized once and reused; repeated worker submissions
   and idempotent shutdown are tested.
 - Paint-time brush creation and GUI keyframe allocation were removed.
-- Session error text is copied before channel destruction; session storage is not
+- Session error text is copied before channel closure; session storage is not
   released until the session thread has actually exited.
 - The main window uses typed message-cracker handlers. Full convention compliance
   remains open as stated above.

@@ -124,6 +124,7 @@ typedef struct CastSession_State_s
     CastMedia_Channel_t replacementUpdates;                  ///< GUI owner to runner, latest complete pair.
     const CastMedia_t*  proxy;                               ///< Runner borrow, stable until its next proxy Take.
     CastSessionConfig   config;
+    CastChannel_Workspace_t channel;
     CastChannel*        pChannel;
     byte_t              loadPayload[LOAD_PAYLOAD_CAPACITY];
     cvkJsonValue        jsonValues[JSON_VALUE_CAPACITY];     ///< Startup-owned response storage, exclusive to the runner.
@@ -1729,7 +1730,11 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
     bool_t   poll_due;
 
     SetPhase(pSession, CAST_STATE_CONNECTING, "CONNECTING");
-    pSession->pChannel = CastChannel_Connect(pSession->config.host, CAST_PORT, error, sizeof(error));
+    pSession->pChannel = CastChannel_Connect(&pSession->channel,
+                                             pSession->config.host,
+                                             CAST_PORT,
+                                             error,
+                                             sizeof(error));
     if (NULL == pSession->pChannel)
     {
         Log(pSession, "cast: %s", error);
@@ -1934,7 +1939,7 @@ done:
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Only startup establishes native session storage. Individual casts reuse it.
+ *  Only startup establishes native session and Cast channel storage. Individual casts reuse both.
  *  Native residency/resource failure remains distinguishable from caller misuse.
  */
 bool_t CastSession_Initialize(CastSession_t* session)
@@ -1951,6 +1956,7 @@ bool_t CastSession_Initialize(CastSession_t* session)
     {
         session->state           = (CastSession_State_t*)OS_Memory_GetAddress(&session->memory);
         session->state->pChannel = NULL;
+        initialized = CastChannel_Initialize(&session->state->channel);
     }
 
     return initialized;
@@ -2248,6 +2254,7 @@ bool_t CastSession_TryClose(CastSession_t* session)
     bool_t running;
     bool_t prepared;
     bool_t can_close;
+    bool_t channel_closed;
     bool_t closed;
 
     LOGASSERT(NULL != session);
@@ -2258,10 +2265,18 @@ bool_t CastSession_TryClose(CastSession_t* session)
     closed    = FALSE;
     if (can_close)
     {
-        closed = OS_Memory_TryClose(&session->memory);
-        if (closed)
+        channel_closed = (NULL == session->state);
+        if (!channel_closed)
         {
-            session->state = NULL;
+            channel_closed = CastChannel_TryClose(&session->state->channel);
+        }
+        if (channel_closed)
+        {
+            closed = OS_Memory_TryClose(&session->memory);
+            if (closed)
+            {
+                session->state = NULL;
+            }
         }
     }
 

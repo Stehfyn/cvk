@@ -2,6 +2,7 @@
 ** the Media Foundation / DirectComposition bridge. Shared textures stay on the
 ** same adapter; keyed mutexes and external queue ownership protect both APIs. */
 #include "renderer.h"
+#include "os/os_compiler.h"
 #include "cdx11.h"
 #include "cdxgi.h"
 #include <d3dcompiler.h>
@@ -228,13 +229,13 @@ static void CreateDevice(VideoRenderer* r)
     cvkCreateFence(r->device, NULL, 0, NULL, &r->fence);
 }
 
-static void CreateView(VideoRenderer* r, Image* image, int index, VkFormat format, VkImageAspectFlags aspect)
+static FORCE_INLINE void CreateView(VideoRenderer* r, Image* image, int index, VkFormat format, VkImageAspectFlags aspect)
 {
     VkImageSubresourceRange range = {aspect, 0, 1, 0, 1};
     cvkCreateImageView2D(r->device, NULL, 0, image->image, format, range, NULL, &image->views[index]);
 }
 
-static void CreateFramebuffer(VideoRenderer* r, Image* image)
+static FORCE_INLINE void CreateFramebuffer(VideoRenderer* r, Image* image)
 {
     cvkCreateFramebuffer(r->device, NULL, 0, r->renderPass, 1, image->views, image->width, image->height, 1, NULL, &image->framebuffer);
 }
@@ -321,7 +322,7 @@ static void CreateSharedImage(VideoRenderer* r, Image* image, UINT width, UINT h
     }
 }
 
-static void DestroyImage(VideoRenderer* r, Image* image)
+static FORCE_INLINE void DestroyImage(VideoRenderer* r, Image* image)
 {
     /* Vulkan idle alone does not wait for D3D's queued copies. */
     if (image->mutex)
@@ -360,21 +361,31 @@ static void DestroyImage(VideoRenderer* r, Image* image)
     ZeroMemory(image, sizeof(*image));
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Releases a previously selected upload plane without a runtime index.
+ */
+static FORCE_INLINE void DestroyFramePlane(VideoRenderer*              renderer,
+                                           ID3D11RenderTargetView*     target,
+                                           ID3D11ShaderResourceView*   view,
+                                           Image*                      plane)
+{
+    if (target)
+    {
+        cdxgiUnknownRelease((IUnknown*)target);
+    }
+    if (view)
+    {
+        cdxgiUnknownRelease((IUnknown*)view);
+    }
+    DestroyImage(renderer, plane);
+}
+
 static void DestroyFrame(VideoRenderer* r, Frame* frame)
 {
-    int index;
-    for (index = 0; index < 2; ++index)
-    {
-        if (frame->targets[index])
-        {
-            cdxgiUnknownRelease((IUnknown*)frame->targets[index]);
-        }
-        if (frame->views[index])
-        {
-            cdxgiUnknownRelease((IUnknown*)frame->views[index]);
-        }
-        DestroyImage(r, &frame->planes[index]);
-    }
+    DestroyFramePlane(r, frame->targets[0], frame->views[0], &frame->planes[0]);
+    DestroyFramePlane(r, frame->targets[1], frame->views[1], &frame->planes[1]);
     if (frame->texture)
     {
         cdxgiUnknownRelease((IUnknown*)frame->texture);
@@ -384,7 +395,7 @@ static void DestroyFrame(VideoRenderer* r, Frame* frame)
 
 /* Copy each NV12 plane without filtering or color conversion. D3D resolves its
 ** native plane layout; Vulkan receives ordinary R8/RG8 images. No CPU readback. */
-static void CreatePlaneCopyShaders(VideoRenderer* r)
+static FORCE_INLINE void CreatePlaneCopyShaders(VideoRenderer* r)
 {
     static const char source[] = "float4 VS(uint id : SV_VertexID) : SV_Position {"
                                  "float2 p = float2((id << 1) & 2, id & 2);"
@@ -505,7 +516,7 @@ static void CreatePasses(VideoRenderer* r)
     CreatePipeline(r, 1, bicubic_frag, sizeof(bicubic_frag));
 }
 
-VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID3D11DeviceContext* context)
+extern FORCE_INLINE VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID3D11DeviceContext* context)
 {
     VideoRenderer* renderer = (VideoRenderer*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*renderer));
     if (!renderer)
@@ -520,7 +531,7 @@ VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID3D11DeviceContext* c
     return renderer;
 }
 
-static void WriteImage(VideoRenderer* r, VkDescriptorSet set, uint32_t binding, VkImageView view, VkSampler sampler)
+static FORCE_INLINE void WriteImage(VideoRenderer* r, VkDescriptorSet set, uint32_t binding, VkImageView view, VkSampler sampler)
 {
     VkDescriptorImageInfo info = {sampler, view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
     VkWriteDescriptorSet  write =
@@ -528,29 +539,79 @@ static void WriteImage(VideoRenderer* r, VkDescriptorSet set, uint32_t binding, 
     cvkUpdateDescriptorSets(r->device, 1, &write, 0, NULL);
 }
 
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Creates one explicitly selected NV12 plane and binds its Vulkan image.
+ */
+static FORCE_INLINE void CreateFramePlane(VideoRenderer*                renderer,
+                                          Frame*                        frame,
+                                          Image*                        plane,
+                                          ID3D11ShaderResourceView**    view,
+                                          ID3D11RenderTargetView**      target,
+                                          VkDescriptorSet               descriptor,
+                                          uint32_t                      binding,
+                                          UINT                          width,
+                                          UINT                          height,
+                                          VkFormat                      vk_format,
+                                          DXGI_FORMAT                   dxgi_format)
+{
+    CreateSharedImage(renderer, plane, width, height, vk_format, dxgi_format, FALSE);
+    cdx11DeviceCreateTexture2DShaderResourceView(renderer->d3d,
+                                                  (ID3D11Resource*)frame->texture,
+                                                  0,
+                                                  1,
+                                                  dxgi_format,
+                                                  view);
+    cdx11DeviceCreateTexture2DRenderTargetView(renderer->d3d,
+                                                (ID3D11Resource*)plane->texture,
+                                                0,
+                                                dxgi_format,
+                                                target);
+    WriteImage(renderer, descriptor, binding, plane->views[0], renderer->samplers[0]);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Recreates the two fixed planes of one frame slot.
+ */
+static FORCE_INLINE void RecreateFrame(VideoRenderer* renderer,
+                                       Frame*         frame,
+                                       VkDescriptorSet descriptor,
+                                       UINT           width,
+                                       UINT           height)
+{
+    DXGI_SAMPLE_DESC sample = {1, 0};
+
+    DestroyFrame(renderer, frame);
+    cdx11DeviceCreateTexture2D(renderer->d3d,
+                               width,
+                               height,
+                               1,
+                               1,
+                               DXGI_FORMAT_NV12,
+                               sample,
+                               D3D11_USAGE_DEFAULT,
+                               D3D11_BIND_SHADER_RESOURCE,
+                               0,
+                               0,
+                               NULL,
+                               &frame->texture);
+    CreateFramePlane(renderer, frame, &frame->planes[0], &frame->views[0], &frame->targets[0],
+                     descriptor, 0, width, height, VK_FORMAT_R8_UNORM, DXGI_FORMAT_R8_UNORM);
+    CreateFramePlane(renderer, frame, &frame->planes[1], &frame->views[1], &frame->targets[1],
+                     descriptor, 1, width >> 1, height >> 1, VK_FORMAT_R8G8_UNORM, DXGI_FORMAT_R8G8_UNORM);
+}
+
 void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
 {
     VkExtent3D extent = {width, height, 1};
-    int        index;
     CVK_ASSERT(width && height && !(width & 1) && !(height & 1));
     cvkDeviceWaitIdle(r->device);
     DestroyImage(r, &r->converted);
-    for (index = 0; index < VIDEO_RENDERER_FRAMES; ++index)
-    {
-        Frame*           frame  = &r->ring[index];
-        DXGI_SAMPLE_DESC sample = {1, 0};
-        int              plane;
-        DestroyFrame(r, frame);
-        cdx11DeviceCreateTexture2D(r->d3d, width, height, 1, 1, DXGI_FORMAT_NV12, sample, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, NULL, &frame->texture);
-        for (plane = 0; plane < 2; ++plane)
-        {
-            DXGI_FORMAT format = plane ? DXGI_FORMAT_R8G8_UNORM : DXGI_FORMAT_R8_UNORM;
-            CreateSharedImage(r, &frame->planes[plane], width >> plane, height >> plane, plane ? VK_FORMAT_R8G8_UNORM : VK_FORMAT_R8_UNORM, format, FALSE);
-            cdx11DeviceCreateTexture2DShaderResourceView(r->d3d, (ID3D11Resource*)frame->texture, 0, 1, format, &frame->views[plane]);
-            cdx11DeviceCreateTexture2DRenderTargetView(r->d3d, (ID3D11Resource*)frame->planes[plane].texture, 0, format, &frame->targets[plane]);
-            WriteImage(r, r->frames[index], (uint32_t)plane, frame->planes[plane].views[0], r->samplers[0]);
-        }
-    }
+    RecreateFrame(r, &r->ring[0], r->frames[0], width, height);
+    RecreateFrame(r, &r->ring[1], r->frames[1], width, height);
     r->converted.width  = width;
     r->converted.height = height;
     cvkSetupImage(r->physical,
@@ -581,24 +642,64 @@ void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
     r->outputWidth = r->outputHeight = 0;
 }
 
-ID3D11Texture2D* VideoRenderer_GetFrame(VideoRenderer* r, int slot)
+/** The ring count must remain a power of two for the bounded index mask. */
+#if (VIDEO_RENDERER_FRAMES & (VIDEO_RENDERER_FRAMES - 1)) != 0
+#error The video frame ring count must be a power of two.
+#endif
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Resolves the frame before validating the caller's slot so every load uses a bounded index.
+ */
+static FORCE_INLINE uint32_t FrameIndex(int slot)
 {
-    CVK_ASSERT(slot >= 0 && slot < VIDEO_RENDERER_FRAMES);
-    return r->ring[slot].texture;
+    uint32_t index;
+
+    index = (uint32_t)slot & (VIDEO_RENDERER_FRAMES - 1);
+    CVK_ASSERT(slot == (int)index);
+    return index;
 }
 
-void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
+extern FORCE_INLINE ID3D11Texture2D* VideoRenderer_GetFrame(VideoRenderer* r, int slot)
 {
-    CVK_ASSERT(slot >= 0 && slot < VIDEO_RENDERER_FRAMES);
-    cdxgiKeyedMutexAcquireSync(r->ring[slot].planes[0].mutex, 0, INFINITE);
-    cdxgiKeyedMutexAcquireSync(r->ring[slot].planes[1].mutex, 0, INFINITE);
+    uint32_t frame_index;
+
+    frame_index = FrameIndex(slot);
+    return r->ring[frame_index].texture;
+}
+
+extern FORCE_INLINE void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
+{
+    uint32_t frame_index;
+
+    frame_index = FrameIndex(slot);
+    cdxgiKeyedMutexAcquireSync(r->ring[frame_index].planes[0].mutex, 0, INFINITE);
+    cdxgiKeyedMutexAcquireSync(r->ring[frame_index].planes[1].mutex, 0, INFINITE);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Draws one selected upload plane through its already resolved views.
+ */
+static FORCE_INLINE void DrawUploadPlane(VideoRenderer*               renderer,
+                                         const Image*                  image,
+                                         ID3D11ShaderResourceView**   view,
+                                         ID3D11RenderTargetView**     target)
+{
+    D3D11_VIEWPORT viewport = {0, 0, (FLOAT)image->width, (FLOAT)image->height, 0, 1};
+
+    cdx11DeviceContextRSSetViewports(renderer->context, 1, &viewport);
+    cdx11DeviceContextPSSetShaderResources(renderer->context, 0, 1, view);
+    cdx11DeviceContextOMSetRenderTargets(renderer->context, 1, target, NULL);
+    cdx11DeviceContextDraw(renderer->context, 3, 0);
 }
 
 void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
 {
-    Frame*                    frame = &r->ring[slot];
+    Frame*                    frame = &r->ring[FrameIndex(slot)];
     ID3D11ShaderResourceView* none  = NULL;
-    int                       plane;
     cdx11DeviceContextIASetInputLayout(r->context, NULL);
     cdx11DeviceContextIASetPrimitiveTopology(r->context, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     cdx11DeviceContextVSSetShader(r->context, r->copyVertex, NULL, 0);
@@ -607,14 +708,8 @@ void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
     cdx11DeviceContextRSSetState(r->context, NULL);
     cdx11DeviceContextOMSetBlendState(r->context, NULL, NULL, UINT_MAX);
     cdx11DeviceContextOMSetDepthStencilState(r->context, NULL, 0);
-    for (plane = 0; plane < 2; ++plane)
-    {
-        D3D11_VIEWPORT viewport = {0, 0, (FLOAT)frame->planes[plane].width, (FLOAT)frame->planes[plane].height, 0, 1};
-        cdx11DeviceContextRSSetViewports(r->context, 1, &viewport);
-        cdx11DeviceContextPSSetShaderResources(r->context, 0, 1, &frame->views[plane]);
-        cdx11DeviceContextOMSetRenderTargets(r->context, 1, &frame->targets[plane], NULL);
-        cdx11DeviceContextDraw(r->context, 3, 0);
-    }
+    DrawUploadPlane(r, &frame->planes[0], &frame->views[0], &frame->targets[0]);
+    DrawUploadPlane(r, &frame->planes[1], &frame->views[1], &frame->targets[1]);
     cdx11DeviceContextPSSetShaderResources(r->context, 0, 1, &none);
     cdx11DeviceContextOMSetRenderTargets(r->context, 0, NULL, NULL);
     cdxgiKeyedMutexReleaseSync(frame->planes[0].mutex, 0);
@@ -622,7 +717,7 @@ void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
     cdx11DeviceContextFlush(r->context);
 }
 
-static void AcquireImage(VideoRenderer* r, Image* image, VkImageLayout layout, VkAccessFlags access, VkPipelineStageFlags stage)
+static FORCE_INLINE void AcquireImage(VideoRenderer* r, Image* image, VkImageLayout layout, VkAccessFlags access, VkPipelineStageFlags stage)
 {
     cvkCmdImageQueueOwnershipBarrier(r->command,
                                      NULL,
@@ -639,7 +734,7 @@ static void AcquireImage(VideoRenderer* r, Image* image, VkImageLayout layout, V
                                      0);
 }
 
-static void ReleaseImage(VideoRenderer* r, Image* image, VkImageLayout layout, VkAccessFlags access, VkPipelineStageFlags stage)
+static FORCE_INLINE void ReleaseImage(VideoRenderer* r, Image* image, VkImageLayout layout, VkAccessFlags access, VkPipelineStageFlags stage)
 {
     cvkCmdImageQueueOwnershipBarrier(r->command,
                                      NULL,
@@ -676,6 +771,7 @@ static void DrawPass(VideoRenderer* r, Image* target, int pass, VkDescriptorSet 
 
 void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int slot, BOOL convert, UINT width, UINT height)
 {
+    uint32_t             frame_index;
     VkResult             result;
     ID3D11Resource*      backBuffer;
     ID3D11Texture2D*     texture;
@@ -687,7 +783,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     uint32_t             count          = convert ? 3 : 1;
     BOOL                 redraw;
 
-    CVK_ASSERT(slot >= 0 && slot < VIDEO_RENDERER_FRAMES);
+    frame_index = FrameIndex(slot);
     cdx11ViewGetResource((ID3D11View*)target, &backBuffer);
     cdxgiUnknownQueryInterface((IUnknown*)backBuffer, &IID_ID3D11Texture2D, (void**)&texture);
     cdx11Texture2DGetDesc(texture, &desc);
@@ -710,8 +806,8 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         cvkBeginCommandBuffer(r->command, NULL, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
         if (convert)
         {
-            AcquireImage(r, &r->ring[slot].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-            AcquireImage(r, &r->ring[slot].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+            AcquireImage(r, &r->ring[frame_index].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+            AcquireImage(r, &r->ring[frame_index].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
             cvkCmdImageBarrier(r->command,
                                NULL,
                                r->convertedInitialized ? VK_ACCESS_SHADER_READ_BIT : 0,
@@ -723,7 +819,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
                                r->convertedInitialized ? VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT : VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                                0);
-            DrawPass(r, &r->converted, 0, r->frames[slot], r->converted.width, r->converted.height);
+            DrawPass(r, &r->converted, 0, r->frames[frame_index], r->converted.width, r->converted.height);
             cvkCmdImageBarrier(r->command,
                                NULL,
                                VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
@@ -735,8 +831,8 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
                                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                                0);
-            ReleaseImage(r, &r->ring[slot].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-            ReleaseImage(r, &r->ring[slot].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+            ReleaseImage(r, &r->ring[frame_index].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+            ReleaseImage(r, &r->ring[frame_index].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
             r->convertedInitialized = TRUE;
         }
         AcquireImage(r, &r->output, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
@@ -744,8 +840,8 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         ReleaseImage(r, &r->output, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
         cvkEndCommandBuffer(r->command);
         syncs[0] = r->output.memory;
-        syncs[1] = r->ring[slot].planes[0].memory;
-        syncs[2] = r->ring[slot].planes[1].memory;
+        syncs[1] = r->ring[frame_index].planes[0].memory;
+        syncs[2] = r->ring[frame_index].planes[1].memory;
         cvkResetFence(r->device, r->fence);
         cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(r->queue, NULL, count, syncs, acquireKeys, timeouts, count, syncs, releaseKeys, 0, NULL, NULL, 1, &r->command, 0, NULL, r->fence);
         r->outputWidth  = width;
@@ -770,6 +866,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
 
 void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y, int slot)
 {
+    uint32_t       frame_index;
     VkResult       result;
     VkDeviceMemory syncs[3];
     uint64_t       acquireKeys[3] = {0, 0, 0};
@@ -779,7 +876,7 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     UINT           height         = r->converted.height;
     D3D11_BOX      source         = {0, 0, 0, width, height, 1};
 
-    CVK_ASSERT(slot >= 0 && slot < VIDEO_RENDERER_FRAMES);
+    frame_index = FrameIndex(slot);
     if (r->output.width != width || r->output.height != height)
     {
         cvkDeviceWaitIdle(r->device);
@@ -788,17 +885,17 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     }
     cvkResetCommandBuffer(r->command, 0);
     cvkBeginCommandBuffer(r->command, NULL, VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, NULL);
-    AcquireImage(r, &r->ring[slot].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-    AcquireImage(r, &r->ring[slot].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    AcquireImage(r, &r->ring[frame_index].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    AcquireImage(r, &r->ring[frame_index].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     AcquireImage(r, &r->output, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-    DrawPass(r, &r->output, 0, r->frames[slot], width, height);
+    DrawPass(r, &r->output, 0, r->frames[frame_index], width, height);
     ReleaseImage(r, &r->output, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-    ReleaseImage(r, &r->ring[slot].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
-    ReleaseImage(r, &r->ring[slot].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    ReleaseImage(r, &r->ring[frame_index].planes[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    ReleaseImage(r, &r->ring[frame_index].planes[1], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     cvkEndCommandBuffer(r->command);
     syncs[0] = r->output.memory;
-    syncs[1] = r->ring[slot].planes[0].memory;
-    syncs[2] = r->ring[slot].planes[1].memory;
+    syncs[1] = r->ring[frame_index].planes[0].memory;
+    syncs[2] = r->ring[frame_index].planes[1].memory;
     cvkResetFence(r->device, r->fence);
     cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(r->queue, NULL, 3, syncs, acquireKeys, timeouts, 3, syncs, releaseKeys, 0, NULL, NULL, 1, &r->command, 0, NULL, r->fence);
     cdxgiKeyedMutexAcquireSync(r->output.mutex, 1, INFINITE);

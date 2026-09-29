@@ -13,8 +13,6 @@
 #define CVK_DIAGNOSTIC_CHAR_ZERO      ('0')
 #define CVK_DIAGNOSTIC_CHAR_MINUS     ('-')
 #define CVK_DIAGNOSTIC_CHAR_END       ('\0')
-#define CVK_DIAGNOSTIC_CHAR_SEPARATOR (':')
-#define CVK_DIAGNOSTIC_CHAR_LF        ('\n')
 #define CVK_DIAGNOSTIC_PREFIX         (": cvk fatal: ")
 
 /*=================================================================================================
@@ -114,11 +112,11 @@ CVK_NORETURN void cvkFatal(const char* pExpression,
     char_t* text;
 
     text = cvkFormatDiagnosticLine(digits, line);
-    (void)fputs(pFile, stderr);
-    (void)fputc(CVK_DIAGNOSTIC_CHAR_SEPARATOR, stderr);
-    (void)fputs(text, stderr);
-    (void)fputs(CVK_DIAGNOSTIC_PREFIX, stderr);
-    (void)fputs(pExpression, stderr);
-    (void)fputc(CVK_DIAGNOSTIC_CHAR_LF, stderr);
-    abort();
+    cvkDiagnosticWrite(pFile);
+    cvkDiagnosticWrite(":");
+    cvkDiagnosticWrite(text);
+    cvkDiagnosticWrite(CVK_DIAGNOSTIC_PREFIX);
+    cvkDiagnosticWrite(pExpression);
+    cvkDiagnosticWrite("\n");
+    cvkDiagnosticExit();
 }

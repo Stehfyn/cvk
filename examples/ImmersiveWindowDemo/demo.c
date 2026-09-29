@@ -3,13 +3,16 @@
 ** The window owns a composition swap chain and a cached native-resolution video bitmap.
 ** Media Foundation decodes on the same D3D11 device; CVK converts new video frames.
 ** D2D scales the cached video and draws the caption into the same presented frame.
-** No C runtime beyond the entry point: Win32 only.
+** Native Win32 startup avoids a C runtime dependency.
 **
 **   ImmersiveWindowDemo [file.mp4]       default: demo.mp4 beside the executable */
 
 #include "immersive_window.h"
 #include "presentation.h"
 #include "video.h"
+#include "os/os_compiler.h"
+#include "os/os_assert.h"
+#include "crt/crt_memory.h"
 #include "os/os_process.h"
 #include "os/os_types.h"
 #include "os/win32/os_text.h"
@@ -38,7 +41,7 @@ static VideoInfo               g_info;
 static BOOL                    g_fPaused;
 
 /* Opt into the same CPU policy as Task Manager's Efficiency mode (green leaf). */
-static void EnableEfficiencyMode(void)
+static FORCE_INLINE void EnableEfficiencyMode(void)
 {
     PROCESS_POWER_THROTTLING_STATE power = {0};
     HANDLE process = GetCurrentProcess();
@@ -95,7 +98,7 @@ static void ArmVideoTimer(HWND hWnd)
     }
 }
 
-static void SyncPlaybackClock(HWND hWnd)
+static FORCE_INLINE void SyncPlaybackClock(HWND hWnd)
 {
     BOOL paused = g_fPaused || IsIconic(hWnd);
     LARGE_INTEGER now;
@@ -123,7 +126,7 @@ static void DrawVideo(HWND hWnd, ID3D11Texture2D* texture, UINT subresource, UIN
     VideoStream_CopyFrame(g_pVideo, texture, subresource, x, y);
 }
 
-static void AdvanceVideo(HWND hWnd)
+static FORCE_INLINE void AdvanceVideo(HWND hWnd)
 {
     LARGE_INTEGER now;
     LONGLONG due;
@@ -220,10 +223,17 @@ static bool_t ResolveFile(TCHAR* pszFile, int capacity)
     bool_t  found;
     bool_t  converted;
     LPTSTR  copied;
+    LPTSTR  component;
+    LPTSTR  cursor;
     DWORD   length;
     DWORD   index;
-    int     lastSlash;
+    DWORD   path_capacity;
+    uint32_t suffix_units;
+    uint32_t component_offset;
+    bool_t module_path_ok;
 
+    suffix_units = (uint32_t)(sizeof(TEXT("demo.mp4")) / sizeof(TCHAR));
+    LOGASSERT(capacity >= (int)suffix_units);
     pszFile[0]  = TEXT('\0');
     copied      = NULL;
     unit_count  = 0;
@@ -236,19 +246,23 @@ static bool_t ResolveFile(TCHAR* pszFile, int capacity)
     }
     else
     {
-        lastSlash = -1;
-        length    = GetModuleFileName(NULL, pszFile, (DWORD)capacity);
-        if (0 < length && length < (DWORD)capacity)
+        path_capacity = (DWORD)capacity - suffix_units + 1;
+        CRT_Memory_Set(pszFile, 0, (uint64_t)capacity * sizeof(TCHAR));
+        length         = GetModuleFileName(NULL, pszFile, path_capacity);
+        module_path_ok = (0 < length) && (length < path_capacity);
+        cursor         = pszFile;
+        component      = pszFile;
+        for (index = 0; index < path_capacity; ++index)
         {
-            for (index = 0; index < length; ++index)
+            if (TEXT('\\') == *cursor)
             {
-                if (TEXT('\\') == pszFile[index])
-                {
-                    lastSlash = (int)index;
-                }
+                component = cursor + 1;
             }
-            copied = lstrcpyn(pszFile + lastSlash + 1, TEXT("demo.mp4"), capacity - lastSlash - 1);
+            ++cursor;
         }
+        component_offset = (uint32_t)(component - pszFile) * (uint32_t)module_path_ok;
+        copied           = lstrcpy(pszFile + component_offset, TEXT("demo.mp4"));
+        copied           = module_path_ok ? copied : NULL;
     }
     return NULL != copied;
 }
@@ -325,9 +339,9 @@ uint32_t OS_Application_Main(void)
     int         show_command;
     int         result;
 
-    startup.cb      = sizeof(startup);
-    instance        = GetModuleHandle(NULL);
-    show_command    = SW_SHOWDEFAULT;
+    startup.cb       = sizeof(startup);
+    instance         = GetModuleHandle(NULL);
+    show_command     = SW_SHOWDEFAULT;
     GetStartupInfo(&startup);
     has_show_command = 0 != (startup.dwFlags & STARTF_USESHOWWINDOW);
     if (has_show_command)

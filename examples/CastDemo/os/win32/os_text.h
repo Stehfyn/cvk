@@ -44,10 +44,11 @@
  * \brief Reads a native Win32 string into caller-owned UTF-16 storage.
  *
  * \par Requirements:
- *  - 001 Pointers shall be valid and disjoint; capacity shall include a terminator and fit INT_MAX.
- *  - 002 Input shall be terminated within INT_MAX units.
- *  - 003 ANSI builds shall decode the active Windows code page without accepting malformed input.
- *  - 004 No allocation shall occur. Failure shall leave an empty terminated output.
+ *  - 001 Pointers shall be valid and disjoint; capacity shall include a terminator.
+ *  - 002 Native conversion calls shall be bounded to INT_MAX units.
+ *  - 003 Input shall be terminated within INT_MAX units.
+ *  - 004 ANSI builds shall decode the active Windows code page without accepting malformed input.
+ *  - 005 No allocation shall occur. Failure shall leave an empty terminated output.
  *
  * \param[out] output     UTF-16 destination
  * \param[in]  capacity   Destination units including its terminator
@@ -65,10 +66,11 @@ bool_t OS_Text_ReadNative(uint16_t* output,
  * \brief Writes a UTF-16 string into caller-owned native Win32 storage.
  *
  * \par Requirements:
- *  - 001 Pointers shall be valid and disjoint; capacity shall include a terminator and fit INT_MAX.
- *  - 002 Input shall be terminated within INT_MAX units.
- *  - 003 ANSI builds shall reject best-fit and default-character substitutions.
- *  - 004 No allocation shall occur. Failure shall leave an empty terminated output.
+ *  - 001 Pointers shall be valid and disjoint; capacity shall include a terminator.
+ *  - 002 Native conversion calls shall be bounded to INT_MAX units.
+ *  - 003 Input shall be terminated within INT_MAX units.
+ *  - 004 ANSI builds shall reject best-fit and default-character substitutions.
+ *  - 005 No allocation shall occur. Failure shall leave an empty terminated output.
  *
  * \param[out] output     Native destination
  * \param[in]  capacity   Destination TCHAR units including its terminator

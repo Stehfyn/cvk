@@ -3,6 +3,7 @@
 ** video passes with cvk. Playback scheduling remains upstream's. */
 
 #include "video.h"
+#include "os/os_compiler.h"
 #include "cdx11.h"
 #include "cdxgi.h"
 #include "cmf.h"
@@ -125,7 +126,7 @@ typedef struct MappedStream
     volatile LONGLONG        prefetched; /* end of the range asked from the OS so far */
 } MappedStream;
 
-static void MappedStream_Prefetch(MappedStream* s, ULONGLONG from)
+static FORCE_INLINE void MappedStream_Prefetch(MappedStream* s, ULONGLONG from)
 {
     WIN32_MEMORY_RANGE_ENTRY range;
     ULONGLONG                end = from + PREFETCH_WINDOW;
@@ -143,20 +144,33 @@ static void MappedStream_Prefetch(MappedStream* s, ULONGLONG from)
     InterlockedExchange64(&s->prefetched, (LONGLONG)end);
 }
 
-static ULONG MappedStream_Copy(MappedStream* s, BYTE* pb, ULONG cb)
+static FORCE_INLINE ULONG MappedStream_Copy(MappedStream* s, BYTE* pb, ULONG cb)
 {
-    LONGLONG pos = s->position;
+    BYTE     scratch = 0;
+    BYTE*    view;
+    LONGLONG pos;
+    ULONGLONG offset;
     ULONGLONG remaining;
     ULONG    count;
-    if (NULL == s->pView || (ULONGLONG)pos >= s->size)
-    {
-        return 0;
-    }
-    remaining = s->size - (ULONGLONG)pos;
+    BOOL     has_view;
+    BOOL     in_range;
+    BOOL     can_copy;
+
+    pos = s->position;
+    has_view = NULL != s->pView;
+    in_range = (ULONGLONG)pos < s->size;
+    can_copy = has_view && in_range;
+    offset = (ULONGLONG)pos & (0ULL - (ULONGLONG)can_copy);
+    remaining = s->size - offset;
     count     = remaining < cb ? (ULONG)remaining : cb;
-    MappedStream_Prefetch(s, (ULONGLONG)pos);
-    CopyMemory(pb, s->pView + pos, count);
-    InterlockedExchange64(&s->position, pos + count);
+    count *= (ULONG)can_copy;
+    view = has_view ? s->pView : &scratch;
+    CopyMemory(pb, view + offset, count);
+    if (can_copy)
+    {
+        MappedStream_Prefetch(s, offset);
+        InterlockedExchange64(&s->position, pos + count);
+    }
     return count;
 }
 
@@ -179,7 +193,7 @@ static ULONG STDMETHODCALLTYPE MappedStream_AddRef(IMFByteStream* This)
 
 static HRESULT STDMETHODCALLTYPE MappedStream_Close(IMFByteStream* This);
 
-static ULONG STDMETHODCALLTYPE MappedStream_Release(IMFByteStream* This)
+static FORCE_INLINE ULONG STDMETHODCALLTYPE MappedStream_Release(IMFByteStream* This)
 {
     ULONG refs = (ULONG)InterlockedDecrement(&((MappedStream*)This)->refs);
     if (0 == refs)
@@ -326,7 +340,7 @@ static HRESULT STDMETHODCALLTYPE MappedStream_Flush(IMFByteStream* This)
     return S_OK;
 }
 
-static HRESULT STDMETHODCALLTYPE MappedStream_Close(IMFByteStream* This)
+static FORCE_INLINE HRESULT STDMETHODCALLTYPE MappedStream_Close(IMFByteStream* This)
 {
     MappedStream* stream = (MappedStream*)This;
     if (NULL != stream->pView)
@@ -397,7 +411,7 @@ static IMFByteStream* MappedStream_Create(LPCTSTR pszFile)
 
 /* --------------------------------------------------------------------------------- the passes */
 
-static void CreateFrameTextures(VideoStream* pStream)
+static FORCE_INLINE void CreateFrameTextures(VideoStream* pStream)
 {
     VideoRenderer_SetSize(pStream->pRenderer, pStream->info.Width, pStream->info.Height);
     pStream->ringHead   = 0;
@@ -410,7 +424,7 @@ static void CreateFrameTextures(VideoStream* pStream)
 /* The DXGI device manager requires the device's multithread protection (ffmpeg's d3d11va
 ** context set the same on this device). ID3D10Multithread is the one interface of the path no
 ** library wraps; its vtable is called. */
-static void ProtectDevice(ID3D11Device* pDevice)
+static FORCE_INLINE void ProtectDevice(ID3D11Device* pDevice)
 {
     ID3D10Multithread* pMultithread;
     if (SUCCEEDED(cdxgiUnknownQueryInterface((IUnknown*)pDevice, &IID_ID3D10Multithread, (void**)&pMultithread)))
@@ -420,7 +434,7 @@ static void ProtectDevice(ID3D11Device* pDevice)
     }
 }
 
-static void ReadInfo(VideoStream* pStream)
+static FORCE_INLINE void ReadInfo(VideoStream* pStream)
 {
     IMFMediaType* pType;
     cmfSourceReaderGetCurrentVideoMediaType(pStream->pReader, &pType);
@@ -491,7 +505,7 @@ VideoStream* VideoStream_Open(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     return pStream;
 }
 
-void VideoStream_GetInfo(const VideoStream* pStream, VideoInfo* pInfo)
+extern FORCE_INLINE void VideoStream_GetInfo(const VideoStream* pStream, VideoInfo* pInfo)
 {
     *pInfo = pStream->info;
 }
@@ -500,11 +514,15 @@ void VideoStream_GetInfo(const VideoStream* pStream, VideoInfo* pInfo)
 ** carries a DXGI buffer, otherwise by uploading the 2-D system-memory buffer. */
 static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
 {
-    IMFDXGIBuffer* pDXGIBuffer;
-    IMF2DBuffer2*  p2DBuffer;
+    IMFDXGIBuffer* pDXGIBuffer = NULL;
+    IMF2DBuffer2*  p2DBuffer = NULL;
+    HRESULT        dxgiResult;
+    HRESULT        buffer2DResult;
     BOOL           fCopied = FALSE;
 
-    if (SUCCEEDED(cmfSampleGetBufferAsDXGIBuffer(pSample, &pDXGIBuffer)))
+    dxgiResult = cmfSampleGetBufferAsDXGIBuffer(pSample, &pDXGIBuffer);
+    buffer2DResult = cmfSampleGetBufferAs2DBuffer2(pSample, &p2DBuffer);
+    if (SUCCEEDED(dxgiResult))
     {
         ID3D11Texture2D* pTexture;
         UINT             subresource;
@@ -532,7 +550,7 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         RELEASE(pDXGIBuffer);
         fCopied = TRUE;
     }
-    else if (SUCCEEDED(cmfSampleGetBufferAs2DBuffer2(pSample, &p2DBuffer)))
+    else if (SUCCEEDED(buffer2DResult))
     {
         BYTE* pScanline0;
         LONG  pitch;
@@ -552,8 +570,8 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
             fCopied = TRUE;
         }
         cmf2DBufferUnlock2D((IMF2DBuffer*)p2DBuffer);
-        RELEASE(p2DBuffer);
     }
+    RELEASE(p2DBuffer);
     return fCopied;
 }
 
@@ -611,7 +629,7 @@ static void FillRing(VideoStream* pStream, DWORD budgetMs)
 
 /* Decodes the next frame ahead of the display within the caller's time budget whenever a slot
 ** is free. */
-void VideoStream_Prefetch(VideoStream* pStream, DWORD budgetMs)
+extern FORCE_INLINE void VideoStream_Prefetch(VideoStream* pStream, DWORD budgetMs)
 {
     if (pStream->ringCount <= VIDEO_LOW_WATER)
     {
@@ -620,7 +638,7 @@ void VideoStream_Prefetch(VideoStream* pStream, DWORD budgetMs)
 }
 
 /* Takes the next decoded frame from the ring; decodes only when the ring is empty. */
-BOOL VideoStream_NextFrame(VideoStream* pStream)
+extern FORCE_INLINE BOOL VideoStream_NextFrame(VideoStream* pStream)
 {
     if (0 == pStream->ringCount)
     {
@@ -648,7 +666,7 @@ void VideoStream_Draw(VideoStream* pStream, ID3D11RenderTargetView* pTarget, UIN
     pStream->fConverted = TRUE;
 }
 
-void VideoStream_CopyFrame(VideoStream* stream, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y)
+extern FORCE_INLINE void VideoStream_CopyFrame(VideoStream* stream, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y)
 {
     if (stream->fHaveFrame)
     {
@@ -656,7 +674,7 @@ void VideoStream_CopyFrame(VideoStream* stream, ID3D11Texture2D* target, UINT su
     }
 }
 
-void VideoStream_Close(VideoStream* pStream)
+extern FORCE_INLINE void VideoStream_Close(VideoStream* pStream)
 {
     if (NULL == pStream)
     {

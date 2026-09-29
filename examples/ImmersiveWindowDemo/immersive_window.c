@@ -29,6 +29,9 @@
 #include <limits.h>
 #include <dcommon.h>
 #include <d3d11.h>
+#ifndef NDEBUG
+#include <d3d11sdklayers.h>
+#endif
 #include <d3dcommon.h>
 #include <dxgi.h>
 #include <dxgi1_2.h>
@@ -206,6 +209,7 @@ typedef struct tagIMMERSIVEWINDOW
     UINT16                 symbolGlyphs[3];
     /* application hooks and state */
     IMMERSIVEVIDEOPROC pVideoProc;
+    ULONGLONG lastToggleTime;
     RESIZEINFO     ri;
     BOOL           fLightMode;
     BOOL           fDarkMode;
@@ -227,7 +231,7 @@ static BOOL g_fActive;
 static HANDLE   g_hTrace;
 static LONGLONG g_traceOrigin;
 
-static LONGLONG Now(void)
+static FORCE_INLINE LONGLONG Now(void)
 {
     LARGE_INTEGER counter;
     QueryPerformanceCounter(&counter);
@@ -256,25 +260,21 @@ static void Trace(LPCTSTR pWhat, HRESULT hr)
     wsprintf(line, TEXT("%8ld us  %-28s hr=%08lX  vblank=%ld us  compose=%ld us\r\n"), (long)((now - g_traceOrigin) * MICROSECONDS_PER_SECOND / frequency.QuadPart), pWhat, (unsigned long)hr,
               (long)(((LONGLONG)timing.qpcVBlank - now) * MICROSECONDS_PER_SECOND / frequency.QuadPart), (long)(((LONGLONG)timing.qpcCompose - now) * MICROSECONDS_PER_SECOND / frequency.QuadPart));
     converted = OS_Text_ReadNative(unicode, TRACE_TEXT_CAPACITY, line);
-    if (converted)
-    {
-        encoded_count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
-                                           (LPCWCH)unicode, -1,
-                                           encoded, sizeof(encoded), NULL, NULL);
-        converted = 0 < encoded_count;
-        if (converted)
-        {
-            WriteFile(g_hTrace, encoded, (DWORD)(encoded_count - 1), &written, NULL);
-        }
-    }
+    encoded_count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
+                                       (LPCWCH)unicode, -1,
+                                       encoded, sizeof(encoded), NULL, NULL);
+    written = (DWORD)encoded_count;
+    written -= (DWORD)(0 < encoded_count);
+    written *= (DWORD)converted;
+    WriteFile(g_hTrace, encoded, written, &written, NULL);
 }
 
-static LPIMMERSIVEWINDOW GetState(HWND hWnd)
+static FORCE_INLINE LPIMMERSIVEWINDOW GetState(HWND hWnd)
 {
     return (LPIMMERSIVEWINDOW)GetProp(hWnd, IMMERSIVE_STATE_PROPERTY);
 }
 
-static void Check(BOOL condition, LPCTSTR pWhat)
+static FORCE_INLINE void Check(BOOL condition, LPCTSTR pWhat)
 {
     if (!condition)
     {
@@ -286,7 +286,7 @@ static void Check(BOOL condition, LPCTSTR pWhat)
 }
 
 /* MyRoundf of the original: the larger of the truncation and the rounded value */
-static int RoundToInt(FLOAT f)
+static FORCE_INLINE int RoundToInt(FLOAT f)
 {
     static const FLOAT half = 0.5F;
     int truncated;
@@ -357,7 +357,7 @@ static void LoadAppIcon(HWND hWnd, LPIMMERSIVEWINDOW pw)
     DeleteObject(iconInfo.hbmMask);
 }
 
-static void SetupFonts(LPIMMERSIVEWINDOW pw)
+static FORCE_INLINE void SetupFonts(LPIMMERSIVEWINDOW pw)
 {
     static const UINT32 symbolCodePoints[3] = {0xE28C, 0x263C, 0xE706};
     IDWriteFactory*     factory;
@@ -421,55 +421,69 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     IDXGIAdapter* adapter;
     IDXGIFactory2* factory;
     IDXGISwapChain1* swapChain;
+    IDXGISwapChain2* swapChain2 = NULL;
+    ID3D11Device* d3dDevice = NULL;
+    IDXGIDevice1* dxgiDevice = NULL;
+    IDCompositionDevice* compositionDevice = NULL;
     IDXGISurface* surface;
     DXGI_SAMPLE_DESC sample = {1, 0};
     RECT client = {0};
+    HRESULT interface_result;
     bool_t has_width;
     bool_t has_height;
+    BOOL got_client_rect;
 
     if (NULL != pw->pD3D11Device)
     {
         return 0;
     }
-    Check(SUCCEEDED(cdx11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceFlags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION,
-                                    &pw->pD3D11Device, &level, &pw->pD3D11DeviceContext)), TEXT("D3D11CreateDevice"));
-#ifndef NDEBUG
-    cdx11DeviceGetDebug(pw->pD3D11Device, &pw->pD3D11Debug);
-    options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
-#endif
-    Check(SUCCEEDED(cdxgiUnknownQueryInterfaceAsDevice1((IUnknown*)pw->pD3D11Device, &pw->pDXGIDevice1)), TEXT("IDXGIDevice1"));
-    cd2dCreateFactoryAsFactory2(D2D1_FACTORY_TYPE_SINGLE_THREADED, &options, &pw->pD2D1Factory2);
-    cd2dFactory2CreateDevice(pw->pD2D1Factory2, (IDXGIDevice*)pw->pDXGIDevice1, &pw->pD2D1Device1);
-    cd2dSetupDefaultDeviceContext((ID2D1Device*)pw->pD2D1Device1, &pw->pD2D1DeviceContext);
-
-    Check(GetClientRect(hWnd, &client), TEXT("client rectangle"));
-    has_width = 0 < client.right;
-    has_height = 0 < client.bottom;
+    /* Window metrics can lag creation; the first frame resizes the fallback swap chain. */
+    got_client_rect = GetClientRect(hWnd, &client);
+    has_width = (0 < client.right) && got_client_rect;
+    has_height = (0 < client.bottom) && got_client_rect;
     pw->szClient.cx = has_width ? client.right : 1;
     pw->szClient.cy = has_height ? client.bottom : 1;
-    cdxgiDeviceGetAdapter((IDXGIDevice*)pw->pDXGIDevice1, &adapter);
+    pw->fFrameDirty = TRUE;
+    SetupFonts(pw);
+    (void)cdx11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, deviceFlags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION,
+                            &d3dDevice, &level, &pw->pD3D11DeviceContext);
+    pw->pD3D11Device = d3dDevice;
+    Check((NULL != d3dDevice) && (NULL != pw->pD3D11DeviceContext), TEXT("D3D11CreateDevice"));
+#ifndef NDEBUG
+    cdx11DeviceGetDebug(d3dDevice, &pw->pD3D11Debug);
+    options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+#endif
+    interface_result = cdxgiUnknownQueryInterfaceAsDevice1((IUnknown*)d3dDevice, &dxgiDevice);
+    pw->pDXGIDevice1 = dxgiDevice;
+    Check(SUCCEEDED(interface_result), TEXT("IDXGIDevice1"));
+    cd2dCreateFactoryAsFactory2(D2D1_FACTORY_TYPE_SINGLE_THREADED, &options, &pw->pD2D1Factory2);
+    cd2dFactory2CreateDevice(pw->pD2D1Factory2, (IDXGIDevice*)dxgiDevice, &pw->pD2D1Device1);
+    cd2dSetupDefaultDeviceContext((ID2D1Device*)pw->pD2D1Device1, &pw->pD2D1DeviceContext);
+    SetupBrushes(pw);
+    LoadAppIcon(hWnd, pw);
+
+    cdxgiDeviceGetAdapter((IDXGIDevice*)dxgiDevice, &adapter);
     cdxgiObjectGetParentAsFactory2((IDXGIObject*)adapter, &factory);
-    cdxgiFactoryCreateSwapChainForComposition(factory, (IUnknown*)pw->pD3D11Device,
+    cdxgiFactoryCreateSwapChainForComposition(factory, (IUnknown*)d3dDevice,
         (UINT)pw->szClient.cx, (UINT)pw->szClient.cy, DXGI_FORMAT_B8G8R8A8_UNORM, FALSE, sample,
         DXGI_USAGE_RENDER_TARGET_OUTPUT, 2, DXGI_SCALING_STRETCH, DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
         DXGI_ALPHA_MODE_IGNORE, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT, NULL, &swapChain);
-    Check(SUCCEEDED(cdxgiUnknownQueryInterfaceAsSwapChain2((IUnknown*)swapChain, &pw->pSwapChain)), TEXT("composition swap chain"));
-    cdxgiSwapChainSetMaximumFrameLatencyOne(pw->pSwapChain);
-    pw->hFrameLatency = cdxgiSwapChainGetFrameLatencyWaitableObject(pw->pSwapChain);
-    Check(NULL != pw->hFrameLatency, TEXT("composition frame latency handle"));
     cdxgiFactoryMakeWindowAssociation((IDXGIFactory*)factory, hWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
+    cdxgiSwapChainGetBufferAsSurface((IDXGISwapChain*)swapChain, 0, &surface);
+    cd2dDeviceContextCreateTargetBitmapFromSurface(pw->pD2D1DeviceContext, surface, DXGI_FORMAT_B8G8R8A8_UNORM, &pw->pTargetBitmap);
+    cdxgiUnknownRelease((IUnknown*)surface);
+    cdcompCreateDevice((IDXGIDevice*)dxgiDevice, &compositionDevice);
+    pw->pDCompDevice = compositionDevice;
+    cdcompDeviceSetupHwndContent(compositionDevice, hWnd, TRUE, (IUnknown*)swapChain, &pw->pDCompTarget, &pw->pDCompVisual);
+    interface_result = cdxgiUnknownQueryInterfaceAsSwapChain2((IUnknown*)swapChain, &swapChain2);
+    pw->pSwapChain = swapChain2;
+    Check(SUCCEEDED(interface_result), TEXT("composition swap chain"));
+    cdxgiSwapChainSetMaximumFrameLatencyOne(swapChain2);
+    pw->hFrameLatency = cdxgiSwapChainGetFrameLatencyWaitableObject(swapChain2);
+    Check(NULL != pw->hFrameLatency, TEXT("composition frame latency handle"));
     cdxgiUnknownRelease((IUnknown*)swapChain);
     cdxgiUnknownRelease((IUnknown*)factory);
     cdxgiUnknownRelease((IUnknown*)adapter);
-    cdxgiSwapChainGetBufferAsSurface((IDXGISwapChain*)pw->pSwapChain, 0, &surface);
-    cd2dDeviceContextCreateTargetBitmapFromSurface(pw->pD2D1DeviceContext, surface, DXGI_FORMAT_B8G8R8A8_UNORM, &pw->pTargetBitmap);
-    cdxgiUnknownRelease((IUnknown*)surface);
-    cdcompCreateDevice((IDXGIDevice*)pw->pDXGIDevice1, &pw->pDCompDevice);
-    cdcompDeviceSetupHwndContent(pw->pDCompDevice, hWnd, TRUE, (IUnknown*)pw->pSwapChain, &pw->pDCompTarget, &pw->pDCompVisual);
-    pw->fFrameDirty = TRUE;
-    SetupBrushes(pw);
-    SetupFonts(pw);
-    LoadAppIcon(hWnd, pw);
     return 0;
 }
 
@@ -571,7 +585,7 @@ static void OnShutdownD2D(LPIMMERSIVEWINDOW pw)
 
 /* ------------------------------------------------------------------------------------------ 3 */
 
-static BOOL GetWindowBorders(HWND hWnd, LPSIZE lpsz)
+static FORCE_INLINE BOOL GetWindowBorders(HWND hWnd, LPSIZE lpsz)
 {
     const UINT dpi = GetDpiForWindow(hWnd);
     lpsz->cx       = GetSystemMetricsForDpi(SM_CXFRAME, dpi) + GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
@@ -579,7 +593,7 @@ static BOOL GetWindowBorders(HWND hWnd, LPSIZE lpsz)
     return TRUE;
 }
 
-static BOOL GetCaptionRect(HWND hWnd, LPRECT lprc)
+static FORCE_INLINE BOOL GetCaptionRect(HWND hWnd, LPRECT lprc)
 {
     const UINT dpi     = GetDpiForWindow(hWnd);
     const int  nHeight = MulDiv(CAPTION_HEIGHT_DIPS, (int)dpi, REFERENCE_DPI);
@@ -594,7 +608,7 @@ static BOOL GetCaptionRect(HWND hWnd, LPRECT lprc)
     return TRUE;
 }
 
-static BOOL GetCaptionButtonRectFast(LPRECT lprc, int nWidth, CAPTIONBUTTON eButton)
+static FORCE_INLINE BOOL GetCaptionButtonRectFast(LPRECT lprc, int nWidth, CAPTIONBUTTON eButton)
 {
     int slot;
     if (CB_CLOSEBUTTON == eButton)
@@ -623,7 +637,7 @@ static BOOL GetCaptionButtonRectFast(LPRECT lprc, int nWidth, CAPTIONBUTTON eBut
     return TRUE;
 }
 
-static BOOL GetCaptionButtonRect(HWND hWnd, LPRECT lprc, CAPTIONBUTTON eButton)
+static FORCE_INLINE BOOL GetCaptionButtonRect(HWND hWnd, LPRECT lprc, CAPTIONBUTTON eButton)
 {
     if (!GetCaptionRect(hWnd, lprc))
     {
@@ -634,7 +648,7 @@ static BOOL GetCaptionButtonRect(HWND hWnd, LPRECT lprc, CAPTIONBUTTON eButton)
 
 static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height, UINT presentFlags);
 
-static void WaitForFrameSlot(LPIMMERSIVEWINDOW pw)
+static FORCE_INLINE void WaitForFrameSlot(LPIMMERSIVEWINDOW pw)
 {
     if (!pw->fFrameSlotReady)
     {
@@ -644,7 +658,7 @@ static void WaitForFrameSlot(LPIMMERSIVEWINDOW pw)
     }
 }
 
-static void InvalidateCaption(HWND hWnd)
+static FORCE_INLINE void InvalidateCaption(HWND hWnd)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     if (NULL != windowState)
@@ -659,10 +673,13 @@ static void InvalidateCaption(HWND hWnd)
 
 /* ------------------------------------------------------------------------------------------ 4 */
 
-static void ApplyAppMode(HWND hWnd, BOOL fDark)
+static FORCE_INLINE bool_t ApplyAppMode(HWND hWnd, BOOL fDark)
 {
-    Check(SUCCEEDED(DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
-                                          &fDark, sizeof(fDark))), TEXT("dark mode caption"));
+    HRESULT result;
+
+    result = DwmSetWindowAttribute(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
+                                   &fDark, sizeof(fDark));
+    return SUCCEEDED(result);
 }
 
 /* ------------------------------------------------------------------------------------------ 5 */
@@ -673,6 +690,10 @@ static BOOL OnNCCreate(HWND hWnd, LPCREATESTRUCT lpcs)
     const enum DWMNCRENDERINGPOLICY ncPolicy = DWMNCRP_DISABLED;
     POINT             cursorPosition;
     MONITORINFO       monitorInfo;
+    HRESULT           frame_result;
+    BOOL              create_result;
+    bool_t            is_frame_ready;
+    bool_t            is_window_created;
 
     EnableNonClientDpiScaling(hWnd);
 
@@ -680,7 +701,7 @@ static BOOL OnNCCreate(HWND hWnd, LPCREATESTRUCT lpcs)
     Check(NULL != windowState, TEXT("HeapAlloc"));
     Check(SetProp(hWnd, IMMERSIVE_STATE_PROPERTY, (HANDLE)windowState), TEXT("SetProp"));
     SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)lpcs->lpCreateParams);
-    Check(SUCCEEDED(DwmSetWindowAttribute(hWnd, DWMWA_NCRENDERING_POLICY, &ncPolicy, sizeof(ncPolicy))), TEXT("disable native frame"));
+    frame_result = DwmSetWindowAttribute(hWnd, DWMWA_NCRENDERING_POLICY, &ncPolicy, sizeof(ncPolicy));
 
     /* BCS_CENTERED: center the window on the monitor under the cursor */
     monitorInfo.cbSize = sizeof(monitorInfo);
@@ -690,35 +711,40 @@ static BOOL OnNCCreate(HWND hWnd, LPCREATESTRUCT lpcs)
         const LONG windowY = monitorInfo.rcWork.top + ((RECTHEIGHT(monitorInfo.rcWork) - lpcs->cy) / 2);
         MoveWindow(hWnd, windowX, windowY, lpcs->cx, lpcs->cy, TRUE);
     }
-    return (BOOL)DefWindowProc(hWnd, WM_NCCREATE, 0, (LPARAM)lpcs);
+    create_result = (BOOL)DefWindowProc(hWnd, WM_NCCREATE, 0, (LPARAM)lpcs);
+    is_frame_ready = SUCCEEDED(frame_result);
+    is_window_created = 0 != create_result;
+    return (BOOL)(is_frame_ready & is_window_created);
 }
 
-static void SyncFrameChange(HWND hWnd)
+static FORCE_INLINE void SyncFrameChange(HWND hWnd)
 {
     SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
-static BOOL OnCreate(HWND hWnd, LPCREATESTRUCT lpcs)
+static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT lpcs)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
+    HRESULT           theme_result;
     windowState->fDarkMode        = TRUE;
     /* The caption is rendered by PaintCaption. Disabling DWM nonclient
     ** rendering alone leaves the themed nonclient implementation active. */
-    Check(SUCCEEDED(SetWindowTheme(hWnd, L"", L"")), TEXT("disable native window theme"));
+    theme_result = SetWindowTheme(hWnd, L"", L"");
     SyncFrameChange(hWnd);
     SendMessage(hWnd, WM_INITD2D, 0, 0);
     FORWARD_WM_CREATE(hWnd, lpcs, DefWindowProc);
+    Check(SUCCEEDED(theme_result), TEXT("disable native window theme"));
     return TRUE;
 }
 
-static void OnDestroy(HWND hWnd)
+static FORCE_INLINE void OnDestroy(HWND hWnd)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     OnShutdownD2D(windowState);
     PostQuitMessage(0);
 }
 
-static void OnNCDestroy(HWND hWnd)
+static FORCE_INLINE void OnNCDestroy(HWND hWnd)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     (void)RemoveProp(hWnd, IMMERSIVE_STATE_PROPERTY);
@@ -729,23 +755,27 @@ static void OnNCDestroy(HWND hWnd)
     FORWARD_WM_NCDESTROY(hWnd, DefWindowProc);
 }
 
-static void OnActivate(HWND hWnd, UINT state, HWND hwndActDeact, BOOL fMinimized)
+static FORCE_INLINE void OnActivate(HWND hWnd, UINT state, HWND hwndActDeact, BOOL fMinimized)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
+    bool_t            mode_applied;
+
     g_fActive            = (WA_INACTIVE != state);
+    mode_applied = TRUE;
     if (!fMinimized)
     {
-        ApplyAppMode(hWnd, windowState->fDarkMode);
+        mode_applied = ApplyAppMode(hWnd, windowState->fDarkMode);
     }
     FORWARD_WM_ACTIVATE(hWnd, state, hwndActDeact, fMinimized, DefWindowProc);
+    Check(mode_applied, TEXT("dark mode caption"));
 }
 
-static void OnClose(HWND hWnd)
+static FORCE_INLINE void OnClose(HWND hWnd)
 {
     DestroyWindow(hWnd);
 }
 
-static void OnPaint(HWND hWnd)
+static FORCE_INLINE void OnPaint(HWND hWnd)
 {
     PAINTSTRUCT paint;
     RECT client;
@@ -762,7 +792,7 @@ static void OnPaint(HWND hWnd)
     EndPaint(hWnd, &paint);
 }
 
-static BOOL OnEraseBkgnd(HWND hWnd, HDC hDC)
+static FORCE_INLINE BOOL OnEraseBkgnd(HWND hWnd, HDC hDC)
 {
     /* Suppress GDI erasure without consuming the pending composition repaint. */
     (void)hWnd;
@@ -796,7 +826,7 @@ static void OnGetMinMaxInfo(HWND hWnd, LPMINMAXINFO lpmmi)
     }
 }
 
-static UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpcsp)
+static FORCE_INLINE UINT OnNCCalcSize(HWND hWnd, BOOL fCalcValidRects, NCCALCSIZE_PARAMS* lpcsp)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     /* The proposed window rectangle is the complete client rectangle. Produce
@@ -905,20 +935,20 @@ static UINT OnNCHitTest(HWND hWnd, int x, int y)
     }
 }
 
-static void OnNCPaint(HWND hWnd, HRGN hrgn)
+static FORCE_INLINE void OnNCPaint(HWND hWnd, HRGN hrgn)
 {
     (void)hWnd;
     (void)hrgn;
 }
 
-static BOOL OnNCActivate(HWND hWnd, BOOL fActive, HWND hwndActDeact, BOOL fMinimized)
+static FORCE_INLINE BOOL OnNCActivate(HWND hWnd, BOOL fActive, HWND hwndActDeact, BOOL fMinimized)
 {
     (void)hwndActDeact;
     (void)fMinimized;
     return (BOOL)DefWindowProc(hWnd, WM_NCACTIVATE, fActive, -1);
 }
 
-static CAPTIONBUTTON CaptionButtonFromHitTest(UINT codeHitTest)
+static FORCE_INLINE CAPTIONBUTTON CaptionButtonFromHitTest(UINT codeHitTest)
 {
     switch (codeHitTest)
     {
@@ -931,7 +961,7 @@ static CAPTIONBUTTON CaptionButtonFromHitTest(UINT codeHitTest)
     }
 }
 
-static void OnNCMouseMove(HWND hWnd, int x, int y, UINT codeHitTest)
+static FORCE_INLINE void OnNCMouseMove(HWND hWnd, int x, int y, UINT codeHitTest)
 {
     TRACKMOUSEEVENT track = {sizeof(track), TME_LEAVE | TME_NONCLIENT, hWnd, 0};
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
@@ -945,7 +975,7 @@ static void OnNCMouseMove(HWND hWnd, int x, int y, UINT codeHitTest)
     FORWARD_WM_NCMOUSEMOVE(hWnd, x, y, codeHitTest, DefWindowProc);
 }
 
-static void OnNCLButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
+static FORCE_INLINE void OnNCLButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     windowState->ePressedCaptionButton = CaptionButtonFromHitTest(codeHitTest);
@@ -960,8 +990,8 @@ static void OnNCLButtonDown(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT cod
 static void OnNCLButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
-    static ULONGLONG  ullLastToggle;
     ULONGLONG         ullNow;
+    bool_t            mode_applied;
     CAPTIONBUTTON pressed = windowState->ePressedCaptionButton;
     windowState->ePressedCaptionButton = CB_NONE;
     if (pressed != CaptionButtonFromHitTest(codeHitTest))
@@ -987,13 +1017,14 @@ static void OnNCLButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
     else if (CB_LIGHTDARKBUTTON == pressed)
     {
         ullNow = GetTickCount64();
-        if (ullNow - ullLastToggle > THEME_TOGGLE_MILLISECONDS)
+        if (ullNow - windowState->lastToggleTime > THEME_TOGGLE_MILLISECONDS)
         {
             windowState->fDarkMode  = !windowState->fDarkMode;
             windowState->fLightMode = !windowState->fDarkMode;
-            ApplyAppMode(hWnd, windowState->fDarkMode);
+            mode_applied = ApplyAppMode(hWnd, windowState->fDarkMode);
             InvalidateCaption(hWnd);
-            ullLastToggle = ullNow;
+            windowState->lastToggleTime = ullNow;
+            Check(mode_applied, TEXT("dark mode caption"));
         }
     }
     else if (CB_CAPTION == pressed)
@@ -1002,7 +1033,7 @@ static void OnNCLButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
     }
 }
 
-static void OnNCLButtonDblClk(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
+static FORCE_INLINE void OnNCLButtonDblClk(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT codeHitTest)
 {
     (void)fDoubleClick;
     (void)x;
@@ -1013,7 +1044,7 @@ static void OnNCLButtonDblClk(HWND hWnd, BOOL fDoubleClick, int x, int y, UINT c
     }
 }
 
-static void OnNCRButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
+static FORCE_INLINE void OnNCRButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
 {
     if (HTCAPTION == codeHitTest)
     {
@@ -1034,7 +1065,7 @@ static void OnNCRButtonUp(HWND hWnd, int x, int y, UINT codeHitTest)
     }
 }
 
-static void OnNCMouseLeave(HWND hWnd)
+static FORCE_INLINE void OnNCMouseLeave(HWND hWnd)
 {
     if (GetState(hWnd)->eHotCaptionButton != CB_NONE)
     {
@@ -1043,7 +1074,7 @@ static void OnNCMouseLeave(HWND hWnd)
     }
 }
 
-static void OnKeyUp(HWND hWnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+static FORCE_INLINE void OnKeyUp(HWND hWnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
     (void)fDown;
     if (VK_ESCAPE == vk && GetForegroundWindow() == hWnd)
@@ -1053,14 +1084,14 @@ static void OnKeyUp(HWND hWnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
     FORWARD_WM_KEYUP(hWnd, vk, cRepeat, flags, DefWindowProc);
 }
 
-static void OnEnterSizeMove(HWND hWnd)
+static FORCE_INLINE void OnEnterSizeMove(HWND hWnd)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     windowState->ri.fMoving = FALSE;
     windowState->ri.fResizing = FALSE;
 }
 
-static void OnExitSizeMove(HWND hWnd)
+static FORCE_INLINE void OnExitSizeMove(HWND hWnd)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     RECT client;
@@ -1085,7 +1116,7 @@ static void OnExitSizeMove(HWND hWnd)
     }
 }
 
-static void OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
+static FORCE_INLINE void OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
 {
     if (GetState(hWnd)->eHotCaptionButton != CB_NONE)
     {
@@ -1097,7 +1128,7 @@ static void OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
     (void)keyFlags;
 }
 
-static void OnMouseLeave(HWND hWnd)
+static FORCE_INLINE void OnMouseLeave(HWND hWnd)
 {
     if (GetState(hWnd)->eHotCaptionButton != CB_NONE)
     {
@@ -1106,34 +1137,34 @@ static void OnMouseLeave(HWND hWnd)
     }
 }
 
-static void OnSysColorChange(HWND hWnd)
+static FORCE_INLINE void OnSysColorChange(HWND hWnd)
 {
     FORWARD_WM_SYSCOLORCHANGE(hWnd, DefWindowProc);
 }
 
-static BOOL OnSetCursor(HWND hWnd, HWND hwndCursor, UINT codeHitTest, UINT msg)
+static FORCE_INLINE BOOL OnSetCursor(HWND hWnd, HWND hwndCursor, UINT codeHitTest, UINT msg)
 {
     return FORWARD_WM_SETCURSOR(hWnd, hwndCursor, codeHitTest, msg, DefWindowProc);
 }
 
-static void OnParentNotify(HWND hWnd, UINT msg, HWND hwndChild, int idChild)
+static FORCE_INLINE void OnParentNotify(HWND hWnd, UINT msg, HWND hwndChild, int idChild)
 {
     FORWARD_WM_PARENTNOTIFY(hWnd, msg, hwndChild, idChild, DefWindowProc);
 }
 
-static BOOL OnMoving(HWND hWnd, LPARAM lprc)
+static FORCE_INLINE BOOL OnMoving(HWND hWnd, LPARAM lprc)
 {
     GetState(hWnd)->ri.fMoving = TRUE;
     return (BOOL)DefWindowProc(hWnd, WM_MOVING, 0, lprc);
 }
 
-static BOOL OnSizing(HWND hWnd, UINT nEdge, LPARAM lprc)
+static FORCE_INLINE BOOL OnSizing(HWND hWnd, UINT nEdge, LPARAM lprc)
 {
     GetState(hWnd)->ri.fResizing = TRUE;
     return (BOOL)DefWindowProc(hWnd, WM_SIZING, nEdge, lprc);
 }
 
-static void OnWindowPosChanged(HWND hWnd, const WINDOWPOS* lpwpos)
+static FORCE_INLINE void OnWindowPosChanged(HWND hWnd, const WINDOWPOS* lpwpos)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     if (NULL != windowState && NULL != windowState->pSwapChain && !IsIconic(hWnd))
@@ -1150,7 +1181,7 @@ static void OnWindowPosChanged(HWND hWnd, const WINDOWPOS* lpwpos)
     FORWARD_WM_WINDOWPOSCHANGED(hWnd, lpwpos, DefWindowProc);
 }
 
-static void OnDwmNcRenderingChanged(HWND hWnd, BOOL fEnabled)
+static FORCE_INLINE void OnDwmNcRenderingChanged(HWND hWnd, BOOL fEnabled)
 {
     if (fEnabled)
     {
@@ -1161,7 +1192,7 @@ static void OnDwmNcRenderingChanged(HWND hWnd, BOOL fEnabled)
 
 /* ------------------------------------------------------------------------------------------ 6 */
 
-static void DrawGlyph(LPIMMERSIVEWINDOW pw, IDWriteFontFace* pFace, UINT16 glyph, FLOAT emSize, FLOAT x, FLOAT y, ID2D1Brush* pBrush, DWRITE_MEASURING_MODE mode)
+static FORCE_INLINE void DrawGlyph(LPIMMERSIVEWINDOW pw, IDWriteFontFace* pFace, UINT16 glyph, FLOAT emSize, FLOAT x, FLOAT y, ID2D1Brush* pBrush, DWRITE_MEASURING_MODE mode)
 {
     DWRITE_GLYPH_OFFSET offset = {0.0F, 0.0F};
     D2D1_POINT_2F       origin;
@@ -1169,14 +1200,14 @@ static void DrawGlyph(LPIMMERSIVEWINDOW pw, IDWriteFontFace* pFace, UINT16 glyph
     cd2dDeviceContextDrawGlyphRun(pw->pD2D1DeviceContext, origin, pFace, emSize, 1, &glyph, NULL, &offset, FALSE, 0, NULL, pBrush, mode);
 }
 
-static void FillButton(LPIMMERSIVEWINDOW pw, const RECT* prc, ID2D1SolidColorBrush* pBrush, FLOAT dx)
+static FORCE_INLINE void FillButton(LPIMMERSIVEWINDOW pw, const RECT* prc, ID2D1SolidColorBrush* pBrush, FLOAT dx)
 {
     ID2D1RenderTarget* target = (ID2D1RenderTarget*)pw->pD2D1DeviceContext;
     cd2dRenderTargetDrawRectangle(target, (FLOAT)prc->left + dx, (FLOAT)prc->top, (FLOAT)prc->right + dx, (FLOAT)prc->bottom, (ID2D1Brush*)pBrush, 1.0F, (ID2D1StrokeStyle*)pw->pStrokeStyle);
     cd2dRenderTargetFillRectangle(target, (FLOAT)prc->left + dx, (FLOAT)prc->top, (FLOAT)prc->right + dx, (FLOAT)prc->bottom, (ID2D1Brush*)pBrush);
 }
 
-static void ToLogical(RECT* prc)
+static FORCE_INLINE void ToLogical(RECT* prc)
 {
     prc->right  = RECTWIDTH(*prc);
     prc->bottom = RECTHEIGHT(*prc);
@@ -1300,15 +1331,31 @@ static void PaintCaption(HWND hWnd, LPIMMERSIVEWINDOW pw)
 static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height, UINT presentFlags)
 {
     ID2D1RenderTarget* target = (ID2D1RenderTarget*)pw->pD2D1DeviceContext;
-    D2D1_RECT_F destination = {0, 0, (FLOAT)width, (FLOAT)height};
+    IDXGISwapChain* swapChain = (IDXGISwapChain*)pw->pSwapChain;
+    D2D1_RECT_F destination = {0, 0, 0, 0};
     HRESULT result;
-    if (width <= 0 || height <= 0 || pw->fRendering || NULL == pw->pSwapChain)
+    bool_t has_width;
+    bool_t has_height;
+    UINT safe_width;
+    UINT safe_height;
+
+    has_width = 0 < width;
+    has_height = 0 < height;
+    safe_width = ((UINT)width & (0U - (UINT)has_width)) + (UINT)(!has_width);
+    safe_height = ((UINT)height & (0U - (UINT)has_height)) + (UINT)(!has_height);
+    if (pw->fRendering)
     {
         return;
     }
+    if (NULL == swapChain)
+    {
+        return;
+    }
+    destination.right = (FLOAT)safe_width;
+    destination.bottom = (FLOAT)safe_height;
     pw->fRendering = TRUE;
     WaitForFrameSlot(pw);
-    if (pw->szClient.cx != width || pw->szClient.cy != height)
+    if (pw->szClient.cx != (LONG)safe_width || pw->szClient.cy != (LONG)safe_height)
     {
         IDXGISurface* surface;
         /* ResizeBuffers requires every direct AND indirect back-buffer reference
@@ -1316,14 +1363,19 @@ static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height
         cd2dDeviceContextClearTarget(pw->pD2D1DeviceContext);
         cdxgiUnknownRelease((IUnknown*)pw->pTargetBitmap);
         pw->pTargetBitmap = NULL;
-        cdxgiSwapChainResizeBuffers((IDXGISwapChain*)pw->pSwapChain, 0, (UINT)width, (UINT)height,
+        cdxgiSwapChainResizeBuffers(swapChain, 0, safe_width, safe_height,
             DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
-        cdxgiSwapChainGetBufferAsSurface((IDXGISwapChain*)pw->pSwapChain, 0, &surface);
+        cdxgiSwapChainGetBufferAsSurface(swapChain, 0, &surface);
         cd2dDeviceContextCreateTargetBitmapFromSurface(pw->pD2D1DeviceContext, surface, DXGI_FORMAT_B8G8R8A8_UNORM, &pw->pTargetBitmap);
         cdxgiUnknownRelease((IUnknown*)surface);
-        pw->szClient.cx = width;
-        pw->szClient.cy = height;
+        pw->szClient.cx = (LONG)safe_width;
+        pw->szClient.cy = (LONG)safe_height;
         presentFlags |= DXGI_PRESENT_RESTART;
+    }
+    if (!has_width || !has_height)
+    {
+        pw->fRendering = FALSE;
+        return;
     }
     cd2dDeviceContextSetTarget(pw->pD2D1DeviceContext, (ID2D1Image*)pw->pTargetBitmap);
     cd2dRenderTargetSetDpi(target, REFERENCE_DPI, REFERENCE_DPI);
@@ -1340,17 +1392,17 @@ static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height
     result = cd2dRenderTargetEndDraw(target, NULL, NULL);
     Check(SUCCEEDED(result), TEXT("frame EndDraw"));
     cd2dDeviceContextClearTarget(pw->pD2D1DeviceContext);
-    result = cdxgiSwapChainPresent((IDXGISwapChain*)pw->pSwapChain, 1, presentFlags);
-    Check(SUCCEEDED(result), TEXT("composition Present"));
+    result = cdxgiSwapChainPresent(swapChain, 1, presentFlags);
     pw->fFrameSlotReady = FALSE;
     pw->captionDpi = GetDpiForWindow(hWnd);
     pw->fCaptionMaximized = IsMaximized(hWnd);
     pw->fFrameDirty = FALSE;
     pw->fRendering = FALSE;
     Trace(TEXT("composition present"), result);
+    Check(SUCCEEDED(result), TEXT("composition Present"));
 }
 
-BOOL GetImmersiveDevice(HWND hWnd, ID3D11Device** device, ID3D11DeviceContext** context)
+extern FORCE_INLINE BOOL GetImmersiveDevice(HWND hWnd, ID3D11Device** device, ID3D11DeviceContext** context)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     if (NULL == windowState || NULL == windowState->pD3D11Device)
@@ -1362,7 +1414,7 @@ BOOL GetImmersiveDevice(HWND hWnd, ID3D11Device** device, ID3D11DeviceContext** 
     return TRUE;
 }
 
-void SetImmersiveVideo(HWND hWnd, UINT width, UINT height, IMMERSIVEVIDEOPROC draw)
+extern FORCE_INLINE void SetImmersiveVideo(HWND hWnd, UINT width, UINT height, IMMERSIVEVIDEOPROC draw)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     DXGI_SAMPLE_DESC sample = {1, 0};
@@ -1390,7 +1442,7 @@ void SetImmersiveVideo(HWND hWnd, UINT width, UINT height, IMMERSIVEVIDEOPROC dr
     windowState->fHaveVideo = FALSE;
 }
 
-void UpdateImmersiveVideo(HWND hWnd)
+extern FORCE_INLINE void UpdateImmersiveVideo(HWND hWnd)
 {
     LPIMMERSIVEWINDOW windowState = GetState(hWnd);
     RECT client;
@@ -1470,7 +1522,7 @@ LRESULT CALLBACK DefImmersiveProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
     }
 }
 
-VOID WINAPI InitImmersiveControls(VOID)
+extern FORCE_INLINE VOID WINAPI InitImmersiveControls(VOID)
 {
     WNDCLASS windowClass;
     TCHAR     tracePath[MAX_PATH];

@@ -38,10 +38,12 @@ EXTERN CRT_Memory_CopyCore:PROC
 EXTERN CRT_Memory_MoveCore:PROC
 EXTERN CRT_Memory_SetCore:PROC
 EXTERN CRT_Stack_ProbeCore:PROC
+EXTERN CRT_String_CompareCore:PROC
 PUBLIC memcmp
 PUBLIC memcpy
 PUBLIC memmove
 PUBLIC memset
+PUBLIC strncmp
 PUBLIC __chkstk
 
 .code
@@ -77,6 +79,12 @@ memmove ENDP
 memset PROC
     jmp CRT_Memory_SetCore
 memset ENDP
+
+;*************************************************************************************************
+; Details: A bounded string ABI call shares the owned CRT_String_CompareCore implementation.
+strncmp PROC
+    jmp CRT_String_CompareCore
+strncmp ENDP
 
 ;*************************************************************************************************
 ; Details: Tail dispatch preserves RAX and the original compiler return address.

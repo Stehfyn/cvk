@@ -13,6 +13,7 @@
 #include "os/win32/os_entry.h"
 
 #include <stdint.h>
+#include <vcruntime.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -54,6 +55,8 @@ OS_NORETURN void WinMainStartup(void)
 {
     uint32_t status;
 
+    /* The Windows SDK supplies the compiler's /GS cookie without CRT startup. */
+    __security_init_cookie();
     status = OS_Application_Main();
     OS_Process_Exit(status);
 }

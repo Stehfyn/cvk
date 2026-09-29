@@ -2120,7 +2120,9 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
             prof = re.search(r"\\par Profile:\s*(\w+)", doc)
             if prof and prof.group(1) != self.api:
                 continue
-            unknown = [c for c in sorted(set(re.findall(r"\b(cvk\w+)\s*\(", body))) if c not in self.sigs and c != name]
+            diagnostic_support = {"cvkDiagnosticWrite", "cvkDiagnosticWriteHex"}
+            unknown = [c for c in sorted(set(re.findall(r"\b(cvk\w+)\s*\(", body)))
+                       if c not in self.sigs and c != name and c not in diagnostic_support]
             if unknown:
                 if self.drop_missing:
                     self.dropped.append(name)                # composes over something outside this profile
@@ -2762,8 +2764,7 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 **===============================================================================================*/
 
 {self.loader_include()}#include "cvk/cvk.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "vk_diagnostic.h"
 #include <string.h>
 #include {self.vk_header}
 {"".join(self.source_include(i) for i in sorted(required))}

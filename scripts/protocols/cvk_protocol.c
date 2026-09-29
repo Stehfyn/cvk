@@ -1,7 +1,6 @@
 /* Tier 3 protocols (SPEC.md section 8b): source of truth kept with the generator and folded
 ** into the generated cvk.h/.c. Composed from the generated surface only. */
 
-#include <stdio.h>
 
 /**
  * \brief VK_EXT_debug_utils callback that prints one message to stderr and never aborts the call.
@@ -28,7 +27,15 @@ VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeve
     (void)pUserData;
     message_id_name = ((NULL != pCallbackData) && (NULL != pCallbackData->pMessageIdName)) ? pCallbackData->pMessageIdName : "";
     message         = ((NULL != pCallbackData) && (NULL != pCallbackData->pMessage)) ? pCallbackData->pMessage : "";
-    (void)fprintf(stderr, "vulkan severity 0x%x type 0x%x %s: %s\n", (unsigned)messageSeverity, (unsigned)messageTypes, message_id_name, message);
+    cvkDiagnosticWrite("vulkan severity 0x");
+    cvkDiagnosticWriteHex((uint32_t)messageSeverity);
+    cvkDiagnosticWrite(" type 0x");
+    cvkDiagnosticWriteHex((uint32_t)messageTypes);
+    cvkDiagnosticWrite(" ");
+    cvkDiagnosticWrite(message_id_name);
+    cvkDiagnosticWrite(": ");
+    cvkDiagnosticWrite(message);
+    cvkDiagnosticWrite("\n");
     return VK_FALSE;
 }
 

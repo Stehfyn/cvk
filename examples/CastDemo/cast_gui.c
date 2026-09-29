@@ -6,23 +6,23 @@
 **
 **   CastDemo [file.mp4]                 preselects the file */
 #define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
-#include <commctrl.h>
+#include <WinSock2.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <CommCtrl.h>
 #include <commdlg.h>
-#include <objbase.h>
+#include <ole2.h>
 #include <shellapi.h>
 #include <windowsx.h>
-#include <uxtheme.h>
+#include <Uxtheme.h>
 #include <dwmapi.h>
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
 
-#include "cast_channel.h"
+#include "cast_media.h"
 #include "cast_session.h"
 #include "os/os_assert.h"
 #include "os/os_memory.h"
@@ -36,10 +36,14 @@
 #include "audio_gain.h"
 #include "cast_events.h"
 #include "os/os_thread.h"
-#include "os/os_assert.h"
 #include "os/os_compiler.h"
+#include "os/os_types.h"
+#include "crt/crt_memory.h"
+#include "utl/utl_decimal.h"
+#include "utl/utl_unicode.h"
+#include "utl/utl_url.h"
 
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 #pragma comment(                                                                                                       \
     linker,                                                                                                            \
     "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -125,6 +129,13 @@ typedef struct PreviewJob
     WCHAR              dest[MAX_PATH];
 } PreviewJob;
 
+typedef struct GainVariant
+{
+    struct GainVariant* next;
+    MediaServer*        server;
+    WCHAR               path[MAX_PATH];
+} GainVariant;
+
 typedef struct App
 {
     HINSTANCE hInstance;
@@ -160,7 +171,8 @@ typedef struct App
     CastSessionConfig   pendingConfig;
     char                gainError[256];
     WCHAR               gainOutput[MAX_PATH];
-    struct GainVariant* gainVariants;
+    GainVariant         gainVariantStorage[MEDIA_SERVER_CAPACITY];
+    GainVariant*        gainVariants;
     HWND                hCast;
     HWND                hHint;
     HWND                hPlayPause;
@@ -222,21 +234,17 @@ typedef struct App
 #define POSITION_TICK_MS (50)
 #define SUBTITLE_TIMER   (2)
 #define GAIN_TIMER       (3)
+#define GAIN_ERROR_CAPACITY (256)
+#define GAIN_PORT_CAPACITY (5)
+#define GAIN_URL_SCHEME ("http")
+#define GAIN_URL_RESOURCE ("/gain.mp4")
+#define GAIN_MEDIA_TYPE ("video/mp4")
 
 #define DARK_BACKGROUND RGB(24, 26, 31)
 #define DARK_FIELD      RGB(36, 39, 46)
 #define DARK_TEXT       RGB(232, 235, 240)
 #define DARK_MUTED      RGB(151, 160, 174)
 #define DARK_ACCENT     RGB(82, 156, 245)
-
-typedef struct GainVariant
-{
-    struct GainVariant* next;
-    MediaServer*        server;
-    WCHAR               path[MAX_PATH];
-} GainVariant;
-
-
 
 /*************************************************************************************************/
 /**
@@ -1254,6 +1262,135 @@ static FORCE_INLINE void ScheduleGain(App* app)
 
 /*************************************************************************************************/
 /**
+ * \brief Reads the numeric host from an existing locally served media URL.
+ *
+ * \par Details:
+ *  The counted URL and IPv4 readers validate every component before the
+ *  output is written. Output is empty on failure.
+ *
+ * \param[in]  source           Terminated source URL
+ * \param[in]  sourceCapacity   Readable source bytes, including termination
+ * \param[out] output           Numeric host text
+ * \param[in]  outputCapacity   Writable bytes, including termination
+ *
+ * \retval TRUE    A complete terminated IPv4 host was written.
+ * \retval FALSE   The URL or output capacity is unsuitable.
+ */
+static FORCE_INLINE bool_t ReadGainLocalAddress(const char_t* source,
+                                                 uint32_t      sourceCapacity,
+                                                 char_t*       output,
+                                                 uint32_t      outputCapacity)
+{
+    Utl_Url_t    original_url;
+    uint32_t     original_url_bytes;
+    uint32_t     host_address;
+    uint32_t     host_bytes;
+    bool_t       is_terminated;
+    bool_t       can_parse_url;
+    bool_t       parsed_url;
+    bool_t       is_ipv4_host;
+    bool_t       valid_host;
+    bool_t       wrote_host;
+
+    LOGASSERT(NULL != source);
+    LOGASSERT(NULL != output);
+    LOGASSERT(0 < outputCapacity);
+
+    host_address = 0;
+    Utl_Url_Initialize(&original_url);
+    original_url_bytes = Utl_Unicode_GetUtf8StringByteCount(source, sourceCapacity);
+    is_terminated      = (UTL_UNICODE_NO_TERMINATOR != original_url_bytes);
+    can_parse_url      = is_terminated && (0 < original_url_bytes);
+    parsed_url         = FALSE;
+    if (can_parse_url)
+    {
+        parsed_url = Utl_Url_Read(&original_url, (const byte_t*)source, original_url_bytes);
+    }
+    is_ipv4_host = parsed_url && (UTL_URL_HOST_IPV4 == original_url.hostKind);
+    valid_host   = FALSE;
+    if (is_ipv4_host)
+    {
+        valid_host = Utl_Url_ReadIpv4(original_url.host, &host_address);
+    }
+    CRT_Memory_Set(output, 0, outputCapacity);
+    host_bytes = 0;
+    if (valid_host)
+    {
+        host_bytes = Utl_Url_WriteIpv4(host_address, (byte_t*)output, outputCapacity - 1);
+    }
+    wrote_host = (0 < host_bytes);
+
+    return wrote_host;
+}
+
+/*************************************************************************************************/
+/**
+ * \brief Writes a served gain URL from counted, validated components.
+ *
+ * \par Details:
+ *  The caller provides a numeric IPv4 host and a native listener port. Output
+ *  stays terminated even if the fixed writer rejects the representation.
+ *
+ * \param[in]  local            Terminated numeric IPv4 address
+ * \param[in]  localCapacity    Readable host bytes including termination
+ * \param[in]  port             Assigned media listener port
+ * \param[out] output           Fixed URL storage
+ * \param[in]  outputCapacity   Writable bytes including termination
+ * \param[out] byteCount        Serialized URL bytes excluding termination
+ *
+ * \retval TRUE    The complete URL was written.
+ * \retval FALSE   A component or output bound was invalid.
+ */
+static FORCE_INLINE bool_t WriteGainUrl(const char_t* local,
+                                         uint32_t      localCapacity,
+                                         uint16_t      port,
+                                         char_t*       output,
+                                         uint32_t      outputCapacity,
+                                         uint32_t*     byteCount)
+{
+    Utl_Url_t url;
+    byte_t    port_text[GAIN_PORT_CAPACITY];
+    uint32_t  host_bytes;
+    uint32_t  port_bytes;
+    bool_t    valid_host;
+    bool_t    valid_port;
+    bool_t    written;
+
+    LOGASSERT(NULL != local);
+    LOGASSERT(NULL != output);
+    LOGASSERT(NULL != byteCount);
+    LOGASSERT(0 < outputCapacity);
+
+    Utl_Url_Initialize(&url);
+    host_bytes = Utl_Unicode_GetUtf8StringByteCount(local, localCapacity);
+    port_bytes = Utl_Decimal_WriteUint64(port, port_text, sizeof(port_text));
+    valid_host = (UTL_UNICODE_NO_TERMINATOR != host_bytes) && (0 < host_bytes);
+    valid_port = (0 < port_bytes);
+    url.scheme.data      = (const byte_t*)GAIN_URL_SCHEME;
+    url.scheme.byteCount = sizeof(GAIN_URL_SCHEME) - 1;
+    url.host.data        = (const byte_t*)local;
+    url.host.byteCount   = valid_host ? host_bytes : 0;
+    url.port.data        = port_text;
+    url.port.byteCount   = port_bytes;
+    url.path.data        = (const byte_t*)GAIN_URL_RESOURCE;
+    url.path.byteCount   = sizeof(GAIN_URL_RESOURCE) - 1;
+    url.hostKind         = UTL_URL_HOST_IPV4;
+    url.hasScheme        = TRUE;
+    url.hasAuthority     = TRUE;
+    url.hasPort          = TRUE;
+    CRT_Memory_Set(output, 0, outputCapacity);
+    (*byteCount) = 0;
+    written = FALSE;
+    if (valid_host && valid_port)
+    {
+        written = Utl_Url_Write(&url, (byte_t*)output, outputCapacity - 1, byteCount);
+    }
+
+    return written;
+}
+
+/*************************************************************************************************/
+/**
  * \par Details:
  *  Consumes an acquired completion, serves successful converted output and
  *  either starts the prepared session or requests a media replacement.
@@ -1261,17 +1398,27 @@ static FORCE_INLINE void ScheduleGain(App* app)
 static FORCE_INLINE void FinishGain(App* app, unsigned serial)
 {
     GainVariant* variant;
-    char         local[64], error[256], url[1200];
+    uint32_t     index;
+    bool_t       has_local_address;
+    bool_t       has_variant;
+    bool_t       can_serve;
+    bool_t       wrote_url;
+    uint32_t     url_bytes;
+    char         local[CAST_SESSION_HOST_CAPACITY];
+    char         error[GAIN_ERROR_CAPACITY];
+    char         url[CAST_MEDIA_URL_CAPACITY];
     LOGASSERT(!app->gainBusy);
     LOGASSERT(serial == app->gainSerial);
     if ((!app->pSession && !app->preparingAudio) || !app->gainOk)
     {
-        WCHAR message[256];
+        WCHAR message[GAIN_ERROR_CAPACITY];
 
-        Utf8ToWide(app->gainError, message, 256);
+        Utf8ToWide(app->gainError, message, GAIN_ERROR_CAPACITY);
         SetWindowTextW(app->hGainState, L"Audio preparation failed");
         if (app->preparingAudio)
+        {
             FinishSession(app, message);
+        }
         else
         {
             CancelGain(app);
@@ -1279,24 +1426,40 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         }
         return;
     }
-    variant = (GainVariant*)calloc(1, sizeof(*variant));
-    /* Use the same reachable local address selected for the original file. */
-    if (!variant || sscanf_s(app->originalUrl, "http://%63[^:]", local, (unsigned)sizeof(local)) != 1)
+    variant = NULL;
+    for (index = 0; index < MEDIA_SERVER_CAPACITY; ++index)
     {
-        free(variant);
+        if (TEXT('\0') == app->gainVariantStorage[index].path[0])
+        {
+            variant = &app->gainVariantStorage[index];
+            break;
+        }
+    }
+    /* Use the same reachable local address selected for the original file. */
+    has_local_address = ReadGainLocalAddress(app->originalUrl,
+                                              sizeof(app->originalUrl),
+                                              local,
+                                              sizeof(local));
+    has_variant = (NULL != variant);
+    can_serve   = has_variant && has_local_address;
+    if (!can_serve)
+    {
         CancelGain(app);
         if (app->preparingAudio)
+        {
             FinishSession(app, L"Cannot serve prepared audio.");
+        }
         SetWindowTextW(app->hGainState, L"Cannot serve audio gain");
         return;
     }
-    variant->server = MediaServer_Start(&app->serving, app->gainOutput, NULL, 0, "video/mp4", error, sizeof(error));
+    variant->server = MediaServer_Start(&app->serving, app->gainOutput, NULL, 0, GAIN_MEDIA_TYPE, error, sizeof(error));
     if (!variant->server)
     {
-        free(variant);
         CancelGain(app);
         if (app->preparingAudio)
+        {
             FinishSession(app, L"Cannot serve prepared audio.");
+        }
         SetWindowTextW(app->hGainState, L"Cannot serve audio gain");
         return;
     }
@@ -1304,11 +1467,18 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
     app->gainOutput[0] = 0;
     variant->next      = app->gainVariants;
     app->gainVariants  = variant;
-    snprintf(url, sizeof(url), "http://%s:%u/gain.mp4", local, (unsigned)MediaServer_GetPort(variant->server));
+    wrote_url = WriteGainUrl(local,
+                              sizeof(local),
+                              MediaServer_GetPort(variant->server),
+                              url,
+                              sizeof(url),
+                              &url_bytes);
+    LOGASSERT(wrote_url);
     if (app->preparingAudio)
     {
-        snprintf(app->pendingConfig.contentUrl, sizeof(app->pendingConfig.contentUrl), "%s", url);
-        snprintf(app->pendingConfig.contentType, sizeof(app->pendingConfig.contentType), "video/mp4");
+        LOGASSERT(sizeof(app->pendingConfig.contentUrl) > url_bytes);
+        CRT_Memory_Copy(app->pendingConfig.contentUrl, url, (uint64_t)url_bytes + 1U);
+        CRT_Memory_Copy(app->pendingConfig.contentType, GAIN_MEDIA_TYPE, sizeof(GAIN_MEDIA_TYPE));
         ++app->events.generation;
         CastEvents_Begin(&app->events.mailbox, app->events.generation);
         CastSession_Prepare(&app->session, &app->pendingConfig);
@@ -1326,7 +1496,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
     }
     else
     {
-        CastSession_ReplaceMedia(app->pSession, url, "video/mp4");
+        CastSession_ReplaceMedia(app->pSession, url, GAIN_MEDIA_TYPE);
         SetWindowTextW(app->hGainState, L"Gain ready - switching");
     }
 }
@@ -1863,7 +2033,8 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
             if (file_removed)
             {
                 pApp->gainVariants = variant->next;
-                free(variant);
+                variant->next = NULL;
+                variant->path[0] = TEXT('\0');
             }
         }
         variants_stopped = (NULL == pApp->gainVariants);

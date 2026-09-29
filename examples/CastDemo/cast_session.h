@@ -9,7 +9,8 @@
  * One playback session on a Cast receiver: connect, launch the default receiver,
  * load a media URL, relay status and accept transport commands. Run executes on
  * the session worker; external producers publish through Post and media setters.
- * Persistent session storage does not cover channel or playback dependencies.
+ * Persistent session storage includes reusable Cast channel buffers. Native
+ * network, SChannel and playback dependencies require separate allocation audits.
  */
 
 /*=================================================================================================

@@ -10,8 +10,7 @@
 
 #include <volk.h>
 #include "cvk/cvk.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "vk_diagnostic.h"
 #include <string.h>
 #include <vulkan/vulkan_core.h>
 #include <stdint.h>
@@ -49,12 +48,10 @@
 #define CVK_DIAGNOSTIC_END_COUNT    (1)  ///< String terminator.
 #define CVK_DIAGNOSTIC_CAPACITY     (CVK_DIAGNOSTIC_DIGIT_COUNT + CVK_DIAGNOSTIC_SIGN_COUNT + CVK_DIAGNOSTIC_END_COUNT)
 
-#define CVK_DIAGNOSTIC_CHAR_ZERO      ('0')
-#define CVK_DIAGNOSTIC_CHAR_MINUS     ('-')
-#define CVK_DIAGNOSTIC_CHAR_END       ('\0')
-#define CVK_DIAGNOSTIC_CHAR_SEPARATOR (':')
-#define CVK_DIAGNOSTIC_CHAR_LF        ('\n')
-#define CVK_DIAGNOSTIC_PREFIX         (": cvk fatal: ")
+#define CVK_DIAGNOSTIC_CHAR_ZERO  ('0')
+#define CVK_DIAGNOSTIC_CHAR_MINUS ('-')
+#define CVK_DIAGNOSTIC_CHAR_END   ('\0')
+#define CVK_DIAGNOSTIC_PREFIX     (": cvk fatal: ")
 
 /*=================================================================================================
 ** 3.2 Types
@@ -151,13 +148,13 @@ CVK_NORETURN void cvkFatal(const char* pExpression, const char* pFile, int line)
 
     text = cvkFormatDiagnosticLine(digits, line);
 
-    (void)fputs(pFile, stderr);
-    (void)fputc(CVK_DIAGNOSTIC_CHAR_SEPARATOR, stderr);
-    (void)fputs(text, stderr);
-    (void)fputs(CVK_DIAGNOSTIC_PREFIX, stderr);
-    (void)fputs(pExpression, stderr);
-    (void)fputc(CVK_DIAGNOSTIC_CHAR_LF, stderr);
-    abort();
+    cvkDiagnosticWrite(pFile);
+    cvkDiagnosticWrite(":");
+    cvkDiagnosticWrite(text);
+    cvkDiagnosticWrite(CVK_DIAGNOSTIC_PREFIX);
+    cvkDiagnosticWrite(pExpression);
+    cvkDiagnosticWrite("\n");
+    cvkDiagnosticExit();
 }
 
 /*************************************************************************************************/
@@ -49828,7 +49825,15 @@ extern CVK_FORCE_INLINE VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage
     message_id_name = ((NULL != pCallbackData) && (NULL != pCallbackData->pMessageIdName)) ? pCallbackData->pMessageIdName : "";
     message         = ((NULL != pCallbackData) && (NULL != pCallbackData->pMessage)) ? pCallbackData->pMessage : "";
 
-    (void)fprintf(stderr, "vulkan severity 0x%x type 0x%x %s: %s\n", (unsigned)messageSeverity, (unsigned)messageTypes, message_id_name, message);
+    cvkDiagnosticWrite("vulkan severity 0x");
+    cvkDiagnosticWriteHex((uint32_t)messageSeverity);
+    cvkDiagnosticWrite(" type 0x");
+    cvkDiagnosticWriteHex((uint32_t)messageTypes);
+    cvkDiagnosticWrite(" ");
+    cvkDiagnosticWrite(message_id_name);
+    cvkDiagnosticWrite(": ");
+    cvkDiagnosticWrite(message);
+    cvkDiagnosticWrite("\n");
 
     return VK_FALSE;
 }

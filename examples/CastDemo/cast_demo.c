@@ -25,23 +25,25 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <windows.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <Windows.h> // IWYU pragma: keep
 
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <tchar.h>
 #include <wchar.h>
 
-#include "cast_channel.h"
 #include "cast_session.h"
 #include "cast_events.h"
 #include "os/os_assert.h"
 #include "os/os_console.h"
 #include "os/os_thread.h"
 #include "os/os_compiler.h"
+#include "os/os_types.h"
 #include "media_server.h"
 #include "cast_network.h"
 #include "os/os_network.h"
@@ -117,6 +119,7 @@ typedef struct CastConsole_s
     CastEvents_t            events;        ///< Worker-to-console status publication.
     CastEvents_Snapshot_t   snapshot;      ///< Consumer-owned acquired status.
     OS_Console_t            console;       ///< Startup-owned keyboard input and mode restoration.
+    double                  keyframes[MP4_INDEX_MAX_KEYFRAMES]; ///< Fixed local-media seek index.
 } CastConsole_t;
 
 /*=================================================================================================
@@ -720,7 +723,6 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
     CastSessionConfig config;
     CastSession_t*    pSession;
     MediaServer*      pServer    = NULL;
-    double*           pKeyframes = NULL;
     WSADATA wsaData;
     char    error[256];
     char    localAddress[64];
@@ -904,7 +906,8 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                 {
                     frame_limit = GpuTranscode_GetFrameCount(pTranscoder);
                 }
-                out    = fopen("proxy.264", "wb");
+                out = NULL;
+                (void)_tfopen_s(&out, TEXT("proxy.264"), TEXT("wb"));
                 header = GpuTranscode_GetHeader(pTranscoder, &header_size);
                 if (out && header && header_size)
                 {
@@ -1334,12 +1337,10 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
          (unsigned)MediaServer_GetPort(pServer),
          extension);
         (void)printf("serving %ls as %s (%s)\n", options.file, config.contentUrl, config.contentType);
-        pKeyframes = (double*)malloc(MP4_INDEX_MAX_KEYFRAMES * sizeof(double));
-        if (NULL != pKeyframes)
-        {
-            config.keyframeCount = Mp4Index_ReadKeyframes(options.file, pKeyframes, MP4_INDEX_MAX_KEYFRAMES);
-            config.pKeyframes    = pKeyframes;
-        }
+        config.keyframeCount = Mp4Index_ReadKeyframes(options.file,
+                                                      app->keyframes,
+                                                      MP4_INDEX_MAX_KEYFRAMES);
+        config.pKeyframes = app->keyframes;
     }
 
     storage_ready = CastSession_Initialize(&app->session);
@@ -1357,7 +1358,6 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
         (void)fprintf(stderr, "cannot start the session\n");
         CloseServingResources(&app->proxy, &pServer);
         CloseSessionResources(app);
-        free(pKeyframes);
         CloseNetworkResources(app);
         return 1;
     }
@@ -1441,7 +1441,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                 if (bounceDone < options.bounce && t >= nextBounce)
                 {
                     const double fromFrac = 0.03 + 0.94 * fmod(0.137 + (bounceDone + 0) * 0.6180339887, 1.0);
-                    const double toFrac   = 0.03 + 0.94 * fmod(0.137 + (bounceDone + 1) * 0.6180339887, 1.0);
+                    const double toFrac   = 0.03 + 0.94 * fmod(0.137 + ((double)bounceDone + 1.0) * 0.6180339887, 1.0);
                     const double seconds  = toFrac * app->duration;
                     int step;
 
@@ -1512,7 +1512,6 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
     }
     CloseServingResources(&app->proxy, &pServer);
     CloseSessionResources(app);
-    free(pKeyframes);
     CloseNetworkResources(app);
     return app->runResult;
 }

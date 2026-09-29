@@ -416,7 +416,7 @@ extern FORCE_INLINE bool_t Utl_Unicode_IsValidUtf8(const byte_t* buffer, uint32_
  * \par Details:
  *  Byte order and BOM interpretation belong to the enclosing byte-stream format.
  */
-bool_t Utl_Unicode_IsValidUtf16(const uint16_t* units, uint32_t unitCount)
+extern FORCE_INLINE bool_t Utl_Unicode_IsValidUtf16(const uint16_t* units, uint32_t unitCount)
 {
     uint32_t cursor;
     bool_t   is_valid;

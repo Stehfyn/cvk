@@ -40,6 +40,11 @@
 ** 3.3 Constants
 **===============================================================================================*/
 
+enum
+{
+    NATIVE_CAPACITY_SIGN_SHIFT = (sizeof(uint32_t) * CHAR_BIT) - 1
+};
+
 /*=================================================================================================
 ** 3.4 Variables
 **===============================================================================================*/
@@ -69,54 +74,52 @@ extern FORCE_INLINE bool_t OS_Text_ReadNative(uint16_t* output,
     uint32_t count;
     int      required;
     int      written;
+    int      native_capacity;
     bool_t   is_unicode;
     bool_t   has_capacity;
-    bool_t   bounded_capacity;
     bool_t   fits;
     bool_t   valid_text;
     bool_t   converted;
     bool_t   accepted;
+    uint64_t copy_bytes;
+    uint16_t scratch;
+    uint16_t* destination;
 
-    has_capacity     = 0 < capacity;
-    bounded_capacity = capacity <= INT_MAX;
+    /* Saturate at the largest count accepted by Win32 conversion APIs. */
+    native_capacity = (int)((capacity | (0U - (capacity >> NATIVE_CAPACITY_SIGN_SHIFT))) & INT_MAX);
+    has_capacity    = 0 < capacity;
     LOGASSERT(NULL != output);
     LOGASSERT(NULL != text);
-    LOGASSERT(has_capacity);
-    LOGASSERT(bounded_capacity);
-    output[0]  = 0;
+    destination = has_capacity ? output : &scratch;
+    destination[0] = 0;
     is_unicode = sizeof(TCHAR) == sizeof(uint16_t);
-    accepted   = FALSE;
     if (is_unicode)
     {
         count = (uint32_t)lstrlen(text);
-        fits  = count < capacity;
+        fits  = count < (uint32_t)native_capacity;
         valid_text = Utl_Unicode_IsValidUtf16((const uint16_t*)text, count);
-        if (fits && valid_text)
-        {
-            CRT_Memory_Copy(output, text, ((uint64_t)count + 1) * sizeof(uint16_t));
-            accepted = TRUE;
-        }
+        accepted   = fits && valid_text;
+        copy_bytes = (((uint64_t)count + 1) * sizeof(uint16_t)) * (uint64_t)accepted;
+        CRT_Memory_Copy(destination, text, copy_bytes);
     }
     else
     {
         required = MultiByteToWideChar(CP_ACP, MB_ERR_INVALID_CHARS, (LPCCH)text, -1, NULL, 0);
-        fits      = required <= (int)capacity;
+        fits      = required <= native_capacity;
         converted = 0 < required;
-        if (converted && fits)
-        {
-            written  = MultiByteToWideChar(CP_ACP,
-                                          MB_ERR_INVALID_CHARS,
-                                          (LPCCH)text,
-                                          -1,
-                                          (LPWSTR)output,
-                                          (int)capacity);
-            accepted = written == required;
-        }
+        written  = MultiByteToWideChar(CP_ACP,
+                                      MB_ERR_INVALID_CHARS,
+                                      (LPCCH)text,
+                                      -1,
+                                      (LPWSTR)destination,
+                                      native_capacity);
+        accepted = converted && fits && (written == required);
     }
     if (!accepted)
     {
-        output[0] = 0;
+        destination[0] = 0;
     }
+    LOGASSERT(has_capacity);
     return accepted;
 }
 
@@ -137,35 +140,35 @@ extern FORCE_INLINE bool_t OS_Text_WriteNative(LPTSTR          output,
     LPBOOL   used_default;
     int      required;
     int      written;
+    int      native_capacity;
     bool_t   is_unicode;
     bool_t   is_utf8;
     bool_t   has_capacity;
-    bool_t   bounded_capacity;
     bool_t   fits;
     bool_t   valid_text;
     bool_t   converted;
     bool_t   lossless;
     bool_t   accepted;
+    uint64_t copy_bytes;
+    TCHAR    scratch;
+    LPTSTR   destination;
 
-    has_capacity     = 0 < capacity;
-    bounded_capacity = capacity <= INT_MAX;
+    /* Saturate at the largest count accepted by Win32 conversion APIs. */
+    native_capacity = (int)((capacity | (0U - (capacity >> NATIVE_CAPACITY_SIGN_SHIFT))) & INT_MAX);
+    has_capacity    = 0 < capacity;
     LOGASSERT(NULL != output);
     LOGASSERT(NULL != text);
-    LOGASSERT(has_capacity);
-    LOGASSERT(bounded_capacity);
-    output[0]  = TEXT('\0');
+    destination = has_capacity ? output : &scratch;
+    destination[0] = TEXT('\0');
     is_unicode = sizeof(TCHAR) == sizeof(uint16_t);
-    accepted   = FALSE;
     if (is_unicode)
     {
         count = Utl_Unicode_GetUtf16StringUnitCount(text, INT_MAX);
-        fits  = count < capacity;
+        fits  = count < (uint32_t)native_capacity;
         valid_text = Utl_Unicode_IsValidUtf16(text, count);
-        if (fits && valid_text)
-        {
-            CRT_Memory_Copy(output, text, ((uint64_t)count + 1) * sizeof(uint16_t));
-            accepted = TRUE;
-        }
+        accepted   = fits && valid_text;
+        copy_bytes = (((uint64_t)count + 1) * sizeof(uint16_t)) * (uint64_t)accepted;
+        CRT_Memory_Copy(destination, text, copy_bytes);
     }
     else
     {
@@ -175,27 +178,25 @@ extern FORCE_INLINE bool_t OS_Text_WriteNative(LPTSTR          output,
         defaulted    = FALSE;
         used_default = is_utf8 ? NULL : &defaulted;
         required     = WideCharToMultiByte(code_page, flags, (LPCWCH)text, -1, NULL, 0, NULL, used_default);
-        fits         = required <= (int)capacity;
+        fits         = required <= native_capacity;
         converted    = 0 < required;
         lossless     = !defaulted;
-        if (converted && lossless && fits)
-        {
-            written = WideCharToMultiByte(code_page,
-                                         flags,
-                                         (LPCWCH)text,
-                                         -1,
-                                         (LPSTR)output,
-                                         (int)capacity,
-                                         NULL,
-                                         used_default);
-            converted = written == required;
-            lossless  = !defaulted;
-            accepted  = converted && lossless;
-        }
+        written = WideCharToMultiByte(code_page,
+                                     flags,
+                                     (LPCWCH)text,
+                                     -1,
+                                     (LPSTR)destination,
+                                     native_capacity,
+                                     NULL,
+                                     used_default);
+        converted = converted && (written == required);
+        lossless  = lossless && !defaulted;
+        accepted  = converted && lossless && fits;
     }
     if (!accepted)
     {
-        output[0] = TEXT('\0');
+        destination[0] = TEXT('\0');
     }
+    LOGASSERT(has_capacity);
     return accepted;
 }

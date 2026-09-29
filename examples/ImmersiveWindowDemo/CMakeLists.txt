@@ -16,6 +16,9 @@ foreach(shader fullscreen.vert nv12.frag bicubic.frag)
 endforeach()
 
 add_library(immersive-video STATIC video.c video.h renderer.c renderer.h ${shader_headers})
+if(MSVC)
+    target_compile_options(immersive-video PRIVATE /GS- /Zl)
+endif()
 target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(immersive-video SYSTEM PUBLIC "${reference_dir}")

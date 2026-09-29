@@ -54,16 +54,16 @@ static FORCE_INLINE bool_t IsWhitespace(uint16_t value);
 
 /*************************************************************************************************/
 /**
- * \brief Counts and consumes consecutive backslashes at the current position.
+ * \brief Consumes consecutive backslashes at the current position.
  * \par Requirements:
  *  - 001 The cursor shall not exceed the readable input count.
  *  - 002 The first non-backslash unit shall remain unread.
  * \param[in] input         Readable command-line units
  * \param[in] inputCount    Readable unit count
  * \param[in,out] cursor    Current position
- * \retval    0..inputCount   Number of consumed backslashes.
+ * \retval    None
  */
-static FORCE_INLINE uint32_t ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor);
+static FORCE_INLINE void ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor);
 
 /*************************************************************************************************/
 /**
@@ -140,24 +140,29 @@ static FORCE_INLINE bool_t IsWhitespace(uint16_t value)
  * \par Details:
  *  Only the following quote determines how many consumed backslashes are literal.
  */
-static FORCE_INLINE uint32_t ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor)
+static FORCE_INLINE void ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor)
 {
     uint32_t start;
+    uint32_t position;
+    uint32_t candidate;
     bool_t   is_backslash;
+    bool_t   is_in_range;
 
     LOGASSERT(NULL != input);
     LOGASSERT(NULL != cursor);
-    LOGASSERT(*cursor <= inputCount);
-    start = *cursor;
-    for (; *cursor < inputCount; ++(*cursor))
+    candidate   = *cursor;
+    is_in_range = candidate <= inputCount;
+    start       = candidate & ((uint32_t)0 - (uint32_t)is_in_range);
+    LOGASSERT(is_in_range);
+    for (position = start; position < inputCount; ++position)
     {
-        is_backslash = (ARGUMENT_BACKSLASH == input[*cursor]);
+        is_backslash = (ARGUMENT_BACKSLASH == input[position]);
         if (!is_backslash)
         {
             break;
         }
     }
-    return *cursor - start;
+    *cursor = position;
 }
 
 /*************************************************************************************************/
@@ -224,6 +229,7 @@ ReadArgument(uint16_t* output, const uint16_t* input, uint32_t inputCount, uint3
     bool_t   is_space;
     bool_t   at_end;
     uint32_t slashes;
+    uint32_t slash_start;
     bool_t   has_quote;
     uint32_t literal_slashes;
     uint32_t index;
@@ -248,7 +254,9 @@ ReadArgument(uint16_t* output, const uint16_t* input, uint32_t inputCount, uint3
         slashes = 0;
         if (!isProgram)
         {
-            slashes = ReadBackslashes(input, inputCount, cursor);
+            slash_start = *cursor;
+            ReadBackslashes(input, inputCount, cursor);
+            slashes = *cursor - slash_start;
         }
         has_input       = (*cursor < inputCount);
         has_quote       = has_input && (ARGUMENT_QUOTE == input[(*cursor)]);

@@ -143,7 +143,7 @@ add_test(NAME cvk-cast-controls COMMAND cvk-cast-control-test)
 if(MSVC)
     # Common CRT-free test policy. Retain IPO, including compiler ABI data objects.
     add_library(cast-no-crt INTERFACE)
-    target_link_libraries(cast-no-crt INTERFACE cast-formats crt-abi kernel32)
+    target_link_libraries(cast-no-crt INTERFACE cast-formats crt-abi BufferOverflowU kernel32)
     target_compile_options(cast-no-crt INTERFACE /GS- /Zl)
     target_link_options(cast-no-crt INTERFACE /NODEFAULTLIB /ENTRY:WinMainStartup)
 
