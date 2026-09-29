@@ -12,6 +12,8 @@
 #include "os/os_compiler.h"
 #include "os/os_types.h"
 
+#include <stdint.h>
+
 /*=================================================================================================
 ** 3. DECLARATIONS
 **

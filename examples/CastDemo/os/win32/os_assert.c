@@ -13,9 +13,13 @@
 **===============================================================================================*/
 
 #include "os/os_assert.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
 
-#include <windows.h>
-#if defined(_MSC_VER)
+#include <Windows.h> // IWYU pragma: keep
+#include <winnt.h>
+#include <stdint.h>
+#ifdef _MSC_VER
 #include <intrin.h>
 #endif
 
@@ -74,7 +78,7 @@ OS_NORETURN void OS_AssertFailure(const char_t* expression, const char_t* file, 
     context.file       = file;
     context.line       = line;
     (void)context.line;
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
     __fastfail(FAST_FAIL_FATAL_APP_EXIT);
 #else
     RaiseFailFastException(NULL, NULL, 0);

@@ -14,9 +14,9 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <minwindef.h>
-#include <winbase.h>
+#include <WinBase.h>
 #include <errhandlingapi.h>
 #include <handleapi.h>
 #include <processthreadsapi.h>
@@ -35,7 +35,7 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define THREAD_STACK_BYTE_COUNT (1024 * 1024) ///< Native committed startup stack size.
+#define THREAD_STACK_BYTE_COUNT (1048576) ///< Native committed startup stack size, one MiB.
 
 /*=================================================================================================
 ** 3.2 Types
@@ -158,7 +158,7 @@ static FORCE_INLINE DWORD WINAPI RunThread(LPVOID parameter)
  *  The event and a fully committed one-megabyte stack are created only here.
  *  Failure retains any acquired resource so the owner can retry TryClose.
  */
-bool_t OS_Thread_Initialize(OS_Thread_t* thread, OS_Thread_Proc_t run, void* context)
+extern FORCE_INLINE bool_t OS_Thread_Initialize(OS_Thread_t* thread, OS_Thread_Proc_t run, void* context)
 {
     uint32_t error;
     bool_t   initialized;
@@ -195,7 +195,7 @@ bool_t OS_Thread_Initialize(OS_Thread_t* thread, OS_Thread_Proc_t run, void* con
  * \par Details:
  *  The atomic acquire pairs with callback completion or native failure publication.
  */
-OS_Thread_State_t OS_Thread_GetState(const OS_Thread_t* thread)
+extern FORCE_INLINE OS_Thread_State_t OS_Thread_GetState(const OS_Thread_t* thread)
 {
     uint32_t state;
 
@@ -211,7 +211,7 @@ OS_Thread_State_t OS_Thread_GetState(const OS_Thread_t* thread)
  * \par Details:
  *  The error word is sticky until the next initialization of closed storage.
  */
-uint32_t OS_Thread_GetError(const OS_Thread_t* thread)
+extern FORCE_INLINE uint32_t OS_Thread_GetError(const OS_Thread_t* thread)
 {
     LOGASSERT(NULL != thread);
 
@@ -223,7 +223,7 @@ uint32_t OS_Thread_GetError(const OS_Thread_t* thread)
  * \par Details:
  *  No native call or blocking observation is needed.
  */
-bool_t OS_Thread_IsStopping(const OS_Thread_t* thread)
+extern FORCE_INLINE bool_t OS_Thread_IsStopping(const OS_Thread_t* thread)
 {
     uint32_t stopping;
 
@@ -240,7 +240,7 @@ bool_t OS_Thread_IsStopping(const OS_Thread_t* thread)
  *  A failed event signal rolls back only RUNNING; concurrent FAILED publication
  *  is preserved. Owner serialization excludes a simultaneous Stop or second Submit.
  */
-bool_t OS_Thread_Submit(OS_Thread_t* thread)
+extern FORCE_INLINE bool_t OS_Thread_Submit(OS_Thread_t* thread)
 {
     bool_t   stopping;
     bool_t   has_thread;
@@ -280,7 +280,7 @@ bool_t OS_Thread_Submit(OS_Thread_t* thread)
  * \par Details:
  *  The single exchange acquires callback writes and allows later context reuse.
  */
-bool_t OS_Thread_TakeResult(OS_Thread_t* thread)
+extern FORCE_INLINE bool_t OS_Thread_TakeResult(OS_Thread_t* thread)
 {
     uint32_t previous;
     bool_t   completed;
@@ -299,7 +299,7 @@ bool_t OS_Thread_TakeResult(OS_Thread_t* thread)
  *  A failed wake does not clear the shutdown request; later Stop or TryClose
  *  retries it. Running callbacks also observe shutdown after returning.
  */
-bool_t OS_Thread_Stop(OS_Thread_t* thread)
+extern FORCE_INLINE bool_t OS_Thread_Stop(OS_Thread_t* thread)
 {
     bool_t   has_thread;
     bool_t   has_wake;
@@ -333,7 +333,7 @@ bool_t OS_Thread_Stop(OS_Thread_t* thread)
  *  An exit observation precedes every release of live-thread resources.
  *  Failed CloseHandle operations retain their identities for a later retry.
  */
-bool_t OS_Thread_TryClose(OS_Thread_t* thread)
+extern FORCE_INLINE bool_t OS_Thread_TryClose(OS_Thread_t* thread)
 {
     bool_t   has_thread;
     bool_t   quiescent;

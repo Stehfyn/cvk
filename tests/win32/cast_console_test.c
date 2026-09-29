@@ -12,7 +12,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <consoleapi.h>
 #include <consoleapi2.h>
 #include <consoleapi3.h>

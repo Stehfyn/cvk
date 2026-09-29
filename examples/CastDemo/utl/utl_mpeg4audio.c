@@ -1614,7 +1614,7 @@ static FORCE_INLINE void WriteConfiguration(Utl_Mpeg4_BitWriter_t* writer, const
  * \par Details:
  *  None
  */
-void Utl_Mpeg4Audio_InitializeConfig(Utl_Mpeg4Audio_Config_t* config)
+extern FORCE_INLINE void Utl_Mpeg4Audio_InitializeConfig(Utl_Mpeg4Audio_Config_t* config)
 {
     LOGASSERT(NULL != config);
     config->objectType               = UTL_MPEG4AUDIO_LC;
@@ -1660,7 +1660,7 @@ void Utl_Mpeg4Audio_InitializeConfig(Utl_Mpeg4Audio_Config_t* config)
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4Audio_GetSampleRate(const Utl_Mpeg4Audio_Config_t* config)
+extern FORCE_INLINE uint32_t Utl_Mpeg4Audio_GetSampleRate(const Utl_Mpeg4Audio_Config_t* config)
 {
     uint32_t rate;
 
@@ -1682,7 +1682,7 @@ uint32_t Utl_Mpeg4Audio_GetSampleRate(const Utl_Mpeg4Audio_Config_t* config)
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4Audio_GetChannelCount(const Utl_Mpeg4Audio_Config_t* config)
+extern FORCE_INLINE uint32_t Utl_Mpeg4Audio_GetChannelCount(const Utl_Mpeg4Audio_Config_t* config)
 {
     uint32_t channels;
 

@@ -12,10 +12,19 @@
 
 #include "os/os_process.h"
 #include "os/os_assert.h"
+#include "os/os_types.h"
+#include "os/os_compiler.h"
 #include "utl/utl_unicode.h"
 #include "utl/utl_arguments.h"
 
-#include <windows.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <minwindef.h>
+#include <WinBase.h>
+#include <winnt.h>
+#include <processenv.h>
+#include <processthreadsapi.h>
+#include <errhandlingapi.h>
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -55,7 +64,7 @@
  *  GetCommandLine returns OS-owned storage. Its native encoding is confined to this
  *  backend; utility code receives counted, native-order UTF-16 units.
  */
-bool_t OS_Process_ReadArgument(uint32_t* unitCount, uint16_t* output, uint32_t capacity, uint32_t argumentIndex)
+extern FORCE_INLINE bool_t OS_Process_ReadArgument(uint32_t* unitCount, uint16_t* output, uint32_t capacity, uint32_t argumentIndex)
 {
     LPCTSTR                command;
     bool_t                 has_text;
@@ -89,7 +98,7 @@ bool_t OS_Process_ReadArgument(uint32_t* unitCount, uint16_t* output, uint32_t c
  *  Only the noninteractive error bits are changed; existing unrelated settings are
  *  retained. Startup is single-threaded, before any application worker exists.
  */
-void OS_Process_SetInteractive(bool_t interactive)
+extern FORCE_INLINE void OS_Process_SetInteractive(bool_t interactive)
 {
     UINT mode;
     UINT mask;

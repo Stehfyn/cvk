@@ -9,8 +9,11 @@
 **===============================================================================================*/
 
 #include "crt/crt_memory.h"
+#include "os/os_types.h"
+#include <stdint.h>
 #include "os/os_assert.h"
 #include "os/os_process.h"
+#include "os/os_compiler.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -18,12 +21,15 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define TEST_LENGTH       (129)
-#define TEST_ALIGNMENT    (16)
-#define TEST_MOVE_OFFSETS (33)
-#define TEST_CAPACITY     (TEST_LENGTH + TEST_MOVE_OFFSETS)
-#define TEST_SENTINEL     (0xDA)
-#define TEST_VALUE_STEP   (51)
+#define TEST_LENGTH             (129)
+#define TEST_ALIGNMENT          (16)
+#define TEST_MOVE_OFFSETS       (33)
+#define TEST_CAPACITY           (TEST_LENGTH + TEST_MOVE_OFFSETS)
+#define TEST_SENTINEL           (0xDA)
+#define TEST_VALUE_STEP         (51)
+#define TEST_PATTERN_MULTIPLIER (71)
+#define TEST_PATTERN_DIVISOR    (7)
+#define TEST_PATTERN_BIAS       (193)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -52,7 +58,44 @@
  *
  * \retval    0..255   Fixture byte value.
  */
-static byte_t Pattern(uint32_t index);
+static FORCE_INLINE byte_t Pattern(uint32_t index);
+
+/*************************************************************************************************/
+/**
+ * \brief Checks one copy placement and preservation of the source and surrounding bytes.
+ *
+ * \par Requirements:
+ *  - 001 Both arrays shall provide TEST_CAPACITY bytes; the selected spans shall fit.
+ *
+ * \param[in]     input          Independent source pattern
+ * \param[in,out] output         Destination fixture
+ * \param[in]     length         Selected byte count
+ * \param[in]     input_offset   Source placement
+ * \param[in]     output_offset  Destination placement
+ *
+ * \retval        None
+ */
+static FORCE_INLINE void CheckCopy(const byte_t* input,
+                                   byte_t*       output,
+                                   uint32_t      length,
+                                   uint32_t      input_offset,
+                                   uint32_t      output_offset);
+
+/*************************************************************************************************/
+/**
+ * \brief Checks one fill placement and preservation of surrounding bytes.
+ *
+ * \par Requirements:
+ *  - 001 The destination shall provide TEST_CAPACITY bytes; the selected span shall fit.
+ *
+ * \param[in,out] output         Destination fixture
+ * \param[in]     length         Selected byte count
+ * \param[in]     output_offset  Destination placement
+ * \param[in]     value          Fill byte
+ *
+ * \retval        None
+ */
+static FORCE_INLINE void CheckSet(byte_t* output, uint32_t length, uint32_t output_offset, byte_t value);
 
 /*************************************************************************************************/
 /**
@@ -63,7 +106,7 @@ static byte_t Pattern(uint32_t index);
  *
  * \retval None
  */
-static void CheckCopyAndSet(void);
+static FORCE_INLINE void CheckCopyAndSet(void);
 
 /*************************************************************************************************/
 /**
@@ -74,7 +117,7 @@ static void CheckCopyAndSet(void);
  *
  * \retval None
  */
-static void CheckMove(void);
+static FORCE_INLINE void CheckMove(void);
 
 /*************************************************************************************************/
 /**
@@ -85,7 +128,7 @@ static void CheckMove(void);
  *
  * \retval None
  */
-static void CheckCompare(void);
+static FORCE_INLINE void CheckCompare(void);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -96,9 +139,79 @@ static void CheckCompare(void);
  * \par Details:
  *  Vary adjacent bytes and high bits so byte order and unsigned comparisons matter.
  */
-static byte_t Pattern(uint32_t index)
+static FORCE_INLINE byte_t Pattern(uint32_t index)
 {
-    return (byte_t)(((index * 71) + (index / 7) + 193) & UINT8_MAX);
+    return (byte_t)(((index * TEST_PATTERN_MULTIPLIER) + (index / TEST_PATTERN_DIVISOR) + TEST_PATTERN_BIAS) &
+                    UINT8_MAX);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Expectations are derived from the original arithmetic pattern, not the copied output.
+ */
+static FORCE_INLINE void CheckCopy(const byte_t* input,
+                                   byte_t*       output,
+                                   uint32_t      length,
+                                   uint32_t      input_offset,
+                                   uint32_t      output_offset)
+{
+    uint32_t index;
+    bool_t   after_start;
+    bool_t   before_end;
+    bool_t   in_output;
+    byte_t   expected;
+
+    for (index = 0; index < TEST_CAPACITY; ++index)
+    {
+        output[index] = TEST_SENTINEL;
+    }
+    CRT_Memory_Copy(&output[output_offset], &input[input_offset], length);
+    for (index = 0; index < TEST_CAPACITY; ++index)
+    {
+        after_start = (output_offset <= index);
+        before_end  = ((output_offset + length) > index);
+        in_output   = after_start && before_end;
+        expected    = TEST_SENTINEL;
+        if (in_output)
+        {
+            expected = Pattern(input_offset + index - output_offset);
+        }
+        LOGASSERT(expected == output[index]);
+        LOGASSERT(Pattern(index) == input[index]);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Every byte outside the selected destination retains its sentinel.
+ */
+static FORCE_INLINE void CheckSet(byte_t* output, uint32_t length, uint32_t output_offset, byte_t value)
+{
+    uint32_t index;
+    bool_t   after_start;
+    bool_t   before_end;
+    bool_t   in_output;
+    byte_t   expected;
+
+    for (index = 0; index < TEST_CAPACITY; ++index)
+    {
+        output[index] = TEST_SENTINEL;
+    }
+    CRT_Memory_Set(&output[output_offset], value, length);
+    for (index = 0; index < TEST_CAPACITY; ++index)
+    {
+        after_start = (output_offset <= index);
+        before_end  = ((output_offset + length) > index);
+        in_output   = after_start && before_end;
+        expected    = TEST_SENTINEL;
+        if (in_output)
+        {
+            expected = value;
+        }
+        LOGASSERT(expected == output[index]);
+    }
 }
 
 /*************************************************************************************************/
@@ -107,7 +220,7 @@ static byte_t Pattern(uint32_t index)
  *  Expected bytes are derived arithmetically rather than copied by the tested
  *  routines. Sentinels detect overwrites; lengths cover all scalar/vector tails.
  */
-static void CheckCopyAndSet(void)
+static FORCE_INLINE void CheckCopyAndSet(void)
 {
     uint32_t index;
     byte_t   input[TEST_CAPACITY];
@@ -115,8 +228,6 @@ static void CheckCopyAndSet(void)
     uint32_t input_offset;
     uint32_t output_offset;
     byte_t   output[TEST_CAPACITY];
-    bool_t   in_output;
-    byte_t   expected;
     uint32_t value;
 
     for (index = 0; index < TEST_CAPACITY; ++index)
@@ -129,43 +240,14 @@ static void CheckCopyAndSet(void)
         {
             for (output_offset = 0; output_offset < TEST_ALIGNMENT; ++output_offset)
             {
-                for (index = 0; index < TEST_CAPACITY; ++index)
-                {
-                    output[index] = TEST_SENTINEL;
-                }
-                CRT_Memory_Copy(&output[output_offset], &input[input_offset], length);
-                for (index = 0; index < TEST_CAPACITY; ++index)
-                {
-                    in_output = (index >= output_offset) && (index < (output_offset + length));
-                    expected  = TEST_SENTINEL;
-                    if (in_output)
-                    {
-                        expected = Pattern(input_offset + index - output_offset);
-                    }
-                    LOGASSERT(expected == output[index]);
-                    LOGASSERT(Pattern(index) == input[index]);
-                }
+                CheckCopy(input, output, length, input_offset, output_offset);
             }
         }
         for (output_offset = 0; output_offset < TEST_ALIGNMENT; ++output_offset)
         {
             for (value = 0; value <= UINT8_MAX; value += TEST_VALUE_STEP)
             {
-                for (index = 0; index < TEST_CAPACITY; ++index)
-                {
-                    output[index] = TEST_SENTINEL;
-                }
-                CRT_Memory_Set(&output[output_offset], (byte_t)value, length);
-                for (index = 0; index < TEST_CAPACITY; ++index)
-                {
-                    in_output = (index >= output_offset) && (index < (output_offset + length));
-                    expected  = TEST_SENTINEL;
-                    if (in_output)
-                    {
-                        expected = (byte_t)value;
-                    }
-                    LOGASSERT(expected == output[index]);
-                }
+                CheckSet(output, length, output_offset, (byte_t)value);
             }
         }
     }
@@ -177,7 +259,7 @@ static void CheckCopyAndSet(void)
  *  Every result is compared with the original input's arithmetic fixture, including
  *  bytes outside the destination. Offsets include overlap distances below one vector.
  */
-static void CheckMove(void)
+static FORCE_INLINE void CheckMove(void)
 {
     uint32_t length;
     uint32_t input_offset;
@@ -219,7 +301,7 @@ static void CheckMove(void)
  *  Each mismatch is introduced into an independently initialized equal pair.
  *  Later differences have the opposite sign so returning a later match is detected.
  */
-static void CheckCompare(void)
+static FORCE_INLINE void CheckCompare(void)
 {
     uint32_t length;
     uint32_t index;

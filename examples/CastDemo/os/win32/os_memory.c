@@ -15,7 +15,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <basetsd.h>
 #include <minwindef.h>
 #include <memoryapi.h>
@@ -99,7 +99,7 @@ static FORCE_INLINE void RecordError(OS_Memory_t* memory, uint32_t code)
  *  The backend reserves/commits, touches and locks every requested page before
  *  publishing readiness. A failed residency request does not become a usable region.
  */
-bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t byteCount)
+extern FORCE_INLINE bool_t OS_Memory_Initialize(OS_Memory_t* memory, uint64_t byteCount)
 {
     uint32_t error;
     bool_t   allocated;
@@ -166,7 +166,7 @@ void* OS_Memory_GetAddress(const OS_Memory_t* memory)
  * \par Details:
  *  Native page rounding does not increase the caller-visible contract.
  */
-uint64_t OS_Memory_GetByteCount(const OS_Memory_t* memory)
+extern FORCE_INLINE uint64_t OS_Memory_GetByteCount(const OS_Memory_t* memory)
 {
     uint64_t byte_count;
 
@@ -186,7 +186,7 @@ uint64_t OS_Memory_GetByteCount(const OS_Memory_t* memory)
  * \par Details:
  *  The Win32 backend records GetLastError values.
  */
-uint32_t OS_Memory_GetError(const OS_Memory_t* memory)
+extern FORCE_INLINE uint32_t OS_Memory_GetError(const OS_Memory_t* memory)
 {
     LOGASSERT(NULL != memory);
 
@@ -212,7 +212,7 @@ bool_t OS_Memory_IsReady(const OS_Memory_t* memory)
  *  unlock attempt stays recorded until successful unlock or whole-region release.
  *  No code may resume borrowing a region after closure starts.
  */
-bool_t OS_Memory_TryClose(OS_Memory_t* memory)
+extern FORCE_INLINE bool_t OS_Memory_TryClose(OS_Memory_t* memory)
 {
     bool_t   has_region;
     bool_t   unlocked;

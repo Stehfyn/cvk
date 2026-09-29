@@ -1979,7 +1979,7 @@ static FORCE_INLINE void ReadJsonContainerStep(JsonParser_t* parser)
  * \par Details:
  *  None
  */
-void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
+extern FORCE_INLINE void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
                                Utl_Json_Frame_t*  frames,
                                uint32_t           frameCapacity,
                                byte_t*            buffer,
@@ -2025,7 +2025,7 @@ void Utl_Json_InitializeReader(Utl_Json_Reader_t* reader, Utl_Json_Value_t* valu
  * \par Details:
  *  None
  */
-uint32_t Utl_Json_GetByteCount(const Utl_Json_Writer_t* writer)
+extern FORCE_INLINE uint32_t Utl_Json_GetByteCount(const Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return writer->used;
@@ -2047,7 +2047,7 @@ Utl_Json_Status_t Utl_Json_GetStatus(const Utl_Json_Writer_t* writer)
  * \par Details:
  *  None
  */
-uint32_t Utl_Json_GetStringByteCount(Utl_Json_Text_t text)
+extern FORCE_INLINE uint32_t Utl_Json_GetStringByteCount(Utl_Json_Text_t text)
 {
     bool_t   valid;
     uint64_t count;
@@ -2100,7 +2100,7 @@ uint32_t Utl_Json_GetStringByteCount(Utl_Json_Text_t text)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_IsComplete(const Utl_Json_Writer_t* writer)
+extern FORCE_INLINE bool_t Utl_Json_IsComplete(const Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return (UTL_JSON_COMPLETE == writer->status);
@@ -2708,7 +2708,7 @@ bool_t Utl_Json_WriteNumber(Utl_Json_Writer_t* writer, Utl_Json_Text_t number)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_WriteUint64(Utl_Json_Writer_t* writer, uint64_t value)
+extern FORCE_INLINE bool_t Utl_Json_WriteUint64(Utl_Json_Writer_t* writer, uint64_t value)
 {
     Utl_Json_Text_t number;
     byte_t          digits[JSON_UINT64_BYTES];
@@ -2728,7 +2728,7 @@ bool_t Utl_Json_WriteUint64(Utl_Json_Writer_t* writer, uint64_t value)
  *  Incrementing before negation covers INT64_MIN without signed overflow.
  *  WriteLiteral validates writer state and capacity before publishing any bytes.
  */
-bool_t Utl_Json_WriteInt64(Utl_Json_Writer_t* writer, int64_t value)
+extern FORCE_INLINE bool_t Utl_Json_WriteInt64(Utl_Json_Writer_t* writer, int64_t value)
 {
     bool_t          is_negative;
     uint64_t        magnitude;
@@ -2766,7 +2766,7 @@ bool_t Utl_Json_WriteInt64(Utl_Json_Writer_t* writer, int64_t value)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_Json_Decimal_t value)
+extern FORCE_INLINE bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_Json_Decimal_t value)
 {
     uint64_t        scale;
     uint32_t        index;
@@ -2810,7 +2810,7 @@ bool_t Utl_Json_WriteDecimal(Utl_Json_Writer_t* writer, Utl_Json_Decimal_t value
  * \par Details:
  *  None
  */
-bool_t Utl_Json_WriteBoolean(Utl_Json_Writer_t* writer, bool_t value)
+extern FORCE_INLINE bool_t Utl_Json_WriteBoolean(Utl_Json_Writer_t* writer, bool_t value)
 {
     Utl_Json_Text_t text;
     bool_t          accepted;
@@ -2842,7 +2842,7 @@ bool_t Utl_Json_WriteNull(Utl_Json_Writer_t* writer)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_BeginObject(Utl_Json_Writer_t* writer)
+extern FORCE_INLINE bool_t Utl_Json_BeginObject(Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return BeginContainer(writer, UTL_JSON_OBJECT);
@@ -2853,7 +2853,7 @@ bool_t Utl_Json_BeginObject(Utl_Json_Writer_t* writer)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_EndObject(Utl_Json_Writer_t* writer)
+extern FORCE_INLINE bool_t Utl_Json_EndObject(Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return EndContainer(writer, UTL_JSON_OBJECT);
@@ -2864,7 +2864,7 @@ bool_t Utl_Json_EndObject(Utl_Json_Writer_t* writer)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_BeginArray(Utl_Json_Writer_t* writer)
+extern FORCE_INLINE bool_t Utl_Json_BeginArray(Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return BeginContainer(writer, UTL_JSON_ARRAY);
@@ -2875,7 +2875,7 @@ bool_t Utl_Json_BeginArray(Utl_Json_Writer_t* writer)
  * \par Details:
  *  None
  */
-bool_t Utl_Json_EndArray(Utl_Json_Writer_t* writer)
+extern FORCE_INLINE bool_t Utl_Json_EndArray(Utl_Json_Writer_t* writer)
 {
     LOGASSERT(NULL != writer);
     return EndContainer(writer, UTL_JSON_ARRAY);

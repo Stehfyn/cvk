@@ -9,6 +9,7 @@
 **===============================================================================================*/
 
 #include "utl/utl_unicode.h"
+#include <stdint.h>
 #include "utl/utl_protobuf.h"
 #include "utl/utl_castv2.h"
 #include "utl/utl_decimal.h"

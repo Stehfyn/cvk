@@ -636,7 +636,7 @@ static FORCE_INLINE void ReadDelimiter(Reader_t* reader, byte_t delimiter)
  * \par Details:
  *  The fixed suffix accounts for every field after the hours component.
  */
-uint32_t Utl_WebVtt_GetTimestampByteCount(uint64_t milliseconds)
+extern FORCE_INLINE uint32_t Utl_WebVtt_GetTimestampByteCount(uint64_t milliseconds)
 {
     uint32_t hours;
 
@@ -697,7 +697,7 @@ uint32_t Utl_WebVtt_GetCueByteCount(const Utl_WebVtt_Cue_t* cue)
  *  The first field is hours only when a second colon follows. Arithmetic is
  *  staged after width/range validation; overflow never wraps into a valid time.
  */
-bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_WebVtt_ReadTimestamp(uint64_t* milliseconds, uint32_t* bytesRead, const byte_t* input, uint32_t byteCount)
 {
     Reader_t reader;
     uint64_t first;

@@ -488,7 +488,7 @@ static FORCE_INLINE uint16_t ReadPolicy(CastHttp_Request_t* request)
  * \par Details:
  *  Binding storage does not clear unused field records or inspect source bytes.
  */
-void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* fields, uint32_t fieldCapacity)
+extern FORCE_INLINE void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* fields, uint32_t fieldCapacity)
 {
     LOGASSERT(NULL != request);
     Utl_Http_InitializeHeadReader(&request->reader, UTL_HTTP_REQUEST, fields, fieldCapacity);
@@ -506,7 +506,7 @@ void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* f
  * \par Details:
  *  The complete response uses only caller-owned or bounded automatic storage.
  */
-void CastHttp_InitializeResponse(CastHttp_Response_t* response, uint16_t status)
+extern FORCE_INLINE void CastHttp_InitializeResponse(CastHttp_Response_t* response, uint16_t status)
 {
     LOGASSERT(NULL != response);
     LOGASSERT(IsResponseStatus(status));
@@ -525,7 +525,7 @@ void CastHttp_InitializeResponse(CastHttp_Response_t* response, uint16_t status)
  * \par Details:
  *  All members are parsed before the first satisfiable member is selected.
  */
-CastHttp_RangeResult_t CastHttp_GetRange(const CastHttp_Request_t* request,
+extern FORCE_INLINE CastHttp_RangeResult_t CastHttp_GetRange(const CastHttp_Request_t* request,
                                          uint64_t                  representationBytes,
                                          Utl_Http_RangeInterval_t* interval)
 {
@@ -594,7 +594,7 @@ uint32_t CastHttp_GetResponseByteCount(const CastHttp_Response_t* response)
  * \par Details:
  *  The underlying terminal head result is not re-read until a new request is initialized.
  */
-CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const byte_t* data, uint32_t byteCount)
+extern FORCE_INLINE CastHttp_Result_t CastHttp_ReadRequest(CastHttp_Request_t* request, const byte_t* data, uint32_t byteCount)
 {
     Utl_Http_Result_t result;
     LOGASSERT(NULL != request);

@@ -9,6 +9,9 @@
 **===============================================================================================*/
 
 #include "os/os_assert.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
+#include <stdint.h>
 #include "os/os_process.h"
 #include "utl/utl_arguments.h"
 
@@ -45,9 +48,59 @@ static const Utl_Arguments_Record_t c_records[] = {{c_program, sizeof(c_program)
 ** 3.5 Static function prototypes
 **===============================================================================================*/
 
+/*************************************************************************************************/
+/**
+ * \brief Checks one record at one exact or insufficient output capacity.
+ *
+ * \param[in] arguments   Initialized record sequence
+ * \param[in] argument    Selected record ordinal
+ * \param[in] capacity    Capacity to exercise
+ *
+ * \retval    None
+ */
+static FORCE_INLINE void CheckCapacity(const Utl_Arguments_t* arguments, uint32_t argument, uint32_t capacity);
+
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Preservation is checked over the complete sentinel buffer, including empty records.
+ */
+static FORCE_INLINE void CheckCapacity(const Utl_Arguments_t* arguments, uint32_t argument, uint32_t capacity)
+{
+    uint16_t output[TEST_CAPACITY];
+    uint32_t count;
+    uint32_t index;
+    bool_t   found;
+    for (index = 0; index < TEST_CAPACITY; ++index)
+    {
+        output[index] = TEST_SENTINEL;
+    }
+    count = TEST_SENTINEL;
+    found = Utl_Arguments_Read(&count, output, capacity, arguments, argument);
+    if (capacity < c_records[argument].unitCount)
+    {
+        LOGASSERT(!found);
+        LOGASSERT(TEST_SENTINEL == count);
+        for (index = 0; index < TEST_CAPACITY; ++index)
+        {
+            LOGASSERT(TEST_SENTINEL == output[index]);
+        }
+    }
+    else
+    {
+        LOGASSERT(found);
+        LOGASSERT(c_records[argument].unitCount == count);
+        for (index = 0; index < count; ++index)
+        {
+            LOGASSERT(c_records[argument].units[index] == output[index]);
+        }
+        LOGASSERT(TEST_SENTINEL == output[count]);
+    }
+}
 
 /*=================================================================================================
 ** 5. PUBLIC FUNCTIONS
@@ -64,7 +117,6 @@ uint32_t OS_Application_Main(void)
     Utl_Arguments_t arguments;
     uint32_t        argument;
     uint32_t        capacity;
-    uint32_t        index;
     uint16_t        output[TEST_CAPACITY];
     uint32_t        count;
     bool_t          found;
@@ -76,31 +128,7 @@ uint32_t OS_Application_Main(void)
     {
         for (capacity = 0; capacity <= c_records[argument].unitCount; ++capacity)
         {
-            for (index = 0; index < TEST_CAPACITY; ++index)
-            {
-                output[index] = TEST_SENTINEL;
-            }
-            count = TEST_SENTINEL;
-            found = Utl_Arguments_Read(&count, output, capacity, &arguments, argument);
-            if (capacity < c_records[argument].unitCount)
-            {
-                LOGASSERT(!found);
-                LOGASSERT(TEST_SENTINEL == count);
-                for (index = 0; index < TEST_CAPACITY; ++index)
-                {
-                    LOGASSERT(TEST_SENTINEL == output[index]);
-                }
-            }
-            else
-            {
-                LOGASSERT(found);
-                LOGASSERT(c_records[argument].unitCount == count);
-                for (index = 0; index < count; ++index)
-                {
-                    LOGASSERT(c_records[argument].units[index] == output[index]);
-                }
-                LOGASSERT(TEST_SENTINEL == output[count]);
-            }
+            CheckCapacity(&arguments, argument, capacity);
         }
     }
     count     = TEST_SENTINEL;

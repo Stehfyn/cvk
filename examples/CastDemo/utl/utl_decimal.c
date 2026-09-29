@@ -14,6 +14,9 @@
 **===============================================================================================*/
 
 #include "utl/utl_decimal.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -52,7 +55,7 @@
  * \par Details:
  *  Repeated division terminates after at most nineteen iterations.
  */
-uint32_t Utl_Decimal_GetUint64ByteCount(uint64_t value)
+extern FORCE_INLINE uint32_t Utl_Decimal_GetUint64ByteCount(uint64_t value)
 {
     uint32_t count;
 
@@ -74,7 +77,7 @@ uint32_t Utl_Decimal_GetUint64ByteCount(uint64_t value)
  * \par Details:
  *  Each digit is checked against the remaining uint64_t range before multiplication.
  */
-bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t   has_outputs;
     bool_t   has_input;
@@ -130,7 +133,7 @@ bool_t Utl_Decimal_ReadUint64(uint64_t* value, uint32_t* bytesRead, const byte_t
  * \par Details:
  *  Digits are written from right to left within the exact precomputed width.
  */
-uint32_t Utl_Decimal_WriteUint64(uint64_t value, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Decimal_WriteUint64(uint64_t value, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   has_buffer;

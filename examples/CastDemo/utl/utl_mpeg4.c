@@ -1001,7 +1001,7 @@ static FORCE_INLINE uint32_t GetTrackByteCount(const Utl_Mpeg4_TrackFragment_t* 
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type)
 {
     LOGASSERT(NULL != header);
     header->type      = type;
@@ -1020,7 +1020,7 @@ void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type)
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span_t bytes)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span_t bytes)
 {
     LOGASSERT(NULL != reader);
     AssertSpan(bytes);
@@ -1034,7 +1034,7 @@ void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output, uint32_t capacity)
 {
     LOGASSERT(NULL != writer);
     LOGASSERT(NULL != output);
@@ -1049,7 +1049,7 @@ void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer)
 {
     LOGASSERT(NULL != writer);
     writer->output   = NULL;
@@ -1063,7 +1063,7 @@ void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer)
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t type)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t type)
 {
     uint32_t width;
 
@@ -1079,7 +1079,7 @@ void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t ty
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
+extern FORCE_INLINE void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
                                             const Utl_Mpeg4_SampleTable_t*  table)
 {
     LOGASSERT(NULL != cursor);
@@ -1095,7 +1095,7 @@ void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* curs
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSampleCursor_t* cursor, const Utl_Mpeg4_SampleTable_t* table)
+extern FORCE_INLINE void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSampleCursor_t* cursor, const Utl_Mpeg4_SampleTable_t* table)
 {
     LOGASSERT(NULL != cursor);
     LOGASSERT(NULL != table);
@@ -1165,7 +1165,7 @@ void Utl_Mpeg4_InitializeMovieFragment(Utl_Mpeg4_MovieFragment_t*       fragment
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetBoxHeaderByteCount(const Utl_Mpeg4_BoxHeader_t* header)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetBoxHeaderByteCount(const Utl_Mpeg4_BoxHeader_t* header)
 {
     uint32_t count;
     bool_t   is_uuid;
@@ -1203,7 +1203,7 @@ uint32_t Utl_Mpeg4_GetBoxHeaderByteCount(const Utl_Mpeg4_BoxHeader_t* header)
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetFullBoxFieldsByteCount(const Utl_Mpeg4_FullBoxFields_t* fields)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetFullBoxFieldsByteCount(const Utl_Mpeg4_FullBoxFields_t* fields)
 {
     uint32_t count;
     bool_t   valid;
@@ -1223,7 +1223,7 @@ uint32_t Utl_Mpeg4_GetFullBoxFieldsByteCount(const Utl_Mpeg4_FullBoxFields_t* fi
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetFileTypeByteCount(const Utl_Mpeg4_FileType_t* fileType)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetFileTypeByteCount(const Utl_Mpeg4_FileType_t* fileType)
 {
     bool_t   whole_brands;
     bool_t   fits_size;
@@ -1267,7 +1267,7 @@ uint32_t Utl_Mpeg4_GetFileTypeByteCount(const Utl_Mpeg4_FileType_t* fileType)
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_GetCompatibleBrand(uint32_t* brand, const Utl_Mpeg4_FileType_t* fileType, uint32_t index)
+extern FORCE_INLINE bool_t Utl_Mpeg4_GetCompatibleBrand(uint32_t* brand, const Utl_Mpeg4_FileType_t* fileType, uint32_t index)
 {
     uint32_t count;
     bool_t   valid_model;
@@ -1292,7 +1292,7 @@ bool_t Utl_Mpeg4_GetCompatibleBrand(uint32_t* brand, const Utl_Mpeg4_FileType_t*
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetIntegerByteCount(Utl_Mpeg4_Integer_t field)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetIntegerByteCount(Utl_Mpeg4_Integer_t field)
 {
     bool_t   nonempty;
     bool_t   within_integer;
@@ -1324,7 +1324,7 @@ uint32_t Utl_Mpeg4_GetIntegerByteCount(Utl_Mpeg4_Integer_t field)
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetBitWriterByteCount(const Utl_Mpeg4_BitWriter_t* writer)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetBitWriterByteCount(const Utl_Mpeg4_BitWriter_t* writer)
 {
     uint32_t count;
 
@@ -1343,7 +1343,7 @@ uint32_t Utl_Mpeg4_GetBitWriterByteCount(const Utl_Mpeg4_BitWriter_t* writer)
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_GetSampleTableEntryByteCount(uint32_t type)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_GetSampleTableEntryByteCount(uint32_t type)
 {
     uint32_t count;
 
@@ -1368,7 +1368,7 @@ uint32_t Utl_Mpeg4_GetSampleTableEntryByteCount(uint32_t type)
  * \par Details:
  *  None
  */
-uint64_t Utl_Mpeg4_GetSampleTableByteCount(const Utl_Mpeg4_SampleTable_t* table)
+extern FORCE_INLINE uint64_t Utl_Mpeg4_GetSampleTableByteCount(const Utl_Mpeg4_SampleTable_t* table)
 {
     uint32_t width;
     uint64_t count;
@@ -1388,7 +1388,7 @@ uint64_t Utl_Mpeg4_GetSampleTableByteCount(const Utl_Mpeg4_SampleTable_t* table)
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_GetSampleDecodeTime(uint64_t* time, const Utl_Mpeg4_TimeToSampleRun_t* run, uint64_t sample)
+extern FORCE_INLINE bool_t Utl_Mpeg4_GetSampleDecodeTime(uint64_t* time, const Utl_Mpeg4_TimeToSampleRun_t* run, uint64_t sample)
 {
     bool_t   valid;
     uint64_t ordinal;
@@ -1606,7 +1606,7 @@ uint32_t Utl_Mpeg4_GetMovieFragmentByteCount(const Utl_Mpeg4_MovieFragment_t* fr
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadBoxHeader(Utl_Mpeg4_BoxHeader_t* header,
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadBoxHeader(Utl_Mpeg4_BoxHeader_t* header,
                                Utl_Mpeg4_Span_t       bytes,
                                uint64_t               parentRemaining,
                                uint64_t               fileRemaining)
@@ -1685,7 +1685,7 @@ bool_t Utl_Mpeg4_ReadBoxHeader(Utl_Mpeg4_BoxHeader_t* header,
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadFullBoxFields(Utl_Mpeg4_FullBoxFields_t* fields, Utl_Mpeg4_Span_t bytes)
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadFullBoxFields(Utl_Mpeg4_FullBoxFields_t* fields, Utl_Mpeg4_Span_t bytes)
 {
     bool_t                    valid;
     Utl_Mpeg4_FullBoxFields_t candidate;
@@ -1707,7 +1707,7 @@ bool_t Utl_Mpeg4_ReadFullBoxFields(Utl_Mpeg4_FullBoxFields_t* fields, Utl_Mpeg4_
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadFileType(Utl_Mpeg4_FileType_t* fileType, Utl_Mpeg4_Span_t bytes)
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadFileType(Utl_Mpeg4_FileType_t* fileType, Utl_Mpeg4_Span_t bytes)
 {
     bool_t               valid;
     Utl_Mpeg4_FileType_t candidate;
@@ -1737,7 +1737,7 @@ bool_t Utl_Mpeg4_ReadFileType(Utl_Mpeg4_FileType_t* fileType, Utl_Mpeg4_Span_t b
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadUnsigned(uint64_t* value, Utl_Mpeg4_Span_t bytes)
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadUnsigned(uint64_t* value, Utl_Mpeg4_Span_t bytes)
 {
     bool_t nonempty;
     bool_t within_integer;
@@ -1760,7 +1760,7 @@ bool_t Utl_Mpeg4_ReadUnsigned(uint64_t* value, Utl_Mpeg4_Span_t bytes)
  * \par Details:
  *  None
  */
-uint64_t Utl_Mpeg4_ReadBits(Utl_Mpeg4_BitReader_t* reader, uint32_t bitCount)
+extern FORCE_INLINE uint64_t Utl_Mpeg4_ReadBits(Utl_Mpeg4_BitReader_t* reader, uint32_t bitCount)
 {
     uint64_t remaining;
     bool_t   fits;
@@ -1815,7 +1815,7 @@ uint64_t Utl_Mpeg4_ReadBits(Utl_Mpeg4_BitReader_t* reader, uint32_t bitCount)
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadSampleTableHeader(Utl_Mpeg4_SampleTable_t* table,
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadSampleTableHeader(Utl_Mpeg4_SampleTable_t* table,
                                        Utl_Mpeg4_Span_t         bytes,
                                        Utl_Mpeg4_BoxPayload_t   payload)
 {
@@ -1862,7 +1862,7 @@ bool_t Utl_Mpeg4_ReadSampleTableHeader(Utl_Mpeg4_SampleTable_t* table,
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadTimeToSampleRun(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadTimeToSampleRun(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
                                      Utl_Mpeg4_TimeToSampleRun_t*    run,
                                      Utl_Mpeg4_Span_t                bytes)
 {
@@ -1906,7 +1906,7 @@ bool_t Utl_Mpeg4_ReadTimeToSampleRun(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
  * \par Details:
  *  None
  */
-bool_t Utl_Mpeg4_ReadSyncSample(Utl_Mpeg4_SyncSampleCursor_t* cursor, uint32_t* sample, Utl_Mpeg4_Span_t bytes)
+extern FORCE_INLINE bool_t Utl_Mpeg4_ReadSyncSample(Utl_Mpeg4_SyncSampleCursor_t* cursor, uint32_t* sample, Utl_Mpeg4_Span_t bytes)
 {
     bool_t   has_entry;
     bool_t   has_bytes;
@@ -1938,7 +1938,7 @@ bool_t Utl_Mpeg4_ReadSyncSample(Utl_Mpeg4_SyncSampleCursor_t* cursor, uint32_t* 
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_WriteBoxHeader(const Utl_Mpeg4_BoxHeader_t* header, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteBoxHeader(const Utl_Mpeg4_BoxHeader_t* header, byte_t* output, uint32_t capacity)
 {
     uint32_t            count;
     bool_t              valid_model;
@@ -1997,7 +1997,7 @@ uint32_t Utl_Mpeg4_WriteBoxHeader(const Utl_Mpeg4_BoxHeader_t* header, byte_t* o
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_WriteFullBoxFields(const Utl_Mpeg4_FullBoxFields_t* fields, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteFullBoxFields(const Utl_Mpeg4_FullBoxFields_t* fields, byte_t* output, uint32_t capacity)
 {
     uint32_t            count;
     bool_t              valid_model;
@@ -2028,7 +2028,7 @@ uint32_t Utl_Mpeg4_WriteFullBoxFields(const Utl_Mpeg4_FullBoxFields_t* fields, b
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_WriteFileType(const Utl_Mpeg4_FileType_t* fileType, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteFileType(const Utl_Mpeg4_FileType_t* fileType, byte_t* output, uint32_t capacity)
 {
     uint32_t            count;
     bool_t              valid_model;
@@ -2066,7 +2066,7 @@ uint32_t Utl_Mpeg4_WriteFileType(const Utl_Mpeg4_FileType_t* fileType, byte_t* o
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_WriteUnsigned(Utl_Mpeg4_Integer_t field, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteUnsigned(Utl_Mpeg4_Integer_t field, byte_t* output, uint32_t capacity)
 {
     uint32_t count;
     bool_t   valid_model;
@@ -2093,7 +2093,7 @@ uint32_t Utl_Mpeg4_WriteUnsigned(Utl_Mpeg4_Integer_t field, byte_t* output, uint
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t field)
+extern FORCE_INLINE void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t field)
 {
     uint64_t remaining;
     uint64_t maximum;
@@ -2129,7 +2129,7 @@ void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t fie
  * \par Details:
  *  None
  */
-void Utl_Mpeg4_WriteAlignedBytes(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_Span_t bytes)
+extern FORCE_INLINE void Utl_Mpeg4_WriteAlignedBytes(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_Span_t bytes)
 {
     bool_t   inactive;
     bool_t   aligned;
@@ -2169,7 +2169,7 @@ void Utl_Mpeg4_WriteAlignedBytes(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_Span_t
  * \par Details:
  *  None
  */
-uint32_t Utl_Mpeg4_WriteSampleTableHeader(const Utl_Mpeg4_SampleTable_t* table, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Mpeg4_WriteSampleTableHeader(const Utl_Mpeg4_SampleTable_t* table, byte_t* output, uint32_t capacity)
 {
     uint64_t            count;
     bool_t              valid_model;

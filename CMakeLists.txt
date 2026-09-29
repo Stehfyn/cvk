@@ -143,6 +143,9 @@ if(Python3_Interpreter_FOUND)
     add_test(NAME cvk-dispatch-count-boundaries
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_dispatch_count.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME cvk-wire-reader-boundaries
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_wire_readers.py
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 # Everything under include/ and src/ is generated. Core is platform-free; each platform has

@@ -11,6 +11,9 @@
 **===============================================================================================*/
 
 #include "os/os_compiler.h"
+#include "os/os_types.h"
+#include "os/os_ringbuffer.h"
+#include <stdint.h>
 #include "os/os_queue.h"
 #include "os/os_assert.h"
 #include "crt/crt_memory.h"
@@ -103,7 +106,7 @@ void OS_Queue_Initialize(OS_Queue_t* queue, void* entries, uint32_t entryByteCou
 
     byte_capacity         = capacity * entryByteCount;
     queue->entryByteCount = entryByteCount;
-    OS_RingBuffer_Initialize(&queue->ring, entries, byte_capacity);
+    OS_RingBuffer_Initialize(&queue->ring, (byte_t*)entries, byte_capacity);
 }
 
 /*************************************************************************************************/

@@ -11,8 +11,18 @@
 #include "os/os_atomic.h"
 #include "os/os_assert.h"
 #include "os/os_process.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
 
-#include <windows.h>
+#include <Windows.h> // IWYU pragma: keep
+
+#include <WinBase.h>
+#include <handleapi.h>
+#include <minwindef.h>
+#include <processthreadsapi.h>
+#include <stdint.h>
+#include <synchapi.h>
+#include <winnt.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -20,13 +30,15 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
-#define ATOMIC_TEST_THREADS     (4)
-#define ATOMIC_TEST_ITERATIONS  (100000)
-#define ATOMIC_TEST_TOTAL       (ATOMIC_TEST_THREADS * ATOMIC_TEST_ITERATIONS)
-#define ATOMIC_TEST_TIMEOUT     (10000)
-#define ATOMIC_TEST_STACK_BYTES (65536)
-#define ATOMIC_TEST_STORED32    (0x87654321)
-#define ATOMIC_TEST_STORED64    (UINT64_MAX - 127)
+#define ATOMIC_TEST_THREADS         (4)
+#define ATOMIC_TEST_ITERATIONS      (100000)
+#define ATOMIC_TEST_TOTAL           (ATOMIC_TEST_THREADS * ATOMIC_TEST_ITERATIONS)
+#define ATOMIC_TEST_TIMEOUT         (10000)
+#define ATOMIC_TEST_STACK_BYTES     (65536)
+#define ATOMIC_TEST_STORED32        (0x87654321)
+#define ATOMIC_TEST_STORED64        (UINT64_MAX - 127)
+#define ATOMIC_TEST_FAILED_EXCHANGE (9)
+#define ATOMIC_TEST_EXCHANGED       (7)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -49,6 +61,16 @@ typedef struct CounterWorker_s
     uint32_t       success64;     ///< Private successful increment count.
 } CounterWorker_t;
 
+/*************************************************************************************************/
+/**
+ * \brief Startup-owned thread identities and private contention results.
+ */
+typedef struct WorkerGroup_s
+{
+    HANDLE          threads[ATOMIC_TEST_THREADS]; ///< Created native threads.
+    CounterWorker_t workers[ATOMIC_TEST_THREADS]; ///< Per-thread test state.
+} WorkerGroup_t;
+
 /*=================================================================================================
 ** 3.3 External global variables
 **===============================================================================================*/
@@ -70,7 +92,7 @@ typedef struct CounterWorker_s
  *
  * \retval None
  */
-static void CheckValues(void);
+static FORCE_INLINE void CheckValues(void);
 
 /*************************************************************************************************/
 /**
@@ -95,7 +117,7 @@ static DWORD WINAPI RunCounters(LPVOID context);
  * \par Details:
  *  Independent expected values exercise each width without a concurrent participant.
  */
-static void CheckValues(void)
+static FORCE_INLINE void CheckValues(void)
 {
     OS_Atomic32_t word32;
     OS_Atomic64_t word64;
@@ -108,14 +130,14 @@ static void CheckValues(void)
     LOGASSERT(UINT64_MAX == OS_Atomic_FetchAdd64(&word64, 1));
     LOGASSERT(0 == OS_Atomic_Load32(&word32));
     LOGASSERT(0 == OS_Atomic_Load64(&word64));
-    LOGASSERT(0 == OS_Atomic_CompareExchange32(&word32, 1, 9));
-    LOGASSERT(0 == OS_Atomic_CompareExchange64(&word64, 1, 9));
+    LOGASSERT(0 == OS_Atomic_CompareExchange32(&word32, 1, ATOMIC_TEST_FAILED_EXCHANGE));
+    LOGASSERT(0 == OS_Atomic_CompareExchange64(&word64, 1, ATOMIC_TEST_FAILED_EXCHANGE));
     LOGASSERT(0 == OS_Atomic_Load32(&word32));
     LOGASSERT(0 == OS_Atomic_Load64(&word64));
     LOGASSERT(0 == OS_Atomic_CompareExchange32(&word32, 0, UINT32_MAX - 1));
     LOGASSERT(0 == OS_Atomic_CompareExchange64(&word64, 0, UINT64_MAX - 1));
-    LOGASSERT((UINT32_MAX - 1) == OS_Atomic_Exchange32(&word32, 7));
-    LOGASSERT((UINT64_MAX - 1) == OS_Atomic_Exchange64(&word64, 7));
+    LOGASSERT((UINT32_MAX - 1) == OS_Atomic_Exchange32(&word32, ATOMIC_TEST_EXCHANGED));
+    LOGASSERT((UINT64_MAX - 1) == OS_Atomic_Exchange64(&word64, ATOMIC_TEST_EXCHANGED));
     OS_Atomic_Store32(&word32, ATOMIC_TEST_STORED32);
     OS_Atomic_Store64(&word64, ATOMIC_TEST_STORED64);
     LOGASSERT(ATOMIC_TEST_STORED32 == OS_Atomic_Load32(&word32));
@@ -140,7 +162,7 @@ static DWORD WINAPI RunCounters(LPVOID context)
     uint32_t         observed32;
     uint64_t         observed64;
 
-    worker = context;
+    worker = (CounterWorker_t*)context;
     LOGASSERT(NULL != worker);
     wait_result = WaitForSingleObject(worker->gate, ATOMIC_TEST_TIMEOUT);
     LOGASSERT(WAIT_OBJECT_0 == wait_result);
@@ -149,13 +171,13 @@ static DWORD WINAPI RunCounters(LPVOID context)
         ticket32 = OS_Atomic_FetchAdd32(worker->counter32, 1);
         ticket64 = OS_Atomic_FetchAdd64(worker->counter64, 1);
         LOGASSERT(ticket32 < ATOMIC_TEST_TOTAL);
-        LOGASSERT(ticket64 < ATOMIC_TEST_TOTAL);
+        LOGASSERT(ticket64 < (uint64_t)ATOMIC_TEST_TOTAL);
         worker->sum32 += ticket32;
         worker->sum64 += ticket64;
-        expected32 = OS_Atomic_Load32(worker->conditional32);
-        expected64 = OS_Atomic_Load64(worker->conditional64);
-        observed32 = OS_Atomic_CompareExchange32(worker->conditional32, expected32, expected32 + 1);
-        observed64 = OS_Atomic_CompareExchange64(worker->conditional64, expected64, expected64 + 1);
+        expected32     = OS_Atomic_Load32(worker->conditional32);
+        expected64     = OS_Atomic_Load64(worker->conditional64);
+        observed32     = OS_Atomic_CompareExchange32(worker->conditional32, expected32, expected32 + 1);
+        observed64     = OS_Atomic_CompareExchange64(worker->conditional64, expected64, expected64 + 1);
         if (expected32 == observed32)
         {
             ++worker->success32;
@@ -181,21 +203,21 @@ static DWORD WINAPI RunCounters(LPVOID context)
  */
 uint32_t OS_Application_Main(void)
 {
-    OS_Atomic32_t   counter32;
-    OS_Atomic64_t   counter64;
-    OS_Atomic32_t   conditional32;
-    OS_Atomic64_t   conditional64;
-    HANDLE          gate;
-    uint32_t        index;
-    CounterWorker_t workers[ATOMIC_TEST_THREADS];
-    uint64_t        sum32;
-    uint64_t        sum64;
-    uint32_t        success32;
-    uint64_t        success64;
-    HANDLE          threads[ATOMIC_TEST_THREADS];
-    DWORD           wait_result;
-    uint64_t        expected_sum;
+    OS_Atomic32_t counter32;
+    OS_Atomic64_t counter64;
+    OS_Atomic32_t conditional32;
+    OS_Atomic64_t conditional64;
+    HANDLE        gate;
+    uint32_t      index;
+    WorkerGroup_t group;
+    uint64_t      sum32;
+    uint64_t      sum64;
+    uint32_t      success32;
+    uint64_t      success64;
+    DWORD         wait_result;
+    uint64_t      expected_sum;
 
+    group = (WorkerGroup_t){.threads = {NULL}};
     OS_Process_SetInteractive(FALSE);
     CheckValues();
     OS_Atomic_Initialize32(&counter32, 0);
@@ -206,37 +228,37 @@ uint32_t OS_Application_Main(void)
     LOGASSERT(NULL != gate);
     for (index = 0; index < ATOMIC_TEST_THREADS; ++index)
     {
-        workers[index].gate          = gate;
-        workers[index].counter32     = &counter32;
-        workers[index].counter64     = &counter64;
-        workers[index].conditional32 = &conditional32;
-        workers[index].conditional64 = &conditional64;
-        workers[index].sum32         = 0;
-        workers[index].sum64         = 0;
-        workers[index].success32     = 0;
-        workers[index].success64     = 0;
-        threads[index]               = CreateThread(NULL, ATOMIC_TEST_STACK_BYTES, RunCounters, &workers[index], 0, NULL);
-        LOGASSERT(NULL != threads[index]);
+        group.workers[index].gate          = gate;
+        group.workers[index].counter32     = &counter32;
+        group.workers[index].counter64     = &counter64;
+        group.workers[index].conditional32 = &conditional32;
+        group.workers[index].conditional64 = &conditional64;
+        group.workers[index].sum32         = 0;
+        group.workers[index].sum64         = 0;
+        group.workers[index].success32     = 0;
+        group.workers[index].success64     = 0;
+        group.threads[index] = CreateThread(NULL, ATOMIC_TEST_STACK_BYTES, RunCounters, &group.workers[index], 0, NULL);
+        LOGASSERT(NULL != group.threads[index]);
     }
     LOGASSERT(SetEvent(gate));
-    wait_result = WaitForMultipleObjects(ATOMIC_TEST_THREADS, threads, TRUE, ATOMIC_TEST_TIMEOUT);
-    LOGASSERT(WAIT_OBJECT_0 == wait_result);
     sum32     = 0;
     sum64     = 0;
     success32 = 0;
     success64 = 0;
     for (index = 0; index < ATOMIC_TEST_THREADS; ++index)
     {
-        sum32 += workers[index].sum32;
-        sum64 += workers[index].sum64;
-        success32 += workers[index].success32;
-        success64 += workers[index].success64;
-        LOGASSERT(CloseHandle(threads[index]));
+        wait_result = WaitForSingleObject(group.threads[index], ATOMIC_TEST_TIMEOUT);
+        LOGASSERT(WAIT_OBJECT_0 == wait_result);
+        sum32     += group.workers[index].sum32;
+        sum64     += group.workers[index].sum64;
+        success32 += group.workers[index].success32;
+        success64 += group.workers[index].success64;
+        LOGASSERT(CloseHandle(group.threads[index]));
     }
     LOGASSERT(CloseHandle(gate));
     expected_sum = ((uint64_t)ATOMIC_TEST_TOTAL * (ATOMIC_TEST_TOTAL - 1)) / 2;
     LOGASSERT(ATOMIC_TEST_TOTAL == OS_Atomic_Load32(&counter32));
-    LOGASSERT(ATOMIC_TEST_TOTAL == OS_Atomic_Load64(&counter64));
+    LOGASSERT((uint64_t)ATOMIC_TEST_TOTAL == OS_Atomic_Load64(&counter64));
     LOGASSERT(expected_sum == sum32);
     LOGASSERT(expected_sum == sum64);
     LOGASSERT(success32 == OS_Atomic_Load32(&conditional32));

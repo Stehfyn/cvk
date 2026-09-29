@@ -21,6 +21,26 @@ work and reuse existing build directories.
 
 The user's final compiler and analysis requirement (2026-09-28) is mandatory:
 
+- Do not change generated CVK functions or their generator to resolve this build.
+  The user explicitly rejected that approach. The attempted array-copy, output
+  initialization and output-publication generator edits were reverted, including
+  regenerated output and the associated generator-test edits. The user subsequently
+  chose "Preserve generated code; allow narrowly scoped diagnostic exceptions."
+  The initial five Clang categories reported in the generated CVK target were:
+  `readability-non-const-parameter`, `bugprone-invalid-enum-default-initialization`,
+  `clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling`,
+  `-Wmissing-noreturn`, and `-Wimplicit-int-enum-cast`. Apply these only to the
+  generated CVK target, preserving every application check, native MSVC warning
+  requirement, and other Clang check. This exception is not CRT-free acceptance
+  or proof that the solution builds.
+  The next generated JSON translation unit reported additional categories covered
+  by the same generated-code-only policy: `misc-include-cleaner`,
+  `readability-magic-numbers`, `misc-no-recursion`, `-Wbad-function-cast`,
+  `performance-no-int-to-ptr`, `clang-analyzer-optin.core.EnumCastOutOfRange`,
+  `readability-redundant-casting`, `readability-function-cognitive-complexity`,
+  `readability-redundant-parentheses`, `clang-analyzer-optin.performance.Padding`,
+  and `readability-function-size`. The build-policy guard checks the exact list
+  and rejects use of this policy by any application target.
 - Preserve existing parameter names. Diagnostic findings do not authorize renaming
   parameters in CVK or its clients. Resolve client misuse through correct contracts
   and call sequencing instead of changing library parameter names.
@@ -41,6 +61,11 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   `bugprone-easily-swappable-parameters`, preserving C arrays and existing CVK
   interfaces. The installed Clang 22.1.8 rejects even a bounds-checked C11 array
   access under the former check. Bounds/path analysis and sanitizers remain required.
+  The user additionally approved `IWYU pragma: keep` solely for required
+  `<Windows.h>` setup includes: removing the header breaks SDK architecture setup,
+  although include-cleaner reports the umbrella include as unused. This permits
+  that individual include annotation, not disabling include-cleaner or annotating
+  arbitrary headers. All other missing/unused direct-header checks remain enabled.
   The user also explicitly requires ignoring warnings from external libraries.
   Keep Volk as a pinned external library and mark dependency/SDK headers as external.
   This explicitly includes Vulkan core, utility, video and SC header families.

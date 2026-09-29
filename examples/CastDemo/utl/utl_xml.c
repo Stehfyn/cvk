@@ -963,7 +963,7 @@ static FORCE_INLINE bool_t SplitName(Utl_Xml_Text_t name, Utl_Xml_Text_t* prefix
             prefix->byteCount = colon;
             local->data       = name.data + colon + 1;
             local->byteCount  = name.byteCount - colon - 1;
-            valid             = Utl_Unicode_ReadUtf8(&scalar, &width, (const byte_t*)local->data, local->byteCount);
+            valid             = Utl_Unicode_ReadUtf8(&scalar, &width, local->data, local->byteCount);
             if (valid)
             {
                 valid = IsNameStart(scalar);
@@ -1332,7 +1332,7 @@ static FORCE_INLINE bool_t ReadLiteralScalar(Cursor_t* cursor, uint32_t* scalar)
     bool_t   attribute_space;
     valid = Utl_Unicode_ReadUtf8(&value,
                                  &width,
-                                 (const byte_t*)cursor->source.data + cursor->offset,
+                                 cursor->source.data + cursor->offset,
                                  cursor->source.byteCount - cursor->offset);
     if (valid)
     {
@@ -1415,7 +1415,7 @@ static FORCE_INLINE bool_t ReadName(Cursor_t* cursor, Utl_Xml_Text_t* name)
         }
         valid = Utl_Unicode_ReadUtf8(&scalar,
                                      &width,
-                                     (const byte_t*)cursor->source.data + cursor->offset,
+                                     cursor->source.data + cursor->offset,
                                      cursor->source.byteCount - cursor->offset);
         if (valid)
         {
@@ -1622,6 +1622,8 @@ static FORCE_INLINE bool_t ReadVersionDeclaration(Reader_t* reader)
 {
     bool_t              valid;
     Utl_Xml_Attribute_t attribute;
+    attribute.name  = GetLiteral(NULL, 0);
+    attribute.value = GetLiteral(NULL, 0);
     valid = IsWhitespace(GetByte(&reader->cursor));
     ReadWhitespace(&reader->cursor);
     if (valid)
@@ -1660,6 +1662,8 @@ static FORCE_INLINE bool_t ReadDeclaration(Reader_t* reader)
     bool_t              standalone;
     bool_t              enabled;
     bool_t              disabled;
+    attribute.name  = GetLiteral(NULL, 0);
+    attribute.value = GetLiteral(NULL, 0);
     valid           = ReadVersionDeclaration(reader);
     encoding_seen   = FALSE;
     standalone_seen = FALSE;
@@ -1964,7 +1968,7 @@ static FORCE_INLINE bool_t ReadSource(Reader_t* reader)
         }
         valid = Utl_Unicode_ReadUtf8(&scalar,
                                      &width,
-                                     (const byte_t*)scan.source.data + scan.offset,
+                                     scan.source.data + scan.offset,
                                      scan.source.byteCount - scan.offset);
         if (valid)
         {
@@ -1999,7 +2003,7 @@ static FORCE_INLINE bool_t ReadSource(Reader_t* reader)
  * \par Details:
  *  Initialization does not initialize unused record slots.
  */
-void Utl_Xml_InitializeDocument(Utl_Xml_Document_t* document, Utl_Xml_Storage_t storage)
+extern FORCE_INLINE void Utl_Xml_InitializeDocument(Utl_Xml_Document_t* document, Utl_Xml_Storage_t storage)
 {
     LOGASSERT(NULL != document);
     LOGASSERT((NULL != storage.nodes) || (0 == storage.nodeCapacity));
@@ -2017,7 +2021,7 @@ void Utl_Xml_InitializeDocument(Utl_Xml_Document_t* document, Utl_Xml_Storage_t 
  * \par Details:
  *  Discouraged but permitted values remain accepted.
  */
-bool_t Utl_Xml_IsChar(uint32_t value)
+extern FORCE_INLINE bool_t Utl_Xml_IsChar(uint32_t value)
 {
     bool_t whitespace;
     bool_t lower;
@@ -2075,7 +2079,7 @@ bool_t Utl_Xml_IsTextEqual(Utl_Xml_Text_t first, Utl_Xml_Text_t second)
  * \par Details:
  *  Text nodes never match an element name.
  */
-bool_t Utl_Xml_IsElement(const Utl_Xml_Node_t* node, Utl_Xml_Name_t name)
+extern FORCE_INLINE bool_t Utl_Xml_IsElement(const Utl_Xml_Node_t* node, Utl_Xml_Name_t name)
 {
     bool_t matches;
     LOGASSERT(NULL != node);
@@ -2136,7 +2140,7 @@ bool_t Utl_Xml_GetTextByteCount(Utl_Xml_Text_t text, uint32_t* byteCount)
  * \par Details:
  *  Comments and processing instructions do not contribute text.
  */
-bool_t Utl_Xml_GetElementTextByteCount(const Utl_Xml_Node_t* element, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Xml_GetElementTextByteCount(const Utl_Xml_Node_t* element, uint32_t* byteCount)
 {
     uint32_t              child_bytes;
     bool_t                valid;
@@ -2295,7 +2299,7 @@ bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, byte_t* output, uint32_t capacity,
         {
             decoded = ReadTextScalar(&cursor, &scalar);
             LOGASSERT(decoded);
-            width = Utl_Unicode_WriteUtf8(scalar, (byte_t*)output + offset, count - offset);
+            width = Utl_Unicode_WriteUtf8(scalar, output + offset, count - offset);
             LOGASSERT(0 < width);
             offset += width;
         }
@@ -2313,7 +2317,7 @@ bool_t Utl_Xml_WriteText(Utl_Xml_Text_t text, byte_t* output, uint32_t capacity,
  * \par Details:
  *  CDATA and entity-decoded text concatenate in document order.
  */
-bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, byte_t* output, uint32_t capacity, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Xml_WriteElementText(const Utl_Xml_Node_t* element, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t                valid;
     uint32_t              count;

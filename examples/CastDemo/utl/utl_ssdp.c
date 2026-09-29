@@ -15,6 +15,9 @@
 **===============================================================================================*/
 
 #include "os/os_compiler.h"
+#include "os/os_types.h"
+#include "utl/utl_http.h"
+#include <stdint.h>
 #include "utl/utl_ssdp.h"
 #include "utl/utl_decimal.h"
 #include "os/os_assert.h"
@@ -58,6 +61,20 @@ static FORCE_INLINE Utl_Http_Text_t Text(const byte_t* data, uint32_t byteCount)
 
 /*************************************************************************************************/
 /**
+ * \brief Derives a view without leading or trailing HTTP optional whitespace.
+ *
+ * \par Requirements:
+ *  - 001 The input shall be a live counted span.
+ *  - 002 Only SP and HTAB shall be removed.
+ *
+ * \param[in] text   Borrowed directive or directive component
+ *
+ * \retval    text   Borrowed span with outer optional whitespace removed.
+ */
+static FORCE_INLINE Utl_Http_Text_t TrimText(Utl_Http_Text_t text);
+
+/*************************************************************************************************/
+/**
  * \brief Checks a nonempty visible ASCII component.
  *
  * \par Requirements:
@@ -87,6 +104,22 @@ static FORCE_INLINE bool_t HasPrefix(Utl_Http_Text_t text, Utl_Http_Text_t prefi
 
 /*************************************************************************************************/
 /**
+ * \brief Checks a visible device or service URN discovery target.
+ *
+ * \par Requirements:
+ *  - 001 The input shall already contain only visible ASCII bytes.
+ *  - 002 The domain, kind and type components shall be nonempty.
+ *  - 003 The kind shall be device or service and the decimal version shall be positive.
+ *
+ * \param[in] target   Counted visible target
+ *
+ * \retval    TRUE    A device or service URN target is valid.
+ * \retval    FALSE   Prefix, components, kind or version are invalid.
+ */
+static FORCE_INLINE bool_t IsUrnTarget(Utl_Http_Text_t target);
+
+/*************************************************************************************************/
+/**
  * \brief Reads one required singleton discovery field.
  *
  * \par Requirements:
@@ -100,6 +133,24 @@ static FORCE_INLINE bool_t HasPrefix(Utl_Http_Text_t text, Utl_Http_Text_t prefi
  * \retval     FALSE   The field is absent or duplicated.
  */
 static FORCE_INLINE bool_t ReadUniqueField(Utl_Http_Text_t* value, const Utl_Http_Head_t* head, Utl_Http_Text_t name);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads one max-age directive or ignores an extension directive.
+ *
+ * \par Requirements:
+ *  - 001 The caller shall provide unpublished age and presence state.
+ *  - 002 A max-age directive shall occur once and contain a complete unsigned decimal value.
+ *  - 003 An extension directive shall leave the age and presence state unchanged.
+ *
+ * \param[in,out] maximumAge   Unpublished age candidate
+ * \param[in,out] found        Whether max-age was already read
+ * \param[in] text            One directive, with quoted comma splitting already complete
+ *
+ * \retval    TRUE    A valid max-age or an extension directive was read.
+ * \retval    FALSE   A max-age is duplicated, malformed or overflowing.
+ */
+static FORCE_INLINE bool_t ReadMaximumAgeDirective(uint64_t* maximumAge, bool_t* found, Utl_Http_Text_t text);
 
 /*************************************************************************************************/
 /**
@@ -173,6 +224,51 @@ static FORCE_INLINE Utl_Http_Text_t Text(const byte_t* data, uint32_t byteCount)
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  The underlying directive bytes remain unchanged.
+ */
+static FORCE_INLINE Utl_Http_Text_t TrimText(Utl_Http_Text_t text)
+{
+    uint32_t        first;
+    uint32_t        last;
+    bool_t          is_space;
+    bool_t          is_tab;
+    bool_t          is_whitespace;
+    Utl_Http_Text_t result;
+
+    first = 0;
+    last  = text.byteCount;
+    for (; first < last; ++first)
+    {
+        is_space      = (UTL_HTTP_CHAR_SPACE == text.data[first]);
+        is_tab        = (UTL_HTTP_CHAR_TAB == text.data[first]);
+        is_whitespace = is_space || is_tab;
+        if (!is_whitespace)
+        {
+            break;
+        }
+    }
+    for (; first < last; --last)
+    {
+        is_space      = (UTL_HTTP_CHAR_SPACE == text.data[last - 1]);
+        is_tab        = (UTL_HTTP_CHAR_TAB == text.data[last - 1]);
+        is_whitespace = is_space || is_tab;
+        if (!is_whitespace)
+        {
+            break;
+        }
+    }
+    result.data      = text.data;
+    result.byteCount = last - first;
+    if (first)
+    {
+        result.data += first;
+    }
+    return result;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  No locale or Unicode classification is used for SSDP URI tokens.
  */
 static FORCE_INLINE bool_t IsVisible(Utl_Http_Text_t text)
@@ -212,6 +308,69 @@ static FORCE_INLINE bool_t HasPrefix(Utl_Http_Text_t text, Utl_Http_Text_t prefi
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Version validation requires a nonzero decimal value without imposing an integer-width bound.
+ */
+static FORCE_INLINE bool_t IsUrnTarget(Utl_Http_Text_t target)
+{
+    Utl_Http_Text_t prefix;
+    bool_t          is_valid;
+    uint32_t        index;
+    uint32_t        part;
+    uint32_t        begin;
+    bool_t          found;
+    Utl_Http_Text_t component;
+    bool_t          is_device;
+    bool_t          is_service;
+    bool_t          nonzero;
+    byte_t          value;
+    bool_t          is_digit;
+
+    prefix   = Text((const byte_t*)UTL_SSDP_URN_PREFIX, sizeof(UTL_SSDP_URN_PREFIX) - 1);
+    is_valid = HasPrefix(target, prefix);
+    index    = prefix.byteCount;
+    for (part = 0; is_valid && (part < UTL_SSDP_URN_COMPONENT_COUNT); ++part)
+    {
+        begin = index;
+        found = FALSE;
+        for (; index < target.byteCount; ++index)
+        {
+            if (UTL_HTTP_CHAR_COLON == target.data[index])
+            {
+                found = TRUE;
+                break;
+            }
+        }
+        is_valid = found && (begin < index);
+        if (is_valid && (UTL_SSDP_URN_KIND_INDEX == part))
+        {
+            component = Text(target.data + begin, index - begin);
+            is_device =
+                Utl_Http_IsTextEqual(component,
+                                     Text((const byte_t*)UTL_SSDP_DEVICE_KIND, sizeof(UTL_SSDP_DEVICE_KIND) - 1),
+                                     FALSE);
+            is_service =
+                Utl_Http_IsTextEqual(component,
+                                     Text((const byte_t*)UTL_SSDP_SERVICE_KIND, sizeof(UTL_SSDP_SERVICE_KIND) - 1),
+                                     FALSE);
+            is_valid = is_device || is_service;
+        }
+        ++index;
+    }
+    nonzero = FALSE;
+    for (; is_valid && (index < target.byteCount); ++index)
+    {
+        value    = target.data[index];
+        is_digit = (UTL_HTTP_CHAR_DIGIT_FIRST <= value) && (value <= UTL_HTTP_CHAR_DIGIT_LAST);
+        is_valid = is_digit;
+        nonzero  = nonzero || (UTL_HTTP_CHAR_DIGIT_FIRST != value);
+    }
+    is_valid = is_valid && nonzero;
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Field names use HTTP case folding; repeated singleton fields are ambiguous and rejected.
  */
 static FORCE_INLINE bool_t ReadUniqueField(Utl_Http_Text_t* value, const Utl_Http_Head_t* head, Utl_Http_Text_t name)
@@ -238,11 +397,73 @@ static FORCE_INLINE bool_t ReadUniqueField(Utl_Http_Text_t* value, const Utl_Htt
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Whitespace trimming does not unquote a value or interpret an extension.
+ */
+static FORCE_INLINE bool_t ReadMaximumAgeDirective(uint64_t* maximumAge, bool_t* found, Utl_Http_Text_t text)
+{
+    Utl_Http_Text_t directive;
+    uint32_t        index;
+    Utl_Http_Text_t name;
+    bool_t          is_maximum_age;
+    bool_t          is_valid;
+    bool_t          has_equals;
+    bool_t          is_new;
+    Utl_Http_Text_t value;
+    uint64_t        age;
+    uint32_t        consumed;
+    bool_t          is_complete;
+
+    LOGASSERT(NULL != maximumAge);
+    LOGASSERT(NULL != found);
+    directive = TrimText(text);
+    for (index = 0; index < directive.byteCount; ++index)
+    {
+        if (UTL_HTTP_CHAR_EQUALS == directive.data[index])
+        {
+            break;
+        }
+    }
+    name = TrimText(Text(directive.data, index));
+    is_maximum_age =
+        Utl_Http_IsTextEqual(name, Text((const byte_t*)UTL_SSDP_MAX_AGE, sizeof(UTL_SSDP_MAX_AGE) - 1), TRUE);
+    is_valid = TRUE;
+    if (is_maximum_age)
+    {
+        value      = Text(NULL, 0);
+        age        = 0;
+        consumed   = 0;
+        has_equals = (index < directive.byteCount);
+        is_new     = !(*found);
+        is_valid   = has_equals && is_new;
+        if (is_valid)
+        {
+            ++index;
+            value    = TrimText(Text(directive.data + index, directive.byteCount - index));
+            is_valid = Utl_Decimal_ReadUint64(&age, &consumed, value.data, value.byteCount);
+        }
+        if (is_valid)
+        {
+            is_complete = (consumed == value.byteCount);
+            is_valid    = is_complete;
+        }
+        if (is_valid)
+        {
+            *maximumAge = age;
+            *found      = TRUE;
+        }
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Comma splitting respects quoted extension values and escapes. Other directives
  *  are ignored as required by UDA; no network cache or deadline is mutated.
  */
 static FORCE_INLINE bool_t ReadMaximumAge(uint64_t* maximumAge, Utl_Http_Text_t text)
 {
+    Utl_Http_Text_t directive;
     bool_t          is_valid;
     uint32_t        index;
     bool_t          quoted;
@@ -250,16 +471,9 @@ static FORCE_INLINE bool_t ReadMaximumAge(uint64_t* maximumAge, Utl_Http_Text_t 
     uint32_t        begin;
     bool_t          found;
     uint64_t        age;
-    uint32_t        consumed;
     bool_t          at_end;
     byte_t          value;
     bool_t          at_separator;
-    uint32_t        first;
-    uint32_t        last;
-    uint32_t        equals;
-    uint32_t        name_end;
-    Utl_Http_Text_t name;
-    bool_t          is_maximum_age;
 
     is_valid = (0 < text.byteCount);
     index    = 0;
@@ -268,7 +482,6 @@ static FORCE_INLINE bool_t ReadMaximumAge(uint64_t* maximumAge, Utl_Http_Text_t 
     begin    = 0;
     found    = FALSE;
     age      = 0;
-    consumed = 0;
     for (; is_valid; ++index)
     {
         at_end       = (index == text.byteCount);
@@ -279,65 +492,8 @@ static FORCE_INLINE bool_t ReadMaximumAge(uint64_t* maximumAge, Utl_Http_Text_t 
             is_valid = !(quoted || escaped);
             if (is_valid)
             {
-                first = begin;
-                last  = index;
-                for (; first < last; ++first)
-                {
-                    if ((UTL_HTTP_CHAR_SPACE != text.data[first]) && (UTL_HTTP_CHAR_TAB != text.data[first]))
-                    {
-                        break;
-                    }
-                }
-                for (; first < last; --last)
-                {
-                    if ((UTL_HTTP_CHAR_SPACE != text.data[last - 1]) && (UTL_HTTP_CHAR_TAB != text.data[last - 1]))
-                    {
-                        break;
-                    }
-                }
-                equals = first;
-                for (; equals < last; ++equals)
-                {
-                    if (UTL_HTTP_CHAR_EQUALS == text.data[equals])
-                    {
-                        break;
-                    }
-                }
-                name_end = equals;
-                for (; first < name_end; --name_end)
-                {
-                    if ((UTL_HTTP_CHAR_SPACE != text.data[name_end - 1]) &&
-                        (UTL_HTTP_CHAR_TAB != text.data[name_end - 1]))
-                    {
-                        break;
-                    }
-                }
-                name = Text(text.data + first, name_end - first);
-                is_maximum_age =
-                    Utl_Http_IsTextEqual(name,
-                                         Text((const byte_t*)UTL_SSDP_MAX_AGE, sizeof(UTL_SSDP_MAX_AGE) - 1),
-                                         TRUE);
-                if (is_maximum_age)
-                {
-                    is_valid = (!found) && (equals < last);
-                    if (is_valid)
-                    {
-                        first = equals + 1;
-                        for (; first < last; ++first)
-                        {
-                            if ((UTL_HTTP_CHAR_SPACE != text.data[first]) && (UTL_HTTP_CHAR_TAB != text.data[first]))
-                            {
-                                break;
-                            }
-                        }
-                        is_valid = Utl_Decimal_ReadUint64(&age, &consumed, text.data + first, last - first);
-                    }
-                    if (is_valid)
-                    {
-                        is_valid = (consumed == (last - first));
-                        found    = is_valid;
-                    }
-                }
+                directive = Text(text.data + begin, index - begin);
+                is_valid  = ReadMaximumAgeDirective(&age, &found, directive);
             }
             if (at_end)
             {
@@ -489,15 +645,6 @@ bool_t Utl_Ssdp_IsTarget(Utl_Http_Text_t target)
     bool_t          is_uuid;
     uint32_t        index;
     bool_t          has_suffix;
-    uint32_t        part;
-    uint32_t        begin;
-    bool_t          found;
-    Utl_Http_Text_t component;
-    bool_t          is_device;
-    bool_t          is_service;
-    bool_t          nonzero;
-    byte_t          value;
-    bool_t          is_digit;
 
     is_valid = IsVisible(target);
     if (is_valid)
@@ -522,46 +669,7 @@ bool_t Utl_Ssdp_IsTarget(Utl_Http_Text_t target)
             }
             else
             {
-                prefix   = Text((const byte_t*)UTL_SSDP_URN_PREFIX, sizeof(UTL_SSDP_URN_PREFIX) - 1);
-                is_valid = HasPrefix(target, prefix);
-                index    = prefix.byteCount;
-                for (part = 0; is_valid && (part < UTL_SSDP_URN_COMPONENT_COUNT); ++part)
-                {
-                    begin = index;
-                    found = FALSE;
-                    for (; index < target.byteCount; ++index)
-                    {
-                        if (UTL_HTTP_CHAR_COLON == target.data[index])
-                        {
-                            found = TRUE;
-                            break;
-                        }
-                    }
-                    is_valid = found && (begin < index);
-                    if (is_valid && (UTL_SSDP_URN_KIND_INDEX == part))
-                    {
-                        component = Text(target.data + begin, index - begin);
-                        is_device = Utl_Http_IsTextEqual(
-                            component,
-                            Text((const byte_t*)UTL_SSDP_DEVICE_KIND, sizeof(UTL_SSDP_DEVICE_KIND) - 1),
-                                 FALSE);
-                        is_service = Utl_Http_IsTextEqual(
-                            component,
-                            Text((const byte_t*)UTL_SSDP_SERVICE_KIND, sizeof(UTL_SSDP_SERVICE_KIND) - 1),
-                                 FALSE);
-                        is_valid = is_device || is_service;
-                    }
-                    ++index;
-                }
-                nonzero = FALSE;
-                for (; is_valid && (index < target.byteCount); ++index)
-                {
-                    value    = target.data[index];
-                    is_digit = (UTL_HTTP_CHAR_DIGIT_FIRST <= value) && (value <= UTL_HTTP_CHAR_DIGIT_LAST);
-                    is_valid = is_digit;
-                    nonzero  = nonzero || (UTL_HTTP_CHAR_DIGIT_FIRST != value);
-                }
-                is_valid = is_valid && nonzero;
+                is_valid = IsUrnTarget(target);
             }
         }
     }
@@ -657,11 +765,11 @@ bool_t Utl_Ssdp_ReadSearch(Utl_Ssdp_Search_t* search, const Utl_Http_Head_t* hea
     {
         has_host =
             ReadUniqueField(&host, head, Text((const byte_t*)UTL_HTTP_FIELD_HOST, sizeof(UTL_HTTP_FIELD_HOST) - 1));
-        has_man    = ReadUniqueField(&man, head, Text((const byte_t*)UTL_SSDP_FIELD_MAN, sizeof(UTL_SSDP_FIELD_MAN) - 1));
-        has_wait   = ReadUniqueField(&wait, head, Text((const byte_t*)UTL_SSDP_FIELD_MX, sizeof(UTL_SSDP_FIELD_MX) - 1));
-        has_target = ReadUniqueField(&candidate.target,
-                                     head,
-                                     Text((const byte_t*)UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
+        has_man  = ReadUniqueField(&man, head, Text((const byte_t*)UTL_SSDP_FIELD_MAN, sizeof(UTL_SSDP_FIELD_MAN) - 1));
+        has_wait = ReadUniqueField(&wait, head, Text((const byte_t*)UTL_SSDP_FIELD_MX, sizeof(UTL_SSDP_FIELD_MX) - 1));
+        has_target  = ReadUniqueField(&candidate.target,
+                                      head,
+                                      Text((const byte_t*)UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
         has_address = has_host && has_man;
         has_search  = has_wait && has_target;
         is_valid    = has_address && has_search;
@@ -750,9 +858,9 @@ bool_t Utl_Ssdp_ReadResponse(Utl_Ssdp_Response_t* response, const Utl_Http_Head_
         has_target = ReadUniqueField(&candidate.target,
                                      head,
                                      Text((const byte_t*)UTL_SSDP_FIELD_ST, sizeof(UTL_SSDP_FIELD_ST) - 1));
-        has_usn = ReadUniqueField(&candidate.usn,
-                                  head,
-                                  Text((const byte_t*)UTL_SSDP_FIELD_USN, sizeof(UTL_SSDP_FIELD_USN) - 1));
+        has_usn    = ReadUniqueField(&candidate.usn,
+                                     head,
+                                     Text((const byte_t*)UTL_SSDP_FIELD_USN, sizeof(UTL_SSDP_FIELD_USN) - 1));
         has_location =
             ReadUniqueField(&candidate.location,
                             head,

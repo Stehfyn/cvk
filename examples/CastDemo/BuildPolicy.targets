@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Command-line validation can run alongside the IDE without sharing its
+       diagnostic log or compilation-database output. Checks remain identical. -->
+  <PropertyGroup Condition="'$(CastAnalysisRunTag)' != ''">
+    <ClangTidyLogFile>$(TargetName).$(CastAnalysisRunTag).ClangTidy.log</ClangTidyLogFile>
+    <ClangTidyProjectDirectory>$(TargetName).$(CastAnalysisRunTag).ClangTidy</ClangTidyProjectDirectory>
+  </PropertyGroup>
   <!-- Native analysis must see fresh compiler state in selected-file builds too. -->
   <ItemDefinitionGroup>
     <ClCompile>

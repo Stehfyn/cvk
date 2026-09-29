@@ -78,9 +78,11 @@ bool_t CastNetwork_ReadLocalAddress(OS_Network_t* network,
             break;
         }
     }
-    text.data      = (const byte_t*)host;
-    text.byteCount = count;
-    valid          = terminated && (UTL_URL_IPV4_MIN_BYTES < outputCapacity);
+    route.destination = 0;
+    route.local       = 0;
+    text.data         = (const byte_t*)host;
+    text.byteCount    = count;
+    valid             = terminated && (UTL_URL_IPV4_MIN_BYTES < outputCapacity);
     if (valid)
     {
         valid = Utl_Url_ReadIpv4(text, &route.destination);

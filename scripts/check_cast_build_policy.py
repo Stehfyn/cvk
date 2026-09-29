@@ -32,6 +32,22 @@ def main():
 
     # Inspect the effective Clang configuration, including built-in defaults.
     policy = root / "examples/CastDemo/.clang-tidy"
+    generated_policy = build / "examples/CastDemo/cvk-generated.clang-tidy"
+    generated_checks = (
+        "readability-non-const-parameter",
+        "bugprone-invalid-enum-default-initialization",
+        "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+        "misc-include-cleaner",
+        "readability-magic-numbers",
+        "misc-no-recursion",
+        "performance-no-int-to-ptr",
+        "clang-analyzer-optin.core.EnumCastOutOfRange",
+        "readability-redundant-casting",
+        "readability-function-cognitive-complexity",
+        "readability-redundant-parentheses",
+        "clang-analyzer-optin.performance.Padding",
+        "readability-function-size",
+    )
     cache = (build / "CMakeCache.txt").read_text(encoding="utf-8")
     tidy = re.search(r"^CAST_CLANG_TIDY_EXECUTABLE:FILEPATH=(.+)$", cache, re.M)
     require(tidy is not None, policy, "configured clang-tidy is missing")
@@ -51,6 +67,23 @@ def main():
             match = re.search(r"readability-identifier-length\." + option + r": +['\"]?(\d+)", config)
             require(match is not None and int(match[1]) == expected, policy,
                     f"identifier-length {option} must be {expected}")
+        result = subprocess.run([tidy[1], f"--config-file={generated_policy}", "--dump-config"],
+                                capture_output=True, text=True, check=True)
+        generated_config = result.stdout
+        extra = re.search(r"^ExtraArgs:\n((?:[ \t]+[^\n]*\n)+)", generated_config, re.M)
+        options = re.findall(r"^[ \t]+-[ \t]+['\"]?([^'\"\s]+)", extra[1], re.M) if extra else []
+        require(options == ["-Wno-padded", "-Wno-documentation", "-Wno-unsafe-buffer-usage",
+                            "-Wno-missing-noreturn", "-Wno-implicit-int-enum-cast",
+                            "-Wno-bad-function-cast"], generated_policy,
+                "generated CVK compiler exceptions exceed the approved set")
+        original_checks = re.search(r"^Checks: +([^\n]+)", config, re.M)
+        effective_checks = re.search(r"^Checks: +([^\n]+)", generated_config, re.M)
+        def check_list(match):
+            return [entry.strip() for entry in match[1].strip("'\"").replace("\\n", "").split(",")] if match else []
+        require(original_checks is not None and effective_checks is not None and
+                check_list(effective_checks) == check_list(original_checks) +
+                ["-" + check for check in generated_checks], generated_policy,
+                "generated CVK check exceptions exceed the approved set")
 
     for category, paths in (("owned", owned), ("external", external)):
         for path in paths:
@@ -68,6 +101,21 @@ def main():
                 require(tree.findtext(f".//m:{setting}", namespaces=NS) == enabled,
                         path, f"{setting} must be {enabled}")
             if is_owned:
+                is_generated = path == build / "cvk.vcxproj"
+                expected_policy = generated_policy if is_generated else policy
+                analysis_options = tree.findtext(".//m:ClangTidyToolExeAdditionalOptions", default="", namespaces=NS)
+                require(expected_policy.as_posix() in analysis_options.replace("\\", "/"), path,
+                        "Clang policy must match this target's approved scope")
+                checks = tree.findtext(".//m:ClangTidyChecks", default="", namespaces=NS)
+                for check in generated_checks:
+                    require(("-" + check in checks) == is_generated, path,
+                            "generated-code exceptions may apply only to cvk")
+                if is_generated:
+                    for source in sources:
+                        source_path = Path(source.get("Include", ""))
+                        if source_path.suffix.lower() == ".c":
+                            require(source_path.is_relative_to(root / "src"), path,
+                                    "the generated CVK policy must not cover application sources")
                 for setting, expected in (("CodeAnalysisRuleSet", "AllRules.ruleset"),
                                           ("CodeAnalysisTreatWarningsAsErrors", "true"),
                                           ("ClangTidyWarningsInSystemHeaders", "false")):

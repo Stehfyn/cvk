@@ -16,6 +16,7 @@
 #include "os/os_process.h"
 #include "os/os_compiler.h"
 #include "os/os_types.h"
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -390,7 +391,7 @@ static void CheckMatroska(void)
             }
         }
         ++index;
-        if (!(ARRAYSIZE(c_validIds) > index))
+        if (!((sizeof(c_validIds) / sizeof(c_validIds[0])) > index))
         {
             break;
         }
@@ -416,7 +417,7 @@ static void CheckMatroska(void)
         width     = Utl_Matroska_WriteElementHeader(&header, output, sizeof(output));
         Check(0 == width, 319);
         ++index;
-        if (!(ARRAYSIZE(c_invalidIds) > index))
+        if (!((sizeof(c_invalidIds) / sizeof(c_invalidIds[0])) > index))
         {
             break;
         }
@@ -490,7 +491,7 @@ static void CheckProtobuf(void)
             }
         }
         ++case_index;
-        if (ARRAYSIZE(c_protoIntegers) == case_index)
+        if ((sizeof(c_protoIntegers) / sizeof(c_protoIntegers[0])) == case_index)
         {
             break;
         }

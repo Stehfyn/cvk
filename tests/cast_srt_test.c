@@ -243,9 +243,9 @@ static FORCE_INLINE void InitializeMarker(Utl_Srt_Cue_t* cue)
     cue->start.hourDigits          = SRT_TEST_WIDTH_SENTINEL;
     cue->end.milliseconds          = SRT_TEST_SENTINEL + 1;
     cue->end.hourDigits            = SRT_TEST_WIDTH_SENTINEL;
-    cue->timingExtension.data      = (const byte_t*)cue->identifier.data;
+    cue->timingExtension.data      = cue->identifier.data;
     cue->timingExtension.byteCount = SRT_TEST_COUNT_SENTINEL;
-    cue->payload.data              = (const byte_t*)cue->identifier.data;
+    cue->payload.data              = cue->identifier.data;
     cue->payload.byteCount         = SRT_TEST_COUNT_SENTINEL;
 }
 

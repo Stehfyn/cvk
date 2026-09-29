@@ -172,7 +172,7 @@ static FORCE_INLINE bool_t ReadByteOrderedUtf16(const Utl_Unicode_Reader_t* read
  *  selected by this API. The byte-order choice is independent of the host target.
  *  https://www.unicode.org/versions/Unicode17.0.0/core-spec/chapter-23/
  */
-void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader, const byte_t* data, uint32_t byteCount)
+extern FORCE_INLINE void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader, const byte_t* data, uint32_t byteCount)
 {
     bool_t has_source;
     bool_t has_pair;
@@ -224,7 +224,7 @@ void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader, const byte_t* da
  * \par Details:
  *  Cursor bounds are initialization/read invariants and programmer obligations.
  */
-uint32_t Utl_Unicode_GetRemainingByteCount(const Utl_Unicode_Reader_t* reader)
+extern FORCE_INLINE uint32_t Utl_Unicode_GetRemainingByteCount(const Utl_Unicode_Reader_t* reader)
 {
     LOGASSERT(NULL != reader);
     LOGASSERT(reader->offset <= reader->byteCount);
@@ -237,7 +237,7 @@ uint32_t Utl_Unicode_GetRemainingByteCount(const Utl_Unicode_Reader_t* reader)
  * \par Details:
  *  Unicode noncharacters are scalar values; their use is a higher-level policy.
  */
-bool_t Utl_Unicode_IsScalar(uint32_t value)
+extern FORCE_INLINE bool_t Utl_Unicode_IsScalar(uint32_t value)
 {
     bool_t is_in_range;
     bool_t is_surrogate;
@@ -254,7 +254,7 @@ bool_t Utl_Unicode_IsScalar(uint32_t value)
  *  The first zero unit terminates the scan. A full unterminated span has an explicit
  *  sentinel, so callers cannot mistake truncation for a complete command line.
  */
-uint32_t Utl_Unicode_GetUtf8StringByteCount(const char_t* text, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Unicode_GetUtf8StringByteCount(const char_t* text, uint32_t capacity)
 {
     uint32_t count;
     uint32_t index;
@@ -281,7 +281,7 @@ uint32_t Utl_Unicode_GetUtf8StringByteCount(const char_t* text, uint32_t capacit
  * \par Details:
  *  The result distinguishes an empty terminated string from missing termination.
  */
-uint32_t Utl_Unicode_GetUtf16StringUnitCount(const uint16_t* units, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Unicode_GetUtf16StringUnitCount(const uint16_t* units, uint32_t capacity)
 {
     uint32_t count;
     uint32_t index;
@@ -304,7 +304,7 @@ uint32_t Utl_Unicode_GetUtf16StringUnitCount(const uint16_t* units, uint32_t cap
  * \par Details:
  *  None
  */
-uint32_t Utl_Unicode_GetUtf8ByteCount(uint32_t value)
+extern FORCE_INLINE uint32_t Utl_Unicode_GetUtf8ByteCount(uint32_t value)
 {
     uint32_t count;
 
@@ -357,7 +357,7 @@ uint32_t Utl_Unicode_GetUtf16UnitCount(uint32_t value)
  * \par Details:
  *  U+0000 and U+FEFF are ordinary counted scalars, not terminators or removed BOMs.
  */
-bool_t Utl_Unicode_IsValidUtf8(const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Unicode_IsValidUtf8(const byte_t* buffer, uint32_t byteCount)
 {
     uint32_t cursor;
     bool_t   is_valid;
@@ -415,7 +415,7 @@ bool_t Utl_Unicode_IsValidUtf16(const uint16_t* units, uint32_t unitCount)
  * \par Details:
  *  Lead-byte classification sets the width and minimum scalar before any continuation byte is read.
  */
-bool_t Utl_Unicode_ReadUtf8(uint32_t* scalar, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf8(uint32_t* scalar, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t   has_outputs;
     bool_t   has_input;
@@ -498,7 +498,7 @@ bool_t Utl_Unicode_ReadUtf8(uint32_t* scalar, uint32_t* bytesRead, const byte_t*
  * \par Details:
  *  A surrogate pair contributes ten bits from each unit above the supplementary-plane base.
  */
-bool_t Utl_Unicode_ReadUtf16(uint32_t* scalar, uint32_t* unitsRead, const uint16_t* units, uint32_t unitCount)
+extern FORCE_INLINE bool_t Utl_Unicode_ReadUtf16(uint32_t* scalar, uint32_t* unitsRead, const uint16_t* units, uint32_t unitCount)
 {
     bool_t   has_outputs;
     bool_t   has_input;
@@ -554,7 +554,7 @@ bool_t Utl_Unicode_ReadUtf16(uint32_t* scalar, uint32_t* unitsRead, const uint16
  * \par Details:
  *  Output and offset are published together only after a complete scalar read.
  */
-Utl_Unicode_ReadResult_t Utl_Unicode_ReadScalar(Utl_Unicode_Reader_t* reader, uint32_t* scalar)
+extern FORCE_INLINE Utl_Unicode_ReadResult_t Utl_Unicode_ReadScalar(Utl_Unicode_Reader_t* reader, uint32_t* scalar)
 {
     uint32_t                 remaining;
     Utl_Unicode_ReadResult_t result;
@@ -598,7 +598,7 @@ Utl_Unicode_ReadResult_t Utl_Unicode_ReadScalar(Utl_Unicode_Reader_t* reader, ui
  * \par Details:
  *  None
  */
-uint32_t Utl_Unicode_WriteUtf8(uint32_t scalar, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Unicode_WriteUtf8(uint32_t scalar, byte_t* buffer, uint32_t capacity)
 {
     uint32_t width;
     bool_t   has_buffer;

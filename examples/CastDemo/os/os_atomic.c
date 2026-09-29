@@ -15,6 +15,8 @@
 **===============================================================================================*/
 
 #include "os/os_atomic.h"
+#include "os/os_compiler.h"
+#include <stdint.h>
 #include "os/os_atomic_backend.h"
 #include "os/os_assert.h"
 
@@ -53,7 +55,7 @@
  * \par Details:
  *  Storage is quiescent; the native store binds no external resources.
  */
-void OS_Atomic_Initialize32(OS_Atomic32_t* atomic, uint32_t value)
+extern FORCE_INLINE void OS_Atomic_Initialize32(OS_Atomic32_t* atomic, uint32_t value)
 {
     LOGASSERT(NULL != atomic);
     LOGASSERT(!((uintptr_t)atomic & (sizeof(uint32_t) - 1)));
@@ -80,7 +82,7 @@ void OS_Atomic_Initialize64(OS_Atomic64_t* atomic, uint64_t value)
  *  The external native call preserves the compiler boundary; the selected backend
  *  provides the documented indivisibility and hardware ordering.
  */
-uint32_t OS_Atomic_Load32(const OS_Atomic32_t* atomic)
+extern FORCE_INLINE uint32_t OS_Atomic_Load32(const OS_Atomic32_t* atomic)
 {
     LOGASSERT(NULL != atomic);
 
@@ -106,7 +108,7 @@ uint64_t OS_Atomic_Load64(const OS_Atomic64_t* atomic)
  *  The external native call preserves the compiler boundary; the selected backend
  *  provides the documented indivisibility and hardware ordering.
  */
-void OS_Atomic_Store32(OS_Atomic32_t* atomic, uint32_t value)
+extern FORCE_INLINE void OS_Atomic_Store32(OS_Atomic32_t* atomic, uint32_t value)
 {
     LOGASSERT(NULL != atomic);
 
@@ -132,7 +134,7 @@ void OS_Atomic_Store64(OS_Atomic64_t* atomic, uint64_t value)
  *  The external native call preserves the compiler boundary; the selected backend
  *  provides the documented indivisibility and hardware ordering.
  */
-uint32_t OS_Atomic_Exchange32(OS_Atomic32_t* atomic, uint32_t value)
+extern FORCE_INLINE uint32_t OS_Atomic_Exchange32(OS_Atomic32_t* atomic, uint32_t value)
 {
     LOGASSERT(NULL != atomic);
 
@@ -158,7 +160,7 @@ uint64_t OS_Atomic_Exchange64(OS_Atomic64_t* atomic, uint64_t value)
  *  The external native call preserves the compiler boundary; the selected backend
  *  provides the documented indivisibility and hardware ordering.
  */
-uint32_t OS_Atomic_CompareExchange32(OS_Atomic32_t* atomic, uint32_t expected, uint32_t replacement)
+extern FORCE_INLINE uint32_t OS_Atomic_CompareExchange32(OS_Atomic32_t* atomic, uint32_t expected, uint32_t replacement)
 {
     LOGASSERT(NULL != atomic);
 

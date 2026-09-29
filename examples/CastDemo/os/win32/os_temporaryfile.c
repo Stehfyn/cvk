@@ -13,7 +13,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <minwindef.h>
 #include <winnt.h>
 #include <fileapi.h>
@@ -105,7 +105,7 @@ static FORCE_INLINE void RecordError(OS_TemporaryFile_t* file, uint32_t code)
  *  The zero-unique native operation creates the filesystem entry and closes its
  *  creation handle. A successful path stays owned even if later consumers fail.
  */
-bool_t OS_TemporaryFile_Initialize(OS_TemporaryFile_t* file)
+extern FORCE_INLINE bool_t OS_TemporaryFile_Initialize(OS_TemporaryFile_t* file)
 {
     DWORD    length;
     TCHAR    directory[OS_TEMPORARYFILE_PATH_CAPACITY];
@@ -155,7 +155,7 @@ bool_t OS_TemporaryFile_Initialize(OS_TemporaryFile_t* file)
  * \par Details:
  *  Readiness is owner-serialized and changes only at initialization or shutdown.
  */
-bool_t OS_TemporaryFile_IsReady(const OS_TemporaryFile_t* file)
+extern FORCE_INLINE bool_t OS_TemporaryFile_IsReady(const OS_TemporaryFile_t* file)
 {
     LOGASSERT(NULL != file);
     return file->ready;
@@ -166,7 +166,7 @@ bool_t OS_TemporaryFile_IsReady(const OS_TemporaryFile_t* file)
  * \par Details:
  *  None
  */
-uint32_t OS_TemporaryFile_GetError(const OS_TemporaryFile_t* file)
+extern FORCE_INLINE uint32_t OS_TemporaryFile_GetError(const OS_TemporaryFile_t* file)
 {
     LOGASSERT(NULL != file);
     return file->error;
@@ -196,7 +196,7 @@ const uint16_t* OS_TemporaryFile_GetPath(const OS_TemporaryFile_t* file)
  *  Readiness is revoked before native removal. Failure retains both the path
  *  identity and first error; successful removal clears the identity once.
  */
-bool_t OS_TemporaryFile_TryClose(OS_TemporaryFile_t* file)
+extern FORCE_INLINE bool_t OS_TemporaryFile_TryClose(OS_TemporaryFile_t* file)
 {
     bool_t   removed;
     uint32_t error;

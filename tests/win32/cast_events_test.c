@@ -9,13 +9,23 @@
 **===============================================================================================*/
 
 #include "cast_events.h"
+#include "cast_session.h"
+#include <Windows.h> // IWYU pragma: keep
+
+#include <WinBase.h>
+#include <handleapi.h>
+#include <minwindef.h>
+#include <processthreadsapi.h>
+#include <synchapi.h>
+#include <sysinfoapi.h>
+#include <winnt.h>
+#include "os/os_types.h"
+#include <stdint.h>
 #include "cast_media.h"
 #include "crt/crt_memory.h"
 #include "os/os_assert.h"
 #include "os/os_compiler.h"
 #include "os/os_process.h"
-
-#include <Windows.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS

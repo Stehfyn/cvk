@@ -111,7 +111,7 @@ static FORCE_INLINE void RecordError(OS_Network_t* network, uint32_t code)
  *  Resident storage is acquired before constructing the native socket identity.
  *  The query uses an IPv4 datagram provider and does not bind a local endpoint.
  */
-bool_t OS_Network_Initialize(OS_Network_t* network)
+extern FORCE_INLINE bool_t OS_Network_Initialize(OS_Network_t* network)
 {
     uint32_t error;
     bool_t   storage_ready;
@@ -147,7 +147,7 @@ bool_t OS_Network_Initialize(OS_Network_t* network)
  * \par Details:
  *  None
  */
-bool_t OS_Network_IsReady(const OS_Network_t* network)
+extern FORCE_INLINE bool_t OS_Network_IsReady(const OS_Network_t* network)
 {
     LOGASSERT(NULL != network);
 
@@ -159,7 +159,7 @@ bool_t OS_Network_IsReady(const OS_Network_t* network)
  * \par Details:
  *  Native Winsock and storage error codes share the Win32 error domain.
  */
-uint32_t OS_Network_GetError(const OS_Network_t* network)
+extern FORCE_INLINE uint32_t OS_Network_GetError(const OS_Network_t* network)
 {
     LOGASSERT(NULL != network);
 
@@ -171,7 +171,7 @@ uint32_t OS_Network_GetError(const OS_Network_t* network)
  * \par Details:
  *  An unpublished or closing reader exposes no native array elements.
  */
-uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* network)
+extern FORCE_INLINE uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* network)
 {
     uint32_t count;
 
@@ -192,7 +192,7 @@ uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* network)
  *  ReadInterfaces has validated AF_INET for every published native address.
  *  Copying the native in_addr representation preserves its network-order octets.
  */
-void OS_Network_GetInterface(const OS_Network_t* network, uint32_t index, OS_Network_Interface_t* value)
+extern FORCE_INLINE void OS_Network_GetInterface(const OS_Network_t* network, uint32_t index, OS_Network_Interface_t* value)
 {
     const INTERFACE_INFO* entry;
 
@@ -272,7 +272,7 @@ bool_t OS_Network_ReadInterfaces(OS_Network_t* network)
  * \par Details:
  *  SIO_ROUTING_INTERFACE_QUERY neither connects nor recreates the retained query socket.
  */
-bool_t OS_Network_ReadRoute(OS_Network_t* network, OS_Network_Route_t* route)
+extern FORCE_INLINE bool_t OS_Network_ReadRoute(OS_Network_t* network, OS_Network_Route_t* route)
 {
     uint32_t           error;
     struct sockaddr_in destination;
@@ -329,7 +329,7 @@ bool_t OS_Network_ReadRoute(OS_Network_t* network, OS_Network_Route_t* route)
  *  The socket identity remains retained if closesocket fails. Storage release
  *  begins only after the socket is gone, and failed storage release is retryable.
  */
-bool_t OS_Network_TryClose(OS_Network_t* network)
+extern FORCE_INLINE bool_t OS_Network_TryClose(OS_Network_t* network)
 {
     bool_t   socket_closed;
     int32_t  status;

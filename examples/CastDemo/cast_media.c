@@ -9,6 +9,7 @@
 **===============================================================================================*/
 
 #include "cast_media.h"
+#include "os/os_compiler.h"
 #include "crt/crt_memory.h"
 #include "os/os_assert.h"
 #include "os/os_mailbox.h"
@@ -51,7 +52,7 @@
  * \par Details:
  *  Unpublished payload is inaccessible, so reset changes only slot ownership.
  */
-void CastMedia_Initialize(CastMedia_Channel_t* channel)
+extern FORCE_INLINE void CastMedia_Initialize(CastMedia_Channel_t* channel)
 {
     LOGASSERT(NULL != channel);
 
@@ -64,7 +65,7 @@ void CastMedia_Initialize(CastMedia_Channel_t* channel)
  *  Bounded scans precede any publication. The reader's slot is never touched,
  *  including when its consumer is suspended during use of a previous pair.
  */
-void CastMedia_Publish(CastMedia_Channel_t* channel, const char_t* url, const char_t* type)
+extern FORCE_INLINE void CastMedia_Publish(CastMedia_Channel_t* channel, const char_t* url, const char_t* type)
 {
     uint32_t     url_count;
     uint32_t     type_count;

@@ -12,7 +12,10 @@
 **===============================================================================================*/
 
 #include "utl/utl_arguments.h"
+#include "os/os_compiler.h"
 #include "os/os_assert.h"
+#include "os/os_types.h"
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -50,7 +53,7 @@
  *  Each source record is one complete argument. A descending copy preserves exact
  *  units and avoids the compiler replacing a forward loop with a CRT memcpy call.
  */
-bool_t Utl_Arguments_Read(uint32_t*              unitCount,
+extern FORCE_INLINE bool_t Utl_Arguments_Read(uint32_t*              unitCount,
                           uint16_t*              output,
                           uint32_t               capacity,
                           const Utl_Arguments_t* arguments,

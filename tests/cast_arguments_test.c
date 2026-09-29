@@ -10,6 +10,9 @@
 **===============================================================================================*/
 
 #include "os/os_assert.h"
+#include "os/os_compiler.h"
+#include "os/os_types.h"
+#include <stdint.h>
 #include "os/os_process.h"
 #include "utl/utl_arguments.h"
 #include "utl/utl_unicode.h"
@@ -80,6 +83,20 @@ static const uint16_t       c_missing[]       = {'p', ' ', '\t'};
 
 /*************************************************************************************************/
 /**
+ * \brief Checks publication and preservation for one output capacity.
+ *
+ * \param[in] fixture     Counted input and expected argument
+ * \param[in] arguments   Initialized input record
+ * \param[in] capacity    Capacity being exercised
+ *
+ * \retval    None
+ */
+static FORCE_INLINE void CheckCapacity(const ArgumentCase_t*  fixture,
+                                       const Utl_Arguments_t* arguments,
+                                       uint32_t               capacity);
+
+/*************************************************************************************************/
+/**
  * \brief Checks one independent vector at every insufficient and exact capacity.
  *
  * \param[in] fixture   Counted input and expected argument
@@ -95,6 +112,46 @@ static void CheckArgument(const ArgumentCase_t* fixture);
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Failed reads preserve every output unit; successful reads publish the exact counted text.
+ */
+static FORCE_INLINE void CheckCapacity(const ArgumentCase_t*  fixture,
+                                       const Utl_Arguments_t* arguments,
+                                       uint32_t               capacity)
+{
+    uint16_t output[TEST_CAPACITY];
+    uint32_t count;
+    uint32_t index;
+    bool_t   found;
+    for (index = 0; index < TEST_CAPACITY; ++index)
+    {
+        output[index] = TEST_SENTINEL;
+    }
+    count = TEST_SENTINEL;
+    found = Utl_Arguments_Read(&count, output, capacity, arguments, fixture->argument);
+    if (capacity < fixture->expectedCount)
+    {
+        LOGASSERT(!found);
+        LOGASSERT(TEST_SENTINEL == count);
+        for (index = 0; index < TEST_CAPACITY; ++index)
+        {
+            LOGASSERT(TEST_SENTINEL == output[index]);
+        }
+    }
+    else
+    {
+        LOGASSERT(found);
+        LOGASSERT(fixture->expectedCount == count);
+        for (index = 0; index < count; ++index)
+        {
+            LOGASSERT((uint16_t)(byte_t)fixture->expected[index] == output[index]);
+        }
+        LOGASSERT(TEST_SENTINEL == output[count]);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  ASCII fixtures are widened by their known counted length. Sentinels detect any
  *  write on failure, output overrun, or unwanted terminator.
  */
@@ -105,9 +162,6 @@ static void CheckArgument(const ArgumentCase_t* fixture)
     Utl_Arguments_t        arguments;
     uint32_t               index;
     uint32_t               capacity;
-    uint16_t               output[TEST_CAPACITY];
-    uint32_t               count;
-    bool_t                 found;
 
     LOGASSERT(fixture->inputCount < TEST_CAPACITY);
     LOGASSERT(fixture->expectedCount < TEST_CAPACITY);
@@ -121,31 +175,7 @@ static void CheckArgument(const ArgumentCase_t* fixture)
     }
     for (capacity = 0; capacity <= fixture->expectedCount; ++capacity)
     {
-        for (index = 0; index < TEST_CAPACITY; ++index)
-        {
-            output[index] = TEST_SENTINEL;
-        }
-        count = TEST_SENTINEL;
-        found = Utl_Arguments_Read(&count, output, capacity, &arguments, fixture->argument);
-        if (capacity < fixture->expectedCount)
-        {
-            LOGASSERT(!found);
-            LOGASSERT(TEST_SENTINEL == count);
-            for (index = 0; index < TEST_CAPACITY; ++index)
-            {
-                LOGASSERT(TEST_SENTINEL == output[index]);
-            }
-        }
-        else
-        {
-            LOGASSERT(found);
-            LOGASSERT(fixture->expectedCount == count);
-            for (index = 0; index < count; ++index)
-            {
-                LOGASSERT((uint16_t)(byte_t)fixture->expected[index] == output[index]);
-            }
-            LOGASSERT(TEST_SENTINEL == output[count]);
-        }
+        CheckCapacity(fixture, &arguments, capacity);
     }
 }
 

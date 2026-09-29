@@ -11,7 +11,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <Windows.h>
+#include <Windows.h> // IWYU pragma: keep
 #include <minwindef.h>
 #include <winnt.h>
 #include <fileapi.h>

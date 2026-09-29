@@ -42,24 +42,29 @@
 #define HTTP_FIELD_TRANSFER   (1)
 #define HTTP_FIELD_CONNECTION (2)
 
-#define DATE_YEAR_MAX      (9999)
-#define DATE_MONTH_COUNT   (12)
-#define DATE_WEEKDAY_COUNT (7)
-#define DATE_FEBRUARY      (2)
-#define DATE_HOUR_MAX      (23)
-#define DATE_MINUTE_MAX    (59)
-#define DATE_SECOND_MAX    (60)
-#define DATE_NAME_BYTES    (3)
-#define DATE_TIME_DIGITS   (2)
-#define DATE_YEAR_DIGITS   (4)
-#define DATE_RADIX         (10)
-#define DATE_DAY_OFFSET    (5)
-#define DATE_MONTH_OFFSET  (8)
-#define DATE_YEAR_OFFSET   (12)
-#define DATE_HOUR_OFFSET   (17)
-#define DATE_MINUTE_OFFSET (20)
-#define DATE_SECOND_OFFSET (23)
-#define DATE_ZONE_OFFSET   (26)
+#define DATE_YEAR_MAX            (9999)
+#define DATE_MONTH_COUNT         (12)
+#define DATE_WEEKDAY_COUNT       (7)
+#define DATE_FEBRUARY            (2)
+#define DATE_HOUR_MAX            (23)
+#define DATE_MINUTE_MAX          (59)
+#define DATE_SECOND_MAX          (60)
+#define DATE_NAME_BYTES          (3)
+#define DATE_TIME_DIGITS         (2)
+#define DATE_YEAR_DIGITS         (4)
+#define DATE_CENTURY_YEARS       (100)
+#define DATE_LEAP_CYCLE_YEARS    (400)
+#define STATUS_DECIMAL_RADIX     (10)
+#define STATUS_HUNDREDS_DIVISOR  (100)
+#define STATUS_WITH_SPACES_BYTES (UTL_HTTP_STATUS_DIGIT_COUNT + 2)
+#define DATE_RADIX               (10)
+#define DATE_DAY_OFFSET          (5)
+#define DATE_MONTH_OFFSET        (8)
+#define DATE_YEAR_OFFSET         (12)
+#define DATE_HOUR_OFFSET         (17)
+#define DATE_MINUTE_OFFSET       (20)
+#define DATE_SECOND_OFFSET       (23)
+#define DATE_ZONE_OFFSET         (26)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -88,7 +93,7 @@ typedef struct HttpFramingFields_s
 **===============================================================================================*/
 
 /** Canonical case-insensitive byte-range unit. */
-static const char_t c_rangeUnit[] = UTL_HTTP_RANGE_UNIT;
+static const byte_t c_rangeUnit[] = UTL_HTTP_RANGE_UNIT;
 
 /** RFC 9110 section 5.6.7 day-name and month terminals, in calendar order. */
 static const byte_t c_weekdays[DATE_WEEKDAY_COUNT][DATE_NAME_BYTES + 1] =
@@ -147,6 +152,21 @@ static FORCE_INLINE byte_t FoldAscii(byte_t value);
  * \retval    cursor..byteCount   Offset of the first non-whitespace byte, or byteCount when none remains.
  */
 static FORCE_INLINE uint32_t GetWhitespaceEnd(const byte_t* buffer, uint32_t byteCount, uint32_t cursor);
+
+/*************************************************************************************************/
+/**
+ * \brief Derives the end of a contiguous HTTP token.
+ *
+ * \par Requirements:
+ *  - 001 The cursor shall lie within the readable text span.
+ *  - 002 Only tchar bytes shall advance the cursor; a delimiter shall remain unread.
+ *
+ * \param[in] text     Counted text
+ * \param[in] cursor   First candidate token byte
+ *
+ * \retval    cursor..text.byteCount   First non-token position or the input end.
+ */
+static FORCE_INLINE uint32_t GetTokenEnd(Utl_Http_Text_t text, uint32_t cursor);
 
 /*************************************************************************************************/
 /**
@@ -219,6 +239,31 @@ static FORCE_INLINE uint32_t GetRangeMemberByteCount(const Utl_Http_Range_t* ran
 
 /*************************************************************************************************/
 /**
+ * \brief Derives body kind and persistence after complete framing validation.
+ *
+ * \par Requirements:
+ *  - 001 The head, accumulated fields and response policy shall already be valid.
+ *  - 002 Bodyless and tunnel policy shall take precedence over transfer and length framing.
+ *  - 003 Tunnel and close-delimited bodies shall not permit connection reuse.
+ *
+ * \param[out] result      Unpublished framing result
+ * \param[in] fields       Validated accumulated fields
+ * \param[in] head         Validated complete head
+ * \param[in] hasNoBody    Bodyless-response policy
+ * \param[in] isTunnel     Successful CONNECT policy
+ * \param[in] isResponse   Response rather than request
+ *
+ * \retval    None
+ */
+static FORCE_INLINE void DeriveFramingResult(Utl_Http_Framing_t*        result,
+                                             const HttpFramingFields_t* fields,
+                                             const Utl_Http_Head_t*     head,
+                                             bool_t                     hasNoBody,
+                                             bool_t                     isTunnel,
+                                             bool_t                     isResponse);
+
+/*************************************************************************************************/
+/**
  * \brief Reads a single non-folded field line.
  *
  * \param[out] field   Result on success
@@ -241,6 +286,39 @@ static FORCE_INLINE bool_t ReadField(Utl_Http_Field_t* field, Utl_Http_Text_t li
  * \retval     FALSE   Otherwise.
  */
 static FORCE_INLINE bool_t ReadVersion(uint8_t* major, uint8_t* minor, Utl_Http_Text_t text);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads the three request-line components.
+ *
+ * \par Requirements:
+ *  - 001 The destination shall be an unpublished request candidate.
+ *  - 002 Exactly one space shall separate method, target and HTTP version.
+ *
+ * \param[in,out] head   Unpublished request head
+ * \param[in] line       Counted line excluding CRLF
+ *
+ * \retval    TRUE    All request-line components are valid.
+ * \retval    FALSE   A component or separator is invalid.
+ */
+static FORCE_INLINE bool_t ReadRequestLine(Utl_Http_Head_t* head, Utl_Http_Text_t line);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads the version, three-digit status and reason phrase.
+ *
+ * \par Requirements:
+ *  - 001 The line shall contain at least UTL_HTTP_REASON_OFFSET bytes.
+ *  - 002 Status and reason separators shall be single spaces.
+ *  - 003 Only a valid status code and field-value reason shall be accepted.
+ *
+ * \param[in,out] head   Unpublished response head
+ * \param[in] line       Counted line excluding CRLF
+ *
+ * \retval    TRUE    The response line is valid.
+ * \retval    FALSE   A component or separator is invalid.
+ */
+static FORCE_INLINE bool_t ReadResponseLine(Utl_Http_Head_t* head, Utl_Http_Text_t line);
 
 /*************************************************************************************************/
 /**
@@ -267,6 +345,40 @@ static FORCE_INLINE void ReadCompletedLine(Utl_Http_HeadReader_t* reader, Utl_Ht
 
 /*************************************************************************************************/
 /**
+ * \brief Applies one consumed byte to the incremental line state.
+ *
+ * \par Requirements:
+ *  - 001 The reader shall be incomplete and its scan shall already include this byte.
+ *  - 002 CR shall be followed by LF; bare LF shall latch an invalid result.
+ *  - 003 Only a complete CRLF-terminated line shall reach the line parser.
+ *
+ * \param[in,out] reader   Initialized incremental reader
+ * \param[in] value        Newly consumed octet
+ *
+ * \retval    None
+ */
+static FORCE_INLINE void ReadHeadByte(Utl_Http_HeadReader_t* reader, byte_t value);
+
+/*************************************************************************************************/
+/**
+ * \brief Finds a list delimiter outside quoted strings.
+ *
+ * \par Requirements:
+ *  - 001 The start position shall lie within the readable list span.
+ *  - 002 Escaped bytes shall not terminate a quote or list member.
+ *  - 003 An unterminated quote or quoted pair shall preserve the output.
+ *
+ * \param[out] end     Delimiter position or list end
+ * \param[in] list     Counted field value
+ * \param[in] start    First member byte
+ *
+ * \retval    TRUE    A complete member boundary was found.
+ * \retval    FALSE   A quoted string or pair is incomplete.
+ */
+static FORCE_INLINE bool_t ReadListMemberEnd(uint32_t* end, Utl_Http_Text_t list, uint32_t start);
+
+/*************************************************************************************************/
+/**
  * \brief Reads the next nonempty HTTP list member, respecting quoted commas.
  *
  * \param[out]    member         Borrowed item on success when hasMember is TRUE
@@ -286,6 +398,23 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
 
 /*************************************************************************************************/
 /**
+ * \brief Reads a token or quoted-string parameter value.
+ *
+ * \par Requirements:
+ *  - 001 The cursor shall identify an available value byte in a field already checked for controls.
+ *  - 002 Quoted pairs shall consume exactly one escaped byte.
+ *  - 003 A token shall contain at least one tchar; a quoted value shall have a closing quote.
+ *
+ * \param[in] text         Counted field value
+ * \param[in,out] cursor   First value byte, advanced over valid syntax
+ *
+ * \retval    TRUE    A token or complete quoted string was read.
+ * \retval    FALSE   The value is absent or incomplete.
+ */
+static FORCE_INLINE bool_t ReadParameterValue(Utl_Http_Text_t text, uint32_t* cursor);
+
+/*************************************************************************************************/
+/**
  * \brief Validates semicolon parameters or chunk extensions.
  *
  * \param[in] text            Complete counted value
@@ -296,6 +425,24 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
  * \retval    FALSE   Otherwise.
  */
 static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor, bool_t valueRequired);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads one nonempty framing-field list member.
+ *
+ * \par Requirements:
+ *  - 001 The candidate shall retain framing state from preceding members.
+ *  - 002 Repeated content lengths shall agree.
+ *  - 003 Chunked shall occur at most once and only as the final transfer coding.
+ *
+ * \param[in,out] fields   Unpublished framing candidate
+ * \param[in] member       Nonempty trimmed list member
+ * \param[in] kind         Length, connection or transfer-coding field selector
+ *
+ * \retval    TRUE    The member is valid with respect to preceding fields.
+ * \retval    FALSE   The member syntax or accumulated framing is invalid.
+ */
+static FORCE_INLINE bool_t ReadFramingMember(HttpFramingFields_t* fields, Utl_Http_Text_t member, uint32_t kind);
 
 /*************************************************************************************************/
 /**
@@ -312,6 +459,26 @@ static FORCE_INLINE bool_t ReadFramingField(HttpFramingFields_t* fields, Utl_Htt
 
 /*************************************************************************************************/
 /**
+ * \brief Accumulates connection, host and applicable body-length fields.
+ *
+ * \par Requirements:
+ *  - 001 The framing candidate shall be initialized and the complete head shall be validated.
+ *  - 002 Bodyless and tunnel policies shall ignore content-length and transfer-encoding fields.
+ *  - 003 Every applicable list member shall be validated before a framing result is published.
+ *
+ * \param[in,out] fields       Initialized unpublished field state
+ * \param[in] head             Validated complete head
+ * \param[in] readsBodyFields  Whether body-length fields affect this message
+ *
+ * \retval    TRUE    Every applicable field is valid.
+ * \retval    FALSE   An applicable field has invalid syntax or conflicts.
+ */
+static FORCE_INLINE bool_t ReadFramingFields(HttpFramingFields_t*   fields,
+                                             const Utl_Http_Head_t* head,
+                                             bool_t                 readsBodyFields);
+
+/*************************************************************************************************/
+/**
  * \brief Reads a uint64_t decimal prefix at the current input offset.
  *
  * \param[out]    value       Non-NULL numeric result
@@ -323,6 +490,28 @@ static FORCE_INLINE bool_t ReadFramingField(HttpFramingFields_t* fields, Utl_Htt
  * \retval        FALSE   Otherwise.
  */
 static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const byte_t* buffer, uint32_t byteCount, uint32_t* cursor);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads the first-last portion of a satisfied Content-Range.
+ *
+ * \par Requirements:
+ *  - 001 The input cursor shall lie within the counted source.
+ *  - 002 Both unsigned decimal bounds and the separating hyphen shall be present.
+ *  - 003 The enclosing reader shall validate semantic bounds before publication.
+ *
+ * \param[in,out] content   Unpublished content-range candidate
+ * \param[in] buffer        Counted input
+ * \param[in] byteCount     Readable source extent
+ * \param[in,out] cursor    Current parsing position
+ *
+ * \retval    TRUE    Both bounds and their delimiter were decoded.
+ * \retval    FALSE   Syntax or integer bounds failed.
+ */
+static FORCE_INLINE bool_t ReadContentRangeBounds(Utl_Http_ContentRange_t* content,
+                                                  const byte_t*            buffer,
+                                                  uint32_t                 byteCount,
+                                                  uint32_t*                cursor);
 
 /*************************************************************************************************/
 /**
@@ -471,6 +660,27 @@ static FORCE_INLINE uint32_t GetWhitespaceEnd(const byte_t* buffer, uint32_t byt
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  The initial cursor is returned when no token byte is present.
+ */
+static FORCE_INLINE uint32_t GetTokenEnd(Utl_Http_Text_t text, uint32_t cursor)
+{
+    bool_t is_token;
+
+    LOGASSERT(cursor <= text.byteCount);
+    for (; cursor < text.byteCount; ++cursor)
+    {
+        is_token = IsTokenByte(text.data[cursor]);
+        if (!is_token)
+        {
+            break;
+        }
+    }
+    return cursor;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  An empty input does not require a data pointer.
  */
 static FORCE_INLINE Utl_Http_Text_t Trim(Utl_Http_Text_t text)
@@ -589,7 +799,7 @@ static FORCE_INLINE bool_t HasBytesUnit(const byte_t* buffer, uint32_t byteCount
     {
         unit.data      = &buffer[(*cursor)];
         unit.byteCount = RANGE_UNIT_BYTES;
-        has_prefix     = IsEqualLiteral(unit, c_rangeUnit, TRUE);
+        has_prefix     = IsEqualLiteral(unit, UTL_HTTP_RANGE_UNIT, TRUE);
         has_prefix     = has_prefix && (separator == buffer[(*cursor) + RANGE_UNIT_BYTES]);
         if (has_prefix)
         {
@@ -606,20 +816,18 @@ static FORCE_INLINE bool_t HasBytesUnit(const byte_t* buffer, uint32_t byteCount
  */
 static FORCE_INLINE bool_t IsValidRange(const Utl_Http_Range_t* range)
 {
+    bool_t is_closed;
+    bool_t is_open;
+    bool_t is_suffix;
     bool_t is_valid;
 
-    switch (range->kind)
+    is_closed = (UTL_HTTP_RANGE_CLOSED == range->kind);
+    is_open   = (UTL_HTTP_RANGE_OPEN == range->kind);
+    is_suffix = (UTL_HTTP_RANGE_SUFFIX == range->kind);
+    is_valid  = is_open || is_suffix;
+    if (is_closed)
     {
-    case UTL_HTTP_RANGE_CLOSED:
         is_valid = (range->first <= range->last);
-        break;
-    case UTL_HTTP_RANGE_OPEN:
-    case UTL_HTTP_RANGE_SUFFIX:
-        is_valid = TRUE;
-        break;
-    default:
-        is_valid = FALSE;
-        break;
     }
     return is_valid;
 }
@@ -647,6 +855,50 @@ static FORCE_INLINE uint32_t GetRangeMemberByteCount(const Utl_Http_Range_t* ran
         }
     }
     return count;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  This operation only derives the typed result; it reads no body bytes.
+ */
+static FORCE_INLINE void DeriveFramingResult(Utl_Http_Framing_t*        result,
+                                             const HttpFramingFields_t* fields,
+                                             const Utl_Http_Head_t*     head,
+                                             bool_t                     hasNoBody,
+                                             bool_t                     isTunnel,
+                                             bool_t                     isResponse)
+{
+    result->kind                   = UTL_HTTP_BODY_NONE;
+    result->contentLength          = 0;
+    result->keepAlive              = ((1 <= head->minor) || fields->keepAlive) && !fields->mustClose;
+    result->hasOtherTransferCoding = fields->hasOtherCoding;
+    if (hasNoBody)
+    {
+        result->kind = UTL_HTTP_BODY_NONE;
+    }
+    else if (isTunnel)
+    {
+        result->kind      = UTL_HTTP_BODY_TUNNEL;
+        result->keepAlive = FALSE;
+    }
+    else if (fields->hasTransfer)
+    {
+        result->kind = fields->hasChunked ? UTL_HTTP_BODY_CHUNKED : UTL_HTTP_BODY_CLOSE;
+    }
+    else if (fields->hasLength)
+    {
+        result->kind          = UTL_HTTP_BODY_LENGTH;
+        result->contentLength = fields->length;
+    }
+    else if (isResponse)
+    {
+        result->kind = UTL_HTTP_BODY_CLOSE;
+    }
+    if (UTL_HTTP_BODY_CLOSE == result->kind)
+    {
+        result->keepAlive = FALSE;
+    }
 }
 
 /*************************************************************************************************/
@@ -711,7 +963,7 @@ static FORCE_INLINE bool_t ReadVersion(uint8_t* major, uint8_t* minor, Utl_Http_
         has_prefix       = IsEqualLiteral(prefix, UTL_HTTP_VERSION_PREFIX, FALSE);
         has_major        = (UTL_HTTP_CHAR_DIGIT_FIRST <= text.data[UTL_HTTP_VERSION_MAJOR_OFFSET]) &&
                            (UTL_HTTP_CHAR_DIGIT_LAST >= text.data[UTL_HTTP_VERSION_MAJOR_OFFSET]);
-        has_minor = (UTL_HTTP_CHAR_DIGIT_FIRST <= text.data[UTL_HTTP_VERSION_MINOR_OFFSET]) &&
+        has_minor        = (UTL_HTTP_CHAR_DIGIT_FIRST <= text.data[UTL_HTTP_VERSION_MINOR_OFFSET]) &&
                            (UTL_HTTP_CHAR_DIGIT_LAST >= text.data[UTL_HTTP_VERSION_MINOR_OFFSET]);
         is_valid =
             has_prefix && has_major && has_minor && (UTL_HTTP_CHAR_DOT == text.data[UTL_HTTP_VERSION_DOT_OFFSET]);
@@ -727,13 +979,56 @@ static FORCE_INLINE bool_t ReadVersion(uint8_t* major, uint8_t* minor, Utl_Http_
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Exactly one SP separates request-line components. Response reason bytes are preserved.
+ *  Partial candidate fields remain private to the enclosing head reader.
  */
-static FORCE_INLINE bool_t ReadStartLine(Utl_Http_Head_t* head, Utl_Http_Text_t line)
+static FORCE_INLINE bool_t ReadRequestLine(Utl_Http_Head_t* head, Utl_Http_Text_t line)
 {
     bool_t          is_valid;
     uint32_t        first;
     uint32_t        second;
+    Utl_Http_Text_t version;
+
+    is_valid = FALSE;
+    for (first = 0; first < line.byteCount; ++first)
+    {
+        if (UTL_HTTP_CHAR_SPACE == line.data[first])
+        {
+            break;
+        }
+    }
+    if ((0 < first) && (first < line.byteCount))
+    {
+        head->method.data      = line.data;
+        head->method.byteCount = first;
+        is_valid               = Utl_Http_IsToken(head->method);
+        for (second = first + 1; second < line.byteCount; ++second)
+        {
+            if (UTL_HTTP_CHAR_SPACE == line.data[second])
+            {
+                break;
+            }
+        }
+        is_valid = is_valid && (second < line.byteCount);
+        if (is_valid)
+        {
+            head->target.data      = line.data + first + 1;
+            head->target.byteCount = second - first - 1;
+            version.data           = line.data + second + 1;
+            version.byteCount      = line.byteCount - second - 1;
+            is_valid               = IsTarget(head->target) && ReadVersion(&head->major, &head->minor, version);
+        }
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The reason phrase remains a borrowed counted span.
+ */
+static FORCE_INLINE bool_t ReadResponseLine(Utl_Http_Head_t* head, Utl_Http_Text_t line)
+{
+    bool_t          is_valid;
     Utl_Http_Text_t version;
     uint64_t        status;
     uint32_t        status_bytes;
@@ -742,62 +1037,58 @@ static FORCE_INLINE bool_t ReadStartLine(Utl_Http_Head_t* head, Utl_Http_Text_t 
     bool_t          has_reason_separator;
     bool_t          status_in_range;
 
-    is_valid = FALSE;
-    if (UTL_HTTP_REQUEST == head->kind)
+    LOGASSERT(UTL_HTTP_REASON_OFFSET <= line.byteCount);
+    version.data      = line.data;
+    version.byteCount = UTL_HTTP_VERSION_BYTE_COUNT;
+    is_valid          = ReadVersion(&head->major, &head->minor, version);
+    status            = 0;
+    status_bytes      = 0;
+    has_status =
+        Utl_Decimal_ReadUint64(&status, &status_bytes, line.data + UTL_HTTP_STATUS_OFFSET, UTL_HTTP_STATUS_DIGIT_COUNT);
+    has_status           = has_status && (UTL_HTTP_STATUS_DIGIT_COUNT == status_bytes);
+    has_status_separator = (UTL_HTTP_CHAR_SPACE == line.data[UTL_HTTP_VERSION_BYTE_COUNT]);
+    has_reason_separator = (UTL_HTTP_CHAR_SPACE == line.data[UTL_HTTP_REASON_OFFSET - 1]);
+    status_in_range      = (UTL_HTTP_STATUS_FIRST <= status) && (UTL_HTTP_STATUS_LAST >= status);
+    is_valid             = is_valid && has_status && has_status_separator && has_reason_separator && status_in_range;
+    if (is_valid)
     {
-        for (first = 0; first < line.byteCount; ++first)
-        {
-            if (UTL_HTTP_CHAR_SPACE == line.data[first])
-            {
-                break;
-            }
-        }
-        if ((0 < first) && (first < line.byteCount))
-        {
-            head->method.data      = line.data;
-            head->method.byteCount = first;
-            is_valid               = Utl_Http_IsToken(head->method);
-            for (second = first + 1; second < line.byteCount; ++second)
-            {
-                if (UTL_HTTP_CHAR_SPACE == line.data[second])
-                {
-                    break;
-                }
-            }
-            is_valid = is_valid && (second < line.byteCount);
-            if (is_valid)
-            {
-                head->target.data      = line.data + first + 1;
-                head->target.byteCount = second - first - 1;
-                version.data           = line.data + second + 1;
-                version.byteCount      = line.byteCount - second - 1;
-                is_valid               = IsTarget(head->target) && ReadVersion(&head->major, &head->minor, version);
-            }
-        }
+        head->status           = (uint16_t)status;
+        head->reason.data      = line.data + UTL_HTTP_REASON_OFFSET;
+        head->reason.byteCount = line.byteCount - UTL_HTTP_REASON_OFFSET;
+        is_valid               = Utl_Http_IsFieldValue(head->reason);
     }
-    else if ((UTL_HTTP_RESPONSE == head->kind) && (UTL_HTTP_REASON_OFFSET <= line.byteCount))
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Exactly one SP separates request-line components. Response reason bytes are preserved.
+ */
+static FORCE_INLINE bool_t ReadStartLine(Utl_Http_Head_t* head, Utl_Http_Text_t line)
+{
+    bool_t is_request;
+    bool_t is_response;
+    bool_t has_response_prefix;
+    bool_t can_read_response;
+    bool_t is_valid;
+
+    is_request          = (UTL_HTTP_REQUEST == head->kind);
+    is_response         = (UTL_HTTP_RESPONSE == head->kind);
+    has_response_prefix = (UTL_HTTP_REASON_OFFSET <= line.byteCount);
+    can_read_response   = is_response && has_response_prefix;
+    is_valid            = FALSE;
+    if (is_request)
     {
-        version.data      = line.data;
-        version.byteCount = UTL_HTTP_VERSION_BYTE_COUNT;
-        is_valid          = ReadVersion(&head->major, &head->minor, version);
-        status            = 0;
-        status_bytes      = 0;
-        has_status        = Utl_Decimal_ReadUint64(&status,
-                                                   &status_bytes,
-                                                   line.data + UTL_HTTP_STATUS_OFFSET,
-                                                   UTL_HTTP_STATUS_DIGIT_COUNT);
-        has_status           = has_status && (UTL_HTTP_STATUS_DIGIT_COUNT == status_bytes);
-        has_status_separator = (UTL_HTTP_CHAR_SPACE == line.data[UTL_HTTP_VERSION_BYTE_COUNT]);
-        has_reason_separator = (UTL_HTTP_CHAR_SPACE == line.data[UTL_HTTP_REASON_OFFSET - 1]);
-        status_in_range      = (UTL_HTTP_STATUS_FIRST <= status) && (UTL_HTTP_STATUS_LAST >= status);
-        is_valid             = is_valid && has_status && has_status_separator && has_reason_separator && status_in_range;
-        if (is_valid)
-        {
-            head->status           = (uint16_t)status;
-            head->reason.data      = line.data + UTL_HTTP_REASON_OFFSET;
-            head->reason.byteCount = line.byteCount - UTL_HTTP_REASON_OFFSET;
-            is_valid               = Utl_Http_IsFieldValue(head->reason);
-        }
+        is_valid = ReadRequestLine(head, line);
+    }
+    else if (can_read_response)
+    {
+        is_valid = ReadResponseLine(head, line);
+    }
+    else
+    {
+        /* The selected grammar cannot match this input. */
     }
     return is_valid;
 }
@@ -855,6 +1146,99 @@ static FORCE_INLINE void ReadCompletedLine(Utl_Http_HeadReader_t* reader, Utl_Ht
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  The borrowed source and accumulated scan position identify the complete line.
+ */
+static FORCE_INLINE void ReadHeadByte(Utl_Http_HeadReader_t* reader, byte_t value)
+{
+    Utl_Http_Text_t line;
+
+    LOGASSERT(UTL_HTTP_INCOMPLETE == reader->result);
+    if (reader->pendingCr)
+    {
+        reader->pendingCr = FALSE;
+        if (UTL_HTTP_CHAR_LF != value)
+        {
+            reader->result = UTL_HTTP_INVALID;
+        }
+        else
+        {
+            LOGASSERT(UTL_HTTP_LINE_END_BYTE_COUNT <= (reader->scan - reader->lineStart));
+            line.data         = reader->input + reader->lineStart;
+            line.byteCount    = reader->scan - reader->lineStart - UTL_HTTP_LINE_END_BYTE_COUNT;
+            reader->lineStart = reader->scan;
+            ReadCompletedLine(reader, line);
+        }
+    }
+    else if (UTL_HTTP_CHAR_CR == value)
+    {
+        reader->pendingCr = TRUE;
+    }
+    else if (UTL_HTTP_CHAR_LF == value)
+    {
+        reader->result = UTL_HTTP_INVALID;
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Comma and quote interpretation follows the current quoted-pair state.
+ */
+static FORCE_INLINE bool_t ReadListMemberEnd(uint32_t* end, Utl_Http_Text_t list, uint32_t start)
+{
+    uint32_t cursor;
+    bool_t   in_quotes;
+    bool_t   escaped;
+    bool_t   is_escape;
+    bool_t   is_quote;
+    bool_t   is_comma;
+    bool_t   opens_escape;
+    bool_t   ends_member;
+    bool_t   is_valid;
+
+    LOGASSERT(NULL != end);
+    LOGASSERT(start <= list.byteCount);
+    in_quotes = FALSE;
+    escaped   = FALSE;
+    for (cursor = start; cursor < list.byteCount; ++cursor)
+    {
+        is_escape    = (UTL_HTTP_CHAR_BACKSLASH == list.data[cursor]);
+        is_quote     = (UTL_HTTP_CHAR_QUOTE == list.data[cursor]);
+        is_comma     = (UTL_HTTP_CHAR_COMMA == list.data[cursor]);
+        opens_escape = in_quotes && is_escape;
+        ends_member  = !in_quotes && is_comma;
+        if (escaped)
+        {
+            escaped = FALSE;
+        }
+        else if (opens_escape)
+        {
+            escaped = TRUE;
+        }
+        else if (is_quote)
+        {
+            in_quotes = !in_quotes;
+        }
+        else if (ends_member)
+        {
+            break;
+        }
+        else
+        {
+            /* This ordinary member byte leaves the quote state unchanged. */
+        }
+    }
+    is_valid = !in_quotes && !escaped;
+    if (is_valid)
+    {
+        *end = cursor;
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Quoted pairs suppress quote/comma interpretation for their following octet. Empty items use a shared local bound.
  */
 static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
@@ -865,8 +1249,6 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
 {
     bool_t          is_valid;
     uint32_t        start;
-    bool_t          in_quotes;
-    bool_t          escaped;
     uint32_t        end;
     Utl_Http_Text_t item;
 
@@ -878,31 +1260,10 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
         {
             break;
         }
-        start     = (*cursor);
-        in_quotes = FALSE;
-        escaped   = FALSE;
-        for (end = start; end < list.byteCount; ++end)
+        start    = (*cursor);
+        is_valid = ReadListMemberEnd(&end, list, start);
+        if (!is_valid)
         {
-            if (escaped)
-            {
-                escaped = FALSE;
-            }
-            else if (in_quotes && (UTL_HTTP_CHAR_BACKSLASH == list.data[end]))
-            {
-                escaped = TRUE;
-            }
-            else if (UTL_HTTP_CHAR_QUOTE == list.data[end])
-            {
-                in_quotes = !in_quotes;
-            }
-            else if (!in_quotes && (UTL_HTTP_CHAR_COMMA == list.data[end]))
-            {
-                break;
-            }
-        }
-        if (in_quotes || escaped)
-        {
-            is_valid = FALSE;
             break;
         }
         item.data      = list.data + start;
@@ -939,6 +1300,61 @@ static FORCE_INLINE bool_t ReadListMember(Utl_Http_Text_t* member,
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  The enclosing parameter reader validates the delimiter after this value.
+ */
+static FORCE_INLINE bool_t ReadParameterValue(Utl_Http_Text_t text, uint32_t* cursor)
+{
+    uint32_t offset;
+    uint32_t start;
+    bool_t   is_quoted;
+    bool_t   is_valid;
+    bool_t   is_quote_end;
+    bool_t   is_escape;
+
+    LOGASSERT(NULL != cursor);
+    LOGASSERT(*cursor < text.byteCount);
+    offset    = *cursor;
+    start     = offset;
+    is_quoted = (UTL_HTTP_CHAR_QUOTE == text.data[offset]);
+    is_valid  = FALSE;
+    if (is_quoted)
+    {
+        ++offset;
+        for (; offset < text.byteCount; ++offset)
+        {
+            is_quote_end = (UTL_HTTP_CHAR_QUOTE == text.data[offset]);
+            is_escape    = (UTL_HTTP_CHAR_BACKSLASH == text.data[offset]);
+            if (is_quote_end)
+            {
+                ++offset;
+                is_valid = TRUE;
+                break;
+            }
+            if (is_escape)
+            {
+                ++offset;
+                if (offset == text.byteCount)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    else
+    {
+        offset   = GetTokenEnd(text, offset);
+        is_valid = (start < offset);
+    }
+    if (is_valid)
+    {
+        *cursor = offset;
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Quoted values accept quoted-pair escaping and obs-text; controls are rejected before parameter parsing.
  */
 static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor, bool_t valueRequired)
@@ -946,7 +1362,6 @@ static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor,
     bool_t   is_valid;
     uint32_t start;
     bool_t   has_equals;
-    bool_t   has_quote_end;
 
     is_valid = TRUE;
     for (;;)
@@ -963,18 +1378,7 @@ static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor,
         }
         cursor = GetWhitespaceEnd(text.data, text.byteCount, cursor + 1);
         start  = cursor;
-        for (;;)
-        {
-            if (cursor == text.byteCount)
-            {
-                break;
-            }
-            if (!IsTokenByte((byte_t)text.data[cursor]))
-            {
-                break;
-            }
-            ++cursor;
-        }
+        cursor = GetTokenEnd(text, cursor);
         if (start == cursor)
         {
             is_valid = FALSE;
@@ -997,58 +1401,68 @@ static FORCE_INLINE bool_t ReadParameters(Utl_Http_Text_t text, uint32_t cursor,
             is_valid = FALSE;
             break;
         }
-        if (UTL_HTTP_CHAR_QUOTE == text.data[cursor])
+        is_valid = ReadParameterValue(text, &cursor);
+        if (!is_valid)
         {
-            ++cursor;
-            has_quote_end = FALSE;
-            for (;;)
-            {
-                if (cursor == text.byteCount)
-                {
-                    break;
-                }
-                if (UTL_HTTP_CHAR_QUOTE == text.data[cursor])
-                {
-                    ++cursor;
-                    has_quote_end = TRUE;
-                    break;
-                }
-                if (UTL_HTTP_CHAR_BACKSLASH == text.data[cursor])
-                {
-                    ++cursor;
-                    if (cursor == text.byteCount)
-                    {
-                        break;
-                    }
-                }
-                ++cursor;
-            }
-            if (!has_quote_end)
-            {
-                is_valid = FALSE;
-                break;
-            }
+            break;
         }
-        else
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Failure discards the enclosing framing candidate.
+ */
+static FORCE_INLINE bool_t ReadFramingMember(HttpFramingFields_t* fields, Utl_Http_Text_t member, uint32_t kind)
+{
+    bool_t          is_valid;
+    uint64_t        length;
+    uint32_t        consumed;
+    Utl_Http_Text_t coding;
+    bool_t          is_chunked;
+
+    if (HTTP_FIELD_LENGTH == kind)
+    {
+        is_valid = Utl_Decimal_ReadUint64(&length, &consumed, member.data, member.byteCount);
+        if (is_valid)
         {
-            start = cursor;
-            for (;;)
+            is_valid = (consumed == member.byteCount);
+            if (fields->hasLength)
             {
-                if (cursor == text.byteCount)
-                {
-                    break;
-                }
-                if (!IsTokenByte((byte_t)text.data[cursor]))
-                {
-                    break;
-                }
-                ++cursor;
+                is_valid = is_valid && (length == fields->length);
             }
-            if (start == cursor)
+            fields->length    = length;
+            fields->hasLength = TRUE;
+        }
+    }
+    else if (HTTP_FIELD_CONNECTION == kind)
+    {
+        is_valid = Utl_Http_IsToken(member);
+        if (is_valid)
+        {
+            fields->mustClose = fields->mustClose || IsEqualLiteral(member, UTL_HTTP_CONNECTION_CLOSE, TRUE);
+            fields->keepAlive = fields->keepAlive || IsEqualLiteral(member, UTL_HTTP_CONNECTION_KEEP_ALIVE, TRUE);
+        }
+    }
+    else
+    {
+        consumed         = GetTokenEnd(member, 0);
+        coding.data      = member.data;
+        coding.byteCount = consumed;
+        is_chunked       = IsEqualLiteral(coding, UTL_HTTP_CODING_CHUNKED, TRUE);
+        is_valid         = (0 < consumed) && !fields->hasChunked;
+        if (is_valid)
+        {
+            is_valid = ReadParameters(member, consumed, TRUE);
+            if (is_chunked)
             {
-                is_valid = FALSE;
-                break;
+                is_valid = is_valid && (consumed == member.byteCount);
             }
+            fields->hasTransfer    = TRUE;
+            fields->hasChunked     = is_chunked;
+            fields->hasOtherCoding = fields->hasOtherCoding || !is_chunked;
         }
     }
     return is_valid;
@@ -1067,10 +1481,6 @@ static FORCE_INLINE bool_t ReadFramingField(HttpFramingFields_t* fields, Utl_Htt
     bool_t          is_valid;
     Utl_Http_Text_t member;
     bool_t          has_member;
-    uint64_t        length;
-    uint32_t        consumed;
-    Utl_Http_Text_t coding;
-    bool_t          is_chunked;
 
     cursor        = 0;
     empty_members = 0;
@@ -1082,61 +1492,58 @@ static FORCE_INLINE bool_t ReadFramingField(HttpFramingFields_t* fields, Utl_Htt
         {
             break;
         }
-        has_any = TRUE;
-        if (HTTP_FIELD_LENGTH == kind)
-        {
-            is_valid = Utl_Decimal_ReadUint64(&length, &consumed, member.data, member.byteCount);
-            if (is_valid)
-            {
-                is_valid = (consumed == member.byteCount);
-                if (fields->hasLength)
-                {
-                    is_valid = is_valid && (length == fields->length);
-                }
-                fields->length    = length;
-                fields->hasLength = TRUE;
-            }
-        }
-        else if (HTTP_FIELD_CONNECTION == kind)
-        {
-            is_valid = Utl_Http_IsToken(member);
-            if (is_valid)
-            {
-                fields->mustClose = fields->mustClose || IsEqualLiteral(member, UTL_HTTP_CONNECTION_CLOSE, TRUE);
-                fields->keepAlive = fields->keepAlive || IsEqualLiteral(member, UTL_HTTP_CONNECTION_KEEP_ALIVE, TRUE);
-            }
-        }
-        else
-        {
-            for (consumed = 0; consumed < member.byteCount; ++consumed)
-            {
-                if (!IsTokenByte((byte_t)member.data[consumed]))
-                {
-                    break;
-                }
-            }
-            coding.data      = member.data;
-            coding.byteCount = consumed;
-            is_chunked       = IsEqualLiteral(coding, UTL_HTTP_CODING_CHUNKED, TRUE);
-            is_valid         = (0 < consumed) && !fields->hasChunked;
-            if (is_valid)
-            {
-                is_valid = ReadParameters(member, consumed, TRUE);
-                if (is_chunked)
-                {
-                    is_valid = is_valid && (consumed == member.byteCount);
-                }
-                fields->hasTransfer    = TRUE;
-                fields->hasChunked     = is_chunked;
-                fields->hasOtherCoding = fields->hasOtherCoding || !is_chunked;
-            }
-        }
+        has_any  = TRUE;
+        is_valid = ReadFramingMember(fields, member, kind);
         if (!is_valid)
         {
             break;
         }
     }
     return is_valid && has_any;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Field order is retained so transfer-coding order and duplicate lengths remain observable.
+ */
+static FORCE_INLINE bool_t ReadFramingFields(HttpFramingFields_t*   fields,
+                                             const Utl_Http_Head_t* head,
+                                             bool_t                 readsBodyFields)
+{
+    uint32_t                index;
+    const Utl_Http_Field_t* field;
+    bool_t                  is_valid;
+
+    is_valid = TRUE;
+    for (index = 0; index < head->fieldCount; ++index)
+    {
+        if (!is_valid)
+        {
+            break;
+        }
+        field = &head->fields[index];
+        if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_CONNECTION, TRUE))
+        {
+            is_valid = ReadFramingField(fields, field->value, HTTP_FIELD_CONNECTION);
+        }
+        else if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_HOST, TRUE))
+        {
+            ++fields->hostCount;
+        }
+        else if (readsBodyFields)
+        {
+            if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_CONTENT_LENGTH, TRUE))
+            {
+                is_valid = ReadFramingField(fields, field->value, HTTP_FIELD_LENGTH);
+            }
+            else if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_TRANSFER_ENCODING, TRUE))
+            {
+                is_valid = ReadFramingField(fields, field->value, HTTP_FIELD_TRANSFER);
+            }
+        }
+    }
+    return is_valid;
 }
 
 /*************************************************************************************************/
@@ -1153,6 +1560,38 @@ static FORCE_INLINE bool_t ReadNumber(uint64_t* value, const byte_t* buffer, uin
     if (is_valid)
     {
         (*cursor) += consumed;
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Partial bounds remain private to the enclosing content-range reader.
+ */
+static FORCE_INLINE bool_t ReadContentRangeBounds(Utl_Http_ContentRange_t* content,
+                                                  const byte_t*            buffer,
+                                                  uint32_t                 byteCount,
+                                                  uint32_t*                cursor)
+{
+    bool_t is_valid;
+
+    LOGASSERT(NULL != content);
+    LOGASSERT(NULL != cursor);
+    LOGASSERT(*cursor <= byteCount);
+    is_valid = ReadNumber(&content->first, buffer, byteCount, cursor);
+    if (is_valid)
+    {
+        is_valid = (*cursor < byteCount);
+    }
+    if (is_valid)
+    {
+        is_valid = (UTL_HTTP_CHAR_HYPHEN == buffer[*cursor]);
+        ++(*cursor);
+    }
+    if (is_valid)
+    {
+        is_valid = ReadNumber(&content->last, buffer, byteCount, cursor);
     }
     return is_valid;
 }
@@ -1257,7 +1696,7 @@ static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_
     for (cursor = width; 0 < cursor;)
     {
         --cursor;
-        output[cursor] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (value % DATE_RADIX));
+        output[cursor]  = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (value % DATE_RADIX));
         value          /= DATE_RADIX;
     }
 }
@@ -1271,7 +1710,7 @@ static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_
  * \par Details:
  *  All scan and candidate members reset. Field bytes remain caller-owned scratch.
  */
-void Utl_Http_InitializeHeadReader(Utl_Http_HeadReader_t* reader,
+extern FORCE_INLINE void Utl_Http_InitializeHeadReader(Utl_Http_HeadReader_t* reader,
                                    Utl_Http_Kind_t        kind,
                                    Utl_Http_Field_t*      fields,
                                    uint32_t               fieldCapacity)
@@ -1313,7 +1752,7 @@ void Utl_Http_InitializeHeadReader(Utl_Http_HeadReader_t* reader,
  * \par Details:
  *  None
  */
-bool_t Utl_Http_IsToken(Utl_Http_Text_t text)
+extern FORCE_INLINE bool_t Utl_Http_IsToken(Utl_Http_Text_t text)
 {
     bool_t   is_valid;
     uint32_t index;
@@ -1338,7 +1777,7 @@ bool_t Utl_Http_IsToken(Utl_Http_Text_t text)
  * \par Details:
  *  Validation treats bytes above ASCII as opaque octets, not Unicode.
  */
-bool_t Utl_Http_IsFieldValue(Utl_Http_Text_t text)
+extern FORCE_INLINE bool_t Utl_Http_IsFieldValue(Utl_Http_Text_t text)
 {
     bool_t   is_valid;
     uint32_t index;
@@ -1369,12 +1808,12 @@ bool_t Utl_Http_IsFieldValue(Utl_Http_Text_t text)
  * \par Details:
  *  Case folding changes ASCII uppercase only; methods normally use exact comparison.
  */
-bool_t Utl_Http_IsTextEqual(Utl_Http_Text_t left, Utl_Http_Text_t right, bool_t ignoreCase)
+extern FORCE_INLINE bool_t Utl_Http_IsTextEqual(Utl_Http_Text_t left, Utl_Http_Text_t right, bool_t ignoreCase)
 {
     bool_t   equal;
     uint32_t index;
-    byte_t   a;
-    byte_t   b;
+    byte_t   first;
+    byte_t   second;
 
     equal = (left.byteCount == right.byteCount);
     if (equal && (0 < left.byteCount))
@@ -1384,14 +1823,14 @@ bool_t Utl_Http_IsTextEqual(Utl_Http_Text_t left, Utl_Http_Text_t right, bool_t 
         {
             for (index = 0; index < left.byteCount; ++index)
             {
-                a = (byte_t)left.data[index];
-                b = (byte_t)right.data[index];
+                first  = (byte_t)left.data[index];
+                second = (byte_t)right.data[index];
                 if (ignoreCase)
                 {
-                    a = FoldAscii(a);
-                    b = FoldAscii(b);
+                    first  = FoldAscii(first);
+                    second = FoldAscii(second);
                 }
-                if (a != b)
+                if (first != second)
                 {
                     equal = FALSE;
                     break;
@@ -1438,7 +1877,7 @@ uint32_t Utl_Http_GetHeadByteCount(const Utl_Http_Head_t* head)
         {
             is_valid = (UTL_HTTP_STATUS_FIRST <= head->status) && (UTL_HTTP_STATUS_LAST >= head->status) &&
                        Utl_Http_IsFieldValue(head->reason);
-            total = (uint64_t)head->reason.byteCount + UTL_HTTP_REASON_OFFSET + (2 * UTL_HTTP_LINE_END_BYTE_COUNT);
+            total    = (uint64_t)head->reason.byteCount + UTL_HTTP_REASON_OFFSET + (2 * UTL_HTTP_LINE_END_BYTE_COUNT);
         }
         else
         {
@@ -1470,7 +1909,7 @@ uint32_t Utl_Http_GetHeadByteCount(const Utl_Http_Head_t* head)
  * \par Details:
  *  Calendar bounds precede table access. Gregorian century exceptions distinguish 1900 from 2000.
  */
-uint32_t Utl_Http_GetDateByteCount(const Utl_Http_Date_t* date)
+extern FORCE_INLINE uint32_t Utl_Http_GetDateByteCount(const Utl_Http_Date_t* date)
 {
     bool_t   has_year;
     bool_t   has_month;
@@ -1498,7 +1937,8 @@ uint32_t Utl_Http_GetDateByteCount(const Utl_Http_Date_t* date)
     if (is_valid)
     {
         days    = c_monthDays[date->month - 1];
-        is_leap = (0 == (date->year % 4)) && ((0 != (date->year % 100)) || (0 == (date->year % 400)));
+        is_leap = (0 == (date->year % 4)) &&
+                  ((0 != (date->year % DATE_CENTURY_YEARS)) || (0 == (date->year % DATE_LEAP_CYCLE_YEARS)));
         if ((DATE_FEBRUARY == date->month) && is_leap)
         {
             ++days;
@@ -1519,15 +1959,14 @@ uint32_t Utl_Http_GetDateByteCount(const Utl_Http_Date_t* date)
  */
 bool_t Utl_Http_DeriveFraming(Utl_Http_Framing_t* framing, const Utl_Http_Head_t* head, Utl_Http_Text_t responseTo)
 {
-    bool_t                  is_valid;
-    bool_t                  is_response;
-    bool_t                  is_informational;
-    bool_t                  has_no_body;
-    bool_t                  is_tunnel;
-    HttpFramingFields_t     fields;
-    uint32_t                index;
-    const Utl_Http_Field_t* field;
-    Utl_Http_Framing_t      result;
+    bool_t              reads_body_fields;
+    bool_t              is_valid;
+    bool_t              is_response;
+    bool_t              is_informational;
+    bool_t              has_no_body;
+    bool_t              is_tunnel;
+    HttpFramingFields_t fields;
+    Utl_Http_Framing_t  result;
 
     is_valid = (NULL != framing) && (0 < Utl_Http_GetHeadByteCount(head));
     if (is_valid)
@@ -1546,7 +1985,7 @@ bool_t Utl_Http_DeriveFraming(Utl_Http_Framing_t* framing, const Utl_Http_Head_t
         has_no_body = is_response &&
                       (IsEqualLiteral(responseTo, UTL_HTTP_METHOD_HEAD, FALSE) || is_informational ||
                        (UTL_HTTP_STATUS_NO_CONTENT == head->status) || (UTL_HTTP_STATUS_NOT_MODIFIED == head->status));
-        is_tunnel = is_response && IsEqualLiteral(responseTo, UTL_HTTP_METHOD_CONNECT, FALSE) &&
+        is_tunnel   = is_response && IsEqualLiteral(responseTo, UTL_HTTP_METHOD_CONNECT, FALSE) &&
                       (UTL_HTTP_STATUS_SUCCESS_FIRST <= head->status) && (UTL_HTTP_STATUS_SUCCESS_LAST >= head->status);
         fields.hasLength      = FALSE;
         fields.length         = 0;
@@ -1556,32 +1995,10 @@ bool_t Utl_Http_DeriveFraming(Utl_Http_Framing_t* framing, const Utl_Http_Head_t
         fields.mustClose      = FALSE;
         fields.keepAlive      = FALSE;
         fields.hostCount      = 0;
-        for (index = 0; index < head->fieldCount; ++index)
+        reads_body_fields     = !has_no_body && !is_tunnel;
+        if (is_valid)
         {
-            if (!is_valid)
-            {
-                break;
-            }
-            field = &head->fields[index];
-            if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_CONNECTION, TRUE))
-            {
-                is_valid = ReadFramingField(&fields, field->value, HTTP_FIELD_CONNECTION);
-            }
-            else if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_HOST, TRUE))
-            {
-                ++fields.hostCount;
-            }
-            else if (!has_no_body && !is_tunnel)
-            {
-                if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_CONTENT_LENGTH, TRUE))
-                {
-                    is_valid = ReadFramingField(&fields, field->value, HTTP_FIELD_LENGTH);
-                }
-                else if (IsEqualLiteral(field->name, UTL_HTTP_FIELD_TRANSFER_ENCODING, TRUE))
-                {
-                    is_valid = ReadFramingField(&fields, field->value, HTTP_FIELD_TRANSFER);
-                }
-            }
+            is_valid = ReadFramingFields(&fields, head, reads_body_fields);
         }
         if (!is_response && (1 <= head->minor))
         {
@@ -1597,36 +2014,7 @@ bool_t Utl_Http_DeriveFraming(Utl_Http_Framing_t* framing, const Utl_Http_Head_t
         }
         if (is_valid)
         {
-            result.kind                   = UTL_HTTP_BODY_NONE;
-            result.contentLength          = 0;
-            result.keepAlive              = ((1 <= head->minor) || fields.keepAlive) && !fields.mustClose;
-            result.hasOtherTransferCoding = fields.hasOtherCoding;
-            if (has_no_body)
-            {
-                result.kind = UTL_HTTP_BODY_NONE;
-            }
-            else if (is_tunnel)
-            {
-                result.kind      = UTL_HTTP_BODY_TUNNEL;
-                result.keepAlive = FALSE;
-            }
-            else if (fields.hasTransfer)
-            {
-                result.kind = fields.hasChunked ? UTL_HTTP_BODY_CHUNKED : UTL_HTTP_BODY_CLOSE;
-            }
-            else if (fields.hasLength)
-            {
-                result.kind          = UTL_HTTP_BODY_LENGTH;
-                result.contentLength = fields.length;
-            }
-            else if (is_response)
-            {
-                result.kind = UTL_HTTP_BODY_CLOSE;
-            }
-            if (UTL_HTTP_BODY_CLOSE == result.kind)
-            {
-                result.keepAlive = FALSE;
-            }
+            DeriveFramingResult(&result, &fields, head, has_no_body, is_tunnel, is_response);
             (*framing) = result;
         }
     }
@@ -1638,7 +2026,7 @@ bool_t Utl_Http_DeriveFraming(Utl_Http_Framing_t* framing, const Utl_Http_Head_t
  * \par Details:
  *  Offset/count representation avoids underflow for the RFC's satisfiable empty suffix case.
  */
-bool_t Utl_Http_ResolveRange(Utl_Http_RangeInterval_t* interval,
+extern FORCE_INLINE bool_t Utl_Http_ResolveRange(Utl_Http_RangeInterval_t* interval,
                              const Utl_Http_Range_t*   range,
                              uint64_t                  representationBytes)
 {
@@ -1736,7 +2124,7 @@ uint32_t Utl_Http_GetRangeByteCount(const Utl_Http_RangeSet_t* request)
  * \par Details:
  *  Each integer occupies at most twenty decimal bytes.
  */
-uint32_t Utl_Http_GetContentRangeByteCount(const Utl_Http_ContentRange_t* content)
+extern FORCE_INLINE uint32_t Utl_Http_GetContentRangeByteCount(const Utl_Http_ContentRange_t* content)
 {
     bool_t   is_valid;
     uint32_t count;
@@ -1748,7 +2136,7 @@ uint32_t Utl_Http_GetContentRangeByteCount(const Utl_Http_ContentRange_t* conten
         count = RANGE_PREFIX_BYTES + 1;
         if (content->hasRange)
         {
-            is_valid = (content->first <= content->last);
+            is_valid  = (content->first <= content->last);
             count    += Utl_Decimal_GetUint64ByteCount(content->first);
             count    += Utl_Decimal_GetUint64ByteCount(content->last);
             ++count;
@@ -1784,7 +2172,7 @@ uint32_t Utl_Http_GetContentRangeByteCount(const Utl_Http_ContentRange_t* conten
  *  RFC 9110 sections 4.2.1 through 4.2.4 define default ports and reject received
  *  userinfo. A native consumer must not reinterpret explicit port zero as default.
  */
-bool_t Utl_Http_GetUrlEndpoint(const Utl_Url_t* url, Utl_Http_Endpoint_t* endpoint)
+extern FORCE_INLINE bool_t Utl_Http_GetUrlEndpoint(const Utl_Url_t* url, Utl_Http_Endpoint_t* endpoint)
 {
     bool_t              valid;
     bool_t              has_host;
@@ -1843,7 +2231,7 @@ bool_t Utl_Http_GetUrlEndpoint(const Utl_Url_t* url, Utl_Http_Endpoint_t* endpoi
  * \par Details:
  *  Wide accumulation includes delimiters without wrapping at UINT32_MAX.
  */
-bool_t Utl_Http_GetOriginTargetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Http_GetOriginTargetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
 {
     bool_t              valid;
     Utl_Http_Endpoint_t endpoint;
@@ -1880,7 +2268,7 @@ bool_t Utl_Http_GetOriginTargetByteCount(const Utl_Url_t* url, uint32_t* byteCou
  * \par Details:
  *  A caller enumerates duplicates by resuming at one past the returned index.
  */
-uint32_t Utl_Http_FindField(const Utl_Http_Head_t* head, Utl_Http_Text_t name, uint32_t startIndex)
+extern FORCE_INLINE uint32_t Utl_Http_FindField(const Utl_Http_Head_t* head, Utl_Http_Text_t name, uint32_t startIndex)
 {
     uint32_t found;
     bool_t   has_fields;
@@ -1913,14 +2301,13 @@ uint32_t Utl_Http_FindField(const Utl_Http_Head_t* head, Utl_Http_Text_t name, u
  */
 Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, const byte_t* buffer, uint32_t byteCount)
 {
-    bool_t          has_input;
-    bool_t          same_input;
-    bool_t          has_bounds;
-    bool_t          at_end;
-    bool_t          is_terminal;
-    byte_t          value;
-    Utl_Http_Text_t line;
-    bool_t          failed;
+    bool_t has_input;
+    bool_t same_input;
+    bool_t has_bounds;
+    bool_t at_end;
+    bool_t is_terminal;
+    byte_t value;
+    bool_t failed;
 
     LOGASSERT(NULL != reader);
 
@@ -1944,30 +2331,7 @@ Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, co
             }
             value = buffer[reader->scan];
             ++reader->scan;
-            if (reader->pendingCr)
-            {
-                reader->pendingCr = FALSE;
-                if (UTL_HTTP_CHAR_LF != value)
-                {
-                    reader->result = UTL_HTTP_INVALID;
-                }
-                else
-                {
-                    LOGASSERT(UTL_HTTP_LINE_END_BYTE_COUNT <= (reader->scan - reader->lineStart));
-                    line.data         = buffer + reader->lineStart;
-                    line.byteCount    = reader->scan - reader->lineStart - UTL_HTTP_LINE_END_BYTE_COUNT;
-                    reader->lineStart = reader->scan;
-                    ReadCompletedLine(reader, line);
-                }
-            }
-            else if (UTL_HTTP_CHAR_CR == value)
-            {
-                reader->pendingCr = TRUE;
-            }
-            else if (UTL_HTTP_CHAR_LF == value)
-            {
-                reader->result = UTL_HTTP_INVALID;
-            }
+            ReadHeadByte(reader, value);
         }
     }
     failed = (UTL_HTTP_INVALID == reader->result) || (UTL_HTTP_CAPACITY == reader->result);
@@ -1984,7 +2348,7 @@ Utl_Http_Result_t Utl_Http_ReadHeadIncremental(Utl_Http_HeadReader_t* reader, co
  * \par Details:
  *  The one-shot entry point uses the same incremental reader and publishes a complete head only.
  */
-Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
+extern FORCE_INLINE Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
                                     Utl_Http_Kind_t  kind,
                                     const byte_t*    buffer,
                                     uint32_t         byteCount)
@@ -2011,7 +2375,7 @@ Utl_Http_Result_t Utl_Http_ReadHead(Utl_Http_Head_t* head,
  * \par Details:
  *  The count is published only after all members have valid syntax and fit the supplied capacity.
  */
-bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Http_ReadRange(Utl_Http_RangeSet_t* request, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t           is_valid;
     uint32_t         cursor;
@@ -2112,20 +2476,7 @@ bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const byte_t*
         }
         else
         {
-            is_valid = ReadNumber(&result.first, buffer, byteCount, &cursor);
-            if (is_valid)
-            {
-                is_valid = (cursor < byteCount);
-            }
-            if (is_valid)
-            {
-                is_valid = (UTL_HTTP_CHAR_HYPHEN == buffer[cursor]);
-                ++cursor;
-            }
-            if (is_valid)
-            {
-                is_valid = ReadNumber(&result.last, buffer, byteCount, &cursor);
-            }
+            is_valid = ReadContentRangeBounds(&result, buffer, byteCount, &cursor);
         }
     }
     if (is_valid)
@@ -2170,7 +2521,7 @@ bool_t Utl_Http_ReadContentRange(Utl_Http_ContentRange_t* content, const byte_t*
  * \par Details:
  *  The size query excludes integer overflow; exact status digits need no formatter or CRT.
  */
-uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2192,18 +2543,19 @@ uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, byte_t* buffer, uint32_
             ++cursor;
         }
         WriteLiteral(buffer, &cursor, UTL_HTTP_VERSION_PREFIX);
-        buffer[cursor]     = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->major);
-        buffer[cursor + 1] = UTL_HTTP_CHAR_DOT;
-        buffer[cursor + 2] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->minor);
+        buffer[cursor]      = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->major);
+        buffer[cursor + 1]  = UTL_HTTP_CHAR_DOT;
+        buffer[cursor + 2]  = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + head->minor);
         cursor             += 3;
         if (UTL_HTTP_RESPONSE == head->kind)
         {
             buffer[cursor]     = UTL_HTTP_CHAR_SPACE;
-            buffer[cursor + 1] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status / 100));
-            buffer[cursor + 2] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + ((head->status / 10) % 10));
-            buffer[cursor + 3] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status % 10));
-            buffer[cursor + 4] = UTL_HTTP_CHAR_SPACE;
-            cursor             += 5;
+            buffer[cursor + 1] = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status / STATUS_HUNDREDS_DIVISOR));
+            buffer[cursor + 2] =
+                (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + ((head->status / STATUS_DECIMAL_RADIX) % STATUS_DECIMAL_RADIX));
+            buffer[cursor + 3]  = (byte_t)(UTL_HTTP_CHAR_DIGIT_FIRST + (head->status % STATUS_DECIMAL_RADIX));
+            buffer[cursor + 4]  = UTL_HTTP_CHAR_SPACE;
+            cursor             += STATUS_WITH_SPACES_BYTES;
             WriteSpan(buffer, &cursor, head->reason);
         }
         WriteLiteral(buffer, &cursor, UTL_HTTP_LINE_END);
@@ -2224,7 +2576,7 @@ uint32_t Utl_Http_WriteHead(const Utl_Http_Head_t* head, byte_t* buffer, uint32_
  * \par Details:
  *  Weekday uses Gregorian arithmetic with January and February counted in the preceding year.
  */
-uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2244,13 +2596,14 @@ uint32_t Utl_Http_WriteDate(const Utl_Http_Date_t* date, byte_t* buffer, uint32_
         {
             --year;
         }
-        weekday = (year + (year / 4) - (year / 100) + (year / 400) + c_weekdayOffsets[date->month - 1] + date->day) %
+        weekday = (year + (year / 4) - (year / DATE_CENTURY_YEARS) + (year / DATE_LEAP_CYCLE_YEARS) +
+                   c_weekdayOffsets[date->month - 1] + date->day) %
                   DATE_WEEKDAY_COUNT;
         for (index = 0; index < DATE_NAME_BYTES; ++index)
         {
             buffer[index]                     = c_weekdays[weekday][index];
             buffer[DATE_MONTH_OFFSET + index] = c_months[date->month - 1][index];
-            buffer[DATE_ZONE_OFFSET + index]  = UTL_HTTP_DATE_GMT[index];
+            buffer[DATE_ZONE_OFFSET + index]  = (byte_t)UTL_HTTP_DATE_GMT[index];
         }
         buffer[DATE_NAME_BYTES]        = UTL_HTTP_CHAR_COMMA;
         buffer[DATE_DAY_OFFSET - 1]    = UTL_HTTP_CHAR_SPACE;
@@ -2332,7 +2685,7 @@ uint32_t Utl_Http_WriteRange(const Utl_Http_RangeSet_t* request, byte_t* buffer,
  * \par Details:
  *  The same semantic count query is used by standalone sizing and writing.
  */
-uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte_t* buffer, uint32_t capacity)
 {
     uint32_t count;
     bool_t   can_write;
@@ -2351,7 +2704,7 @@ uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte
         if (content->hasRange)
         {
             cursor         += Utl_Decimal_WriteUint64(content->first, &buffer[cursor], count - cursor);
-            buffer[cursor] = UTL_HTTP_CHAR_HYPHEN;
+            buffer[cursor]  = UTL_HTTP_CHAR_HYPHEN;
             ++cursor;
             cursor += Utl_Decimal_WriteUint64(content->last, &buffer[cursor], count - cursor);
         }
@@ -2384,7 +2737,7 @@ uint32_t Utl_Http_WriteContentRange(const Utl_Http_ContentRange_t* content, byte
  *  RFC 9112 section 3.2.1 retains the encoded path and query. Capacity and syntax
  *  are checked before any output write; fragments never enter the request target.
  */
-bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Http_WriteOriginTarget(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t   valid;
     uint32_t count;

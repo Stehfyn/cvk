@@ -9,6 +9,10 @@
 **===============================================================================================*/
 
 #include "os/os_queue.h"
+#include "cast_session.h"
+#include "os/os_ringbuffer.h"
+#include "os/os_types.h"
+#include <stdint.h>
 #include "os/os_assert.h"
 #include "os/os_process.h"
 #include "cast_commands.h"

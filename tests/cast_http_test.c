@@ -9,6 +9,7 @@
 **===============================================================================================*/
 
 #include "utl/utl_http.h"
+#include <stdint.h>
 #include "os/os_assert.h"
 #include "os/os_process.h"
 #include "os/os_compiler.h"
@@ -19,6 +20,21 @@
 **
 ** 3.1 Macros
 **===============================================================================================*/
+
+#define HTTP_TEST_FIELD_CAPACITY    (8)
+#define HTTP_TEST_REQUEST_CAPACITY  (128)
+#define HTTP_TEST_RESPONSE_CAPACITY (256)
+#define HTTP_TEST_BODY_SUFFIX_BYTES (5)
+#define HTTP_TEST_TARGET_BYTES      (10)
+#define HTTP_TEST_ALPHABET_BYTES    (26)
+#define HTTP_TEST_LENGTH_SENTINEL   (73)
+#define HTTP_TEST_NONLEAP_CENTURY   (1900)
+#define HTTP_TEST_MONTH_OVERFLOW    (13)
+#define HTTP_TEST_APRIL_OVERFLOW    (31)
+#define HTTP_TEST_YEAR_OVERFLOW     (10000)
+#define HTTP_TEST_HOUR_OVERFLOW     (24)
+#define HTTP_TEST_MINUTE_OVERFLOW   (60)
+#define HTTP_TEST_SECOND_OVERFLOW   (61)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -450,17 +466,17 @@ static FORCE_INLINE void Check(bool_t passed, uint32_t line)
 static void CheckHeads(void)
 {
     Utl_Http_Head_t   head;
-    Utl_Http_Field_t  fields[8];
+    Utl_Http_Field_t  fields[HTTP_TEST_FIELD_CAPACITY];
     uint32_t          prefix;
     Utl_Http_Result_t result;
     Utl_Http_Text_t   name;
     uint32_t          index;
-    byte_t            output[128];
+    byte_t            output[HTTP_TEST_REQUEST_CAPACITY];
     uint32_t          count;
 
     head.fields        = fields;
-    head.fieldCapacity = 8;
-    for (prefix = 0; prefix < (sizeof(c_input) - 5); ++prefix)
+    head.fieldCapacity = HTTP_TEST_FIELD_CAPACITY;
+    for (prefix = 0; prefix < (sizeof(c_input) - HTTP_TEST_BODY_SUFFIX_BYTES); ++prefix)
     {
         result = Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, prefix);
         Check(UTL_HTTP_INCOMPLETE == result, __LINE__);
@@ -468,38 +484,38 @@ static void CheckHeads(void)
     }
     result = Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1);
     Check(UTL_HTTP_COMPLETE == result, __LINE__);
-    Check((3 == head.fieldCount) && ((sizeof(c_input) - 5) == head.byteCount), __LINE__);
+    Check((3 == head.fieldCount) && ((sizeof(c_input) - HTTP_TEST_BODY_SUFFIX_BYTES) == head.byteCount), __LINE__);
     Check((1 == head.major) && (1 == head.minor), __LINE__);
-    Check((3 == head.method.byteCount) && (10 == head.target.byteCount), __LINE__);
+    Check((3 == head.method.byteCount) && (HTTP_TEST_TARGET_BYTES == head.target.byteCount), __LINE__);
     name.data      = (const byte_t*)"rAnGe";
-    name.byteCount = 5;
+    name.byteCount = sizeof("rAnGe") - 1;
     Check(1 == Utl_Http_FindField(&head, name, 0), __LINE__);
     Check(UTL_HTTP_NO_FIELD == Utl_Http_FindField(&head, name, 2), __LINE__);
     Check((sizeof(c_canonical) - 1) == Utl_Http_GetHeadByteCount(&head), __LINE__);
     for (index = 0; index < sizeof(output); ++index)
     {
-        output[index] = (char_t)('a' + (index % 26));
+        output[index] = (byte_t)('a' + (index % HTTP_TEST_ALPHABET_BYTES));
     }
     for (prefix = 0; prefix < (sizeof(c_canonical) - 1); ++prefix)
     {
         Check(0 == Utl_Http_WriteHead(&head, output, prefix), __LINE__);
         for (index = 0; index < sizeof(output); ++index)
         {
-            Check((char_t)('a' + (index % 26)) == output[index], __LINE__);
+            Check((byte_t)('a' + (index % HTTP_TEST_ALPHABET_BYTES)) == output[index], __LINE__);
         }
     }
     count = Utl_Http_WriteHead(&head, output, sizeof(c_canonical) - 1);
     Check((sizeof(c_canonical) - 1) == count, __LINE__);
     for (index = 0; index < count; ++index)
     {
-        Check(c_canonical[index] == output[index], __LINE__);
+        Check((byte_t)c_canonical[index] == output[index], __LINE__);
     }
-    Check((char_t)('a' + (count % 26)) == output[count], __LINE__);
+    Check((byte_t)('a' + (count % HTTP_TEST_ALPHABET_BYTES)) == output[count], __LINE__);
     head.fieldCapacity = 2;
     Check(UTL_HTTP_CAPACITY == Utl_Http_ReadHead(&head, UTL_HTTP_REQUEST, (const byte_t*)c_input, sizeof(c_input) - 1),
           __LINE__);
     Check((0 == head.fieldCount) && (0 == head.byteCount), __LINE__);
-    head.fieldCapacity = 8;
+    head.fieldCapacity = HTTP_TEST_FIELD_CAPACITY;
     for (index = 0; index < (sizeof(c_badHeads) / sizeof(c_badHeads[0])); ++index)
     {
         Check(UTL_HTTP_INVALID ==
@@ -529,25 +545,25 @@ static void CheckFraming(void)
     uint32_t               index;
     const FramingVector_t* vector;
     Utl_Http_Head_t        head;
-    Utl_Http_Field_t       fields[8];
+    Utl_Http_Field_t       fields[HTTP_TEST_FIELD_CAPACITY];
     Utl_Http_Text_t        method;
     Utl_Http_Framing_t     framing;
     bool_t                 accepted;
     uint32_t               count;
-    byte_t                 output[256];
+    byte_t                 output[HTTP_TEST_RESPONSE_CAPACITY];
 
     for (index = 0; index < (sizeof(c_framing) / sizeof(c_framing[0])); ++index)
     {
         vector             = &c_framing[index];
         head.fields        = fields;
-        head.fieldCapacity = 8;
+        head.fieldCapacity = HTTP_TEST_FIELD_CAPACITY;
         Check(UTL_HTTP_COMPLETE ==
                   Utl_Http_ReadHead(&head, vector->kind, (const byte_t*)vector->text, vector->byteCount),
               __LINE__);
         method.data                    = (const byte_t*)vector->method;
         method.byteCount               = vector->methodBytes;
         framing.kind                   = UTL_HTTP_BODY_TUNNEL;
-        framing.contentLength          = 73;
+        framing.contentLength          = HTTP_TEST_LENGTH_SENTINEL;
         framing.keepAlive              = TRUE;
         framing.hasOtherTransferCoding = TRUE;
         accepted                       = Utl_Http_DeriveFraming(&framing, &head, method);
@@ -562,7 +578,9 @@ static void CheckFraming(void)
         else
         {
             Check(UTL_HTTP_BODY_TUNNEL == framing.kind, __LINE__);
-            Check((73 == framing.contentLength) && framing.keepAlive && framing.hasOtherTransferCoding, __LINE__);
+            Check((HTTP_TEST_LENGTH_SENTINEL == framing.contentLength) && framing.keepAlive &&
+                      framing.hasOtherTransferCoding,
+                  __LINE__);
         }
         count = Utl_Http_WriteHead(&head, output, sizeof(output));
         Check(0 < count, __LINE__);
@@ -604,35 +622,35 @@ static void CheckDates(void)
               __LINE__);
         for (byte_index = 0; byte_index < UTL_HTTP_DATE_BYTE_COUNT; ++byte_index)
         {
-            Check(c_dateText[index][byte_index] == output[byte_index], __LINE__);
+            Check((byte_t)c_dateText[index][byte_index] == output[byte_index], __LINE__);
         }
         Check('?' == output[UTL_HTTP_DATE_BYTE_COUNT], __LINE__);
     }
     invalid      = c_dates[1];
-    invalid.year = 1900;
+    invalid.year = HTTP_TEST_NONLEAP_CENTURY;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid       = c_dates[0];
     invalid.month = 0;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
-    invalid.month = 13;
+    invalid.month = HTTP_TEST_MONTH_OVERFLOW;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid     = c_dates[0];
     invalid.day = 0;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid.month = 4;
-    invalid.day   = 31;
+    invalid.day   = HTTP_TEST_APRIL_OVERFLOW;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid      = c_dates[0];
-    invalid.year = 10000;
+    invalid.year = HTTP_TEST_YEAR_OVERFLOW;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid      = c_dates[0];
-    invalid.hour = 24;
+    invalid.hour = HTTP_TEST_HOUR_OVERFLOW;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid        = c_dates[0];
-    invalid.minute = 60;
+    invalid.minute = HTTP_TEST_MINUTE_OVERFLOW;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
     invalid        = c_dates[0];
-    invalid.second = 61;
+    invalid.second = HTTP_TEST_SECOND_OVERFLOW;
     Check(0 == Utl_Http_GetDateByteCount(&invalid), __LINE__);
 }
 
@@ -645,13 +663,13 @@ static void CheckIncremental(void)
 {
     uint32_t              boundary;
     Utl_Http_HeadReader_t reader;
-    Utl_Http_Field_t      fields[8];
+    Utl_Http_Field_t      fields[HTTP_TEST_FIELD_CAPACITY];
     uint32_t              prefix;
     Utl_Http_Result_t     result;
     uint32_t              index;
 
-    boundary = sizeof(c_input) - 5;
-    Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 8);
+    boundary = sizeof(c_input) - HTTP_TEST_BODY_SUFFIX_BYTES;
+    Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, HTTP_TEST_FIELD_CAPACITY);
     for (prefix = 0; prefix < boundary; ++prefix)
     {
         result = Utl_Http_ReadHeadIncremental(&reader, (const byte_t*)c_input, prefix);
@@ -667,7 +685,7 @@ static void CheckIncremental(void)
     Check((boundary == reader.scan) && (3 == reader.head.fieldCount), __LINE__);
     for (index = 0; index < (sizeof(c_badHeads) / sizeof(c_badHeads[0])); ++index)
     {
-        Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, 8);
+        Utl_Http_InitializeHeadReader(&reader, UTL_HTTP_REQUEST, fields, HTTP_TEST_FIELD_CAPACITY);
         result = UTL_HTTP_INCOMPLETE;
         for (prefix = 0; prefix <= c_badHeadBytes[index]; ++prefix)
         {

@@ -989,7 +989,7 @@ static FORCE_INLINE void EncodeCommand(Utl_Json_Writer_t* writer, const Utl_Chro
  * \par Details:
  *  Namespace literals are counted at compile time; no termination scan is needed.
  */
-Utl_Json_Text_t Utl_Chromecast_GetNamespace(Utl_Chromecast_Namespace_t nameSpace)
+extern FORCE_INLINE Utl_Json_Text_t Utl_Chromecast_GetNamespace(Utl_Chromecast_Namespace_t nameSpace)
 {
     bool_t          is_connection;
     bool_t          is_heartbeat;
@@ -1031,7 +1031,7 @@ Utl_Json_Text_t Utl_Chromecast_GetNamespace(Utl_Chromecast_Namespace_t nameSpace
  * \par Details:
  *  The command discriminator determines routing without examining payload fields.
  */
-Utl_Chromecast_Namespace_t Utl_Chromecast_GetCommandNamespace(Utl_Chromecast_CommandKind_t kind)
+extern FORCE_INLINE Utl_Chromecast_Namespace_t Utl_Chromecast_GetCommandNamespace(Utl_Chromecast_CommandKind_t kind)
 {
     bool_t                     is_connection;
     bool_t                     is_ping;

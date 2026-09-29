@@ -11,6 +11,8 @@
 **===============================================================================================*/
 
 #include "os/os_compiler.h"
+#include "os/os_types.h"
+#include <stdint.h>
 #include "utl/utl_arguments.h"
 #include "os/os_assert.h"
 
@@ -43,6 +45,51 @@
 
 /*************************************************************************************************/
 /**
+ * \brief Recognizes a command-line argument separator.
+ * \param[in] value   Native UTF-16 code unit
+ * \retval    TRUE    The unit is SP or HTAB.
+ * \retval    FALSE   The unit is ordinary argument content.
+ */
+static FORCE_INLINE bool_t IsWhitespace(uint16_t value);
+
+/*************************************************************************************************/
+/**
+ * \brief Counts and consumes consecutive backslashes at the current position.
+ * \par Requirements:
+ *  - 001 The cursor shall not exceed the readable input count.
+ *  - 002 The first non-backslash unit shall remain unread.
+ * \param[in] input         Readable command-line units
+ * \param[in] inputCount    Readable unit count
+ * \param[in,out] cursor    Current position
+ * \retval    0..inputCount   Number of consumed backslashes.
+ */
+static FORCE_INLINE uint32_t ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor);
+
+/*************************************************************************************************/
+/**
+ * \brief Applies quote interpretation after consuming a backslash run.
+ * \par Requirements:
+ *  - 001 The cursor shall identify a readable quote unit.
+ *  - 002 Odd backslash runs shall retain a literal quote.
+ *  - 003 Inside ordinary arguments a doubled quote shall emit one literal quote.
+ * \param[in] input           Readable command-line units
+ * \param[in] inputCount      Readable unit count
+ * \param[in,out] cursor      Current quote position
+ * \param[in,out] inQuotes    Current quoting state
+ * \param[in] isProgram       Program-name grammar selector
+ * \param[in] slashes         Preceding backslash count
+ * \retval    TRUE    Emit a literal quote.
+ * \retval    FALSE   The quote changes quoting state without output.
+ */
+static FORCE_INLINE bool_t ReadQuote(const uint16_t* input,
+                                     uint32_t        inputCount,
+                                     uint32_t*       cursor,
+                                     bool_t*         inQuotes,
+                                     bool_t          isProgram,
+                                     uint32_t        slashes);
+
+/*************************************************************************************************/
+/**
  * \brief Measures or copies the argument at the current input offset.
  *
  * \param[out]    output       Output units or NULL for measurement
@@ -53,11 +100,21 @@
  *
  * \retval        0..inputCount   Decoded argument unit count.
  */
-static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
-                             const uint16_t* input,
-                             uint32_t        inputCount,
-                             uint32_t*       cursor,
-                             bool_t          isProgram);
+static FORCE_INLINE uint32_t
+ReadArgument(uint16_t* output, const uint16_t* input, uint32_t inputCount, uint32_t* cursor, bool_t isProgram);
+
+/*************************************************************************************************/
+/**
+ * \brief Counts one decoded unit and writes it during a preflighted output pass.
+ * \par Requirements:
+ *  - 001 A non-NULL output shall have room for the decoded argument.
+ *  - 002 A NULL output shall select measurement without dereferencing output.
+ * \param[out] output       Preflighted storage or NULL
+ * \param[in,out] count     Current output unit count
+ * \param[in] value         Decoded unit
+ * \retval    None
+ */
+static FORCE_INLINE void WriteUnit(uint16_t* output, uint32_t* count, uint16_t value);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -66,14 +123,99 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Quoting state determines whether this separator ends the current argument.
+ */
+static FORCE_INLINE bool_t IsWhitespace(uint16_t value)
+{
+    bool_t is_space;
+    bool_t is_tab;
+
+    is_space = (ARGUMENT_SPACE == value);
+    is_tab   = (ARGUMENT_TAB == value);
+    return is_space || is_tab;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Only the following quote determines how many consumed backslashes are literal.
+ */
+static FORCE_INLINE uint32_t ReadBackslashes(const uint16_t* input, uint32_t inputCount, uint32_t* cursor)
+{
+    uint32_t start;
+    bool_t   is_backslash;
+
+    LOGASSERT(NULL != input);
+    LOGASSERT(NULL != cursor);
+    LOGASSERT(*cursor <= inputCount);
+    start = *cursor;
+    for (; *cursor < inputCount; ++(*cursor))
+    {
+        is_backslash = (ARGUMENT_BACKSLASH == input[*cursor]);
+        if (!is_backslash)
+        {
+            break;
+        }
+    }
+    return *cursor - start;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  A doubled quote consumes its second unit here; the enclosing reader consumes
+ *  the current unit. Program names do not use the ordinary doubled-quote rule.
+ */
+static FORCE_INLINE bool_t ReadQuote(const uint16_t* input,
+                                     uint32_t        inputCount,
+                                     uint32_t*       cursor,
+                                     bool_t*         inQuotes,
+                                     bool_t          isProgram,
+                                     uint32_t        slashes)
+{
+    bool_t emit;
+    bool_t odd_slashes;
+    bool_t has_next;
+    bool_t can_double_quote;
+    bool_t doubled_quote;
+
+    LOGASSERT(NULL != input);
+    LOGASSERT(NULL != cursor);
+    LOGASSERT(NULL != inQuotes);
+    LOGASSERT(*cursor < inputCount);
+    LOGASSERT(ARGUMENT_QUOTE == input[*cursor]);
+    emit        = TRUE;
+    odd_slashes = !!(slashes % 2);
+    if (!odd_slashes)
+    {
+        has_next         = ((*cursor + 1) < inputCount);
+        can_double_quote = !isProgram && *inQuotes && has_next;
+        doubled_quote    = FALSE;
+        if (can_double_quote)
+        {
+            doubled_quote = (ARGUMENT_QUOTE == input[*cursor + 1]);
+        }
+        if (doubled_quote)
+        {
+            ++(*cursor);
+        }
+        else
+        {
+            *inQuotes = !(*inQuotes);
+            emit      = FALSE;
+        }
+    }
+    return emit;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Each loop advances cursor or finishes the argument. Output is optional only for this
  *  private measuring pass; the public API preflights capacity before the writing pass.
  */
-static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
-                             const uint16_t* input,
-                             uint32_t        inputCount,
-                             uint32_t*       cursor,
-                             bool_t          isProgram)
+static FORCE_INLINE uint32_t
+ReadArgument(uint16_t* output, const uint16_t* input, uint32_t inputCount, uint32_t* cursor, bool_t isProgram)
 {
     uint32_t count;
     bool_t   in_quotes;
@@ -86,10 +228,6 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
     uint32_t literal_slashes;
     uint32_t index;
     bool_t   emit;
-    bool_t   odd_slashes;
-    bool_t   doubled_quote;
-    bool_t   has_next;
-    bool_t   can_double_quote;
 
     count     = 0;
     in_quotes = FALSE;
@@ -101,7 +239,7 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
             break;
         }
         value    = input[(*cursor)];
-        is_space = (ARGUMENT_SPACE == value) || (ARGUMENT_TAB == value);
+        is_space = IsWhitespace(value);
         at_end   = is_space && (!in_quotes);
         if (at_end)
         {
@@ -110,27 +248,14 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
         slashes = 0;
         if (!isProgram)
         {
-            for (;;)
-            {
-                has_input = (*cursor < inputCount);
-                if (!has_input || (ARGUMENT_BACKSLASH != input[(*cursor)]))
-                {
-                    break;
-                }
-                ++slashes;
-                ++(*cursor);
-            }
+            slashes = ReadBackslashes(input, inputCount, cursor);
         }
         has_input       = (*cursor < inputCount);
         has_quote       = has_input && (ARGUMENT_QUOTE == input[(*cursor)]);
         literal_slashes = has_quote ? (slashes / 2) : slashes;
         for (index = 0; index < literal_slashes; ++index)
         {
-            if (NULL != output)
-            {
-                output[count] = ARGUMENT_BACKSLASH;
-            }
-            ++count;
+            WriteUnit(output, &count, ARGUMENT_BACKSLASH);
         }
         if (!has_input)
         {
@@ -140,30 +265,11 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
         emit  = TRUE;
         if (has_quote)
         {
-            odd_slashes = (0 != (slashes % 2));
-            if (!odd_slashes)
-            {
-                doubled_quote    = FALSE;
-                has_next         = ((*cursor + 1) < inputCount);
-                can_double_quote = (!isProgram) && in_quotes && has_next;
-                if (can_double_quote)
-                {
-                    doubled_quote = (ARGUMENT_QUOTE == input[(*cursor) + 1]);
-                }
-                if (doubled_quote)
-                {
-                    ++(*cursor);
-                }
-                else
-                {
-                    in_quotes = !in_quotes;
-                    emit      = FALSE;
-                }
-            }
+            emit = ReadQuote(input, inputCount, cursor, &in_quotes, isProgram, slashes);
         }
         else
         {
-            is_space = (ARGUMENT_SPACE == value) || (ARGUMENT_TAB == value);
+            is_space = IsWhitespace(value);
             at_end   = is_space && (!in_quotes);
             if (at_end)
             {
@@ -172,15 +278,25 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
         }
         if (emit)
         {
-            if (NULL != output)
-            {
-                output[count] = value;
-            }
-            ++count;
+            WriteUnit(output, &count, value);
         }
         ++(*cursor);
     }
     return count;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Measuring and writing follow the same decoded-unit sequence.
+ */
+static FORCE_INLINE void WriteUnit(uint16_t* output, uint32_t* count, uint16_t value)
+{
+    if (NULL != output)
+    {
+        output[*count] = value;
+    }
+    ++(*count);
 }
 
 /*=================================================================================================
@@ -193,7 +309,7 @@ static FORCE_INLINE uint32_t ReadArgument(uint16_t*       output,
  *  The selected argument is first measured, then replayed into proven capacity.
  *  An unmatched opening quote retains the remaining units, as specified by Microsoft.
  */
-bool_t Utl_Arguments_Read(uint32_t*              unitCount,
+extern FORCE_INLINE bool_t Utl_Arguments_Read(uint32_t*              unitCount,
                           uint16_t*              output,
                           uint32_t               capacity,
                           const Utl_Arguments_t* arguments,
@@ -231,7 +347,7 @@ bool_t Utl_Arguments_Read(uint32_t*              unitCount,
             {
                 break;
             }
-            is_space = (ARGUMENT_SPACE == input[cursor]) || (ARGUMENT_TAB == input[cursor]);
+            is_space = IsWhitespace(input[cursor]);
             if (!is_space)
             {
                 break;

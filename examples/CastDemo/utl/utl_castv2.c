@@ -19,9 +19,13 @@
 **===============================================================================================*/
 
 #include "os/os_compiler.h"
+#include "os/os_assert.h"
+#include "os/os_types.h"
 #include "utl/utl_castv2.h"
 #include "utl/utl_protobuf.h"
 #include "utl/utl_unicode.h"
+
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -46,10 +50,23 @@
 #define CASTV2_PRESENT_TEXT         (0x20)
 #define CASTV2_PRESENT_BINARY       (0x40)
 #define CASTV2_REQUIRED_FIELDS      (0x1F)
+#define CASTV2_LENGTH_HIGH_SHIFT    (24)
+#define CASTV2_LENGTH_MIDDLE_SHIFT  (16)
+#define CASTV2_LENGTH_LOW_SHIFT     (8)
 
 /*=================================================================================================
 ** 3.2 Types
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/** \brief Unpublished envelope with independent presence tracking for both payload forms. */
+typedef struct MessageReader_s
+{
+    Utl_CastV2_Message_t message;       ///< Routing fields and payload discriminator.
+    Utl_CastV2_Span_t    textPayload;   ///< Last text payload, including an empty value.
+    Utl_CastV2_Span_t    binaryPayload; ///< Last binary payload, including an empty value.
+    uint32_t             present;       ///< Accepted known field numbers.
+} MessageReader_t;
 
 /*=================================================================================================
 ** 3.3 External global variables
@@ -62,6 +79,17 @@
 /*=================================================================================================
 ** 3.5 Static function prototypes
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \brief Initializes the private candidate for a single envelope read.
+ * \par Requirements:
+ *  - 001 The caller shall supply writable reader storage.
+ *  - 002 No previous field or presence state shall be retained.
+ * \param[out] reader   Candidate reader
+ * \retval     None
+ */
+static FORCE_INLINE void InitializeReader(MessageReader_t* reader);
 
 /*************************************************************************************************/
 /**
@@ -100,6 +128,32 @@ static FORCE_INLINE void DeriveField(Utl_Protobuf_Field_t* field, const Utl_Cast
 
 /*************************************************************************************************/
 /**
+ * \brief Reads a length-delimited field according to its envelope schema number.
+ * \par Requirements:
+ *  - 001 Every recognized string shall be valid UTF-8, including overwritten duplicates.
+ *  - 002 Unknown field numbers shall be ignored without interpreting their payload.
+ *  - 003 A recognized field shall be published to the candidate only after validation.
+ * \param[in,out] reader   Initialized unpublished candidate
+ * \param[in]     field    Decoded protobuf BYTES record
+ * \retval        TRUE     A recognized field is valid, or the field number is unknown.
+ * \retval        FALSE    A recognized string has invalid UTF-8.
+ */
+static FORCE_INLINE bool_t ReadBytesField(MessageReader_t* reader, const Utl_Protobuf_Field_t* field);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads a version or payload-discriminator varint.
+ * \par Requirements:
+ *  - 001 Unrecognized numbers and enum values shall leave candidate fields unchanged.
+ *  - 002 Accepted values shall update their corresponding presence bits.
+ * \param[in,out] reader   Initialized unpublished candidate
+ * \param[in]     field    Decoded protobuf VARINT record
+ * \retval        None
+ */
+static FORCE_INLINE void ReadIntegerField(MessageReader_t* reader, const Utl_Protobuf_Field_t* field);
+
+/*************************************************************************************************/
+/**
  * \brief Writes a prevalidated message into an exact-size body span.
  *
  * \param[in]  message     Stable validated message with disjoint spans
@@ -113,6 +167,28 @@ static FORCE_INLINE void WriteBody(const Utl_CastV2_Message_t* message, byte_t* 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
 **===============================================================================================*/
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Presence is independent of zero-valued enums and empty borrowed spans.
+ */
+static FORCE_INLINE void InitializeReader(MessageReader_t* reader)
+{
+    Utl_CastV2_Span_t empty;
+
+    LOGASSERT(NULL != reader);
+    empty.data                  = NULL;
+    empty.byteCount             = 0;
+    reader->message.source      = empty;
+    reader->message.destination = empty;
+    reader->message.nameSpace   = empty;
+    reader->message.payload     = empty;
+    reader->message.payloadType = UTL_CASTV2_STRING;
+    reader->textPayload         = empty;
+    reader->binaryPayload       = empty;
+    reader->present             = 0;
+}
 
 /*************************************************************************************************/
 /**
@@ -222,6 +298,108 @@ static FORCE_INLINE void DeriveField(Utl_Protobuf_Field_t* field, const Utl_Cast
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Only schema string fields undergo Unicode validation. The binary payload and
+ *  unknown fields remain opaque; duplicate recognized fields replace prior spans.
+ */
+static FORCE_INLINE bool_t ReadBytesField(MessageReader_t* reader, const Utl_Protobuf_Field_t* field)
+{
+    Utl_CastV2_Span_t* span;
+    uint32_t           presence;
+    bool_t             is_text;
+    bool_t             is_known;
+    bool_t             needs_validation;
+    bool_t             is_valid;
+    bool_t             can_publish;
+
+    LOGASSERT(NULL != reader);
+    LOGASSERT(NULL != field);
+    LOGASSERT(UTL_PROTOBUF_BYTES == field->wireType);
+
+    span     = NULL;
+    presence = 0;
+    is_text  = TRUE;
+    switch (field->number)
+    {
+    case CASTV2_FIELD_SOURCE:
+        span     = &reader->message.source;
+        presence = CASTV2_PRESENT_SOURCE;
+        break;
+    case CASTV2_FIELD_DESTINATION:
+        span     = &reader->message.destination;
+        presence = CASTV2_PRESENT_DESTINATION;
+        break;
+    case CASTV2_FIELD_NAMESPACE:
+        span     = &reader->message.nameSpace;
+        presence = CASTV2_PRESENT_NAMESPACE;
+        break;
+    case CASTV2_FIELD_TEXT:
+        span     = &reader->textPayload;
+        presence = CASTV2_PRESENT_TEXT;
+        break;
+    case CASTV2_FIELD_BINARY:
+        span     = &reader->binaryPayload;
+        presence = CASTV2_PRESENT_BINARY;
+        is_text  = FALSE;
+        break;
+    default:
+        break;
+    }
+    is_known         = (NULL != span);
+    needs_validation = is_known && is_text;
+    is_valid         = TRUE;
+    if (needs_validation)
+    {
+        is_valid = Utl_Unicode_IsValidUtf8(field->bytes, field->byteCount);
+    }
+    can_publish = is_known && is_valid;
+    if (can_publish)
+    {
+        span->data       = field->bytes;
+        span->byteCount  = field->byteCount;
+        reader->present |= presence;
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Unknown enum values follow protobuf unknown-field behavior and do not erase
+ *  a previously accepted value of the same field.
+ */
+static FORCE_INLINE void ReadIntegerField(MessageReader_t* reader, const Utl_Protobuf_Field_t* field)
+{
+    bool_t is_version;
+    bool_t valid_version;
+    bool_t accepts_version;
+    bool_t is_payload_type;
+    bool_t valid_payload_type;
+    bool_t accepts_payload_type;
+
+    LOGASSERT(NULL != reader);
+    LOGASSERT(NULL != field);
+    LOGASSERT(UTL_PROTOBUF_VARINT == field->wireType);
+
+    is_version           = (CASTV2_FIELD_VERSION == field->number);
+    valid_version        = (CASTV2_VERSION == field->integerValue);
+    accepts_version      = is_version && valid_version;
+    is_payload_type      = (CASTV2_FIELD_PAYLOAD_TYPE == field->number);
+    valid_payload_type   = (UTL_CASTV2_BINARY >= field->integerValue);
+    accepts_payload_type = is_payload_type && valid_payload_type;
+    if (accepts_version)
+    {
+        reader->present |= CASTV2_PRESENT_VERSION;
+    }
+    if (accepts_payload_type)
+    {
+        reader->message.payloadType  = (Utl_CastV2_PayloadType_t)field->integerValue;
+        reader->present             |= CASTV2_PRESENT_PAYLOAD_TYPE;
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  Six records are emitted; each record's storage was included by the preceding size query.
  */
 static FORCE_INLINE void WriteBody(const Utl_CastV2_Message_t* message, byte_t* buffer, uint32_t byteCount)
@@ -282,7 +460,7 @@ uint32_t Utl_CastV2_GetMessageByteCount(const Utl_CastV2_Message_t* message)
  * \par Details:
  *  None
  */
-uint32_t Utl_CastV2_GetFrameByteCount(const Utl_CastV2_Message_t* message)
+extern FORCE_INLINE uint32_t Utl_CastV2_GetFrameByteCount(const Utl_CastV2_Message_t* message)
 {
     uint32_t count;
 
@@ -318,8 +496,9 @@ Utl_CastV2_FrameState_t Utl_CastV2_InspectFrame(uint32_t* frameBytes, const byte
         state = UTL_CASTV2_FRAME_INCOMPLETE;
         if (has_header)
         {
-            body_bytes     = ((uint32_t)buffer[0] << 24) | ((uint32_t)buffer[1] << 16);
-            body_bytes    |= ((uint32_t)buffer[2] << 8) | (uint32_t)buffer[3];
+            body_bytes =
+                ((uint32_t)buffer[0] << CASTV2_LENGTH_HIGH_SHIFT) | ((uint32_t)buffer[1] << CASTV2_LENGTH_MIDDLE_SHIFT);
+            body_bytes    |= ((uint32_t)buffer[2] << CASTV2_LENGTH_LOW_SHIFT) | (uint32_t)buffer[3];
             is_size_valid  = (0 < body_bytes) && (UTL_CASTV2_MAX_BODY >= body_bytes);
             if (is_size_valid)
             {
@@ -350,17 +529,19 @@ bool_t Utl_CastV2_ReadMessage(Utl_CastV2_Message_t* message, const byte_t* buffe
 {
     bool_t               has_output;
     bool_t               has_input;
-    bool_t               has_size;
+    bool_t               has_body;
+    bool_t               fits_body;
     bool_t               is_valid;
     uint32_t             cursor;
-    uint32_t             present;
-    Utl_CastV2_Message_t result;
-    Utl_CastV2_Span_t    text_payload;
-    Utl_CastV2_Span_t    binary_payload;
+    MessageReader_t      reader;
     Utl_Protobuf_Field_t field;
     uint32_t             consumed;
-    bool_t               is_routing_field;
-    bool_t               is_string_field;
+    bool_t               at_end;
+    bool_t               stop_reading;
+    bool_t               starts_group;
+    bool_t               ends_group;
+    bool_t               is_bytes;
+    bool_t               is_varint;
     bool_t               has_required;
     bool_t               has_text;
     bool_t               has_binary;
@@ -368,131 +549,67 @@ bool_t Utl_CastV2_ReadMessage(Utl_CastV2_Message_t* message, const byte_t* buffe
     bool_t               has_single_payload;
     bool_t               payload_matches_type;
 
-    has_output                   = (NULL != message);
-    has_input                    = (NULL != buffer);
-    has_size                     = (0 < byteCount) && (UTL_CASTV2_MAX_BODY >= byteCount);
-    is_valid                     = has_output && has_input && has_size;
-    cursor                       = 0;
-    present                      = 0;
-    result.source.data           = NULL;
-    result.source.byteCount      = 0;
-    result.destination.data      = NULL;
-    result.destination.byteCount = 0;
-    result.nameSpace.data        = NULL;
-    result.nameSpace.byteCount   = 0;
-    result.payloadType           = UTL_CASTV2_STRING;
-    result.payload.data          = NULL;
-    result.payload.byteCount     = 0;
-    text_payload.data            = NULL;
-    text_payload.byteCount       = 0;
-    binary_payload.data          = NULL;
-    binary_payload.byteCount     = 0;
+    has_output = (NULL != message);
+    has_input  = (NULL != buffer);
+    has_body   = (0 < byteCount);
+    fits_body  = (UTL_CASTV2_MAX_BODY >= byteCount);
+    is_valid   = has_output && has_input && has_body && fits_body;
+    cursor     = 0;
+    InitializeReader(&reader);
     for (;;)
     {
-        if (!is_valid || (cursor == byteCount))
+        at_end       = (cursor == byteCount);
+        stop_reading = !is_valid || at_end;
+        if (stop_reading)
         {
             break;
         }
         is_valid = Utl_Protobuf_ReadField(&field, &buffer[cursor], byteCount - cursor);
         if (is_valid)
         {
-            consumed = field.encodedByteCount;
-            if (UTL_PROTOBUF_GROUP_START == field.wireType)
+            consumed     = field.encodedByteCount;
+            starts_group = (UTL_PROTOBUF_GROUP_START == field.wireType);
+            ends_group   = (UTL_PROTOBUF_GROUP_END == field.wireType);
+            is_bytes     = (UTL_PROTOBUF_BYTES == field.wireType);
+            is_varint    = (UTL_PROTOBUF_VARINT == field.wireType);
+            if (starts_group)
             {
                 is_valid = Utl_Protobuf_SkipField(&consumed, &buffer[cursor], byteCount - cursor);
             }
-            else if (UTL_PROTOBUF_GROUP_END == field.wireType)
+            else if (ends_group)
             {
                 is_valid = FALSE;
             }
+            else if (is_bytes)
+            {
+                is_valid = ReadBytesField(&reader, &field);
+            }
+            else if (is_varint)
+            {
+                ReadIntegerField(&reader, &field);
+            }
             else
             {
-                is_routing_field = (CASTV2_FIELD_SOURCE <= field.number) && (CASTV2_FIELD_NAMESPACE >= field.number);
-                is_string_field  = is_routing_field || (CASTV2_FIELD_TEXT == field.number);
-                if (is_string_field && (UTL_PROTOBUF_BYTES == field.wireType))
-                {
-                    is_valid = Utl_Unicode_IsValidUtf8(field.bytes, field.byteCount);
-                }
-                switch (field.number)
-                {
-                case CASTV2_FIELD_VERSION:
-                    if ((UTL_PROTOBUF_VARINT == field.wireType) && (CASTV2_VERSION == field.integerValue))
-                    {
-                        present |= CASTV2_PRESENT_VERSION;
-                    }
-                    break;
-                case CASTV2_FIELD_SOURCE:
-                    if (UTL_PROTOBUF_BYTES == field.wireType)
-                    {
-                        result.source.data       = field.bytes;
-                        result.source.byteCount  = field.byteCount;
-                        present                 |= CASTV2_PRESENT_SOURCE;
-                    }
-                    break;
-                case CASTV2_FIELD_DESTINATION:
-                    if (UTL_PROTOBUF_BYTES == field.wireType)
-                    {
-                        result.destination.data       = field.bytes;
-                        result.destination.byteCount  = field.byteCount;
-                        present                      |= CASTV2_PRESENT_DESTINATION;
-                    }
-                    break;
-                case CASTV2_FIELD_NAMESPACE:
-                    if (UTL_PROTOBUF_BYTES == field.wireType)
-                    {
-                        result.nameSpace.data       = field.bytes;
-                        result.nameSpace.byteCount  = field.byteCount;
-                        present                    |= CASTV2_PRESENT_NAMESPACE;
-                    }
-                    break;
-                case CASTV2_FIELD_PAYLOAD_TYPE:
-                    if (UTL_PROTOBUF_VARINT == field.wireType)
-                    {
-                        if (UTL_CASTV2_BINARY >= field.integerValue)
-                        {
-                            result.payloadType  = (Utl_CastV2_PayloadType_t)field.integerValue;
-                            present            |= CASTV2_PRESENT_PAYLOAD_TYPE;
-                        }
-                    }
-                    break;
-                case CASTV2_FIELD_TEXT:
-                    if (UTL_PROTOBUF_BYTES == field.wireType)
-                    {
-                        text_payload.data       = field.bytes;
-                        text_payload.byteCount  = field.byteCount;
-                        present                |= CASTV2_PRESENT_TEXT;
-                    }
-                    break;
-                case CASTV2_FIELD_BINARY:
-                    if (UTL_PROTOBUF_BYTES == field.wireType)
-                    {
-                        binary_payload.data       = field.bytes;
-                        binary_payload.byteCount  = field.byteCount;
-                        present                  |= CASTV2_PRESENT_BINARY;
-                    }
-                    break;
-                default:
-                    break;
-                }
+                /* Fixed-width fields are unknown to the retained CastV2 schema. */
             }
             cursor += consumed;
         }
     }
-    has_required         = (CASTV2_REQUIRED_FIELDS == (present & CASTV2_REQUIRED_FIELDS));
-    has_text             = !!(present & CASTV2_PRESENT_TEXT);
-    has_binary           = !!(present & CASTV2_PRESENT_BINARY);
-    is_text              = (UTL_CASTV2_STRING == result.payloadType);
+    has_required         = (CASTV2_REQUIRED_FIELDS == (reader.present & CASTV2_REQUIRED_FIELDS));
+    has_text             = !!(reader.present & CASTV2_PRESENT_TEXT);
+    has_binary           = !!(reader.present & CASTV2_PRESENT_BINARY);
+    is_text              = (UTL_CASTV2_STRING == reader.message.payloadType);
     has_single_payload   = (has_text != has_binary);
     payload_matches_type = (is_text == has_text);
     is_valid             = is_valid && has_required && has_single_payload && payload_matches_type;
     if (is_valid)
     {
-        result.payload = binary_payload;
+        reader.message.payload = reader.binaryPayload;
         if (is_text)
         {
-            result.payload = text_payload;
+            reader.message.payload = reader.textPayload;
         }
-        (*message) = result;
+        (*message) = reader.message;
     }
     return is_valid;
 }
@@ -529,7 +646,7 @@ uint32_t Utl_CastV2_WriteMessage(const Utl_CastV2_Message_t* message, byte_t* bu
  * \par Details:
  *  The bounded body count makes adding the four-byte header safe before the capacity check.
  */
-uint32_t Utl_CastV2_WriteFrame(const Utl_CastV2_Message_t* message, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_CastV2_WriteFrame(const Utl_CastV2_Message_t* message, byte_t* buffer, uint32_t capacity)
 {
     uint32_t body_bytes;
     uint32_t frame_bytes;
@@ -544,9 +661,9 @@ uint32_t Utl_CastV2_WriteFrame(const Utl_CastV2_Message_t* message, byte_t* buff
     has_capacity = (frame_bytes <= capacity);
     if (has_buffer && has_body && has_capacity)
     {
-        buffer[0] = (byte_t)(body_bytes >> 24);
-        buffer[1] = (byte_t)(body_bytes >> 16);
-        buffer[2] = (byte_t)(body_bytes >> 8);
+        buffer[0] = (byte_t)(body_bytes >> CASTV2_LENGTH_HIGH_SHIFT);
+        buffer[1] = (byte_t)(body_bytes >> CASTV2_LENGTH_MIDDLE_SHIFT);
+        buffer[2] = (byte_t)(body_bytes >> CASTV2_LENGTH_LOW_SHIFT);
         buffer[3] = (byte_t)body_bytes;
         WriteBody(message, &buffer[UTL_CASTV2_HEADER_BYTES], body_bytes);
     }

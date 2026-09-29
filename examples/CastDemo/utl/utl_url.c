@@ -322,6 +322,25 @@ static FORCE_INLINE bool_t IsPath(const Utl_Url_t* url);
 
 /*************************************************************************************************/
 /**
+ * \brief Reads one RFC 3986 dec-octet at the supplied input position.
+ *
+ * \par Requirements:
+ *  - 001 The initial offset shall lie within the counted input.
+ *  - 002 One through three decimal digits shall encode a value no greater than 255.
+ *  - 003 Multi-digit values shall have no leading zero.
+ *  - 004 Failure shall preserve the offset and value outputs.
+ *
+ * \param[in]     text     Counted address text
+ * \param[in,out] offset   Current input position
+ * \param[out]    value    Decoded octet
+ *
+ * \retval        TRUE     One valid octet was decoded.
+ * \retval        FALSE    The octet was absent or invalid.
+ */
+static FORCE_INLINE bool_t ReadIpv4Octet(Utl_Url_Text_t text, uint32_t* offset, uint32_t* value);
+
+/*************************************************************************************************/
+/**
  * \brief Splits a bracketed address literal or registered host from its optional port.
  *
  * \par Requirements:
@@ -629,9 +648,9 @@ static FORCE_INLINE bool_t IsComponent(Utl_Url_Text_t text, Component_t kind)
             valid = (PERCENT_BYTE_COUNT <= (text.byteCount - index));
             if (valid)
             {
-                first  = GetHexValue(text.data[index + 1]);
-                second = GetHexValue(text.data[index + 2]);
-                valid  = (HEX_INVALID != first) && (HEX_INVALID != second);
+                first   = GetHexValue(text.data[index + 1]);
+                second  = GetHexValue(text.data[index + 2]);
+                valid   = (HEX_INVALID != first) && (HEX_INVALID != second);
                 index  += PERCENT_BYTE_COUNT;
             }
         }
@@ -777,7 +796,7 @@ static FORCE_INLINE bool_t IsIpv6(Utl_Url_Text_t text)
         if (valid)
         {
             count += width;
-            valid = (count <= IPV6_PART_COUNT);
+            valid  = (count <= IPV6_PART_COUNT);
         }
         if (valid && (!last))
         {
@@ -958,6 +977,74 @@ static FORCE_INLINE bool_t IsPath(const Utl_Url_t* url)
         }
     }
 
+    return valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  At most three digits are accumulated. The caller validates the following dot
+ *  or end of address, so an overlong octet cannot consume part of another octet.
+ */
+static FORCE_INLINE bool_t ReadIpv4Octet(Utl_Url_Text_t text, uint32_t* offset, uint32_t* value)
+{
+    uint32_t cursor;
+    uint32_t first;
+    uint32_t candidate;
+    uint32_t digits;
+    bool_t   has_input;
+    bool_t   has_capacity;
+    bool_t   can_read;
+    bool_t   is_digit;
+    bool_t   has_digits;
+    bool_t   fits_octet;
+    bool_t   valid;
+    bool_t   multiple_digits;
+    bool_t   starts_with_zero;
+    bool_t   leading_zero;
+
+    LOGASSERT(NULL != offset);
+    LOGASSERT(NULL != value);
+    AssertText(text);
+    LOGASSERT(*offset <= text.byteCount);
+
+    cursor    = *offset;
+    first     = cursor;
+    candidate = 0;
+    digits    = 0;
+    for (;;)
+    {
+        has_input    = (cursor < text.byteCount);
+        has_capacity = (digits < IPV4_PART_DIGITS);
+        can_read     = has_input && has_capacity;
+        if (!can_read)
+        {
+            break;
+        }
+        is_digit = IsDigit(text.data[cursor]);
+        if (!is_digit)
+        {
+            break;
+        }
+        candidate = (candidate * DECIMAL_RADIX) + (uint32_t)(text.data[cursor] - UTL_URL_CHAR_DIGIT_FIRST);
+        ++cursor;
+        ++digits;
+    }
+    has_digits = !!digits;
+    fits_octet = (candidate <= IPV4_PART_MAX);
+    valid      = has_digits && fits_octet;
+    if (valid)
+    {
+        multiple_digits  = (1 < digits);
+        starts_with_zero = (UTL_URL_CHAR_DIGIT_FIRST == text.data[first]);
+        leading_zero     = multiple_digits && starts_with_zero;
+        valid            = !leading_zero;
+    }
+    if (valid)
+    {
+        *offset = cursor;
+        *value  = candidate;
+    }
     return valid;
 }
 
@@ -1200,7 +1287,7 @@ static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, byte_t* output, ui
  * \par Details:
  *  The empty relative reference is valid and has an empty recomposition.
  */
-void Utl_Url_Initialize(Utl_Url_t* url)
+extern FORCE_INLINE void Utl_Url_Initialize(Utl_Url_t* url)
 {
     Utl_Url_Text_t empty;
 
@@ -1281,7 +1368,7 @@ bool_t Utl_Url_IsValid(const Utl_Url_t* url)
  * \par Details:
  *  Wide accumulation prevents component sums from wrapping the public count.
  */
-bool_t Utl_Url_GetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Url_GetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
 {
     bool_t   valid;
     uint64_t count;
@@ -1293,7 +1380,7 @@ bool_t Utl_Url_GetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
     valid = Utl_Url_IsValid(url);
     if (valid)
     {
-        count = url->scheme.byteCount;
+        count  = url->scheme.byteCount;
         count += url->userInfo.byteCount;
         count += url->host.byteCount;
         count += url->port.byteCount;
@@ -1345,7 +1432,7 @@ bool_t Utl_Url_GetByteCount(const Utl_Url_t* url, uint32_t* byteCount)
  *  Decimal range is checked before multiply/add. A syntactically valid URI port
  *  can exceed this native representation and therefore fail this separate query.
  */
-bool_t Utl_Url_GetPort(const Utl_Url_t* url, uint16_t* port)
+extern FORCE_INLINE bool_t Utl_Url_GetPort(const Utl_Url_t* url, uint16_t* port)
 {
     bool_t   valid;
     uint32_t value;
@@ -1384,7 +1471,7 @@ bool_t Utl_Url_GetPort(const Utl_Url_t* url, uint16_t* port)
  * \par Details:
  *  The four octets contribute their decimal widths and exactly three periods.
  */
-uint32_t Utl_Url_GetIpv4ByteCount(uint32_t address)
+extern FORCE_INLINE uint32_t Utl_Url_GetIpv4ByteCount(uint32_t address)
 {
     uint32_t count;
     uint32_t part;
@@ -1393,8 +1480,8 @@ uint32_t Utl_Url_GetIpv4ByteCount(uint32_t address)
     count = IPV4_PART_COUNT - 1;
     for (part = 0; part < IPV4_PART_COUNT; ++part)
     {
-        shift = (IPV4_PART_COUNT - part - 1) * IPV4_PART_BITS;
-        value = (address >> shift) & IPV4_PART_MAX;
+        shift  = (IPV4_PART_COUNT - part - 1) * IPV4_PART_BITS;
+        value  = (address >> shift) & IPV4_PART_MAX;
         count += Utl_Decimal_GetUint64ByteCount(value);
     }
     return count;
@@ -1405,7 +1492,7 @@ uint32_t Utl_Url_GetIpv4ByteCount(uint32_t address)
  * \par Details:
  *  Validation precedes all output publication. Decoding shrinks or preserves size.
  */
-bool_t Utl_Url_GetDecodedByteCount(Utl_Url_Text_t text, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Url_GetDecodedByteCount(Utl_Url_Text_t text, uint32_t* byteCount)
 {
     uint32_t index;
     uint32_t count;
@@ -1430,9 +1517,9 @@ bool_t Utl_Url_GetDecodedByteCount(Utl_Url_Text_t text, uint32_t* byteCount)
             valid = (PERCENT_BYTE_COUNT <= (text.byteCount - index));
             if (valid)
             {
-                first  = GetHexValue(text.data[index + 1]);
-                second = GetHexValue(text.data[index + 2]);
-                valid  = (HEX_INVALID != first) && (HEX_INVALID != second);
+                first   = GetHexValue(text.data[index + 1]);
+                second  = GetHexValue(text.data[index + 2]);
+                valid   = (HEX_INVALID != first) && (HEX_INVALID != second);
                 index  += PERCENT_BYTE_COUNT;
             }
         }
@@ -1455,17 +1542,16 @@ bool_t Utl_Url_GetDecodedByteCount(Utl_Url_Text_t text, uint32_t* byteCount)
  * \par Details:
  *  At most three digits per octet are accumulated before checking the octet bound.
  */
-bool_t Utl_Url_ReadIpv4(Utl_Url_Text_t text, uint32_t* address)
+extern FORCE_INLINE bool_t Utl_Url_ReadIpv4(Utl_Url_Text_t text, uint32_t* address)
 {
     uint32_t candidate;
     bool_t   valid;
     uint32_t offset;
     uint32_t part;
-    uint32_t first;
     uint32_t value;
-    uint32_t digits;
-    bool_t   digit;
-    bool_t   leading_zero;
+    bool_t   has_next_part;
+    bool_t   needs_separator;
+    bool_t   at_end;
 
     LOGASSERT(NULL != address);
     AssertText(text);
@@ -1474,35 +1560,14 @@ bool_t Utl_Url_ReadIpv4(Utl_Url_Text_t text, uint32_t* address)
     offset    = 0;
     for (part = 0; valid && (part < IPV4_PART_COUNT); ++part)
     {
-        first  = offset;
-        value  = 0;
-        digits = 0;
-        for (;;)
-        {
-            if ((offset >= text.byteCount) || (digits >= IPV4_PART_DIGITS))
-            {
-                break;
-            }
-            digit = IsDigit(text.data[offset]);
-            if (!digit)
-            {
-                break;
-            }
-            value = (value * DECIMAL_RADIX) + (uint32_t)(text.data[offset] - UTL_URL_CHAR_DIGIT_FIRST);
-            ++offset;
-            ++digits;
-        }
-        valid = (0 < digits) && (value <= IPV4_PART_MAX);
-        if (valid)
-        {
-            leading_zero = (1 < digits) && (UTL_URL_CHAR_DIGIT_FIRST == text.data[first]);
-            valid        = !leading_zero;
-        }
+        valid = ReadIpv4Octet(text, &offset, &value);
         if (valid)
         {
             candidate = (candidate << IPV4_PART_BITS) | value;
         }
-        if (valid && ((part + 1) < IPV4_PART_COUNT))
+        has_next_part   = ((part + 1) < IPV4_PART_COUNT);
+        needs_separator = valid && has_next_part;
+        if (needs_separator)
         {
             valid = (offset < text.byteCount);
             if (valid)
@@ -1512,7 +1577,8 @@ bool_t Utl_Url_ReadIpv4(Utl_Url_Text_t text, uint32_t* address)
             }
         }
     }
-    valid = valid && (offset == text.byteCount);
+    at_end = (offset == text.byteCount);
+    valid  = valid && at_end;
 
     if (valid)
     {
@@ -1570,9 +1636,9 @@ bool_t Utl_Url_Read(Utl_Url_t* url, const byte_t* data, uint32_t byteCount)
     }
     if (authority)
     {
-        candidate.hasAuthority = TRUE;
+        candidate.hasAuthority  = TRUE;
         offset                 += 2;
-        first                  = offset;
+        first                   = offset;
         for (; offset < byteCount; ++offset)
         {
             value = data[offset];
@@ -1607,7 +1673,7 @@ bool_t Utl_Url_Read(Utl_Url_t* url, const byte_t* data, uint32_t byteCount)
  * \par Details:
  *  Preflight guarantees each decimal write and separator fits before any output is changed.
  */
-uint32_t Utl_Url_WriteIpv4(uint32_t address, byte_t* output, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Url_WriteIpv4(uint32_t address, byte_t* output, uint32_t capacity)
 {
     uint32_t count;
     uint32_t written;
@@ -1644,7 +1710,7 @@ uint32_t Utl_Url_WriteIpv4(uint32_t address, byte_t* output, uint32_t capacity)
  * \par Details:
  *  RFC 3986 section 5.3 delimiter recomposition, preserving the caller's syntax.
  */
-bool_t Utl_Url_Write(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Url_Write(const Utl_Url_t* url, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t   valid;
     uint32_t count;
@@ -1695,7 +1761,7 @@ bool_t Utl_Url_Write(const Utl_Url_t* url, byte_t* output, uint32_t capacity, ui
  *  Complete escape and capacity validation precedes the first destination write.
  *  Reserved characters must therefore be split into components before this call.
  */
-bool_t Utl_Url_WriteDecoded(Utl_Url_Text_t text, byte_t* output, uint32_t capacity, uint32_t* byteCount)
+extern FORCE_INLINE bool_t Utl_Url_WriteDecoded(Utl_Url_Text_t text, byte_t* output, uint32_t capacity, uint32_t* byteCount)
 {
     bool_t   valid;
     uint32_t count;
@@ -1721,9 +1787,9 @@ bool_t Utl_Url_WriteDecoded(Utl_Url_Text_t text, byte_t* output, uint32_t capaci
         {
             if (UTL_URL_CHAR_PERCENT == text.data[index])
             {
-                first          = GetHexValue(text.data[index + 1]);
-                second         = GetHexValue(text.data[index + 2]);
-                output[offset] = (byte_t)((first * HEX_RADIX) + second);
+                first           = GetHexValue(text.data[index + 1]);
+                second          = GetHexValue(text.data[index + 2]);
+                output[offset]  = (byte_t)((first * HEX_RADIX) + second);
                 index          += PERCENT_BYTE_COUNT;
             }
             else

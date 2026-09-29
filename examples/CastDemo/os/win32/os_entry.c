@@ -9,6 +9,10 @@
 **===============================================================================================*/
 
 #include "os/os_process.h"
+#include "os/os_compiler.h"
+#include "os/win32/os_entry.h"
+
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
@@ -46,7 +50,7 @@
  *  The platform-neutral application body returns a status. No CRT initialization
  *  or shutdown routine participates in this entry path.
  */
-void WinMainStartup(void)
+OS_NORETURN void WinMainStartup(void)
 {
     uint32_t status;
 

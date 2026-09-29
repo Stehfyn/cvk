@@ -192,7 +192,7 @@ static FORCE_INLINE void RecordError(OS_Console_t* console, uint32_t error)
  *  The duplicated handle isolates native handle lifetime. Input mode remains a
  *  shared console property whose exclusive ownership is a caller precondition.
  */
-bool_t OS_Console_Initialize(OS_Console_t* console)
+extern FORCE_INLINE bool_t OS_Console_Initialize(OS_Console_t* console)
 {
     HANDLE standard_input;
     bool_t has_handle;
@@ -285,7 +285,7 @@ bool_t OS_Console_Initialize(OS_Console_t* console)
  * \par Details:
  *  None
  */
-uint32_t OS_Console_GetError(const OS_Console_t* console)
+extern FORCE_INLINE uint32_t OS_Console_GetError(const OS_Console_t* console)
 {
     LOGASSERT(NULL != console);
     return console->error;
@@ -296,7 +296,7 @@ uint32_t OS_Console_GetError(const OS_Console_t* console)
  * \par Details:
  *  None
  */
-bool_t OS_Console_IsAvailable(const OS_Console_t* console)
+extern FORCE_INLINE bool_t OS_Console_IsAvailable(const OS_Console_t* console)
 {
     LOGASSERT(NULL != console);
     return console->available;
@@ -308,7 +308,7 @@ bool_t OS_Console_IsAvailable(const OS_Console_t* console)
  *  ReadConsoleInputEx with NOWAIT atomically consumes at most one available
  *  record. An empty input queue cannot turn a prior readiness check into a wait.
  */
-OS_Console_ReadResult_t OS_Console_ReadKey(OS_Console_t* console, OS_Console_Key_t* key)
+extern FORCE_INLINE OS_Console_ReadResult_t OS_Console_ReadKey(OS_Console_t* console, OS_Console_Key_t* key)
 {
     OS_Console_ReadResult_t result;
     bool_t                  has_error;
@@ -366,7 +366,7 @@ OS_Console_ReadResult_t OS_Console_ReadKey(OS_Console_t* console, OS_Console_Key
  *  Restoration and native handle release are separate retained obligations.
  *  No failed operation is cleared or interpreted as successful closure.
  */
-bool_t OS_Console_TryClose(OS_Console_t* console)
+extern FORCE_INLINE bool_t OS_Console_TryClose(OS_Console_t* console)
 {
     bool_t restored;
     DWORD  error;

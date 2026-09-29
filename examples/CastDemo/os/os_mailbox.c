@@ -12,6 +12,7 @@
 **===============================================================================================*/
 
 #include "os/os_mailbox.h"
+#include "os/os_compiler.h"
 #include "os/os_atomic.h"
 #include "os/os_assert.h"
 #include "os/os_types.h"
@@ -58,7 +59,7 @@
  * \par Details:
  *  Initial roles are distinct; no payload bytes are inspected or cleared.
  */
-void OS_Mailbox_Initialize(OS_Mailbox_t* mailbox)
+extern FORCE_INLINE void OS_Mailbox_Initialize(OS_Mailbox_t* mailbox)
 {
     LOGASSERT(NULL != mailbox);
 
@@ -73,7 +74,7 @@ void OS_Mailbox_Initialize(OS_Mailbox_t* mailbox)
  * \par Details:
  *  The query touches only producer-owned metadata, never the consumer's fields.
  */
-uint32_t OS_Mailbox_GetWriteIndex(const OS_Mailbox_t* mailbox)
+extern FORCE_INLINE uint32_t OS_Mailbox_GetWriteIndex(const OS_Mailbox_t* mailbox)
 {
     LOGASSERT(NULL != mailbox);
     LOGASSERT(OS_MAILBOX_SLOT_COUNT > mailbox->writer);
@@ -86,7 +87,7 @@ uint32_t OS_Mailbox_GetWriteIndex(const OS_Mailbox_t* mailbox)
  * \par Details:
  *  Readability belongs to the consumer and remains set across empty observations.
  */
-uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox)
+extern FORCE_INLINE uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox)
 {
     LOGASSERT(NULL != mailbox);
     LOGASSERT(mailbox->readable);
@@ -101,7 +102,7 @@ uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox)
  *  Release publishes completed payload writes; acquire prevents reuse of a
  *  former reader slot before that consumer has finished its previous borrow.
  */
-void OS_Mailbox_Publish(OS_Mailbox_t* mailbox)
+extern FORCE_INLINE void OS_Mailbox_Publish(OS_Mailbox_t* mailbox)
 {
     uint32_t writer;
     uint32_t previous;
@@ -121,7 +122,7 @@ void OS_Mailbox_Publish(OS_Mailbox_t* mailbox)
  *  exchanges may replace the value but leave it pending. The acquired reader
  *  slot cannot return to the producer until this consumer exchanges it away.
  */
-bool_t OS_Mailbox_TryTake(OS_Mailbox_t* mailbox)
+extern FORCE_INLINE bool_t OS_Mailbox_TryTake(OS_Mailbox_t* mailbox)
 {
     uint32_t publication;
     bool_t   available;

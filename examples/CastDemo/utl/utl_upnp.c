@@ -133,7 +133,7 @@ static FORCE_INLINE bool_t FindUnique(const Utl_Xml_Document_t* document,
  * \par Details:
  *  None
  */
-void Utl_Upnp_InitializeDescription(Utl_Upnp_Description_t* description)
+extern FORCE_INLINE void Utl_Upnp_InitializeDescription(Utl_Upnp_Description_t* description)
 {
     LOGASSERT(NULL != description);
     description->device       = NULL;

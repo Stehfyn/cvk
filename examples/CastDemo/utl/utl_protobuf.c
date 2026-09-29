@@ -363,7 +363,7 @@ static FORCE_INLINE bool_t SkipGroup(uint32_t* cursor, uint32_t number, const by
  *  Intermediate length arithmetic is 64-bit; the public count is narrowed only
  *  after the complete record has been proven representable.
  */
-uint32_t Utl_Protobuf_GetFieldByteCount(const Utl_Protobuf_Field_t* field)
+extern FORCE_INLINE uint32_t Utl_Protobuf_GetFieldByteCount(const Utl_Protobuf_Field_t* field)
 {
     uint32_t count;
     bool_t   has_field;
@@ -436,7 +436,7 @@ uint32_t Utl_Protobuf_GetFieldByteCount(const Utl_Protobuf_Field_t* field)
  *  The tenth-byte check precedes the shift into bit 63. No failed parse publishes
  *  either the accumulated integer or its partial width.
  */
-bool_t Utl_Protobuf_ReadVarint(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Protobuf_ReadVarint(uint64_t* value, uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t   has_value;
     bool_t   has_count;
@@ -528,7 +528,7 @@ uint32_t Utl_Protobuf_WriteVarint(uint64_t value, byte_t* buffer, uint32_t capac
  *  Counts are subtracted from the available span before each payload access.
  *  A local field records borrowed data only after all bounds have been checked.
  */
-bool_t Utl_Protobuf_ReadField(Utl_Protobuf_Field_t* field, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Protobuf_ReadField(Utl_Protobuf_Field_t* field, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t               has_field;
     bool_t               valid;
@@ -578,7 +578,7 @@ bool_t Utl_Protobuf_ReadField(Utl_Protobuf_Field_t* field, const byte_t* buffer,
  * \par Details:
  *  FieldByteCount validates all forms before the writer changes output.
  */
-uint32_t Utl_Protobuf_WriteField(const Utl_Protobuf_Field_t* field, byte_t* buffer, uint32_t capacity)
+extern FORCE_INLINE uint32_t Utl_Protobuf_WriteField(const Utl_Protobuf_Field_t* field, byte_t* buffer, uint32_t capacity)
 {
     uint32_t required;
     uint32_t written;
@@ -651,7 +651,7 @@ uint32_t Utl_Protobuf_WriteField(const Utl_Protobuf_Field_t* field, byte_t* buff
  *  A fixed stack validates nested group numbers without recursive calls.
  *  The source cursor advances only by a complete validated record.
  */
-bool_t Utl_Protobuf_SkipField(uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
+extern FORCE_INLINE bool_t Utl_Protobuf_SkipField(uint32_t* bytesRead, const byte_t* buffer, uint32_t byteCount)
 {
     bool_t               has_output;
     bool_t               valid;
