@@ -248,11 +248,12 @@ static void CreateDevice(VideoRenderer* r)
 static void CreateSharedImage(VideoRenderer* r, Image* image, UINT width, UINT height, VkFormat format, DXGI_FORMAT d3dFormat, BOOL output)
 {
     VkImageUsageFlags usage  = output ? (VkImageUsageFlags)VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT : (VkImageUsageFlags)VK_IMAGE_USAGE_SAMPLED_BIT;
-    VkExtent2D        extent = {width, height};
+    VkExtent2D        extent;
     IDXGIResource1*   resource;
     HANDLE            handle;
     DXGI_SAMPLE_DESC  sample = {1, 0};
 
+    cvkInitExtent2D(&extent, width, height);
     if (!cvkGetPhysicalDeviceD3D11Texture2DImportSupport(r->physical, format, usage))
     {
         Fail(TEXT("The Vulkan driver cannot import the shared video plane or output texture."));
@@ -518,8 +519,9 @@ static FORCE_INLINE void RecreateFrame(VideoRenderer* renderer,
 
 void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
 {
-    VkExtent2D extent = {width, height};
+    VkExtent2D extent;
     CVK_ASSERT(width && height && !(width & 1) && !(height & 1));
+    cvkInitExtent2D(&extent, width, height);
     cvkDeviceWaitIdle(r->device);
     DestroyImage(r, &r->converted);
     RecreateFrame(r, &r->ring[0], r->frames[0], width, height);
@@ -658,8 +660,6 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         cvkBeginOneTimeCommandBuffer(r->command, NULL);
         if (convert)
         {
-            VkExtent2D convertedExtent = {r->converted.width, r->converted.height};
-
             cvkCmdAcquireImageFromExternal(r->command,
                                            NULL,
                                            (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
@@ -711,7 +711,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
             cvkCmdExecuteFullscreenQuadRenderPass(r->command,
                                                   r->renderPass,
                                                   r->converted.framebuffer,
-                                                  convertedExtent,
+                                                  sourceExtent,
                                                   r->pipelines[VIDEO_PASS_NV12],
                                                   r->layouts[VIDEO_PASS_NV12],
                                                   r->frames[frame_index]);
