@@ -48186,6 +48186,38 @@ extern CVK_FORCE_INLINE void cvkCmdDrawWithPushConstants(VkCommandBuffer        
     cvkCmdPushGraphicsConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
     cvkCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
+extern CVK_FORCE_INLINE void cvkCmdDrawFullscreenQuad(VkCommandBuffer commandBuffer)
+{
+    cvkCmdDraw(commandBuffer, 4, 1, 0, 0);
+}
+extern CVK_FORCE_INLINE void cvkCmdDrawFullscreenQuadWithPushConstants(VkCommandBuffer        commandBuffer,
+                                                                       VkPipeline             pipeline,
+                                                                       VkPipelineLayout       layout,
+                                                                       uint32_t               firstSet,
+                                                                       uint32_t               descriptorSetCount,
+                                                                       const VkDescriptorSet* pDescriptorSets,
+                                                                       uint32_t               dynamicOffsetCount,
+                                                                       const uint32_t*        pDynamicOffsets,
+                                                                       uint32_t               pushConstantOffset,
+                                                                       uint32_t               pushConstantSize,
+                                                                       const void*            pPushConstants)
+{
+    cvkCmdDrawWithPushConstants(commandBuffer,
+                                pipeline,
+                                layout,
+                                firstSet,
+                                descriptorSetCount,
+                                pDescriptorSets,
+                                dynamicOffsetCount,
+                                pDynamicOffsets,
+                                4,
+                                1,
+                                0,
+                                0,
+                                pushConstantOffset,
+                                pushConstantSize,
+                                pPushConstants);
+}
 extern CVK_FORCE_INLINE void cvkCmdDrawIndexedWithPushConstants(VkCommandBuffer        commandBuffer,
                                                                 VkPipeline             pipeline,
                                                                 VkPipelineLayout       layout,
@@ -51800,6 +51832,16 @@ extern CVK_FORCE_INLINE void cvkCmdDispatchComputeItems2D(VkCommandBuffer       
                                pushConstantOffset,
                                pushConstantSize,
                                pPushConstants);
+}
+extern CVK_FORCE_INLINE void cvkCmdExecuteFullscreenQuadRenderPass(VkCommandBuffer  commandBuffer,
+                                                                   VkRenderPass     renderPass,
+                                                                   VkFramebuffer    framebuffer,
+                                                                   VkExtent2D       extent,
+                                                                   VkPipeline       pipeline,
+                                                                   VkPipelineLayout layout,
+                                                                   VkDescriptorSet  descriptorSet)
+{
+    cvkCmdExecuteGraphicsRenderPass(commandBuffer, renderPass, framebuffer, extent, pipeline, layout, descriptorSet, 4);
 }
 extern CVK_FORCE_INLINE void cvkSetupVideoSession(VkPhysicalDevice             physicalDevice,
                                                   VkDevice                     device,

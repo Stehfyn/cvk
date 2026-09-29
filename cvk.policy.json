@@ -3135,6 +3135,45 @@
         }
       ]
     },
+    "cvkCmdDrawFullscreenQuad": {
+      "brief": "Draws a four-vertex fullscreen quad with a triangle-strip pipeline whose vertex shader derives positions from vertex indices.",
+      "steps": [
+        {
+          "call": "cvkCmdDraw",
+          "bind": {
+            "vertexCount": "4",
+            "instanceCount": "1",
+            "firstVertex": "0",
+            "firstInstance": "0"
+          }
+        }
+      ]
+    },
+    "cvkCmdDrawFullscreenQuadWithPushConstants": {
+      "brief": "Binds a graphics pipeline and descriptors, pushes constants, and draws a four-vertex fullscreen quad using vertex indices and triangle-strip topology.",
+      "steps": [
+        {
+          "call": "cvkCmdDrawWithPushConstants",
+          "bind": {
+            "vertexCount": "4",
+            "instanceCount": "1",
+            "firstVertex": "0",
+            "firstInstance": "0"
+          }
+        }
+      ]
+    },
+    "cvkCmdExecuteFullscreenQuadRenderPass": {
+      "brief": "Records a graphics render pass drawing a fullscreen quad with a vertex-index shader and triangle-strip pipeline.",
+      "steps": [
+        {
+          "call": "cvkCmdExecuteGraphicsRenderPass",
+          "bind": {
+            "vertexCount": "4"
+          }
+        }
+      ]
+    },
     "cvkCmdDrawIndexedWithPushConstants": {
       "brief": "Binds a graphics pipeline, its descriptor sets, and push constants, then draws indexed vertices.",
       "inputs": [

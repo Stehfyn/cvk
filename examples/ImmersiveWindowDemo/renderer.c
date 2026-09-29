@@ -611,7 +611,7 @@ extern FORCE_INLINE void VideoRenderer_BeginUpload(VideoRenderer* r, int slot)
 
 void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
 {
-    Frame*                    frame = &r->ring[FrameIndex(slot)];
+    Frame* frame = &r->ring[FrameIndex(slot)];
     cdx11DeviceContextTransferMultiplanarTexture(r->context,
                                                  r->copyVertex,
                                                  r->copyPixel,
@@ -653,9 +653,9 @@ static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UI
     {
         cvkCmdBindGraphicsPipeline(r->command, r->pipelines[pass]);
         cvkCmdBindGraphicsDescriptorSets(r->command, r->layouts[pass], 0, 1, &set, 0, NULL);
-        cvkCmdDraw(r->command, 4, 1, 0, 0);
+        cvkCmdDrawFullscreenQuad(r->command);
     }
-    else
+    else // VIDEO_PASS_BICUBIC
     {
         float constants[] = {
             1.0F / (float)width,
@@ -666,21 +666,17 @@ static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UI
             (float)r->output.height / (float)height
         };
 
-        cvkCmdDrawWithPushConstants(r->command,
-                                    r->pipelines[pass],
-                                    r->layouts[pass],
-                                    0,
-                                    1,
-                                    &set,
-                                    0,
-                                    NULL,
-                                    4,
-                                    1,
-                                    0,
-                                    0,
-                                    0,
-                                    sizeof(constants),
-                                    constants);
+        cvkCmdDrawFullscreenQuadWithPushConstants(r->command,
+                                                  r->pipelines[pass],
+                                                  r->layouts[pass],
+                                                  0,
+                                                  1,
+                                                  &set,
+                                                  0,
+                                                  NULL,
+                                                  0,
+                                                  sizeof(constants),
+                                                  constants);
     }
     cvkCmdEndExternalRenderPass(r->command,
                                 NULL,
@@ -781,14 +777,13 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
                                    (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                                    (VkDependencyFlags)0);
             }
-            cvkCmdExecuteGraphicsRenderPass(r->command,
-                                            r->renderPass,
-                                            r->converted.framebuffer,
-                                            convertedExtent,
-                                            r->pipelines[VIDEO_PASS_NV12],
-                                            r->layouts[VIDEO_PASS_NV12],
-                                            r->frames[frame_index],
-                                            4);
+            cvkCmdExecuteFullscreenQuadRenderPass(r->command,
+                                                  r->renderPass,
+                                                  r->converted.framebuffer,
+                                                  convertedExtent,
+                                                  r->pipelines[VIDEO_PASS_NV12],
+                                                  r->layouts[VIDEO_PASS_NV12],
+                                                  r->frames[frame_index]);
             cvkCmdImageBarrier(r->command,
                                NULL,
                                (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
