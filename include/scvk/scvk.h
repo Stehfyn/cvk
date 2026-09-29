@@ -954,7 +954,46 @@ void scvkSetupScratchBuffer(VkPhysicalDevice physicalDevice, VkDevice device, co
 void scvkCmdBeginRenderPassOnExternalImage(VkCommandBuffer commandBuffer, const void* pBarrierNext, VkAccessFlags dstAccessMask, VkImageLayout externalLayout, VkImageLayout renderLayout, uint32_t queueFamilyIndex, VkImage image, VkImageSubresourceRange subresourceRange, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, const void* pRenderPassNext, VkRenderPass renderPass, VkFramebuffer framebuffer, VkRect2D renderArea, uint32_t clearValueCount, const VkClearValue* pClearValues, VkSubpassContents contents);
 void scvkCmdEndRenderPassOnExternalImage(VkCommandBuffer commandBuffer, const void* pBarrierNext, VkAccessFlags srcAccessMask, VkImageLayout renderLayout, VkImageLayout externalLayout, uint32_t queueFamilyIndex, VkImage image, VkImageSubresourceRange subresourceRange, VkPipelineStageFlags srcStageMask, VkDependencyFlags dependencyFlags);
 void scvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer commandBuffer, VkImageLayout externalLayout, VkImageLayout renderLayout, uint32_t queueFamilyIndex, VkImage image, VkImageSubresourceRange subresourceRange, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet);
+void scvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffer,
+                                            VkImageLayout           externalLayout,
+                                            VkImageLayout           sampledLayout,
+                                            uint32_t                queueFamilyIndex,
+                                            uint32_t                imageCount,
+                                            const VkImage*          pImages,
+                                            VkImageSubresourceRange subresourceRange,
+                                            VkPipelineStageFlags    sampledStageMask);
+void scvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
+                                          VkImageLayout           sampledLayout,
+                                          VkImageLayout           externalLayout,
+                                          uint32_t                queueFamilyIndex,
+                                          uint32_t                imageCount,
+                                          const VkImage*          pImages,
+                                          VkImageSubresourceRange subresourceRange,
+                                          VkPipelineStageFlags    sampledStageMask);
+void scvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         commandBuffer,
+                                                  VkImageLayout           sampledLayout,
+                                                  VkImage                 image,
+                                                  VkImageSubresourceRange subresourceRange,
+                                                  VkPipelineStageFlags    sampledStageMask);
+void scvkCmdTransitionSampledImageToColorAttachment(VkCommandBuffer         commandBuffer,
+                                                   VkImageLayout           sampledLayout,
+                                                   VkImageLayout           renderLayout,
+                                                   VkImage                 image,
+                                                   VkImageSubresourceRange subresourceRange,
+                                                   VkPipelineStageFlags    sampledStageMask);
 void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer commandBuffer, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t vertexCount);
+void scvkCmdExecuteFullscreenQuadRenderPassToSampledImage(VkCommandBuffer         commandBuffer,
+                                                         VkImage                 image,
+                                                         VkImageSubresourceRange subresourceRange,
+                                                         VkImageLayout           renderLayout,
+                                                         VkImageLayout           sampledLayout,
+                                                         VkPipelineStageFlags    sampledStageMask,
+                                                         VkRenderPass            renderPass,
+                                                         VkFramebuffer           framebuffer,
+                                                         VkExtent2D              extent,
+                                                         VkPipeline              pipeline,
+                                                         VkPipelineLayout        layout,
+                                                         VkDescriptorSet         descriptorSet);
 void scvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer commandBuffer, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D extent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t vertexCount, uint32_t pushConstantSize, const void* pPushConstants);
 VKAPI_ATTR VkBool32 VKAPI_CALL scvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
 void scvkCreateDebugInstance(const void* pNext, VkInstanceCreateFlags flags, const VkApplicationInfo* pApplicationInfo, uint32_t enabledLayerCount, const char* const* ppEnabledLayerNames, uint32_t enabledExtensionCount, const char* const* ppEnabledExtensionNames, VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback, void* pUserData, const VkAllocationCallbacks* pAllocator, VkExtensionProperties pProperties[SCVK_MAX_PROPERTIES], VkInstance* pInstance, VkDebugUtilsMessengerEXT* pMessenger);

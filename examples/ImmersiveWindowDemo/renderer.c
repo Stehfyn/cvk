@@ -24,12 +24,14 @@
 #include <dxgiformat.h>
 #include <dxgicommon.h>
 #include <minwindef.h>
+#include <windef.h>
 #include <minwinbase.h>
 #include <winnt.h>
 #include <Unknwnbase.h>
 #include <winerror.h>
 #include <debugapi.h>
 #include <WinUser.h>
+#include <wingdi.h>
 #include <processthreadsapi.h>
 #include <heapapi.h>
 #include <handleapi.h>
@@ -107,7 +109,6 @@ struct VideoRenderer
     Frame                 ring[VIDEO_RENDERER_FRAMES];
     Image                 converted;
     Image                 output;
-    BOOL                  convertedInitialized;
     UINT                  outputWidth, outputHeight;
 #ifdef CVK_DEMO_VALIDATION
     VkDebugUtilsMessengerEXT messenger;
@@ -435,6 +436,13 @@ static void CreatePasses(VideoRenderer* r)
 extern FORCE_INLINE VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID3D11DeviceContext* context)
 {
     VideoRenderer* renderer = (VideoRenderer*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*renderer));
+    HDC            desktop;
+    int            desktopWidth;
+    int            desktopHeight;
+    bool_t         desktopAvailable;
+    bool_t         desktopReleased;
+    bool_t         desktopSizeValid;
+
     if (!renderer)
     {
         Fail(TEXT("Cannot allocate the video renderer."));
@@ -444,6 +452,31 @@ extern FORCE_INLINE VideoRenderer* VideoRenderer_Create(ID3D11Device* device, ID
     CreatePlaneCopyShaders(renderer);
     CreateDevice(renderer);
     CreatePasses(renderer);
+    desktop = GetDC(NULL);
+    desktopAvailable = (NULL != desktop);
+    if (!desktopAvailable)
+    {
+        Fail(TEXT("Cannot query the primary desktop size."));
+    }
+    desktopWidth = GetDeviceCaps(desktop, DESKTOPHORZRES);
+    desktopHeight = GetDeviceCaps(desktop, DESKTOPVERTRES);
+    desktopReleased = (0 != ReleaseDC(NULL, desktop));
+    if (!desktopReleased)
+    {
+        Fail(TEXT("Cannot release the primary desktop DC."));
+    }
+    desktopSizeValid = (0 < desktopWidth) && (0 < desktopHeight);
+    if (!desktopSizeValid)
+    {
+        Fail(TEXT("Cannot query the primary desktop size."));
+    }
+    CreateSharedImage(renderer,
+                      &renderer->output,
+                      (UINT)desktopWidth,
+                      (UINT)desktopHeight,
+                      VK_FORMAT_B8G8R8A8_UNORM,
+                      DXGI_FORMAT_B8G8R8A8_UNORM,
+                      TRUE);
     return renderer;
 }
 
@@ -520,6 +553,7 @@ static FORCE_INLINE void RecreateFrame(VideoRenderer* renderer,
 void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
 {
     VkExtent2D extent;
+    VkResult   result;
     CVK_ASSERT(width && height && !(width & 1) && !(height & 1));
     cvkInitExtent2D(&extent, width, height);
     cvkDeviceWaitIdle(r->device);
@@ -559,7 +593,18 @@ void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
                                                r->scale,
                                                0,
                                                0);
-    r->convertedInitialized = FALSE;
+    cvkResetCommandBuffer(r->command, (VkCommandBufferResetFlags)0);
+    cvkBeginCommandBuffer(r->command, NULL, (VkCommandBufferUsageFlags)0, NULL);
+    cvkCmdTransitionUndefinedImageToSampledImage(r->command,
+                                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                 r->converted.image,
+                                                 colorRange,
+                                                 (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    cvkEndCommandBuffer(r->command);
+    cvkResetFence(r->device, r->fence);
+    cvkQueueSubmitInfo(r->queue, NULL, 0, NULL, NULL, 1, &r->command, 0, NULL, r->fence);
+    result = cvkWaitForFenceIndefinitely(r->device, r->fence);
+    CVK_ASSERT(VK_SUCCESS == result);
     r->outputWidth = r->outputHeight = 0;
 }
 
@@ -629,24 +674,26 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     uint32_t             timeouts[3]    = {INFINITE, INFINITE, INFINITE};
     uint32_t             count          = convert ? 3 : 1;
     BOOL                 redraw;
+    bool_t               contentFitsBackBuffer;
+    bool_t               outputMatchesBackBuffer;
+    bool_t               contentWidthChanged;
+    bool_t               contentHeightChanged;
 
     frame_index = FrameIndex(slot);
     cdx11ViewGetResource((ID3D11View*)target, &backBuffer);
     cdx11UnknownQueryInterfaceAsTexture2D((IUnknown*)backBuffer, &texture);
     cdx11Texture2DGetDesc(texture, &desc);
     cdxgiUnknownRelease((IUnknown*)texture);
-    CVK_ASSERT(width <= desc.Width && height <= desc.Height);
-    if (r->output.width != desc.Width || r->output.height != desc.Height)
-    {
-        cvkDeviceWaitIdle(r->device);
-        DestroyImage(r, &r->output);
-        CreateSharedImage(r, &r->output, desc.Width, desc.Height, VK_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM, TRUE);
-        r->outputWidth = r->outputHeight = 0;
-    }
+    contentFitsBackBuffer = (width <= desc.Width) && (height <= desc.Height);
+    outputMatchesBackBuffer = (r->output.width == desc.Width) && (r->output.height == desc.Height);
+    CVK_ASSERT(contentFitsBackBuffer);
+    CVK_ASSERT(outputMatchesBackBuffer);
     /* Hover, activation and the old-geometry resize latch often repaint the
     ** same video at the same size. Keep the scaled pixels as well as the NV12
     ** conversion, so these paints only copy and draw the caption. */
-    redraw = convert || width != r->outputWidth || height != r->outputHeight;
+    contentWidthChanged = (width != r->outputWidth);
+    contentHeightChanged = (height != r->outputHeight);
+    redraw = convert || contentWidthChanged || contentHeightChanged;
     if (redraw)
     {
         VkExtent2D sourceExtent;
@@ -657,96 +704,47 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         cvkInitExtent2D(&contentExtent, width, height);
         cvkInitExtent2D(&backingExtent, r->output.width, r->output.height);
         cvkResetCommandBuffer(r->command, (VkCommandBufferResetFlags)0);
-        cvkBeginOneTimeCommandBuffer(r->command, NULL);
+        cvkBeginCommandBuffer(r->command, NULL, (VkCommandBufferUsageFlags)0, NULL);
         if (convert)
         {
-            cvkCmdAcquireImageFromExternal(r->command,
-                                           NULL,
-                                           (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                           VK_IMAGE_LAYOUT_GENERAL,
-                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                           r->family,
-                                           r->ring[frame_index].planes[0].image,
-                                           colorRange,
-                                           (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                           (VkDependencyFlags)0);
-            cvkCmdAcquireImageFromExternal(r->command,
-                                           NULL,
-                                           (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                           VK_IMAGE_LAYOUT_GENERAL,
-                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                           r->family,
-                                           r->ring[frame_index].planes[1].image,
-                                           colorRange,
-                                           (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                           (VkDependencyFlags)0);
-            if (r->convertedInitialized)
-            {
-                cvkCmdImageBarrier(r->command,
-                                   NULL,
-                                   (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                   (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                   VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                   r->converted.image,
-                                   colorRange,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                   (VkDependencyFlags)0);
-            }
-            else
-            {
-                cvkCmdImageBarrier(r->command,
-                                   NULL,
-                                   (VkAccessFlags)0,
-                                   (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                   VK_IMAGE_LAYOUT_UNDEFINED,
-                                   VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                   r->converted.image,
-                                   colorRange,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                   (VkDependencyFlags)0);
-            }
-            cvkCmdExecuteFullscreenQuadRenderPass(r->command,
-                                                  r->renderPass,
-                                                  r->converted.framebuffer,
-                                                  sourceExtent,
-                                                  r->pipelines[VIDEO_PASS_NV12],
-                                                  r->layouts[VIDEO_PASS_NV12],
-                                                  r->frames[frame_index]);
-            cvkCmdImageBarrier(r->command,
-                               NULL,
-                               (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                               (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                               VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                               VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                               r->converted.image,
-                               colorRange,
-                               (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                               (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                               (VkDependencyFlags)0);
-            cvkCmdReleaseImageToExternal(r->command,
-                                         NULL,
-                                         (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                         VK_IMAGE_LAYOUT_GENERAL,
-                                         r->family,
-                                         r->ring[frame_index].planes[0].image,
-                                         colorRange,
-                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                         (VkDependencyFlags)0);
-            cvkCmdReleaseImageToExternal(r->command,
-                                         NULL,
-                                         (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                         VK_IMAGE_LAYOUT_GENERAL,
-                                         r->family,
-                                         r->ring[frame_index].planes[1].image,
-                                         colorRange,
-                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                         (VkDependencyFlags)0);
-            r->convertedInitialized = TRUE;
+            VkImage sampledImages[2];
+
+            sampledImages[0] = r->ring[frame_index].planes[0].image;
+            sampledImages[1] = r->ring[frame_index].planes[1].image;
+            cvkCmdAcquireSampledImagesFromExternal(r->command,
+                                                   VK_IMAGE_LAYOUT_GENERAL,
+                                                   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                   r->family,
+                                                   VK_COUNT_OF(sampledImages),
+                                                   sampledImages,
+                                                   colorRange,
+                                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+            cvkCmdTransitionSampledImageToColorAttachment(r->command,
+                                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                           VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                                           r->converted.image,
+                                                           colorRange,
+                                                           (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+            cvkCmdExecuteFullscreenQuadRenderPassToSampledImage(r->command,
+                                                                 r->converted.image,
+                                                                 colorRange,
+                                                                 VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                                 (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                                                                 r->renderPass,
+                                                                 r->converted.framebuffer,
+                                                                 sourceExtent,
+                                                                 r->pipelines[VIDEO_PASS_NV12],
+                                                                 r->layouts[VIDEO_PASS_NV12],
+                                                                 r->frames[frame_index]);
+            cvkCmdReleaseSampledImagesToExternal(r->command,
+                                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                 VK_IMAGE_LAYOUT_GENERAL,
+                                                 r->family,
+                                                 VK_COUNT_OF(sampledImages),
+                                                 sampledImages,
+                                                 colorRange,
+                                                 (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
         }
         cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(r->command,
                                                              VK_IMAGE_LAYOUT_GENERAL,
@@ -801,37 +799,25 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     UINT           height         = r->converted.height;
     D3D11_BOX      source         = {0, 0, 0, width, height, 1};
     VkExtent2D     extent;
+    VkImage        sampledImages[2];
+    bool_t         frameFitsOutput;
 
     frame_index = FrameIndex(slot);
-    if (r->output.width != width || r->output.height != height)
-    {
-        cvkDeviceWaitIdle(r->device);
-        DestroyImage(r, &r->output);
-        CreateSharedImage(r, &r->output, width, height, VK_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM, TRUE);
-    }
+    sampledImages[0] = r->ring[frame_index].planes[0].image;
+    sampledImages[1] = r->ring[frame_index].planes[1].image;
+    frameFitsOutput = (width <= r->output.width) && (height <= r->output.height);
+    CVK_ASSERT(frameFitsOutput);
     cvkResetCommandBuffer(r->command, (VkCommandBufferResetFlags)0);
-    cvkBeginOneTimeCommandBuffer(r->command, NULL);
-    cvkCmdAcquireImageFromExternal(r->command,
-                                   NULL,
-                                   (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                   VK_IMAGE_LAYOUT_GENERAL,
-                                   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                   r->family,
-                                   r->ring[frame_index].planes[0].image,
-                                   colorRange,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                   (VkDependencyFlags)0);
-    cvkCmdAcquireImageFromExternal(r->command,
-                                   NULL,
-                                   (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                   VK_IMAGE_LAYOUT_GENERAL,
-                                   VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                   r->family,
-                                   r->ring[frame_index].planes[1].image,
-                                   colorRange,
-                                   (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                   (VkDependencyFlags)0);
-    cvkInitExtent2D(&extent, r->output.width, r->output.height);
+    cvkBeginCommandBuffer(r->command, NULL, (VkCommandBufferUsageFlags)0, NULL);
+    cvkCmdAcquireSampledImagesFromExternal(r->command,
+                                           VK_IMAGE_LAYOUT_GENERAL,
+                                           VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                           r->family,
+                                           VK_COUNT_OF(sampledImages),
+                                           sampledImages,
+                                           colorRange,
+                                           (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    cvkInitExtent2D(&extent, width, height);
     cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(r->command,
                                                          VK_IMAGE_LAYOUT_GENERAL,
                                                          VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -844,26 +830,14 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
                                                          r->pipelines[VIDEO_PASS_NV12],
                                                          r->layouts[VIDEO_PASS_NV12],
                                                          r->frames[frame_index]);
-    cvkCmdReleaseImageToExternal(r->command,
-                                 NULL,
-                                 (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                 VK_IMAGE_LAYOUT_GENERAL,
-                                 r->family,
-                                 r->ring[frame_index].planes[0].image,
-                                 colorRange,
-                                 (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                 (VkDependencyFlags)0);
-    cvkCmdReleaseImageToExternal(r->command,
-                                 NULL,
-                                 (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
-                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-                                 VK_IMAGE_LAYOUT_GENERAL,
-                                 r->family,
-                                 r->ring[frame_index].planes[1].image,
-                                 colorRange,
-                                 (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                                 (VkDependencyFlags)0);
+    cvkCmdReleaseSampledImagesToExternal(r->command,
+                                         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                         VK_IMAGE_LAYOUT_GENERAL,
+                                         r->family,
+                                         VK_COUNT_OF(sampledImages),
+                                         sampledImages,
+                                         colorRange,
+                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     cvkEndCommandBuffer(r->command);
     syncs[0] = r->output.memory;
     syncs[1] = r->ring[frame_index].planes[0].memory;

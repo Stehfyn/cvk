@@ -186,6 +186,7 @@ class Generator:
         self.input_asserts: bool = bool(policy.get("input_asserts", False))
         self.doc_comments: bool = bool(policy.get("doc_comments", True))
         self.single_line_prototypes: bool = bool(policy.get("single_line_prototypes", False))
+        self.multiline_protocol_prototypes: Set[str] = set()
         self.designated_initializers: bool = bool(policy.get("designated_initializers", True))
         self.used_capacities: Dict[str, int] = {}
         self.array_extents: Dict[str, str] = {}
@@ -2162,6 +2163,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
                 for callee in unknown:
                     self.errors.append(f"protocol {name} calls {callee}, which the generator does not produce")
             name = self.register(name, "protocol:" + os.path.basename(path))
+            if re.search(r"\\par Prototype:\s*multiline", doc):
+                self.multiline_protocol_prototypes.add(name)
             ret = sig.split(name)[0].strip()
             params: List[EmittedParam] = []
             for piece in plist.split(","):
@@ -2603,7 +2606,13 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         if not self.single_line_prototypes:
             return text
         pattern = r"(?m)^[ \t]*(?:[A-Za-z_]\w*[ \t*]+)+(?:cvk|" + re.escape(self.prefix) + r")[A-Z]\w*[ \t]*\([^;{}]*\)[ \t]*;"
-        return re.sub(pattern, lambda m: re.sub(r"\s+", " ", m.group()).strip(), text)
+        def format_prototype(match: re.Match) -> str:
+            name = re.search(r"\b(?:cvk|" + re.escape(self.prefix) + r")[A-Z]\w*", match.group())
+            if name and name.group() in self.multiline_protocol_prototypes:
+                return match.group().strip()
+            return re.sub(r"\s+", " ", match.group()).strip()
+
+        return re.sub(pattern, format_prototype, text)
 
     def prototype_block(self, declarations: str) -> str:
         if not self.single_line_prototypes:

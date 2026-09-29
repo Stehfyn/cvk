@@ -12977,6 +12977,93 @@ extern SCVK_FORCE_INLINE void scvkCmdExecuteFullscreenQuadRenderPassOnExternalIm
                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                                         (VkDependencyFlags)0);
 }
+extern SCVK_FORCE_INLINE void scvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffer,
+                                                                      VkImageLayout           externalLayout,
+                                                                      VkImageLayout           sampledLayout,
+                                                                      uint32_t                queueFamilyIndex,
+                                                                      uint32_t                imageCount,
+                                                                      const VkImage*          pImages,
+                                                                      VkImageSubresourceRange subresourceRange,
+                                                                      VkPipelineStageFlags    sampledStageMask)
+{
+    uint32_t imageIndex;
+
+    for (imageIndex = 0; imageIndex < imageCount; ++imageIndex)
+    {
+        scvkCmdAcquireImageFromExternal(commandBuffer,
+                                        NULL,
+                                        (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                                        externalLayout,
+                                        sampledLayout,
+                                        queueFamilyIndex,
+                                        pImages[imageIndex],
+                                        subresourceRange,
+                                        sampledStageMask,
+                                        (VkDependencyFlags)0);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
+                                                                    VkImageLayout           sampledLayout,
+                                                                    VkImageLayout           externalLayout,
+                                                                    uint32_t                queueFamilyIndex,
+                                                                    uint32_t                imageCount,
+                                                                    const VkImage*          pImages,
+                                                                    VkImageSubresourceRange subresourceRange,
+                                                                    VkPipelineStageFlags    sampledStageMask)
+{
+    uint32_t imageIndex;
+
+    for (imageIndex = 0; imageIndex < imageCount; ++imageIndex)
+    {
+        scvkCmdReleaseImageToExternal(commandBuffer,
+                                      NULL,
+                                      (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                                      sampledLayout,
+                                      externalLayout,
+                                      queueFamilyIndex,
+                                      pImages[imageIndex],
+                                      subresourceRange,
+                                      sampledStageMask,
+                                      (VkDependencyFlags)0);
+    }
+}
+extern SCVK_FORCE_INLINE void scvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         commandBuffer,
+                                                                            VkImageLayout           sampledLayout,
+                                                                            VkImage                 image,
+                                                                            VkImageSubresourceRange subresourceRange,
+                                                                            VkPipelineStageFlags    sampledStageMask)
+{
+    scvkCmdImageBarrier(commandBuffer,
+                        NULL,
+                        (VkAccessFlags)0,
+                        (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                        VK_IMAGE_LAYOUT_UNDEFINED,
+                        sampledLayout,
+                        image,
+                        subresourceRange,
+                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                        sampledStageMask,
+                        (VkDependencyFlags)0);
+}
+extern SCVK_FORCE_INLINE void scvkCmdTransitionSampledImageToColorAttachment(VkCommandBuffer         commandBuffer,
+                                                                             VkImageLayout           sampledLayout,
+                                                                             VkImageLayout           renderLayout,
+                                                                             VkImage                 image,
+                                                                             VkImageSubresourceRange subresourceRange,
+                                                                             VkPipelineStageFlags    sampledStageMask)
+{
+    scvkCmdImageBarrier(commandBuffer,
+                        NULL,
+                        (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                        (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                        sampledLayout,
+                        renderLayout,
+                        image,
+                        subresourceRange,
+                        sampledStageMask,
+                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                        (VkDependencyFlags)0);
+}
 extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                                                VkRenderPass     renderPass,
                                                                VkFramebuffer    framebuffer,
@@ -12998,6 +13085,32 @@ extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  
     scvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
     scvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
     scvkCmdEndRenderPass(commandBuffer);
+}
+extern SCVK_FORCE_INLINE void scvkCmdExecuteFullscreenQuadRenderPassToSampledImage(VkCommandBuffer         commandBuffer,
+                                                                                   VkImage                 image,
+                                                                                   VkImageSubresourceRange subresourceRange,
+                                                                                   VkImageLayout           renderLayout,
+                                                                                   VkImageLayout           sampledLayout,
+                                                                                   VkPipelineStageFlags    sampledStageMask,
+                                                                                   VkRenderPass            renderPass,
+                                                                                   VkFramebuffer           framebuffer,
+                                                                                   VkExtent2D              extent,
+                                                                                   VkPipeline              pipeline,
+                                                                                   VkPipelineLayout        layout,
+                                                                                   VkDescriptorSet         descriptorSet)
+{
+    scvkCmdExecuteGraphicsRenderPass(commandBuffer, renderPass, framebuffer, extent, pipeline, layout, descriptorSet, 4);
+    scvkCmdImageBarrier(commandBuffer,
+                        NULL,
+                        (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                        (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                        renderLayout,
+                        sampledLayout,
+                        image,
+                        subresourceRange,
+                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                        sampledStageMask,
+                        (VkDependencyFlags)0);
 }
 extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBuffer,
                                                                                 VkRenderPass     renderPass,

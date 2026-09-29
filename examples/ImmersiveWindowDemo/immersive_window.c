@@ -432,12 +432,17 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
     bool_t has_width;
     bool_t has_height;
     BOOL got_client_rect;
+    HDC desktop;
+    int desktop_width;
+    int desktop_height;
+    bool_t desktop_available;
+    bool_t desktop_released;
+    bool_t desktop_size_valid;
 
     if (NULL != pw->pD3D11Device)
     {
         return 0;
     }
-    /* Window metrics can lag creation; the first frame resizes the fallback swap chain. */
     got_client_rect = GetClientRect(hWnd, &client);
     has_width = (0 < client.right) && got_client_rect;
     has_height = (0 < client.bottom) && got_client_rect;
@@ -464,8 +469,17 @@ static LRESULT OnInitD2D(HWND hWnd, LPIMMERSIVEWINDOW pw)
 
     cdxgiDeviceGetAdapter((IDXGIDevice*)dxgiDevice, &adapter);
     cdxgiObjectGetParentAsFactory2((IDXGIObject*)adapter, &factory);
+    desktop = GetDC(NULL);
+    desktop_available = (NULL != desktop);
+    Check(desktop_available, TEXT("primary desktop DC"));
+    desktop_width = GetDeviceCaps(desktop, DESKTOPHORZRES);
+    desktop_height = GetDeviceCaps(desktop, DESKTOPVERTRES);
+    desktop_released = (0 != ReleaseDC(NULL, desktop));
+    Check(desktop_released, TEXT("release primary desktop DC"));
+    desktop_size_valid = (0 < desktop_width) && (0 < desktop_height);
+    Check(desktop_size_valid, TEXT("primary desktop size"));
     cdxgiFactoryCreateSwapChainForComposition(factory, (IUnknown*)d3dDevice,
-        (UINT)pw->szClient.cx, (UINT)pw->szClient.cy, DXGI_FORMAT_B8G8R8A8_UNORM, FALSE, sample,
+        (UINT)desktop_width, (UINT)desktop_height, DXGI_FORMAT_B8G8R8A8_UNORM, FALSE, sample,
         DXGI_USAGE_RENDER_TARGET_OUTPUT, 2, DXGI_SCALING_STRETCH, DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL,
         DXGI_ALPHA_MODE_IGNORE, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT, NULL, &swapChain);
     cdxgiFactoryMakeWindowAssociation((IDXGIFactory*)factory, hWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
@@ -1357,17 +1371,6 @@ static void RenderFrame(HWND hWnd, LPIMMERSIVEWINDOW pw, LONG width, LONG height
     WaitForFrameSlot(pw);
     if (pw->szClient.cx != (LONG)safe_width || pw->szClient.cy != (LONG)safe_height)
     {
-        IDXGISurface* surface;
-        /* ResizeBuffers requires every direct AND indirect back-buffer reference
-        ** to be released, including the D2D context's current target. */
-        cd2dDeviceContextClearTarget(pw->pD2D1DeviceContext);
-        cdxgiUnknownRelease((IUnknown*)pw->pTargetBitmap);
-        pw->pTargetBitmap = NULL;
-        cdxgiSwapChainResizeBuffers(swapChain, 0, safe_width, safe_height,
-            DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
-        cdxgiSwapChainGetBufferAsSurface(swapChain, 0, &surface);
-        cd2dDeviceContextCreateTargetBitmapFromSurface(pw->pD2D1DeviceContext, surface, DXGI_FORMAT_B8G8R8A8_UNORM, &pw->pTargetBitmap);
-        cdxgiUnknownRelease((IUnknown*)surface);
         pw->szClient.cx = (LONG)safe_width;
         pw->szClient.cy = (LONG)safe_height;
         presentFlags |= DXGI_PRESENT_RESTART;

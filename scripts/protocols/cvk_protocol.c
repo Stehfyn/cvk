@@ -173,6 +173,144 @@ void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer       
 }
 
 /**
+ * \brief Acquires externally owned images for shader sampling.
+ * \par Prototype: multiline
+ * \param[in] commandBuffer Command buffer recording the acquires.
+ * \param[in] externalLayout Layout held by the external owner.
+ * \param[in] sampledLayout Layout used while sampling.
+ * \param[in] queueFamilyIndex Queue family recording the acquires.
+ * \param[in] imageCount Number of images to acquire.
+ * \param[in] pImages Images to acquire.
+ * \param[in] subresourceRange Subresources of each image.
+ * \param[in] sampledStageMask Shader stages that sample the images.
+ * \retval None
+ */
+void cvkCmdAcquireSampledImagesFromExternal(VkCommandBuffer         commandBuffer,
+                                            VkImageLayout           externalLayout,
+                                            VkImageLayout           sampledLayout,
+                                            uint32_t                queueFamilyIndex,
+                                            uint32_t                imageCount,
+                                            const VkImage*          pImages,
+                                            VkImageSubresourceRange subresourceRange,
+                                            VkPipelineStageFlags    sampledStageMask)
+{
+    uint32_t imageIndex;
+
+    for (imageIndex = 0; imageIndex < imageCount; ++imageIndex)
+    {
+        cvkCmdAcquireImageFromExternal(commandBuffer,
+                                       NULL,
+                                       (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                                       externalLayout,
+                                       sampledLayout,
+                                       queueFamilyIndex,
+                                       pImages[imageIndex],
+                                       subresourceRange,
+                                       sampledStageMask,
+                                       (VkDependencyFlags)0);
+    }
+}
+
+/**
+ * \brief Releases shader-sampled images to an external owner.
+ * \par Prototype: multiline
+ * \param[in] commandBuffer Command buffer recording the releases.
+ * \param[in] sampledLayout Layout used while sampling.
+ * \param[in] externalLayout Layout required by the external owner.
+ * \param[in] queueFamilyIndex Queue family recording the releases.
+ * \param[in] imageCount Number of images to release.
+ * \param[in] pImages Images to release.
+ * \param[in] subresourceRange Subresources of each image.
+ * \param[in] sampledStageMask Shader stages that sampled the images.
+ * \retval None
+ */
+void cvkCmdReleaseSampledImagesToExternal(VkCommandBuffer         commandBuffer,
+                                          VkImageLayout           sampledLayout,
+                                          VkImageLayout           externalLayout,
+                                          uint32_t                queueFamilyIndex,
+                                          uint32_t                imageCount,
+                                          const VkImage*          pImages,
+                                          VkImageSubresourceRange subresourceRange,
+                                          VkPipelineStageFlags    sampledStageMask)
+{
+    uint32_t imageIndex;
+
+    for (imageIndex = 0; imageIndex < imageCount; ++imageIndex)
+    {
+        cvkCmdReleaseImageToExternal(commandBuffer,
+                                     NULL,
+                                     (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                                     sampledLayout,
+                                     externalLayout,
+                                     queueFamilyIndex,
+                                     pImages[imageIndex],
+                                     subresourceRange,
+                                     sampledStageMask,
+                                     (VkDependencyFlags)0);
+    }
+}
+
+/**
+ * \brief Transitions a new image from undefined to a shader-sampled layout.
+ * \par Prototype: multiline
+ * \param[in] commandBuffer Command buffer recording the transition.
+ * \param[in] sampledLayout Layout used while sampling.
+ * \param[in] image Image to transition.
+ * \param[in] subresourceRange Subresources to transition.
+ * \param[in] sampledStageMask Shader stages that sample the image.
+ * \retval None
+ */
+void cvkCmdTransitionUndefinedImageToSampledImage(VkCommandBuffer         commandBuffer,
+                                                  VkImageLayout           sampledLayout,
+                                                  VkImage                 image,
+                                                  VkImageSubresourceRange subresourceRange,
+                                                  VkPipelineStageFlags    sampledStageMask)
+{
+    cvkCmdImageBarrier(commandBuffer,
+                       NULL,
+                       (VkAccessFlags)0,
+                       (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                       VK_IMAGE_LAYOUT_UNDEFINED,
+                       sampledLayout,
+                       image,
+                       subresourceRange,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                       sampledStageMask,
+                       (VkDependencyFlags)0);
+}
+
+/**
+ * \brief Transitions a sampled image for color attachment writes.
+ * \par Prototype: multiline
+ * \param[in] commandBuffer Command buffer recording the transition.
+ * \param[in] sampledLayout Previous sampled-image layout.
+ * \param[in] renderLayout Layout required by the render pass.
+ * \param[in] image Image to transition.
+ * \param[in] subresourceRange Subresources to transition.
+ * \param[in] sampledStageMask Shader stages that sampled the image.
+ * \retval None
+ */
+void cvkCmdTransitionSampledImageToColorAttachment(VkCommandBuffer         commandBuffer,
+                                                   VkImageLayout           sampledLayout,
+                                                   VkImageLayout           renderLayout,
+                                                   VkImage                 image,
+                                                   VkImageSubresourceRange subresourceRange,
+                                                   VkPipelineStageFlags    sampledStageMask)
+{
+    cvkCmdImageBarrier(commandBuffer,
+                       NULL,
+                       (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                       sampledLayout,
+                       renderLayout,
+                       image,
+                       subresourceRange,
+                       sampledStageMask,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                       (VkDependencyFlags)0);
+}
+
+/**
  * \brief Records a graphics render pass that draws non-indexed vertices without push constants.
  * \param[in] commandBuffer Command buffer recording the pass.
  * \param[in] renderPass Render pass to begin.
@@ -218,6 +356,57 @@ void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                      NULL);
     cvkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
     cvkCmdEndRenderPass(commandBuffer);
+}
+
+/**
+ * \brief Executes a fullscreen color pass and leaves its image ready for shader sampling.
+ * \par Prototype: multiline
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] image Color attachment already in renderLayout that becomes a sampled image.
+ * \param[in] subresourceRange Color attachment subresources.
+ * \param[in] renderLayout Layout required by the render pass.
+ * \param[in] sampledLayout Layout used while sampling.
+ * \param[in] sampledStageMask Shader stages that sample the image.
+ * \param[in] renderPass Render pass that leaves the image in color attachment layout.
+ * \param[in] framebuffer Target framebuffer.
+ * \param[in] extent Render area, viewport, and scissor extent.
+ * \param[in] pipeline Fullscreen triangle-strip pipeline.
+ * \param[in] layout Pipeline layout for the descriptor set.
+ * \param[in] descriptorSet Descriptor set bound at set zero.
+ * \retval None
+ */
+void cvkCmdExecuteFullscreenQuadRenderPassToSampledImage(VkCommandBuffer         commandBuffer,
+                                                         VkImage                 image,
+                                                         VkImageSubresourceRange subresourceRange,
+                                                         VkImageLayout           renderLayout,
+                                                         VkImageLayout           sampledLayout,
+                                                         VkPipelineStageFlags    sampledStageMask,
+                                                         VkRenderPass            renderPass,
+                                                         VkFramebuffer           framebuffer,
+                                                         VkExtent2D              extent,
+                                                         VkPipeline              pipeline,
+                                                         VkPipelineLayout        layout,
+                                                         VkDescriptorSet         descriptorSet)
+{
+    cvkCmdExecuteGraphicsRenderPass(commandBuffer,
+                                    renderPass,
+                                    framebuffer,
+                                    extent,
+                                    pipeline,
+                                    layout,
+                                    descriptorSet,
+                                    4);
+    cvkCmdImageBarrier(commandBuffer,
+                       NULL,
+                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                       (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,
+                       renderLayout,
+                       sampledLayout,
+                       image,
+                       subresourceRange,
+                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                       sampledStageMask,
+                       (VkDependencyFlags)0);
 }
 
 /**
