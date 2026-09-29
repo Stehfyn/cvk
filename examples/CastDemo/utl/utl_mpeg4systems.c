@@ -86,12 +86,15 @@ typedef struct DescriptorPrefix_s
 /**
  * \brief Checks a counted storage precondition.
  *
+ * \par Details:
+ *  Storage precondition checked.
+ *
  * \par Requirements:
  *  - 001 A nonempty span shall have readable storage; misuse shall assert.
  *
  * \param[in] span   Counted borrowed bytes
  *
- * \retval None Storage precondition checked.
+ * \retval None
  */
 static FORCE_INLINE void AssertSpan(Utl_Mpeg4_Span_t span);
 
@@ -191,6 +194,9 @@ static FORCE_INLINE bool_t ReadUrl(Utl_Mpeg4_Span_t* url, DescriptorCursor_t* cu
 /**
  * \brief Writes a validated big-endian field into preflighted output.
  *
+ * \par Details:
+ *  Field and cursor written.
+ *
  * \par Requirements:
  *  - 001 Width shall be one through four and the caller shall reserve that many writable bytes.
  *  - 002 The value shall fit the selected field width.
@@ -199,7 +205,7 @@ static FORCE_INLINE bool_t ReadUrl(Utl_Mpeg4_Span_t* url, DescriptorCursor_t* cu
  * \param[in,out] cursor   Required output offset
  * \param[in]     field    Field value and byte width
  *
- * \retval None Field and cursor written.
+ * \retval None
  */
 static FORCE_INLINE void WriteInteger(byte_t* output, uint32_t* cursor, Utl_Mpeg4_Integer_t field);
 

@@ -74,7 +74,7 @@ typedef struct Gfx_Display_CreateInfo_t
  * \param[out] ppDisplay          Receives a non-NULL display object retained for process lifetime
  * \param[in]  pCreateInfo        Non-NULL configuration containing a supported display kind
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 void Gfx_Display_Create(Gfx_Display_t** ppDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 

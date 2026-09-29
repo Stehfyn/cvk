@@ -190,6 +190,9 @@ typedef struct Utl_Json_Reader_s
 /**
  * \brief Initializes explicit output or counting mode with caller-owned storage.
  *
+ * \par Details:
+ *  A fresh writer is ready.
+ *
  * \par Requirements:
  *  - 001 Required writer and nonempty frame storage shall assert when absent.
  *  - 002 NULL output shall explicitly select counting mode; capacity shall still bound the result.
@@ -202,7 +205,7 @@ typedef struct Utl_Json_Reader_s
  * \param[out]    buffer          Writable bytes, or NULL for counting
  * \param[in]     capacity        Output/counting limit
  *
- * \retval None   A fresh writer is ready.
+ * \retval None
  */
 void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
                                Utl_Json_Frame_t*  frames,
@@ -214,6 +217,9 @@ void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
 /**
  * \brief Binds reusable caller-owned records before document reads.
  *
+ * \par Details:
+ *  An empty READY reader is established.
+ *
  * \par Requirements:
  *  - 001 Missing storage or zero capacity shall assert as developer misuse.
  *  - 002 No record contents, input, allocation, native resources or global state shall be accessed.
@@ -223,7 +229,7 @@ void Utl_Json_InitializeWriter(Utl_Json_Writer_t* writer,
  * \param[out] values     Exclusive storage retained through all document borrows
  * \param[in]  capacity   Positive writable record count
  *
- * \retval None   An empty READY reader is established.
+ * \retval None
  */
 void Utl_Json_InitializeReader(Utl_Json_Reader_t* reader, Utl_Json_Value_t* values, uint32_t capacity);
 

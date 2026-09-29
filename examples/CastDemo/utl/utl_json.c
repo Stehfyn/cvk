@@ -181,6 +181,9 @@ static FORCE_INLINE bool_t GetIntegerMagnitude(uint64_t* magnitude, const JsonIn
 /**
  * \brief Appends one validated mantissa digit to a bounded integer summary.
  *
+ * \par Details:
+ *  Prefix and exact digit counts are updated without overflow.
+ *
  * \par Requirements:
  *  - 001 The summary shall be initialized and digit shall belong to zero through nine.
  *  - 002 At most nineteen significant digits shall be accumulated; remaining digits shall only update counts.
@@ -189,13 +192,16 @@ static FORCE_INLINE bool_t GetIntegerMagnitude(uint64_t* magnitude, const JsonIn
  * \param[in,out] number   Initialized summary
  * \param[in]     digit    Numeric digit, not an ASCII character
  *
- * \retval        None   Prefix and exact digit counts are updated without overflow.
+ * \retval        None
  */
 static FORCE_INLINE void AppendIntegerDigit(JsonInteger_t* number, uint32_t digit);
 
 /*************************************************************************************************/
 /**
  * \brief Summarizes a validated exponent without an unbounded integer accumulator.
+ *
+ * \par Details:
+ *  Exponent sign, magnitude and overflow status are retained.
  *
  * \par Requirements:
  *  - 001 The cursor shall point at the first byte after an exponent marker in valid JSON number syntax.
@@ -205,7 +211,7 @@ static FORCE_INLINE void AppendIntegerDigit(JsonInteger_t* number, uint32_t digi
  * \param[in,out] number   Initialized summary
  * \param[in,out] cursor   Remaining validated exponent bytes
  *
- * \retval        None   Exponent sign, magnitude and overflow status are retained.
+ * \retval        None
  */
 static FORCE_INLINE void ReadIntegerExponent(JsonInteger_t* number, JsonCursor_t* cursor);
 
@@ -286,13 +292,16 @@ static FORCE_INLINE bool_t Reserve(Utl_Json_Writer_t* writer, uint64_t bytes);
 /**
  * \brief Copies preflighted bytes or advances the counting pass.
  *
+ * \par Details:
+ *  Byte count advances.
+ *
  * \par Requirements:
  *  - 001 Input storage and writer invariants shall be established by the calling stage.
  *
  * \param[in,out] writer   Preflighted writer
  * \param[in]     text     Disjoint counted source
  *
- * \retval None   Byte count advances.
+ * \retval None
  */
 static FORCE_INLINE void EmitBytes(Utl_Json_Writer_t* writer, Utl_Json_Text_t text);
 
@@ -300,13 +309,16 @@ static FORCE_INLINE void EmitBytes(Utl_Json_Writer_t* writer, Utl_Json_Text_t te
 /**
  * \brief Emits one already reserved syntax byte.
  *
+ * \par Details:
+ *  Byte count advances by one.
+ *
  * \par Requirements:
  *  - 001 Input storage and writer invariants shall be established by the calling stage.
  *
  * \param[in,out] writer   Preflighted writer
  * \param[in]     value    Syntax byte
  *
- * \retval None   Byte count advances by one.
+ * \retval None
  */
 static FORCE_INLINE void EmitByte(Utl_Json_Writer_t* writer, byte_t value);
 
@@ -314,13 +326,16 @@ static FORCE_INLINE void EmitByte(Utl_Json_Writer_t* writer, byte_t value);
 /**
  * \brief Emits preflighted validated UTF-8 as a quoted JSON string.
  *
+ * \par Details:
+ *  Complete string emitted.
+ *
  * \par Requirements:
  *  - 001 Input storage and writer invariants shall be established by the calling stage.
  *
  * \param[in,out] writer   Preflighted writer
  * \param[in]     text     Valid disjoint UTF-8
  *
- * \retval None   Complete string emitted.
+ * \retval None
  */
 static FORCE_INLINE void EmitString(Utl_Json_Writer_t* writer, Utl_Json_Text_t text);
 
@@ -343,12 +358,15 @@ static FORCE_INLINE bool_t PrepareValue(Utl_Json_Writer_t* writer, uint32_t byte
 /**
  * \brief Emits a preflighted array element separator when needed.
  *
+ * \par Details:
+ *  Optional comma emitted.
+ *
  * \par Requirements:
  *  - 001 Input storage and writer invariants shall be established by the calling stage.
  *
  * \param[in,out] writer   Preflighted value position
  *
- * \retval None   Optional comma emitted.
+ * \retval None
  */
 static FORCE_INLINE void EmitPrefix(Utl_Json_Writer_t* writer);
 
@@ -356,12 +374,15 @@ static FORCE_INLINE void EmitPrefix(Utl_Json_Writer_t* writer);
 /**
  * \brief Commits one parent value after all its bytes are written.
  *
+ * \par Details:
+ *  Parent grammar advances.
+ *
  * \par Requirements:
  *  - 001 Input storage and writer invariants shall be established by the calling stage.
  *
  * \param[in,out] writer   Preflighted value position
  *
- * \retval None   Parent grammar advances.
+ * \retval None
  */
 static FORCE_INLINE void CompleteValue(Utl_Json_Writer_t* writer);
 
@@ -529,13 +550,16 @@ static FORCE_INLINE bool_t IsDecodedEqual(Utl_Json_Text_t encoded, Utl_Json_Text
 /**
  * \brief Advances past JSON whitespace within a counted source.
  *
+ * \par Details:
+ *  Offset advances without passing the source end.
+ *
  * \par Requirements:
  *  - 001 The cursor shall own a valid bounded input offset.
  *  - 002 Only consecutive JSON whitespace shall be consumed; no byte beyond the counted end shall be accessed.
  *
  * \param[in,out] cursor   Valid counted source cursor
  *
- * \retval None   Offset advances without passing the source end.
+ * \retval None
  */
 static FORCE_INLINE void SkipJsonSpace(JsonCursor_t* cursor);
 
@@ -593,6 +617,9 @@ static FORCE_INLINE bool_t ReadJsonNumber(JsonCursor_t* cursor, Utl_Json_Text_t*
 /**
  * \brief Publishes one validated record and updates the container traversal state.
  *
+ * \par Details:
+ *  The record is published and the next grammar phase is established.
+ *
  * \par Requirements:
  *  - 001 The next record at reader valueCount shall be initialized after capacity and syntax validation.
  *  - 002 Existing parent and sibling links shall identify earlier records owned by the same reader.
@@ -601,13 +628,16 @@ static FORCE_INLINE bool_t ReadJsonNumber(JsonCursor_t* cursor, Utl_Json_Text_t*
  * \param[in,out] parser      Exclusive valid parser state
  * \param[in]     container   Whether the record opens a new object or array
  *
- * \retval None   The record is published and the next grammar phase is established.
+ * \retval None
  */
 static FORCE_INLINE void AppendJsonValue(JsonParser_t* parser, bool_t container);
 
 /*************************************************************************************************/
 /**
  * \brief Appends one value and enters its container without recursion.
+ *
+ * \par Details:
+ *  One value is appended or failure is latched.
  *
  * \par Requirements:
  *  - 001 The parser shall retain exclusive reader storage and valid parent links.
@@ -617,13 +647,16 @@ static FORCE_INLINE void AppendJsonValue(JsonParser_t* parser, bool_t container)
  * \param[in,out] parser   Valid parser at the next value
  * \param[in]     name     Raw object-member name, or an absent span
  *
- * \retval None   One value is appended or failure is latched.
+ * \retval None
  */
 static FORCE_INLINE void ReadJsonValue(JsonParser_t* parser, Utl_Json_Text_t name);
 
 /*************************************************************************************************/
 /**
  * \brief Reads a required array value or object name/colon/value sequence.
+ *
+ * \par Details:
+ *  One child is entered or failure is latched.
  *
  * \par Requirements:
  *  - 001 The parser parent shall refer to an admitted open object or array.
@@ -632,13 +665,16 @@ static FORCE_INLINE void ReadJsonValue(JsonParser_t* parser, Utl_Json_Text_t nam
  *
  * \param[in,out] parser   Valid parser with an open parent
  *
- * \retval None   One child is entered or failure is latched.
+ * \retval None
  */
 static FORCE_INLINE void ReadJsonChild(JsonParser_t* parser);
 
 /*************************************************************************************************/
 /**
  * \brief Advances exactly one container grammar stage.
+ *
+ * \par Details:
+ *  Consumes grammar input, closes a container or rejects input.
  *
  * \par Requirements:
  *  - 001 The parser parent and phase shall describe an admitted open container.
@@ -647,7 +683,7 @@ static FORCE_INLINE void ReadJsonChild(JsonParser_t* parser);
  *
  * \param[in,out] parser   Open-container parser after whitespace
  *
- * \retval None   Consumes grammar input, closes a container or rejects input.
+ * \retval None
  */
 static FORCE_INLINE void ReadJsonContainerStep(JsonParser_t* parser);
 

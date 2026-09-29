@@ -90,13 +90,16 @@ typedef struct Utl_Avc_Config_s
 /**
  * \brief Initializes an empty caller-owned model without inventing a codec profile.
  *
+ * \par Details:
+ *  Empty model initialized.
+ *
  * \par Requirements:
  *  - 001 A missing owner shall assert.
  *  - 002 All members shall be initialized; the caller shall supply a valid length width and actual codec fields before serialization.
  *
  * \param[out] config   Required exclusively writable owner
  *
- * \retval None Empty model initialized.
+ * \retval None
  */
 void Utl_Avc_InitializeConfig(Utl_Avc_Config_t* config);
 

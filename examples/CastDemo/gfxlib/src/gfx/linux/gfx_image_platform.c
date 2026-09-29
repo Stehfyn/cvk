@@ -69,7 +69,7 @@
  * \param[in,out] image   Initialized owner receiving native resources
  * \param[in] createInfo   Validated image configuration and native sharing parameters
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVaImport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -86,7 +86,7 @@ static void InitializeVaImport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t*
  * \param[in,out] image   Initialized owner receiving native resources
  * \param[in] createInfo   Validated image configuration and native sharing parameters
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVaExport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -103,7 +103,7 @@ static void InitializeVaExport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t*
  * \param[in,out] image   Initialized owner receiving native resources
  * \param[in] createInfo   Validated image configuration and native sharing parameters
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVulkanImport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -120,7 +120,7 @@ static void InitializeVulkanImport(Gfx_Image_t* image, const Gfx_Image_CreateInf
  * \param[in,out] image   Initialized owner receiving native resources
  * \param[in] createInfo   Validated image configuration and native sharing parameters
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVulkanExport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -134,7 +134,7 @@ static void InitializeVulkanExport(Gfx_Image_t* image, const Gfx_Image_CreateInf
  * \param[out] objectFds         Receives each object's borrowed file descriptor
  * \param[out] drmFormatModifier Receives the modifier shared by every object
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void GetSurfaceMemoryObjectsDrm(const VADRMPRIMESurfaceDescriptor* descriptor,
                                        uint32_t*                          objectCount,
@@ -152,7 +152,7 @@ static void GetSurfaceMemoryObjectsDrm(const VADRMPRIMESurfaceDescriptor* descri
  * \param[in]     fd              Importable file descriptor
  * \param[out]    pMemoryTypeBits Receives compatible physical-device memory-type bits
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void GetMemoryPropertiesInfoFd(VkDevice                           device,
                                       void*                              pNext,
@@ -174,7 +174,7 @@ static void GetMemoryPropertiesInfoFd(VkDevice                           device,
  * \param[in]  pAllocator      Optional host allocation callbacks
  * \param[out] pMemory         Imported dedicated memory handle
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void AllocateImportedDedicatedImageMemoryFd(VkDevice                           device,
                                                    const void*                        pNext,
@@ -200,7 +200,7 @@ static void AllocateImportedDedicatedImageMemoryFd(VkDevice                     
  * \param[in]  pAllocator      Optional Vulkan allocation callbacks, or NULL
  * \param[out] pMemory         Receives allocated memory
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SetupImportedDedicatedImageMemoryFd(VkDevice                           device,
                                                 const void*                        pNext,
@@ -237,7 +237,7 @@ static void SetupImportedDedicatedImageMemoryFd(VkDevice                        
  * \param[in]  pAllocator            Vulkan allocator, or NULL
  * \param[out] pImage                Receives the created image
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateExternalDrmFormatModifierImage(VkDevice                        device,
                                                  const void*                     pNext,
@@ -290,7 +290,7 @@ static void CreateExternalDrmFormatModifierImage(VkDevice                       
  * \param[out] pMemories                 Receives imported memory allocations
  * \param[out] pMemoryCount              Receives the initialized allocation count
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SetupImportedDrmFormatModifierImage(VkPhysicalDevice                   physicalDevice,
                                                 VkDevice                           device,
@@ -333,7 +333,7 @@ static void SetupImportedDrmFormatModifierImage(VkPhysicalDevice                
  * \param[in]  pAllocator      Optional allocation callbacks
  * \param[out] pMemory         Receives imported and bound memory
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SetupImportedImageMemoryFd(VkDevice                           device,
                                        const void*                        pNext,
@@ -368,7 +368,7 @@ static void SetupImportedImageMemoryFd(VkDevice                           device
  * \param[out] pMemory               Receives exportable memory
  * \param[out] pFd                   Receives the native exported handle
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SetupExportedMemoryBufferFd(VkPhysicalDevice                   physicalDevice,
                                         VkDevice                           device,
@@ -410,7 +410,7 @@ static void SetupExportedMemoryBufferFd(VkPhysicalDevice                   physi
  * \param[out] pMemory               Receives exportable dedicated memory
  * \param[out] pFd                   Receives the native exported handle
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SetupExportedDedicatedMemoryBufferFd(VkPhysicalDevice                   physicalDevice,
                                                  VkDevice                           device,
@@ -460,7 +460,7 @@ static void SetupExportedDedicatedMemoryBufferFd(VkPhysicalDevice               
  * \param[out] pMemories                 Receives imported memory allocations
  * \param[out] pMemoryCount              Receives the initialized allocation count
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SetupImportedDmaBufImage(VkPhysicalDevice             physicalDevice,
                                      VkDevice                     device,
@@ -497,7 +497,7 @@ static void SetupImportedDmaBufImage(VkPhysicalDevice             physicalDevice
  * \param[out] pVaFourcc         Supported VA representation, falling back to the canonical format
  * \param[out] pDrmFormat        DRM format of its composed layer
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void GetImageFormats(VkFormat format, uint32_t preferredVaFourcc, uint32_t* pVaFourcc, uint32_t* pDrmFormat);
 

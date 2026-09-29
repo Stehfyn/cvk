@@ -62,13 +62,16 @@ typedef struct Utl_Upnp_Description_s
 /**
  * \brief Establishes an empty description identity without acquiring storage.
  *
+ * \par Details:
+ *  Empty identity is established.
+ *
  * \par Requirements:
  *  - 001 Missing output shall assert as a development error.
  *  - 002 Every borrowed field shall become NULL.
  *
  * \param[out] description   Required exclusive result
  *
- * \retval     None   Empty identity is established.
+ * \retval     None
  */
 void Utl_Upnp_InitializeDescription(Utl_Upnp_Description_t* description);
 

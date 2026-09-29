@@ -137,13 +137,16 @@ typedef struct Ssdp_State_s
 /**
  * \brief Retains the first failure in the current operation.
  *
+ * \par Details:
+ *  Failure evidence is retained.
+ *
  * \par Requirements:
  *  - 001 The caller shall capture native error state before any subsequent native operation.
  *
  * \param[in,out] discovery   Initialized owner
  * \param[in]     code        Captured native or local failure code
  *
- * \retval        None   Failure evidence is retained.
+ * \retval        None
  */
 static FORCE_INLINE void RecordError(Ssdp_t* discovery, uint32_t code);
 
@@ -329,19 +332,25 @@ static FORCE_INLINE bool_t SendSearch(Ssdp_t* discovery);
 /**
  * \brief Validates one received SSDP reply and records a new bounded USN/location pair.
  *
+ * \par Details:
+ *  A valid new identity is retained when present.
+ *
  * \par Requirements:
  *  - 001 Malformed, expired, oversized, duplicate and nonmatching replies shall leave location count unchanged.
  *
  * \param[in,out] state       Exclusive native workspace with room for one more location
  * \param[in]     byteCount   Positive datagram byte count within response storage
  *
- * \retval        None   A valid new identity is retained when present.
+ * \retval        None
  */
 static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
  * \brief Collects replies within the requested reply window and output capacity.
+ *
+ * \par Details:
+ *  Valid locations and native failure evidence are retained.
  *
  * \par Requirements:
  *  - 001 Socket reads shall be nonblocking; timeout shall be recomputed before each select.
@@ -350,7 +359,7 @@ static FORCE_INLINE void ReadResponse(Ssdp_State_t* state, uint32_t byteCount);
  * \param[in]     capacity    Positive location limit no greater than CAST_MAX_DEVICES
  * \param[in]     timeoutMs   Reply window in milliseconds
  *
- * \retval        None   Valid locations and native failure evidence are retained.
+ * \retval        None
  */
 static FORCE_INLINE void CollectResponses(Ssdp_t* discovery, uint32_t capacity, uint32_t timeoutMs);
 

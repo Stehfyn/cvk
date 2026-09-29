@@ -144,6 +144,9 @@ uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* network);
 /**
  * \brief Copies one published interface into caller storage.
  *
+ * \par Details:
+ *  One interface value is copied.
+ *
  * \par Requirements:
  *  - 001 A missing output, unready owner or unpublished index shall assert.
  *  - 002 Output storage shall be disjoint from the owner and its native storage.
@@ -153,7 +156,7 @@ uint32_t OS_Network_GetInterfaceCount(const OS_Network_t* network);
  * \param[in]  index     Index less than GetInterfaceCount
  * \param[out] value     Required disjoint output
  *
- * \retval     None   One interface value is copied.
+ * \retval     None
  */
 void OS_Network_GetInterface(const OS_Network_t* network, uint32_t index, OS_Network_Interface_t* value);
 

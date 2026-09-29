@@ -61,7 +61,7 @@ static LRESULT CALLBACK ProcessWindowMessage(HWND window, UINT message, WPARAM w
  *
  * \param[in] pCreateInfo        Non-NULL configuration selecting a supported display kind
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -72,7 +72,7 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
  * \param[out] pDisplay           Receives client dimensions, module handle, and window handle
  * \param[in]  pCreateInfo        Requested client extent
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -83,7 +83,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
  * \param[out] pDisplay           Zero-initialized display storage to initialize as running
  * \param[in]  pCreateInfo        Valid display-kind selection
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 

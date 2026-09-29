@@ -60,7 +60,7 @@
  * \param[in,out] thread   Initialized thread storage
  * \param[in]     code     Native error captured immediately after failure
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void RecordError(OS_Thread_t* thread, uint32_t code);
 

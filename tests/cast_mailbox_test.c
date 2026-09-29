@@ -76,12 +76,15 @@ static const char_t        c_lastType[]  = "video/webm";
 /**
  * \brief Establishes empty implementation and oracle state while quiescent.
  *
+ * \par Details:
+ *  Both models are empty.
+ *
  * \par Requirements:
  *  - 001 No payload shall be read before publication/acquisition.
  *
  * \param[out] fixture   Required retained test state
  *
- * \retval     None   Both models are empty.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
 
@@ -89,13 +92,16 @@ static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
 /**
  * \brief Checks producer ownership and retained-reader stability across publication.
  *
+ * \par Details:
+ *  A complete new abstract value is pending.
+ *
  * \par Requirements:
  *  - 001 Publication values shall be strictly increasing in this bounded test.
  *  - 002 A prior reader slot shall remain stable and disjoint from the writable slot.
  *
  * \param[in,out] fixture   Required initialized fixture
  *
- * \retval        None   A complete new abstract value is pending.
+ * \retval        None
  */
 static FORCE_INLINE void PublishValue(Fixture_t* fixture);
 
@@ -103,13 +109,16 @@ static FORCE_INLINE void PublishValue(Fixture_t* fixture);
 /**
  * \brief Checks consumer behavior against the abstract latest-value oracle.
  *
+ * \par Details:
+ *  The observed implementation state matches the oracle.
+ *
  * \par Requirements:
  *  - 001 Availability and acquired value shall match the independent oracle.
  *  - 002 Empty reads shall preserve the prior borrow.
  *
  * \param[in,out] fixture   Required initialized fixture
  *
- * \retval        None   The observed implementation state matches the oracle.
+ * \retval        None
  */
 static FORCE_INLINE void TakeValue(Fixture_t* fixture);
 
@@ -117,11 +126,14 @@ static FORCE_INLINE void TakeValue(Fixture_t* fixture);
 /**
  * \brief Enumerates all publish/take sequences of a fixed length.
  *
+ * \par Details:
+ *  Every transition agrees with the independent latest-value model.
+ *
  * \par Requirements:
  *  - 001 Every sequence shall begin empty and finish with repeated draining attempts.
  *  - 002 No expected slot indexes shall be derived from the implementation's rotation algorithm.
  *
- * \retval None   Every transition agrees with the independent latest-value model.
+ * \retval None
  */
 static FORCE_INLINE void CheckTransitions(void);
 
@@ -129,12 +141,15 @@ static FORCE_INLINE void CheckTransitions(void);
 /**
  * \brief Checks one borrowed maximum-size publication without following caller strings.
  *
+ * \par Details:
+ *  Counts, payloads and terminators remain intact.
+ *
  * \par Requirements:
  *  - 001 Every byte and terminator shall match its independent marker.
  *
  * \param[in] media   Required acquired maximum-size pair
  *
- * \retval    None   Counts, payloads and terminators remain intact.
+ * \retval    None
  */
 static FORCE_INLINE void CheckLongPair(const CastMedia_t* media);
 
@@ -142,13 +157,16 @@ static FORCE_INLINE void CheckLongPair(const CastMedia_t* media);
 /**
  * \brief Checks coherent publication, independent channels and borrow lifetime.
  *
+ * \par Details:
+ *  Every media-publication requirement is checked.
+ *
  * \par Requirements:
  *  - 001 Changing input after publication shall not change the retained result.
  *  - 002 Repeated producer updates shall not overwrite the consumer's current borrow.
  *  - 003 The next successful acquisition shall return the latest complete pair.
  *  - 004 Quiescent initialization shall discard pending publications.
  *
- * \retval None   Every media-publication requirement is checked.
+ * \retval None
  */
 static FORCE_INLINE void CheckMedia(void);
 

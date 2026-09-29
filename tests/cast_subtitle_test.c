@@ -65,12 +65,15 @@ static FixtureWorkspace_t g_fixture;
 /**
  * \brief Checks bounded conversion, in-place source staging and reuse after failure.
  *
+ * \par Details:
+ *  Assertion failure identifies a contract violation.
+ *
  * \par Requirements:
  *  - 001 Every insufficient capacity shall publish an empty result without touching either guard.
  *  - 002 Successful conversion shall match independent expected wire bytes.
  *  - 003 A malformed conversion shall not retain an earlier result or prevent subsequent reuse.
  *
- * \retval None   Assertion failure identifies a contract violation.
+ * \retval None
  */
 static FORCE_INLINE void CheckWorkspace(void);
 
@@ -213,11 +216,14 @@ static FORCE_INLINE void CheckWorkspace(void)
 /**
  * \brief Checks timestamp boundaries and malformed SubRip input.
  *
+ * \par Details:
+ *  Failed checks assert.
+ *
  * \par Requirements:
  *  - 001 Accepted inputs shall publish complete WebVTT and rejected inputs an empty result.
  *  - 002 Every conversion shall reuse the initialized workspace and invalidate failed output.
  *
- * \retval None   No result value; failed checks assert.
+ * \retval None
  */
 static FORCE_INLINE void CheckTimestamps(void);
 
@@ -321,12 +327,15 @@ static FORCE_INLINE bool_t AcceptLateCue(void* user, double start, double end, c
 /**
  * \brief Checks extraction of the sixty-fifth supported subtitle track.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 The fixture shall reuse startup storage and the existing temporary path.
  *
  * \param[in] path   Required temporary file path owned by the fixture
  *
- * \retval    None   No result value; a fixture mismatch asserts.
+ * \retval    None
  */
 static FORCE_INLINE void CheckLateTrack(const TCHAR* path);
 

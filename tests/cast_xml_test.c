@@ -345,66 +345,87 @@ static const DescriptionCase_t c_descriptionCases[] = {
 /*************************************************************************************************/
 /**
  * \brief Checks every unwritten output byte.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 First shall be within the fixed output.
  * \param[in] first   Beginning of the guard tail
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckGuard(uint32_t first);
 
 /*************************************************************************************************/
 /**
  * \brief Checks exact normalized content and every short destination capacity.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Document shall contain the current completed case.
  * \param[in] test   Independent expected bytes
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckText(const Case_t* test);
 
 /*************************************************************************************************/
 /**
  * \brief Checks parse outcome and failure publication.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Input and expected result shall be independent test data.
  * \param[in] test   Complete parser expectation
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckCase(const Case_t* test);
 
 /*************************************************************************************************/
 /**
  * \brief Checks every incomplete prefix and recovery after repeated rejection.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Only the complete independent document shall be accepted.
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckPrefixes(void);
 
 /*************************************************************************************************/
 /**
  * \brief Checks node and attribute capacity failure with subsequent owner reuse.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Zero-capacity storage shall be valid initialization and fail only when a record is needed.
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckCapacity(void);
 
 /*************************************************************************************************/
 /**
  * \brief Checks scope shadowing and raw-versus-reference attribute whitespace.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Sibling scopes and unprefixed attribute namespaces shall remain independent.
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckNamespaces(void);
 
 /*************************************************************************************************/
 /**
  * \brief Checks root-device identity selection and output preservation.
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Nested devices and vendor fields shall not override direct schema fields.
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckDescription(void);
 
@@ -412,18 +433,24 @@ static FORCE_INLINE void CheckDescription(void);
 /**
  * \brief Checks consistent malformed-text rejection across comparison, sizing and writing.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Raw closing delimiters shall fail in content and CDATA, but remain literal comparison data.
  *  - 002 Encoded closing delimiters and raw attribute data shall retain their permitted meanings.
  *  - 003 Invalid text shall preserve both the output bytes and the count.
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckTextKinds(void);
 
 /*************************************************************************************************/
 /**
  * \brief Checks one independently specified display identity case.
+ *
+ * \par Details:
+ *  Assertions pass or the process fails.
  *
  * \par Requirements:
  *  - 001 Each source shall be a complete namespace-well-formed XML document.
@@ -432,7 +459,7 @@ static FORCE_INLINE void CheckTextKinds(void);
  *
  * \param[in] test   Expected display-identity result
  *
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckDescriptionCase(const DescriptionCase_t* test);
 

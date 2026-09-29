@@ -176,6 +176,9 @@ bool_t CastSession_IsRunning(const CastSession_t* session);
 /**
  * \brief Prepares one cast using the existing startup storage.
  *
+ * \par Details:
+ *  A complete initialized configuration is prepared.
+ *
  * \par Requirements:
  *  - 001 Required owner, configuration and callback shall assert when missing.
  *  - 002 The owner shall have initialized successfully and exclude every producer and runner during preparation.
@@ -186,7 +189,7 @@ bool_t CastSession_IsRunning(const CastSession_t* session);
  * \param[in,out] session   Initialized idle lifetime owner
  * \param[in]     config    Configuration copied by value; referenced keyframes and callback context stay borrowed
  *
- * \retval        None   A complete initialized configuration is prepared.
+ * \retval        None
  */
 void CastSession_Prepare(CastSession_t* session, const CastSessionConfig* config);
 
@@ -231,6 +234,9 @@ uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
 /**
  * \brief Publishes the prepared low-latency scrub proxy.
  *
+ * \par Details:
+ *  Proxy publication is complete.
+ *
  * \par Requirements:
  *  - 001 The owner shall remain prepared until this producer is quiescent.
  *  - 002 The caller shall provide stable terminated URL and MIME strings, disjoint from session state.
@@ -241,13 +247,16 @@ uint32_t CastSession_WriteLoad(const CastSessionConfig* config,
  * \param[in]     pUrl           Required URL, fewer than 1200 bytes excluding its terminator
  * \param[in]     pContentType   Required MIME type, fewer than 64 bytes excluding its terminator
  *
- * \retval        None   Proxy publication is complete.
+ * \retval        None
  */
 void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pContentType);
 
 /*************************************************************************************************/
 /**
  * \brief Publishes a media replacement for the runner to consume.
+ *
+ * \par Details:
+ *  Replacement publication is complete; playback switch remains asynchronous.
  *
  * \par Requirements:
  *  - 001 The owner shall remain prepared until this producer is quiescent.
@@ -260,7 +269,7 @@ void CastSession_SetProxy(CastSession_t* owner, const char* pUrl, const char* pC
  * \param[in]     url           Required URL, fewer than 1200 bytes excluding its terminator
  * \param[in]     contentType   Required MIME type, fewer than 64 bytes excluding its terminator
  *
- * \retval        None   Replacement publication is complete; playback switch remains asynchronous.
+ * \retval        None
  */
 void CastSession_ReplaceMedia(CastSession_t* owner, const char* url, const char* contentType);
 
@@ -304,6 +313,9 @@ bool_t CastSession_Post(CastSession_t* owner, CastCommand command, double second
 /**
  * \brief Ends a prepared cast while retaining its startup storage.
  *
+ * \par Details:
+ *  Preparation is cleared; storage remains available for reuse.
+ *
  * \par Requirements:
  *  - 001 The owner shall acquire worker completion and stop every external publisher before resetting.
  *  - 002 A running operation or unreleased channel shall assert as misuse.
@@ -312,7 +324,7 @@ bool_t CastSession_Post(CastSession_t* owner, CastCommand command, double second
  *
  * \param[in,out] session   Required initialized owner with no active users
  *
- * \retval        None   Preparation is cleared; storage remains available for reuse.
+ * \retval        None
  */
 void CastSession_Reset(CastSession_t* session);
 

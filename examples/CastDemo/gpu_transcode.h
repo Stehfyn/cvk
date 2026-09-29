@@ -9,6 +9,7 @@
 #define CAST_GPU_TRANSCODE_H
 
 #include "os/os_types.h"
+#include "gpu_device.h"
 #include "os/os_atomic.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -39,7 +40,8 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig);
 
 /* Opens the source and creates the GPU decode and encode sessions for the given settings. Returns
 ** NULL on failure with a reason in pReport. */
-GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
+GpuTranscoder* GpuTranscode_Open(GpuDevice*                deviceStorage,
+                                 const wchar_t*            pFile,
                                  const GpuTranscodeConfig* pConfig,
                                  char*                     pReport,
                                  size_t                    reportCapacity);
@@ -70,7 +72,8 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder);
 /* One call: transcode pSource into a proxy MP4 at pDest (GPU H.264 video re-encode plus AAC audio
 ** passthrough, interleaved and timed from the source). If pCancel is non-NULL and becomes non-zero
 ** the transcode stops early. Writes diagnostics to pReport. Returns 1 on success. */
-int GpuTranscode_WriteMp4(const wchar_t*            pSource,
+int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
+                          const wchar_t*            pSource,
                           const wchar_t*            pDest,
                           const GpuTranscodeConfig* pConfig,
                           unsigned                  startFrame,
@@ -84,7 +87,8 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
 ** first fragment so playback can start within a fraction of a second instead of after the full
 ** transcode. Paths are terminated native-order UTF-16; an optional cancellation word is
 ** read through OS_Atomic and must remain initialized/alive through return. Returns 1 on success. */
-int GpuTranscode_WriteFragmentedMp4(const uint16_t*           pSource,
+int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
+                                    const uint16_t*           pSource,
                                     const uint16_t*           pDest,
                                     const GpuTranscodeConfig* pConfig,
                                     uint32_t                  maxFrames,

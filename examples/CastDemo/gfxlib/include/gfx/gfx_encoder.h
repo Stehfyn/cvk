@@ -208,7 +208,7 @@ typedef struct Gfx_Encoder_s Gfx_Encoder_t;
  * \param[out] encoder          Receives a non-NULL encoder retained for process lifetime
  * \param[in]  createInfo        Non-NULL stream configuration; pointed-to auxiliary arrays are copied
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 void Gfx_Encoder_Create(Gfx_Encoder_t** encoder, Gfx_Encoder_CreateInfo_t* createInfo);
 

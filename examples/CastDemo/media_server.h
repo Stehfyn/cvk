@@ -258,12 +258,15 @@ MediaServer* MediaServer_StartGrowing(MediaServer_Workspace_t* workspace,
 /**
  * \brief Publishes producer completion to readers of a growing representation.
  *
+ * \par Details:
+ *  Growing readers can stop at the final available bytes.
+ *
  * \par Requirements:
  *  - 001 The caller shall retain listener ownership; NULL and fixed representations shall be harmless.
  *
  * \param[in,out] pServer   Optional retained listener
  *
- * \retval None   Growing readers can stop at the final available bytes.
+ * \retval None
  */
 void MediaServer_MarkComplete(MediaServer* pServer);
 

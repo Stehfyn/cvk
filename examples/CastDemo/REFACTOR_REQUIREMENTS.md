@@ -21,6 +21,9 @@ work and reuse existing build directories.
 
 The user's final compiler and analysis requirement (2026-09-28) is mandatory:
 
+- Preserve existing parameter names. Diagnostic findings do not authorize renaming
+  parameters in CVK or its clients. Resolve client misuse through correct contracts
+  and call sequencing instead of changing library parameter names.
 - Public library includes carry the library namespace. CVK uses `cvk/cvk.h` and
   `cvk/win32/cvk_win32.h`, with analogous JSON and other platform headers. The
   standalone SC profile uses `scvk/`. Generators, exported include roots and every
@@ -306,7 +309,9 @@ is a review aid, not a narrower replacement for the source precedents.
    supported specification semantics. Match the documentation to the implementation.
    Results use aligned `\retval` entries, with separate values/ranges and failure
    cases. `\return`, `\returns` and their `@` spellings are prohibited. Use
-   `\retval None` for void contracts; retain the full Details block on definitions.
+   `\retval    None` for void contracts, with nothing following `None`; do not add
+   "No result value." or describe effects on the result line. Put meaningful effects
+   in Details or numbered requirements. Retain the full Details block on definitions.
 3. Use explicit-width domain types and the XML `bool_t`, `byte_t`, `char_t`,
    `float32_t` and `float64_t` precedent. Use platform types at genuine platform
    boundaries. Check bounds before narrowing. Do not blanket-replace lengths with

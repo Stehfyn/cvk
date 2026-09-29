@@ -114,6 +114,7 @@ typedef struct PreviewResult
 
 typedef struct PreviewJob
 {
+    GpuDevice          gpuDevice; ///< Startup-owned device and query workspace.
     HWND               hWnd;
     PreviewResult*     pResult;
     volatile LONG*     pCancel;
@@ -275,7 +276,7 @@ static FORCE_INLINE App* GetApp(HWND window)
  *
  * \param[in,out] app   Initialized application and its persistent workers
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void PollJobs(App* app);
 
@@ -532,7 +533,7 @@ static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, const App* pApp)
     PaintSubtitleItem(hWnd,
                       dc,
                       text,
-                      (int)SendMessageW(hWnd, CB_GETCURSEL, 0, 0),
+                      (int)SendMessage(hWnd, CB_GETCURSEL, 0, 0),
                       ODS_COMBOBOXEDIT | (enabled ? 0 : ODS_DISABLED),
                       pApp);
     border = focused && enabled ? pApp->accentBrush : pApp->borderBrush;
@@ -614,10 +615,10 @@ static FORCE_INLINE void ApplyFont(App* pApp)
     }
     for (hChild = GetWindow(pApp->hWnd, GW_CHILD); NULL != hChild; hChild = GetWindow(hChild, GW_HWNDNEXT))
     {
-        SendMessageW(hChild, WM_SETFONT, (WPARAM)pApp->hFont, TRUE);
+        SendMessage(hChild, WM_SETFONT, (WPARAM)pApp->hFont, TRUE);
     }
-    SendMessageW(pApp->hSubtitle, CB_SETITEMHEIGHT, 0, Scale(pApp, 22));
-    SendMessageW(pApp->hSubtitle, CB_SETITEMHEIGHT, (WPARAM)-1, Scale(pApp, 20));
+    SendMessage(pApp->hSubtitle, CB_SETITEMHEIGHT, 0, Scale(pApp, 22));
+    SendMessage(pApp->hSubtitle, CB_SETITEMHEIGHT, (WPARAM)-1, Scale(pApp, 20));
 }
 
 /*************************************************************************************************/
@@ -780,19 +781,19 @@ static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
     int width;
     int qp;
 
-    width = (int)SendMessageW(pApp->hResSlider, TBM_GETPOS, 0, 0);
+    width = (int)SendMessage(pApp->hResSlider, TBM_GETPOS, 0, 0);
     width = ((width + 8) / 16) * 16; /* proxy width is a multiple of 16 */
     if (width < 240)
     {
         width = 240;
     }
     pApp->transcode.width          = (unsigned)width;
-    qp                             = (int)SendMessageW(pApp->hQpSlider, TBM_GETPOS, 0, 0);
+    qp                             = (int)SendMessage(pApp->hQpSlider, TBM_GETPOS, 0, 0);
     pApp->transcode.qpInter        = qp;
     pApp->transcode.qpIntra        = (qp - 4 > 1) ? qp - 4 : 1; /* keyframes a little sharper */
-    pApp->transcode.gopLength      = (unsigned)SendMessageW(pApp->hGopSlider, TBM_GETPOS, 0, 0);
-    pApp->transcode.motionStrength = (int)SendMessageW(pApp->hMotionSlider, TBM_GETPOS, 0, 0);
-    pApp->transcode.motionAdaptive = (BST_CHECKED == SendMessageW(pApp->hMotionCheck, BM_GETCHECK, 0, 0)) ? 1 : 0;
+    pApp->transcode.gopLength      = (unsigned)SendMessage(pApp->hGopSlider, TBM_GETPOS, 0, 0);
+    pApp->transcode.motionStrength = (int)SendMessage(pApp->hMotionSlider, TBM_GETPOS, 0, 0);
+    pApp->transcode.motionAdaptive = (BST_CHECKED == SendMessage(pApp->hMotionCheck, BM_GETCHECK, 0, 0)) ? 1 : 0;
     EnableWindow(pApp->hMotionSlider, pApp->transcode.motionAdaptive);
     UpdateConfigLabels(pApp);
 }
@@ -832,12 +833,12 @@ static FORCE_INLINE void CreateControls(App* pApp)
         CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE);
     SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Automatic");
     SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
-    SendMessageW(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
+    SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
     pApp->hGainLabel = CreateChild(pApp, L"STATIC", L"Audio gain 100%", SS_LEFT, 0, ID_GAIN_LABEL);
     pApp->hGain      = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GAIN);
-    SendMessageW(pApp->hGain, TBM_SETRANGE, TRUE, MAKELPARAM(0, 400));
-    SendMessageW(pApp->hGain, TBM_SETPOS, TRUE, 100);
-    SendMessageW(pApp->hGain, TBM_SETPAGESIZE, 0, 25);
+    SendMessage(pApp->hGain, TBM_SETRANGE, TRUE, MAKELPARAM(0, 400));
+    SendMessage(pApp->hGain, TBM_SETPOS, TRUE, 100);
+    SendMessage(pApp->hGain, TBM_SETPAGESIZE, 0, 25);
     pApp->hGainState = CreateChild(pApp, L"STATIC", L"Original audio", SS_RIGHT | SS_ENDELLIPSIS, 0, ID_GAIN_STATE);
     pApp->hCast      = CreateChild(pApp, L"BUTTON", L"Cast", BS_DEFPUSHBUTTON | WS_TABSTOP, 0, ID_CAST);
     pApp->hHint      = CreateChild(pApp,
@@ -877,15 +878,15 @@ static FORCE_INLINE void CreateControls(App* pApp)
     pApp->hPreview     = CreateChild(pApp, L"BUTTON", L"Preview", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PREVIEW);
     pApp->hCfgReadout  = CreateChild(pApp, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_READOUT);
 
-    SendMessageW(pApp->hResSlider, TBM_SETRANGE, TRUE, MAKELPARAM(320, 1920));
-    SendMessageW(pApp->hResSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.width);
-    SendMessageW(pApp->hQpSlider, TBM_SETRANGE, TRUE, MAKELPARAM(18, 40));
-    SendMessageW(pApp->hQpSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.qpInter);
-    SendMessageW(pApp->hGopSlider, TBM_SETRANGE, TRUE, MAKELPARAM(6, 90));
-    SendMessageW(pApp->hGopSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.gopLength);
-    SendMessageW(pApp->hMotionSlider, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
-    SendMessageW(pApp->hMotionSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.motionStrength);
-    SendMessageW(pApp->hMotionCheck, BM_SETCHECK, pApp->transcode.motionAdaptive ? BST_CHECKED : BST_UNCHECKED, 0);
+    SendMessage(pApp->hResSlider, TBM_SETRANGE, TRUE, MAKELPARAM(320, 1920));
+    SendMessage(pApp->hResSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.width);
+    SendMessage(pApp->hQpSlider, TBM_SETRANGE, TRUE, MAKELPARAM(18, 40));
+    SendMessage(pApp->hQpSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.qpInter);
+    SendMessage(pApp->hGopSlider, TBM_SETRANGE, TRUE, MAKELPARAM(6, 90));
+    SendMessage(pApp->hGopSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.gopLength);
+    SendMessage(pApp->hMotionSlider, TBM_SETRANGE, TRUE, MAKELPARAM(0, 100));
+    SendMessage(pApp->hMotionSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.motionStrength);
+    SendMessage(pApp->hMotionCheck, BM_SETCHECK, pApp->transcode.motionAdaptive ? BST_CHECKED : BST_UNCHECKED, 0);
 
     ListView_SetExtendedListViewStyle(pApp->hList, LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
     ZeroMemory(&column, sizeof(column));
@@ -898,7 +899,7 @@ static FORCE_INLINE void CreateControls(App* pApp)
     column.pszText = L"Model";
     ListView_InsertColumn(pApp->hList, 2, &column);
     SetWindowSubclass(ListView_GetHeader(pApp->hList), DarkHeaderProc, 1, (DWORD_PTR)pApp);
-    SendMessageW(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
+    SendMessage(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
     /* A click on the channel should jump to the cursor and scrub, not page toward it. */
     SetWindowSubclass(pApp->hSeek, SeekBarProc, 1, (DWORD_PTR)pApp);
     ApplyFont(pApp);
@@ -1069,7 +1070,7 @@ static FORCE_INLINE void RefreshSubtitles(App* pApp)
         return;
     wcscpy_s(pApp->subtitleSource, 1024, source);
     pApp->subtitleCount = _wcsnicmp(source, L"http", 4) ? Subtitles_Find(source, pApp->subtitles) : 0;
-    SendMessageW(pApp->hSubtitle, CB_RESETCONTENT, 0, 0);
+    SendMessage(pApp->hSubtitle, CB_RESETCONTENT, 0, 0);
     _snwprintf_s(automatic,
                  380,
                  _TRUNCATE,
@@ -1079,7 +1080,7 @@ static FORCE_INLINE void RefreshSubtitles(App* pApp)
     SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
     for (unsigned i = 0; i < pApp->subtitleCount; ++i)
         SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)pApp->subtitles[i].label);
-    SendMessageW(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
+    SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
 }
 
 /*************************************************************************************************/
@@ -1104,7 +1105,7 @@ static FORCE_INLINE void BrowseSubtitles(App* pApp)
     {
         Subtitles_InitializeFileTrack(path, &pApp->subtitles[pApp->subtitleCount]);
         SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)pApp->subtitles[pApp->subtitleCount++].label);
-        SendMessageW(pApp->hSubtitle, CB_SETCURSEL, pApp->subtitleCount + 1, 0);
+        SendMessage(pApp->hSubtitle, CB_SETCURSEL, (WPARAM)pApp->subtitleCount + 1, 0);
     }
 }
 
@@ -1368,7 +1369,7 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     {
         int choice;
         RefreshSubtitles(pApp);
-        choice = (int)SendMessageW(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
+        choice = (int)SendMessage(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
         if (choice == 0 && pApp->subtitleCount)
             subtitle = &pApp->subtitles[0];
         else if (choice >= 2 && (unsigned)(choice - 2) < pApp->subtitleCount)
@@ -1502,7 +1503,7 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
             FinishSession(pApp, message);
             return;
         }
-        if (pApp->audioNeedsConversion || SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
+        if (pApp->audioNeedsConversion || SendMessage(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
         {
             pApp->pendingConfig  = config;
             pApp->preparingAudio = 1;
@@ -1546,7 +1547,7 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
     ZeroMemory(&pApp->status, sizeof(pApp->status));
     pApp->stopping = 0;
     UpdateControls(pApp);
-    if (buildProxy && SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
+    if (buildProxy && SendMessage(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
         ScheduleGain(pApp);
 }
 
@@ -1581,7 +1582,8 @@ static FORCE_INLINE void PreviewJobRun(void* context)
 
     ZeroMemory(pResult, sizeof(*pResult));
     wcscpy_s(pResult->path, MAX_PATH, pJob->dest);
-    pResult->ok = GpuTranscode_WriteMp4(pJob->source,
+    pResult->ok = GpuTranscode_WriteMp4(&pJob->gpuDevice,
+                                        pJob->source,
                                         pJob->dest,
                                         &pJob->config,
                                         pJob->startFrame,
@@ -1692,7 +1694,7 @@ static FORCE_INLINE void StartPreview(App* pApp)
     pApp->previewCancel = 0;
     pJob->pCancel       = &pApp->previewCancel;
     /* Start the clip near the current playback position (or a quarter in), snapped to a keyframe. */
-    position         = (int)SendMessageW(pApp->hSeek, TBM_GETPOS, 0, 0);
+    position         = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
     ratio            = (pApp->status.duration > 0 && position > 0) ? (double)position / SEEK_RANGE : 0.25;
     pJob->startFrame = (unsigned)(ratio * 24.0 * (pApp->status.duration > 0 ? pApp->status.duration : 600.0));
     pJob->frames     = 8u * 24u; /* about eight seconds at ~24 fps */
@@ -1750,11 +1752,11 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
         {
             seconds = pApp->status.duration;
         }
-        SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(seconds / pApp->status.duration * SEEK_RANGE + 0.5));
+        SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(seconds / pApp->status.duration * SEEK_RANGE + 0.5));
     }
     else
     {
-        SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, 0);
+        SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, 0);
     }
     if (pApp->status.hasMedia)
     {
@@ -1894,7 +1896,7 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
         pApp->stopping      = 0;
         pApp->finishPending = 0;
         ZeroMemory(&pApp->status, sizeof(pApp->status));
-        SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, 0);
+        SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, 0);
         SetWindowTextW(pApp->hTime, L"");
         if (NULL != pReason)
         {
@@ -1963,7 +1965,7 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
         ratio = 1.0;
     }
     seconds = pApp->status.duration * ratio;
-    SendMessageW(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(ratio * SEEK_RANGE + 0.5));
+    SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)(ratio * SEEK_RANGE + 0.5));
     if (final)
     {
         pApp->seeking = 0;
@@ -2000,7 +2002,7 @@ static FORCE_INLINE double GetRatioFromClick(HWND hSeek, LPARAM lParam)
     const int x = GET_X_LPARAM(lParam);
     int span;
 
-    SendMessageW(hSeek, TBM_GETCHANNELRECT, 0, (LPARAM)&channel);
+    SendMessage(hSeek, TBM_GETCHANNELRECT, 0, (LPARAM)&channel);
     span = channel.right - channel.left;
     return (span > 0) ? (double)(x - channel.left) / span : 0.0;
 }
@@ -2057,7 +2059,7 @@ SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSu
  */
 static FORCE_INLINE void OnSeekScroll(App* pApp, int code)
 {
-    const int position = (int)SendMessageW(pApp->hSeek, TBM_GETPOS, 0, 0);
+    const int position = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
 
     if (NULL == pApp->pSession || pApp->status.duration <= 0 || TB_THUMBTRACK == code)
     {
@@ -2644,7 +2646,7 @@ static FORCE_INLINE void OnHScroll(HWND hWnd, HWND hControl, UINT code, int posi
     if (hControl == pApp->hGain)
     {
         WCHAR text[64];
-        unsigned percent = (unsigned)SendMessageW(pApp->hGain, TBM_GETPOS, 0, 0);
+        unsigned percent = (unsigned)SendMessage(pApp->hGain, TBM_GETPOS, 0, 0);
         _snwprintf_s(text, 64, _TRUNCATE, L"Audio gain %u%%", percent);
         SetWindowTextW(pApp->hGainLabel, text);
         if (pApp->pSession || pApp->preparingAudio)
@@ -3029,6 +3031,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE previousInstance, LPWSTR com
     if (ready)
     {
         app    = (App*)OS_Memory_GetAddress(&memory);
+        GpuDevice_Initialize(&app->previewJob.gpuDevice);
         result = RunWindow(app, instance, showCommand);
     }
     for (;;)

@@ -53,7 +53,7 @@
  * \param[in] file         Static source file name from LOGASSERT
  * \param[in] line         One-based source line
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 OS_NORETURN void OS_AssertFailure(const char_t* expression, const char_t* file, uint32_t line);
 

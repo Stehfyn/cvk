@@ -89,12 +89,15 @@ typedef struct AvcCursor_s
 /**
  * \brief Checks counted storage preconditions.
  *
+ * \par Details:
+ *  Preconditions checked.
+ *
  * \par Requirements:
  *  - 001 Nonempty spans shall have stable accessible storage; programmer misuse shall assert.
  *
  * \param[in] bytes   Complete borrowed extent
  *
- * \retval None Preconditions checked.
+ * \retval None
  */
 static FORCE_INLINE void AssertSpan(Utl_Mpeg4_Span_t bytes);
 
@@ -190,6 +193,9 @@ static FORCE_INLINE bool_t ReadEntry(Utl_Mpeg4_Span_t* parameter, AvcCursor_t* c
 /**
  * \brief Consumes an entire declared array into an unpublished candidate view.
  *
+ * \par Details:
+ *  Candidate and sticky cursor status updated.
+ *
  * \par Requirements:
  *  - 001 Count shall be width-validated before entry.
  *  - 002 The candidate shall not be published when the cursor reports invalid input.
@@ -198,13 +204,16 @@ static FORCE_INLINE bool_t ReadEntry(Utl_Mpeg4_Span_t* parameter, AvcCursor_t* c
  * \param[in,out] cursor   Required initialized cursor
  * \param[in]     count    Declared bounded count
  *
- * \retval None Candidate and sticky cursor status updated.
+ * \retval None
  */
 static FORCE_INLINE void ReadParameterSets(Utl_Avc_ParameterSets_t* sets, AvcCursor_t* cursor, uint32_t count);
 
 /*************************************************************************************************/
 /**
  * \brief Reads complete high-profile metadata and its sequence-extension array.
+ *
+ * \par Details:
+ *  Candidate fields and validity updated.
  *
  * \par Requirements:
  *  - 001 All reserved bits and depth ranges shall be checked.
@@ -213,13 +222,16 @@ static FORCE_INLINE void ReadParameterSets(Utl_Avc_ParameterSets_t* sets, AvcCur
  * \param[in,out] config   Required initialized candidate
  * \param[in,out] cursor   Required initialized cursor
  *
- * \retval None Candidate fields and validity updated.
+ * \retval None
  */
 static FORCE_INLINE void ReadHighFields(Utl_Avc_Config_t* config, AvcCursor_t* cursor);
 
 /*************************************************************************************************/
 /**
  * \brief Copies one preflighted complete span.
+ *
+ * \par Details:
+ *  Bytes copied and cursor advanced.
  *
  * \par Requirements:
  *  - 001 The complete output extent and arithmetic shall have been validated before entry.
@@ -229,7 +241,7 @@ static FORCE_INLINE void ReadHighFields(Utl_Avc_Config_t* config, AvcCursor_t* c
  * \param[in,out] position   Required bounded output cursor
  * \param[in]     bytes      Validated stable span
  *
- * \retval None Bytes copied and cursor advanced.
+ * \retval None
  */
 static FORCE_INLINE void WriteSpan(byte_t* output, uint32_t* position, Utl_Mpeg4_Span_t bytes);
 

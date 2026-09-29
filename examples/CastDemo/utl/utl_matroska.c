@@ -58,7 +58,7 @@ static FORCE_INLINE uint32_t GetIdByteCount(uint32_t id);
  * \param[in]  byteCount   Width from one through eight
  * \param[in]  value       Encoded integer
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 static FORCE_INLINE void WriteEncoded(byte_t* buffer, uint32_t byteCount, uint64_t value);
 

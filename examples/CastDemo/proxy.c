@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include "proxy.h"
 #include "cast_session.h"
+#include "gpu_device.h"
 #include "gpu_transcode.h"
 #include "media_server.h"
 #include "os/os_types.h"
@@ -58,6 +59,7 @@ typedef struct Proxy_State_s
     OS_Atomic32_t            cancelled;                                ///< Independent per-job cancellation latch.
     MediaServer*             server;                                   ///< Retained serving owner after callback completion.
     CastSession_t*           session;                                  ///< Borrowed until successful job stop.
+    GpuDevice               gpuDevice;                                ///< Startup-owned device and query workspace.
     GpuTranscodeConfig       config;                                   ///< Copied transcode settings.
     uint16_t                 source[OS_TEMPORARYFILE_PATH_CAPACITY];   ///< Copied, validated native-order UTF-16 source.
     const uint16_t*          output;                                   ///< Stable startup-owned scratch path.
@@ -85,13 +87,16 @@ typedef struct Proxy_State_s
 /**
  * \brief Constructs empty private state before the worker is made available.
  *
+ * \par Details:
+ *  Private lifetime fields and cancellation are initialized.
+ *
  * \par Requirements:
  *  - 001 Required state shall assert; construction shall occur only under exclusive startup ownership.
  *  - 002 Native storage is already resident; no allocation or file operation shall occur here.
  *
  * \param[out] state   Required fresh private storage
  *
- * \retval     None   Private lifetime fields and cancellation are initialized.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeState(Proxy_State_t* state);
 
@@ -131,6 +136,9 @@ static FORCE_INLINE bool_t WriteUrl(Proxy_State_t* state);
 /**
  * \brief Builds and publishes one complete proxy on the persistent worker.
  *
+ * \par Details:
+ *  Conversion/publication ended; owner must acquire completion before context reuse.
+ *
  * \par Requirements:
  *  - 001 The accepted context, scratch file and prepared session shall remain alive until callback completion.
  *  - 002 Cancellation shall be observed atomically before conversion, serving and publication.
@@ -138,7 +146,7 @@ static FORCE_INLINE bool_t WriteUrl(Proxy_State_t* state);
  *
  * \param[in,out] context   Stable Proxy_t owner fixed at worker initialization
  *
- * \retval        None   Conversion/publication ended; owner must acquire completion before context reuse.
+ * \retval        None
  */
 static FORCE_INLINE void RunJob(void* context);
 
@@ -156,6 +164,7 @@ static FORCE_INLINE void InitializeState(Proxy_State_t* state)
 {
     LOGASSERT(NULL != state);
     OS_Atomic_Initialize32(&state->cancelled, FALSE);
+    GpuDevice_Initialize(&state->gpuDevice);
     state->serving      = NULL;
     state->server       = NULL;
     state->session      = NULL;
@@ -300,7 +309,8 @@ static FORCE_INLINE void RunJob(void* context)
     converted = FALSE;
     if (!cancelled)
     {
-        converted = !!GpuTranscode_WriteFragmentedMp4(state->source,
+        converted = !!GpuTranscode_WriteFragmentedMp4(&state->gpuDevice,
+                                                      state->source,
                                                       state->output,
                                                       &state->config,
                                                       0,

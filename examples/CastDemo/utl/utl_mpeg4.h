@@ -263,6 +263,9 @@ typedef struct Utl_Mpeg4_MovieFragment_s
 /**
  * \brief Initializes a complete empty ordinary box model.
  *
+ * \par Details:
+ *  Empty box initialized.
+ *
  * \par Requirements:
  *  - 001 Missing owner shall assert.
  *  - 002 Every field shall be initialized without allocation; UUID type bytes shall start at zero.
@@ -270,13 +273,16 @@ typedef struct Utl_Mpeg4_MovieFragment_s
  * \param[out] header   Required exclusively writable owner
  * \param[in]  type     Box type code
  *
- * \retval None Empty box initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes a caller-owned MPEG-4 bit reader.
+ *
+ * \par Details:
+ *  Reader initialized.
  *
  * \par Requirements:
  *  - 001 Missing owner or nonempty input storage shall assert.
@@ -286,13 +292,16 @@ void Utl_Mpeg4_InitializeBoxHeader(Utl_Mpeg4_BoxHeader_t* header, uint32_t type)
  * \param[out] reader   Required exclusively writable owner
  * \param[in]  bytes    Stable complete memory extent
  *
- * \retval None Reader initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span_t bytes);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes a bounded caller-owned MPEG-4 bit writer.
+ *
+ * \par Details:
+ *  Writer initialized.
  *
  * \par Requirements:
  *  - 001 Missing owner or writable storage shall assert, even for zero capacity.
@@ -303,13 +312,16 @@ void Utl_Mpeg4_InitializeBitReader(Utl_Mpeg4_BitReader_t* reader, Utl_Mpeg4_Span
  * \param[out] output     Required writable storage, untouched during initialization
  * \param[in]  capacity   Complete writable extent
  *
- * \retval None Writer initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes a bit counter using the same validation as a bounded writer.
+ *
+ * \par Details:
+ *  Counter initialized.
  *
  * \par Requirements:
  *  - 001 Missing owner shall assert.
@@ -318,13 +330,16 @@ void Utl_Mpeg4_InitializeBitWriter(Utl_Mpeg4_BitWriter_t* writer, byte_t* output
  *
  * \param[out] writer   Required exclusively writable owner
  *
- * \retval None Counter initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes an empty model for a supported fixed-entry sample table.
+ *
+ * \par Details:
+ *  Empty table initialized.
  *
  * \par Requirements:
  *  - 001 Missing storage or an unsupported table kind shall assert as caller misuse.
@@ -333,13 +348,16 @@ void Utl_Mpeg4_InitializeBitCounter(Utl_Mpeg4_BitWriter_t* writer);
  * \param[out] table   Required exclusively writable owner
  * \param[in]  type    stts or stss
  *
- * \retval None Empty table initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t type);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes a decoding-time cursor from a validated stts prefix.
+ *
+ * \par Details:
+ *  Cursor initialized.
  *
  * \par Requirements:
  *  - 001 Missing owners and an incorrect table kind shall assert.
@@ -348,7 +366,7 @@ void Utl_Mpeg4_InitializeSampleTable(Utl_Mpeg4_SampleTable_t* table, uint32_t ty
  * \param[out] cursor   Required exclusively writable owner
  * \param[in]  table    Required stts prefix model
  *
- * \retval None Cursor initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* cursor,
                                             const Utl_Mpeg4_SampleTable_t*  table);
@@ -357,6 +375,9 @@ void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* curs
 /**
  * \brief Initializes the ordering validator for a present stss table.
  *
+ * \par Details:
+ *  Cursor initialized.
+ *
  * \par Requirements:
  *  - 001 Missing owners and an incorrect table kind shall assert.
  *  - 002 A present empty table shall represent no sync samples; an absent table means all samples are sync samples.
@@ -364,7 +385,7 @@ void Utl_Mpeg4_InitializeTimeToSampleCursor(Utl_Mpeg4_TimeToSampleCursor_t* curs
  * \param[out] cursor   Required exclusively writable owner
  * \param[in]  table    Required present stss prefix model
  *
- * \retval None Cursor initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSampleCursor_t* cursor, const Utl_Mpeg4_SampleTable_t* table);
 
@@ -372,18 +393,24 @@ void Utl_Mpeg4_InitializeSyncSampleCursor(Utl_Mpeg4_SyncSampleCursor_t* cursor, 
 /**
  * \brief Initializes a valid empty version-zero run.
  *
+ * \par Details:
+ *  Valid empty run initialized.
+ *
  * \par Requirements:
  *  - 001 Missing owner storage shall assert; no resource or payload is acquired.
  *
  * \param[out] run   Required exclusive owner
  *
- * \retval None Valid empty run initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes a track fragment containing only its required defaults header.
+ *
+ * \par Details:
+ *  Valid empty track fragment initialized.
  *
  * \par Requirements:
  *  - 001 Missing owner or zero track ID shall assert as development errors.
@@ -392,13 +419,16 @@ void Utl_Mpeg4_InitializeTrackRun(Utl_Mpeg4_TrackRun_t* run);
  * \param[out] track     Required exclusive owner
  * \param[in]  trackId   Positive track identity
  *
- * \retval None Valid empty track fragment initialized.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_t trackId);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes a sequence-one movie fragment borrowing initialized tracks.
+ *
+ * \par Details:
+ *  Fragment initialized without allocation.
  *
  * \par Requirements:
  *  - 001 Missing owners or an empty track array shall assert.
@@ -408,7 +438,7 @@ void Utl_Mpeg4_InitializeTrackFragment(Utl_Mpeg4_TrackFragment_t* track, uint32_
  * \param[in]  tracks       Required stable initialized array
  * \param[in]  trackCount   Readable track fragments
  *
- * \retval None Fragment initialized without allocation.
+ * \retval None
  */
 void Utl_Mpeg4_InitializeMovieFragment(Utl_Mpeg4_MovieFragment_t*       fragment,
                                        const Utl_Mpeg4_TrackFragment_t* tracks,
@@ -825,6 +855,9 @@ uint32_t Utl_Mpeg4_WriteUnsigned(Utl_Mpeg4_Integer_t field, byte_t* output, uint
 /**
  * \brief Writes or measures one complete MSB-first field after preflight.
  *
+ * \par Details:
+ *  Inspect valid for the sticky result.
+ *
  * \par Requirements:
  *  - 001 The initialized owner and a one-through-64-bit syntax width shall assert on misuse.
  *  - 002 An out-of-width value or insufficient capacity shall latch failure without changing cursor or output.
@@ -834,13 +867,16 @@ uint32_t Utl_Mpeg4_WriteUnsigned(Utl_Mpeg4_Integer_t field, byte_t* output, uint
  * \param[in,out] writer   Required initialized writer or counter
  * \param[in]     field    Complete unsigned field
  *
- * \retval None Inspect valid for the sticky result.
+ * \retval None
  */
 void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t field);
 
 /*************************************************************************************************/
 /**
  * \brief Writes or measures a complete byte-aligned MPEG-4 byte sequence.
+ *
+ * \par Details:
+ *  Inspect valid for the sticky result.
  *
  * \par Requirements:
  *  - 001 An active initialized owner shall be byte-aligned; misuse shall assert. Sticky failure shall remain a no-op.
@@ -851,7 +887,7 @@ void Utl_Mpeg4_WriteBits(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t fie
  * \param[in,out] writer   Required initialized writer or counter
  * \param[in]     bytes    Stable complete byte sequence
  *
- * \retval None Inspect valid for the sticky result.
+ * \retval None
  */
 void Utl_Mpeg4_WriteAlignedBytes(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_Span_t bytes);
 

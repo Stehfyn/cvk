@@ -93,6 +93,9 @@ typedef struct TestVector_s
 /**
  * \brief Checks both rejection classification and unchanged complete output.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
@@ -101,7 +104,7 @@ typedef struct TestVector_s
  * \param[in]     bytes      Exact malformed/unsupported input
  * \param[in]     expected   Expected rejection category
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckRejected(TestContext_t*          context,
                                        Utl_Mpeg4_Span_t        bytes,
@@ -111,6 +114,9 @@ static FORCE_INLINE void CheckRejected(TestContext_t*          context,
 /**
  * \brief Checks every insufficient destination capacity against a whole-buffer sentinel.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
@@ -118,13 +124,16 @@ static FORCE_INLINE void CheckRejected(TestContext_t*          context,
  * \param[in,out] context   Required fixture storage
  * \param[in]     config    Required valid stable model
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckShortWrites(TestContext_t* context, const Utl_Mpeg4Audio_Config_t* config);
 
 /*************************************************************************************************/
 /**
  * \brief Checks independent wire bytes, derived semantics and capacity/truncation boundaries.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
@@ -133,7 +142,7 @@ static FORCE_INLINE void CheckShortWrites(TestContext_t* context, const Utl_Mpeg
  * \param[in,out] context   Required fixture storage
  * \param[in]     vector    Required independent expected vector
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckVector(TestContext_t* context, const TestVector_t* vector);
 
@@ -141,13 +150,16 @@ static FORCE_INLINE void CheckVector(TestContext_t* context, const TestVector_t*
 /**
  * \brief Checks LC, explicit frequency, core delay and complete PCE vectors.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckBaseVectors(TestContext_t* context);
 
@@ -155,13 +167,16 @@ static FORCE_INLINE void CheckBaseVectors(TestContext_t* context);
 /**
  * \brief Checks explicit HE/PS and synchronized presence/absence without inferring unknown tools.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckExtensionVectors(TestContext_t* context);
 
@@ -169,19 +184,25 @@ static FORCE_INLINE void CheckExtensionVectors(TestContext_t* context);
 /**
  * \brief Checks malformed and unsupported inputs as distinct unchanged-output outcomes.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckMalformed(TestContext_t* context);
 
 /*************************************************************************************************/
 /**
  * \brief Checks complete output preservation for inconsistent writer models.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
@@ -190,7 +211,7 @@ static FORCE_INLINE void CheckMalformed(TestContext_t* context);
  * \param[in,out] context   Required fixture storage
  * \param[in]     config    Required invalid model
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckInvalidModel(TestContext_t* context, const Utl_Mpeg4Audio_Config_t* config);
 
@@ -198,13 +219,16 @@ static FORCE_INLINE void CheckInvalidModel(TestContext_t* context, const Utl_Mpe
 /**
  * \brief Checks width, array, duplicate-selector and profile relationships before output mutation.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckModelBoundaries(TestContext_t* context);
 
@@ -212,13 +236,16 @@ static FORCE_INLINE void CheckModelBoundaries(TestContext_t* context);
 /**
  * \brief Checks maximum opaque comments and complete capacity preflight.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The entry-owned fixture context shall remain exclusive and initialized.
  *  - 002 Any violated expected result shall assert.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckProgramComment(TestContext_t* context);
 

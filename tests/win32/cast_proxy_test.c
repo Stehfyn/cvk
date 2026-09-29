@@ -70,6 +70,9 @@ static MediaServer_Workspace_t g_serving;
 /**
  * \brief Rejects events from the deliberately inactive session runner.
  *
+ * \par Details:
+ *  Any invocation terminates the fixture.
+ *
  * \par Requirements:
  *  - 001 No exercised owner operation shall invoke a session callback.
  *
@@ -78,7 +81,7 @@ static MediaServer_Workspace_t g_serving;
  * \param[in]     status    Unused status
  * \param[in]     text      Unused diagnostic
  *
- * \retval        None   Any invocation terminates the fixture.
+ * \retval        None
  */
 static OS_NORETURN FORCE_INLINE void RejectEvent(void*             context,
                                                  CastEvent         event,
@@ -89,11 +92,14 @@ static OS_NORETURN FORCE_INLINE void RejectEvent(void*             context,
 /**
  * \brief Checks input rejection without submitting or changing startup ownership.
  *
+ * \par Details:
+ *  All rejection assertions pass or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 The session shall be prepared; the proxy shall initially be ready.
  *  - 002 Invalid UTF-16, empty/unterminated source and invalid/unterminated IPv4 shall leave the proxy ready.
  *
- * \retval None   All rejection assertions pass or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckRejectedInput(void);
 
@@ -101,13 +107,16 @@ static FORCE_INLINE void CheckRejectedInput(void);
 /**
  * \brief Acquires per-job teardown or final closure under a finite fixture deadline.
  *
+ * \par Details:
+ *  Teardown completed or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 The prepared session and startup source shall stay alive until completion.
  *  - 002 No polling timeout shall be accepted as completed teardown.
  *
  * \param[in] final   TRUE requests final closure; FALSE requests reusable per-job stop
  *
- * \retval    None   Teardown completed or the fixture fails.
+ * \retval    None
  */
 static FORCE_INLINE void AwaitStop(bool_t final);
 
@@ -115,11 +124,14 @@ static FORCE_INLINE void AwaitStop(bool_t final);
 /**
  * \brief Waits for natural conversion rejection while retaining the job lifetime.
  *
+ * \par Details:
+ *  Completion was observed or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 The supplied empty source shall fail container parsing before any GPU is created.
  *  - 002 Callback completion alone shall not rearm the proxy for another request.
  *
- * \retval None   Completion was observed or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void AwaitCompletion(void);
 
@@ -127,11 +139,14 @@ static FORCE_INLINE void AwaitCompletion(void);
 /**
  * \brief Checks repeated submission, cancellation and context reuse against stable startup storage.
  *
+ * \par Details:
+ *  All assertions pass or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 The memory address, extent and scratch-path address shall remain stable across jobs.
  *  - 002 A second submission shall fail before per-job stop, even if the callback already completed.
  *
- * \retval None   All assertions pass or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckReuse(void);
 

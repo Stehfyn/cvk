@@ -94,13 +94,16 @@ static FORCE_INLINE Utl_Mpeg4_Span_t Bytes(const byte_t* bytes, uint32_t count);
 /**
  * \brief Checks known descriptor bytes and all shorter destination capacities.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The context shall be initialized and exclusively owned by the fixture.
  *  - 002 Failed writes shall preserve every destination byte.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckDescriptor(TestContext_t* context);
 
@@ -108,12 +111,15 @@ static FORCE_INLINE void CheckDescriptor(TestContext_t* context);
 /**
  * \brief Checks the independent dependency, URL and clock fixture fields.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The model shall be borrowed from the complete optional-field fixture.
  *
  * \param[in] stream   Required complete model
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckOptionalFields(const Utl_Mpeg4Systems_ElementaryStream_t* stream);
 
@@ -121,12 +127,15 @@ static FORCE_INLINE void CheckOptionalFields(const Utl_Mpeg4Systems_ElementarySt
 /**
  * \brief Checks all fixed and optional fields against the independent ES vectors.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The model shall be borrowed from one complete known fixture.
  *
  * \param[in] stream   Required complete model
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckStreamFields(const Utl_Mpeg4Systems_ElementaryStream_t* stream);
 
@@ -134,18 +143,24 @@ static FORCE_INLINE void CheckStreamFields(const Utl_Mpeg4Systems_ElementaryStre
 /**
  * \brief Checks the independent audio decoder requirements.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The model shall be borrowed from the known MPEG-4 audio descriptor.
  *
  * \param[in] decoder   Required complete model
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckDecoderFields(const Utl_Mpeg4Systems_DecoderConfig_t* decoder);
 
 /*************************************************************************************************/
 /**
  * \brief Checks a typed ES descriptor and its decoder configuration.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 The known wire vector shall be independently specified.
@@ -154,7 +169,7 @@ static FORCE_INLINE void CheckDecoderFields(const Utl_Mpeg4Systems_DecoderConfig
  * \param[in,out] context   Required fixture storage
  * \param[in]     input     Complete known wire vector
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckStream(TestContext_t* context, Utl_Mpeg4_Span_t input);
 
@@ -162,11 +177,14 @@ static FORCE_INLINE void CheckStream(TestContext_t* context, Utl_Mpeg4_Span_t in
 /**
  * \brief Checks truncation, invalid nested extents and singleton duplication.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Rejected reads shall preserve all previously published result fields.
  *  - 002 A child outside its enclosing ES payload shall never be selected as that ES's decoder.
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckRejected(void);
 
@@ -174,13 +192,16 @@ static FORCE_INLINE void CheckRejected(void);
 /**
  * \brief Checks the seven-bit expandable-length boundary.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Input and output shall be retained disjoint arrays.
  *  - 002 Length width shall change at 128 without losing payload bytes.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckLengths(TestContext_t* context);
 
@@ -188,10 +209,13 @@ static FORCE_INLINE void CheckLengths(TestContext_t* context);
 /**
  * \brief Checks malformed fields inside complete descriptor envelopes.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 A prior valid ES model shall survive every rejected nested field unchanged.
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckMalformedParts(void);
 
@@ -199,13 +223,16 @@ static FORCE_INLINE void CheckMalformedParts(void);
 /**
  * \brief Checks whole-buffer preservation for a rejected decoder model.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The invalid model and output shall remain stable and disjoint.
  *
  * \param[in,out] context   Required fixture storage
  * \param[in]     decoder   Required invalid model
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckRejectedDecoder(TestContext_t* context, const Utl_Mpeg4Systems_DecoderConfig_t* decoder);
 
@@ -213,12 +240,15 @@ static FORCE_INLINE void CheckRejectedDecoder(TestContext_t* context, const Utl_
 /**
  * \brief Checks decoder field domains and duplicate codec components.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Each invalid model shall fail before writing any output.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckInvalidDecoder(TestContext_t* context);
 

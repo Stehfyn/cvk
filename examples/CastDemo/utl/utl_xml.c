@@ -162,13 +162,16 @@ static const Range_t c_nameAdditional[] = {
 /**
  * \brief Asserts the caller-owned text representation.
  *
+ * \par Details:
+ *  Representation requirements hold or the assertion fails.
+ *
  * \par Requirements:
  *  - 001 Nonempty text shall have readable storage and every text kind shall be defined.
  *  - 002 Malformed input bytes shall remain ordinary parse failures.
  *
  * \param[in] text   Borrowed representation to inspect
  *
- * \retval    None   Representation requirements hold or the assertion fails.
+ * \retval    None
  */
 static FORCE_INLINE void AssertText(Utl_Xml_Text_t text);
 
@@ -416,12 +419,15 @@ static FORCE_INLINE bool_t AppendAttribute(Reader_t* reader, Utl_Xml_Node_t* nod
 /**
  * \brief Consumes XML whitespace within a source bound.
  *
+ * \par Details:
+ *  Position advances past whitespace.
+ *
  * \par Requirements:
  *  - 001 No byte beyond the source shall be read.
  *
  * \param[in,out] cursor   Bounded position
  *
- * \retval        None   Position advances past whitespace.
+ * \retval        None
  */
 static FORCE_INLINE void ReadWhitespace(Cursor_t* cursor);
 

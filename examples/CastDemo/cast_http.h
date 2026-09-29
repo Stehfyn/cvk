@@ -95,6 +95,9 @@ typedef struct CastHttp_Response_s
 /**
  * \brief Binds retained field slots and begins one request without acquiring resources.
  *
+ * \par Details:
+ *  An incomplete request is ready for appended input.
+ *
  * \par Requirements:
  *  - 001 Required owner and nonempty storage shall assert on misuse.
  *  - 002 Previous input borrows shall be revoked; every policy field shall be initialized.
@@ -104,13 +107,16 @@ typedef struct CastHttp_Response_s
  * \param[in,out] fields          Disjoint fixed field records
  * \param[in]     fieldCapacity   Number of writable records
  *
- * \retval        None   An incomplete request is ready for appended input.
+ * \retval        None
  */
 void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* fields, uint32_t fieldCapacity);
 
 /*************************************************************************************************/
 /**
  * \brief Establishes an empty typed response before representation data is supplied.
+ *
+ * \par Details:
+ *  The empty response is initialized.
  *
  * \par Requirements:
  *  - 001 The result pointer shall assert when missing.
@@ -120,7 +126,7 @@ void CastHttp_InitializeRequest(CastHttp_Request_t* request, Utl_Http_Field_t* f
  * \param[out] response   Required exclusive model
  * \param[in]  status     Named HTTP status
  *
- * \retval     None   The empty response is initialized.
+ * \retval     None
  */
 void CastHttp_InitializeResponse(CastHttp_Response_t* response, uint16_t status);
 

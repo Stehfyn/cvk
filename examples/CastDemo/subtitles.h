@@ -80,6 +80,9 @@ typedef struct Subtitles_Workspace_s
 /**
  * \brief Establishes and touches conversion storage during application initialization.
  *
+ * \par Details:
+ *  The workspace is ready for reuse.
+ *
  * \par Requirements:
  *  - 001 Required workspace and two disjoint buffers shall be supplied; absent pointers shall assert.
  *  - 002 Capacity shall be between one and SUBTITLE_TEXT_CAPACITY; misuse shall assert.
@@ -91,13 +94,16 @@ typedef struct Subtitles_Workspace_s
  * \param[out] output      Required result storage, disjoint from source and workspace
  * \param[in]  capacity    Readable/writable bytes in each buffer
  *
- * \retval     None   The workspace is ready for reuse.
+ * \retval     None
  */
 void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
  * \brief Initializes one file-backed track and derives its display language.
+ *
+ * \par Details:
+ *  The file-backed track is initialized; legacy field copies truncate long input.
  *
  * \par Requirements:
  *  - 001 Required path and destination shall be supplied; missing pointers shall assert.
@@ -107,7 +113,7 @@ void Subtitles_Initialize(Subtitles_Workspace_t* workspace, byte_t* source, byte
  * \param[in]  path    Required terminated native path
  * \param[out] track   Required exclusively owned destination
  *
- * \retval     None   The file-backed track is initialized; legacy field copies truncate long input.
+ * \retval     None
  */
 void Subtitles_InitializeFileTrack(const wchar_t* path, SubtitleTrack* track);
 

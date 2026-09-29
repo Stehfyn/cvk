@@ -133,19 +133,25 @@ static FORCE_INLINE uint32_t GetRangeField(const Utl_Http_Head_t* head);
 /**
  * \brief Appends one prevalidated field to the fixed response model.
  *
+ * \par Details:
+ *  One field is retained.
+ *
  * \par Requirements:
  *  - 001 The implementation shall reserve sufficient fixed slots before each append.
  *
  * \param[in,out] output   Private field owner
  * \param[in]     field    Named stable field spans
  *
- * \retval        None   One field is retained.
+ * \retval        None
  */
 static FORCE_INLINE void AppendField(ResponseHead_t* output, const Utl_Http_Field_t* field);
 
 /*************************************************************************************************/
 /**
  * \brief Constructs counted fields for a validated response.
+ *
+ * \par Details:
+ *  The complete head model is established.
  *
  * \par Requirements:
  *  - 001 Caller shall validate the response before deriving range arithmetic.
@@ -155,7 +161,7 @@ static FORCE_INLINE void AppendField(ResponseHead_t* output, const Utl_Http_Fiel
  * \param[out] output     Private fixed workspace
  * \param[in]  response   Validated metadata
  *
- * \retval     None   The complete head model is established.
+ * \retval     None
  */
 static FORCE_INLINE void SetResponseHead(ResponseHead_t* output, const CastHttp_Response_t* response);
 

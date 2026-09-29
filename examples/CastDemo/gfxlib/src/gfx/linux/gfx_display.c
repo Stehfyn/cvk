@@ -42,7 +42,7 @@ static const char c_displayWindowName[] = "Vulkan VA zero-copy";
  *
  * \param[in] pCreateInfo        Request for windowed X11, direct-display, or headless operation
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -53,7 +53,7 @@ static void ValidateCreateInfo(const Gfx_Display_CreateInfo_t* pCreateInfo);
  * \param[out] pDisplay        Display receiving X Display, Window, WM_DELETE_WINDOW atom, and screen extent
  * \param[in] pCreateInfo      Requested window extent
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 
@@ -64,7 +64,7 @@ static void CreateWindowedDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_Cre
  * \param[out] pDisplay        Zero-initialized display marked running
  * \param[in] pCreateInfo      Validated Linux display kind
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateDisplay(Gfx_Display_t* pDisplay, const Gfx_Display_CreateInfo_t* pCreateInfo);
 

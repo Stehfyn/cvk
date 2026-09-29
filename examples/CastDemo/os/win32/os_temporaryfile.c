@@ -56,6 +56,9 @@
 /**
  * \brief Retains the first native failure, including an absent native error code.
  *
+ * \par Details:
+ *  First failure evidence is retained.
+ *
  * \par Requirements:
  *  - 001 The file owner shall already be initialized and exclusively held.
  *  - 002 A failure with a zero error code shall retain ERROR_GEN_FAILURE.
@@ -64,7 +67,7 @@
  * \param[in,out] file   Initialized file owner
  * \param[in]     code   Native error captured immediately after failure
  *
- * \retval        None   First failure evidence is retained.
+ * \retval        None
  */
 static FORCE_INLINE void RecordError(OS_TemporaryFile_t* file, uint32_t code);
 

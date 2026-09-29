@@ -77,7 +77,7 @@
  * \param[in,out] image   Image owner initialized with no native resources
  * \param[in] createInfo   Validated image and native sharing configuration
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVaImport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -93,7 +93,7 @@ static void InitializeVaImport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t*
  * \param[in,out] image   Image owner initialized with no native resources
  * \param[in] createInfo   Validated image and native sharing configuration
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVaExport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -110,7 +110,7 @@ static void InitializeVaExport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t*
  * \param[in,out] image   Image owner initialized with no native resources
  * \param[in] createInfo   Validated image and native sharing configuration
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVulkanTransfer(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -127,7 +127,7 @@ static void InitializeVulkanTransfer(Gfx_Image_t* image, const Gfx_Image_CreateI
  * \param[in,out] image   Image owner initialized with no native resources
  * \param[in] createInfo   Validated image and native sharing configuration
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void InitializeVulkanImport(Gfx_Image_t* image, const Gfx_Image_CreateInfo_t* createInfo);
 

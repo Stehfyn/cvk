@@ -1,4 +1,4 @@
-"""Check migrated gfx calls against the pinned CVK, cva and cdx declarations."""
+"""Check owned C clients against the pinned CVK, cva and cdx declarations."""
 
 import argparse
 from pathlib import Path
@@ -9,7 +9,10 @@ import sys
 def mask(text):
     """Keep source offsets while ignoring comments and quoted tokens."""
     tokens = r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\''
-    return re.sub(tokens, lambda match: re.sub(r"[^\n]", " ", match[0]), text, flags=re.S)
+    def replace(match):
+        blank = re.sub(r"[^\n]", " ", match[0])
+        return blank if match[0].startswith(("/*", "//")) else "X" + blank[1:]
+    return re.sub(tokens, replace, text, flags=re.S)
 
 
 def arguments(code, opening):
@@ -58,7 +61,9 @@ def main():
                         failures.append(f"{header}: incompatible declarations for {name}")
                     declarations[name] = count
     checked = 0
-    for source in (root / "examples/CastDemo/gfxlib/src").rglob("*.c"):
+    sources = sorted(source for directory in (root / "examples", root / "tests")
+                     for source in directory.rglob("*.c"))
+    for source in sources:
         code = mask(source.read_text(encoding="utf-8"))
         for match in pattern.finditer(code):
             count, _ = arguments(code, code.index("(", match.start()))
@@ -71,7 +76,7 @@ def main():
     if failures:
         print("\n".join(failures))
     else:
-        print(f"Verified declaration presence and argument counts for {checked} gfx dependency calls")
+        print(f"Verified declaration presence and argument counts for {checked} owned-client dependency calls")
     return 1 if failures else 0
 
 

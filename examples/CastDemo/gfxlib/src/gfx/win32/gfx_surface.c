@@ -141,7 +141,7 @@ static const D3D12_HEAP_PROPERTIES c_d3d12UploadHeapProps = {
  * \param[in] file              Source file containing the check
  * \param[in] line               One-based source line containing the check
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CheckHresult(HRESULT hr, const char* expression, const char* file, int line);
 
@@ -155,7 +155,7 @@ static void CheckHresult(HRESULT hr, const char* expression, const char* file, i
  * \param[in] description        Null-terminated diagnostic text
  * \param[in] context            Unused callback context
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void __stdcall MessageCallbackD3D12(D3D12_MESSAGE_CATEGORY category,
                                            D3D12_MESSAGE_SEVERITY severity,
@@ -265,7 +265,7 @@ static uint64_t GetAlignedHeapSizeD3D12(ID3D12Device*              d3d12Device,
  * \param[out] interopKind                    Receives the selected interop path
  * \param[out] externalMemoryHandleType       Receives heap or resource type for direct import
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void SelectVulkanSurfaceInteropD3D12(VkPhysicalDevice                    physicalDevice,
                                             VkFormat                            format,
@@ -304,7 +304,7 @@ static void SelectVulkanSurfaceInteropD3D12(VkPhysicalDevice                    
  * \param[out] d3d12TransferBytes          Receives the optional mapped D3D12 transfer buffer
  * \param[out] interopKind                  Receives the selected interop path
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                         dxgiFormat,
                                               LUID                                vkDeviceLuid,
@@ -347,7 +347,7 @@ static void CreateSharedSurfaceResourcesD3D12(DXGI_FORMAT                       
  * \param[in] d3d12Fence              Fence signaled after the queued copy
  * \param[in] completionFenceValue     Fence value signaled after the queued copy
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CopySurfaceTransferBufferToReadImageD3D12(ID3D12CommandQueue*                       d3d12CopyQueue,
                                                       ID3D12CommandAllocator*                   d3d12CopyAllocator,
@@ -365,7 +365,7 @@ static void CopySurfaceTransferBufferToReadImageD3D12(ID3D12CommandQueue*       
  *
  * \param[in] createInfo        Non-NULL surface configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -376,7 +376,7 @@ static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* createInfo);
  * \param[out] surface       Receives the native surface and window dimensions
  * \param[in]  createInfo    Valid windowed presentation configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateWindowedPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -387,7 +387,7 @@ static void CreateWindowedPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
  * \param[out] surface       Receives the native surface and requested dimensions
  * \param[in]  createInfo    Valid headless presentation configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateHeadlessPresentSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -398,7 +398,7 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* surface, const Gfx_Surfa
  * \param[out] surface           Receives common state and the windowed, direct, or headless VkSurfaceKHR
  * \param[in]  createInfo        Valid present-surface configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -409,7 +409,7 @@ static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surfa
  * \param[out] surface           Receives initialized VA state, D3D12 allocation, and backend image handles
  * \param[in]  createInfo        Storage format, dimensions, and matching VA/Vulkan device contexts
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -420,7 +420,7 @@ static void CreateStorageSurface(Gfx_Surface_t* surface, const Gfx_Surface_Creat
  * \param[out] surface           Zero-initialized surface storage to construct
  * \param[in]  createInfo        Presentation or storage creation parameters
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* createInfo);
 
@@ -430,7 +430,7 @@ static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_Crea
  *
  * \param[in,out] surface        Storage surface with no active reader
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void AcquireSurface(Gfx_Surface_t* surface);
 
@@ -440,7 +440,7 @@ static void AcquireSurface(Gfx_Surface_t* surface);
  *
  * \param[in,out] surface        Storage surface with submitted writes and writePending set
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ReleaseSurface(Gfx_Surface_t* surface);
 

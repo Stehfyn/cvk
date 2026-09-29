@@ -564,7 +564,8 @@ void GpuTranscode_InitializeConfig(GpuTranscodeConfig* pConfig)
  *  Opens the source and creates its shared GPU device, decoder, encoder and
  *  frame-ring storage. Failed resource setup unwinds through Close.
  */
-GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
+GpuTranscoder* GpuTranscode_Open(GpuDevice*                deviceStorage,
+                                 const wchar_t*            pFile,
                                  const GpuTranscodeConfig* pConfig,
                                  char*                     pReport,
                                  size_t                    reportCapacity)
@@ -628,7 +629,7 @@ GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
     pTranscoder->sourceHeight   = source_height;
     pTranscoder->sampleCount    = Mp4Demux_GetSampleCount(p_demux);
     pTranscoder->sampleCapacity = 8u * 1024u * 1024u;
-    pTranscoder->device         = GpuDevice_Create(1, 1, device_report, sizeof(device_report));
+    pTranscoder->device         = GpuDevice_Create(deviceStorage, TRUE, TRUE, device_report, sizeof(device_report));
     Report(pReport, reportCapacity, "device: %s", device_report);
     if (NULL == pTranscoder->device)
     {
@@ -676,8 +677,8 @@ GpuTranscoder* GpuTranscode_Open(const wchar_t*            pFile,
             ++pTranscoder->planeCount;
         }
     }
-    pTranscoder->emptySlots  = CreateSemaphoreW(NULL, PIPELINE_SLOTS, PIPELINE_SLOTS, NULL);
-    pTranscoder->filledSlots = CreateSemaphoreW(NULL, 0, PIPELINE_SLOTS, NULL);
+    pTranscoder->emptySlots  = CreateSemaphore(NULL, PIPELINE_SLOTS, PIPELINE_SLOTS, NULL);
+    pTranscoder->filledSlots = CreateSemaphore(NULL, 0, PIPELINE_SLOTS, NULL);
     Report(pReport, reportCapacity, "decode: %s", decode_report);
     Report(pReport, reportCapacity, "encode: %s", encode_report);
     if (NULL == pTranscoder->decoder || NULL == pTranscoder->encoder || NULL == pTranscoder->sampleBuffer ||
@@ -942,7 +943,8 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
  *  Starts at a source keyframe, preserves video timing and interleaves retained
  *  AAC up to each encoded frame's end before finalizing the clip.
  */
-int GpuTranscode_WriteMp4(const wchar_t*            pSource,
+int GpuTranscode_WriteMp4(GpuDevice*                deviceStorage,
+                          const wchar_t*            pSource,
                           const wchar_t*            pDest,
                           const GpuTranscodeConfig* pConfig,
                           unsigned                  startFrame,
@@ -977,7 +979,7 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
     int            ok;
     unsigned       frame;
 
-    pTranscoder = GpuTranscode_Open(pSource, pConfig, open_report, sizeof(open_report));
+    pTranscoder = GpuTranscode_Open(deviceStorage, pSource, pConfig, open_report, sizeof(open_report));
     if (reportCapacity > 0)
     {
         pReport[0] = 0;
@@ -1136,7 +1138,8 @@ int GpuTranscode_WriteMp4(const wchar_t*            pSource,
  *  Invokes the optional ready callback after the configured head start or the
  *  successful final flush of a short clip.
  */
-int GpuTranscode_WriteFragmentedMp4(const uint16_t*           pSource,
+int GpuTranscode_WriteFragmentedMp4(GpuDevice*                deviceStorage,
+                                    const uint16_t*           pSource,
                                     const uint16_t*           pDest,
                                     const GpuTranscodeConfig* pConfig,
                                     uint32_t                  maxFrames,
@@ -1174,7 +1177,7 @@ int GpuTranscode_WriteFragmentedMp4(const uint16_t*           pSource,
     int              ok;
     unsigned         frame;
 
-    pTranscoder = GpuTranscode_Open(pSource, pConfig, open_report, sizeof(open_report));
+    pTranscoder = GpuTranscode_Open(deviceStorage, pSource, pConfig, open_report, sizeof(open_report));
     if (reportCapacity > 0)
     {
         pReport[0] = 0;

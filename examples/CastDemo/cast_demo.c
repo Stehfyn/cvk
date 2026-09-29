@@ -112,6 +112,7 @@ typedef struct CastConsole_s
     OS_Network_t            routeNetwork;  ///< Route-query resource established at startup.
     Proxy_t                 proxy;         ///< Proxy lifetime and persistent execution state.
     MediaServer_Workspace_t serving;       ///< HTTP listener and worker pool.
+    GpuDevice               gpuDevice;     ///< Startup-owned device and query workspace.
     GpuProbe_t              gpuProbe;      ///< Startup diagnostic storage.
     CastEvents_t            events;        ///< Worker-to-console status publication.
     CastEvents_Snapshot_t   snapshot;      ///< Consumer-owned acquired status.
@@ -134,11 +135,14 @@ typedef struct CastConsole_s
 /**
  * \brief Releases startup-owned proxy and route resources before Winsock shutdown.
  *
+ * \par Details:
+ *  Proxy and route resources are released; failed Winsock cleanup sets the process result.
+ *
  * \par Requirements:
  *  - 001 Both initialized owners shall remain live and Winsock shall remain available until closure succeeds.
  *  - 002 Failed releases shall retain ownership and be retried; the console polling wait remains an open timing defect.
  *
- * \retval None   Proxy and route resources are released; failed Winsock cleanup sets the process result.
+ * \retval None
  */
 static FORCE_INLINE void CloseNetworkResources(CastConsole_t* app);
 
@@ -146,18 +150,24 @@ static FORCE_INLINE void CloseNetworkResources(CastConsole_t* app);
 /**
  * \brief Closes startup-owned session resources after work and publishers are quiescent.
  *
+ * \par Details:
+ *  Native session resources are closed; any recorded failure changes the exit result.
+ *
  * \par Requirements:
  *  - 001 Both lifetime objects shall have been initialized, including after failed startup.
  *  - 002 The caller shall stop proxy publication and acquire worker completion before entry.
  *  - 003 Failed native releases shall retain owner storage and be retried on later shutdown polls.
  *
- * \retval None   Native session resources are closed; any recorded failure changes the exit result.
+ * \retval None
  */
 static FORCE_INLINE void CloseSessionResources(CastConsole_t* app);
 
 /*************************************************************************************************/
 /**
  * \brief Polls proxy and serving shutdown before releasing their dependencies.
+ *
+ * \par Details:
+ *  No remaining proxy publisher or serving worker can use the dependencies.
  *
  * \par Requirements:
  *  - 001 The caller shall have requested session Stop; both owners shall remain live.
@@ -167,7 +177,7 @@ static FORCE_INLINE void CloseSessionResources(CastConsole_t* app);
  * \param[in,out] proxy    Required initialized proxy owner
  * \param[in,out] server   Required pointer to a possibly NULL server owner
  *
- * \retval None   No remaining proxy publisher or serving worker can use the dependencies.
+ * \retval None
  */
 static FORCE_INLINE void CloseServingResources(Proxy_t* proxy, MediaServer** server);
 
@@ -764,7 +774,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                 char        device_report[256];
                 char        report[512];
 
-                pGpu = GpuDevice_Create(0, 1, device_report, sizeof(device_report));
+                pGpu = GpuDevice_Create(&app->gpuDevice, 0, 1, device_report, sizeof(device_report));
                 (void)printf("%s", device_report);
                 if (NULL == pGpu)
                 {
@@ -795,7 +805,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                 {
                     frame_count = (unsigned)_wtoi(argv[argIndex + 1]);
                 }
-                pGpu = GpuDevice_Create(0, 1, device_report, sizeof(device_report));
+                pGpu = GpuDevice_Create(&app->gpuDevice, 0, 1, device_report, sizeof(device_report));
                 (void)printf("%s", device_report);
                 if (NULL == pGpu)
                 {
@@ -884,7 +894,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
 
                 GpuTranscode_InitializeConfig(&tconfig);
                 frame_limit = (argIndex + 2 < argc) ? (unsigned)wcstoul(argv[argIndex + 2], NULL, 10) : 60u;
-                pTranscoder = GpuTranscode_Open(argv[argIndex + 1], &tconfig, report, sizeof(report));
+                pTranscoder = GpuTranscode_Open(&app->gpuDevice, argv[argIndex + 1], &tconfig, report, sizeof(report));
                 (void)printf("%s", report);
                 if (NULL == pTranscoder)
                 {
@@ -947,7 +957,8 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
 
                 GpuTranscode_InitializeConfig(&fragConfig);
                 max_frames = (argIndex + 3 < argc) ? (unsigned)wcstoul(argv[argIndex + 3], NULL, 10) : 0u;
-                ok         = GpuTranscode_WriteFragmentedMp4(argv[argIndex + 1],
+                ok         = GpuTranscode_WriteFragmentedMp4(&app->gpuDevice,
+                                                             argv[argIndex + 1],
                                                              argv[argIndex + 2],
                                                              &fragConfig,
                                                              max_frames,
@@ -968,7 +979,8 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
 
                 GpuTranscode_InitializeConfig(&proxyConfig);
                 max_frames = (argIndex + 3 < argc) ? (unsigned)wcstoul(argv[argIndex + 3], NULL, 10) : 0u;
-                ok         = GpuTranscode_WriteMp4(argv[argIndex + 1],
+                ok         = GpuTranscode_WriteMp4(&app->gpuDevice,
+                                                   argv[argIndex + 1],
                                                    argv[argIndex + 2],
                                                    &proxyConfig,
                                                    0,
@@ -1003,7 +1015,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                     Mp4Demux_Close(pDemux);
                     return 1;
                 }
-                pGpu = GpuDevice_Create(1, 0, deviceReport, sizeof(deviceReport));
+                pGpu = GpuDevice_Create(&app->gpuDevice, 1, 0, deviceReport, sizeof(deviceReport));
                 (void)printf("%s", deviceReport);
                 if (NULL == pGpu)
                 {
@@ -1052,7 +1064,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                     Mp4Demux_Close(pDemux);
                     return 1;
                 }
-                pGpu = GpuDevice_Create(1, 0, deviceReport, sizeof(deviceReport));
+                pGpu = GpuDevice_Create(&app->gpuDevice, 1, 0, deviceReport, sizeof(deviceReport));
                 (void)printf("%s", deviceReport);
                 if (NULL == pGpu)
                 {
@@ -1532,6 +1544,7 @@ int wmain(int argc, wchar_t** argv)
     {
         app = (CastConsole_t*)OS_Memory_GetAddress(&memory);
         CastEvents_Initialize(&app->events);
+        GpuDevice_Initialize(&app->gpuDevice);
         ready = OS_Console_Initialize(&app->console);
         if (ready)
         {

@@ -135,6 +135,9 @@ typedef struct Utl_Url_s
 /**
  * \brief Initializes an empty relative reference without acquiring resources.
  *
+ * \par Details:
+ *  A valid empty relative reference is established.
+ *
  * \par Requirements:
  *  - 001 A missing result shall assert as a development error.
  *  - 002 Every component shall be empty and all presence flags shall be false.
@@ -142,7 +145,7 @@ typedef struct Utl_Url_s
  *
  * \param[out] url   Required object, exclusively owned
  *
- * \retval     None   A valid empty relative reference is established.
+ * \retval     None
  */
 void Utl_Url_Initialize(Utl_Url_t* url);
 

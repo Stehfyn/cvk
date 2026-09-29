@@ -81,9 +81,12 @@ typedef struct ConsoleFixture_s
 /**
  * \brief Initializes isolated keyboard, redirected and failed-start owners.
  *
+ * \par Details:
+ *  Setup succeeds or an assertion terminates this isolated process.
+ *
  * \param[out] fixture   Required lifetime storage
  *
- * \retval     None   Setup succeeds or an assertion terminates this isolated process.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeFixture(ConsoleFixture_t* fixture);
 
@@ -91,10 +94,13 @@ static FORCE_INLINE void InitializeFixture(ConsoleFixture_t* fixture);
 /**
  * \brief Checks unchanged output on an expected non-key result.
  *
+ * \par Details:
+ *  Every published field retains its independent sentinel.
+ *
  * \param[in,out] console   Initialized owner
  * \param[in]     expected  EMPTY, IGNORED or FAILED
  *
- * \retval        None   Every published field retains its independent sentinel.
+ * \retval        None
  */
 static FORCE_INLINE void CheckPreservedKey(OS_Console_t* console, OS_Console_ReadResult_t expected);
 
@@ -102,9 +108,12 @@ static FORCE_INLINE void CheckPreservedKey(OS_Console_t* console, OS_Console_Rea
 /**
  * \brief Exercises one-record consumption, repeat counts, modifiers and key-up.
  *
+ * \par Details:
+ *  Native results match the expected portable records.
+ *
  * \param[in,out] fixture   Initialized exclusive console owner
  *
- * \retval        None   Native results match the expected portable records.
+ * \retval        None
  */
 static FORCE_INLINE void CheckInput(ConsoleFixture_t* fixture);
 
@@ -112,9 +121,12 @@ static FORCE_INLINE void CheckInput(ConsoleFixture_t* fixture);
 /**
  * \brief Checks complete mode restoration and idempotent owner closure.
  *
+ * \par Details:
+ *  Every owner is closed with its first error preserved.
+ *
  * \param[in,out] fixture   Initialized owners after input exercise
  *
- * \retval        None   Every owner is closed with its first error preserved.
+ * \retval        None
  */
 static FORCE_INLINE void CheckClosure(ConsoleFixture_t* fixture);
 
@@ -122,7 +134,10 @@ static FORCE_INLINE void CheckClosure(ConsoleFixture_t* fixture);
 /**
  * \brief Exercises successful absence of standard input in a detached process.
  *
- * \retval None   Optional input stays unavailable through repeated successful closure.
+ * \par Details:
+ *  Optional input stays unavailable through repeated successful closure.
+ *
+ * \retval None
  */
 static FORCE_INLINE void CheckAbsentInput(void);
 

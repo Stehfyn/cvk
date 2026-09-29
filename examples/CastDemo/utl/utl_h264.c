@@ -198,7 +198,7 @@ static uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right);
  * \param[in,out] writer  Byte-aligned RBSP writer
  * \param[in]     value   Payload type or payload size to encode
  *
- * \retval None  No result value.
+ * \retval None
  */
 static void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value);
 
@@ -276,7 +276,7 @@ static uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
  * \param[in,out] writer   Initialized byte-aligned writer or counter
  * \param[in]     unit     Stable header and bounded RBSP model
  *
- * \retval None  No result value.
+ * \retval None
  */
 static void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit);
 

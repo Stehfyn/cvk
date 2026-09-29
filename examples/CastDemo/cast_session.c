@@ -187,6 +187,9 @@ typedef struct CastSession_State_s
 /**
  * \brief Initializes meaningful state for one prepared cast.
  *
+ * \par Details:
+ *  One idle cast is prepared.
+ *
  * \par Requirements:
  *  - 001 The owner shall exclude runners and publishers and retain the startup region.
  *  - 002 Configuration storage shall be disjoint; referenced keyframes and callback context shall remain alive until Reset.
@@ -195,7 +198,7 @@ typedef struct CastSession_State_s
  * \param[out] state    Required persistent implementation storage
  * \param[in]  config   Required validated caller configuration
  *
- * \retval     None   One idle cast is prepared.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeState(CastSession_State_t* state, const CastSessionConfig* config);
 
@@ -461,6 +464,9 @@ static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
 /**
  * \brief Requests application shutdown and drains replies until the bounded deadline.
  *
+ * \par Details:
+ *  Request/drain attempt finished; channel cleanup remains with the runner.
+ *
  * \par Requirements:
  *  - 001 The runner shall own the channel and stable counted application session ID.
  *  - 002 Missing session/channel or failed command transmission shall leave without waiting.
@@ -468,7 +474,7 @@ static FORCE_INLINE bool_t OnReceiverStatus(CastSession_State_t*   session,
  *
  * \param[in,out] pSession   Required runner-owned state
  *
- * \retval        None   Request/drain attempt finished; channel cleanup remains with the runner.
+ * \retval        None
  */
 static void Leave(CastSession_State_t* pSession);
 

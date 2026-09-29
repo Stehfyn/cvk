@@ -113,7 +113,7 @@ typedef struct CastEvents_s
  *
  * \param[out] events   Non-NULL exclusively owned fresh storage
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 void CastEvents_Initialize(CastEvents_t* events);
 
@@ -133,7 +133,7 @@ void CastEvents_Initialize(CastEvents_t* events);
  * \param[in,out] events       Non-NULL quiescent caller-owned storage
  * \param[in]     generation   Opaque caller generation identifier
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void CastEvents_Begin(CastEvents_t* events, uint32_t generation);
 

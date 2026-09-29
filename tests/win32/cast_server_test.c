@@ -69,11 +69,14 @@ static MediaServer_Workspace_t g_serving;
 /**
  * \brief Checks that rejected bind syntax cannot silently select every interface.
  *
+ * \par Details:
+ *  All rejection assertions pass or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 Rejection shall precede native socket creation and work without Winsock startup.
  *  - 002 Error text shall distinguish invalid input from a later native startup failure.
  *
- * \retval None   All rejection assertions pass or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckRejectedBind(void);
 
@@ -95,6 +98,9 @@ static FORCE_INLINE SOCKET ConnectClient(uint16_t port);
 /**
  * \brief Sends the complete counted fixture bytes.
  *
+ * \par Details:
+ *  The request is queued or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 Partial native sends shall advance exactly by their reported extent.
  *  - 002 The finite native deadline shall fail the fixture rather than permit an indefinite wait.
@@ -103,7 +109,7 @@ static FORCE_INLINE SOCKET ConnectClient(uint16_t port);
  * \param[in] text     Complete readable request bytes
  * \param[in] count    Exact readable extent
  *
- * \retval    None   The request is queued or the fixture fails.
+ * \retval    None
  */
 static FORCE_INLINE void SendText(SOCKET client, const char_t* text, uint32_t count);
 
@@ -111,19 +117,25 @@ static FORCE_INLINE void SendText(SOCKET client, const char_t* text, uint32_t co
 /**
  * \brief Establishes that the server accepted and answered a persistent client.
  *
+ * \par Details:
+ *  A complete successful response was consumed or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 A bodyless HEAD response shall have the independently specified status prefix and complete delimiter.
  *  - 002 The fixture shall consume the exact header without waiting for connection closure.
  *
  * \param[in] client   Exclusive connected fixture socket
  *
- * \retval    None   A complete successful response was consumed or the fixture fails.
+ * \retval    None
  */
 static FORCE_INLINE void ReadHead(SOCKET client);
 
 /*************************************************************************************************/
 /**
  * \brief Checks retained owner identity and eventual shutdown of all admitted clients.
+ *
+ * \par Details:
+ *  Closure and ownership assertions pass or the fixture fails.
  *
  * \par Requirements:
  *  - 001 Every unsuccessful poll shall preserve the original pointer value.
@@ -132,7 +144,7 @@ static FORCE_INLINE void ReadHead(SOCKET client);
  *
  * \param[in,out] owner   Required live server pointer
  *
- * \retval        None   Closure and ownership assertions pass or the fixture fails.
+ * \retval        None
  */
 static FORCE_INLINE void StopServer(MediaServer** owner);
 
@@ -140,12 +152,15 @@ static FORCE_INLINE void StopServer(MediaServer** owner);
 /**
  * \brief Exercises persistent idle and incomplete requests during server cancellation.
  *
+ * \par Details:
+ *  All assertions pass or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 Every client shall complete a HEAD before shutdown, proving admission.
  *  - 002 A client shall remain reusable across more than one server read-poll interval.
  *  - 003 Clients shall remain open until server shutdown proves that their workers ended.
  *
- * \retval None   All assertions pass or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckClients(void);
 
@@ -153,11 +168,14 @@ static FORCE_INLINE void CheckClients(void);
 /**
  * \brief Exercises complete listener saturation and slot reuse against stable storage.
  *
+ * \par Details:
+ *  Every bounded admission and reuse assertion passes.
+ *
  * \par Requirements:
  *  - 001 An excess listener shall fail without changing existing identities or pool storage.
  *  - 002 A successfully retired slot shall accept another representation.
  *
- * \retval None   Every bounded admission and reuse assertion passes.
+ * \retval None
  */
 static FORCE_INLINE void CheckListenerCapacity(void);
 
@@ -165,11 +183,14 @@ static FORCE_INLINE void CheckListenerCapacity(void);
 /**
  * \brief Exercises a client queued beyond worker capacity and subsequent reuse.
  *
+ * \par Details:
+ *  Capacity handoff and cleanup complete within fixture deadlines.
+ *
  * \par Requirements:
  *  - 001 Every startup worker shall first hold one persistent client.
  *  - 002 Ending one client shall permit the queued peer to obtain a valid response.
  *
- * \retval None   Capacity handoff and cleanup complete within fixture deadlines.
+ * \retval None
  */
 static FORCE_INLINE void CheckClientCapacity(void);
 

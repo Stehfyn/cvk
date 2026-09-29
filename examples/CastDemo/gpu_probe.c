@@ -121,6 +121,9 @@ static FORCE_INLINE bool_t HasExtension(const GpuProbe_Storage_t* storage, const
 /**
  * \brief Appends one complete fragment or latches diagnostic saturation.
  *
+ * \par Details:
+ *  Report or saturation latch is updated.
+ *
  * \par Requirements:
  *  - 001 Extent shall be checked before copying; termination shall always fit.
  *
@@ -128,7 +131,7 @@ static FORCE_INLINE bool_t HasExtension(const GpuProbe_Storage_t* storage, const
  * \param[in] text   Counted source
  * \param[in] bytes   Source bytes
  *
- * \retval None   Report or saturation latch is updated.
+ * \retval None
  */
 static FORCE_INLINE void AppendText(GpuProbe_t* probe, const char_t* text, uint32_t bytes);
 
@@ -136,13 +139,16 @@ static FORCE_INLINE void AppendText(GpuProbe_t* probe, const char_t* text, uint3
 /**
  * \brief Appends a native numeric property without variadic or CRT formatting.
  *
+ * \par Details:
+ *  Complete decimal digits are appended or saturation is latched.
+ *
  * \par Requirements:
  *  - 001 The decimal temporary shall cover the complete unsigned domain.
  *
  * \param[in,out] probe   Report owner
  * \param[in] value   Numeric property
  *
- * \retval None   Complete decimal digits are appended or saturation is latched.
+ * \retval None
  */
 static FORCE_INLINE void AppendNumber(GpuProbe_t* probe, uint32_t value);
 
@@ -150,13 +156,16 @@ static FORCE_INLINE void AppendNumber(GpuProbe_t* probe, uint32_t value);
 /**
  * \brief Appends the diagnostic spelling of a capability question.
  *
+ * \par Details:
+ *  The spelling is appended.
+ *
  * \par Requirements:
  *  - 001 Both spellings shall be counted constants.
  *
  * \param[in,out] probe   Report owner
  * \param[in] answer   Capability result
  *
- * \retval None   The spelling is appended.
+ * \retval None
  */
 static FORCE_INLINE void AppendQuestion(GpuProbe_t* probe, bool_t answer);
 
@@ -261,13 +270,16 @@ static FORCE_INLINE bool_t ReadDecodeProfile(GpuProbe_t* probe, VkPhysicalDevice
 /**
  * \brief Reports limits, queues and blit properties of the selected device.
  *
+ * \par Details:
+ *  The retained report is extended.
+ *
  * \par Requirements:
  *  - 001 Every queue and format query shall refer to the selected physical device.
  *
  * \param[in,out] probe   Selected snapshot and report
  * \param[in] physical   Selected physical device
  *
- * \retval None   The retained report is extended.
+ * \retval None
  */
 static FORCE_INLINE void ReportSelected(GpuProbe_t* probe, VkPhysicalDevice physical);
 

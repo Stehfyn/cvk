@@ -81,7 +81,7 @@ typedef struct CastCommands_s
  *
  * \param[out] commands   Non-NULL caller-owned storage
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 void CastCommands_Reset(CastCommands_t* commands);
 

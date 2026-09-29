@@ -242,6 +242,9 @@ static FORCE_INLINE bool_t IsValidCommand(const Utl_Chromecast_Command_t* comman
 /**
  * \brief Supplies an application field name to the JSON writer.
  *
+ * \par Details:
+ *  JSON writer owns grammar and status.
+ *
  * \par Requirements:
  *  - 001 Cast fields shall remain borrowed, immutable and disjoint from output during both passes.
  *
@@ -249,13 +252,16 @@ static FORCE_INLINE bool_t IsValidCommand(const Utl_Chromecast_Command_t* comman
  * \param[in]     name     Cast field name
  * \param[in]     bytes    Counted name bytes
  *
- * \retval None   JSON writer owns grammar and status.
+ * \retval None
  */
 static FORCE_INLINE void WriteName(Utl_Json_Writer_t* writer, const char_t* name, uint32_t bytes);
 
 /*************************************************************************************************/
 /**
  * \brief Supplies an application string token to the JSON writer.
+ *
+ * \par Details:
+ *  JSON writer owns escaping and status.
  *
  * \par Requirements:
  *  - 001 Cast fields shall remain borrowed, immutable and disjoint from output during both passes.
@@ -264,7 +270,7 @@ static FORCE_INLINE void WriteName(Utl_Json_Writer_t* writer, const char_t* name
  * \param[in]     value    Cast token
  * \param[in]     bytes    Counted token bytes
  *
- * \retval None   JSON writer owns escaping and status.
+ * \retval None
  */
 static FORCE_INLINE void WriteToken(Utl_Json_Writer_t* writer, const char_t* value, uint32_t bytes);
 
@@ -275,7 +281,7 @@ static FORCE_INLINE void WriteToken(Utl_Json_Writer_t* writer, const char_t* val
  * \param[in,out] writer   Initialized writer
  * \param[in]     rgba     Packed RRGGBBAA value
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void WriteColor(Utl_Json_Writer_t* writer, uint32_t rgba);
 
@@ -283,13 +289,16 @@ static FORCE_INLINE void WriteColor(Utl_Json_Writer_t* writer, uint32_t rgba);
 /**
  * \brief Composes the selected Cast subtitle and application outline style.
  *
+ * \par Details:
+ *  JSON writer retains final status.
+ *
  * \par Requirements:
  *  - 001 Cast fields shall remain borrowed, immutable and disjoint from output during both passes.
  *
  * \param[in,out] writer     Shared JSON writer
  * \param[in]     subtitle   Valid selected track
  *
- * \retval None   JSON writer retains final status.
+ * \retval None
  */
 static FORCE_INLINE void WriteSubtitle(Utl_Json_Writer_t* writer, const Utl_Chromecast_Subtitle_t* subtitle);
 
@@ -300,7 +309,7 @@ static FORCE_INLINE void WriteSubtitle(Utl_Json_Writer_t* writer, const Utl_Chro
  * \param[in,out] writer   Initialized writer
  * \param[in]     style    Preflighted borrowed style model
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void WriteTextTrackStyle(Utl_Json_Writer_t* writer, const Utl_Chromecast_TextTrackStyle_t* style);
 
@@ -308,19 +317,25 @@ static FORCE_INLINE void WriteTextTrackStyle(Utl_Json_Writer_t* writer, const Ut
 /**
  * \brief Composes only the Cast LOAD schema through general JSON operations.
  *
+ * \par Details:
+ *  Completion is queried from the JSON writer.
+ *
  * \par Requirements:
  *  - 001 Cast fields shall remain borrowed, immutable and disjoint from output during both passes.
  *
  * \param[in,out] writer   Counting or output writer
  * \param[in]     load     Stable Cast model
  *
- * \retval None   Completion is queried from the JSON writer.
+ * \retval None
  */
 static FORCE_INLINE void EncodeLoad(Utl_Json_Writer_t* writer, const Utl_Chromecast_Load_t* load);
 
 /*************************************************************************************************/
 /**
  * \brief Composes the active SEEK fields after the common request fields.
+ *
+ * \par Details:
+ *  Writer records completion or failure.
  *
  * \par Requirements:
  *  - 001 The seek model shall have a valid decimal scale and resume value.
@@ -329,13 +344,16 @@ static FORCE_INLINE void EncodeLoad(Utl_Json_Writer_t* writer, const Utl_Chromec
  * \param[in,out] writer   Initialized writer inside a command object
  * \param[in]     seek     Stable validated model
  *
- * \retval        None   Writer records completion or failure.
+ * \retval        None
  */
 static FORCE_INLINE void WriteSeek(Utl_Json_Writer_t* writer, const Utl_Chromecast_Seek_t* seek);
 
 /*************************************************************************************************/
 /**
  * \brief Composes the fields selected by a preflighted command model.
+ *
+ * \par Details:
+ *  Writer records completion or failure.
  *
  * \par Requirements:
  *  - 001 The model shall satisfy IsValidCommand and remain unchanged through serialization.
@@ -344,7 +362,7 @@ static FORCE_INLINE void WriteSeek(Utl_Json_Writer_t* writer, const Utl_Chromeca
  * \param[in,out] writer    Initialized exclusive writer
  * \param[in]     command   Stable validated command model
  *
- * \retval        None   Writer records completion or failure.
+ * \retval        None
  */
 static FORCE_INLINE void EncodeCommand(Utl_Json_Writer_t* writer, const Utl_Chromecast_Command_t* command);
 

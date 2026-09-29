@@ -82,12 +82,15 @@ typedef struct FragmentBox_s
 /**
  * \brief Asserts the counted-storage ownership contract.
  *
+ * \par Details:
+ *  Contract checked.
+ *
  * \par Requirements:
  *  - 001 Nonempty missing storage shall assert.
  *
  * \param[in] bytes   Stable readable extent
  *
- * \retval None Contract checked.
+ * \retval None
  */
 static FORCE_INLINE void AssertSpan(Utl_Mpeg4_Span_t bytes);
 
@@ -123,19 +126,25 @@ static FORCE_INLINE uint64_t ReadUnsigned(const byte_t* bytes, uint32_t width);
 /**
  * \brief Writes a preflighted unsigned big-endian field.
  *
+ * \par Details:
+ *  Field written.
+ *
  * \par Requirements:
  *  - 001 Width, capacity and value representability shall be established before mutation.
  *
  * \param[out] bytes   Complete writable field
  * \param[in]  field   Value paired with its validated wire width
  *
- * \retval None Field written.
+ * \retval None
  */
 static FORCE_INLINE void WriteUnsigned(byte_t* bytes, Utl_Mpeg4_Integer_t field);
 
 /*************************************************************************************************/
 /**
  * \brief Writes a preflighted bit field in complete byte portions.
+ *
+ * \par Details:
+ *  Field and cursor advanced.
  *
  * \par Requirements:
  *  - 001 The caller shall validate the complete field value and output capacity first.
@@ -145,7 +154,7 @@ static FORCE_INLINE void WriteUnsigned(byte_t* bytes, Utl_Mpeg4_Integer_t field)
  * \param[in,out] writer   Required preflighted writable owner
  * \param[in]     field    Complete validated field
  *
- * \retval None Field and cursor advanced.
+ * \retval None
  */
 static FORCE_INLINE void WriteBitField(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_BitField_t field);
 
@@ -227,13 +236,16 @@ static FORCE_INLINE bool_t IsFragmentSample(const Utl_Mpeg4_FragmentSample_t* sa
 /**
  * \brief Appends a preflighted 32-bit network field through the shared bit writer.
  *
+ * \par Details:
+ *  Writer advanced.
+ *
  * \par Requirements:
  *  - 001 The caller shall retain exclusive output ownership and complete preflight.
  *
  * \param[in,out] writer   Required initialized writer
  * \param[in]     value    Complete field value
  *
- * \retval None Writer advanced.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragment32(Utl_Mpeg4_BitWriter_t* writer, uint32_t value);
 
@@ -241,19 +253,25 @@ static FORCE_INLINE void WriteFragment32(Utl_Mpeg4_BitWriter_t* writer, uint32_t
 /**
  * \brief Appends a preflighted 64-bit network field through the shared bit writer.
  *
+ * \par Details:
+ *  Writer advanced.
+ *
  * \par Requirements:
  *  - 001 The caller shall retain exclusive output ownership and complete preflight.
  *
  * \param[in,out] writer   Required initialized writer
  * \param[in]     value    Complete field value
  *
- * \retval None Writer advanced.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragment64(Utl_Mpeg4_BitWriter_t* writer, uint64_t value);
 
 /*************************************************************************************************/
 /**
  * \brief Appends a preflighted ordinary Box header.
+ *
+ * \par Details:
+ *  Header appended.
  *
  * \par Requirements:
  *  - 001 The model shall pair a known type with its complete ordinary box extent.
@@ -262,7 +280,7 @@ static FORCE_INLINE void WriteFragment64(Utl_Mpeg4_BitWriter_t* writer, uint64_t
  * \param[in,out] writer   Required initialized writer
  * \param[in]     box      Paired type and complete extent
  *
- * \retval None Header appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragmentBox(Utl_Mpeg4_BitWriter_t* writer, FragmentBox_t box);
 
@@ -270,13 +288,16 @@ static FORCE_INLINE void WriteFragmentBox(Utl_Mpeg4_BitWriter_t* writer, Fragmen
 /**
  * \brief Appends preflighted version and flags.
  *
+ * \par Details:
+ *  Fields appended.
+ *
  * \par Requirements:
  *  - 001 The enclosing query shall validate box-specific version and option relationships.
  *
  * \param[in,out] writer   Required writer
  * \param[in]     fields   Known FullBox fields
  *
- * \retval None Fields appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragmentFields(Utl_Mpeg4_BitWriter_t* writer, Utl_Mpeg4_FullBoxFields_t fields);
 
@@ -284,13 +305,16 @@ static FORCE_INLINE void WriteFragmentFields(Utl_Mpeg4_BitWriter_t* writer, Utl_
 /**
  * \brief Serializes a validated tfhd in specification field order.
  *
+ * \par Details:
+ *  Complete tfhd appended.
+ *
  * \par Requirements:
  *  - 001 All fields and output extent shall have been preflighted.
  *
  * \param[in,out] writer   Required writer
  * \param[in]     track    Stable validated track
  *
- * \retval None Complete tfhd appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragmentHeader(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackFragment_t* track);
 
@@ -298,19 +322,25 @@ static FORCE_INLINE void WriteFragmentHeader(Utl_Mpeg4_BitWriter_t* writer, cons
 /**
  * \brief Serializes a preflighted tfdt without narrowing unknown values.
  *
+ * \par Details:
+ *  Complete tfdt appended.
+ *
  * \par Requirements:
  *  - 001 The parent writer shall place this after tfhd and before all trun boxes.
  *
  * \param[in,out] writer   Required writer
  * \param[in]     track    Stable track with known decode-time version
  *
- * \retval None Complete tfdt appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragmentDecodeTime(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackFragment_t* track);
 
 /*************************************************************************************************/
 /**
  * \brief Serializes selected sample fields after complete validation.
+ *
+ * \par Details:
+ *  Selected sample fields appended.
  *
  * \par Requirements:
  *  - 001 Signed offsets shall encode by the defined modulo conversion to uint32_t.
@@ -319,7 +349,7 @@ static FORCE_INLINE void WriteFragmentDecodeTime(Utl_Mpeg4_BitWriter_t* writer, 
  * \param[in]     sample   Stable validated sample
  * \param[in]     run      Stable selected field layout
  *
- * \retval None Selected sample fields appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragmentSample(Utl_Mpeg4_BitWriter_t*            writer,
                                              const Utl_Mpeg4_FragmentSample_t* sample,
@@ -329,13 +359,16 @@ static FORCE_INLINE void WriteFragmentSample(Utl_Mpeg4_BitWriter_t*            w
 /**
  * \brief Serializes a complete preflighted trun, including signed offsets.
  *
+ * \par Details:
+ *  Complete trun appended.
+ *
  * \par Requirements:
  *  - 001 Implicit empty rows shall not dereference sample storage.
  *
  * \param[in,out] writer   Required writer
  * \param[in]     run      Stable validated run
  *
- * \retval None Complete trun appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteFragmentRun(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackRun_t* run);
 
@@ -343,13 +376,16 @@ static FORCE_INLINE void WriteFragmentRun(Utl_Mpeg4_BitWriter_t* writer, const U
 /**
  * \brief Serializes one validated traf in required child order.
  *
+ * \par Details:
+ *  Complete traf appended.
+ *
  * \par Requirements:
  *  - 001 No model mutation shall occur between outer preflight and completion.
  *
  * \param[in,out] writer   Required writer
  * \param[in]     track    Stable validated track
  *
- * \retval None Complete traf appended.
+ * \retval None
  */
 static FORCE_INLINE void WriteTrackFragment(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4_TrackFragment_t* track);
 

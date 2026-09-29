@@ -155,6 +155,9 @@ typedef struct Utl_Mpeg4Audio_Config_s
 /**
  * \brief Initializes caller-owned configuration to 48 kHz stereo AAC LC.
  *
+ * \par Details:
+ *  Model initialized.
+ *
  * \par Requirements:
  *  - 001 The required destination shall assert when missing.
  *  - 002 All members shall be initialized; no allocation, native operation or external CRT shall occur.
@@ -162,7 +165,7 @@ typedef struct Utl_Mpeg4Audio_Config_s
  *
  * \param[out] config   Required exclusively writable model
  *
- * \retval None Model initialized.
+ * \retval None
  */
 void Utl_Mpeg4Audio_InitializeConfig(Utl_Mpeg4Audio_Config_t* config);
 

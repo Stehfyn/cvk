@@ -175,7 +175,7 @@ typedef struct Gfx_Image_CreateInfo_s
  * \param[out] image      Receives the allocated image; initialized by this function
  * \param[in]  createInfo Backend, sharing role, extent, and native creation parameters
  *
- * \retval None   No result value.
+ * \retval None
  */
 void Gfx_Image_Create(Gfx_Image_t** image, const Gfx_Image_CreateInfo_t* createInfo);
 
@@ -197,7 +197,7 @@ void Gfx_Image_Create(Gfx_Image_t** image, const Gfx_Image_CreateInfo_t* createI
  * \param[out]    dst     Non-NULL destination storage filled during this call
  * \param[in]     dstSize Destination size in bytes
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 void Gfx_Image_ReadMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
 
@@ -217,7 +217,7 @@ void Gfx_Image_ReadMemory(Gfx_Image_t* image, void* dst, uint64_t dstSize);
  * \param[in]     src     Non-NULL source storage copied during this call
  * \param[in]     srcSize Number of source bytes
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 void Gfx_Image_WriteMemory(Gfx_Image_t* image, const void* src, uint64_t srcSize);
 

@@ -74,7 +74,7 @@ typedef struct OS_RingBuffer_s
  * \param[in,out] bytes      Non-NULL caller-owned writable storage
  * \param[in]     capacity   Readable/writable storage extent in bytes, at least one
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_RingBuffer_Initialize(OS_RingBuffer_t* ring, byte_t* bytes, uint32_t capacity);
 
@@ -167,7 +167,7 @@ byte_t* OS_RingBuffer_GetWritableSpan(uint32_t* byteCount, OS_RingBuffer_t* ring
  *
  * \param[in,out] ring   Non-NULL initialized state, exclusively accessed
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_RingBuffer_Reset(OS_RingBuffer_t* ring);
 
@@ -187,7 +187,7 @@ void OS_RingBuffer_Reset(OS_RingBuffer_t* ring);
  * \param[in,out] ring        Non-NULL initialized exclusively accessed state
  * \param[in]     byteCount   Initialized prefix length, no greater than FreeByteCount
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_RingBuffer_Produce(OS_RingBuffer_t* ring, uint32_t byteCount);
 
@@ -207,7 +207,7 @@ void OS_RingBuffer_Produce(OS_RingBuffer_t* ring, uint32_t byteCount);
  * \param[in,out] ring        Non-NULL initialized exclusively accessed state
  * \param[in]     byteCount   Prefix length, no greater than ByteCount
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_RingBuffer_Consume(OS_RingBuffer_t* ring, uint32_t byteCount);
 

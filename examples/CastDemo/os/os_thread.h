@@ -54,7 +54,7 @@ typedef enum OS_Thread_State_e
  *
  * \param[in,out] context   Fixed caller-owned job context
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 typedef void (*OS_Thread_Proc_t)(void* context);
 

@@ -358,19 +358,25 @@ static FORCE_INLINE uint8_t ReadObject(Utl_Mpeg4_BitReader_t* reader);
 /**
  * \brief Reads and validates the complete sampling-frequency syntax.
  *
+ * \par Details:
+ *  Candidate field and sticky validity updated.
+ *
  * \par Requirements:
  *  - 001 Escape shall require all 24 frequency bits; reserved indices and zero frequencies shall fail.
  *
  * \param[out]    frequency   Required candidate field
  * \param[in,out] reader      Required initialized cursor
  *
- * \retval None Candidate field and sticky validity updated.
+ * \retval None
  */
 static FORCE_INLINE void ReadFrequency(Utl_Mpeg4Audio_Frequency_t* frequency, Utl_Mpeg4_BitReader_t* reader);
 
 /*************************************************************************************************/
 /**
  * \brief Reads a specification-bounded channel map.
+ *
+ * \par Details:
+ *  Elements decoded; reader records truncation.
  *
  * \par Requirements:
  *  - 001 Count shall be previously read from its four-bit field and fit the supplied array.
@@ -379,7 +385,7 @@ static FORCE_INLINE void ReadFrequency(Utl_Mpeg4Audio_Frequency_t* frequency, Ut
  * \param[in,out] reader     Required initialized cursor
  * \param[in]     count      Element count
  *
- * \retval None Elements decoded; reader records truncation.
+ * \retval None
  */
 static FORCE_INLINE void ReadElements(Utl_Mpeg4Audio_Element_t* elements,
                                       Utl_Mpeg4_BitReader_t*    reader,
@@ -389,19 +395,25 @@ static FORCE_INLINE void ReadElements(Utl_Mpeg4Audio_Element_t* elements,
 /**
  * \brief Reads the program mixdown fields selected by presence flags.
  *
+ * \par Details:
+ *  Selected mixdown fields read.
+ *
  * \par Requirements:
  *  - 001 Inactive optional values shall remain in their initialized state.
  *
  * \param[in,out] program   Required initialized candidate
  * \param[in,out] reader    Required initialized cursor
  *
- * \retval None Selected mixdown fields read.
+ * \retval None
  */
 static FORCE_INLINE void ReadProgramMixdown(Utl_Mpeg4Audio_Program_t* program, Utl_Mpeg4_BitReader_t* reader);
 
 /*************************************************************************************************/
 /**
  * \brief Reads the complete PCE syntax including arrays, relative alignment and comments.
+ *
+ * \par Details:
+ *  Candidate decoded; sticky validity records truncation.
  *
  * \par Requirements:
  *  - 001 All array counts shall come from bounded specification fields.
@@ -411,7 +423,7 @@ static FORCE_INLINE void ReadProgramMixdown(Utl_Mpeg4Audio_Program_t* program, U
  * \param[in,out] program   Required initialized candidate
  * \param[in,out] reader    Required initialized cursor
  *
- * \retval None Candidate decoded; sticky validity records truncation.
+ * \retval None
  */
 static FORCE_INLINE void ReadProgram(Utl_Mpeg4Audio_Program_t* program, Utl_Mpeg4_BitReader_t* reader);
 
@@ -483,19 +495,25 @@ static FORCE_INLINE Utl_Mpeg4Audio_Status_t ReadPadding(Utl_Mpeg4_BitReader_t* r
 /**
  * \brief Measures or writes the selected indexed/explicit frequency.
  *
+ * \par Details:
+ *  Complete frequency syntax measured or written.
+ *
  * \par Requirements:
  *  - 001 The frequency shall be semantically valid before serialization.
  *
  * \param[in,out] writer      Required cursor
  * \param[in]     frequency   Required validated frequency
  *
- * \retval None Complete frequency syntax measured or written.
+ * \retval None
  */
 static FORCE_INLINE void WriteFrequency(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Frequency_t* frequency);
 
 /*************************************************************************************************/
 /**
  * \brief Measures or writes selected program channel elements.
+ *
+ * \par Details:
+ *  Selected element bits measured or written.
  *
  * \par Requirements:
  *  - 001 The count shall fit the declared array; inactive entries shall not be read.
@@ -504,7 +522,7 @@ static FORCE_INLINE void WriteFrequency(Utl_Mpeg4_BitWriter_t* writer, const Utl
  * \param[in]     elements   Required selected elements
  * \param[in]     count      Validated element count
  *
- * \retval None Selected element bits measured or written.
+ * \retval None
  */
 static FORCE_INLINE void WriteElements(Utl_Mpeg4_BitWriter_t*          writer,
                                        const Utl_Mpeg4Audio_Element_t* elements,
@@ -514,19 +532,25 @@ static FORCE_INLINE void WriteElements(Utl_Mpeg4_BitWriter_t*          writer,
 /**
  * \brief Measures or writes only the present mixdown fields.
  *
+ * \par Details:
+ *  Selected mixdown syntax measured or written.
+ *
  * \par Requirements:
  *  - 001 Inactive optional fields shall not be inspected.
  *
  * \param[in,out] writer    Required cursor
  * \param[in]     program   Required program
  *
- * \retval None Selected mixdown syntax measured or written.
+ * \retval None
  */
 static FORCE_INLINE void WriteProgramMixdown(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Program_t* program);
 
 /*************************************************************************************************/
 /**
  * \brief Measures or writes the complete PCE including opaque comment bytes.
+ *
+ * \par Details:
+ *  PCE measured or written.
  *
  * \par Requirements:
  *  - 001 Array and comment counts shall be validated before traversal.
@@ -535,7 +559,7 @@ static FORCE_INLINE void WriteProgramMixdown(Utl_Mpeg4_BitWriter_t* writer, cons
  * \param[in,out] writer    Required cursor
  * \param[in]     program   Required bounded model
  *
- * \retval None PCE measured or written.
+ * \retval None
  */
 static FORCE_INLINE void WriteProgram(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Program_t* program);
 
@@ -543,19 +567,25 @@ static FORCE_INLINE void WriteProgram(Utl_Mpeg4_BitWriter_t* writer, const Utl_M
 /**
  * \brief Measures or writes the optional backward-compatible extension.
  *
+ * \par Details:
+ *  Extension measured or written.
+ *
  * \par Requirements:
  *  - 001 Signaling and presence combinations shall already be validated.
  *
  * \param[in,out] writer   Required cursor
  * \param[in]     config   Required validated model
  *
- * \retval None Extension measured or written.
+ * \retval None
  */
 static FORCE_INLINE void WriteExtension(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Config_t* config);
 
 /*************************************************************************************************/
 /**
  * \brief Measures or writes a complete configuration with the selected signaling form.
+ *
+ * \par Details:
+ *  Complete unpadded bit count measured or written.
  *
  * \par Requirements:
  *  - 001 Semantic validation shall precede serialization; field widths are checked during measurement.
@@ -564,7 +594,7 @@ static FORCE_INLINE void WriteExtension(Utl_Mpeg4_BitWriter_t* writer, const Utl
  * \param[in,out] writer   Required cursor
  * \param[in]     config   Required stable model
  *
- * \retval None Complete unpadded bit count measured or written.
+ * \retval None
  */
 static FORCE_INLINE void WriteConfiguration(Utl_Mpeg4_BitWriter_t* writer, const Utl_Mpeg4Audio_Config_t* config);
 

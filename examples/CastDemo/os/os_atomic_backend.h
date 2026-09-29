@@ -83,7 +83,7 @@ uint64_t OS_Atomic_Load64Core(const uint64_t* word);
  * \param[in,out] word    Accessible 32-bit native word
  * \param[in]     value   Word value to establish
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Atomic_Store32Core(uint32_t* word, uint32_t value);
 
@@ -101,7 +101,7 @@ void OS_Atomic_Store32Core(uint32_t* word, uint32_t value);
  * \param[in,out] word    Accessible 64-bit native word
  * \param[in]     value   Word value to establish
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Atomic_Store64Core(uint64_t* word, uint64_t value);
 

@@ -87,6 +87,9 @@ typedef struct Utl_Unicode_Reader_s
 /**
  * \brief Initializes a cursor over UTF-8 or signature-marked UTF-16 byte storage.
  *
+ * \par Details:
+ *  A cursor is ready for queries and reads.
+ *
  * \par Requirements:
  *  - 001 Missing cursor or nonempty source storage shall assert as programmer misuse.
  *  - 002 UTF-8 shall be selected when no supported leading signature is present.
@@ -98,7 +101,7 @@ typedef struct Utl_Unicode_Reader_s
  * \param[in]  data        Stable input, NULL only for an empty span
  * \param[in]  byteCount   Readable bytes retained until the cursor is no longer used
  *
- * \retval     None   A cursor is ready for queries and reads.
+ * \retval     None
  */
 void Utl_Unicode_InitializeReader(Utl_Unicode_Reader_t* reader, const byte_t* data, uint32_t byteCount);
 

@@ -87,7 +87,7 @@ typedef struct Gfx_Image_Layout_s
  * \param[out] layout  Owner's retained layout, published only after all extent checks
  * \param[in]  image   Supported native descriptor whose storage and geometry remain unchanged
  *
- * \retval None   No result value.
+ * \retval None
  */
 void Gfx_Image_InitializeLayout(Gfx_Image_Layout_t* layout, const VAImage* image);
 
@@ -107,7 +107,7 @@ void Gfx_Image_InitializeLayout(Gfx_Image_Layout_t* layout, const VAImage* image
  * \param[in]  capacity  Writable output extent in bytes
  * \param[in]  input     Synchronized mapped native storage
  *
- * \retval None   No result value.
+ * \retval None
  */
 void Gfx_Image_ReadLayout(const Gfx_Image_Layout_t* layout, void* output, uint64_t capacity, const void* input);
 
@@ -127,7 +127,7 @@ void Gfx_Image_ReadLayout(const Gfx_Image_Layout_t* layout, void* output, uint64
  * \param[in]  capacity  Readable input extent in bytes
  * \param[out] output    Synchronized mapped native storage
  *
- * \retval None   No result value.
+ * \retval None
  */
 void Gfx_Image_WriteLayout(const Gfx_Image_Layout_t* layout, const void* input, uint64_t capacity, void* output);
 

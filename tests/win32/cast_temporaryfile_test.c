@@ -56,11 +56,14 @@ static OS_TemporaryFile_t g_second;
 /**
  * \brief Checks that two startup owners receive distinct valid native paths.
  *
+ * \par Details:
+ *  All assertions pass or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 Both owners shall be ready and their path borrows shall remain stable.
  *  - 002 Comparison shall use only initialized units through termination.
  *
- * \retval None   All assertions pass or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckDistinctPaths(void);
 
@@ -68,12 +71,15 @@ static FORCE_INLINE void CheckDistinctPaths(void);
 /**
  * \brief Forces a real sharing violation, then verifies retained removal and retry.
  *
+ * \par Details:
+ *  All assertions pass or the fixture fails.
+ *
  * \par Requirements:
  *  - 001 The fixture shall copy the path before revoking its borrow.
  *  - 002 Failed closure shall revoke readiness while retaining first-error evidence.
  *  - 003 Releasing the conflicting handle shall permit removal and idempotent closure.
  *
- * \retval None   All assertions pass or the fixture fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckRemovalRetry(void);
 

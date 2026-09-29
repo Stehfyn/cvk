@@ -142,13 +142,16 @@ static FORCE_INLINE void WriteLog(char_t* text, uint32_t sequence);
 /**
  * \brief Publishes two differently sized fields carrying the same sequence marker.
  *
+ * \par Details:
+ *  A maximum-size coherent pair is published.
+ *
  * \par Requirements:
  *  - 001 Only the initialized test producer shall access source buffers and publish media.
  *  - 002 Input shall provide the complete EVENT_TEST_HEX_COUNT prefix and repeated marker payload.
  *
  * \param[in] text   Stable complete log-pattern input
  *
- * \retval    None   A maximum-size coherent pair is published.
+ * \retval    None
  */
 static FORCE_INLINE void PublishMedia(const char_t* text);
 

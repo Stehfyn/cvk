@@ -94,7 +94,7 @@ static FORCE_INLINE bool_t IsValidMessage(const Utl_CastV2_Message_t* message);
  * \param[in]  message   Validated message
  * \param[in]  index     Zero through CASTV2_FIELD_COUNT minus one
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 static FORCE_INLINE void DeriveField(Utl_Protobuf_Field_t* field, const Utl_CastV2_Message_t* message, uint32_t index);
 
@@ -106,7 +106,7 @@ static FORCE_INLINE void DeriveField(Utl_Protobuf_Field_t* field, const Utl_Cast
  * \param[out] buffer      Non-NULL output
  * \param[in]  byteCount   Exact MessageByteCount result
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 static FORCE_INLINE void WriteBody(const Utl_CastV2_Message_t* message, byte_t* buffer, uint32_t byteCount);
 

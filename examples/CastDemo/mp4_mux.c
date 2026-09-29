@@ -165,6 +165,9 @@ static FORCE_INLINE uint32_t WriteAudioDescriptor(const Mp4Mux* mux, byte_t* out
 /**
  * \brief Appends an mp4a sample description containing a typed esds descriptor.
  *
+ * \par Details:
+ *  Description appended or sticky failure published.
+ *
  * \par Requirements:
  *  - 001 The owner and output buffer shall be valid and exclusively owned by the mux worker.
  *  - 002 Descriptor generation shall finish before any enclosing box is appended.
@@ -173,13 +176,16 @@ static FORCE_INLINE uint32_t WriteAudioDescriptor(const Mp4Mux* mux, byte_t* out
  * \param[in,out] mux      Required mux owner
  * \param[in,out] buffer   Required legacy box-assembly buffer
  *
- * \retval None Description appended or sticky failure published.
+ * \retval None
  */
 static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer);
 
 /*************************************************************************************************/
 /**
  * \brief Appends version zero and explicit flags through the common FullBox codec.
+ *
+ * \par Details:
+ *  Fields appended.
  *
  * \par Requirements:
  *  - 001 The internal caller shall provide representable flags.
@@ -188,7 +194,7 @@ static FORCE_INLINE void WriteAudioSampleEntry(Mp4Mux* mux, MuxBuffer* buffer);
  * \param[in,out] buffer   Required legacy output buffer
  * \param[in]     flags    Box-specific 24-bit flags
  *
- * \retval None Fields appended.
+ * \retval None
  */
 static FORCE_INLINE void BufferFullBoxVersionZero(MuxBuffer* buffer, uint32_t flags);
 
@@ -213,6 +219,9 @@ static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented);
 /**
  * \brief Appends one complete bounded span and latches failure.
  *
+ * \par Details:
+ *  Inspect failed; no partial append is published.
+ *
  * \par Requirements:
  *  - 001 Missing required storage shall assert.
  *  - 002 Fixed metadata storage shall never grow.
@@ -223,13 +232,16 @@ static FORCE_INLINE bool_t WriteFileType(Mp4Mux* mux, bool_t fragmented);
  * \param[in]     data     Disjoint input, nullable only when empty
  * \param[in]     count    Readable input bytes
  *
- * \retval None Inspect failed; no partial append is published.
+ * \retval None
  */
 static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32_t count);
 
 /*************************************************************************************************/
 /**
  * \brief Replaces a previously reserved complete network integer.
+ *
+ * \par Details:
+ *  Existing field replaced or sticky failure preserved.
  *
  * \par Requirements:
  *  - 001 A failed owner shall remain a no-op without reading any output address.
@@ -239,13 +251,16 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
  * \param[in]     offset   Reserved byte offset
  * \param[in]     value    Complete replacement value
  *
- * \retval None Existing field replaced or sticky failure preserved.
+ * \retval None
  */
 static FORCE_INLINE void PatchBuffer32(MuxBuffer* buffer, uint32_t offset, uint32_t value);
 
 /*************************************************************************************************/
 /**
  * \brief Finishes a reserved ordinary box without indexing a failed buffer.
+ *
+ * \par Details:
+ *  Box size published or sticky failure retained.
  *
  * \par Requirements:
  *  - 001 The opening prefix shall be present unless failure is already latched.
@@ -254,7 +269,7 @@ static FORCE_INLINE void PatchBuffer32(MuxBuffer* buffer, uint32_t offset, uint3
  * \param[in,out] buffer     Required assembly owner
  * \param[in]     position   Previously reserved box start
  *
- * \retval None Box size published or sticky failure retained.
+ * \retval None
  */
 static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position);
 
@@ -262,19 +277,25 @@ static FORCE_INLINE void BoxClose(MuxBuffer* buffer, uint32_t position);
 /**
  * \brief Binds fixed metadata storage already belonging to the mux owner.
  *
+ * \par Details:
+ *  Fixed metadata storage bound.
+ *
  * \par Requirements:
  *  - 001 The complete owner shall be initialized before this operation.
  *  - 002 No native allocation or resource acquisition shall occur here.
  *
  * \param[in,out] mux   Required exclusively owned mux
  *
- * \retval None Fixed metadata storage bound.
+ * \retval None
  */
 static FORCE_INLINE void InitializeFragmentStorage(Mp4Mux* mux);
 
 /*************************************************************************************************/
 /**
  * \brief Constructs a moof-relative track with one explicit duration/size run.
+ *
+ * \par Details:
+ *  Known fragment layout initialized.
  *
  * \par Requirements:
  *  - 001 The caller shall provide disjoint initialized-lifetime storage and a positive track ID.
@@ -284,7 +305,7 @@ static FORCE_INLINE void InitializeFragmentStorage(Mp4Mux* mux);
  * \param[out] run       Required associated run model
  * \param[in]  trackId   Movie track identity
  *
- * \retval None Known fragment layout initialized.
+ * \retval None
  */
 static FORCE_INLINE void InitializeFragmentTrack(Utl_Mpeg4_TrackFragment_t* track,
                                                  Utl_Mpeg4_TrackRun_t*      run,
@@ -423,6 +444,9 @@ static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t b
 /**
  * \brief Binds one worker-local fragment layout to the current retained sample records.
  *
+ * \par Details:
+ *  Every selected model and derived-output slot initialized.
+ *
  * \par Requirements:
  *  - 001 The mux shall have at least one pending sample and exclusively own every borrowed array.
  *  - 002 The layout shall remain at a stable address through serialization; its interior pointers shall not outlive it.
@@ -430,7 +454,7 @@ static FORCE_INLINE bool_t WriteProgressiveAudio(Mp4Mux* mux, Utl_Mpeg4_Span_t b
  * \param[out] layout   Required worker-local storage
  * \param[in]  mux      Required stable mux owner
  *
- * \retval None Every selected model and derived-output slot initialized.
+ * \retval None
  */
 static FORCE_INLINE void InitializeFragmentLayout(FragmentLayout_t* layout, const Mp4Mux* mux);
 
@@ -490,6 +514,9 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
 /**
  * \brief Publishes a successfully flushed fragment and releases its pending logical slots for reuse.
  *
+ * \par Details:
+ *  Progress advanced and pending counts cleared without allocation.
+ *
  * \par Requirements:
  *  - 001 The caller shall have completed WriteFragmentLayout successfully.
  *  - 002 All new sequence and time values shall have been prevalidated before native output.
@@ -497,7 +524,7 @@ static FORCE_INLINE bool_t WriteFragmentLayout(Mp4Mux* mux, const FragmentLayout
  * \param[in,out] mux      Required exclusive mux owner
  * \param[in]     layout   Successfully published layout
  *
- * \retval None Progress advanced and pending counts cleared without allocation.
+ * \retval None
  */
 static FORCE_INLINE void CommitFragment(Mp4Mux* mux, const FragmentLayout_t* layout);
 

@@ -113,6 +113,9 @@ static const NumberFormat_t c_fractionFormat = {SRT_FRACTION_DIGITS, SRT_FRACTIO
 /**
  * \brief Establishes a private counted cursor.
  *
+ * \par Details:
+ *  The cursor is valid and at offset zero.
+ *
  * \par Requirements:
  *  - 001 Required cursor and nonempty source shall be supplied; misuse shall assert.
  *  - 002 Initialization shall reset offset and sticky validity without inspecting input.
@@ -121,7 +124,7 @@ static const NumberFormat_t c_fractionFormat = {SRT_FRACTION_DIGITS, SRT_FRACTIO
  * \param[in]  input       Stable counted source, NULL only when empty
  * \param[in]  byteCount   Readable extent
  *
- * \retval     None   The cursor is valid and at offset zero.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input, uint32_t byteCount);
 
@@ -129,13 +132,16 @@ static FORCE_INLINE void InitializeCursor(Cursor_t* cursor, const byte_t* input,
 /**
  * \brief Establishes empty private cue staging.
  *
+ * \par Details:
+ *  Every span and timestamp has a defined empty value.
+ *
  * \par Requirements:
  *  - 001 The required cue shall be exclusively owned.
  *  - 002 All fields shall be initialized before conditional parsing.
  *
  * \param[out] cue   Required private model
  *
- * \retval     None   Every span and timestamp has a defined empty value.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeCue(Utl_Srt_Cue_t* cue);
 
@@ -158,6 +164,9 @@ static FORCE_INLINE bool_t HasArrow(const Utl_Srt_Span_t* line);
 /**
  * \brief Parses one bounded-width decimal field into private staging.
  *
+ * \par Details:
+ *  Cursor validity records the result.
+ *
  * \par Requirements:
  *  - 001 The initialized cursor shall remain within its readable extent.
  *  - 002 Field width, value and decimal overflow shall be validated before cursor advancement.
@@ -167,13 +176,16 @@ static FORCE_INLINE bool_t HasArrow(const Utl_Srt_Span_t* line);
  * \param[in]     format   Required field rules
  * \param[out]    number   Required private result, ignored after failure
  *
- * \retval        None   Cursor validity records the result.
+ * \retval        None
  */
 static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* format, Number_t* number);
 
 /*************************************************************************************************/
 /**
  * \brief Consumes a timestamp separator.
+ *
+ * \par Details:
+ *  A delimiter is consumed or failure is latched.
  *
  * \par Requirements:
  *  - 001 The cursor shall be initialized and remain within its readable extent.
@@ -183,7 +195,7 @@ static FORCE_INLINE void ReadNumber(Cursor_t* cursor, const NumberFormat_t* form
  * \param[in,out] cursor     Initialized private cursor
  * \param[in]     expected   Required separator, colon or comma
  *
- * \retval        None   A delimiter is consumed or failure is latched.
+ * \retval        None
  */
 static FORCE_INLINE void ReadDelimiter(Cursor_t* cursor, byte_t expected);
 
@@ -243,6 +255,9 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
 /**
  * \brief Reads an optional identifier and the mandatory timing line.
  *
+ * \par Details:
+ *  Timing is parsed or cursor validity is cleared.
+ *
  * \par Requirements:
  *  - 001 The first line shall be nonempty and validated.
  *  - 002 At most one identifier line shall precede timing; a blank line after an identifier shall fail.
@@ -252,13 +267,16 @@ static FORCE_INLINE bool_t ReadTimingLine(const Utl_Srt_Span_t* line, Utl_Srt_Cu
  * \param[in]     first    Required validated first line
  * \param[in,out] cue      Initialized private cue staging
  *
- * \retval        None   Timing is parsed or cursor validity is cleared.
+ * \retval        None
  */
 static FORCE_INLINE void ReadHeader(Cursor_t* cursor, const Line_t* first, Utl_Srt_Cue_t* cue);
 
 /*************************************************************************************************/
 /**
  * \brief Collects validated payload lines up to a blank separator or EOF.
+ *
+ * \par Details:
+ *  The payload is staged or cursor validity records failure.
  *
  * \par Requirements:
  *  - 001 Each successful line shall consume bytes; malformed UTF-8/NUL shall latch failure.
@@ -268,13 +286,16 @@ static FORCE_INLINE void ReadHeader(Cursor_t* cursor, const Line_t* first, Utl_S
  * \param[in,out] cursor    Initialized private cursor after timing
  * \param[out]    payload   Required private span staging
  *
- * \retval        None   The payload is staged or cursor validity records failure.
+ * \retval        None
  */
 static FORCE_INLINE void ReadPayload(Cursor_t* cursor, Utl_Srt_Span_t* payload);
 
 /*************************************************************************************************/
 /**
  * \brief Publishes every field of a completely parsed cue.
+ *
+ * \par Details:
+ *  All scalar values and borrowed spans are published.
  *
  * \par Requirements:
  *  - 001 Both models shall be present and disjoint.
@@ -283,7 +304,7 @@ static FORCE_INLINE void ReadPayload(Cursor_t* cursor, Utl_Srt_Span_t* payload);
  * \param[out] output   Required public destination
  * \param[in]  staged   Required complete private model
  *
- * \retval     None   All scalar values and borrowed spans are published.
+ * \retval     None
  */
 static FORCE_INLINE void PublishCue(Utl_Srt_Cue_t* output, const Utl_Srt_Cue_t* staged);
 

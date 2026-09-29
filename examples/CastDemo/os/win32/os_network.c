@@ -64,13 +64,16 @@ typedef struct OS_Network_State_s
 /**
  * \brief Retains the first captured native error.
  *
+ * \par Details:
+ *  Failure evidence is retained.
+ *
  * \par Requirements:
  *  - 001 The caller shall capture the code immediately after the failed native operation.
  *
  * \param[in,out] network   Initialized owner
  * \param[in]     code      Captured native failure code
  *
- * \retval        None   Failure evidence is retained.
+ * \retval        None
  */
 static FORCE_INLINE void RecordError(OS_Network_t* network, uint32_t code);
 

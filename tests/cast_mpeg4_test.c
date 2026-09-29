@@ -118,6 +118,9 @@ static FORCE_INLINE Utl_Mpeg4_Span_t Bytes(const byte_t* data, uint32_t count);
 /**
  * \brief Checks an independent Box encoding, every truncated prefix and every short writer capacity.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The retained box extent shall include the complete literal header.
  *  - 002 Failed writes shall preserve the complete destination, including bytes outside supplied capacity.
@@ -126,7 +129,7 @@ static FORCE_INLINE Utl_Mpeg4_Span_t Bytes(const byte_t* data, uint32_t count);
  * \param[in]     bytes     Independent header encoding
  * \param[in]     extent    Resolved box size and enclosing file extent
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckBox(TestContext_t* context, Utl_Mpeg4_Span_t bytes, uint64_t extent);
 
@@ -134,13 +137,16 @@ static FORCE_INLINE void CheckBox(TestContext_t* context, Utl_Mpeg4_Span_t bytes
 /**
  * \brief Checks file-end semantics, empty external input and invalid writer models.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 A size-zero child shall not escape its parent to reach file end.
  *  - 002 Conflicting flags, ordinary-size overflow and undersized boxes shall leave output unchanged.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckBoxBoundaries(TestContext_t* context);
 
@@ -148,18 +154,24 @@ static FORCE_INLINE void CheckBoxBoundaries(TestContext_t* context);
 /**
  * \brief Checks FullBox field widths, unknown-version representation and output preservation.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Generic reading shall retain version one without assuming version-zero payload semantics.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckFullBox(TestContext_t* context);
 
 /*************************************************************************************************/
 /**
  * \brief Checks a single shorter payload against independent field-width rules.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 Only complete major/minor fields followed by whole brands shall be accepted.
@@ -168,13 +180,16 @@ static FORCE_INLINE void CheckFullBox(TestContext_t* context);
  * \param[in] model   Required retained complete model
  * \param[in] bytes   Independent prefix under test
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckFileTypePrefix(const Utl_Mpeg4_FileType_t* model, Utl_Mpeg4_Span_t bytes);
 
 /*************************************************************************************************/
 /**
  * \brief Checks every shorter FileTypeBox writer capacity and reader prefix.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 Rejection shall preserve every byte in the destination, including the unused tail.
@@ -183,7 +198,7 @@ static FORCE_INLINE void CheckFileTypePrefix(const Utl_Mpeg4_FileType_t* model, 
  * \param[in]     model     Complete file-type model
  * \param[in]     bytes     Independent complete payload encoding
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckFileTypeCapacities(TestContext_t*              context,
                                                  const Utl_Mpeg4_FileType_t* model,
@@ -193,13 +208,16 @@ static FORCE_INLINE void CheckFileTypeCapacities(TestContext_t*              con
 /**
  * \brief Checks complete file-type syntax, unknown brands and all capacity boundaries.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Complete prefixes with zero or one compatible brand shall remain valid independent payloads.
  *  - 002 Malformed brand extent and invalid code bytes shall fail without partial publication.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckFileType(TestContext_t* context);
 
@@ -207,13 +225,16 @@ static FORCE_INLINE void CheckFileType(TestContext_t* context);
 /**
  * \brief Checks independent unaligned 64-bit MSB-first fields and byte rounding.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 A full-width field shall not cause a width-sized shift.
  *  - 002 Writing into nonzero storage shall initialize each touched byte, including zero trailing bits.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckBitstream(TestContext_t* context);
 
@@ -221,13 +242,16 @@ static FORCE_INLINE void CheckBitstream(TestContext_t* context);
 /**
  * \brief Checks field preflight and idempotent reader/writer failure.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 A rejected field shall preserve the cursor and every destination byte.
  *  - 002 Further operations after failure shall remain no-ops until initialization.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckBitstreamFailure(TestContext_t* context);
 
@@ -235,13 +259,16 @@ static FORCE_INLINE void CheckBitstreamFailure(TestContext_t* context);
 /**
  * \brief Checks complete-width network integers, invalid widths and short destinations.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The full uint64_t range shall remain representable without narrowing.
  *  - 002 Invalid reads shall preserve the previous published value.
  *
  * \param[in,out] context   Required fixture storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckUnsigned(TestContext_t* context);
 
@@ -249,13 +276,16 @@ static FORCE_INLINE void CheckUnsigned(TestContext_t* context);
 /**
  * \brief Checks independent table-prefix encoding and wide declared extents.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Every short input/output prefix shall preserve the published model or destination.
  *  - 002 The declared table extent shall widen before entry multiplication.
  *
  * \param[in,out] context   Required reusable fixture owner
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckTableHeader(TestContext_t* context);
 
@@ -263,12 +293,15 @@ static FORCE_INLINE void CheckTableHeader(TestContext_t* context);
 /**
  * \brief Checks unsupported headers and a present empty sync table.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Unsupported syntax shall preserve the prior different-kind model.
  *  - 002 A present zero-entry stss shall accept no sync sample.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckTableHeaderRejection(void);
 
@@ -276,12 +309,15 @@ static FORCE_INLINE void CheckTableHeaderRejection(void);
 /**
  * \brief Checks two independent time runs and one-based sample queries.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Decoded times shall match the manually derived sequence 0, 10, 20, 30, 50.
  *  - 002 Missing samples and an exhausted table shall preserve published results.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckTimingRuns(void);
 
@@ -289,11 +325,14 @@ static FORCE_INLINE void CheckTimingRuns(void);
 /**
  * \brief Checks every incomplete timing-entry prefix.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Every shorter entry shall leave all output and cursor members unchanged.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckTimingFailure(void);
 
@@ -301,11 +340,14 @@ static FORCE_INLINE void CheckTimingFailure(void);
 /**
  * \brief Checks permitted empty runs and zero decoding deltas.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Zero-valued syntax shall not create a non-progressing cursor or an invented format rejection.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckZeroTiming(void);
 
@@ -313,12 +355,15 @@ static FORCE_INLINE void CheckZeroTiming(void);
 /**
  * \brief Checks ordering and completion of one-based sync samples.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Zero, duplicate and descending numbers shall preserve output and cursor.
  *  - 002 The independent sequence one, three, five shall consume exactly three entries.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckSyncSamples(void);
 
@@ -326,12 +371,15 @@ static FORCE_INLINE void CheckSyncSamples(void);
 /**
  * \brief Checks second-run samples and rejection at either boundary.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Invalid queries shall preserve the last published timestamp.
  *
  * \param[in] run   Decoded second run, beginning at sample four
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckSampleQueries(const Utl_Mpeg4_TimeToSampleRun_t* run);
 
@@ -339,11 +387,14 @@ static FORCE_INLINE void CheckSampleQueries(const Utl_Mpeg4_TimeToSampleRun_t* r
 /**
  * \brief Checks cumulative uint64_t duration exhaustion with two maximum-width runs.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 The second run shall reject overflow while preserving the first run and cursor.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckTimingOverflow(void);
 
@@ -351,11 +402,14 @@ static FORCE_INLINE void CheckTimingOverflow(void);
 /**
  * \brief Checks every incomplete sync entry and the prohibited sample number zero.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Invalid input shall preserve every cursor member and the result.
  *
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckSyncTruncation(void);
 
@@ -363,13 +417,16 @@ static FORCE_INLINE void CheckSyncTruncation(void);
 /**
  * \brief Checks the four-byte sync-entry width and a present empty table prefix.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Declared payload truncation shall preserve the previous model.
  *  - 002 The independent sync-header encoding shall round-trip unchanged.
  *
  * \param[in,out] context   Required reusable fixture owner
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckSyncTableHeader(TestContext_t* context);
 

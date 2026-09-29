@@ -332,6 +332,9 @@ static FORCE_INLINE bool_t SendErrorResponse(Connection_t* connection, uint16_t 
 /**
  * \brief Records a counted request and completed transfer summary.
  *
+ * \par Details:
+ *  The diagnostic is attempted.
+ *
  * \par Requirements:
  *  - 001 Request shall be READY and retain its bounded source bytes.
  *  - 002 The legacy CRT logging dependency remains an open migration defect.
@@ -342,7 +345,7 @@ static FORCE_INLINE bool_t SendErrorResponse(Connection_t* connection, uint16_t 
  * \param[in] response     Selected response metadata
  * \param[in] sent         Transmitted body bytes
  *
- * \retval    None   The diagnostic is attempted.
+ * \retval    None
  */
 static FORCE_INLINE void LogResponse(const Connection_t*        connection,
                                      const CastHttp_Request_t*  request,
@@ -352,6 +355,9 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
 /*************************************************************************************************/
 /**
  * \brief Derives a progressive response or a bounded snapshot selected by Range.
+ *
+ * \par Details:
+ *  All response members are initialized.
  *
  * \par Requirements:
  *  - 001 Caller shall retain a ready request and an open growing file.
@@ -363,7 +369,7 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
  * \param[in]  request      Ready request policy
  * \param[out] response     Exclusive complete response metadata
  *
- * \retval     None   All response members are initialized.
+ * \retval     None
  */
 static FORCE_INLINE void ReadGrowingResponse(const Connection_t*       connection,
                                              const CastHttp_Request_t* request,
@@ -453,6 +459,9 @@ static FORCE_INLINE bool_t ServeRequest(Connection_t* connection);
 /**
  * \brief Owns one legacy connection worker until cleanup.
  *
+ * \par Details:
+ *  The callback returned native-resource ownership to admission.
+ *
  * \par Requirements:
  *  - 001 The accepted connection shall be exclusively owned by this worker; immutable metadata remains borrowed.
  *  - 002 Pipeline storage shall advance only after a complete persistent response.
@@ -460,7 +469,7 @@ static FORCE_INLINE bool_t ServeRequest(Connection_t* connection);
  *
  * \param[in,out] parameter   Connection_t supplied by AcceptLoop
  *
- * \retval        None   The callback returned native-resource ownership to admission.
+ * \retval        None
  */
 static FORCE_INLINE void ServeConnection(void* parameter);
 
@@ -485,19 +494,25 @@ static FORCE_INLINE bool_t ReadBindAddress(const char_t* text, uint32_t* address
 /**
  * \brief Retains the first native pool failure.
  *
+ * \par Details:
+ *  Existing failure evidence remains unchanged.
+ *
  * \par Requirements:
  *  - 001 Error publication shall be atomic; zero on failure shall become ERROR_GEN_FAILURE.
  *
  * \param[in,out] storage   Retained startup storage
  * \param[in] code   Captured native failure
  *
- * \retval None   Existing failure evidence remains unchanged.
+ * \retval None
  */
 static FORCE_INLINE void RecordError(MediaServer_Storage_t* storage, uint32_t code);
 
 /*************************************************************************************************/
 /**
  * \brief Copies a bounded diagnostic without a formatting runtime.
+ *
+ * \par Details:
+ *  Nonempty output capacity contains a terminated diagnostic.
  *
  * \par Requirements:
  *  - 001 Nonzero capacity shall provide writable output; source and output shall be disjoint.
@@ -507,7 +522,7 @@ static FORCE_INLINE void RecordError(MediaServer_Storage_t* storage, uint32_t co
  * \param[in] text   Complete constant diagnostic
  * \param[in] count   Diagnostic byte count
  *
- * \retval None   Nonempty output capacity contains a terminated diagnostic.
+ * \retval None
  */
 static FORCE_INLINE void WriteError(char_t* output, uint32_t capacity, const char_t* text, uint32_t count);
 
@@ -577,6 +592,9 @@ static FORCE_INLINE bool_t TryCloseConnectionResources(MediaServer_Storage_t* st
 /**
  * \brief Acquires and retires one client without losing failed native releases.
  *
+ * \par Details:
+ *  Completion/cleanup is acquired or remains pending.
+ *
  * \par Requirements:
  *  - 001 Only admission or the exclusive quiescent recovery owner shall call this operation.
  *  - 002 Busy callback fields shall remain untouched until completion acquisition.
@@ -585,13 +603,16 @@ static FORCE_INLINE bool_t TryCloseConnectionResources(MediaServer_Storage_t* st
  * \param[in,out] storage   Exclusive admission metadata
  * \param[in,out] connection   Retained slot
  *
- * \retval None   Completion/cleanup is acquired or remains pending.
+ * \retval None
  */
 static FORCE_INLINE void RetireConnection(MediaServer_Storage_t* storage, Connection_t* connection);
 
 /*************************************************************************************************/
 /**
  * \brief Acquires completed callbacks and retries their native cleanup.
+ *
+ * \par Details:
+ *  Each slot receives at most one completion and cleanup attempt.
  *
  * \par Requirements:
  *  - 001 Only admission shall invoke this operation; busy callback fields shall remain untouched.
@@ -600,13 +621,16 @@ static FORCE_INLINE void RetireConnection(MediaServer_Storage_t* storage, Connec
  *
  * \param[in,out] storage   Admission-owned connection lifetimes
  *
- * \retval None   Each slot receives at most one completion and cleanup attempt.
+ * \retval None
  */
 static FORCE_INLINE void RetireConnections(MediaServer_Storage_t* storage);
 
 /*************************************************************************************************/
 /**
  * \brief Publishes one accepted socket to a reusable startup worker.
+ *
+ * \par Details:
+ *  Work is submitted or retained for native cleanup.
  *
  * \par Requirements:
  *  - 001 The admission worker shall own a free connection slot and the accepted socket.
@@ -617,7 +641,7 @@ static FORCE_INLINE void RetireConnections(MediaServer_Storage_t* storage);
  * \param[in,out] connection   Exclusive free slot
  * \param[in] client   Accepted native socket
  *
- * \retval None   Work is submitted or retained for native cleanup.
+ * \retval None
  */
 static FORCE_INLINE void StartClient(MediaServer* server, Connection_t* connection, SOCKET client);
 
@@ -625,13 +649,16 @@ static FORCE_INLINE void StartClient(MediaServer* server, Connection_t* connecti
 /**
  * \brief Attempts one accept using a nonblocking listener and an available client slot.
  *
+ * \par Details:
+ *  At most one native accept and client submission occur.
+ *
  * \par Requirements:
  *  - 001 Only admission shall use a published listener socket.
  *  - 002 Saturation shall retain the native backlog without accepting an unowned socket.
  *
  * \param[in,out] server   Active listener metadata
  *
- * \retval None   At most one native accept and client submission occur.
+ * \retval None
  */
 static FORCE_INLINE void PollListener(MediaServer* server);
 
@@ -639,19 +666,25 @@ static FORCE_INLINE void PollListener(MediaServer* server);
 /**
  * \brief Retires a stopped listener only after native cleanup and every client reference.
  *
+ * \par Details:
+ *  Successful retirement publishes STOPPED or releases an abandoned start.
+ *
  * \par Requirements:
  *  - 001 Admission shall no longer accept on this listener.
  *  - 002 Failed close shall retain identity; borrowed data shall remain live until STOPPED.
  *
  * \param[in,out] server   Stopping listener slot
  *
- * \retval None   Successful retirement publishes STOPPED or releases an abandoned start.
+ * \retval None
  */
 static FORCE_INLINE void RetireListener(MediaServer* server);
 
 /*************************************************************************************************/
 /**
  * \brief Advances retained cleanup when the admission thread fails before callback execution.
+ *
+ * \par Details:
+ *  This caller advanced one bounded cleanup pass or another caller owns recovery.
  *
  * \par Requirements:
  *  - 001 FAILED shall acquire callback quiescence before any admission-owned field is inspected.
@@ -661,13 +694,16 @@ static FORCE_INLINE void RetireListener(MediaServer* server);
  *
  * \param[in,out] storage   Retained pool with a failed admission worker
  *
- * \retval None   This caller advanced one bounded cleanup pass or another caller owns recovery.
+ * \retval None
  */
 static FORCE_INLINE void RecoverAdmission(MediaServer_Storage_t* storage);
 
 /*************************************************************************************************/
 /**
  * \brief Serializes listener admission and client retirement on one startup worker.
+ *
+ * \par Details:
+ *  Global shutdown and all native retirement completed.
  *
  * \par Requirements:
  *  - 001 Each pass shall visit fixed listener/client capacities once.
@@ -676,7 +712,7 @@ static FORCE_INLINE void RecoverAdmission(MediaServer_Storage_t* storage);
  *
  * \param[in,out] context   Stable initialized MediaServer_Workspace_t owner
  *
- * \retval None   Global shutdown and all native retirement completed.
+ * \retval None
  */
 static FORCE_INLINE void AcceptLoop(void* context);
 
@@ -700,6 +736,9 @@ static FORCE_INLINE bool_t OpenListener(MediaServer* server, const ServerEndpoin
 /**
  * \brief Copies validated immutable inputs into a reserved listener slot.
  *
+ * \par Details:
+ *  All client-visible metadata is initialized before publication.
+ *
  * \par Requirements:
  *  - 001 The slot shall be reserved and free of native/client ownership.
  *  - 002 The caller shall have proved path/media-type termination and every source extent.
@@ -708,7 +747,7 @@ static FORCE_INLINE bool_t OpenListener(MediaServer* server, const ServerEndpoin
  * \param[in,out] server   Exclusive reserved slot
  * \param[in] representation   Validated source model
  *
- * \retval None   All client-visible metadata is initialized before publication.
+ * \retval None
  */
 static FORCE_INLINE void PrepareRepresentation(MediaServer* server, const ServerRepresentation_t* representation);
 

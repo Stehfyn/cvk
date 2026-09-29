@@ -105,6 +105,9 @@ typedef struct Utl_Srt_Reader_s
 /**
  * \brief Initializes a reader and consumes one optional UTF-8 signature.
  *
+ * \par Details:
+ *  The reader is ready for queries and cue reads.
+ *
  * \par Requirements:
  *  - 001 Missing reader or nonempty input storage shall assert as programmer misuse.
  *  - 002 Input shall remain stable and disjoint from the cursor and all cue outputs.
@@ -116,7 +119,7 @@ typedef struct Utl_Srt_Reader_s
  * \param[in]  input       Stable complete source; NULL only for zero byteCount
  * \param[in]  byteCount   Readable source extent
  *
- * \retval     None   The reader is ready for queries and cue reads.
+ * \retval     None
  */
 void Utl_Srt_InitializeReader(Utl_Srt_Reader_t* reader, const byte_t* input, uint32_t byteCount);
 

@@ -83,7 +83,7 @@ static Fixture_t g_restarted; ///< Immediate rearm followed by shutdown.
  *
  * \param[in,out] context   Initialized Job_t whose owner waits for completion
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void RunJob(void* context);
 
@@ -91,9 +91,12 @@ static FORCE_INLINE void RunJob(void* context);
 /**
  * \brief Waits for one callback result under the test deadline.
  *
+ * \par Details:
+ *  A deadline or worker failure asserts.
+ *
  * \param[in,out] thread   Initialized execution object with an accepted job
  *
- * \retval        None   No result value; a deadline or worker failure asserts.
+ * \retval        None
  */
 static FORCE_INLINE void WaitForResult(OS_Thread_t* thread);
 
@@ -101,9 +104,12 @@ static FORCE_INLINE void WaitForResult(OS_Thread_t* thread);
 /**
  * \brief Closes an idle or completing thread under the test deadline.
  *
+ * \par Details:
+ *  An exceeded deadline asserts.
+ *
  * \param[in,out] thread   Initialized execution object
  *
- * \retval        None   No result value; an exceeded deadline asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CloseThread(OS_Thread_t* thread);
 
@@ -111,9 +117,12 @@ static FORCE_INLINE void CloseThread(OS_Thread_t* thread);
 /**
  * \brief Establishes one startup worker with a closed callback gate.
  *
+ * \par Details:
+ *  Initialization failure asserts.
+ *
  * \param[out] fixture   Fresh static storage retained until thread closure
  *
- * \retval     None   No result value; initialization failure asserts.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
 
@@ -121,9 +130,12 @@ static FORCE_INLINE void InitializeFixture(Fixture_t* fixture);
 /**
  * \brief Verifies that stopping preserves an accepted job and its context.
  *
+ * \par Details:
+ *  Incorrect state or output asserts.
+ *
  * \param[in,out] fixture   Initialized idle fixture with its gate closed
  *
- * \retval        None   No result value; incorrect state or output asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckAcceptedStop(Fixture_t* fixture);
 
@@ -131,9 +143,12 @@ static FORCE_INLINE void CheckAcceptedStop(Fixture_t* fixture);
 /**
  * \brief Verifies repeated results and unchanged native resource count.
  *
+ * \par Details:
+ *  Incorrect state or output asserts.
+ *
  * \param[in,out] fixture   Initialized idle fixture
  *
- * \retval        None   No result value; incorrect state or output asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckRepeatedJobs(Fixture_t* fixture);
 
@@ -141,9 +156,12 @@ static FORCE_INLINE void CheckRepeatedJobs(Fixture_t* fixture);
 /**
  * \brief Verifies an immediate rearm followed by a stop request.
  *
+ * \par Details:
+ *  A missing second result asserts.
+ *
  * \param[in,out] fixture   Initialized idle fixture
  *
- * \retval        None   No result value; a missing second result asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckRearmStop(Fixture_t* fixture);
 

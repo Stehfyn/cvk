@@ -85,10 +85,13 @@ static FORCE_INLINE uint32_t GetModifiers(uint32_t nativeState);
 /**
  * \brief Retains the first native failure and disables further input.
  *
+ * \par Details:
+ *  Restoration and handle ownership are preserved.
+ *
  * \param[in,out] console   Required initialized owner
  * \param[in]     error     Native failure code, normalized when unexpectedly zero
  *
- * \retval        None   Restoration and handle ownership are preserved.
+ * \retval        None
  */
 static FORCE_INLINE void RecordError(OS_Console_t* console, uint32_t error);
 

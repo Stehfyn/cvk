@@ -64,6 +64,9 @@ static const Storage_t   g_zero = {{0}};
 /**
  * \brief Rejects callback invocation by preparation and reset operations.
  *
+ * \par Details:
+ *  Any invocation asserts.
+ *
  * \par Requirements:
  *  - 001 None of the exercised owner operations shall dispatch an event.
  *
@@ -72,7 +75,7 @@ static const Storage_t   g_zero = {{0}};
  * \param[in]     status    Unused borrowed status
  * \param[in]     text      Unused borrowed diagnostic
  *
- * \retval        None   Any invocation asserts.
+ * \retval        None
  */
 static OS_NORETURN FORCE_INLINE void RejectEvent(void* context, CastEvent event, const CastStatus* status, const char* text);
 
@@ -80,18 +83,24 @@ static OS_NORETURN FORCE_INLINE void RejectEvent(void* context, CastEvent event,
 /**
  * \brief Checks zeroed writable storage and idempotent complete closure.
  *
+ * \par Details:
+ *  All assertions pass or the test process fails.
+ *
  * \par Requirements:
  *  - 001 The fixture shall have initialized successfully and remain exclusively owned.
  *  - 002 The last byte of the declared extent shall retain a written value across getter calls.
  *  - 003 Closed storage shall publish no address or usable byte count.
  *
- * \retval None   All assertions pass or the test process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckMemory(void);
 
 /*************************************************************************************************/
 /**
  * \brief Exercises command and storage ownership for one prepared cast.
+ *
+ * \par Details:
+ *  The fixture is reset for the next cast.
  *
  * \par Requirements:
  *  - 001 Startup storage shall remain unchanged across rejected closure and Reset.
@@ -100,7 +109,7 @@ static FORCE_INLINE void CheckMemory(void);
  * \param[in] address     Expected startup region address
  * \param[in] byteCount   Expected startup usable extent
  *
- * \retval    None   The fixture is reset for the next cast.
+ * \retval    None
  */
 static FORCE_INLINE void CheckPreparedCast(const void* address, uint64_t byteCount);
 
@@ -108,13 +117,16 @@ static FORCE_INLINE void CheckPreparedCast(const void* address, uint64_t byteCou
 /**
  * \brief Checks repeated command admission and storage lifetime across prepared casts.
  *
+ * \par Details:
+ *  All assertions pass or the test process fails.
+ *
  * \par Requirements:
  *  - 001 Every cast shall reuse the same startup address and extent.
  *  - 002 Stop shall reject ordinary commands in that cast; the next Prepare shall admit them again.
  *  - 003 Closure while prepared shall reject without revoking usable storage.
  *  - 004 Repeated Reset and successful closure shall be idempotent.
  *
- * \retval None   All assertions pass or the test process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckSession(void);
 

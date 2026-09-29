@@ -85,7 +85,7 @@ static IDXGIInfoQueue* g_dxgi_info_queue        = NULL;
 /**
  * \brief Enables the D3D12 debug layer and all DRED diagnostics.
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void EnableD3d12DebugLogging(void);
 
@@ -103,7 +103,7 @@ static const char* GetDxgiMessageSeverityName(DXGI_INFO_QUEUE_MESSAGE_SEVERITY s
 /**
  * \brief Serializes, prints, and clears every queued DXGI diagnostic.
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ReportDxgiMessages(void);
 
@@ -111,7 +111,7 @@ static void ReportDxgiMessages(void);
 /**
  * \brief Initializes the process DXGI diagnostic queue.
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void InitializeDxgiDebug(void);
 
@@ -132,7 +132,7 @@ static UINT GetDxgiFactoryFlags(void);
  * \param[in] pFile              Source file reported to Os_LogFatal
  * \param[in] line               Source line reported to Os_LogFatal
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CheckDxgiResult(HRESULT hr, const char* pExpression, const char* pFile, int line);
 
@@ -145,7 +145,7 @@ static void CheckDxgiResult(HRESULT hr, const char* pExpression, const char* pFi
  * \param[in] pFile              Source file reported to Os_LogFatal
  * \param[in] line               Source line reported to Os_LogFatal
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CheckHresult(HRESULT hr, const char* pExpression, const char* pFile, int line);
 

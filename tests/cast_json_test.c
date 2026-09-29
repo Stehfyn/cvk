@@ -84,10 +84,13 @@ typedef struct JsonTest_s
 /**
  * \brief Starts a quiescent writer case in fixed caller-owned storage.
  *
+ * \par Details:
+ *  The writer and sentinel are initialized.
+ *
  * \param[out] test     Required case storage
  * \param[in]  frames   Number of available records, at most TEST_FRAMES
  *
- * \retval     None   The writer and sentinel are initialized.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeCase(JsonTest_t* test, uint32_t frames);
 
@@ -106,11 +109,14 @@ static FORCE_INLINE Utl_Json_Text_t Text(const char_t* data, uint32_t count);
 /**
  * \brief Checks an independently chosen number against RFC 8259 syntax.
  *
+ * \par Details:
+ *  A mismatch asserts.
+ *
  * \param[in] expected   Expected classification
  * \param[in] data       Borrowed numeric lexeme
  * \param[in] count      Exact lexeme extent
  *
- * \retval    None   A mismatch asserts.
+ * \retval    None
  */
 static FORCE_INLINE void CheckNumber(bool_t expected, const char_t* data, uint32_t count);
 
@@ -118,7 +124,10 @@ static FORCE_INLINE void CheckNumber(bool_t expected, const char_t* data, uint32
 /**
  * \brief Checks representative productions and malformed boundary forms.
  *
- * \retval None   A mismatch asserts.
+ * \par Details:
+ *  A mismatch asserts.
+ *
+ * \retval None
  */
 static FORCE_INLINE void CheckNumbers(void);
 
@@ -126,9 +135,12 @@ static FORCE_INLINE void CheckNumbers(void);
 /**
  * \brief Constructs an independently specified nested document.
  *
+ * \par Details:
+ *  The writer retains completion or its first error.
+ *
  * \param[in,out] writer   Initialized output or counting writer
  *
- * \retval        None   The writer retains completion or its first error.
+ * \retval        None
  */
 static FORCE_INLINE void WriteNested(Utl_Json_Writer_t* writer);
 
@@ -136,9 +148,12 @@ static FORCE_INLINE void WriteNested(Utl_Json_Writer_t* writer);
 /**
  * \brief Checks nested output, counting mode, exact capacity and scalar decimals.
  *
+ * \par Details:
+ *  A mismatch asserts.
+ *
  * \param[in,out] test   Quiescent caller-owned case storage
  *
- * \retval        None   A mismatch asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckOutput(JsonTest_t* test);
 
@@ -146,9 +161,12 @@ static FORCE_INLINE void CheckOutput(JsonTest_t* test);
 /**
  * \brief Checks rejected grammar operations, terminal status and nesting bounds.
  *
+ * \par Details:
+ *  A mismatch asserts.
+ *
  * \param[in,out] test   Quiescent caller-owned case storage
  *
- * \retval        None   A mismatch asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckState(JsonTest_t* test);
 
@@ -156,15 +174,21 @@ static FORCE_INLINE void CheckState(JsonTest_t* test);
 /**
  * \brief Checks that a completed root rejects subsequent names, strings and numbers.
  *
+ * \par Details:
+ *  A mismatch asserts.
+ *
  * \param[in,out] test   Quiescent caller-owned case storage
  *
- * \retval        None   A mismatch asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckAfterComplete(JsonTest_t* test);
 
 /*************************************************************************************************/
 /**
  * \brief Checks one complete or malformed external JSON text and its publication state.
+ *
+ * \par Details:
+ *  All assertions passed.
  *
  * \par Requirements:
  *  - 001 The reader shall own its fixed record storage for the complete call.
@@ -175,7 +199,7 @@ static FORCE_INLINE void CheckAfterComplete(JsonTest_t* test);
  * \param[in]     byteCount   Exact input extent
  * \param[in]     expected    Required syntax result
  *
- * \retval None   All assertions passed.
+ * \retval None
  */
 static FORCE_INLINE void CheckDocument(JsonTest_t*           test,
                                        const char_t*         input,
@@ -186,13 +210,16 @@ static FORCE_INLINE void CheckDocument(JsonTest_t*           test,
 /**
  * \brief Checks JSON grammar, scalar validity, capacity and reader reuse.
  *
+ * \par Details:
+ *  All assertions passed.
+ *
  * \par Requirements:
  *  - 001 Malformed external inputs shall return errors without assertions in the library.
  *  - 002 Every truncated container prefix and short record capacity shall be rejected.
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None   All assertions passed.
+ * \retval None
  */
 static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test);
 
@@ -200,13 +227,16 @@ static FORCE_INLINE void CheckReaderSyntax(JsonTest_t* test);
 /**
  * \brief Checks decoded names, linked child traversal and bounded nonrecursive nesting.
  *
+ * \par Details:
+ *  All assertions passed.
+ *
  * \par Requirements:
  *  - 001 Lookup shall compare decoded names and retain duplicate source order.
  *  - 002 Nesting shall use supplied records up to their exact capacity.
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None   All assertions passed.
+ * \retval None
  */
 static FORCE_INLINE void CheckReaderTree(JsonTest_t* test);
 
@@ -214,19 +244,25 @@ static FORCE_INLINE void CheckReaderTree(JsonTest_t* test);
 /**
  * \brief Checks UTF-8 decoding and preservation on malformed or short output.
  *
+ * \par Details:
+ *  All assertions passed.
+ *
  * \par Requirements:
  *  - 001 Short output and invalid Unicode shall preserve the complete destination and count.
  *  - 002 Escaped U+0000 shall remain a counted byte and not terminate output.
  *
  * \param[in,out] test   Entry-owned fixture
  *
- * \retval None   All assertions passed.
+ * \retval None
  */
 static FORCE_INLINE void CheckReaderStrings(JsonTest_t* test);
 
 /*************************************************************************************************/
 /**
  * \brief Checks exact integer conversion from one independently specified JSON value.
+ *
+ * \par Details:
+ *  A mismatch asserts in every build.
  *
  * \par Requirements:
  *  - 001 The input shall be complete valid JSON; numeric-domain rejection shall preserve the result sentinel.
@@ -236,7 +272,7 @@ static FORCE_INLINE void CheckReaderStrings(JsonTest_t* test);
  * \param[in]     text       Independent complete JSON fixture
  * \param[in]     expected   Exact expected value, or NULL for domain rejection
  *
- * \retval        None   A mismatch asserts in every build.
+ * \retval        None
  */
 static FORCE_INLINE void CheckInteger(JsonTest_t* test, Utl_Json_Text_t text, const int64_t* expected);
 
@@ -244,13 +280,16 @@ static FORCE_INLINE void CheckInteger(JsonTest_t* test, Utl_Json_Text_t text, co
 /**
  * \brief Exercises integer limits, fractional cancellation, huge exponents and wrong value kinds.
  *
+ * \par Details:
+ *  A mismatch asserts in every build.
+ *
  * \par Requirements:
  *  - 001 Boundaries shall be checked with independently chosen values and lexical forms.
  *  - 002 Rejected queries shall preserve output; queries shall not change complete-document status.
  *
  * \param[in,out] test   Entry-owned reader storage
  *
- * \retval        None   A mismatch asserts in every build.
+ * \retval        None
  */
 static FORCE_INLINE void CheckIntegers(JsonTest_t* test);
 

@@ -81,12 +81,15 @@ typedef struct Slice_s
 /**
  * \brief Asserts the required storage of one borrowed component.
  *
+ * \par Details:
+ *  Required storage is present.
+ *
  * \par Requirements:
  *  - 001 Nonempty spans shall have readable storage; empty spans may have a NULL base.
  *
  * \param[in] text   Borrowed component
  *
- * \retval    None   Required storage is present.
+ * \retval    None
  */
 static FORCE_INLINE void AssertText(Utl_Url_Text_t text);
 
@@ -352,6 +355,9 @@ static FORCE_INLINE bool_t ReadAuthority(Utl_Url_t* url, Utl_Url_Text_t text);
 /**
  * \brief Splits path, query and fragment after the authority prefix.
  *
+ * \par Details:
+ *  Borrowed suffix components are established.
+ *
  * \par Requirements:
  *  - 001 The destination shall be an initialized unpublished candidate.
  *  - 002 All bytes shall remain encoded; complete grammar validation follows splitting.
@@ -359,13 +365,16 @@ static FORCE_INLINE bool_t ReadAuthority(Utl_Url_t* url, Utl_Url_Text_t text);
  * \param[in,out] url    Private candidate
  * \param[in]     text   Remaining URI syntax
  *
- * \retval        None   Borrowed suffix components are established.
+ * \retval        None
  */
 static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text);
 
 /*************************************************************************************************/
 /**
  * \brief Appends one already-sized component during recomposition.
+ *
+ * \par Details:
+ *  The component bytes are copied and offset advances.
  *
  * \par Requirements:
  *  - 001 Preflight shall have proved total capacity; empty spans shall require no source/output pointer.
@@ -374,13 +383,16 @@ static FORCE_INLINE void ReadPath(Utl_Url_t* url, Utl_Url_Text_t text);
  * \param[in,out] offset   Current initialized output count
  * \param[in]     text     Borrowed validated component
  *
- * \retval        None   The component bytes are copied and offset advances.
+ * \retval        None
  */
 static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Text_t text);
 
 /*************************************************************************************************/
 /**
  * \brief Appends one grammar delimiter during recomposition.
+ *
+ * \par Details:
+ *  One byte is written and offset advances.
  *
  * \par Requirements:
  *  - 001 Preflight shall have proved one remaining writable byte.
@@ -389,13 +401,16 @@ static FORCE_INLINE void WriteText(byte_t* output, uint32_t* offset, Utl_Url_Tex
  * \param[in,out] offset   Current initialized output count
  * \param[in]     value    Grammar delimiter
  *
- * \retval        None   One byte is written and offset advances.
+ * \retval        None
  */
 static FORCE_INLINE void WriteCharacter(byte_t* output, uint32_t* offset, byte_t value);
 
 /*************************************************************************************************/
 /**
  * \brief Writes a prevalidated authority and its exact delimiters.
+ *
+ * \par Details:
+ *  Authority bytes are written and the offset advances.
  *
  * \par Requirements:
  *  - 001 The model shall contain an authority whose complete output capacity was checked.
@@ -405,7 +420,7 @@ static FORCE_INLINE void WriteCharacter(byte_t* output, uint32_t* offset, byte_t
  * \param[out]    output   Complete writable destination
  * \param[in,out] offset   Current destination offset
  *
- * \retval        None   Authority bytes are written and the offset advances.
+ * \retval        None
  */
 static FORCE_INLINE void WriteAuthority(const Utl_Url_t* url, byte_t* output, uint32_t* offset);
 

@@ -88,7 +88,7 @@ static uint32_t GetVaapiPixelFormat(Gfx_Surface_PixelFormat_t pixelFormat);
  *
  * \param[in] pCreateInfo        Non-NULL surface configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -99,7 +99,7 @@ static void ValidateCreateInfo(const Gfx_Surface_CreateInfo_t* pCreateInfo);
  * \param[out] pSurface       Receives the native surface and window dimensions
  * \param[in]  pCreateInfo    Valid windowed presentation configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateWindowedPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -110,7 +110,7 @@ static void CreateWindowedPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
  * \param[out] pSurface       Receives the native surface and requested dimensions
  * \param[in]  pCreateInfo    Valid headless presentation configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateHeadlessPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -121,7 +121,7 @@ static void CreateHeadlessPresentSurface(Gfx_Surface_t* pSurface, const Gfx_Surf
  * \param[out] pSurface        Presentation surface receiving the native VkSurfaceKHR and resolved extent
  * \param[in] pCreateInfo      Validated display and Vulkan instance configuration
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -132,7 +132,7 @@ static void CreatePresentSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surfa
  * \param[out] pSurface        Storage surface receiving VA state, PRIME metadata, and logical images
  * \param[in] pCreateInfo      Storage format, dimensions, and matching VA/Vulkan device contexts
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateStorageSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -143,7 +143,7 @@ static void CreateStorageSurface(Gfx_Surface_t* pSurface, const Gfx_Surface_Crea
  * \param[out] pSurface        Zero-initialized destination
  * \param[in] pCreateInfo      Kind-specific creation request
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_CreateInfo_t* pCreateInfo);
 
@@ -153,7 +153,7 @@ static void CreateSurface(Gfx_Surface_Storage_t* storage, const Gfx_Surface_Crea
  *
  * \param[in,out] pSurface Storage surface with no active reader
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void AcquireSurface(Gfx_Surface_t* pSurface);
 
@@ -163,7 +163,7 @@ static void AcquireSurface(Gfx_Surface_t* pSurface);
  *
  * \param[in,out] pSurface Storage surface with submitted writes and writePending set
  *
- * \retval None   No result value.
+ * \retval None
  */
 static void ReleaseSurface(Gfx_Surface_t* pSurface);
 

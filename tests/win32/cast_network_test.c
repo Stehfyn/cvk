@@ -60,12 +60,15 @@ static OS_Network_t g_network;
 /**
  * \brief Checks a failed startup owner before Winsock is available.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Winsock shall not have been initialized in this process.
  *  - 002 Startup failure shall expose neither readiness nor snapshot entries.
  *  - 003 Repeated closure shall preserve the first failure and release retained memory.
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckFailedStartup(void);
 
@@ -73,13 +76,16 @@ static FORCE_INLINE void CheckFailedStartup(void);
 /**
  * \brief Checks stable copied values for one published interface.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 The index shall belong to the current exclusive reader snapshot.
  *  - 002 Comparisons shall cover fields, excluding unspecified structure padding.
  *
  * \param[in] index   Published interface index
  *
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckInterface(uint32_t index);
 
@@ -87,12 +93,15 @@ static FORCE_INLINE void CheckInterface(uint32_t index);
 /**
  * \brief Checks complete interface snapshots using one startup allocation.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 The reader shall be ready and exclusively owned.
  *  - 002 Query/getter calls shall preserve the owned region address and extent.
  *  - 003 Repeated getters shall copy identical values without consuming the snapshot.
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckSnapshots(void);
 
@@ -100,10 +109,13 @@ static FORCE_INLINE void CheckSnapshots(void);
 /**
  * \brief Checks repeated loopback route queries and transactional text output.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Independent values and guards shall be checked without relying on a round trip alone.
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckRoutes(void);
 
@@ -111,10 +123,13 @@ static FORCE_INLINE void CheckRoutes(void);
 /**
  * \brief Checks route text capacity and invalid input preservation.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Failure shall preserve guarded output and success shall match independent bytes.
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckRouteOutput(void);
 

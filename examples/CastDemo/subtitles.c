@@ -268,13 +268,16 @@ static FORCE_INLINE int TextSample(void* user, double start, double end, const b
 /**
  * \brief Normalizes the complete counted UTF-8 scratch buffer in place.
  *
+ * \par Details:
+ *  The count and terminator describe normalized text.
+ *
  * \par Requirements:
  *  - 001 Text shall be initialized, valid UTF-8 and contain no embedded NUL.
  *  - 002 CRLF and CR shall become LF without growing the stored extent.
  *
  * \param[in,out] text   Exclusively owned decoded scratch
  *
- * \retval        None   The count and terminator describe normalized text.
+ * \retval        None
  */
 static FORCE_INLINE void NormalizeNewlines(Text* text);
 
@@ -334,6 +337,9 @@ static FORCE_INLINE bool_t ReadSidecar(Subtitles_Workspace_t* workspace, const S
 /**
  * \brief Writes the bounded terminated load-failure description.
  *
+ * \par Details:
+ *  The description is terminated.
+ *
  * \par Requirements:
  *  - 001 Error storage shall be present and capacity shall include at least one byte.
  *  - 002 The description shall truncate only at capacity minus one and retain termination.
@@ -341,7 +347,7 @@ static FORCE_INLINE bool_t ReadSidecar(Subtitles_Workspace_t* workspace, const S
  * \param[out] error      Writable description
  * \param[in]  capacity   Writable bytes
  *
- * \retval     None   The description is terminated.
+ * \retval     None
  */
 static FORCE_INLINE void WriteLoadError(char_t* error, uint32_t capacity);
 

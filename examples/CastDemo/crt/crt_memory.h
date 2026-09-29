@@ -78,7 +78,7 @@ int32_t CRT_Memory_Compare(const void* first, const void* second, uint64_t byteC
  * \param[in]  input       Non-NULL disjoint readable extent
  * \param[in]  byteCount   Exact byte count to copy
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 void CRT_Memory_Copy(void* output, const void* input, uint64_t byteCount);
 
@@ -99,7 +99,7 @@ void CRT_Memory_Copy(void* output, const void* input, uint64_t byteCount);
  * \param[in]  input       Non-NULL readable extent, possibly overlapping output
  * \param[in]  byteCount   Exact byte count to move
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 void CRT_Memory_Move(void* output, const void* input, uint64_t byteCount);
 
@@ -120,7 +120,7 @@ void CRT_Memory_Move(void* output, const void* input, uint64_t byteCount);
  * \param[in]  value       Byte value to repeat
  * \param[in]  byteCount   Exact output extent in bytes
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 void CRT_Memory_Set(void* output, byte_t value, uint64_t byteCount);
 

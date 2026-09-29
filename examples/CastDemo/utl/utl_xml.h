@@ -172,6 +172,9 @@ typedef struct Utl_Xml_Document_s
 /**
  * \brief Binds fixed XML records and establishes an empty reusable document.
  *
+ * \par Details:
+ *  Empty document with no borrowed input.
+ *
  * \par Requirements:
  *  - 001 Missing required storage shall assert as a development error.
  *  - 002 Storage shall be disjoint from the document and every later input span.
@@ -180,7 +183,7 @@ typedef struct Utl_Xml_Document_s
  * \param[out] document   Exclusive owner
  * \param[in]  storage    Retained fixed arrays
  *
- * \retval     None   Empty document with no borrowed input.
+ * \retval     None
  */
 void Utl_Xml_InitializeDocument(Utl_Xml_Document_t* document, Utl_Xml_Storage_t storage);
 

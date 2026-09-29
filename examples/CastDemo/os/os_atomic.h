@@ -88,7 +88,7 @@ typedef struct OS_Atomic64_s
  * \param[in,out] atomic   Non-NULL quiescent caller-owned object
  * \param[in]     value    Word value to establish
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Atomic_Initialize32(OS_Atomic32_t* atomic, uint32_t value);
 
@@ -109,7 +109,7 @@ void OS_Atomic_Initialize32(OS_Atomic32_t* atomic, uint32_t value);
  * \param[in,out] atomic   Non-NULL quiescent caller-owned object
  * \param[in]     value    Word value to establish
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Atomic_Initialize64(OS_Atomic64_t* atomic, uint64_t value);
 
@@ -167,7 +167,7 @@ uint64_t OS_Atomic_Load64(const OS_Atomic64_t* atomic);
  * \param[in,out] atomic   Non-NULL initialized naturally aligned object
  * \param[in]     value    Word value to establish
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Atomic_Store32(OS_Atomic32_t* atomic, uint32_t value);
 
@@ -187,7 +187,7 @@ void OS_Atomic_Store32(OS_Atomic32_t* atomic, uint32_t value);
  * \param[in,out] atomic   Non-NULL initialized naturally aligned object
  * \param[in]     value    Word value to establish
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Atomic_Store64(OS_Atomic64_t* atomic, uint64_t value);
 

@@ -68,6 +68,9 @@ typedef struct OS_Mailbox_s
 /**
  * \brief Establishes disjoint empty slot ownership before concurrent use.
  *
+ * \par Details:
+ *  One writer, one exchange slot and one empty reader are established.
+ *
  * \par Requirements:
  *  - 001 Required, naturally aligned, exclusively owned metadata shall assert when absent.
  *  - 002 All previous participants shall be quiescent before reuse.
@@ -76,7 +79,7 @@ typedef struct OS_Mailbox_s
  *
  * \param[out] mailbox   Required quiescent metadata with three retained payload slots
  *
- * \retval     None   One writer, one exchange slot and one empty reader are established.
+ * \retval     None
  */
 void OS_Mailbox_Initialize(OS_Mailbox_t* mailbox);
 
@@ -115,6 +118,9 @@ uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox);
 /**
  * \brief Publishes the producer's completely written payload without waiting.
  *
+ * \par Details:
+ *  Publication is complete; the producer owns its next slot.
+ *
  * \par Requirements:
  *  - 001 The sole producer shall have finished all writes to its current slot.
  *  - 002 Exactly one atomic exchange shall transfer that slot and acquire the previous middle slot.
@@ -124,7 +130,7 @@ uint32_t OS_Mailbox_GetReadIndex(const OS_Mailbox_t* mailbox);
  *
  * \param[in,out] mailbox   Required initialized producer-side metadata
  *
- * \retval        None   Publication is complete; the producer owns its next slot.
+ * \retval        None
  */
 void OS_Mailbox_Publish(OS_Mailbox_t* mailbox);
 

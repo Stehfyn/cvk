@@ -106,6 +106,9 @@ typedef struct Line_s
 /**
  * \brief Establishes a private output cursor.
  *
+ * \par Details:
+ *  The empty cursor is valid.
+ *
  * \par Requirements:
  *  - 001 The required cursor shall be exclusively owned; a missing cursor shall assert.
  *  - 002 A supplied output shall expose capacity writable bytes; NULL shall select measurement.
@@ -115,13 +118,16 @@ typedef struct Line_s
  * \param[out] output     Writable storage or NULL for measurement
  * \param[in]  capacity   Permitted byte count
  *
- * \retval     None   The empty cursor is valid.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint32_t capacity);
 
 /*************************************************************************************************/
 /**
  * \brief Counts or appends a bounded fragment.
+ *
+ * \par Details:
+ *  Count/output advances on success; validity records capacity failure.
  *
  * \par Requirements:
  *  - 001 Input shall remain readable and disjoint from output throughout the call.
@@ -131,13 +137,16 @@ static FORCE_INLINE void InitializeWriter(Writer_t* writer, byte_t* output, uint
  * \param[in]     input       Required readable fragment
  * \param[in]     byteCount   Fragment extent
  *
- * \retval        None   Count/output advances on success; validity records capacity failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
  * \brief Appends one ASCII grammar byte.
+ *
+ * \par Details:
+ *  Cursor validity records failure.
  *
  * \par Requirements:
  *  - 001 The cursor shall retain its count-within-capacity invariant.
@@ -147,13 +156,16 @@ static FORCE_INLINE void AppendBytes(Writer_t* writer, const byte_t* input, uint
  * \param[in,out] writer   Initialized cursor
  * \param[in]     value    Grammar byte
  *
- * \retval        None   Cursor validity records failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendByte(Writer_t* writer, byte_t value);
 
 /*************************************************************************************************/
 /**
  * \brief Appends a decimal field with leading-zero padding.
+ *
+ * \par Details:
+ *  Cursor validity records failure.
  *
  * \par Requirements:
  *  - 001 The required field shall use a minimum width no greater than three.
@@ -163,13 +175,16 @@ static FORCE_INLINE void AppendByte(Writer_t* writer, byte_t value);
  * \param[in,out] writer   Initialized cursor
  * \param[in]     number   Required decimal field and minimum width
  *
- * \retval        None   Cursor validity records failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendNumber(Writer_t* writer, const Number_t* number);
 
 /*************************************************************************************************/
 /**
  * \brief Serializes one canonical timestamp.
+ *
+ * \par Details:
+ *  Cursor validity records failure.
  *
  * \par Requirements:
  *  - 001 Hours shall use at least two digits; minutes and seconds exactly two, fractions exactly three.
@@ -179,13 +194,16 @@ static FORCE_INLINE void AppendNumber(Writer_t* writer, const Number_t* number);
  * \param[in,out] writer         Initialized cursor
  * \param[in]     milliseconds   Timestamp offset
  *
- * \retval        None   Cursor validity records failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendTimestamp(Writer_t* writer, uint64_t milliseconds);
 
 /*************************************************************************************************/
 /**
  * \brief Serializes a validated timing line.
+ *
+ * \par Details:
+ *  Invalid intervals or insufficient output latch failure.
  *
  * \par Requirements:
  *  - 001 End shall be strictly after start; invalid intervals shall latch failure without output.
@@ -196,7 +214,7 @@ static FORCE_INLINE void AppendTimestamp(Writer_t* writer, uint64_t milliseconds
  * \param[in]     start    Start milliseconds
  * \param[in]     end      End milliseconds
  *
- * \retval        None   Invalid intervals or insufficient output latch failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendTiming(Writer_t* writer, uint64_t start, uint64_t end);
 
@@ -204,19 +222,25 @@ static FORCE_INLINE void AppendTiming(Writer_t* writer, uint64_t start, uint64_t
 /**
  * \brief Escapes a literal scalar for WebVTT cue text.
  *
+ * \par Details:
+ *  Cursor validity records failure.
+ *
  * \par Requirements:
  *  - 001 The scalar shall be nonzero and valid; newline handling belongs to AppendText.
  *
  * \param[in,out] writer   Initialized cursor
  * \param[in]     scalar   Valid non-newline scalar
  *
- * \retval        None   Cursor validity records failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendScalar(Writer_t* writer, uint32_t scalar);
 
 /*************************************************************************************************/
 /**
  * \brief Normalizes one source scalar into an escaped, nonempty payload line.
+ *
+ * \par Details:
+ *  Line state advances and writer validity records failure.
  *
  * \par Requirements:
  *  - 001 Source scalars shall be valid and nonzero.
@@ -227,13 +251,16 @@ static FORCE_INLINE void AppendScalar(Writer_t* writer, uint32_t scalar);
  * \param[in,out] line     Initialized line state
  * \param[in]     scalar   Decoded source scalar
  *
- * \retval        None   Line state advances and writer validity records failure.
+ * \retval        None
  */
 static FORCE_INLINE void AppendLineScalar(Writer_t* writer, Line_t* line, uint32_t scalar);
 
 /*************************************************************************************************/
 /**
  * \brief Decodes and serializes complete literal text with cue-safe line boundaries.
+ *
+ * \par Details:
+ *  Text and final cue separator are appended or failure is latched.
  *
  * \par Requirements:
  *  - 001 Every iteration shall consume one scalar or stop on end/failure.
@@ -243,7 +270,7 @@ static FORCE_INLINE void AppendLineScalar(Writer_t* writer, Line_t* line, uint32
  * \param[in]     input       Stable borrowed text; NULL only for zero byteCount
  * \param[in]     byteCount   Readable bytes
  *
- * \retval        None   Text and final cue separator are appended or failure is latched.
+ * \retval        None
  */
 static FORCE_INLINE void AppendText(Writer_t* writer, const byte_t* input, uint32_t byteCount);
 
@@ -269,6 +296,9 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
 /**
  * \brief Consumes one required timestamp delimiter.
  *
+ * \par Details:
+ *  The delimiter is consumed or failure is latched.
+ *
  * \par Requirements:
  *  - 001 The cursor shall remain within the counted readable extent.
  *  - 002 Missing or mismatched delimiters shall latch failure; failed cursors shall remain unchanged.
@@ -276,7 +306,7 @@ static FORCE_INLINE uint32_t ReadNumber(Reader_t* reader, uint64_t* value, uint3
  * \param[in,out] reader      Initialized private cursor
  * \param[in]     delimiter   Required grammar byte
  *
- * \retval        None   The delimiter is consumed or failure is latched.
+ * \retval        None
  */
 static FORCE_INLINE void ReadDelimiter(Reader_t* reader, byte_t delimiter);
 

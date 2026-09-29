@@ -100,7 +100,7 @@ struct Gfx_Renderer_t
  *
  * \param[in] pCreateInfo        Complete renderer specification
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void ValidateCreateInfo(const Gfx_Renderer_CreateInfo_t* pCreateInfo);
 
@@ -111,7 +111,7 @@ static void ValidateCreateInfo(const Gfx_Renderer_CreateInfo_t* pCreateInfo);
  * \param[out] pRenderer         Zero-initialized renderer storage
  * \param[in]  pCreateInfo       Validated renderer specification
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CreateRenderer(Gfx_Renderer_t* pRenderer, const Gfx_Renderer_CreateInfo_t* pCreateInfo);
 
@@ -133,7 +133,7 @@ static uint32_t GetQuerySlot(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pImage);
  * \param[in,out] pRenderer      Initialized renderer
  * \param[in]     slotIndex      Timestamp slot to collect when pending
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void CollectQuerySlot(Gfx_Renderer_t* pRenderer, uint32_t slotIndex);
 
@@ -143,7 +143,7 @@ static void CollectQuerySlot(Gfx_Renderer_t* pRenderer, uint32_t slotIndex);
  *
  * \param[in,out] pRenderer      Idle renderer receiving the acquired destination image
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImage);
 
@@ -154,7 +154,7 @@ static void BeginFrame(Gfx_Renderer_t* pRenderer, Gfx_Image_t* pTargetImage);
  * \param[in,out] pRenderer      Renderer recording an active frame
  * \param[in]     frameIndex     Animation frame supplied to the render program
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void RenderFrame(Gfx_Renderer_t* pRenderer, uint32_t frameIndex);
 
@@ -164,7 +164,7 @@ static void RenderFrame(Gfx_Renderer_t* pRenderer, uint32_t frameIndex);
  *
  * \param[in,out] pRenderer      Active renderer containing recorded render work
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void EndFrame(Gfx_Renderer_t* pRenderer);
 
@@ -175,7 +175,7 @@ static void EndFrame(Gfx_Renderer_t* pRenderer);
  * \param[in,out] pRenderer      Idle renderer whose query results are collected
  * \param[out]    pStatistics    Receives a cumulative renderer-lifetime snapshot
  *
- * \retval    None   No result value.
+ * \retval    None
  */
 static void GetStatistics(Gfx_Renderer_t* pRenderer, Gfx_Renderer_Statistics_t* pStatistics);
 

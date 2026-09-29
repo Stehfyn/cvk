@@ -261,7 +261,7 @@ static FORCE_INLINE bool_t ReadStartLine(Utl_Http_Head_t* head, Utl_Http_Text_t 
  * \param[in,out] reader   Initialized scan state
  * \param[in]     line     Borrowed line excluding its CRLF
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void ReadCompletedLine(Utl_Http_HeadReader_t* reader, Utl_Http_Text_t line);
 
@@ -349,7 +349,7 @@ static FORCE_INLINE bool_t ReadRangeMember(Utl_Http_Range_t* range,
  * \param[in,out] cursor   Next output offset
  * \param[in]     text     Readable disjoint span
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void WriteSpan(byte_t* buffer, uint32_t* cursor, Utl_Http_Text_t text);
 
@@ -361,7 +361,7 @@ static FORCE_INLINE void WriteSpan(byte_t* buffer, uint32_t* cursor, Utl_Http_Te
  * \param[in,out] cursor    Next output offset
  * \param[in]     literal   Internal constant covered by writer size preflight
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 static FORCE_INLINE void WriteLiteral(byte_t* buffer, uint32_t* cursor, const char_t* literal);
 
@@ -373,7 +373,7 @@ static FORCE_INLINE void WriteLiteral(byte_t* buffer, uint32_t* cursor, const ch
  * \param[in]  value    Number already bounded by its calendar component
  * \param[in]  width    Two or four decimal digits
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 static FORCE_INLINE void WriteDateNumber(byte_t* output, uint32_t value, uint32_t width);
 

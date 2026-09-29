@@ -144,7 +144,7 @@ static FORCE_INLINE bool_t ReadIdentity(Utl_Http_Text_t* uuid, Utl_Http_Text_t u
  * \param[out] waitText   Ten writable decimal bytes
  * \param[in]  search     Previously validated search
  *
- * \retval     None   No result value.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeSearchHead(Utl_Http_Head_t*         head,
                                               Utl_Http_Field_t*        fields,

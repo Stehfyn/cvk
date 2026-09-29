@@ -196,12 +196,15 @@ static FORCE_INLINE Utl_Json_Text_t Text(const char_t* data, uint32_t byteCount)
 /**
  * \brief Initializes the baseline request fixture.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  * \param[out] load   Required fixture model
  *
- * \retval     None   No result value; a fixture mismatch asserts.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeLoad(Utl_Chromecast_Load_t* load);
 
@@ -209,11 +212,14 @@ static FORCE_INLINE void InitializeLoad(Utl_Chromecast_Load_t* load);
 /**
  * \brief Checks a complete independently specified request and every short capacity.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None   No result value; a fixture mismatch asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckKnownLoad(TestContext_t* context);
 
@@ -221,11 +227,14 @@ static FORCE_INLINE void CheckKnownLoad(TestContext_t* context);
 /**
  * \brief Checks subtitles, pause state, LIVE semantics and escaping of every dynamic field.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None   No result value; a fixture mismatch asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckSubtitle(TestContext_t* context);
 
@@ -233,11 +242,14 @@ static FORCE_INLINE void CheckSubtitle(TestContext_t* context);
 /**
  * \brief Checks every control escape, quote, reverse solidus and supplementary UTF-8.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None   No result value; a fixture mismatch asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckStrings(TestContext_t* context);
 
@@ -245,12 +257,15 @@ static FORCE_INLINE void CheckStrings(TestContext_t* context);
 /**
  * \brief Verifies that an invalid model preserves its entire destination.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  * \param[in] load   Deliberately invalid fixture
  *
- * \retval    None   No result value; a fixture mismatch asserts.
+ * \retval    None
  */
 static FORCE_INLINE void CheckRejected(TestContext_t* context, Utl_Chromecast_Load_t* load);
 
@@ -258,11 +273,14 @@ static FORCE_INLINE void CheckRejected(TestContext_t* context, Utl_Chromecast_Lo
 /**
  * \brief Checks missing fields, unsupported kinds and malformed UTF-8.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None   No result value; a fixture mismatch asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckInvalidModels(TestContext_t* context);
 
@@ -270,11 +288,14 @@ static FORCE_INLINE void CheckInvalidModels(TestContext_t* context);
 /**
  * \brief Checks exact uint64_t time output and bounded string measurement.
  *
+ * \par Details:
+ *  A fixture mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Fixture storage shall remain live for the complete call.
  *
  *
- * \retval None   No result value; a fixture mismatch asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckNumericLimits(TestContext_t* context);
 
@@ -282,13 +303,16 @@ static FORCE_INLINE void CheckNumericLimits(TestContext_t* context);
 /**
  * \brief Checks optional styles, every edge token, packed colors and fractional font scale.
  *
+ * \par Details:
+ *  A mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Complete independent wire strings shall match for all five supported edge kinds.
  *  - 002 Every short output and invalid style shall preserve the entire destination.
  *
  * \param[in,out] context   Entry-owned output and sentinel storage
  *
- * \retval        None   A mismatch asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckStyles(TestContext_t* context);
 
@@ -296,12 +320,15 @@ static FORCE_INLINE void CheckStyles(TestContext_t* context);
 /**
  * \brief Compares one complete style request and every insufficient output capacity.
  *
+ * \par Details:
+ *  A mismatch asserts.
+ *
  * \param[in,out] context     Entry-owned output and sentinel storage
  * \param[in]     load        Valid complete request
  * \param[in]     expected    Independently specified wire bytes
  * \param[in]     byteCount   Expected complete wire extent
  *
- * \retval        None   A mismatch asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckStyle(TestContext_t*               context,
                                     const Utl_Chromecast_Load_t* load,
@@ -312,6 +339,9 @@ static FORCE_INLINE void CheckStyle(TestContext_t*               context,
 /**
  * \brief Checks a complete independently specified command and every short capacity.
  *
+ * \par Details:
+ *  Mismatches assert in every build.
+ *
  * \par Requirements:
  *  - 001 Output beyond the exact count shall remain unchanged; no terminator shall be added.
  *  - 002 Every short capacity and missing output shall fail without modifying storage.
@@ -321,7 +351,7 @@ static FORCE_INLINE void CheckStyle(TestContext_t*               context,
  * \param[in]     expected    Independent expected wire bytes
  * \param[in]     byteCount   Expected serialized extent
  *
- * \retval        None   Mismatches assert in every build.
+ * \retval        None
  */
 static FORCE_INLINE void CheckCommand(TestContext_t*                  context,
                                       const Utl_Chromecast_Command_t* command,
@@ -332,13 +362,16 @@ static FORCE_INLINE void CheckCommand(TestContext_t*                  context,
 /**
  * \brief Checks rejected command models preserve the complete output region.
  *
+ * \par Details:
+ *  Unexpected acceptance or mutation asserts.
+ *
  * \par Requirements:
  *  - 001 Counting and serialization shall both reject the selected invalid model.
  *
  * \param[in,out] context   Entry-owned fixture buffers
  * \param[in]     command   Invalid external field model with its selected member initialized
  *
- * \retval        None   Unexpected acceptance or mutation asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckRejectedCommand(TestContext_t* context, const Utl_Chromecast_Command_t* command);
 
@@ -346,13 +379,16 @@ static FORCE_INLINE void CheckRejectedCommand(TestContext_t* context, const Utl_
 /**
  * \brief Exercises every supported command schema with independent complete wire strings.
  *
+ * \par Details:
+ *  Any mismatch asserts.
+ *
  * \par Requirements:
  *  - 001 Type-only commands shall work without initialized inactive fields.
  *  - 002 IDs, decimal bounds, optional fields and JSON escaping shall match the independent fixtures.
  *
  * \param[in,out] context   Entry-owned fixture buffers
  *
- * \retval        None   Any mismatch asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckCommands(TestContext_t* context);
 
@@ -360,18 +396,24 @@ static FORCE_INLINE void CheckCommands(TestContext_t* context);
 /**
  * \brief Exercises invalid kinds, required fields, request IDs and seek domains.
  *
+ * \par Details:
+ *  Any unexpected acceptance asserts.
+ *
  * \par Requirements:
  *  - 001 Invalid active fields shall fail transactionally, without accessing inactive fields.
  *
  * \param[in,out] context   Entry-owned fixture buffers
  *
- * \retval        None   Any unexpected acceptance asserts.
+ * \retval        None
  */
 static FORCE_INLINE void CheckInvalidCommands(TestContext_t* context);
 
 /*************************************************************************************************/
 /**
  * \brief Checks one independently specified namespace string.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 Expected text shall remain readable for the complete comparison.
@@ -380,7 +422,7 @@ static FORCE_INLINE void CheckInvalidCommands(TestContext_t* context);
  * \param[in] kind       Namespace selector
  * \param[in] expected   Independent wire spelling
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckNamespace(Utl_Chromecast_Namespace_t kind, Utl_Json_Text_t expected);
 
@@ -388,17 +430,23 @@ static FORCE_INLINE void CheckNamespace(Utl_Chromecast_Namespace_t kind, Utl_Jso
 /**
  * \brief Checks protocol namespaces and the namespace selected by every command kind.
  *
+ * \par Details:
+ *  Assertion on mismatch.
+ *
  * \par Requirements:
  *  - 001 Unsupported selectors shall return their documented empty or invalid result.
  *  - 002 Every supported command shall select the protocol's expected namespace.
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckNamespaces(void);
 
 /*************************************************************************************************/
 /**
  * \brief Checks escaped receiver routing through exact counted CastV2 fields.
+ *
+ * \par Details:
+ *  Assertion on mismatch.
  *
  * \par Requirements:
  *  - 001 Storage shall belong to the entry-owned context and remain disjoint from the model.
@@ -407,7 +455,7 @@ static FORCE_INLINE void CheckNamespaces(void);
  *
  * \param[in,out] context   Required retained output and sentinel storage
  *
- * \retval None Assertion on mismatch.
+ * \retval None
  */
 static FORCE_INLINE void CheckCountedRoute(TestContext_t* context);
 

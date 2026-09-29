@@ -493,12 +493,15 @@ static const RequestCase_t c_requests[] = {
 /**
  * \brief Checks that every unwritten output byte retains its sentinel.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 First shall be within the fixed output extent.
  *
  * \param[in] first   First unwritten byte
  *
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckGuard(uint32_t first);
 
@@ -506,13 +509,16 @@ static FORCE_INLINE void CheckGuard(uint32_t first);
 /**
  * \brief Checks the expected request decision and selected representation interval.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Expected decisions shall come from independent wire vectors.
  *  - 002 Terminal repeated reads shall preserve the result without consuming new data.
  *
  * \param[in] test   Independent expected result
  *
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckRequest(const RequestCase_t* test);
 
@@ -520,19 +526,25 @@ static FORCE_INLINE void CheckRequest(const RequestCase_t* test);
 /**
  * \brief Checks fragmented heads, exact pipeline boundaries and reuse after rejection.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 The first ready request shall stop exactly before the second request.
  *  - 002 Every shorter prefix shall remain incomplete.
  *  - 003 A capacity failure shall latch until reinitialization.
  *
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckPipeline(void);
 
 /*************************************************************************************************/
 /**
  * \brief Checks independent exact response bytes and every short output capacity.
+ *
+ * \par Details:
+ *  Assertions pass or the process fails.
  *
  * \par Requirements:
  *  - 001 Preflight size shall equal the independent wire extent.
@@ -542,7 +554,7 @@ static FORCE_INLINE void CheckPipeline(void);
  * \param[in] expected        Independent expected bytes
  * \param[in] expectedBytes   Exact expected extent
  *
- * \retval    None   Assertions pass or the process fails.
+ * \retval    None
  */
 static FORCE_INLINE void CheckResponse(const CastHttp_Response_t* response,
                                        const char_t*              expected,
@@ -552,12 +564,15 @@ static FORCE_INLINE void CheckResponse(const CastHttp_Response_t* response,
 /**
  * \brief Checks response kinds and invalid-model preservation.
  *
+ * \par Details:
+ *  Assertions pass or the process fails.
+ *
  * \par Requirements:
  *  - 001 Expected wire bytes shall be independent literals.
  *  - 002 Invalid interval arithmetic and field injection shall fail without writes.
  *
  *
- * \retval None   Assertions pass or the process fails.
+ * \retval None
  */
 static FORCE_INLINE void CheckResponses(void);
 

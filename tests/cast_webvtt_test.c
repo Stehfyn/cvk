@@ -109,10 +109,13 @@ static const char_t        c_emptyCueWire[] = "00:00:00.000 --> 00:00:01.001\n\n
 /**
  * \brief Checks one complete signature-marked byte sequence against independent scalars.
  *
+ * \par Details:
+ *  Scalar values and idempotent end-of-input assertions pass.
+ *
  * \param[in] data        Stable source vector
  * \param[in] byteCount   Readable bytes
  *
- * \retval    None   Scalar values and idempotent end-of-input assertions pass.
+ * \retval    None
  */
 static FORCE_INLINE void CheckReader(const byte_t* data, uint32_t byteCount);
 
@@ -120,7 +123,10 @@ static FORCE_INLINE void CheckReader(const byte_t* data, uint32_t byteCount);
 /**
  * \brief Checks repeated malformed reads preserve output and cursor position.
  *
- * \retval None   All malformed scalar assertions pass.
+ * \par Details:
+ *  All malformed scalar assertions pass.
+ *
+ * \retval None
  */
 static FORCE_INLINE void CheckInvalidReaders(void);
 
@@ -128,9 +134,12 @@ static FORCE_INLINE void CheckInvalidReaders(void);
 /**
  * \brief Checks one independent timestamp wire vector and every shorter output capacity.
  *
+ * \par Details:
+ *  Count, write, parse and output-preservation assertions pass.
+ *
  * \param[in] item   Independent expected value, bytes and count
  *
- * \retval    None   Count, write, parse and output-preservation assertions pass.
+ * \retval    None
  */
 static FORCE_INLINE void CheckTimestamp(const Time_t* item);
 
@@ -138,7 +147,10 @@ static FORCE_INLINE void CheckTimestamp(const Time_t* item);
 /**
  * \brief Checks invalid timestamp grammar and every truncated maximum-value prefix.
  *
- * \retval None   Invalid-input output-preservation assertions pass.
+ * \par Details:
+ *  Invalid-input output-preservation assertions pass.
+ *
+ * \retval None
  */
 static FORCE_INLINE void CheckInvalidTimestamps(void);
 
@@ -146,11 +158,14 @@ static FORCE_INLINE void CheckInvalidTimestamps(void);
 /**
  * \brief Checks a complete cue against independently written WebVTT bytes.
  *
+ * \par Details:
+ *  Wire and all-short-capacity assertions pass.
+ *
  * \param[in] cue         Stable plain-text model
  * \param[in] expected    Independent expected serialization
  * \param[in] byteCount   Expected serialization length
  *
- * \retval    None   Wire and all-short-capacity assertions pass.
+ * \retval    None
  */
 static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* expected, uint32_t byteCount);
 
@@ -158,7 +173,10 @@ static FORCE_INLINE void CheckCue(const Utl_WebVtt_Cue_t* cue, const char_t* exp
 /**
  * \brief Checks encoding, newline, escaping, timing and invalid-cue boundaries.
  *
- * \retval None   Every cue fixture passes.
+ * \par Details:
+ *  Every cue fixture passes.
+ *
+ * \retval None
  */
 static FORCE_INLINE void CheckCues(void);
 

@@ -115,12 +115,15 @@ static const char_t        c_marker[] = "retained field storage for cue rollback
 /**
  * \brief Establishes defined recognizable cue fields for preservation checks.
  *
+ * \par Details:
+ *  The sentinel model is ready.
+ *
  * \par Requirements:
  *  - 001 Every field shall have a defined value or valid borrowed pointer.
  *
  * \param[out] cue   Required staging model
  *
- * \retval     None   The sentinel model is ready.
+ * \retval     None
  */
 static FORCE_INLINE void InitializeMarker(Utl_Srt_Cue_t* cue);
 
@@ -128,19 +131,25 @@ static FORCE_INLINE void InitializeMarker(Utl_Srt_Cue_t* cue);
 /**
  * \brief Verifies every public cue field was preserved.
  *
+ * \par Details:
+ *  A changed field asserts.
+ *
  * \par Requirements:
  *  - 001 Input shall have been initialized by InitializeMarker before the tested operation.
  *  - 002 Padding shall not participate in the comparison.
  *
  * \param[in] cue   Required model
  *
- * \retval    None   A changed field asserts.
+ * \retval    None
  */
 static FORCE_INLINE void CheckMarker(const Utl_Srt_Cue_t* cue);
 
 /*************************************************************************************************/
 /**
  * \brief Compares a borrowed result span against independent bytes.
+ *
+ * \par Details:
+ *  A mismatch asserts.
  *
  * \par Requirements:
  *  - 001 Both counted extents shall match before memory comparison.
@@ -149,13 +158,16 @@ static FORCE_INLINE void CheckMarker(const Utl_Srt_Cue_t* cue);
  * \param[in] expected    Required expected bytes
  * \param[in] byteCount   Expected extent
  *
- * \retval    None   A mismatch asserts.
+ * \retval    None
  */
 static FORCE_INLINE void CheckSpan(const Utl_Srt_Span_t* span, const char_t* expected, uint32_t byteCount);
 
 /*************************************************************************************************/
 /**
  * \brief Checks failed timestamp parsing preserves every result field.
+ *
+ * \par Details:
+ *  Any publication after failure asserts.
  *
  * \par Requirements:
  *  - 001 Input shall be an independently known malformed or incomplete timestamp.
@@ -164,7 +176,7 @@ static FORCE_INLINE void CheckSpan(const Utl_Srt_Span_t* span, const char_t* exp
  * \param[in] input       Stable counted input
  * \param[in] byteCount   Readable extent
  *
- * \retval    None   Any publication after failure asserts.
+ * \retval    None
  */
 static FORCE_INLINE void CheckInvalidTimestamp(const char_t* input, uint32_t byteCount);
 
@@ -172,11 +184,14 @@ static FORCE_INLINE void CheckInvalidTimestamp(const char_t* input, uint32_t byt
 /**
  * \brief Checks timestamp values, prefix counts, invalid forms and truncation.
  *
+ * \par Details:
+ *  Any failed requirement asserts.
+ *
  * \par Requirements:
  *  - 001 Every invalid/truncated timestamp shall preserve both outputs.
  *  - 002 Maximum representable time shall succeed and its immediate overflow shall fail.
  *
- * \retval None   Any failed requirement asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckTimestamps(void);
 
@@ -184,11 +199,14 @@ static FORCE_INLINE void CheckTimestamps(void);
 /**
  * \brief Checks complete cues, line endings and repeated END.
  *
+ * \par Details:
+ *  Any failed requirement asserts.
+ *
  * \par Requirements:
  *  - 001 Parsed values and all borrowed spans shall match independent expected data.
  *  - 002 END shall preserve cue output and consume trailing separators once.
  *
- * \retval None   Any failed requirement asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckCues(void);
 
@@ -196,12 +214,15 @@ static FORCE_INLINE void CheckCues(void);
 /**
  * \brief Checks malformed cue rollback and source-prefix boundaries.
  *
+ * \par Details:
+ *  Any failed requirement asserts.
+ *
  * \par Requirements:
  *  - 001 INVALID shall preserve cursor and every cue field on repeated calls.
  *  - 002 Incomplete timing shall not publish an empty-looking valid cue.
  *  - 003 Embedded NUL shall be rejected using the counted extent.
  *
- * \retval None   Any failed requirement asserts.
+ * \retval None
  */
 static FORCE_INLINE void CheckFailures(void);
 

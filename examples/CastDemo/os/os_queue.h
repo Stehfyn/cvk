@@ -74,7 +74,7 @@ typedef struct OS_Queue_s
  * \param[in]     entryByteCount   Positive fixed object-representation width
  * \param[in]     capacity         Positive number of entries
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Queue_Initialize(OS_Queue_t* queue, void* entries, uint32_t entryByteCount, uint32_t capacity);
 
@@ -139,7 +139,7 @@ bool_t OS_Queue_GetEntry(void* entry, const OS_Queue_t* queue, uint32_t index);
  *
  * \param[in,out] queue   Non-NULL initialized exclusively accessed queue
  *
- * \retval        None   No result value.
+ * \retval        None
  */
 void OS_Queue_Reset(OS_Queue_t* queue);
 
