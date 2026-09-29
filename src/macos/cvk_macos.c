@@ -6,7 +6,6 @@
 #include "cvk/cvk.h"
 #include "cvk/macos/cvk_macos.h"
 #include <volk.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_macos.h>
 

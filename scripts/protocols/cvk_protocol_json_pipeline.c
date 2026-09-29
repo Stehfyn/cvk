@@ -22,6 +22,7 @@ uint32_t cvkParsePipelineJsonObjectList(const cvkJsonContext* pContext, const cv
     count = ((NULL != pList) && (CVK_JSON_ARRAY == pList->kind)) ? pList->childCount : 0;
     (*ppIds)      = (uint64_t*)cvkAllocateArena(pContext->pArena, count * sizeof(uint64_t), sizeof(uint64_t));
     (*ppElements) = cvkAllocateArena(pContext->pArena, count * elementSize, CVK_JSON_ARENA_ALIGNMENT);
+    CVK_ASSERT((0 == count) || ((NULL != *ppIds) && (NULL != *ppElements)));
     for (index = 0; index < count; ++index)
     {
         const cvkJsonValue* entry  = cvkGetJsonElement(&pContext->document, pList, index);

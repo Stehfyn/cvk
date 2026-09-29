@@ -2594,6 +2594,8 @@ static CVK_FORCE_INLINE void {name}(const cvkJsonContext* pContext,
         required.update(self.direct_type_headers(defs) - set(self.PLATFORM_INCLUDES[plat]))
         required.update(header for header in self.PLATFORM_INCLUDES[plat] if header.startswith("<vulkan/"))
         required.add(self.vk_header)
+        if not re.search(r"\b(?:VKAPI_ATTR|VKAPI_CALL|VKAPI_PTR)\b", defs):
+            required.discard("<vulkan/vk_platform.h>")
         if re.search(r"\b(?:memcpy|memmove|memcmp|memset|str\w*)\s*\(", defs):
             required.add("<string.h>")
         includes = "".join(f"#include {i}\n" for i in sorted(required))

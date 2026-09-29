@@ -3,7 +3,6 @@
 #include "scvk/scvk.h"
 #include "scvk/sci/scvk_sci.h"
 #include <stdint.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_sc_core.h>
 #include <vulkan/vulkan_sci.h>
 

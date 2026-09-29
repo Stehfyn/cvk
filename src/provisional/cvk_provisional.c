@@ -7,7 +7,6 @@
 #include "cvk/provisional/cvk_provisional.h"
 #include <volk.h>
 #include <stdint.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_beta.h>
 #include <vulkan/vulkan_core.h>
 

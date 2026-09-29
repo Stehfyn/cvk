@@ -7,7 +7,6 @@
 #include "cvk/ggp/cvk_ggp.h"
 #include <volk.h>
 #include <stdint.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ggp.h>
 

@@ -877,6 +877,8 @@ extern SCVK_FORCE_INLINE uint32_t scvkParsePipelineJsonObjectList(const scvkJson
     (*ppIds) = (uint64_t*)scvkAllocateArena(pContext->pArena, count * sizeof(uint64_t), sizeof(uint64_t));
 
     (*ppElements) = scvkAllocateArena(pContext->pArena, count * elementSize, SCVK_JSON_ARENA_ALIGNMENT);
+    SCVK_ASSERT((0 == count) || ((NULL != *ppIds) && (NULL != *ppElements)));
+
     for (index = 0; index < count; ++index)
     {
         const scvkJsonValue* entry = scvkGetJsonElement(&pContext->document, pList, index);

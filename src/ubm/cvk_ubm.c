@@ -8,7 +8,6 @@
 #include <volk.h>
 #include <stdint.h>
 #include <ubm.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_ubm.h>
 

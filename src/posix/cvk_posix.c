@@ -8,7 +8,6 @@
 #include <volk.h>
 #include <stdint.h>
 #include <unistd.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
 extern CVK_FORCE_INLINE void cvkImportFdImage(VkPhysicalDevice                   physicalDevice,

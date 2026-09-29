@@ -6,7 +6,6 @@
 #include "cvk/cvk.h"
 #include "cvk/xlib_xrandr/cvk_xlib_xrandr.h"
 #include <volk.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xlib_xrandr.h>
 

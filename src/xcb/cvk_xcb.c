@@ -7,7 +7,6 @@
 #include "cvk/xcb/cvk_xcb.h"
 #include <volk.h>
 #include <stdint.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 #include <vulkan/vulkan_xcb.h>
 

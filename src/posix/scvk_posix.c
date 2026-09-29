@@ -4,7 +4,6 @@
 #include "scvk/posix/scvk_posix.h"
 #include <stdint.h>
 #include <unistd.h>
-#include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_sc_core.h>
 
 extern SCVK_FORCE_INLINE void scvkImportFdImage(VkPhysicalDevice                   physicalDevice,
