@@ -102,3 +102,83 @@ void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer  commandBuffer,
                                               sizeof(constants),
                                               &constants);
 }
+
+/**
+ * \brief Acquires an external color image, executes bicubic scaling, and releases it.
+ * \par Profile: vulkan
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] externalLayout Layout held by the external owner before and after the pass.
+ * \param[in] renderLayout Color attachment layout during the pass.
+ * \param[in] queueFamilyIndex Queue family recording the pass.
+ * \param[in] image Externally owned color attachment image.
+ * \param[in] subresourceRange Color attachment subresources.
+ * \param[in] renderPass Render pass compatible with the bicubic pipeline.
+ * \param[in] framebuffer Target framebuffer.
+ * \param[in] backingExtent Render area, viewport, and scissor extent.
+ * \param[in] pipeline Pipeline created by cvkCreateBicubicScalingPipeline.
+ * \param[in] layout Layout returned with the pipeline.
+ * \param[in] descriptorSet Descriptor set for the sampled image.
+ * \param[in] sourceExtent Dimensions of the sampled image.
+ * \param[in] contentExtent Dimensions of the destination content.
+ * \param[in] blend Bicubic-to-original blend in the range zero to one.
+ * \retval None
+ */
+void cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                          VkImageLayout           externalLayout,
+                                                          VkImageLayout           renderLayout,
+                                                          uint32_t                queueFamilyIndex,
+                                                          VkImage                 image,
+                                                          VkImageSubresourceRange subresourceRange,
+                                                          VkRenderPass            renderPass,
+                                                          VkFramebuffer           framebuffer,
+                                                          VkExtent2D              backingExtent,
+                                                          VkPipeline              pipeline,
+                                                          VkPipelineLayout        layout,
+                                                          VkDescriptorSet         descriptorSet,
+                                                          VkExtent2D              sourceExtent,
+                                                          VkExtent2D              contentExtent,
+                                                          float                   blend)
+{
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, backingExtent);
+
+    cvkCmdBeginRenderPassOnExternalImage(commandBuffer,
+                                         NULL,
+                                         (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                         externalLayout,
+                                         renderLayout,
+                                         queueFamilyIndex,
+                                         image,
+                                         subresourceRange,
+                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                         (VkDependencyFlags)0,
+                                         NULL,
+                                         renderPass,
+                                         framebuffer,
+                                         area,
+                                         0,
+                                         NULL,
+                                         VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, backingExtent);
+    cvkCmdDrawFullscreenQuadWithBicubicScaling(commandBuffer,
+                                               pipeline,
+                                               layout,
+                                               descriptorSet,
+                                               sourceExtent,
+                                               contentExtent,
+                                               backingExtent,
+                                               blend);
+    cvkCmdEndRenderPassOnExternalImage(commandBuffer,
+                                       NULL,
+                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                       renderLayout,
+                                       externalLayout,
+                                       queueFamilyIndex,
+                                       image,
+                                       subresourceRange,
+                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                       (VkDependencyFlags)0);
+}

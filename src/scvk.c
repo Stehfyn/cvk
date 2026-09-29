@@ -12926,6 +12926,57 @@ extern SCVK_FORCE_INLINE void scvkCmdEndRenderPassOnExternalImage(VkCommandBuffe
     scvkCmdEndRenderPass(commandBuffer);
     scvkCmdReleaseImageToExternal(commandBuffer, pBarrierNext, srcAccessMask, renderLayout, externalLayout, queueFamilyIndex, image, subresourceRange, srcStageMask, dependencyFlags);
 }
+extern SCVK_FORCE_INLINE void scvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                                    VkImageLayout           externalLayout,
+                                                                                    VkImageLayout           renderLayout,
+                                                                                    uint32_t                queueFamilyIndex,
+                                                                                    VkImage                 image,
+                                                                                    VkImageSubresourceRange subresourceRange,
+                                                                                    VkRenderPass            renderPass,
+                                                                                    VkFramebuffer           framebuffer,
+                                                                                    VkExtent2D              extent,
+                                                                                    VkPipeline              pipeline,
+                                                                                    VkPipelineLayout        layout,
+                                                                                    VkDescriptorSet         descriptorSet)
+{
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    scvkInitOffset2D(&offset, 0, 0);
+    scvkInitRect2D(&area, offset, extent);
+
+    scvkCmdBeginRenderPassOnExternalImage(commandBuffer,
+                                          NULL,
+                                          (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                          externalLayout,
+                                          renderLayout,
+                                          queueFamilyIndex,
+                                          image,
+                                          subresourceRange,
+                                          (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                          (VkDependencyFlags)0,
+                                          NULL,
+                                          renderPass,
+                                          framebuffer,
+                                          area,
+                                          0,
+                                          NULL,
+                                          VK_SUBPASS_CONTENTS_INLINE);
+    scvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    scvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    scvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
+    scvkCmdDrawFullscreenQuad(commandBuffer);
+    scvkCmdEndRenderPassOnExternalImage(commandBuffer,
+                                        NULL,
+                                        (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                        renderLayout,
+                                        externalLayout,
+                                        queueFamilyIndex,
+                                        image,
+                                        subresourceRange,
+                                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                        (VkDependencyFlags)0);
+}
 extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                                                VkRenderPass     renderPass,
                                                                VkFramebuffer    framebuffer,
@@ -12935,7 +12986,11 @@ extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  
                                                                VkDescriptorSet  descriptorSet,
                                                                uint32_t         vertexCount)
 {
-    VkRect2D area = {{0, 0}, extent};
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    scvkInitOffset2D(&offset, 0, 0);
+    scvkInitRect2D(&area, offset, extent);
 
     scvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     scvkCmdSetViewportAndScissor2D(commandBuffer, extent);
@@ -12955,7 +13010,11 @@ extern SCVK_FORCE_INLINE void scvkCmdExecuteGraphicsRenderPassWithPushConstants(
                                                                                 uint32_t         pushConstantSize,
                                                                                 const void*      pPushConstants)
 {
-    VkRect2D area = {{0, 0}, extent};
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    scvkInitOffset2D(&offset, 0, 0);
+    scvkInitRect2D(&area, offset, extent);
 
     scvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     scvkCmdSetViewportAndScissor2D(commandBuffer, extent);

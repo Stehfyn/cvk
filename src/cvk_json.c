@@ -1798,6 +1798,58 @@ extern CVK_FORCE_INLINE void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkComman
 
     cvkCmdDrawFullscreenQuadWithPushConstants(commandBuffer, pipeline, layout, 0, 1, &descriptorSet, 0, NULL, 0, sizeof(constants), &constants);
 }
+extern CVK_FORCE_INLINE void cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                                  VkImageLayout           externalLayout,
+                                                                                  VkImageLayout           renderLayout,
+                                                                                  uint32_t                queueFamilyIndex,
+                                                                                  VkImage                 image,
+                                                                                  VkImageSubresourceRange subresourceRange,
+                                                                                  VkRenderPass            renderPass,
+                                                                                  VkFramebuffer           framebuffer,
+                                                                                  VkExtent2D              backingExtent,
+                                                                                  VkPipeline              pipeline,
+                                                                                  VkPipelineLayout        layout,
+                                                                                  VkDescriptorSet         descriptorSet,
+                                                                                  VkExtent2D              sourceExtent,
+                                                                                  VkExtent2D              contentExtent,
+                                                                                  float                   blend)
+{
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, backingExtent);
+
+    cvkCmdBeginRenderPassOnExternalImage(commandBuffer,
+                                         NULL,
+                                         (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                         externalLayout,
+                                         renderLayout,
+                                         queueFamilyIndex,
+                                         image,
+                                         subresourceRange,
+                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                         (VkDependencyFlags)0,
+                                         NULL,
+                                         renderPass,
+                                         framebuffer,
+                                         area,
+                                         0,
+                                         NULL,
+                                         VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, backingExtent);
+    cvkCmdDrawFullscreenQuadWithBicubicScaling(commandBuffer, pipeline, layout, descriptorSet, sourceExtent, contentExtent, backingExtent, blend);
+    cvkCmdEndRenderPassOnExternalImage(commandBuffer,
+                                       NULL,
+                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                       renderLayout,
+                                       externalLayout,
+                                       queueFamilyIndex,
+                                       image,
+                                       subresourceRange,
+                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                       (VkDependencyFlags)0);
+}
 /*************************************************************************************************/
 /**
  * \par Details:

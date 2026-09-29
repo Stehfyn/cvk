@@ -50223,6 +50223,57 @@ extern CVK_FORCE_INLINE void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer 
     cvkCmdEndRenderPass(commandBuffer);
     cvkCmdReleaseImageToExternal(commandBuffer, pBarrierNext, srcAccessMask, renderLayout, externalLayout, queueFamilyIndex, image, subresourceRange, srcStageMask, dependencyFlags);
 }
+extern CVK_FORCE_INLINE void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                                                  VkImageLayout           externalLayout,
+                                                                                  VkImageLayout           renderLayout,
+                                                                                  uint32_t                queueFamilyIndex,
+                                                                                  VkImage                 image,
+                                                                                  VkImageSubresourceRange subresourceRange,
+                                                                                  VkRenderPass            renderPass,
+                                                                                  VkFramebuffer           framebuffer,
+                                                                                  VkExtent2D              extent,
+                                                                                  VkPipeline              pipeline,
+                                                                                  VkPipelineLayout        layout,
+                                                                                  VkDescriptorSet         descriptorSet)
+{
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, extent);
+
+    cvkCmdBeginRenderPassOnExternalImage(commandBuffer,
+                                         NULL,
+                                         (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                         externalLayout,
+                                         renderLayout,
+                                         queueFamilyIndex,
+                                         image,
+                                         subresourceRange,
+                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                         (VkDependencyFlags)0,
+                                         NULL,
+                                         renderPass,
+                                         framebuffer,
+                                         area,
+                                         0,
+                                         NULL,
+                                         VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, 0, 1, &descriptorSet, 0, NULL);
+    cvkCmdDrawFullscreenQuad(commandBuffer);
+    cvkCmdEndRenderPassOnExternalImage(commandBuffer,
+                                       NULL,
+                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                       renderLayout,
+                                       externalLayout,
+                                       queueFamilyIndex,
+                                       image,
+                                       subresourceRange,
+                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                       (VkDependencyFlags)0);
+}
 extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                                              VkRenderPass     renderPass,
                                                              VkFramebuffer    framebuffer,
@@ -50232,7 +50283,11 @@ extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  co
                                                              VkDescriptorSet  descriptorSet,
                                                              uint32_t         vertexCount)
 {
-    VkRect2D area = {{0, 0}, extent};
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, extent);
 
     cvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
@@ -50252,7 +50307,11 @@ extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPassWithPushConstants(Vk
                                                                               uint32_t         pushConstantSize,
                                                                               const void*      pPushConstants)
 {
-    VkRect2D area = {{0, 0}, extent};
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, extent);
 
     cvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewportAndScissor2D(commandBuffer, extent);

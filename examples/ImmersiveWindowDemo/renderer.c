@@ -614,61 +614,6 @@ void VideoRenderer_EndUpload(VideoRenderer* r, int slot)
     cdx11DeviceContextFlush(r->context);
 }
 
-static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UINT width, UINT height)
-{
-    VkExtent2D extent = {r->output.width, r->output.height};
-    VkRect2D   area   = {{0, 0}, extent};
-
-    cvkCmdBeginRenderPassOnExternalImage(r->command,
-                                         NULL,
-                                         (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                         VK_IMAGE_LAYOUT_GENERAL,
-                                         VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                         r->family,
-                                         r->output.image,
-                                         colorRange,
-                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                         (VkDependencyFlags)0,
-                                         NULL,
-                                         r->renderPass,
-                                         r->output.framebuffer,
-                                         area,
-                                         0,
-                                         NULL,
-                                         VK_SUBPASS_CONTENTS_INLINE);
-    cvkCmdSetViewportAndScissor2D(r->command, extent);
-    if (VIDEO_PASS_NV12 == pass)
-    {
-        cvkCmdBindGraphicsPipeline(r->command, r->pipelines[pass]);
-        cvkCmdBindGraphicsDescriptorSets(r->command, r->layouts[pass], 0, 1, &set, 0, NULL);
-        cvkCmdDrawFullscreenQuad(r->command);
-    }
-    else // VIDEO_PASS_BICUBIC
-    {
-        VkExtent2D sourceExtent  = {r->converted.width, r->converted.height};
-        VkExtent2D contentExtent = {width, height};
-
-        cvkCmdDrawFullscreenQuadWithBicubicScaling(r->command,
-                                                    r->pipelines[pass],
-                                                    r->layouts[pass],
-                                                    set,
-                                                    sourceExtent,
-                                                    contentExtent,
-                                                    extent,
-                                                    0.0F);
-    }
-    cvkCmdEndRenderPassOnExternalImage(r->command,
-                                       NULL,
-                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-                                       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                                       VK_IMAGE_LAYOUT_GENERAL,
-                                       r->family,
-                                       r->output.image,
-                                       colorRange,
-                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                                       (VkDependencyFlags)0);
-}
-
 void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int slot, BOOL convert, UINT width, UINT height)
 {
     uint32_t             frame_index;
@@ -702,6 +647,13 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     redraw = convert || width != r->outputWidth || height != r->outputHeight;
     if (redraw)
     {
+        VkExtent2D sourceExtent;
+        VkExtent2D contentExtent;
+        VkExtent2D backingExtent;
+
+        cvkInitExtent2D(&sourceExtent, r->converted.width, r->converted.height);
+        cvkInitExtent2D(&contentExtent, width, height);
+        cvkInitExtent2D(&backingExtent, r->output.width, r->output.height);
         cvkResetCommandBuffer(r->command, (VkCommandBufferResetFlags)0);
         cvkBeginOneTimeCommandBuffer(r->command, NULL);
         if (convert)
@@ -796,7 +748,21 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
                                          (VkDependencyFlags)0);
             r->convertedInitialized = TRUE;
         }
-        RenderPass(r, VIDEO_PASS_BICUBIC, r->scale, width, height);
+        cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(r->command,
+                                                             VK_IMAGE_LAYOUT_GENERAL,
+                                                             VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                                             r->family,
+                                                             r->output.image,
+                                                             colorRange,
+                                                             r->renderPass,
+                                                             r->output.framebuffer,
+                                                             backingExtent,
+                                                             r->pipelines[VIDEO_PASS_BICUBIC],
+                                                             r->layouts[VIDEO_PASS_BICUBIC],
+                                                             r->scale,
+                                                             sourceExtent,
+                                                             contentExtent,
+                                                             0.0F);
         cvkEndCommandBuffer(r->command);
         syncs[0] = r->output.memory;
         syncs[1] = r->ring[frame_index].planes[0].memory;
@@ -834,6 +800,7 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     UINT           width          = r->converted.width;
     UINT           height         = r->converted.height;
     D3D11_BOX      source         = {0, 0, 0, width, height, 1};
+    VkExtent2D     extent;
 
     frame_index = FrameIndex(slot);
     if (r->output.width != width || r->output.height != height)
@@ -864,7 +831,19 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
                                    colorRange,
                                    (VkPipelineStageFlags)VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                                    (VkDependencyFlags)0);
-    RenderPass(r, VIDEO_PASS_NV12, r->frames[frame_index], width, height);
+    cvkInitExtent2D(&extent, r->output.width, r->output.height);
+    cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(r->command,
+                                                         VK_IMAGE_LAYOUT_GENERAL,
+                                                         VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                                                         r->family,
+                                                         r->output.image,
+                                                         colorRange,
+                                                         r->renderPass,
+                                                         r->output.framebuffer,
+                                                         extent,
+                                                         r->pipelines[VIDEO_PASS_NV12],
+                                                         r->layouts[VIDEO_PASS_NV12],
+                                                         r->frames[frame_index]);
     cvkCmdReleaseImageToExternal(r->command,
                                  NULL,
                                  (VkAccessFlags)VK_ACCESS_SHADER_READ_BIT,

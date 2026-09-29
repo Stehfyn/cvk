@@ -99,6 +99,80 @@ void cvkCmdEndRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
 }
 
 /**
+ * \brief Acquires an external color image, draws a fullscreen quad, and releases it.
+ * \param[in] commandBuffer Command buffer recording the pass.
+ * \param[in] externalLayout Layout held by the external owner before and after the pass.
+ * \param[in] renderLayout Color attachment layout during the pass.
+ * \param[in] queueFamilyIndex Queue family recording the pass.
+ * \param[in] image Externally owned color attachment image.
+ * \param[in] subresourceRange Color attachment subresources.
+ * \param[in] renderPass Render pass to execute.
+ * \param[in] framebuffer Target framebuffer.
+ * \param[in] extent Render area, viewport, and scissor extent.
+ * \param[in] pipeline Fullscreen triangle-strip pipeline.
+ * \param[in] layout Pipeline layout for the descriptor set.
+ * \param[in] descriptorSet Descriptor set bound at set zero.
+ * \retval None
+ */
+void cvkCmdExecuteFullscreenQuadRenderPassOnExternalImage(VkCommandBuffer         commandBuffer,
+                                                          VkImageLayout           externalLayout,
+                                                          VkImageLayout           renderLayout,
+                                                          uint32_t                queueFamilyIndex,
+                                                          VkImage                 image,
+                                                          VkImageSubresourceRange subresourceRange,
+                                                          VkRenderPass            renderPass,
+                                                          VkFramebuffer           framebuffer,
+                                                          VkExtent2D              extent,
+                                                          VkPipeline              pipeline,
+                                                          VkPipelineLayout        layout,
+                                                          VkDescriptorSet         descriptorSet)
+{
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, extent);
+
+    cvkCmdBeginRenderPassOnExternalImage(commandBuffer,
+                                         NULL,
+                                         (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                         externalLayout,
+                                         renderLayout,
+                                         queueFamilyIndex,
+                                         image,
+                                         subresourceRange,
+                                         (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                         (VkDependencyFlags)0,
+                                         NULL,
+                                         renderPass,
+                                         framebuffer,
+                                         area,
+                                         0,
+                                         NULL,
+                                         VK_SUBPASS_CONTENTS_INLINE);
+    cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
+    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    cvkCmdBindGraphicsDescriptorSets(commandBuffer,
+                                     layout,
+                                     0,
+                                     1,
+                                     &descriptorSet,
+                                     0,
+                                     NULL);
+    cvkCmdDrawFullscreenQuad(commandBuffer);
+    cvkCmdEndRenderPassOnExternalImage(commandBuffer,
+                                       NULL,
+                                       (VkAccessFlags)VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+                                       renderLayout,
+                                       externalLayout,
+                                       queueFamilyIndex,
+                                       image,
+                                       subresourceRange,
+                                       (VkPipelineStageFlags)VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                       (VkDependencyFlags)0);
+}
+
+/**
  * \brief Records a graphics render pass that draws non-indexed vertices without push constants.
  * \param[in] commandBuffer Command buffer recording the pass.
  * \param[in] renderPass Render pass to begin.
@@ -119,7 +193,11 @@ void cvkCmdExecuteGraphicsRenderPass(VkCommandBuffer  commandBuffer,
                                   VkDescriptorSet  descriptorSet,
                                   uint32_t         vertexCount)
 {
-    VkRect2D area = {{0, 0}, extent};
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, extent);
 
     cvkCmdBeginRenderPass(commandBuffer,
                           NULL,
@@ -167,7 +245,11 @@ void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBu
                                                    uint32_t         pushConstantSize,
                                                    const void*      pPushConstants)
 {
-    VkRect2D area = {{0, 0}, extent};
+    VkOffset2D offset;
+    VkRect2D   area;
+
+    cvkInitOffset2D(&offset, 0, 0);
+    cvkInitRect2D(&area, offset, extent);
 
     cvkCmdBeginRenderPass(commandBuffer,
                           NULL,

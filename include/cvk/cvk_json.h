@@ -2122,6 +2122,7 @@ void cvkCreateGraphicsPipelineFromJsonWithModules(VkDevice device, VkPipelineCac
 void cvkCreateGraphicsPipelineFromJson(VkDevice device, VkPipelineCache pipelineCache, const char* pJsonText, size_t jsonLength, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, size_t vertexCodeSize, const uint32_t* pVertexCode, size_t fragmentCodeSize, const uint32_t* pFragmentCode, VkRenderPass externalRenderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 void cvkCreateBicubicScalingPipeline(VkDevice device, VkPipelineCache pipelineCache, cvkJsonValue* pJsonValues, uint32_t jsonValueCapacity, cvkArena* pArena, VkRenderPass renderPass, const VkAllocationCallbacks* pAllocator, cvkPipelineJsonObjects* pObjects);
 void cvkCmdDrawFullscreenQuadWithBicubicScaling(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, VkExtent2D sourceExtent, VkExtent2D contentExtent, VkExtent2D backingExtent, float blend);
+void cvkCmdExecuteBicubicScalingRenderPassOnExternalImage(VkCommandBuffer commandBuffer, VkImageLayout externalLayout, VkImageLayout renderLayout, uint32_t queueFamilyIndex, VkImage image, VkImageSubresourceRange subresourceRange, VkRenderPass renderPass, VkFramebuffer framebuffer, VkExtent2D backingExtent, VkPipeline pipeline, VkPipelineLayout layout, VkDescriptorSet descriptorSet, VkExtent2D sourceExtent, VkExtent2D contentExtent, float blend);
 /* clang-format on */
 
 #endif /* CVK_JSON_H */
