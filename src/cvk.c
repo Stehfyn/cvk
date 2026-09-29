@@ -48165,43 +48165,43 @@ extern CVK_FORCE_INLINE VkResult cvkSetupGraphicsPipeline(VkDevice              
                                      pAllocator,
                                      pPipeline);
 }
-extern CVK_FORCE_INLINE void cvkCmdDrawGraphicsVertices(VkCommandBuffer        commandBuffer,
-                                                        VkPipeline             pipeline,
-                                                        VkPipelineLayout       layout,
-                                                        uint32_t               firstSet,
-                                                        uint32_t               descriptorSetCount,
-                                                        const VkDescriptorSet* pDescriptorSets,
-                                                        uint32_t               dynamicOffsetCount,
-                                                        const uint32_t*        pDynamicOffsets,
-                                                        uint32_t               vertexCount,
-                                                        uint32_t               instanceCount,
-                                                        uint32_t               firstVertex,
-                                                        uint32_t               firstInstance,
-                                                        uint32_t               pushConstantOffset,
-                                                        uint32_t               pushConstantSize,
-                                                        const void*            pPushConstants)
+extern CVK_FORCE_INLINE void cvkCmdDrawWithPushConstants(VkCommandBuffer        commandBuffer,
+                                                         VkPipeline             pipeline,
+                                                         VkPipelineLayout       layout,
+                                                         uint32_t               firstSet,
+                                                         uint32_t               descriptorSetCount,
+                                                         const VkDescriptorSet* pDescriptorSets,
+                                                         uint32_t               dynamicOffsetCount,
+                                                         const uint32_t*        pDynamicOffsets,
+                                                         uint32_t               vertexCount,
+                                                         uint32_t               instanceCount,
+                                                         uint32_t               firstVertex,
+                                                         uint32_t               firstInstance,
+                                                         uint32_t               pushConstantOffset,
+                                                         uint32_t               pushConstantSize,
+                                                         const void*            pPushConstants)
 {
     cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
     cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
     cvkCmdPushGraphicsConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
     cvkCmdDraw(commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance);
 }
-extern CVK_FORCE_INLINE void cvkCmdDrawGraphicsIndices(VkCommandBuffer        commandBuffer,
-                                                       VkPipeline             pipeline,
-                                                       VkPipelineLayout       layout,
-                                                       uint32_t               firstSet,
-                                                       uint32_t               descriptorSetCount,
-                                                       const VkDescriptorSet* pDescriptorSets,
-                                                       uint32_t               dynamicOffsetCount,
-                                                       const uint32_t*        pDynamicOffsets,
-                                                       uint32_t               indexCount,
-                                                       uint32_t               instanceCount,
-                                                       uint32_t               firstIndex,
-                                                       int32_t                vertexOffset,
-                                                       uint32_t               firstInstance,
-                                                       uint32_t               pushConstantOffset,
-                                                       uint32_t               pushConstantSize,
-                                                       const void*            pPushConstants)
+extern CVK_FORCE_INLINE void cvkCmdDrawIndexedWithPushConstants(VkCommandBuffer        commandBuffer,
+                                                                VkPipeline             pipeline,
+                                                                VkPipelineLayout       layout,
+                                                                uint32_t               firstSet,
+                                                                uint32_t               descriptorSetCount,
+                                                                const VkDescriptorSet* pDescriptorSets,
+                                                                uint32_t               dynamicOffsetCount,
+                                                                const uint32_t*        pDynamicOffsets,
+                                                                uint32_t               indexCount,
+                                                                uint32_t               instanceCount,
+                                                                uint32_t               firstIndex,
+                                                                int32_t                vertexOffset,
+                                                                uint32_t               firstInstance,
+                                                                uint32_t               pushConstantOffset,
+                                                                uint32_t               pushConstantSize,
+                                                                const void*            pPushConstants)
 {
     cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
     cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
@@ -50224,7 +50224,7 @@ extern CVK_FORCE_INLINE void cvkCmdExecuteGraphicsRenderPassWithPushConstants(Vk
 
     cvkCmdBeginRenderPass(commandBuffer, NULL, renderPass, framebuffer, area, 0, NULL, VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
-    cvkCmdDrawGraphicsVertices(commandBuffer, pipeline, layout, 0, 1, &descriptorSet, 0, NULL, vertexCount, 1, 0, 0, 0, pushConstantSize, pPushConstants);
+    cvkCmdDrawWithPushConstants(commandBuffer, pipeline, layout, 0, 1, &descriptorSet, 0, NULL, vertexCount, 1, 0, 0, 0, pushConstantSize, pPushConstants);
     cvkCmdEndRenderPass(commandBuffer);
 }
 extern CVK_FORCE_INLINE VKAPI_ATTR VkBool32 VKAPI_CALL cvkWriteDebugUtilsMessage(VkDebugUtilsMessageSeverityFlagBitsEXT      messageSeverity,

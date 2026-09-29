@@ -178,21 +178,21 @@ void cvkCmdExecuteGraphicsRenderPassWithPushConstants(VkCommandBuffer  commandBu
                           NULL,
                           VK_SUBPASS_CONTENTS_INLINE);
     cvkCmdSetViewportAndScissor2D(commandBuffer, extent);
-    cvkCmdDrawGraphicsVertices(commandBuffer,
-                               pipeline,
-                               layout,
-                               0,
-                               1,
-                               &descriptorSet,
-                               0,
-                               NULL,
-                               vertexCount,
-                               1,
-                               0,
-                               0,
-                               0,
-                               pushConstantSize,
-                               pPushConstants);
+    cvkCmdDrawWithPushConstants(commandBuffer,
+                                pipeline,
+                                layout,
+                                0,
+                                1,
+                                &descriptorSet,
+                                0,
+                                NULL,
+                                vertexCount,
+                                1,
+                                0,
+                                0,
+                                0,
+                                pushConstantSize,
+                                pPushConstants);
     cvkCmdEndRenderPass(commandBuffer);
 }
 

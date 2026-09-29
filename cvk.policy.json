@@ -3096,7 +3096,7 @@
         }
       ]
     },
-    "cvkCmdDrawGraphicsVertices": {
+    "cvkCmdDrawWithPushConstants": {
       "brief": "Binds a graphics pipeline, its descriptor sets, and push constants, then draws vertices.",
       "inputs": [
         {
@@ -3135,7 +3135,7 @@
         }
       ]
     },
-    "cvkCmdDrawGraphicsIndices": {
+    "cvkCmdDrawIndexedWithPushConstants": {
       "brief": "Binds a graphics pipeline, its descriptor sets, and push constants, then draws indexed vertices.",
       "inputs": [
         {

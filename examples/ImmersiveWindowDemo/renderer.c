@@ -666,21 +666,21 @@ static void RenderPass(VideoRenderer* r, VideoPass pass, VkDescriptorSet set, UI
             (float)r->output.height / (float)height
         };
 
-        cvkCmdDrawGraphicsVertices(r->command,
-                                   r->pipelines[pass],
-                                   r->layouts[pass],
-                                   0,
-                                   1,
-                                   &set,
-                                   0,
-                                   NULL,
-                                   4,
-                                   1,
-                                   0,
-                                   0,
-                                   0,
-                                   sizeof(constants),
-                                   constants);
+        cvkCmdDrawWithPushConstants(r->command,
+                                    r->pipelines[pass],
+                                    r->layouts[pass],
+                                    0,
+                                    1,
+                                    &set,
+                                    0,
+                                    NULL,
+                                    4,
+                                    1,
+                                    0,
+                                    0,
+                                    0,
+                                    sizeof(constants),
+                                    constants);
     }
     cvkCmdEndExternalRenderPass(r->command,
                                 NULL,
