@@ -832,11 +832,38 @@
       ],
       "steps": [
         {
+          "call": "cvkGetWorkgroupCount",
+          "bind": {
+            "itemCount": "itemCount.width",
+            "itemsPerInvocation": "itemsPerInvocation.width",
+            "localSize": "localSize.width"
+          },
+          "into": "group_count_x"
+        },
+        {
+          "call": "cvkGetWorkgroupCount",
+          "bind": {
+            "itemCount": "itemCount.height",
+            "itemsPerInvocation": "itemsPerInvocation.height",
+            "localSize": "localSize.height"
+          },
+          "into": "group_count_y"
+        },
+        {
+          "call": "cvkGetWorkgroupCount",
+          "bind": {
+            "itemCount": "itemCount.depth",
+            "itemsPerInvocation": "itemsPerInvocation.depth",
+            "localSize": "localSize.depth"
+          },
+          "into": "group_count_z"
+        },
+        {
           "call": "cvkCmdDispatch",
           "bind": {
-            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width)",
-            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height)",
-            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth)"
+            "groupCountX": "group_count_x",
+            "groupCountY": "group_count_y",
+            "groupCountZ": "group_count_z"
           }
         }
       ]
@@ -2681,10 +2708,10 @@
             "rasterizerDiscardEnable": "VK_FALSE",
             "polygonMode": "VK_POLYGON_MODE_FILL",
             "depthBiasEnable": "VK_FALSE",
-            "depthBiasConstantFactor": "0.0f",
-            "depthBiasClamp": "0.0f",
-            "depthBiasSlopeFactor": "0.0f",
-            "lineWidth": "1.0f"
+            "depthBiasConstantFactor": "0.0F",
+            "depthBiasClamp": "0.0F",
+            "depthBiasSlopeFactor": "0.0F",
+            "lineWidth": "1.0F"
           }
         }
       ]
@@ -2696,7 +2723,7 @@
           "call": "cvkInitPipelineMultisampleStateCreateInfo",
           "bind": {
             "sampleShadingEnable": "VK_FALSE",
-            "minSampleShading": "0.0f",
+            "minSampleShading": "0.0F",
             "pSampleMask": "NULL",
             "alphaToCoverageEnable": "VK_FALSE",
             "alphaToOneEnable": "VK_FALSE"
@@ -2732,8 +2759,8 @@
             "stencilTestEnable": "VK_FALSE",
             "front": "stencil_op_state",
             "back": "stencil_op_state",
-            "minDepthBounds": "0.0f",
-            "maxDepthBounds": "1.0f"
+            "minDepthBounds": "0.0F",
+            "maxDepthBounds": "1.0F"
           }
         }
       ]
@@ -2764,8 +2791,8 @@
             "stencilTestEnable": "VK_FALSE",
             "front": "stencil_op_state",
             "back": "stencil_op_state",
-            "minDepthBounds": "0.0f",
-            "maxDepthBounds": "1.0f"
+            "minDepthBounds": "0.0F",
+            "maxDepthBounds": "1.0F"
           }
         }
       ]
@@ -2817,7 +2844,7 @@
       ],
       "steps": [
         {
-          "declare": "float blend_constants[4] = { 0.0f, 0.0f, 0.0f, 0.0f }"
+          "declare": "float blend_constants[4] = { 0.0F, 0.0F, 0.0F, 0.0F }"
         },
         {
           "call": "cvkInitPipelineColorBlendStateCreateInfo",
@@ -2847,12 +2874,12 @@
             "pInfo": "viewport"
           },
           "bind": {
-            "x": "0.0f",
-            "y": "0.0f",
+            "x": "0.0F",
+            "y": "0.0F",
             "width": "(float)extent2D.width",
             "height": "(float)extent2D.height",
-            "minDepth": "0.0f",
-            "maxDepth": "1.0f"
+            "minDepth": "0.0F",
+            "maxDepth": "1.0F"
           }
         },
         {
@@ -5560,11 +5587,38 @@
       ],
       "steps": [
         {
+          "call": "cvkGetWorkgroupCount",
+          "bind": {
+            "itemCount": "itemCount.width",
+            "itemsPerInvocation": "itemsPerInvocation.width",
+            "localSize": "localSize.width"
+          },
+          "into": "group_count_x"
+        },
+        {
+          "call": "cvkGetWorkgroupCount",
+          "bind": {
+            "itemCount": "itemCount.height",
+            "itemsPerInvocation": "itemsPerInvocation.height",
+            "localSize": "localSize.height"
+          },
+          "into": "group_count_y"
+        },
+        {
+          "call": "cvkGetWorkgroupCount",
+          "bind": {
+            "itemCount": "itemCount.depth",
+            "itemsPerInvocation": "itemsPerInvocation.depth",
+            "localSize": "localSize.depth"
+          },
+          "into": "group_count_z"
+        },
+        {
           "call": "cvkCmdDrawMeshTasks",
           "bind": {
-            "groupCountX": "(itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width)",
-            "groupCountY": "(itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height)",
-            "groupCountZ": "(itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth)"
+            "groupCountX": "group_count_x",
+            "groupCountY": "group_count_y",
+            "groupCountZ": "group_count_z"
           }
         }
       ]

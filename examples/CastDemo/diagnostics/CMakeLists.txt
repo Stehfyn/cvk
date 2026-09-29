@@ -34,7 +34,8 @@ endif()
 # These are diagnostic processes: sanitizer startup and its runtime are required.
 # Production's CRT-free entry/link policy remains unchanged. Every owned source,
 # including the portable memory backend, receives the same instrumentation.
-add_compile_options(-Weverything -Werror -Wno-padded -g -fno-omit-frame-pointer
+# Preserve the user-required bare \retval None convention, as approved for Clang.
+add_compile_options(-Weverything -Werror -Wno-padded -Wno-documentation -Wno-unsafe-buffer-usage -g -fno-omit-frame-pointer
     -fPIE -ffreestanding ${cast_sanitizer_options})
 add_link_options(-fuse-ld=lld -pie ${cast_sanitizer_options})
 

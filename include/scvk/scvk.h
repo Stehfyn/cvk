@@ -45,6 +45,13 @@ void scvkCheckResult(VkResult result, const char* pExpression, const char* pFile
 #define SCVK_MAX_SWAPCHAIN_IMAGES                 (16)
 #define SCVK_MAX_TIME_DOMAINS                     (64)
 
+/* Fixed array extents, from the Vulkan registry. */
+#define SCVK_CLEAR_COLOR_VALUE_32_COUNT                                     (4)
+#define SCVK_DEBUG_UTILS_LABEL_EXT_COUNT                                    (4)
+#define SCVK_IMAGE_BLIT_OFFSETS_COUNT                                       (2)
+#define SCVK_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO_CONSTANTS_COUNT         (4)
+#define SCVK_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR_OPS_COUNT (2)
+
 /* clang-format off */
 void scvkInitAcquireNextImageInfo(VkAcquireNextImageInfoKHR* pInfo, const void* pNext, VkSwapchainKHR swapchain, uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t deviceMask);
 void scvkInitAcquireProfilingLockInfo(VkAcquireProfilingLockInfoKHR* pInfo, const void* pNext, VkAcquireProfilingLockFlagsKHR flags, uint64_t timeout);
@@ -85,7 +92,7 @@ void scvkInitComponentMapping(VkComponentMapping* pInfo, VkComponentSwizzle r, V
 void scvkInitComputePipelineCreateInfo(VkComputePipelineCreateInfo* pInfo, const void* pNext, VkPipelineCreateFlags flags, VkPipelineShaderStageCreateInfo stage, VkPipelineLayout layout, VkPipeline basePipelineHandle, int32_t basePipelineIndex);
 void scvkInitConformanceVersion(VkConformanceVersion* pInfo, uint8_t major, uint8_t minor, uint8_t subminor, uint8_t patch);
 void scvkInitCopyDescriptorSet(VkCopyDescriptorSet* pInfo, const void* pNext, VkDescriptorSet srcSet, uint32_t srcBinding, uint32_t srcArrayElement, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount);
-void scvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[4]);
+void scvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT]);
 void scvkInitDebugUtilsMessengerCallbackData(VkDebugUtilsMessengerCallbackDataEXT* pInfo, const void* pNext, VkDebugUtilsMessengerCallbackDataFlagsEXT flags, const char* pMessageIdName, int32_t messageIdNumber, const char* pMessage, uint32_t queueLabelCount, const VkDebugUtilsLabelEXT* pQueueLabels, uint32_t cmdBufLabelCount, const VkDebugUtilsLabelEXT* pCmdBufLabels, uint32_t objectCount, const VkDebugUtilsObjectNameInfoEXT* pObjects);
 void scvkInitDebugUtilsMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT* pInfo, const void* pNext, VkDebugUtilsMessengerCreateFlagsEXT flags, VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback, void* pUserData);
 void scvkInitDebugUtilsObjectNameInfo(VkDebugUtilsObjectNameInfoEXT* pInfo, const void* pNext, VkObjectType objectType, uint64_t objectHandle, const char* pObjectName);
@@ -154,7 +161,7 @@ void scvkInitFramebufferCreateInfo(VkFramebufferCreateInfo* pInfo, const void* p
 void scvkInitGraphicsPipelineCreateInfo(VkGraphicsPipelineCreateInfo* pInfo, const void* pNext, VkPipelineCreateFlags flags, uint32_t stageCount, const VkPipelineShaderStageCreateInfo* pStages, const VkPipelineVertexInputStateCreateInfo* pVertexInputState, const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState, const VkPipelineTessellationStateCreateInfo* pTessellationState, const VkPipelineViewportStateCreateInfo* pViewportState, const VkPipelineRasterizationStateCreateInfo* pRasterizationState, const VkPipelineMultisampleStateCreateInfo* pMultisampleState, const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState, const VkPipelineColorBlendStateCreateInfo* pColorBlendState, const VkPipelineDynamicStateCreateInfo* pDynamicState, VkPipelineLayout layout, VkRenderPass renderPass, uint32_t subpass, VkPipeline basePipelineHandle, int32_t basePipelineIndex);
 void scvkInitHdrMetadata(VkHdrMetadataEXT* pInfo, const void* pNext, VkXYColorEXT displayPrimaryRed, VkXYColorEXT displayPrimaryGreen, VkXYColorEXT displayPrimaryBlue, VkXYColorEXT whitePoint, float maxLuminance, float minLuminance, float maxContentLightLevel, float maxFrameAverageLightLevel);
 void scvkInitHeadlessSurfaceCreateInfo(VkHeadlessSurfaceCreateInfoEXT* pInfo, const void* pNext, VkHeadlessSurfaceCreateFlagsEXT flags);
-void scvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresource, const VkOffset3D srcOffsets[2], VkImageSubresourceLayers dstSubresource, const VkOffset3D dstOffsets[2]);
+void scvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresource, const VkOffset3D srcOffsets[SCVK_IMAGE_BLIT_OFFSETS_COUNT], VkImageSubresourceLayers dstSubresource, const VkOffset3D dstOffsets[SCVK_IMAGE_BLIT_OFFSETS_COUNT]);
 void scvkInitImageCopy(VkImageCopy* pInfo, VkImageSubresourceLayers srcSubresource, VkOffset3D srcOffset, VkImageSubresourceLayers dstSubresource, VkOffset3D dstOffset, VkExtent3D extent);
 void scvkInitImageCreateInfo(VkImageCreateInfo* pInfo, const void* pNext, VkImageCreateFlags flags, VkImageType imageType, VkFormat format, VkExtent3D extent, uint32_t mipLevels, uint32_t arrayLayers, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndexCount, const uint32_t* pQueueFamilyIndices, VkImageLayout initialLayout);
 void scvkInitImageDrmFormatModifierExplicitCreateInfo(VkImageDrmFormatModifierExplicitCreateInfoEXT* pInfo, const void* pNext, uint64_t drmFormatModifier, uint32_t drmFormatModifierPlaneCount, const VkSubresourceLayout* pPlaneLayouts);
@@ -286,12 +293,12 @@ void scvkInitPipelineCacheSafetyCriticalIndexEntry(VkPipelineCacheSafetyCritical
 void scvkInitPipelineCacheStageValidationIndexEntry(VkPipelineCacheStageValidationIndexEntry* pInfo, uint64_t codeSize, uint64_t codeOffset);
 void scvkInitPipelineColorBlendAdvancedStateCreateInfo(VkPipelineColorBlendAdvancedStateCreateInfoEXT* pInfo, const void* pNext, VkBool32 srcPremultiplied, VkBool32 dstPremultiplied, VkBlendOverlapEXT blendOverlap);
 void scvkInitPipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo, VkBool32 blendEnable, VkBlendFactor srcColorBlendFactor, VkBlendFactor dstColorBlendFactor, VkBlendOp colorBlendOp, VkBlendFactor srcAlphaBlendFactor, VkBlendFactor dstAlphaBlendFactor, VkBlendOp alphaBlendOp, VkColorComponentFlags colorWriteMask);
-void scvkInitPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo* pInfo, const void* pNext, VkPipelineColorBlendStateCreateFlags flags, VkBool32 logicOpEnable, VkLogicOp logicOp, uint32_t attachmentCount, const VkPipelineColorBlendAttachmentState* pAttachments, const float blendConstants[4]);
+void scvkInitPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInfo* pInfo, const void* pNext, VkPipelineColorBlendStateCreateFlags flags, VkBool32 logicOpEnable, VkLogicOp logicOp, uint32_t attachmentCount, const VkPipelineColorBlendAttachmentState* pAttachments, const float blendConstants[SCVK_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO_CONSTANTS_COUNT]);
 void scvkInitPipelineColorWriteCreateInfo(VkPipelineColorWriteCreateInfoEXT* pInfo, const void* pNext, uint32_t attachmentCount, const VkBool32* pColorWriteEnables);
 void scvkInitPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo, const void* pNext, VkPipelineDepthStencilStateCreateFlags flags, VkBool32 depthTestEnable, VkBool32 depthWriteEnable, VkCompareOp depthCompareOp, VkBool32 depthBoundsTestEnable, VkBool32 stencilTestEnable, VkStencilOpState front, VkStencilOpState back, float minDepthBounds, float maxDepthBounds);
 void scvkInitPipelineDiscardRectangleStateCreateInfo(VkPipelineDiscardRectangleStateCreateInfoEXT* pInfo, const void* pNext, VkPipelineDiscardRectangleStateCreateFlagsEXT flags, VkDiscardRectangleModeEXT discardRectangleMode, uint32_t discardRectangleCount, const VkRect2D* pDiscardRectangles);
 void scvkInitPipelineDynamicStateCreateInfo(VkPipelineDynamicStateCreateInfo* pInfo, const void* pNext, VkPipelineDynamicStateCreateFlags flags, uint32_t dynamicStateCount, const VkDynamicState* pDynamicStates);
-void scvkInitPipelineFragmentShadingRateStateCreateInfo(VkPipelineFragmentShadingRateStateCreateInfoKHR* pInfo, const void* pNext, VkExtent2D fragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[2]);
+void scvkInitPipelineFragmentShadingRateStateCreateInfo(VkPipelineFragmentShadingRateStateCreateInfoKHR* pInfo, const void* pNext, VkExtent2D fragmentSize, const VkFragmentShadingRateCombinerOpKHR combinerOps[SCVK_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR_OPS_COUNT]);
 void scvkInitPipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCreateInfo* pInfo, const void* pNext, VkPipelineInputAssemblyStateCreateFlags flags, VkPrimitiveTopology topology, VkBool32 primitiveRestartEnable);
 void scvkInitPipelineLayoutCreateInfo(VkPipelineLayoutCreateInfo* pInfo, const void* pNext, VkPipelineLayoutCreateFlags flags, uint32_t setLayoutCount, const VkDescriptorSetLayout* pSetLayouts, uint32_t pushConstantRangeCount, const VkPushConstantRange* pPushConstantRanges);
 void scvkInitPipelineMultisampleStateCreateInfo(VkPipelineMultisampleStateCreateInfo* pInfo, const void* pNext, VkPipelineMultisampleStateCreateFlags flags, VkSampleCountFlagBits rasterizationSamples, VkBool32 sampleShadingEnable, float minSampleShading, const VkSampleMask* pSampleMask, VkBool32 alphaToCoverageEnable, VkBool32 alphaToOneEnable);
@@ -366,9 +373,9 @@ void scvkInitVertexInputBindingDescription2(VkVertexInputBindingDescription2EXT*
 void scvkInitViewport(VkViewport* pInfo, float x, float y, float width, float height, float minDepth, float maxDepth);
 void scvkInitWriteDescriptorSet(VkWriteDescriptorSet* pInfo, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorImageInfo* pImageInfo, const VkDescriptorBufferInfo* pBufferInfo, const VkBufferView* pTexelBufferView);
 void scvkInitXYColor(VkXYColorEXT* pInfo, float x, float y);
-void scvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[4]);
-void scvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[4]);
-void scvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[4]);
+void scvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[SCVK_CLEAR_COLOR_VALUE_32_COUNT]);
+void scvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[SCVK_CLEAR_COLOR_VALUE_32_COUNT]);
+void scvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[SCVK_CLEAR_COLOR_VALUE_32_COUNT]);
 void scvkInitClearValueColor(VkClearValue* pInfo, VkClearColorValue color);
 void scvkInitClearValueDepthStencil(VkClearValue* pInfo, VkClearDepthStencilValue depthStencil);
 void scvkInitPerformanceCounterResultInt32(VkPerformanceCounterResultKHR* pInfo, int32_t int32);
@@ -388,7 +395,7 @@ void scvkBindBufferMemory(VkDevice device, VkBuffer buffer, VkDeviceMemory memor
 void scvkBindBufferMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindBufferMemoryInfo* pBindInfos);
 void scvkBindImageMemory(VkDevice device, VkImage image, VkDeviceMemory memory, VkDeviceSize memoryOffset);
 void scvkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindImageMemoryInfo* pBindInfos);
-void scvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4]);
+void scvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT]);
 void scvkCmdBeginQuery(VkCommandBuffer commandBuffer, VkQueryPool queryPool, uint32_t query, VkQueryControlFlags flags);
 void scvkCmdBeginRenderPass(VkCommandBuffer commandBuffer, const void* pNext, VkRenderPass renderPass, VkFramebuffer framebuffer, VkRect2D renderArea, uint32_t clearValueCount, const VkClearValue* pClearValues, VkSubpassContents contents);
 void scvkCmdBeginRenderPass2(VkCommandBuffer commandBuffer, const void* pRenderPassBeginNext, VkRenderPass renderPass, VkFramebuffer framebuffer, VkRect2D renderArea, uint32_t clearValueCount, const VkClearValue* pClearValues, const void* pSubpassBeginInfoNext, VkSubpassContents contents);
@@ -420,7 +427,7 @@ void scvkCmdEndRenderPass(VkCommandBuffer commandBuffer);
 void scvkCmdEndRenderPass2(VkCommandBuffer commandBuffer, const void* pNext);
 void scvkCmdExecuteCommands(VkCommandBuffer commandBuffer, uint32_t commandBufferCount, const VkCommandBuffer* pCommandBuffers);
 void scvkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDeviceSize dstOffset, VkDeviceSize size, uint32_t data);
-void scvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4]);
+void scvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT]);
 void scvkCmdNextSubpass(VkCommandBuffer commandBuffer, VkSubpassContents contents);
 void scvkCmdNextSubpass2(VkCommandBuffer commandBuffer, const void* pSubpassBeginInfoNext, VkSubpassContents contents, const void* pSubpassEndInfoNext);
 void scvkCmdPipelineBarrier(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStageMask, VkPipelineStageFlags dstStageMask, VkDependencyFlags dependencyFlags, uint32_t memoryBarrierCount, const VkMemoryBarrier* pMemoryBarriers, uint32_t bufferMemoryBarrierCount, const VkBufferMemoryBarrier* pBufferMemoryBarriers, uint32_t imageMemoryBarrierCount, const VkImageMemoryBarrier* pImageMemoryBarriers);
@@ -588,9 +595,9 @@ void scvkImportFenceFd(VkDevice device, const void* pNext, VkFence fence, VkFenc
 void scvkImportSemaphoreFd(VkDevice device, const void* pNext, VkSemaphore semaphore, VkSemaphoreImportFlags flags, VkExternalSemaphoreHandleTypeFlagBits handleType, int fd);
 void scvkInvalidateMappedMemoryRanges(VkDevice device, uint32_t memoryRangeCount, const VkMappedMemoryRange* pMemoryRanges);
 void scvkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** ppData);
-void scvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4]);
+void scvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT]);
 void scvkQueueEndDebugUtilsLabel(VkQueue queue);
-void scvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4]);
+void scvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT]);
 VkResult scvkQueuePresent(VkQueue queue, const void* pNext, uint32_t waitSemaphoreCount, const VkSemaphore* pWaitSemaphores, uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, const uint32_t* pImageIndices, VkResult* pResults);
 void scvkQueueSubmit(VkQueue queue, uint32_t submitCount, const VkSubmitInfo* pSubmits, VkFence fence);
 void scvkQueueWaitIdle(VkQueue queue);
@@ -827,10 +834,6 @@ void scvkUpdateImageDescriptorSet(VkDevice device, VkSampler sampler, VkImageVie
 void scvkUpdateBufferDescriptorSet(VkDevice device, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize range, const void* pNext, VkDescriptorSet dstSet, uint32_t dstBinding, uint32_t dstArrayElement, VkDescriptorType descriptorType);
 void scvkCreateTimestampQueryPool(VkDevice device, const void* pQueryPoolNext, VkQueryPoolCreateFlags flags, uint32_t queryCount, const VkAllocationCallbacks* pAllocator, VkQueryPool* pQueryPool);
 VkResult scvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32_t firstQuery, uint32_t queryCount, VkQueryResultFlags flags, uint64_t* pResults);
-void scvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize);
-void scvkCmdDispatchComputeItems(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize, uint32_t pushConstantOffset, uint32_t pushConstantSize, const void* pPushConstants);
-void scvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D);
-void scvkCmdDispatchComputeItems2D(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets, uint32_t pushConstantOffset, uint32_t pushConstantSize, const void* pPushConstants, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D);
 void scvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence);
 VkResult scvkWaitForFenceIndefinitely(VkDevice device, VkFence fence);
 VkResult scvkWaitForAllFences(VkDevice device, uint32_t fenceCount, const VkFence* pFences);
@@ -924,6 +927,47 @@ void scvkWriteMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset
 void scvkReadMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, const void* pRangeNext, void* pData);
 void scvkWriteCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, const void* pData);
 void scvkReadCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void* pData);
+/*=================================================================================================
+** 2. INCLUDE FILES
+**===============================================================================================*/
+
+#include <stdint.h>
+
+/*=================================================================================================
+** 3. DECLARATIONS
+**
+** 3.1 Macros
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.2 Types
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.3 External global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.4 Static global variables
+**===============================================================================================*/
+
+/*=================================================================================================
+** 3.5 Static function prototypes
+**===============================================================================================*/
+
+/*=================================================================================================
+** 4. PRIVATE FUNCTIONS
+**===============================================================================================*/
+
+/*=================================================================================================
+** 5. PUBLIC FUNCTIONS
+**===============================================================================================*/
+
+uint32_t scvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, uint32_t localSize);
+void scvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize);
+void scvkCmdDispatchComputeItems(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize, uint32_t pushConstantOffset, uint32_t pushConstantSize, const void* pPushConstants);
+void scvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D);
+void scvkCmdDispatchComputeItems2D(VkCommandBuffer commandBuffer, VkPipeline pipeline, VkPipelineLayout layout, uint32_t firstSet, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets, uint32_t dynamicOffsetCount, const uint32_t* pDynamicOffsets, uint32_t pushConstantOffset, uint32_t pushConstantSize, const void* pPushConstants, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D);
 /* clang-format on */
 
 #endif /* SCVK_H */

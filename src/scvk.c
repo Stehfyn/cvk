@@ -516,7 +516,7 @@ void scvkInitCopyDescriptorSet(VkCopyDescriptorSet* pInfo,
         .descriptorCount = descriptorCount
     };
 }
-void scvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[4])
+void scvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT initialized_info =
     {
@@ -1375,7 +1375,11 @@ void scvkInitHeadlessSurfaceCreateInfo(VkHeadlessSurfaceCreateInfoEXT* pInfo, co
         .flags = flags
     };
 }
-void scvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresource, const VkOffset3D srcOffsets[2], VkImageSubresourceLayers dstSubresource, const VkOffset3D dstOffsets[2])
+void scvkInitImageBlit(VkImageBlit*             pInfo,
+                       VkImageSubresourceLayers srcSubresource,
+                       const VkOffset3D         srcOffsets[SCVK_IMAGE_BLIT_OFFSETS_COUNT],
+                       VkImageSubresourceLayers dstSubresource,
+                       const VkOffset3D         dstOffsets[SCVK_IMAGE_BLIT_OFFSETS_COUNT])
 {
     VkImageBlit initialized_info =
     {
@@ -2947,7 +2951,7 @@ void scvkInitPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateIn
                                                VkLogicOp                                  logicOp,
                                                uint32_t                                   attachmentCount,
                                                const VkPipelineColorBlendAttachmentState* pAttachments,
-                                               const float                                blendConstants[4])
+                                               const float                                blendConstants[SCVK_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO_CONSTANTS_COUNT])
 {
     VkPipelineColorBlendStateCreateInfo initialized_info =
     {
@@ -3039,7 +3043,7 @@ void scvkInitPipelineDynamicStateCreateInfo(VkPipelineDynamicStateCreateInfo* pI
 void scvkInitPipelineFragmentShadingRateStateCreateInfo(VkPipelineFragmentShadingRateStateCreateInfoKHR* pInfo,
                                                         const void*                                      pNext,
                                                         VkExtent2D                                       fragmentSize,
-                                                        const VkFragmentShadingRateCombinerOpKHR         combinerOps[2])
+                                                        const VkFragmentShadingRateCombinerOpKHR         combinerOps[SCVK_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR_OPS_COUNT])
 {
     VkPipelineFragmentShadingRateStateCreateInfoKHR initialized_info =
     {
@@ -4122,7 +4126,7 @@ void scvkInitXYColor(VkXYColorEXT* pInfo, float x, float y)
         .y = y
     };
 }
-void scvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[4])
+void scvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[SCVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
     VkClearColorValue initialized_info =
     {
@@ -4133,7 +4137,7 @@ void scvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float3
 
     (*pInfo) = initialized_info;
 }
-void scvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[4])
+void scvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[SCVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
     VkClearColorValue initialized_info =
     {
@@ -4144,7 +4148,7 @@ void scvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[
 
     (*pInfo) = initialized_info;
 }
-void scvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[4])
+void scvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[SCVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
     VkClearColorValue initialized_info =
     {
@@ -4325,7 +4329,7 @@ void scvkBindImageMemory2(VkDevice device, uint32_t bindInfoCount, const VkBindI
 {
     SCVK_CHECK(vkBindImageMemory2(device, bindInfoCount, pBindInfos));
 }
-void scvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
+void scvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -4541,7 +4545,7 @@ void scvkCmdFillBuffer(VkCommandBuffer commandBuffer, VkBuffer dstBuffer, VkDevi
 {
     vkCmdFillBuffer(commandBuffer, dstBuffer, dstOffset, size, data);
 }
-void scvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
+void scvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -6570,7 +6574,7 @@ void scvkMapMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize offset, 
 {
     SCVK_CHECK(vkMapMemory(device, memory, offset, size, flags, ppData));
 }
-void scvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
+void scvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -6587,7 +6591,7 @@ void scvkQueueEndDebugUtilsLabel(VkQueue queue)
 {
     vkQueueEndDebugUtilsLabelEXT(queue);
 }
-void scvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
+void scvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[SCVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -10567,7 +10571,7 @@ uint32_t scvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pM
 
     for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)
     {
-        if ((memoryTypeBits & (1u << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))
+        if ((memoryTypeBits & ((uint32_t)1 << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))
         {
             return memory_type_index;
         }
@@ -10581,7 +10585,7 @@ uint32_t scvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemo
 
     for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)
     {
-        if ((memoryTypeBits & (1u << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))
+        if ((memoryTypeBits & ((uint32_t)1 << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))
         {
             return memory_type_index;
         }
@@ -11193,81 +11197,6 @@ VkResult scvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint3
                                    (VkQueryResultFlags)(
                                        flags |
                                        (VkFlags)VK_QUERY_RESULT_64_BIT));
-}
-void scvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
-{
-    scvkCmdDispatch(commandBuffer,
-                    (itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width),
-                    (itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height),
-                    (itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth));
-}
-void scvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
-                                 VkPipeline             pipeline,
-                                 VkPipelineLayout       layout,
-                                 uint32_t               firstSet,
-                                 uint32_t               descriptorSetCount,
-                                 const VkDescriptorSet* pDescriptorSets,
-                                 uint32_t               dynamicOffsetCount,
-                                 const uint32_t*        pDynamicOffsets,
-                                 VkExtent3D             itemCount,
-                                 VkExtent3D             itemsPerInvocation,
-                                 VkExtent3D             localSize,
-                                 uint32_t               pushConstantOffset,
-                                 uint32_t               pushConstantSize,
-                                 const void*            pPushConstants)
-{
-    scvkCmdBindComputePipeline(commandBuffer, pipeline);
-    scvkCmdBindComputeDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    scvkCmdPushComputeConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
-    scvkCmdDispatchItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
-}
-void scvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
-{
-    VkExtent3D item_count;
-    VkExtent3D items_per_invocation;
-    VkExtent3D local_size;
-
-    scvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
-    scvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
-    scvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
-    scvkCmdDispatchItems(commandBuffer, item_count, items_per_invocation, local_size);
-}
-void scvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
-                                   VkPipeline             pipeline,
-                                   VkPipelineLayout       layout,
-                                   uint32_t               firstSet,
-                                   uint32_t               descriptorSetCount,
-                                   const VkDescriptorSet* pDescriptorSets,
-                                   uint32_t               dynamicOffsetCount,
-                                   const uint32_t*        pDynamicOffsets,
-                                   uint32_t               pushConstantOffset,
-                                   uint32_t               pushConstantSize,
-                                   const void*            pPushConstants,
-                                   VkExtent2D             itemCount2D,
-                                   VkExtent2D             itemsPerInvocation2D,
-                                   VkExtent2D             localSize2D)
-{
-    VkExtent3D item_count;
-    VkExtent3D items_per_invocation;
-    VkExtent3D local_size;
-
-    scvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
-    scvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
-    scvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
-    scvkCmdDispatchComputeItems(commandBuffer,
-                                pipeline,
-                                layout,
-                                firstSet,
-                                descriptorSetCount,
-                                pDescriptorSets,
-                                dynamicOffsetCount,
-                                pDynamicOffsets,
-                                item_count,
-                                items_per_invocation,
-                                local_size,
-                                pushConstantOffset,
-                                pushConstantSize,
-                                pPushConstants);
 }
 void scvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
@@ -12050,21 +11979,21 @@ void scvkInitFillPipelineRasterizationStateCreateInfo(VkPipelineRasterizationSta
                                                       VkCullModeFlags                         cullMode,
                                                       VkFrontFace                             frontFace)
 {
-    scvkInitPipelineRasterizationStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, cullMode, frontFace, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
+    scvkInitPipelineRasterizationStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, cullMode, frontFace, VK_FALSE, 0.0F, 0.0F, 0.0F, 1.0F);
 }
 void scvkInitSampleCountPipelineMultisampleStateCreateInfo(VkPipelineMultisampleStateCreateInfo* pInfo,
                                                            const void*                           pNext,
                                                            VkPipelineMultisampleStateCreateFlags flags,
                                                            VkSampleCountFlagBits                 rasterizationSamples)
 {
-    scvkInitPipelineMultisampleStateCreateInfo(pInfo, pNext, flags, rasterizationSamples, VK_FALSE, 0.0f, NULL, VK_FALSE, VK_FALSE);
+    scvkInitPipelineMultisampleStateCreateInfo(pInfo, pNext, flags, rasterizationSamples, VK_FALSE, 0.0F, NULL, VK_FALSE, VK_FALSE);
 }
 void scvkInitDisabledPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo, const void* pNext, VkPipelineDepthStencilStateCreateFlags flags)
 {
     VkStencilOpState stencil_op_state;
 
     scvkInitStencilOpState(&stencil_op_state, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_COMPARE_OP_NEVER, 0, 0, 0);
-    scvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_COMPARE_OP_ALWAYS, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0f, 1.0f);
+    scvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_COMPARE_OP_ALWAYS, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0F, 1.0F);
 }
 void scvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo,
                                                           const void*                            pNext,
@@ -12075,7 +12004,7 @@ void scvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencil
     VkStencilOpState stencil_op_state;
 
     scvkInitStencilOpState(&stencil_op_state, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_COMPARE_OP_NEVER, 0, 0, 0);
-    scvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_TRUE, depthWriteEnable, depthCompareOp, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0f, 1.0f);
+    scvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_TRUE, depthWriteEnable, depthCompareOp, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0F, 1.0F);
 }
 void scvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo)
 {
@@ -12116,7 +12045,7 @@ void scvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBl
                                                                VkPipelineColorBlendStateCreateFlags       flags,
                                                                const VkPipelineColorBlendAttachmentState* pAttachment)
 {
-    float blend_constants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    float blend_constants[4] = {0.0F, 0.0F, 0.0F, 0.0F};
 
     scvkInitPipelineColorBlendStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_LOGIC_OP_COPY, 1, pAttachment, blend_constants);
 }
@@ -12124,7 +12053,7 @@ void scvkCmdSetViewport2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D)
 {
     VkViewport viewport;
 
-    scvkInitViewport(&viewport, 0.0f, 0.0f, (float)extent2D.width, (float)extent2D.height, 0.0f, 1.0f);
+    scvkInitViewport(&viewport, 0.0F, 0.0F, (float)extent2D.width, (float)extent2D.height, 0.0F, 1.0F);
     scvkCmdSetViewport(commandBuffer, viewport);
 }
 void scvkCmdSetScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D)
@@ -12450,4 +12379,101 @@ void scvkReadCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize
     scvkMapMemory(device, memory, offset, size, flags, &mapped);
     (void)memcpy(pData, mapped, (size_t)size);
     scvkUnmapMemory(device, memory);
+}
+uint32_t scvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, uint32_t localSize)
+{
+    uint64_t items_per_group;
+    uint64_t rounded_count;
+    uint32_t group_count;
+
+    SCVK_ASSERT(0 < itemsPerInvocation);
+    SCVK_ASSERT(0 < localSize);
+
+    items_per_group = (uint64_t)itemsPerInvocation * (uint64_t)localSize;
+    rounded_count   = (uint64_t)itemCount + items_per_group - 1;
+    group_count     = (uint32_t)(rounded_count / items_per_group);
+
+    return group_count;
+}
+void scvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
+{
+    uint32_t group_count_x;
+    uint32_t group_count_y;
+    uint32_t group_count_z;
+
+    group_count_x = scvkGetWorkgroupCount(itemCount.width, itemsPerInvocation.width, localSize.width);
+
+    group_count_y = scvkGetWorkgroupCount(itemCount.height, itemsPerInvocation.height, localSize.height);
+
+    group_count_z = scvkGetWorkgroupCount(itemCount.depth, itemsPerInvocation.depth, localSize.depth);
+
+    scvkCmdDispatch(commandBuffer, group_count_x, group_count_y, group_count_z);
+}
+void scvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
+                                 VkPipeline             pipeline,
+                                 VkPipelineLayout       layout,
+                                 uint32_t               firstSet,
+                                 uint32_t               descriptorSetCount,
+                                 const VkDescriptorSet* pDescriptorSets,
+                                 uint32_t               dynamicOffsetCount,
+                                 const uint32_t*        pDynamicOffsets,
+                                 VkExtent3D             itemCount,
+                                 VkExtent3D             itemsPerInvocation,
+                                 VkExtent3D             localSize,
+                                 uint32_t               pushConstantOffset,
+                                 uint32_t               pushConstantSize,
+                                 const void*            pPushConstants)
+{
+    scvkCmdBindComputePipeline(commandBuffer, pipeline);
+    scvkCmdBindComputeDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    scvkCmdPushComputeConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
+    scvkCmdDispatchItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
+}
+void scvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    scvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    scvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    scvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    scvkCmdDispatchItems(commandBuffer, item_count, items_per_invocation, local_size);
+}
+void scvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
+                                   VkPipeline             pipeline,
+                                   VkPipelineLayout       layout,
+                                   uint32_t               firstSet,
+                                   uint32_t               descriptorSetCount,
+                                   const VkDescriptorSet* pDescriptorSets,
+                                   uint32_t               dynamicOffsetCount,
+                                   const uint32_t*        pDynamicOffsets,
+                                   uint32_t               pushConstantOffset,
+                                   uint32_t               pushConstantSize,
+                                   const void*            pPushConstants,
+                                   VkExtent2D             itemCount2D,
+                                   VkExtent2D             itemsPerInvocation2D,
+                                   VkExtent2D             localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    scvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    scvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    scvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    scvkCmdDispatchComputeItems(commandBuffer,
+                                pipeline,
+                                layout,
+                                firstSet,
+                                descriptorSetCount,
+                                pDescriptorSets,
+                                dynamicOffsetCount,
+                                pDynamicOffsets,
+                                item_count,
+                                items_per_invocation,
+                                local_size,
+                                pushConstantOffset,
+                                pushConstantSize,
+                                pPushConstants);
 }

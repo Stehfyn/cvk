@@ -17,7 +17,9 @@ migrate without colliding with their remaining system runtime imports. Those
 mandated spellings stay inside the backend. The assembly uses only volatile
 registers and SSE2, preserves the stack and direction flag,
 and accesses exact bounded extents. `_fltused` is supplied by a separate compiler
-data module. Forced symbol retention resolves the marker before LTCG; C optimization
+data module in the MSVC x64 assembly backend. It exports the exact compiler ABI
+name and four-byte value in read-only storage; it has no C namespace declaration
+or executable code. Forced symbol retention resolves the marker before LTCG; C optimization
 and whole-program optimization remain enabled.
 
 No heap, startup initializer, locks, waits, I/O, external runtime helpers, or mutable

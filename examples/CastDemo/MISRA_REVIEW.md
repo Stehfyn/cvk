@@ -23,9 +23,15 @@ substitute for reviewing the complete program.
   Volk is a pinned external target; dependency and SDK headers are system/external
   includes. Their warnings and clang-tidy findings are excluded. This does not
   establish dependency MISRA, allocation or lifecycle compliance.
-- The sole permitted owned-code diagnostic exception is compiler-inserted padding:
-  MSVC C4820 and Clang's corresponding `-Wpadded` diagnostic. No other diagnostic
-  exclusions, `/QSpectre`, `NO_INLINE` barriers or analysis bypasses are permitted.
+- MSVC C4820 and Clang's `-Wpadded` are the compiler-padding exceptions. The
+  user subsequently approved preserving bare `\retval None` and existing parameter
+  names through two Clang exceptions: `-Wno-documentation` and a minimum parameter
+  name length of one. Other identifier-length checks remain enabled. Clang has no
+  separate switch for its empty retval paragraph diagnostic. No other diagnostic
+  exclusions, `/QSpectre`, `NO_INLINE` barriers or analysis bypasses are permitted,
+  except the further explicitly approved `-Wno-unsafe-buffer-usage` and
+  `-bugprone-easily-swappable-parameters`. These preserve the C buffer model and
+  existing CVK signatures; bounds/path analysis and sanitizer requirements remain.
 - [`.clang-tidy`](.clang-tidy) is the effective check configuration. Generated
   compiler commands must select C, and every target/configuration must preserve
   the policy. A failed analysis run does not authorize linking a replacement

@@ -2,7 +2,7 @@
 # Enable the complete general-purpose C analysis families. C++-only checks in
 # these families select their own language support; the database selects C.
 # Project-specific LLVM/Google/FPGA policies and C++ modernization are not the
-# coding standard for this repository. No per-diagnostic exclusion is used.
+# coding standard for this repository. Approved exceptions are recorded below.
 Checks: >
   clang-analyzer-*,
   bugprone-*,
@@ -11,12 +11,19 @@ Checks: >
   misc-*,
   performance-*,
   portability-*,
-  readability-*
+  readability-*,
+  -bugprone-easily-swappable-parameters
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 SystemHeaders: false
-# The user excludes external-library headers. Owned code retains every configured
-# check; compiler-introduced padding is its only per-diagnostic exemption.
-ExtraArgs: ['-Wno-padded']
+# User-approved exceptions: compiler padding, Clang documentation diagnostics
+# conflicting with bare \retval None, and minimum parameter-name length. Clang
+# provides no separate switch for its empty retval paragraph warning. Other
+# identifier-length checks remain enabled; existing parameter names are preserved.
+# Later approved: raw C buffer usage and existing adjacent same-type parameters.
+# Bounds/path analysis and every other bugprone check remain enabled.
+ExtraArgs: ['-Wno-padded', '-Wno-documentation', '-Wno-unsafe-buffer-usage']
+CheckOptions:
+  readability-identifier-length.MinimumParameterNameLength: 1
 FormatStyle: file
 ...

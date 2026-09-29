@@ -11,6 +11,7 @@
 #include "utl/utl_h264.h"
 
 #include "os/os_assert.h"
+#include "os/os_compiler.h"
 #include "os/os_types.h"
 #include "utl/utl_mpeg4.h"
 #include "crt/crt_memory.h"
@@ -25,6 +26,24 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
+/* ITU-T H.264 Annex E, Table E-1: reduced sample aspect ratios. */
+#define SAR_1_TO_1    (((uint64_t)1 << SAR_NUMERATOR_SHIFT) | 1)    ///< Reduced 1:1 sample shape.
+#define SAR_12_TO_11  (((uint64_t)12 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 12:11 sample shape.
+#define SAR_10_TO_11  (((uint64_t)10 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 10:11 sample shape.
+#define SAR_16_TO_11  (((uint64_t)16 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 16:11 sample shape.
+#define SAR_40_TO_33  (((uint64_t)40 << SAR_NUMERATOR_SHIFT) | 33)  ///< Reduced 40:33 sample shape.
+#define SAR_24_TO_11  (((uint64_t)24 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 24:11 sample shape.
+#define SAR_20_TO_11  (((uint64_t)20 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 20:11 sample shape.
+#define SAR_32_TO_11  (((uint64_t)32 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 32:11 sample shape.
+#define SAR_80_TO_33  (((uint64_t)80 << SAR_NUMERATOR_SHIFT) | 33)  ///< Reduced 80:33 sample shape.
+#define SAR_18_TO_11  (((uint64_t)18 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 18:11 sample shape.
+#define SAR_15_TO_11  (((uint64_t)15 << SAR_NUMERATOR_SHIFT) | 11)  ///< Reduced 15:11 sample shape.
+#define SAR_64_TO_33  (((uint64_t)64 << SAR_NUMERATOR_SHIFT) | 33)  ///< Reduced 64:33 sample shape.
+#define SAR_160_TO_99 (((uint64_t)160 << SAR_NUMERATOR_SHIFT) | 99) ///< Reduced 160:99 sample shape.
+#define SAR_4_TO_3    (((uint64_t)4 << SAR_NUMERATOR_SHIFT) | 3)    ///< Reduced 4:3 sample shape.
+#define SAR_3_TO_2    (((uint64_t)3 << SAR_NUMERATOR_SHIFT) | 2)    ///< Reduced 3:2 sample shape.
+#define SAR_2_TO_1    (((uint64_t)2 << SAR_NUMERATOR_SHIFT) | 1)    ///< Reduced 2:1 sample shape.
+
 /* ITU-T H.264 clauses 7.3.2.11 and 7.4.2.11: RBSP trailing bits. */
 #define RBSP_ALIGNMENT_BYTE           (0x80)
 #define BYTE_BIT_COUNT                (8)    ///< Bits per serialized byte.
@@ -32,11 +51,12 @@
 #define NAL_MAX_UNIT_TYPE             (31)   ///< Five-bit nal_unit_type maximum.
 #define NAL_REFERENCE_SHIFT           (5)    ///< nal_ref_idc position in the NAL header byte.
 #define ESCAPE_ZERO_COUNT             (2)    ///< Zero run before a potentially emulated start code.
-#define LEVEL_LIMIT_COUNT             (17)   ///< Retained frame-size/rate level candidates.
 #define RESERVED_CONSTRAINT_BITS_MASK (0x03) ///< reserved_zero_2bits in the SPS constraint byte.
 #define SAR_NUMERATOR_SHIFT           (32)   ///< Packs a reduced ratio for exact case selection.
 
 /* ITU-T H.264 clauses 7.3.2.1.1.1 and 7.4.2.1.1.1: scaling_list() coding. */
+#define SCALING_LIST_4X4_SIDE      (4)    ///< Width and height of a 4-by-4 scaling list.
+#define SCALING_LIST_8X8_SIDE      (8)    ///< Width and height of an 8-by-8 scaling list.
 #define SCALING_LIST_INITIAL_SCALE (8)    ///< Initial lastScale and nextScale in scaling_list().
 #define SCALING_LIST_SCALE_MODULUS (256)  ///< Modulus used to reconstruct each scaling coefficient.
 #define SCALING_LIST_MIN_DELTA     (-128) ///< Minimum permitted delta_scale value.
@@ -121,6 +141,30 @@
 **===============================================================================================*/
 
 /*************************************************************************************************/
+/** \brief Ascending retained level candidates from H.264 Table A-1. */
+typedef enum H264LevelIndex_e
+{
+    LEVEL_INDEX_1_0,
+    LEVEL_INDEX_1_1,
+    LEVEL_INDEX_1_2,
+    LEVEL_INDEX_1_3,
+    LEVEL_INDEX_2_1,
+    LEVEL_INDEX_2_2,
+    LEVEL_INDEX_3_0,
+    LEVEL_INDEX_3_1,
+    LEVEL_INDEX_3_2,
+    LEVEL_INDEX_4_0,
+    LEVEL_INDEX_4_2,
+    LEVEL_INDEX_5_0,
+    LEVEL_INDEX_5_1,
+    LEVEL_INDEX_5_2,
+    LEVEL_INDEX_6_0,
+    LEVEL_INDEX_6_1,
+    LEVEL_INDEX_6_2,
+    LEVEL_INDEX_COUNT
+} H264LevelIndex_t;
+
+/*************************************************************************************************/
 /**
  * \brief Associates an H.264 level identifier with its frame-size and macroblock-rate limits.
  */
@@ -166,6 +210,90 @@ typedef struct NalUnit_s
 
 /*************************************************************************************************/
 /**
+ * \brief Checks the canonical boolean representation used by parameter constructors.
+ *
+ * \par Requirements:
+ *  - 001 Only FALSE and TRUE shall be accepted as constructor flag values.
+ *
+ * \param[in] value Caller-supplied flag
+ *
+ * \retval None
+ */
+static FORCE_INLINE void AssertBoolean(bool_t value);
+
+/*************************************************************************************************/
+/**
+ * \brief Checks syntax domains before evaluating profile-specific restrictions.
+ *
+ * \par Requirements:
+ *  - 001 Out-of-range slice, reserved flags, weighting mode or chroma offsets shall fail.
+ *  - 002 Validation shall leave caller storage unchanged and require no allocation.
+ *
+ * \param[in] sliceType Full slice syntax value, including the all-slices offset
+ * \param[in] constraintSetFlags Constraint and reserved bits
+ * \param[in] weightedBipredIdc Weighted bidirectional prediction mode
+ * \param[in] chromaQpIndexOffset First chroma quantizer offset
+ * \param[in] secondChromaQpIndexOffset Second chroma quantizer offset
+ *
+ * \retval TRUE  Every supplied syntax value is within its specified domain.
+ * \retval FALSE A supplied syntax value is invalid.
+ */
+static FORCE_INLINE bool_t IsCodingSyntaxValid(uint8_t sliceType,
+                                               uint8_t constraintSetFlags,
+                                               uint8_t weightedBipredIdc,
+                                               int32_t chromaQpIndexOffset,
+                                               int32_t secondChromaQpIndexOffset);
+
+/*************************************************************************************************/
+/**
+ * \brief Checks the coding tools permitted by baseline-compatible streams.
+ *
+ * \par Requirements:
+ *  - 001 Baseline coding shall use frame pictures, CAVLC, unweighted prediction and I/P slices.
+ *  - 002 The slice type shall already be normalized to its base syntax value.
+ *
+ * \param[in] frameMbsOnlyFlag Frame-only picture flag
+ * \param[in] entropyCodingModeFlag CABAC selection flag
+ * \param[in] weightedPredFlag Weighted prediction flag
+ * \param[in] weightedBipredIdc Bidirectional weighting mode
+ * \param[in] sliceType Normalized slice type
+ *
+ * \retval TRUE  All coding tools satisfy the baseline restrictions.
+ * \retval FALSE A selected coding tool is incompatible.
+ */
+static FORCE_INLINE bool_t IsBaselineCodingCompatible(bool_t  frameMbsOnlyFlag,
+                                                      bool_t  entropyCodingModeFlag,
+                                                      bool_t  weightedPredFlag,
+                                                      uint8_t weightedBipredIdc,
+                                                      uint8_t sliceType);
+
+/*************************************************************************************************/
+/**
+ * \brief Evaluates progressive and constrained-high compatibility restrictions.
+ *
+ * \par Requirements:
+ *  - 001 The slice type shall be normalized to its base syntax value.
+ *  - 002 Constraint flags four and five shall affect only the profiles specified by Annex A.
+ *
+ * \param[in] profileIdc Profile identifier
+ * \param[in] constraintSetFlags Profile constraint bits
+ * \param[in] frameMbsOnlyFlag Progressive-frame flag
+ * \param[in] weightedPredFlag Weighted prediction flag
+ * \param[in] weightedBipredIdc Bidirectional weighting mode
+ * \param[in] sliceType Normalized slice type
+ *
+ * \retval TRUE  The selected constraints permit these coding tools.
+ * \retval FALSE The selected constraints prohibit these coding tools.
+ */
+static FORCE_INLINE bool_t IsHighConstraintCompatible(uint8_t profileIdc,
+                                                      uint8_t constraintSetFlags,
+                                                      bool_t  frameMbsOnlyFlag,
+                                                      bool_t  weightedPredFlag,
+                                                      uint8_t weightedBipredIdc,
+                                                      uint8_t sliceType);
+
+/*************************************************************************************************/
+/**
  * \brief Determines whether an SPS profile uses high-profile syntax fields.
  *
  * \param[in] profileIdc        H.264 profile_idc value
@@ -173,7 +301,7 @@ typedef struct NalUnit_s
  * \retval TRUE  The profile requires chroma-format and bit-depth fields.
  * \retval FALSE Baseline/main-style SPS syntax applies.
  */
-static bool_t IsHighProfile(uint8_t profileIdc);
+static FORCE_INLINE bool_t IsHighProfile(uint8_t profileIdc);
 
 /*************************************************************************************************/
 /**
@@ -184,7 +312,7 @@ static bool_t IsHighProfile(uint8_t profileIdc);
  *
  * \retval result Greatest common divisor; returns left when right is zero.
  */
-static uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right);
+static FORCE_INLINE uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right);
 
 /*************************************************************************************************/
 /**
@@ -200,69 +328,55 @@ static uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right);
  *
  * \retval None
  */
-static void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value);
+static FORCE_INLINE void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value);
 
 /*************************************************************************************************/
 /**
- * \brief Serializes sequence parameters into a raw byte sequence payload.
+ * \brief Writes video usability information from an SPS syntax model.
  *
- * \param[out] rbsp             Destination receiving SPS syntax bits
- * \param[in]  rbspCapacity     Writable byte capacity of rbsp
- * \param[in]  params           Validated SPS syntax model
+ * \par Requirements:
+ *  - 001 The writer and SPS model shall be valid and exclusively borrowed.
+ *  - 002 Presence flags shall control their corresponding Annex E syntax fields.
  *
- * \retval result Number of SPS syntax bits written before RBSP trailing bits.
+ * \param[in,out] writer Initialized bit writer
+ * \param[in] params Validated SPS syntax
+ *
+ * \retval None
  */
-static uint32_t WriteSPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_SpsParams_t* params);
+static FORCE_INLINE void WriteVui(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_SpsParams_t* params);
 
 /*************************************************************************************************/
 /**
- * \brief Serializes picture parameters into a raw byte sequence payload.
+ * \brief Writes one optional scaling list and its bounded signed coefficient deltas.
  *
- * \param[out] rbsp             Destination receiving PPS syntax bits
- * \param[in]  rbspCapacity     Writable byte capacity of rbsp
- * \param[in]  params           Validated PPS syntax model
+ * \par Requirements:
+ *  - 001 The model shall provide element_count delta values.
+ *  - 002 A zero reconstructed nextScale shall terminate delta syntax immediately.
  *
- * \retval result Number of PPS syntax bits written before RBSP trailing bits.
+ * \param[in,out] writer Initialized bit writer
+ * \param[in] scaling_list Validated scaling-list model
+ * \param[in] element_count 4-by-4 or 8-by-8 coefficient count
+ *
+ * \retval None
  */
-static uint32_t WritePPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_PpsParams_t* params);
+static FORCE_INLINE void WriteScalingList(Utl_Mpeg4_BitWriter_t*        writer,
+                                          const Utl_H264_ScalingList_t* scaling_list,
+                                          uint32_t                      element_count);
 
 /*************************************************************************************************/
 /**
- * \brief Serializes a supplemental message into a raw byte sequence payload.
+ * \brief Writes the scaling lists selected by PPS chroma format and transform size.
  *
- * \param[out] rbsp                 Destination receiving SEI syntax bytes
- * \param[in]  rbspCapacity         Writable byte capacity of rbsp
- * \param[in]  payloadType          H.264 SEI payload_type value
- * \param[in]  pPayloadBytes        Payload bytes, or NULL when payloadByteCount is zero
- * \param[in]  payloadByteCount     Number of payload bytes
+ * \par Requirements:
+ *  - 001 The PPS scaling-matrix presence flag shall already have been written as true.
+ *  - 002 Exactly the lists required by clause 7.3.2.2 shall be emitted.
  *
- * \retval result Number of SEI syntax bits written before RBSP trailing bits.
+ * \param[in,out] writer Initialized bit writer
+ * \param[in] params Validated PPS syntax
+ *
+ * \retval None
  */
-static uint32_t WriteSEI(byte_t*       rbsp,
-                         uint64_t      rbspCapacity,
-                         uint32_t      payloadType,
-                         const byte_t* pPayloadBytes,
-                         uint64_t      payloadByteCount);
-
-/*************************************************************************************************/
-/**
- * \brief Finalizes an RBSP and inserts it as an Annex B NAL unit with emulation prevention.
- *
- * \param[out]    bufferToPlacePacketIn             Destination receiving the complete Annex B NAL unit
- * \param[in]     sizeOfPacketBuffer         Writable byte capacity of bufferToPlacePacketIn
- * \param[in]     nalHeader          Header prepended to the encoded RBSP
- * \param[in]     rbsp               RBSP syntax bits before rbsp_trailing_bits
- * \param[in]     rbspCapacity       Writable byte capacity of rbsp
- * \param[in]     rbspBitOffset      Number of syntax bits already present in rbsp
- *
- * \retval result Number of Annex B NAL bytes written to bufferToPlacePacketIn.
- */
-static uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
-                             uint64_t        sizeOfPacketBuffer,
-                             H264NalHeader_t nalHeader,
-                             const byte_t*   rbsp,
-                             uint64_t        rbspCapacity,
-                             uint32_t        rbspBitOffset);
+static FORCE_INLINE void WritePpsScalingLists(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_PpsParams_t* params);
 
 /*************************************************************************************************/
 /**
@@ -278,7 +392,69 @@ static uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
  *
  * \retval None
  */
-static void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit);
+static FORCE_INLINE void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit);
+
+/*************************************************************************************************/
+/**
+ * \brief Finalizes an RBSP and inserts it as an Annex B NAL unit with emulation prevention.
+ *
+ * \param[out]    bufferToPlacePacketIn             Destination receiving the complete Annex B NAL unit
+ * \param[in]     sizeOfPacketBuffer         Writable byte capacity of bufferToPlacePacketIn
+ * \param[in]     nalHeader          Header prepended to the encoded RBSP
+ * \param[in]     rbsp               RBSP syntax bits before rbsp_trailing_bits
+ * \param[in]     rbspCapacity       Writable byte capacity of rbsp
+ * \param[in]     rbspBitOffset      Number of syntax bits already present in rbsp
+ *
+ * \retval result Number of Annex B NAL bytes written to bufferToPlacePacketIn.
+ */
+static FORCE_INLINE uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
+                                          uint64_t        sizeOfPacketBuffer,
+                                          H264NalHeader_t nalHeader,
+                                          const byte_t*   rbsp,
+                                          uint64_t        rbspCapacity,
+                                          uint32_t        rbspBitOffset);
+
+/*************************************************************************************************/
+/**
+ * \brief Serializes sequence parameters into a raw byte sequence payload.
+ *
+ * \param[out] rbsp             Destination receiving SPS syntax bits
+ * \param[in]  rbspCapacity     Writable byte capacity of rbsp
+ * \param[in]  params           Validated SPS syntax model
+ *
+ * \retval result Number of SPS syntax bits written before RBSP trailing bits.
+ */
+static FORCE_INLINE uint32_t WriteSPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_SpsParams_t* params);
+
+/*************************************************************************************************/
+/**
+ * \brief Serializes picture parameters into a raw byte sequence payload.
+ *
+ * \param[out] rbsp             Destination receiving PPS syntax bits
+ * \param[in]  rbspCapacity     Writable byte capacity of rbsp
+ * \param[in]  params           Validated PPS syntax model
+ *
+ * \retval result Number of PPS syntax bits written before RBSP trailing bits.
+ */
+static FORCE_INLINE uint32_t WritePPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_PpsParams_t* params);
+
+/*************************************************************************************************/
+/**
+ * \brief Serializes a supplemental message into a raw byte sequence payload.
+ *
+ * \param[out] rbsp                 Destination receiving SEI syntax bytes
+ * \param[in]  rbspCapacity         Writable byte capacity of rbsp
+ * \param[in]  payloadType          H.264 SEI payload_type value
+ * \param[in]  pPayloadBytes        Payload bytes, or NULL when payloadByteCount is zero
+ * \param[in]  payloadByteCount     Number of payload bytes
+ *
+ * \retval result Number of SEI syntax bits written before RBSP trailing bits.
+ */
+static FORCE_INLINE uint32_t WriteSEI(byte_t*       rbsp,
+                                      uint64_t      rbspCapacity,
+                                      uint32_t      payloadType,
+                                      const byte_t* pPayloadBytes,
+                                      uint64_t      payloadByteCount);
 
 /*=================================================================================================
 ** 4. PRIVATE FUNCTIONS
@@ -287,9 +463,140 @@ static void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit);
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Flags are checked before narrowing them into one-bit syntax fields.
+ */
+static FORCE_INLINE void AssertBoolean(bool_t value)
+{
+    bool_t is_false;
+    bool_t is_true;
+    bool_t is_valid;
+
+    is_false = (FALSE == value);
+    is_true  = (TRUE == value);
+    is_valid = is_false || is_true;
+    LOGASSERT(is_valid);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Validates scalar domains independently of Annex A profile compatibility.
+ */
+static FORCE_INLINE bool_t IsCodingSyntaxValid(uint8_t sliceType,
+                                               uint8_t constraintSetFlags,
+                                               uint8_t weightedBipredIdc,
+                                               int32_t chromaQpIndexOffset,
+                                               int32_t secondChromaQpIndexOffset)
+{
+    bool_t valid_slice;
+    bool_t valid_constraints;
+    bool_t valid_bipred;
+    bool_t first_qp_minimum;
+    bool_t first_qp_maximum;
+    bool_t second_qp_minimum;
+    bool_t second_qp_maximum;
+    bool_t valid_qp;
+    bool_t is_valid;
+
+    valid_slice       = (sliceType < 2 * UTL_H264_SLICE_TYPE_ALL_OFFSET);
+    valid_constraints = TRUE;
+    if (constraintSetFlags & RESERVED_CONSTRAINT_BITS_MASK)
+    {
+        valid_constraints = FALSE;
+    }
+    valid_bipred      = (weightedBipredIdc <= UTL_H264_MAX_WEIGHTED_BIPRED_IDC);
+    first_qp_minimum  = (UTL_H264_MIN_CHROMA_QP_INDEX_OFFSET <= chromaQpIndexOffset);
+    first_qp_maximum  = (UTL_H264_MAX_CHROMA_QP_INDEX_OFFSET >= chromaQpIndexOffset);
+    second_qp_minimum = (UTL_H264_MIN_CHROMA_QP_INDEX_OFFSET <= secondChromaQpIndexOffset);
+    second_qp_maximum = (UTL_H264_MAX_CHROMA_QP_INDEX_OFFSET >= secondChromaQpIndexOffset);
+    valid_qp          = first_qp_minimum && first_qp_maximum && second_qp_minimum && second_qp_maximum;
+    is_valid          = valid_slice && valid_constraints && valid_bipred && valid_qp;
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Applies the baseline tool intersection required by Annex A.2.1.
+ */
+static FORCE_INLINE bool_t IsBaselineCodingCompatible(bool_t  frameMbsOnlyFlag,
+                                                      bool_t  entropyCodingModeFlag,
+                                                      bool_t  weightedPredFlag,
+                                                      uint8_t weightedBipredIdc,
+                                                      uint8_t sliceType)
+{
+    bool_t uses_cavlc;
+    bool_t unweighted_prediction;
+    bool_t unweighted_bipred;
+    bool_t is_intra;
+    bool_t is_predictive;
+    bool_t is_baseline_slice;
+    bool_t is_valid;
+
+    uses_cavlc            = (FALSE == entropyCodingModeFlag);
+    unweighted_prediction = (FALSE == weightedPredFlag);
+    unweighted_bipred     = (0 == weightedBipredIdc);
+    is_intra              = (UTL_H264_SLICE_TYPE_I == sliceType);
+    is_predictive         = (UTL_H264_SLICE_TYPE_P == sliceType);
+    is_baseline_slice     = is_intra || is_predictive;
+    is_valid = frameMbsOnlyFlag && uses_cavlc && unweighted_prediction && unweighted_bipred && is_baseline_slice;
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Combines the applicable Annex A restrictions without changing the legacy-profile checks.
+ */
+static FORCE_INLINE bool_t IsHighConstraintCompatible(uint8_t profileIdc,
+                                                      uint8_t constraintSetFlags,
+                                                      bool_t  frameMbsOnlyFlag,
+                                                      bool_t  weightedPredFlag,
+                                                      uint8_t weightedBipredIdc,
+                                                      uint8_t sliceType)
+{
+    bool_t is_valid;
+    bool_t is_high;
+    bool_t is_high10;
+    bool_t permits_progressive_constraint;
+    bool_t is_bidirectional;
+    bool_t uses_bipred;
+    bool_t uses_weighting;
+    bool_t violates_constrained_high;
+    bool_t constrained_high_valid;
+
+    is_valid                       = TRUE;
+    is_high                        = (UTL_H264_PROFILE_HIGH == profileIdc);
+    is_high10                      = (UTL_H264_PROFILE_HIGH_10 == profileIdc);
+    permits_progressive_constraint = is_high || is_high10;
+    if (constraintSetFlags & UTL_H264_CONSTRAINT_SET4_FLAG)
+    {
+        if (permits_progressive_constraint)
+        {
+            is_valid = frameMbsOnlyFlag;
+        }
+        if (constraintSetFlags & UTL_H264_CONSTRAINT_SET5_FLAG)
+        {
+            is_bidirectional          = (UTL_H264_SLICE_TYPE_B == sliceType);
+            uses_bipred               = (0 < weightedBipredIdc);
+            uses_weighting            = weightedPredFlag || uses_bipred;
+            violates_constrained_high = is_bidirectional || uses_weighting;
+            constrained_high_valid    = (FALSE == violates_constrained_high);
+            if (is_high)
+            {
+                is_valid = is_valid && constrained_high_valid;
+            }
+        }
+    }
+    return is_valid;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  None
  */
-static bool_t IsHighProfile(uint8_t profileIdc)
+static FORCE_INLINE bool_t IsHighProfile(uint8_t profileIdc)
 {
     bool_t high_profile;
 
@@ -323,7 +630,7 @@ static bool_t IsHighProfile(uint8_t profileIdc)
  * \par Details:
  *  None
  */
-static uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right)
+static FORCE_INLINE uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right)
 {
     uint32_t remainder;
 
@@ -341,7 +648,7 @@ static uint32_t GreatestCommonDivisor(uint32_t left, uint32_t right)
  * \par Details:
  *  None
  */
-static void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value)
+static FORCE_INLINE void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value)
 {
     Utl_Mpeg4_BitField_t field;
 
@@ -374,10 +681,202 @@ static void WriteSEIExtendedValue(Utl_Mpeg4_BitWriter_t* writer, uint64_t value)
 /*************************************************************************************************/
 /**
  * \par Details:
+ *  Serializes the existing Annex E field order without changing SPS framing.
+ */
+static FORCE_INLINE void WriteVui(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_SpsParams_t* params)
+{
+    Utl_Mpeg4_BitField_t field;
+
+    field.value    = params->aspectRatioInfoPresentFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (params->aspectRatioInfoPresentFlag)
+    {
+        field.value    = params->aspectRatioIdc;
+        field.bitCount = BYTE_BIT_COUNT;
+        Utl_Mpeg4_WriteBits(writer, field);
+        if (UTL_H264_ASPECT_RATIO_IDC_EXTENDED_SAR == params->aspectRatioIdc)
+        {
+            field.value    = params->sarWidth;
+            field.bitCount = SAR_DIMENSION_BIT_COUNT;
+            Utl_Mpeg4_WriteBits(writer, field);
+            field.value    = params->sarHeight;
+            field.bitCount = SAR_DIMENSION_BIT_COUNT;
+            Utl_Mpeg4_WriteBits(writer, field);
+        }
+    }
+    field.value    = params->overscanInfoPresentFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (params->overscanInfoPresentFlag)
+    {
+        field.value    = params->overscanAppropriateFlag;
+        field.bitCount = 1;
+        Utl_Mpeg4_WriteBits(writer, field);
+    }
+    field.value    = params->videoSignalTypePresentFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (params->videoSignalTypePresentFlag)
+    {
+        field.value    = params->videoFormat;
+        field.bitCount = VIDEO_FORMAT_BIT_COUNT;
+        Utl_Mpeg4_WriteBits(writer, field);
+        field.value    = params->videoFullRangeFlag;
+        field.bitCount = 1;
+        Utl_Mpeg4_WriteBits(writer, field);
+        field.value    = params->colourDescriptionPresentFlag;
+        field.bitCount = 1;
+        Utl_Mpeg4_WriteBits(writer, field);
+        if (params->colourDescriptionPresentFlag)
+        {
+            field.value    = params->colourPrimaries;
+            field.bitCount = BYTE_BIT_COUNT;
+            Utl_Mpeg4_WriteBits(writer, field);
+            field.value    = params->transferCharacteristics;
+            field.bitCount = BYTE_BIT_COUNT;
+            Utl_Mpeg4_WriteBits(writer, field);
+            field.value    = params->matrixCoefficients;
+            field.bitCount = BYTE_BIT_COUNT;
+            Utl_Mpeg4_WriteBits(writer, field);
+        }
+    }
+    field.value    = params->chromaLocInfoPresentFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (params->chromaLocInfoPresentFlag)
+    {
+        Utl_ExpGolomb_WriteUnsigned(writer, params->chromaSampleLocTypeTopField);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->chromaSampleLocTypeBottomField);
+    }
+    field.value    = params->timingInfoPresentFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (params->timingInfoPresentFlag)
+    {
+        field.value    = params->numUnitsInTick;
+        field.bitCount = VUI_TIMING_VALUE_BIT_COUNT;
+        Utl_Mpeg4_WriteBits(writer, field);
+        field.value    = params->timeScale;
+        field.bitCount = VUI_TIMING_VALUE_BIT_COUNT;
+        Utl_Mpeg4_WriteBits(writer, field);
+        field.value    = params->fixedFrameRateFlag;
+        field.bitCount = 1;
+        Utl_Mpeg4_WriteBits(writer, field);
+    }
+    field.value    = FALSE;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    field.value    = FALSE;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    field.value    = FALSE;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    field.value    = params->bitstreamRestrictionFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (params->bitstreamRestrictionFlag)
+    {
+        field.value    = params->motionVectorsOverPicBoundariesFlag;
+        field.bitCount = 1;
+        Utl_Mpeg4_WriteBits(writer, field);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->maxBytesPerPicDenom);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->maxBitsPerMbDenom);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->log2MaxMvLengthHorizontal);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->log2MaxMvLengthVertical);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->maxNumReorderFrames);
+        Utl_ExpGolomb_WriteUnsigned(writer, params->maxDecFrameBuffering);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Preserves default-list and repeated-tail termination from clause 7.3.2.1.1.1.
+ */
+static FORCE_INLINE void WriteScalingList(Utl_Mpeg4_BitWriter_t*        writer,
+                                          const Utl_H264_ScalingList_t* scaling_list,
+                                          uint32_t                      element_count)
+{
+    Utl_Mpeg4_BitField_t field;
+    int32_t              next_scale;
+    uint32_t             element_index;
+    int32_t              delta_scale;
+
+    field.value    = scaling_list->presentFlag;
+    field.bitCount = 1;
+    Utl_Mpeg4_WriteBits(writer, field);
+    if (scaling_list->presentFlag)
+    {
+        // next_scale == 0 selects the default list at index zero, or repeats the last
+        // coefficient thereafter. Neither form writes further delta_scale values.
+        next_scale = SCALING_LIST_INITIAL_SCALE;
+        for (element_index = 0; element_index < element_count; ++element_index)
+        {
+            delta_scale = scaling_list->deltaScale[element_index];
+            LOGASSERT(SCALING_LIST_MIN_DELTA <= delta_scale);
+            LOGASSERT(SCALING_LIST_MAX_DELTA >= delta_scale);
+
+            Utl_ExpGolomb_WriteSigned(writer, delta_scale);
+            next_scale = (next_scale + delta_scale + SCALING_LIST_SCALE_MODULUS) % SCALING_LIST_SCALE_MODULUS;
+
+            if (0 == next_scale)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Six 4-by-4 lists precede the optional chroma-dependent 8-by-8 lists.
+ */
+static FORCE_INLINE void WritePpsScalingLists(Utl_Mpeg4_BitWriter_t* writer, const Utl_H264_PpsParams_t* params)
+{
+    uint32_t                      scaling_list_count;
+    uint32_t                      scaling_list_index;
+    const Utl_H264_ScalingList_t* scaling_list;
+    uint32_t                      element_count;
+
+    scaling_list_count = UTL_H264_SCALING_LIST_4X4_COUNT;
+    if (params->transform8x8ModeFlag)
+    {
+        if (UTL_H264_CHROMA_FORMAT_444 == params->chromaFormatIdc)
+        {
+            scaling_list_count = UTL_H264_MAX_SCALING_LIST_COUNT;
+        }
+        else
+        {
+            scaling_list_count += UTL_H264_SCALING_LIST_8X8_COUNT;
+        }
+    }
+    for (scaling_list_index = 0; scaling_list_index < scaling_list_count; ++scaling_list_index)
+    {
+        scaling_list = &params->scalingLists[scaling_list_index];
+
+        if (scaling_list_index < UTL_H264_SCALING_LIST_4X4_COUNT)
+        {
+            element_count = UTL_H264_SCALING_LIST_4X4_ELEMENT_COUNT;
+        }
+        else
+        {
+            element_count = UTL_H264_SCALING_LIST_8X8_ELEMENT_COUNT;
+        }
+
+        WriteScalingList(writer, scaling_list, element_count);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
  *  The zero run covers RBSP bytes only. An escape is inserted immediately before the next byte
  *  when its value is at most three. The shared reader handles both complete and partial bytes.
  */
-static void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit)
+static FORCE_INLINE void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit)
 {
     Utl_Mpeg4_BitReader_t reader;
     uint32_t              whole_byte_count;
@@ -453,12 +952,12 @@ static void WriteNalBytes(Utl_Mpeg4_BitWriter_t* writer, const NalUnit_t* unit)
  *  The returned byte count includes zero_byte, the start-code prefix, NAL header, escaped RBSP,
  *  and inserted emulation-prevention bytes. If the complete NAL unit does not fit, zero is returned.
  */
-static uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
-                             uint64_t        sizeOfPacketBuffer,
-                             H264NalHeader_t nalHeader,
-                             const byte_t*   rbsp,
-                             uint64_t        rbspCapacity,
-                             uint32_t        rbspBitOffset)
+static FORCE_INLINE uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
+                                          uint64_t        sizeOfPacketBuffer,
+                                          H264NalHeader_t nalHeader,
+                                          const byte_t*   rbsp,
+                                          uint64_t        rbspCapacity,
+                                          uint32_t        rbspBitOffset)
 {
     NalUnit_t             unit;
     Utl_Mpeg4_BitWriter_t writer;
@@ -520,7 +1019,7 @@ static uint64_t WriteNalUnit(byte_t*         bufferToPlacePacketIn,
  *  Returns the RBSP bit count before rbsp_trailing_bits(); WriteNalUnit adds trailing bits and NAL
  *  framing.
  */
-static uint32_t WriteSPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_SpsParams_t* params)
+static FORCE_INLINE uint32_t WriteSPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_SpsParams_t* params)
 {
     Utl_Mpeg4_BitField_t  field;
 
@@ -607,107 +1106,7 @@ static uint32_t WriteSPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_Sps
     Utl_Mpeg4_WriteBits(&writer, field);
     if (params->vuiParametersPresentFlag)
     {
-        field.value    = params->aspectRatioInfoPresentFlag;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        if (params->aspectRatioInfoPresentFlag)
-        {
-            field.value    = params->aspectRatioIdc;
-            field.bitCount = BYTE_BIT_COUNT;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            if (UTL_H264_ASPECT_RATIO_IDC_EXTENDED_SAR == params->aspectRatioIdc)
-            {
-                field.value    = params->sarWidth;
-                field.bitCount = SAR_DIMENSION_BIT_COUNT;
-                Utl_Mpeg4_WriteBits(&writer, field);
-                field.value    = params->sarHeight;
-                field.bitCount = SAR_DIMENSION_BIT_COUNT;
-                Utl_Mpeg4_WriteBits(&writer, field);
-            }
-        }
-        field.value    = params->overscanInfoPresentFlag;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        if (params->overscanInfoPresentFlag)
-        {
-            field.value    = params->overscanAppropriateFlag;
-            field.bitCount = 1;
-            Utl_Mpeg4_WriteBits(&writer, field);
-        }
-        field.value    = params->videoSignalTypePresentFlag;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        if (params->videoSignalTypePresentFlag)
-        {
-            field.value    = params->videoFormat;
-            field.bitCount = VIDEO_FORMAT_BIT_COUNT;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            field.value    = params->videoFullRangeFlag;
-            field.bitCount = 1;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            field.value    = params->colourDescriptionPresentFlag;
-            field.bitCount = 1;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            if (params->colourDescriptionPresentFlag)
-            {
-                field.value    = params->colourPrimaries;
-                field.bitCount = BYTE_BIT_COUNT;
-                Utl_Mpeg4_WriteBits(&writer, field);
-                field.value    = params->transferCharacteristics;
-                field.bitCount = BYTE_BIT_COUNT;
-                Utl_Mpeg4_WriteBits(&writer, field);
-                field.value    = params->matrixCoefficients;
-                field.bitCount = BYTE_BIT_COUNT;
-                Utl_Mpeg4_WriteBits(&writer, field);
-            }
-        }
-        field.value    = params->chromaLocInfoPresentFlag;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        if (params->chromaLocInfoPresentFlag)
-        {
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->chromaSampleLocTypeTopField);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->chromaSampleLocTypeBottomField);
-        }
-        field.value    = params->timingInfoPresentFlag;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        if (params->timingInfoPresentFlag)
-        {
-            field.value    = params->numUnitsInTick;
-            field.bitCount = VUI_TIMING_VALUE_BIT_COUNT;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            field.value    = params->timeScale;
-            field.bitCount = VUI_TIMING_VALUE_BIT_COUNT;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            field.value    = params->fixedFrameRateFlag;
-            field.bitCount = 1;
-            Utl_Mpeg4_WriteBits(&writer, field);
-        }
-        field.value    = FALSE;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        field.value    = FALSE;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        field.value    = FALSE;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        field.value    = params->bitstreamRestrictionFlag;
-        field.bitCount = 1;
-        Utl_Mpeg4_WriteBits(&writer, field);
-        if (params->bitstreamRestrictionFlag)
-        {
-            field.value    = params->motionVectorsOverPicBoundariesFlag;
-            field.bitCount = 1;
-            Utl_Mpeg4_WriteBits(&writer, field);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->maxBytesPerPicDenom);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->maxBitsPerMbDenom);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->log2MaxMvLengthHorizontal);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->log2MaxMvLengthVertical);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->maxNumReorderFrames);
-            Utl_ExpGolomb_WriteUnsigned(&writer, params->maxDecFrameBuffering);
-        }
+        WriteVui(&writer, params);
     }
     rbsp_bit_offset = 0;
     if (writer.valid)
@@ -738,19 +1137,12 @@ static uint32_t WriteSPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_Sps
  *  Returns the RBSP bit count before rbsp_trailing_bits(); WriteNalUnit adds trailing bits and NAL
  *  framing.
  */
-static uint32_t WritePPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_PpsParams_t* params)
+static FORCE_INLINE uint32_t WritePPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_PpsParams_t* params)
 {
-    Utl_Mpeg4_BitField_t          field;
+    Utl_Mpeg4_BitField_t  field;
 
-    Utl_Mpeg4_BitWriter_t         writer;
-    uint32_t                      rbsp_bit_offset;
-    uint32_t                      scaling_list_count;
-    uint32_t                      scaling_list_index;
-    uint32_t                      element_count;
-    uint32_t                      element_index;
-    int32_t                       next_scale;
-    int32_t                       delta_scale;
-    const Utl_H264_ScalingList_t* scaling_list;
+    Utl_Mpeg4_BitWriter_t writer;
+    uint32_t              rbsp_bit_offset;
 
     LOGASSERT(NULL != params);
     LOGASSERT(NULL != rbsp);
@@ -802,56 +1194,7 @@ static uint32_t WritePPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_Pps
         Utl_Mpeg4_WriteBits(&writer, field);
         if (params->picScalingMatrixPresentFlag)
         {
-            scaling_list_count = UTL_H264_SCALING_LIST_4X4_COUNT;
-            if (params->transform8x8ModeFlag)
-            {
-                if (UTL_H264_CHROMA_FORMAT_444 == params->chromaFormatIdc)
-                {
-                    scaling_list_count = UTL_H264_MAX_SCALING_LIST_COUNT;
-                }
-                else
-                {
-                    scaling_list_count += UTL_H264_SCALING_LIST_8X8_COUNT;
-                }
-            }
-            for (scaling_list_index = 0; scaling_list_index < scaling_list_count; ++scaling_list_index)
-            {
-                scaling_list = &params->scalingLists[scaling_list_index];
-
-                if (scaling_list_index < UTL_H264_SCALING_LIST_4X4_COUNT)
-                {
-                    element_count = UTL_H264_SCALING_LIST_4X4_ELEMENT_COUNT;
-                }
-                else
-                {
-                    element_count = UTL_H264_SCALING_LIST_8X8_ELEMENT_COUNT;
-                }
-
-                field.value    = scaling_list->presentFlag;
-                field.bitCount = 1;
-                Utl_Mpeg4_WriteBits(&writer, field);
-                if (scaling_list->presentFlag)
-                {
-                    // next_scale == 0 selects the default list at index zero, or repeats the last
-                    // coefficient thereafter. Neither form writes further delta_scale values.
-                    next_scale = SCALING_LIST_INITIAL_SCALE;
-                    for (element_index = 0; element_index < element_count; ++element_index)
-                    {
-                        delta_scale = scaling_list->deltaScale[element_index];
-                        LOGASSERT(SCALING_LIST_MIN_DELTA <= delta_scale);
-                        LOGASSERT(SCALING_LIST_MAX_DELTA >= delta_scale);
-
-                        Utl_ExpGolomb_WriteSigned(&writer, delta_scale);
-                        next_scale =
-                            (next_scale + delta_scale + SCALING_LIST_SCALE_MODULUS) % SCALING_LIST_SCALE_MODULUS;
-
-                        if (0 == next_scale)
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
+            WritePpsScalingLists(&writer, params);
         }
         Utl_ExpGolomb_WriteSigned(&writer, params->secondChromaQpIndexOffset);
     }
@@ -869,11 +1212,11 @@ static uint32_t WritePPS(byte_t* rbsp, uint64_t rbspCapacity, const Utl_H264_Pps
  * \par Details:
  *  None
  */
-static uint32_t WriteSEI(byte_t*       rbsp,
-                         uint64_t      rbspCapacity,
-                         uint32_t      payloadType,
-                         const byte_t* pPayloadBytes,
-                         uint64_t      payloadByteCount)
+static FORCE_INLINE uint32_t WriteSEI(byte_t*       rbsp,
+                                      uint64_t      rbspCapacity,
+                                      uint32_t      payloadType,
+                                      const byte_t* pPayloadBytes,
+                                      uint64_t      payloadByteCount)
 {
     Utl_Mpeg4_BitWriter_t writer;
     bool_t                has_payload;
@@ -977,7 +1320,7 @@ void Utl_H264_InitializeSps(Utl_H264_SpsParams_t* params,
     LOGASSERT(chromaFormatIdc <= UTL_H264_CHROMA_FORMAT_444);
     LOGASSERT((UTL_H264_MIN_BIT_DEPTH <= bitDepthLuma) && (UTL_H264_MAX_BIT_DEPTH >= bitDepthLuma));
     LOGASSERT((UTL_H264_MIN_BIT_DEPTH <= bitDepthChroma) && (UTL_H264_MAX_BIT_DEPTH >= bitDepthChroma));
-    LOGASSERT((FALSE == qpprimeYZeroTransformBypassFlag) || (TRUE == qpprimeYZeroTransformBypassFlag));
+    AssertBoolean(qpprimeYZeroTransformBypassFlag);
     LOGASSERT(0 != width);
     LOGASSERT(0 != height);
     LOGASSERT(0 != frameRateNumerator);
@@ -985,16 +1328,16 @@ void Utl_H264_InitializeSps(Utl_H264_SpsParams_t* params,
     LOGASSERT(0 != maximumFrameNumber);
     LOGASSERT(0 != maximumPicOrderCntLsb);
     LOGASSERT(maxNumRefFrames <= UTL_H264_MAX_DECODED_PICTURE_BUFFER_ENTRIES);
-    LOGASSERT((FALSE == gapsInFrameNumValueAllowedFlag) || (TRUE == gapsInFrameNumValueAllowedFlag));
-    LOGASSERT((FALSE == interlaced) || (TRUE == interlaced));
-    LOGASSERT((FALSE == mbAdaptiveFrameFieldFlag) || (TRUE == mbAdaptiveFrameFieldFlag));
+    AssertBoolean(gapsInFrameNumValueAllowedFlag);
+    AssertBoolean(interlaced);
+    AssertBoolean(mbAdaptiveFrameFieldFlag);
     LOGASSERT((TRUE == interlaced) || (FALSE == mbAdaptiveFrameFieldFlag));
-    LOGASSERT((FALSE == direct8x8InferenceFlag) || (TRUE == direct8x8InferenceFlag));
-    LOGASSERT((FALSE == vuiParametersPresentFlag) || (TRUE == vuiParametersPresentFlag));
-    LOGASSERT((FALSE == timingInfoPresentFlag) || (TRUE == timingInfoPresentFlag));
-    LOGASSERT((FALSE == fixedFrameRateFlag) || (TRUE == fixedFrameRateFlag));
-    LOGASSERT((FALSE == bitstreamRestrictionFlag) || (TRUE == bitstreamRestrictionFlag));
-    LOGASSERT((FALSE == motionVectorsOverPicBoundariesFlag) || (TRUE == motionVectorsOverPicBoundariesFlag));
+    AssertBoolean(direct8x8InferenceFlag);
+    AssertBoolean(vuiParametersPresentFlag);
+    AssertBoolean(timingInfoPresentFlag);
+    AssertBoolean(fixedFrameRateFlag);
+    AssertBoolean(bitstreamRestrictionFlag);
+    AssertBoolean(motionVectorsOverPicBoundariesFlag);
     LOGASSERT(((0 == sampleAspectRatioWidth) && (0 == sampleAspectRatioHeight)) ||
               ((0 != sampleAspectRatioWidth) && (0 != sampleAspectRatioHeight)));
     LOGASSERT(maxNumReorderFrames <= maxDecFrameBuffering);
@@ -1100,7 +1443,7 @@ void Utl_H264_InitializeScalingList(Utl_H264_ScalingList_t* params, const uint8_
     is_eight_by_eight = (UTL_H264_SCALING_LIST_8X8_ELEMENT_COUNT == elementCount);
     valid_count       = is_four_by_four || is_eight_by_eight;
     LOGASSERT(valid_count);
-    side           = is_four_by_four ? 4 : 8;
+    side           = is_four_by_four ? SCALING_LIST_4X4_SIDE : SCALING_LIST_8X8_SIDE;
     previous_scale = SCALING_LIST_INITIAL_SCALE;
     row            = 0;
     column         = 0;
@@ -1193,18 +1536,18 @@ void Utl_H264_InitializePps(Utl_H264_PpsParams_t* params,
     LOGASSERT(seqParameterSetId <= UTL_H264_MAX_SEQUENCE_PARAMETER_SET_ID);
     LOGASSERT(picInitQp <= UTL_H264_MAX_QUANTIZATION_PARAMETER);
     LOGASSERT(picInitQs <= UTL_H264_MAX_QUANTIZATION_PARAMETER);
-    LOGASSERT((0 == entropyCodingMode) || (1 == entropyCodingMode));
-    LOGASSERT((0 == bottomFieldPicOrderInFramePresent) || (1 == bottomFieldPicOrderInFramePresent));
+    AssertBoolean(entropyCodingMode);
+    AssertBoolean(bottomFieldPicOrderInFramePresent);
     LOGASSERT((0 < numRefIdxL0DefaultActive) && (UTL_H264_MAX_REFERENCE_LIST_ENTRIES >= numRefIdxL0DefaultActive));
     LOGASSERT((0 < numRefIdxL1DefaultActive) && (UTL_H264_MAX_REFERENCE_LIST_ENTRIES >= numRefIdxL1DefaultActive));
-    LOGASSERT((0 == weightedPrediction) || (1 == weightedPrediction));
+    AssertBoolean(weightedPrediction);
     LOGASSERT(UTL_H264_MAX_WEIGHTED_BIPRED_IDC >= weightedBipredIdc);
     LOGASSERT((UTL_H264_MIN_CHROMA_QP_INDEX_OFFSET <= chromaQpIndexOffset) &&
               (UTL_H264_MAX_CHROMA_QP_INDEX_OFFSET >= chromaQpIndexOffset));
-    LOGASSERT((0 == deblockingFilterControlPresent) || (1 == deblockingFilterControlPresent));
-    LOGASSERT((0 == constrainedIntraPrediction) || (1 == constrainedIntraPrediction));
-    LOGASSERT((0 == redundantPictures) || (1 == redundantPictures));
-    LOGASSERT((0 == transform8x8Mode) || (1 == transform8x8Mode));
+    AssertBoolean(deblockingFilterControlPresent);
+    AssertBoolean(constrainedIntraPrediction);
+    AssertBoolean(redundantPictures);
+    AssertBoolean(transform8x8Mode);
     LOGASSERT(chromaFormatIdc <= UTL_H264_CHROMA_FORMAT_444);
     LOGASSERT((UTL_H264_MIN_CHROMA_QP_INDEX_OFFSET <= secondChromaQpIndexOffset) &&
               (UTL_H264_MAX_CHROMA_QP_INDEX_OFFSET >= secondChromaQpIndexOffset));
@@ -1262,91 +1605,91 @@ uint8_t Utl_H264_DeriveLevelIdc(uint32_t width,
     Utl_H264_DeriveCodedDimensions(width, height, FALSE, &width_in_mbs, &height_in_mbs, &padded_width, &padded_height);
     frame_mbs = (uint64_t)width_in_mbs * height_in_mbs;
     selected  = 0;
-    for (level_index = 0; level_index < LEVEL_LIMIT_COUNT; ++level_index)
+    for (level_index = 0; level_index < LEVEL_INDEX_COUNT; ++level_index)
     {
         switch (level_index)
         {
-        case 0:
+        case LEVEL_INDEX_1_0:
             limits.maximumFrameMacroblocks     = LEVEL_1_0_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_1_0_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_1_0_IDC;
             break;
-        case 1:
+        case LEVEL_INDEX_1_1:
             limits.maximumFrameMacroblocks     = LEVEL_1_1_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_1_1_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_1_1_IDC;
             break;
-        case 2:
+        case LEVEL_INDEX_1_2:
             limits.maximumFrameMacroblocks     = LEVEL_1_2_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_1_2_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_1_2_IDC;
             break;
-        case 3:
+        case LEVEL_INDEX_1_3:
             limits.maximumFrameMacroblocks     = LEVEL_1_3_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_1_3_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_1_3_IDC;
             break;
-        case 4:
+        case LEVEL_INDEX_2_1:
             limits.maximumFrameMacroblocks     = LEVEL_2_1_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_2_1_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_2_1_IDC;
             break;
-        case 5:
+        case LEVEL_INDEX_2_2:
             limits.maximumFrameMacroblocks     = LEVEL_2_2_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_2_2_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_2_2_IDC;
             break;
-        case 6:
+        case LEVEL_INDEX_3_0:
             limits.maximumFrameMacroblocks     = LEVEL_3_0_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_3_0_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_3_0_IDC;
             break;
-        case 7:
+        case LEVEL_INDEX_3_1:
             limits.maximumFrameMacroblocks     = LEVEL_3_1_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_3_1_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_3_1_IDC;
             break;
-        case 8:
+        case LEVEL_INDEX_3_2:
             limits.maximumFrameMacroblocks     = LEVEL_3_2_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_3_2_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_3_2_IDC;
             break;
-        case 9:
+        case LEVEL_INDEX_4_0:
             limits.maximumFrameMacroblocks     = LEVEL_4_0_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_4_0_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_4_0_IDC;
             break;
-        case 10:
+        case LEVEL_INDEX_4_2:
             limits.maximumFrameMacroblocks     = LEVEL_4_2_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_4_2_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_4_2_IDC;
             break;
-        case 11:
+        case LEVEL_INDEX_5_0:
             limits.maximumFrameMacroblocks     = LEVEL_5_0_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_5_0_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_5_0_IDC;
             break;
-        case 12:
+        case LEVEL_INDEX_5_1:
             limits.maximumFrameMacroblocks     = LEVEL_5_1_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_5_1_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_5_1_IDC;
             break;
-        case 13:
+        case LEVEL_INDEX_5_2:
             limits.maximumFrameMacroblocks     = LEVEL_5_2_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_5_2_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_5_2_IDC;
             break;
-        case 14:
+        case LEVEL_INDEX_6_0:
             limits.maximumFrameMacroblocks     = LEVEL_6_0_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_6_0_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_6_0_IDC;
             break;
-        case 15:
+        case LEVEL_INDEX_6_1:
             limits.maximumFrameMacroblocks     = LEVEL_6_1_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_6_1_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_6_1_IDC;
             break;
-        case 16:
+        case LEVEL_INDEX_6_2:
             limits.maximumFrameMacroblocks     = LEVEL_6_2_MAX_FRAME_MBS;
             limits.maximumMacroblocksPerSecond = LEVEL_6_2_MAX_MBS_PER_SECOND;
             limits.levelIdc                    = UTL_H264_LEVEL_6_2_IDC;
@@ -1397,14 +1740,6 @@ bool_t Utl_H264_IsProfileCodingCompatible(uint8_t profileIdc,
                                           int32_t chromaQpIndexOffset,
                                           int32_t secondChromaQpIndexOffset)
 {
-    bool_t valid_slice;
-    bool_t valid_constraints;
-    bool_t valid_bipred;
-    bool_t first_qp_minimum;
-    bool_t first_qp_maximum;
-    bool_t second_qp_minimum;
-    bool_t second_qp_maximum;
-    bool_t valid_qp;
     bool_t is_valid;
     bool_t baseline;
     bool_t main_profile;
@@ -1414,10 +1749,6 @@ bool_t Utl_H264_IsProfileCodingCompatible(uint8_t profileIdc,
     bool_t profile_supported;
     bool_t uses_cavlc;
     bool_t is_intra;
-    bool_t is_predictive;
-    bool_t is_baseline_slice;
-    bool_t unweighted_prediction;
-    bool_t unweighted_bipred;
     bool_t baseline_tools_valid;
     bool_t distinct_chroma_offsets;
     bool_t has_extension;
@@ -1429,32 +1760,17 @@ bool_t Utl_H264_IsProfileCodingCompatible(uint8_t profileIdc,
     bool_t restricted_picture;
     bool_t needs_regular_picture;
     bool_t regular_picture;
-    bool_t is_high;
-    bool_t is_high10;
-    bool_t permits_progressive_constraint;
-    bool_t is_bidirectional;
-    bool_t uses_bipred;
-    bool_t uses_weighting;
-    bool_t violates_constrained_high;
-    bool_t constrained_high_valid;
+    bool_t high_constraints_valid;
 
-    valid_slice       = (sliceType < 2 * UTL_H264_SLICE_TYPE_ALL_OFFSET);
-    valid_constraints = TRUE;
-    if (constraintSetFlags & RESERVED_CONSTRAINT_BITS_MASK)
-    {
-        valid_constraints = FALSE;
-    }
-    valid_bipred       = (weightedBipredIdc <= UTL_H264_MAX_WEIGHTED_BIPRED_IDC);
-    first_qp_minimum   = (UTL_H264_MIN_CHROMA_QP_INDEX_OFFSET <= chromaQpIndexOffset);
-    first_qp_maximum   = (UTL_H264_MAX_CHROMA_QP_INDEX_OFFSET >= chromaQpIndexOffset);
-    second_qp_minimum  = (UTL_H264_MIN_CHROMA_QP_INDEX_OFFSET <= secondChromaQpIndexOffset);
-    second_qp_maximum  = (UTL_H264_MAX_CHROMA_QP_INDEX_OFFSET >= secondChromaQpIndexOffset);
-    valid_qp           = first_qp_minimum && first_qp_maximum && second_qp_minimum && second_qp_maximum;
-    is_valid           = valid_slice && valid_constraints && valid_bipred && valid_qp;
-    sliceType         %= UTL_H264_SLICE_TYPE_ALL_OFFSET;
-    baseline           = (UTL_H264_PROFILE_BASELINE == profileIdc);
-    main_profile       = (UTL_H264_PROFILE_MAIN == profileIdc);
-    extended           = (UTL_H264_PROFILE_EXTENDED == profileIdc);
+    is_valid      = IsCodingSyntaxValid(sliceType,
+                                        constraintSetFlags,
+                                        weightedBipredIdc,
+                                        chromaQpIndexOffset,
+                                        secondChromaQpIndexOffset);
+    sliceType    %= UTL_H264_SLICE_TYPE_ALL_OFFSET;
+    baseline      = (UTL_H264_PROFILE_BASELINE == profileIdc);
+    main_profile  = (UTL_H264_PROFILE_MAIN == profileIdc);
+    extended      = (UTL_H264_PROFILE_EXTENDED == profileIdc);
     if (constraintSetFlags & UTL_H264_CONSTRAINT_SET0_FLAG)
     {
         baseline = TRUE;
@@ -1496,14 +1812,13 @@ bool_t Utl_H264_IsProfileCodingCompatible(uint8_t profileIdc,
         profile_supported = FALSE;
         break;
     }
-    is_valid              = is_valid && profile_supported;
-    is_intra              = (UTL_H264_SLICE_TYPE_I == sliceType);
-    is_predictive         = (UTL_H264_SLICE_TYPE_P == sliceType);
-    is_baseline_slice     = is_intra || is_predictive;
-    unweighted_prediction = (FALSE == weightedPredFlag);
-    unweighted_bipred     = (0 == weightedBipredIdc);
-    baseline_tools_valid =
-        frameMbsOnlyFlag && uses_cavlc && unweighted_prediction && unweighted_bipred && is_baseline_slice;
+    is_valid             = is_valid && profile_supported;
+    is_intra             = (UTL_H264_SLICE_TYPE_I == sliceType);
+    baseline_tools_valid = IsBaselineCodingCompatible(frameMbsOnlyFlag,
+                                                      entropyCodingModeFlag,
+                                                      weightedPredFlag,
+                                                      weightedBipredIdc,
+                                                      sliceType);
     if (baseline)
     {
         is_valid = is_valid && baseline_tools_valid;
@@ -1534,28 +1849,13 @@ bool_t Utl_H264_IsProfileCodingCompatible(uint8_t profileIdc,
     {
         is_valid = is_valid && is_intra;
     }
-    is_high                        = (UTL_H264_PROFILE_HIGH == profileIdc);
-    is_high10                      = (UTL_H264_PROFILE_HIGH_10 == profileIdc);
-    permits_progressive_constraint = is_high || is_high10;
-    if (constraintSetFlags & UTL_H264_CONSTRAINT_SET4_FLAG)
-    {
-        if (permits_progressive_constraint)
-        {
-            is_valid = is_valid && frameMbsOnlyFlag;
-        }
-        if (constraintSetFlags & UTL_H264_CONSTRAINT_SET5_FLAG)
-        {
-            is_bidirectional          = (UTL_H264_SLICE_TYPE_B == sliceType);
-            uses_bipred               = (0 < weightedBipredIdc);
-            uses_weighting            = weightedPredFlag || uses_bipred;
-            violates_constrained_high = is_bidirectional || uses_weighting;
-            constrained_high_valid    = (FALSE == violates_constrained_high);
-            if (is_high)
-            {
-                is_valid = is_valid && constrained_high_valid;
-            }
-        }
-    }
+    high_constraints_valid = IsHighConstraintCompatible(profileIdc,
+                                                        constraintSetFlags,
+                                                        frameMbsOnlyFlag,
+                                                        weightedPredFlag,
+                                                        weightedBipredIdc,
+                                                        sliceType);
+    is_valid               = is_valid && high_constraints_valid;
     return is_valid;
 }
 
@@ -1837,52 +2137,52 @@ void Utl_H264_DeriveAspectRatio(uint32_t  width,
         ratio    = ((uint64_t)width << SAR_NUMERATOR_SHIFT) | height;
         switch (ratio)
         {
-        case ((uint64_t)1 << SAR_NUMERATOR_SHIFT) | 1:
+        case SAR_1_TO_1:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_1_TO_1;
             break;
-        case ((uint64_t)12 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_12_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_12_TO_11;
             break;
-        case ((uint64_t)10 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_10_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_10_TO_11;
             break;
-        case ((uint64_t)16 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_16_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_16_TO_11;
             break;
-        case ((uint64_t)40 << SAR_NUMERATOR_SHIFT) | 33:
+        case SAR_40_TO_33:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_40_TO_33;
             break;
-        case ((uint64_t)24 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_24_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_24_TO_11;
             break;
-        case ((uint64_t)20 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_20_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_20_TO_11;
             break;
-        case ((uint64_t)32 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_32_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_32_TO_11;
             break;
-        case ((uint64_t)80 << SAR_NUMERATOR_SHIFT) | 33:
+        case SAR_80_TO_33:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_80_TO_33;
             break;
-        case ((uint64_t)18 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_18_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_18_TO_11;
             break;
-        case ((uint64_t)15 << SAR_NUMERATOR_SHIFT) | 11:
+        case SAR_15_TO_11:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_15_TO_11;
             break;
-        case ((uint64_t)64 << SAR_NUMERATOR_SHIFT) | 33:
+        case SAR_64_TO_33:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_64_TO_33;
             break;
-        case ((uint64_t)160 << SAR_NUMERATOR_SHIFT) | 99:
+        case SAR_160_TO_99:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_160_TO_99;
             break;
-        case ((uint64_t)4 << SAR_NUMERATOR_SHIFT) | 3:
+        case SAR_4_TO_3:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_4_TO_3;
             break;
-        case ((uint64_t)3 << SAR_NUMERATOR_SHIFT) | 2:
+        case SAR_3_TO_2:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_3_TO_2;
             break;
-        case ((uint64_t)2 << SAR_NUMERATOR_SHIFT) | 1:
+        case SAR_2_TO_1:
             (*aspectRatioIdc) = UTL_H264_ASPECT_RATIO_IDC_2_TO_1;
             break;
         default:
@@ -1903,22 +2203,35 @@ void Utl_H264_DeriveAspectRatio(uint32_t  width,
  */
 uint8_t Utl_H264_DeriveSliceType(Utl_H264_PictureType_t pictureType)
 {
+    bool_t  is_idr;
+    bool_t  is_intra;
+    bool_t  is_predictive;
+    bool_t  is_bidirectional;
+    bool_t  intra_picture;
+    bool_t  inter_picture;
+    bool_t  valid_picture;
     uint8_t slice_type;
 
-    switch (pictureType)
+    is_idr           = (UTL_H264_PICTURE_TYPE_IDR == pictureType);
+    is_intra         = (UTL_H264_PICTURE_TYPE_I == pictureType);
+    is_predictive    = (UTL_H264_PICTURE_TYPE_P == pictureType);
+    is_bidirectional = (UTL_H264_PICTURE_TYPE_B == pictureType);
+    intra_picture    = is_idr || is_intra;
+    inter_picture    = is_predictive || is_bidirectional;
+    valid_picture    = intra_picture || inter_picture;
+    LOGASSERT(valid_picture);
+    slice_type = UTL_H264_SLICE_TYPE_I;
+    if (is_predictive)
     {
-    case UTL_H264_PICTURE_TYPE_IDR:
-    case UTL_H264_PICTURE_TYPE_I:
-        slice_type = UTL_H264_SLICE_TYPE_I;
-        break;
-    case UTL_H264_PICTURE_TYPE_P:
         slice_type = UTL_H264_SLICE_TYPE_P;
-        break;
-    case UTL_H264_PICTURE_TYPE_B:
+    }
+    else if (is_bidirectional)
+    {
         slice_type = UTL_H264_SLICE_TYPE_B;
-        break;
-    default:
-        OS_AssertFailure("Unsupported H.264 picture type", __FILE__, __LINE__);
+    }
+    else
+    {
+        /* Both IDR and ordinary intra pictures use I-slice syntax. */
     }
     return slice_type;
 }
@@ -1933,14 +2246,29 @@ void Utl_H264_DeriveActiveReferenceCounts(uint8_t   sliceType,
                                           uint32_t* list0Count,
                                           uint32_t* list1Count)
 {
-    LOGASSERT(UTL_H264_SLICE_TYPE_I == sliceType || UTL_H264_SLICE_TYPE_P == sliceType ||
-              UTL_H264_SLICE_TYPE_B == sliceType);
+    bool_t is_intra;
+    bool_t is_predictive;
+    bool_t is_bidirectional;
+    bool_t is_inter;
+    bool_t valid_slice;
+    bool_t has_references;
+    bool_t uses_list0;
+    bool_t uses_list1;
+
+    is_intra         = (UTL_H264_SLICE_TYPE_I == sliceType);
+    is_predictive    = (UTL_H264_SLICE_TYPE_P == sliceType);
+    is_bidirectional = (UTL_H264_SLICE_TYPE_B == sliceType);
+    is_inter         = is_predictive || is_bidirectional;
+    valid_slice      = is_intra || is_inter;
+    LOGASSERT(valid_slice);
     LOGASSERT(decodedPictureCount <= UTL_H264_MAX_DECODED_PICTURE_BUFFER_ENTRIES);
     LOGASSERT(NULL != list0Count);
     LOGASSERT(NULL != list1Count);
-
-    (*list0Count) = UTL_H264_SLICE_TYPE_I != sliceType && 0 != decodedPictureCount ? (uint32_t)decodedPictureCount : 1;
-    (*list1Count) = UTL_H264_SLICE_TYPE_B == sliceType && 0 != decodedPictureCount ? (uint32_t)decodedPictureCount : 1;
+    has_references = (0 < decodedPictureCount);
+    uses_list0     = is_inter && has_references;
+    uses_list1     = is_bidirectional && has_references;
+    (*list0Count)  = uses_list0 ? decodedPictureCount : 1;
+    (*list1Count)  = uses_list1 ? decodedPictureCount : 1;
 }
 
 /*************************************************************************************************/

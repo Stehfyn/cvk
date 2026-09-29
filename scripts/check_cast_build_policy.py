@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 import re
 import sys
+import subprocess
 import xml.etree.ElementTree as ET
 
 
@@ -26,7 +27,30 @@ def main():
 
     def require(condition, path, message):
         if not condition:
-            failures.append(f"{path.relative_to(build)}: {message}")
+            label = path.relative_to(build) if path.is_relative_to(build) else path.relative_to(root)
+            failures.append(f"{label}: {message}")
+
+    # Inspect the effective Clang configuration, including built-in defaults.
+    policy = root / "examples/CastDemo/.clang-tidy"
+    cache = (build / "CMakeCache.txt").read_text(encoding="utf-8")
+    tidy = re.search(r"^CAST_CLANG_TIDY_EXECUTABLE:FILEPATH=(.+)$", cache, re.M)
+    require(tidy is not None, policy, "configured clang-tidy is missing")
+    if tidy is not None:
+        result = subprocess.run([tidy[1], f"--config-file={policy}", "--dump-config"],
+                                capture_output=True, text=True, check=True)
+        config = result.stdout
+        extra = re.search(r"^ExtraArgs:\n((?:[ \t]+[^\n]*\n)+)", config, re.M)
+        options = re.findall(r"^[ \t]+-[ \t]+['\"]?([^'\"\s]+)", extra[1], re.M) if extra else []
+        require(options == ["-Wno-padded", "-Wno-documentation", "-Wno-unsafe-buffer-usage"], policy,
+                "only the approved compiler-padding, documentation and raw C buffer exceptions are permitted")
+        require("-bugprone-easily-swappable-parameters" in config, policy,
+                "the approved adjacent-parameter exception must be effective")
+        for option, expected in (("MinimumParameterNameLength", 1),
+                                 ("MinimumVariableNameLength", 3),
+                                 ("MinimumLoopCounterNameLength", 2)):
+            match = re.search(r"readability-identifier-length\." + option + r": +['\"]?(\d+)", config)
+            require(match is not None and int(match[1]) == expected, policy,
+                    f"identifier-length {option} must be {expected}")
 
     for category, paths in (("owned", owned), ("external", external)):
         for path in paths:

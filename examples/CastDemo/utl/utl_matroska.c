@@ -15,12 +15,20 @@
 
 #include "os/os_compiler.h"
 #include "utl/utl_matroska.h"
+#include "os/os_types.h"
+
+#include <stdint.h>
 
 /*=================================================================================================
 ** 3. DECLARATIONS
 ** 
 ** 3.1 Macros
 **===============================================================================================*/
+
+/* RFC 8794 section 4: one width-marker bit per encoded VINT byte. */
+#define VINT_BYTE_BIT_COUNT     (8)    ///< Bits in each encoded byte.
+#define VINT_DATA_BITS_PER_BYTE (7)    ///< Payload bits added by each width increment.
+#define VINT_FIRST_WIDTH_MARKER (0x80) ///< One-byte VINT width marker.
 
 /*=================================================================================================
 ** 3.2 Types
@@ -114,7 +122,7 @@ static FORCE_INLINE void WriteEncoded(byte_t* buffer, uint32_t byteCount, uint64
     {
         --byte_index;
         buffer[byte_index]   = (byte_t)value;
-        value              >>= 8;
+        value              >>= VINT_BYTE_BIT_COUNT;
         if (!(0 != byte_index))
         {
             break;
@@ -157,7 +165,7 @@ bool_t Utl_Matroska_ReadVint(Utl_Matroska_Vint_t* value, const byte_t* buffer, u
         is_valid   = has_marker;
         if (has_marker)
         {
-            marker = 0x80;
+            marker = VINT_FIRST_WIDTH_MARKER;
             width  = 1;
             for (;;)
             {
@@ -177,14 +185,14 @@ bool_t Utl_Matroska_ReadVint(Utl_Matroska_Vint_t* value, const byte_t* buffer, u
                 byte_index          = 0;
                 for (;;)
                 {
-                    result.encodedValue = (result.encodedValue << 8) | buffer[byte_index];
+                    result.encodedValue = (result.encodedValue << VINT_BYTE_BIT_COUNT) | buffer[byte_index];
                     ++byte_index;
                     if (!(byte_index < width))
                     {
                         break;
                     }
                 }
-                data_mask             = (((uint64_t)1 << (7 * width)) - 1);
+                data_mask             = (((uint64_t)1 << (VINT_DATA_BITS_PER_BYTE * width)) - 1);
                 result.value          = result.encodedValue & data_mask;
                 result.byteCount      = width;
                 result.allDataBitsSet = (data_mask == result.value);
@@ -206,7 +214,7 @@ bool_t Utl_Matroska_ReadElementHeader(Utl_Matroska_ElementHeader_t* header,
                                       uint64_t                      byteCount,
                                       uint64_t                      remaining)
 {
-    Utl_Matroska_Vint_t          id;
+    Utl_Matroska_Vint_t          identifier;
     Utl_Matroska_Vint_t          size;
     bool_t                       has_output;
     bool_t                       is_valid;
@@ -217,39 +225,39 @@ bool_t Utl_Matroska_ReadElementHeader(Utl_Matroska_ElementHeader_t* header,
     bool_t                       header_fits;
     bool_t                       payload_fits;
 
-    id.encodedValue     = 0;
-    id.value            = 0;
-    id.byteCount        = 0;
-    id.allDataBitsSet   = FALSE;
-    size.encodedValue   = 0;
-    size.value          = 0;
-    size.byteCount      = 0;
-    size.allDataBitsSet = FALSE;
-    has_output          = (NULL != header);
-    is_valid            = has_output;
+    identifier.encodedValue   = 0;
+    identifier.value          = 0;
+    identifier.byteCount      = 0;
+    identifier.allDataBitsSet = FALSE;
+    size.encodedValue         = 0;
+    size.value                = 0;
+    size.byteCount            = 0;
+    size.allDataBitsSet       = FALSE;
+    has_output                = (NULL != header);
+    is_valid                  = has_output;
     if (is_valid)
     {
-        is_valid = Utl_Matroska_ReadVint(&id, buffer, byteCount);
+        is_valid = Utl_Matroska_ReadVint(&identifier, buffer, byteCount);
     }
     if (is_valid)
     {
-        id_width_fits = (UTL_MATROSKA_MAX_ID_BYTES >= id.byteCount);
+        id_width_fits = (UTL_MATROSKA_MAX_ID_BYTES >= identifier.byteCount);
         is_valid      = id_width_fits;
     }
     if (is_valid)
     {
-        result.id         = (uint32_t)id.encodedValue;
+        result.id         = (uint32_t)identifier.encodedValue;
         expected_id_bytes = GetIdByteCount(result.id);
-        id_is_canonical   = (id.byteCount == expected_id_bytes);
+        id_is_canonical   = (identifier.byteCount == expected_id_bytes);
         is_valid          = id_is_canonical;
     }
     if (is_valid)
     {
-        is_valid = Utl_Matroska_ReadVint(&size, buffer + id.byteCount, byteCount - id.byteCount);
+        is_valid = Utl_Matroska_ReadVint(&size, buffer + identifier.byteCount, byteCount - identifier.byteCount);
     }
     if (is_valid)
     {
-        result.headerByteCount  = id.byteCount + size.byteCount;
+        result.headerByteCount  = identifier.byteCount + size.byteCount;
         result.sizeByteCount    = size.byteCount;
         result.unknownSize      = size.allDataBitsSet;
         result.payloadByteCount = size.value;
@@ -311,7 +319,7 @@ uint32_t Utl_Matroska_WriteElementHeader(const Utl_Matroska_ElementHeader_t* hea
         if (is_valid)
         {
             header_bytes = id_bytes + header->sizeByteCount;
-            marker       = ((uint64_t)1 << (7 * header->sizeByteCount));
+            marker       = ((uint64_t)1 << (VINT_DATA_BITS_PER_BYTE * header->sizeByteCount));
             maximum_size = marker - 1;
             payload_fits = header->unknownSize || (header->payloadByteCount < maximum_size);
             has_capacity = (header_bytes <= capacity);

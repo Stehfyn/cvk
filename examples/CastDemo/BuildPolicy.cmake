@@ -1,5 +1,6 @@
 # Required owned-code policy. External libraries/headers are excluded by user instruction;
-# compiler-inserted padding remains the only per-diagnostic owned-code exemption.
+# MSVC permits only compiler padding. The four later approved Clang exceptions
+# are specified in .clang-tidy; the VS command line retains the same check selection.
 find_program(CAST_CLANG_TIDY_EXECUTABLE NAMES clang-tidy REQUIRED)
 get_filename_component(cast_clang_tidy_directory "${CAST_CLANG_TIDY_EXECUTABLE}" DIRECTORY)
 set(cast_clang_tidy_config "${CMAKE_CURRENT_LIST_DIR}/.clang-tidy")
@@ -30,7 +31,7 @@ function(cast_apply_build_policy target)
         VS_GLOBAL_EnableMicrosoftCodeAnalysis true
         VS_GLOBAL_EnableClangTidyCodeAnalysis true
         VS_GLOBAL_ClangTidyToolPath "${cast_clang_tidy_directory}"
-        VS_GLOBAL_ClangTidyChecks "clang-analyzer-*,bugprone-*,cert-*,concurrency-*,misc-*,performance-*,portability-*,readability-*"
+        VS_GLOBAL_ClangTidyChecks "clang-analyzer-*,bugprone-*,cert-*,concurrency-*,misc-*,performance-*,portability-*,readability-*,-bugprone-easily-swappable-parameters"
         VS_GLOBAL_ClangTidyHeaderFilter ".*"
         VS_GLOBAL_ClangTidyWarningsInSystemHeaders false
         VS_GLOBAL_ClangTidyToolExeAdditionalOptions "--warnings-as-errors=* --config-file=\"${cast_clang_tidy_config}\"")

@@ -372,19 +372,19 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
     region_offset      = raygen_size;
     for (group_index = 0; group_index < missGroupCount; ++group_index)
     {
-        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + (group_index * handle_stride));
     }
     region_first_group += missGroupCount;
     region_offset += miss_size;
     for (group_index = 0; group_index < hitGroupCount; ++group_index)
     {
-        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + (group_index * handle_stride));
     }
     region_first_group += hitGroupCount;
     region_offset += hit_size;
     for (group_index = 0; group_index < callableGroupCount; ++group_index)
     {
-        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + (group_index * handle_stride));
     }
     cvkUnmapMemory(device, (*pMemory));
 

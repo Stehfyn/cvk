@@ -2,7 +2,7 @@
 if(MSVC AND CMAKE_C_COMPILER_ARCHITECTURE_ID STREQUAL "x64")
     enable_language(ASM_MASM)
     add_subdirectory(msvc/x64)
-    set(crt_native_sources $<TARGET_OBJECTS:crt-native> msvc/crt_float.c)
+    set(crt_native_sources $<TARGET_OBJECTS:crt-native>)
 else()
     message(FATAL_ERROR "The hand-written CRT needs a verified memory backend for this target")
 endif()

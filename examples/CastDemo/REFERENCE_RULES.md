@@ -174,8 +174,13 @@ continue to take precedence where an individual reference function differs.
 ## Acceptance evidence still missing
 
 The user's final compiler/analysis correction requires `/Wall /WX`, with only
-compiler-introduced padding warnings suppressible; no `/QSpectre`, other warning
-suppression or circumvention; no `NO_INLINE`/equivalent; and `FORCE_INLINE` for
+compiler-introduced padding warnings suppressible in MSVC. The user later approved
+two Clang exceptions to preserve bare `\retval None` and existing parameter names:
+`-Wno-documentation` and a minimum parameter-name length of one. A subsequent
+explicit approval adds `-Wno-unsafe-buffer-usage` and exclusion of only
+`bugprone-easily-swappable-parameters`. Bounds/path analysis, sanitizers and
+other checks remain enabled. No `/QSpectre`, other warning suppression or circumvention; no
+`NO_INLINE`/equivalent; and `FORCE_INLINE` for
 inline helpers. C5045 requires valid-by-construction addresses and corrected load
 ordering, not an unchecked speculative read. Clang-tidy must be fully enabled
 for C and fail the build on findings. MISRA C:2025 rule/directive coverage,

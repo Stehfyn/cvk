@@ -56,6 +56,7 @@ VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex)
 VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
 {
     VkImageAspectFlags aspect_mask;
+    VkImageAspectFlagBits plane_aspect;
     uint32_t           plane_count;
     uint32_t           plane_index;
 
@@ -75,7 +76,8 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     plane_count = vkuFormatPlaneCount(format);
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
-        aspect_mask |= (VkImageAspectFlags)cvkGetFormatPlaneAspect(format, plane_index);
+        plane_aspect = cvkGetFormatPlaneAspect(format, plane_index);
+        aspect_mask |= (VkImageAspectFlags)plane_aspect;
     }
     return aspect_mask;
 }
@@ -276,6 +278,7 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
     uint32_t                 plane_strides[VKU_FORMAT_MAX_PLANES];
     VkExtent3D               plane_extents[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceLayers plane_subresource;
+    VkImageAspectFlagBits    plane_aspect;
     VkOffset3D               plane_offset;
     VkExtent2D               divisors;
     VkExtent3D               block_extent;
@@ -315,7 +318,8 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
         block_extent         = vkuFormatTexelBlockExtent(plane_format);
         tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1) / block_extent.width) * plane_texel_size;
         buffer_row_length    = (tight_row_byte_count == plane_strides[plane_index]) ? 0 : (plane_strides[plane_index] / plane_texel_size) * block_extent.width;
-        cvkInitImageSubresourceLayers(&plane_subresource, (VkImageAspectFlags)cvkGetFormatPlaneAspect(imageFormat, plane_index), imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
+        plane_aspect = cvkGetFormatPlaneAspect(imageFormat, plane_index);
+        cvkInitImageSubresourceLayers(&plane_subresource, (VkImageAspectFlags)plane_aspect, imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
         cvkInitBufferImageCopy(&pRegions[plane_index], bufferOffset + plane_offsets[plane_index], buffer_row_length, 0, plane_subresource, plane_offset, plane_extents[plane_index]);
         (*pAspectMask) |= plane_subresource.aspectMask;
     }

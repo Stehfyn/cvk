@@ -1998,13 +1998,24 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
  */
 static FORCE_INLINE double GetRatioFromClick(HWND hSeek, LPARAM lParam)
 {
-    RECT channel;
-    const int x = GET_X_LPARAM(lParam);
-    int span;
+    RECT    channel;
+    int32_t x;
+    double  span;
+    double  offset;
+    bool_t  has_span;
+    double  ratio;
 
     SendMessage(hSeek, TBM_GETCHANNELRECT, 0, (LPARAM)&channel);
-    span = channel.right - channel.left;
-    return (span > 0) ? (double)(x - channel.left) / span : 0.0;
+    x        = GET_X_LPARAM(lParam);
+    span     = (double)channel.right - (double)channel.left;
+    offset   = (double)x - (double)channel.left;
+    has_span = 0.0 < span;
+    ratio    = 0.0;
+    if (has_span)
+    {
+        ratio = offset / span;
+    }
+    return ratio;
 }
 
 /* Subclass: a channel click jumps to the cursor and scrubs; release seeks there exactly. */
@@ -3015,7 +3026,10 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
  *  Retains the context outside the window procedure until all workers and the
  *  native window have stopped using it. Native memory-release failure is retried.
  */
-int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE previousInstance, LPWSTR commandLine, int showCommand)
+int APIENTRY wWinMain(_In_ HINSTANCE instance,
+                      _In_opt_ HINSTANCE previousInstance,
+                      _In_ LPWSTR commandLine,
+                      _In_ int showCommand)
 {
     OS_Memory_t memory;
     bool_t      ready;

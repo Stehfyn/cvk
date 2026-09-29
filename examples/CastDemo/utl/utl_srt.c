@@ -488,7 +488,7 @@ static FORCE_INLINE bool_t ReadLine(Cursor_t* cursor, Line_t* line)
         line->text.byteCount = cursor->offset - first;
         if (cursor->valid)
         {
-            cursor->valid = Utl_Unicode_IsValidUtf8((const byte_t*)line->text.data, line->text.byteCount);
+            cursor->valid = Utl_Unicode_IsValidUtf8(line->text.data, line->text.byteCount);
         }
         has_next = (cursor->offset < cursor->byteCount);
         if (cursor->valid && has_next)

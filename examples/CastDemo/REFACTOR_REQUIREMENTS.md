@@ -29,9 +29,19 @@ The user's final compiler and analysis requirement (2026-09-28) is mandatory:
   standalone SC profile uses `scvk/`. Generators, exported include roots and every
   owned consumer must agree; flat forwarding headers do not satisfy this rule.
 - Compile the owned CastDemo build, gfxlib and CVK with MSVC `/Wall /WX`.
-- Only warnings about compiler-introduced padding may be suppressed. No other
-  owned-code warning may be disabled, filtered out, downgraded or circumvented.
-  The user's later explicit exception is to ignore warnings from external libraries.
+- MSVC permits only compiler-introduced padding warnings to be suppressed.
+  The user subsequently approved two Clang exceptions: documentation diagnostics
+  conflicting with bare `\retval None`, and parameter-name length checks conflicting
+  with existing names. Clang groups the empty-paragraph diagnostic under
+  `-Wdocumentation`; use `-Wno-documentation` and set the minimum parameter-name
+  length to one. Other identifier-length checks remain enabled. No other owned-code
+  warning may be disabled, filtered out, downgraded or circumvented. This later
+  authorization supersedes the padding-only Clang policy in earlier checkpoints.
+  A further explicit approval permits `-Wno-unsafe-buffer-usage` and disabling only
+  `bugprone-easily-swappable-parameters`, preserving C arrays and existing CVK
+  interfaces. The installed Clang 22.1.8 rejects even a bounds-checked C11 array
+  access under the former check. Bounds/path analysis and sanitizers remain required.
+  The user also explicitly requires ignoring warnings from external libraries.
   Keep Volk as a pinned external library and mark dependency/SDK headers as external.
   This explicitly includes Vulkan core, utility, video and SC header families.
   Consume the user's pinned `external/cdx` submodule for applicable DirectX work
@@ -256,7 +266,7 @@ requirement. Neither qualification waives the other requirements.
 | Failure robustness and idempotence | Explicit ownership/state transitions; no terminal-event loss; stop priority; stale completion rejection; cancellation and teardown fault injection; no use-after-free | Open: queue/mailbox tests cover part of the control path only |
 | Optimization | Baseline and resulting CPU, memory, executable/import footprint, latency and throughput measurements; inspect hot-path generated code | Open: no whole-application performance proof |
 | Win32 UI conventions | Retained canonical layout, coherent painting, correct invalidation; theme/DPI/high-contrast behavior; keyboard and UIA verification | Open |
-| Strict enforcement | Format and convention guards; CRLF; warning-clean builds with warnings-as-errors; native AllRules and full configured C clang-tidy analysis; only compiler-inserted padding diagnostics exempt; optimization retained | Open |
+| Strict enforcement | Format and convention guards; CRLF; warning-clean builds with warnings-as-errors; native AllRules and full configured C clang-tidy analysis; only compiler padding and the four explicitly approved Clang exceptions; optimization retained | Open |
 | Correct deliverable | GUI and CLI release builds under `build/windows-msvc-2026/examples/CastDemo/Release`, tested from the final current tree | Intermediate builds exist; final acceptance remains open |
 
 ## Features that must be retained

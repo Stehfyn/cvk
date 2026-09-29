@@ -187,6 +187,7 @@ class Generator:
         self.single_line_prototypes: bool = bool(policy.get("single_line_prototypes", False))
         self.designated_initializers: bool = bool(policy.get("designated_initializers", True))
         self.used_capacities: Dict[str, int] = {}
+        self.array_extents: Dict[str, str] = {}
         self.names: Dict[str, str] = {}
         self.decls: Dict[str, List[str]] = defaultdict(list)   # "" = core, else platform name
         self.defs: Dict[str, List[str]] = defaultdict(list)
@@ -636,7 +637,7 @@ class Generator:
                         fields.append(("pNext", pn))
                         continue
                     if m.array_len:
-                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
                         arrays.append((m.name, m.name))
                     else:
                         params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
@@ -901,6 +902,21 @@ class Generator:
                 + [f"(void)memcpy({local}.{m.name}, {m.name}, sizeof({local}.{m.name}));" for m in arrays]
                 + [f"(*pInfo) = {local};"])
 
+    def array_extent(self, s: Struct, m: Param) -> str:
+        """Name literal registry extents without changing the native array contract."""
+        dimensions = m.array_len.split("][")
+        named = []
+        stem = "CVK_" + "_".join(tokens(s.name[2:]) + tokens(m.name)).upper()
+        for index, dimension in enumerate(dimensions):
+            if dimension.isdecimal():
+                suffix = "_COUNT" if len(dimensions) == 1 else f"_DIMENSION_{index}_COUNT"
+                name = stem + suffix
+                self.array_extents[name] = dimension
+                named.append(name)
+            else:
+                named.append(dimension)
+        return "][".join(named)
+
     def emit_builder(self, s: Struct) -> None:
         name = self.register("cvkInit" + self.struct_short(s), s.name)
         params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
@@ -917,7 +933,7 @@ class Generator:
                 if m.name in ("sType", "pNext"):
                     continue
                 if m.array_len:
-                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
                     body.append(f"(void)memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));")
                     arrays.append(m)
                 else:
@@ -943,7 +959,7 @@ class Generator:
             name = self.register("cvkInit" + self.struct_short(s) + cap, f"{s.name}::{m.name}")
             params = [EmittedParam(f"{s.name}* pInfo", "pInfo", f"Receives the initialized {s.name}", True)]
             if m.array_len:
-                params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
                 body = [f"(void)memcpy(pInfo->{m.name}, {m.name}, sizeof(pInfo->{m.name}));"]
             else:
                 params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
@@ -1306,7 +1322,7 @@ class Generator:
                         params.append(EmittedParam(f"{self.pnext_type(s)} pNext", "pNext", f"Optional extension chain attached to {s.name}, or NULL", False))
                         fields.append(("pNext", "pNext"))
                     elif m.array_len:
-                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                        params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
                         arrays.append((m.name, m.name))
                     else:
                         params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
@@ -1398,7 +1414,7 @@ class Generator:
                     params.append(EmittedParam(f"{self.pnext_type(s)} {pn}", pn, f"Optional extension chain attached to {s.name}, or NULL", False))
                     fields.append(("pNext", pn))
                 elif m.array_len:
-                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{m.array_len}]", m.name, f"{s.name}::{m.name}", False))
+                    params.append(EmittedParam(f"const {m.full_type} {m.name}[{self.array_extent(s, m)}]", m.name, f"{s.name}::{m.name}", False))
                     arrays.append((m.name, m.name))
                 else:
                     params.append(EmittedParam(f"{m.full_type} {m.name}", m.name, f"{s.name}::{m.name}", False))
@@ -1741,7 +1757,7 @@ class Generator:
                 "",
                 "for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)",
                 "{",
-                "    if ((memoryTypeBits & (1u << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))",
+                "    if ((memoryTypeBits & ((uint32_t)1 << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))",
                 "    {",
                 "        return memory_type_index;",
                 "    }",
@@ -1760,7 +1776,7 @@ class Generator:
                 "",
                 "for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)",
                 "{",
-                "    if ((memoryTypeBits & (1u << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))",
+                "    if ((memoryTypeBits & ((uint32_t)1 << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))",
                 "    {",
                 "        return memory_type_index;",
                 "    }",
@@ -2441,6 +2457,7 @@ class Generator:
         all_caps = dict(self.capacities)
         all_caps.update(self.used_capacities)
         caps = "\n".join(f"#define {k} ({v})" for k, v in sorted(all_caps.items()))
+        extents = "\n".join(f"#define {k} ({v})" for k, v in sorted(self.array_extents.items()))
         return self.finish_header(f"""#ifndef CVK_H
 #define CVK_H
 
@@ -2467,6 +2484,9 @@ void cvkCheckResult(VkResult result, const char* pExpression, const char* pFile,
 
 /* Fixed capacities, from cvk.policy.json. */
 {caps}
+
+/* Fixed array extents, from the Vulkan registry. */
+{extents}
 
 {(chr(10) * 2).join(self.fragments)}
 

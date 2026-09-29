@@ -2582,7 +2582,7 @@ void cvkInitDataGraphProcessingEngineCreateInfoARM(VkDataGraphProcessingEngineCr
         .pProcessingEngines    = pProcessingEngines
     };
 }
-void cvkInitDebugMarkerMarkerInfo(VkDebugMarkerMarkerInfoEXT* pInfo, const void* pNext, const char* pMarkerName, const float color[4])
+void cvkInitDebugMarkerMarkerInfo(VkDebugMarkerMarkerInfoEXT* pInfo, const void* pNext, const char* pMarkerName, const float color[CVK_DEBUG_MARKER_MARKER_INFO_EXT_COUNT])
 {
     VkDebugMarkerMarkerInfoEXT initialized_info =
     {
@@ -2637,7 +2637,7 @@ void cvkInitDebugReportCallbackCreateInfo(VkDebugReportCallbackCreateInfoEXT* pI
         .pUserData   = pUserData
     };
 }
-void cvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[4])
+void cvkInitDebugUtilsLabel(VkDebugUtilsLabelEXT* pInfo, const void* pNext, const char* pLabelName, const float color[CVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT initialized_info =
     {
@@ -4694,7 +4694,11 @@ void cvkInitImageAlignmentControlCreateInfoMESA(VkImageAlignmentControlCreateInf
         .maximumRequestedAlignment = maximumRequestedAlignment
     };
 }
-void cvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresource, const VkOffset3D srcOffsets[2], VkImageSubresourceLayers dstSubresource, const VkOffset3D dstOffsets[2])
+void cvkInitImageBlit(VkImageBlit*             pInfo,
+                      VkImageSubresourceLayers srcSubresource,
+                      const VkOffset3D         srcOffsets[CVK_IMAGE_BLIT_OFFSETS_COUNT],
+                      VkImageSubresourceLayers dstSubresource,
+                      const VkOffset3D         dstOffsets[CVK_IMAGE_BLIT_OFFSETS_COUNT])
 {
     VkImageBlit initialized_info =
     {
@@ -4712,9 +4716,9 @@ void cvkInitImageBlit(VkImageBlit* pInfo, VkImageSubresourceLayers srcSubresourc
 void cvkInitImageBlit2(VkImageBlit2*            pInfo,
                        const void*              pNext,
                        VkImageSubresourceLayers srcSubresource,
-                       const VkOffset3D         srcOffsets[2],
+                       const VkOffset3D         srcOffsets[CVK_IMAGE_BLIT_2_OFFSETS_COUNT],
                        VkImageSubresourceLayers dstSubresource,
-                       const VkOffset3D         dstOffsets[2])
+                       const VkOffset3D         dstOffsets[CVK_IMAGE_BLIT_2_OFFSETS_COUNT])
 {
     VkImageBlit2 initialized_info =
     {
@@ -6114,14 +6118,14 @@ void cvkInitPartitionedAccelerationStructureUpdateInstanceDataNV(VkPartitionedAc
 }
 void cvkInitPartitionedAccelerationStructureWriteInstanceDataNV(VkPartitionedAccelerationStructureWriteInstanceDataNV* pInfo,
                                                                 VkTransformMatrixKHR                                   transform,
-                                                                const float                                            explicitAABB[6],
-                                                                uint32_t                                               instanceID,
-                                                                uint32_t                                               instanceMask,
-                                                                uint32_t                                               instanceContributionToHitGroupIndex,
-                                                                VkPartitionedAccelerationStructureInstanceFlagsNV      instanceFlags,
-                                                                uint32_t                                               instanceIndex,
-                                                                uint32_t                                               partitionIndex,
-                                                                VkDeviceAddress                                        accelerationStructure)
+                                                                const float explicitAABB[CVK_PARTITIONED_ACCELERATION_STRUCTURE_WRITE_INSTANCE_DATA_NV_AABB_COUNT],
+                                                                uint32_t    instanceID,
+                                                                uint32_t    instanceMask,
+                                                                uint32_t    instanceContributionToHitGroupIndex,
+                                                                VkPartitionedAccelerationStructureInstanceFlagsNV instanceFlags,
+                                                                uint32_t                                          instanceIndex,
+                                                                uint32_t                                          partitionIndex,
+                                                                VkDeviceAddress                                   accelerationStructure)
 {
     VkPartitionedAccelerationStructureWriteInstanceDataNV initialized_info =
     {
@@ -6140,9 +6144,10 @@ void cvkInitPartitionedAccelerationStructureWriteInstanceDataNV(VkPartitionedAcc
 
     (*pInfo) = initialized_info;
 }
-void cvkInitPartitionedAccelerationStructureWritePartitionTranslationDataNV(VkPartitionedAccelerationStructureWritePartitionTranslationDataNV* pInfo,
-                                                                            uint32_t                                                           partitionIndex,
-                                                                            const float                                                        partitionTranslation[3])
+void cvkInitPartitionedAccelerationStructureWritePartitionTranslationDataNV(
+    VkPartitionedAccelerationStructureWritePartitionTranslationDataNV* pInfo,
+    uint32_t                                                           partitionIndex,
+    const float                                                        partitionTranslation[CVK_PARTITIONED_ACCELERATION_STRUCTURE_WRITE_PARTITION_TRANSLATION_DATA_NV_TRANSLATION_COUNT])
 {
     VkPartitionedAccelerationStructureWritePartitionTranslationDataNV initialized_info =
     {
@@ -10597,7 +10602,7 @@ void cvkInitPipelineColorBlendStateCreateInfo(VkPipelineColorBlendStateCreateInf
                                               VkLogicOp                                  logicOp,
                                               uint32_t                                   attachmentCount,
                                               const VkPipelineColorBlendAttachmentState* pAttachments,
-                                              const float                                blendConstants[4])
+                                              const float                                blendConstants[CVK_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO_CONSTANTS_COUNT])
 {
     VkPipelineColorBlendStateCreateInfo initialized_info =
     {
@@ -10812,7 +10817,7 @@ void cvkInitPipelineFragmentShadingRateEnumStateCreateInfoNV(VkPipelineFragmentS
                                                              const void*                                         pNext,
                                                              VkFragmentShadingRateTypeNV                         shadingRateType,
                                                              VkFragmentShadingRateNV                             shadingRate,
-                                                             const VkFragmentShadingRateCombinerOpKHR            combinerOps[2])
+                                                             const VkFragmentShadingRateCombinerOpKHR            combinerOps[CVK_PIPELINE_FRAGMENT_SHADING_RATE_ENUM_STATE_CREATE_INFO_NV_OPS_COUNT])
 {
     VkPipelineFragmentShadingRateEnumStateCreateInfoNV initialized_info =
     {
@@ -10830,7 +10835,7 @@ void cvkInitPipelineFragmentShadingRateEnumStateCreateInfoNV(VkPipelineFragmentS
 void cvkInitPipelineFragmentShadingRateStateCreateInfo(VkPipelineFragmentShadingRateStateCreateInfoKHR* pInfo,
                                                        const void*                                      pNext,
                                                        VkExtent2D                                       fragmentSize,
-                                                       const VkFragmentShadingRateCombinerOpKHR         combinerOps[2])
+                                                       const VkFragmentShadingRateCombinerOpKHR         combinerOps[CVK_PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR_OPS_COUNT])
 {
     VkPipelineFragmentShadingRateStateCreateInfoKHR initialized_info =
     {
@@ -13547,7 +13552,7 @@ void cvkInitTraceRaysIndirectCommand(VkTraceRaysIndirectCommandKHR* pInfo, uint3
         .depth  = depth
     };
 }
-void cvkInitTransformMatrix(VkTransformMatrixKHR* pInfo, const float matrix[3][4])
+void cvkInitTransformMatrix(VkTransformMatrixKHR* pInfo, const float matrix[CVK_TRANSFORM_MATRIX_KHR_DIMENSION_0_COUNT][CVK_TRANSFORM_MATRIX_KHR_DIMENSION_1_COUNT])
 {
     VkTransformMatrixKHR initialized_info =
     {
@@ -15104,7 +15109,7 @@ void cvkInitAccelerationStructureMotionInstanceDataSrtMotionInstanceNV(VkAcceler
         .srtMotionInstance = srtMotionInstance
     };
 }
-void cvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[4])
+void cvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32[CVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
     VkClearColorValue initialized_info =
     {
@@ -15115,7 +15120,7 @@ void cvkInitClearColorValueFloat32(VkClearColorValue* pInfo, const float float32
 
     (*pInfo) = initialized_info;
 }
-void cvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[4])
+void cvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[CVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
     VkClearColorValue initialized_info =
     {
@@ -15126,7 +15131,7 @@ void cvkInitClearColorValueInt32(VkClearColorValue* pInfo, const int32_t int32[4
 
     (*pInfo) = initialized_info;
 }
-void cvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[4])
+void cvkInitClearColorValueUint32(VkClearColorValue* pInfo, const uint32_t uint32[CVK_CLEAR_COLOR_VALUE_32_COUNT])
 {
     VkClearColorValue initialized_info =
     {
@@ -15751,7 +15756,7 @@ void cvkCmdBeginCustomResolve(VkCommandBuffer commandBuffer, void* pNext)
 
     vkCmdBeginCustomResolveEXT(commandBuffer, &begin_custom_resolve_info);
 }
-void cvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
+void cvkCmdBeginDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[CVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -16618,7 +16623,7 @@ void cvkCmdCuLaunchKernelNVX(VkCommandBuffer    commandBuffer,
 
     vkCmdCuLaunchKernelNVX(commandBuffer, &launch_info);
 }
-void cvkCmdDebugMarkerBegin(VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[4])
+void cvkCmdDebugMarkerBegin(VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[CVK_DEBUG_MARKER_MARKER_INFO_EXT_COUNT])
 {
     VkDebugMarkerMarkerInfoEXT marker_info =
     {
@@ -16635,7 +16640,7 @@ void cvkCmdDebugMarkerEnd(VkCommandBuffer commandBuffer)
 {
     vkCmdDebugMarkerEndEXT(commandBuffer);
 }
-void cvkCmdDebugMarkerInsert(VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[4])
+void cvkCmdDebugMarkerInsert(VkCommandBuffer commandBuffer, const void* pNext, const char* pMarkerName, const float color[CVK_DEBUG_MARKER_MARKER_INFO_EXT_COUNT])
 {
     VkDebugMarkerMarkerInfoEXT marker_info =
     {
@@ -17157,7 +17162,7 @@ void cvkCmdFillMemory(VkCommandBuffer commandBuffer, const VkDeviceAddressRangeK
 {
     vkCmdFillMemoryKHR(commandBuffer, pDstRange, dstFlags, data);
 }
-void cvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[4])
+void cvkCmdInsertDebugUtilsLabel(VkCommandBuffer commandBuffer, const void* pNext, const char* pLabelName, const float color[CVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -22775,7 +22780,7 @@ void cvkMergeValidationCaches(VkDevice device, VkValidationCacheEXT dstCache, ui
 {
     CVK_CHECK(vkMergeValidationCachesEXT(device, dstCache, srcCacheCount, pSrcCaches));
 }
-void cvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
+void cvkQueueBeginDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[CVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -22796,7 +22801,7 @@ void cvkQueueEndDebugUtilsLabel(VkQueue queue)
 {
     vkQueueEndDebugUtilsLabelEXT(queue);
 }
-void cvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[4])
+void cvkQueueInsertDebugUtilsLabel(VkQueue queue, const void* pNext, const char* pLabelName, const float color[CVK_DEBUG_UTILS_LABEL_EXT_COUNT])
 {
     VkDebugUtilsLabelEXT label_info =
     {
@@ -44639,7 +44644,7 @@ uint32_t cvkGetMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemoryType* pMe
 
     for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)
     {
-        if ((memoryTypeBits & (1u << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))
+        if ((memoryTypeBits & ((uint32_t)1 << memory_type_index)) && (pMemoryTypes[memory_type_index].propertyFlags == properties))
         {
             return memory_type_index;
         }
@@ -44653,7 +44658,7 @@ uint32_t cvkGetCompatibleMemoryTypeIndex(uint32_t memoryTypeCount, const VkMemor
 
     for (memory_type_index = 0; memory_type_index < memoryTypeCount; ++memory_type_index)
     {
-        if ((memoryTypeBits & (1u << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))
+        if ((memoryTypeBits & ((uint32_t)1 << memory_type_index)) && ((pMemoryTypes[memory_type_index].propertyFlags & requiredProperties) == requiredProperties))
         {
             return memory_type_index;
         }
@@ -45312,81 +45317,6 @@ VkResult cvkGetQueryPoolResults64(VkDevice device, VkQueryPool queryPool, uint32
                                   (VkQueryResultFlags)(
                                       flags |
                                       (VkFlags)VK_QUERY_RESULT_64_BIT));
-}
-void cvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
-{
-    cvkCmdDispatch(commandBuffer,
-                   (itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width),
-                   (itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height),
-                   (itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth));
-}
-void cvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
-                                VkPipeline             pipeline,
-                                VkPipelineLayout       layout,
-                                uint32_t               firstSet,
-                                uint32_t               descriptorSetCount,
-                                const VkDescriptorSet* pDescriptorSets,
-                                uint32_t               dynamicOffsetCount,
-                                const uint32_t*        pDynamicOffsets,
-                                VkExtent3D             itemCount,
-                                VkExtent3D             itemsPerInvocation,
-                                VkExtent3D             localSize,
-                                uint32_t               pushConstantOffset,
-                                uint32_t               pushConstantSize,
-                                const void*            pPushConstants)
-{
-    cvkCmdBindComputePipeline(commandBuffer, pipeline);
-    cvkCmdBindComputeDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    cvkCmdPushComputeConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
-    cvkCmdDispatchItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
-}
-void cvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
-{
-    VkExtent3D item_count;
-    VkExtent3D items_per_invocation;
-    VkExtent3D local_size;
-
-    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
-    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
-    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
-    cvkCmdDispatchItems(commandBuffer, item_count, items_per_invocation, local_size);
-}
-void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
-                                  VkPipeline             pipeline,
-                                  VkPipelineLayout       layout,
-                                  uint32_t               firstSet,
-                                  uint32_t               descriptorSetCount,
-                                  const VkDescriptorSet* pDescriptorSets,
-                                  uint32_t               dynamicOffsetCount,
-                                  const uint32_t*        pDynamicOffsets,
-                                  uint32_t               pushConstantOffset,
-                                  uint32_t               pushConstantSize,
-                                  const void*            pPushConstants,
-                                  VkExtent2D             itemCount2D,
-                                  VkExtent2D             itemsPerInvocation2D,
-                                  VkExtent2D             localSize2D)
-{
-    VkExtent3D item_count;
-    VkExtent3D items_per_invocation;
-    VkExtent3D local_size;
-
-    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
-    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
-    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
-    cvkCmdDispatchComputeItems(commandBuffer,
-                               pipeline,
-                               layout,
-                               firstSet,
-                               descriptorSetCount,
-                               pDescriptorSets,
-                               dynamicOffsetCount,
-                               pDynamicOffsets,
-                               item_count,
-                               items_per_invocation,
-                               local_size,
-                               pushConstantOffset,
-                               pushConstantSize,
-                               pPushConstants);
 }
 void cvkCreateSignaledFence(VkDevice device, const void* pFenceNext, const VkAllocationCallbacks* pAllocator, VkFence* pFence)
 {
@@ -46409,21 +46339,21 @@ void cvkInitFillPipelineRasterizationStateCreateInfo(VkPipelineRasterizationStat
                                                      VkCullModeFlags                         cullMode,
                                                      VkFrontFace                             frontFace)
 {
-    cvkInitPipelineRasterizationStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, cullMode, frontFace, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
+    cvkInitPipelineRasterizationStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, cullMode, frontFace, VK_FALSE, 0.0F, 0.0F, 0.0F, 1.0F);
 }
 void cvkInitSampleCountPipelineMultisampleStateCreateInfo(VkPipelineMultisampleStateCreateInfo* pInfo,
                                                           const void*                           pNext,
                                                           VkPipelineMultisampleStateCreateFlags flags,
                                                           VkSampleCountFlagBits                 rasterizationSamples)
 {
-    cvkInitPipelineMultisampleStateCreateInfo(pInfo, pNext, flags, rasterizationSamples, VK_FALSE, 0.0f, NULL, VK_FALSE, VK_FALSE);
+    cvkInitPipelineMultisampleStateCreateInfo(pInfo, pNext, flags, rasterizationSamples, VK_FALSE, 0.0F, NULL, VK_FALSE, VK_FALSE);
 }
 void cvkInitDisabledPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo, const void* pNext, VkPipelineDepthStencilStateCreateFlags flags)
 {
     VkStencilOpState stencil_op_state;
 
     cvkInitStencilOpState(&stencil_op_state, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_COMPARE_OP_NEVER, 0, 0, 0);
-    cvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_COMPARE_OP_ALWAYS, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0f, 1.0f);
+    cvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_FALSE, VK_COMPARE_OP_ALWAYS, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0F, 1.0F);
 }
 void cvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo* pInfo,
                                                          const void*                            pNext,
@@ -46434,7 +46364,7 @@ void cvkInitDepthTestPipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilS
     VkStencilOpState stencil_op_state;
 
     cvkInitStencilOpState(&stencil_op_state, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_STENCIL_OP_KEEP, VK_COMPARE_OP_NEVER, 0, 0, 0);
-    cvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_TRUE, depthWriteEnable, depthCompareOp, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0f, 1.0f);
+    cvkInitPipelineDepthStencilStateCreateInfo(pInfo, pNext, flags, VK_TRUE, depthWriteEnable, depthCompareOp, VK_FALSE, VK_FALSE, stencil_op_state, stencil_op_state, 0.0F, 1.0F);
 }
 void cvkInitOpaquePipelineColorBlendAttachmentState(VkPipelineColorBlendAttachmentState* pInfo)
 {
@@ -46475,7 +46405,7 @@ void cvkInitSingleAttachmentPipelineColorBlendStateCreateInfo(VkPipelineColorBle
                                                               VkPipelineColorBlendStateCreateFlags       flags,
                                                               const VkPipelineColorBlendAttachmentState* pAttachment)
 {
-    float blend_constants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    float blend_constants[4] = {0.0F, 0.0F, 0.0F, 0.0F};
 
     cvkInitPipelineColorBlendStateCreateInfo(pInfo, pNext, flags, VK_FALSE, VK_LOGIC_OP_COPY, 1, pAttachment, blend_constants);
 }
@@ -46483,7 +46413,7 @@ void cvkCmdSetViewport2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D)
 {
     VkViewport viewport;
 
-    cvkInitViewport(&viewport, 0.0f, 0.0f, (float)extent2D.width, (float)extent2D.height, 0.0f, 1.0f);
+    cvkInitViewport(&viewport, 0.0F, 0.0F, (float)extent2D.width, (float)extent2D.height, 0.0F, 1.0F);
     cvkCmdSetViewport(commandBuffer, viewport);
 }
 void cvkCmdSetScissor2D(VkCommandBuffer commandBuffer, VkExtent2D extent2D)
@@ -48447,81 +48377,6 @@ VkResult cvkSetupTaskMeshShadingPipeline(VkDevice                               
                                      pAllocator,
                                      pPipeline);
 }
-void cvkCmdDrawMeshTaskItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
-{
-    cvkCmdDrawMeshTasks(commandBuffer,
-                        (itemCount.width + itemsPerInvocation.width * localSize.width - 1) / (itemsPerInvocation.width * localSize.width),
-                        (itemCount.height + itemsPerInvocation.height * localSize.height - 1) / (itemsPerInvocation.height * localSize.height),
-                        (itemCount.depth + itemsPerInvocation.depth * localSize.depth - 1) / (itemsPerInvocation.depth * localSize.depth));
-}
-void cvkCmdDrawMeshShadingTasks(VkCommandBuffer        commandBuffer,
-                                VkPipeline             pipeline,
-                                VkPipelineLayout       layout,
-                                uint32_t               firstSet,
-                                uint32_t               descriptorSetCount,
-                                const VkDescriptorSet* pDescriptorSets,
-                                uint32_t               dynamicOffsetCount,
-                                const uint32_t*        pDynamicOffsets,
-                                VkExtent3D             itemCount,
-                                VkExtent3D             itemsPerInvocation,
-                                VkExtent3D             localSize,
-                                uint32_t               pushConstantOffset,
-                                uint32_t               pushConstantSize,
-                                const void*            pPushConstants)
-{
-    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
-    cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
-    cvkCmdPushMeshShadingConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
-    cvkCmdDrawMeshTaskItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
-}
-void cvkCmdDrawMeshTaskItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
-{
-    VkExtent3D item_count;
-    VkExtent3D items_per_invocation;
-    VkExtent3D local_size;
-
-    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
-    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
-    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
-    cvkCmdDrawMeshTaskItems(commandBuffer, item_count, items_per_invocation, local_size);
-}
-void cvkCmdDrawMeshShadingTasks2D(VkCommandBuffer        commandBuffer,
-                                  VkPipeline             pipeline,
-                                  VkPipelineLayout       layout,
-                                  uint32_t               firstSet,
-                                  uint32_t               descriptorSetCount,
-                                  const VkDescriptorSet* pDescriptorSets,
-                                  uint32_t               dynamicOffsetCount,
-                                  const uint32_t*        pDynamicOffsets,
-                                  uint32_t               pushConstantOffset,
-                                  uint32_t               pushConstantSize,
-                                  const void*            pPushConstants,
-                                  VkExtent2D             itemCount2D,
-                                  VkExtent2D             itemsPerInvocation2D,
-                                  VkExtent2D             localSize2D)
-{
-    VkExtent3D item_count;
-    VkExtent3D items_per_invocation;
-    VkExtent3D local_size;
-
-    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
-    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
-    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
-    cvkCmdDrawMeshShadingTasks(commandBuffer,
-                               pipeline,
-                               layout,
-                               firstSet,
-                               descriptorSetCount,
-                               pDescriptorSets,
-                               dynamicOffsetCount,
-                               pDynamicOffsets,
-                               item_count,
-                               items_per_invocation,
-                               local_size,
-                               pushConstantOffset,
-                               pushConstantSize,
-                               pPushConstants);
-}
 VkResult cvkCreateTaskShader(VkDevice                     device,
                              const void*                  pShaderNext,
                              VkShaderCreateFlagsEXT       flags,
@@ -48891,19 +48746,19 @@ void cvkSetupRayTracingShaderBindingTable(VkPhysicalDevice                 physi
     region_offset      = raygen_size;
     for (group_index = 0; group_index < missGroupCount; ++group_index)
     {
-        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + (group_index * handle_stride));
     }
     region_first_group += missGroupCount;
     region_offset += miss_size;
     for (group_index = 0; group_index < hitGroupCount; ++group_index)
     {
-        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + (group_index * handle_stride));
     }
     region_first_group += hitGroupCount;
     region_offset += hit_size;
     for (group_index = 0; group_index < callableGroupCount; ++group_index)
     {
-        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + group_index * handle_stride);
+        cvkGetRayTracingShaderGroupHandles(device, pipeline, region_first_group + group_index, 1, (size_t)handle_size, mapped + region_offset + (group_index * handle_stride));
     }
     cvkUnmapMemory(device, (*pMemory));
 
@@ -48954,6 +48809,21 @@ void cvkReadCoherentMemory(VkDevice device, VkDeviceMemory memory, VkDeviceSize 
     (void)memcpy(pData, mapped, (size_t)size);
     cvkUnmapMemory(device, memory);
 }
+uint32_t cvkGetWorkgroupCount(uint32_t itemCount, uint32_t itemsPerInvocation, uint32_t localSize)
+{
+    uint64_t items_per_group;
+    uint64_t rounded_count;
+    uint32_t group_count;
+
+    CVK_ASSERT(0 < itemsPerInvocation);
+    CVK_ASSERT(0 < localSize);
+
+    items_per_group = (uint64_t)itemsPerInvocation * (uint64_t)localSize;
+    rounded_count   = (uint64_t)itemCount + items_per_group - 1;
+    group_count     = (uint32_t)(rounded_count / items_per_group);
+
+    return group_count;
+}
 uint32_t cvkGetFormatPlaneCount(VkFormat format)
 {
     return vkuFormatPlaneCount(format);
@@ -48973,9 +48843,10 @@ VkImageAspectFlagBits cvkGetMemoryPlaneAspect(uint32_t planeIndex)
 }
 VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
 {
-    VkImageAspectFlags aspect_mask;
-    uint32_t           plane_count;
-    uint32_t           plane_index;
+    VkImageAspectFlags    aspect_mask;
+    VkImageAspectFlagBits plane_aspect;
+    uint32_t              plane_count;
+    uint32_t              plane_index;
 
     aspect_mask = 0;
     if (vkuFormatHasDepth(format))
@@ -48993,7 +48864,9 @@ VkImageAspectFlags cvkGetFormatAspectMask(VkFormat format)
     plane_count = vkuFormatPlaneCount(format);
     for (plane_index = 0; plane_index < plane_count; ++plane_index)
     {
-        aspect_mask |= (VkImageAspectFlags)cvkGetFormatPlaneAspect(format, plane_index);
+        plane_aspect = cvkGetFormatPlaneAspect(format, plane_index);
+
+        aspect_mask |= (VkImageAspectFlags)plane_aspect;
     }
 
     return aspect_mask;
@@ -49115,6 +48988,7 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
     uint32_t                 plane_strides[VKU_FORMAT_MAX_PLANES];
     VkExtent3D               plane_extents[VKU_FORMAT_MAX_PLANES];
     VkImageSubresourceLayers plane_subresource;
+    VkImageAspectFlagBits    plane_aspect;
     VkOffset3D               plane_offset;
     VkExtent2D               divisors;
     VkExtent3D               block_extent;
@@ -49160,11 +49034,9 @@ uint32_t cvkGetBufferImageCopyRegions(VkDeviceSize             bufferOffset,
         tight_row_byte_count = (VkDeviceSize)((plane_extents[plane_index].width + block_extent.width - 1) / block_extent.width) * plane_texel_size;
         buffer_row_length    = (tight_row_byte_count == plane_strides[plane_index]) ? 0 : (plane_strides[plane_index] / plane_texel_size) * block_extent.width;
 
-        cvkInitImageSubresourceLayers(&plane_subresource,
-                                      (VkImageAspectFlags)cvkGetFormatPlaneAspect(imageFormat, plane_index),
-                                      imageSubresource.mipLevel,
-                                      imageSubresource.baseArrayLayer,
-                                      imageSubresource.layerCount);
+        plane_aspect = cvkGetFormatPlaneAspect(imageFormat, plane_index);
+
+        cvkInitImageSubresourceLayers(&plane_subresource, (VkImageAspectFlags)plane_aspect, imageSubresource.mipLevel, imageSubresource.baseArrayLayer, imageSubresource.layerCount);
         cvkInitBufferImageCopy(&pRegions[plane_index], bufferOffset + plane_offsets[plane_index], buffer_row_length, 0, plane_subresource, plane_offset, plane_extents[plane_index]);
 
         (*pAspectMask) |= plane_subresource.aspectMask;
@@ -49538,6 +49410,40 @@ void cvkCmdTransferBlitImage(VkCommandBuffer          commandBuffer,
                        (VkPipelineStageFlags)VK_PIPELINE_STAGE_TRANSFER_BIT,
                        dstDstStageMask,
                        dependencyFlags);
+}
+void cvkCmdDispatchItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
+{
+    uint32_t group_count_x;
+    uint32_t group_count_y;
+    uint32_t group_count_z;
+
+    group_count_x = cvkGetWorkgroupCount(itemCount.width, itemsPerInvocation.width, localSize.width);
+
+    group_count_y = cvkGetWorkgroupCount(itemCount.height, itemsPerInvocation.height, localSize.height);
+
+    group_count_z = cvkGetWorkgroupCount(itemCount.depth, itemsPerInvocation.depth, localSize.depth);
+
+    cvkCmdDispatch(commandBuffer, group_count_x, group_count_y, group_count_z);
+}
+void cvkCmdDispatchComputeItems(VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                VkExtent3D             itemCount,
+                                VkExtent3D             itemsPerInvocation,
+                                VkExtent3D             localSize,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants)
+{
+    cvkCmdBindComputePipeline(commandBuffer, pipeline);
+    cvkCmdBindComputeDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    cvkCmdPushComputeConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
+    cvkCmdDispatchItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
 }
 void cvkCmdTransferBufferToImage(VkCommandBuffer          commandBuffer,
                                  VkDependencyFlags        dependencyFlags,
@@ -50083,6 +49989,54 @@ void cvkCmdTransferBlitImage2D(VkCommandBuffer          commandBuffer,
                             dstDstAccessMask,
                             dstFinalLayout);
 }
+void cvkCmdDispatchItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDispatchItems(commandBuffer, item_count, items_per_invocation, local_size);
+}
+void cvkCmdDispatchComputeItems2D(VkCommandBuffer        commandBuffer,
+                                  VkPipeline             pipeline,
+                                  VkPipelineLayout       layout,
+                                  uint32_t               firstSet,
+                                  uint32_t               descriptorSetCount,
+                                  const VkDescriptorSet* pDescriptorSets,
+                                  uint32_t               dynamicOffsetCount,
+                                  const uint32_t*        pDynamicOffsets,
+                                  uint32_t               pushConstantOffset,
+                                  uint32_t               pushConstantSize,
+                                  const void*            pPushConstants,
+                                  VkExtent2D             itemCount2D,
+                                  VkExtent2D             itemsPerInvocation2D,
+                                  VkExtent2D             localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDispatchComputeItems(commandBuffer,
+                               pipeline,
+                               layout,
+                               firstSet,
+                               descriptorSetCount,
+                               pDescriptorSets,
+                               dynamicOffsetCount,
+                               pDynamicOffsets,
+                               item_count,
+                               items_per_invocation,
+                               local_size,
+                               pushConstantOffset,
+                               pushConstantSize,
+                               pPushConstants);
+}
 void cvkSetupVideoSession(VkPhysicalDevice             physicalDevice,
                           VkDevice                     device,
                           const void*                  pVideoSessionNext,
@@ -50175,4 +50129,86 @@ void cvkSetupTopLevelAccelerationStructure(VkPhysicalDevice                     
                                   pScratchBuffer,
                                   pScratchMemory,
                                   pScratchDeviceAddress);
+}
+void cvkCmdDrawMeshTaskItems(VkCommandBuffer commandBuffer, VkExtent3D itemCount, VkExtent3D itemsPerInvocation, VkExtent3D localSize)
+{
+    uint32_t group_count_x;
+    uint32_t group_count_y;
+    uint32_t group_count_z;
+
+    group_count_x = cvkGetWorkgroupCount(itemCount.width, itemsPerInvocation.width, localSize.width);
+
+    group_count_y = cvkGetWorkgroupCount(itemCount.height, itemsPerInvocation.height, localSize.height);
+
+    group_count_z = cvkGetWorkgroupCount(itemCount.depth, itemsPerInvocation.depth, localSize.depth);
+
+    cvkCmdDrawMeshTasks(commandBuffer, group_count_x, group_count_y, group_count_z);
+}
+void cvkCmdDrawMeshShadingTasks(VkCommandBuffer        commandBuffer,
+                                VkPipeline             pipeline,
+                                VkPipelineLayout       layout,
+                                uint32_t               firstSet,
+                                uint32_t               descriptorSetCount,
+                                const VkDescriptorSet* pDescriptorSets,
+                                uint32_t               dynamicOffsetCount,
+                                const uint32_t*        pDynamicOffsets,
+                                VkExtent3D             itemCount,
+                                VkExtent3D             itemsPerInvocation,
+                                VkExtent3D             localSize,
+                                uint32_t               pushConstantOffset,
+                                uint32_t               pushConstantSize,
+                                const void*            pPushConstants)
+{
+    cvkCmdBindGraphicsPipeline(commandBuffer, pipeline);
+    cvkCmdBindGraphicsDescriptorSets(commandBuffer, layout, firstSet, descriptorSetCount, pDescriptorSets, dynamicOffsetCount, pDynamicOffsets);
+    cvkCmdPushMeshShadingConstants(commandBuffer, layout, pushConstantOffset, pushConstantSize, pPushConstants);
+    cvkCmdDrawMeshTaskItems(commandBuffer, itemCount, itemsPerInvocation, localSize);
+}
+void cvkCmdDrawMeshTaskItems2D(VkCommandBuffer commandBuffer, VkExtent2D itemCount2D, VkExtent2D itemsPerInvocation2D, VkExtent2D localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDrawMeshTaskItems(commandBuffer, item_count, items_per_invocation, local_size);
+}
+void cvkCmdDrawMeshShadingTasks2D(VkCommandBuffer        commandBuffer,
+                                  VkPipeline             pipeline,
+                                  VkPipelineLayout       layout,
+                                  uint32_t               firstSet,
+                                  uint32_t               descriptorSetCount,
+                                  const VkDescriptorSet* pDescriptorSets,
+                                  uint32_t               dynamicOffsetCount,
+                                  const uint32_t*        pDynamicOffsets,
+                                  uint32_t               pushConstantOffset,
+                                  uint32_t               pushConstantSize,
+                                  const void*            pPushConstants,
+                                  VkExtent2D             itemCount2D,
+                                  VkExtent2D             itemsPerInvocation2D,
+                                  VkExtent2D             localSize2D)
+{
+    VkExtent3D item_count;
+    VkExtent3D items_per_invocation;
+    VkExtent3D local_size;
+
+    cvkInitExtent3D(&item_count, itemCount2D.width, itemCount2D.height, 1);
+    cvkInitExtent3D(&items_per_invocation, itemsPerInvocation2D.width, itemsPerInvocation2D.height, 1);
+    cvkInitExtent3D(&local_size, localSize2D.width, localSize2D.height, 1);
+    cvkCmdDrawMeshShadingTasks(commandBuffer,
+                               pipeline,
+                               layout,
+                               firstSet,
+                               descriptorSetCount,
+                               pDescriptorSets,
+                               dynamicOffsetCount,
+                               pDynamicOffsets,
+                               item_count,
+                               items_per_invocation,
+                               local_size,
+                               pushConstantOffset,
+                               pushConstantSize,
+                               pPushConstants);
 }
