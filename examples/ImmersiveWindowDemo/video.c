@@ -10,7 +10,8 @@
 #include "os/win32/os_text.h"
 #include <stdint.h>
 #ifdef CVK_DEMO_VALIDATION
-#include <stdio.h>
+#include "utl/utl_decimal.h"
+#include "os/os_types.h"
 #endif
 
 #include <d3d10.h>
@@ -69,6 +70,38 @@ struct VideoStream
     } while (0)
 
 static void FillRing(VideoStream* pStream, DWORD budgetMs);
+
+#ifdef CVK_DEMO_VALIDATION
+/*************************************************************************************************/
+/**
+ * \brief Writes a decimal diagnostic value through the generic Win32 text interface.
+ * \param[in] value  Unsigned value to display.
+ * \retval None
+ */
+static FORCE_INLINE void DebugUint32(uint32_t value);
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Decimal ASCII digits have the same values in both native text modes. Storage
+ *  includes the terminator and the decimal module's maximum uint32_t width.
+ */
+static FORCE_INLINE void DebugUint32(uint32_t value)
+{
+    byte_t   digits[sizeof("4294967295")];
+    uint32_t count;
+    uint32_t index;
+    TCHAR    text[sizeof("4294967295")];
+
+    count = Utl_Decimal_WriteUint64(value, digits, sizeof(digits) - 1);
+    for (index = 0; index < count; ++index)
+    {
+        text[index] = (TCHAR)digits[index];
+    }
+    text[count] = 0;
+    OutputDebugString(text);
+}
+#endif
 
 /* ----------------------------------------------------------------- the memory-mapped byte stream */
 
@@ -532,14 +565,23 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
         if (pStream->decodePath != 1)
         {
             D3D11_TEXTURE2D_DESC desc;
+            LPCTSTR              binding;
             cdx11Texture2DGetDesc(pTexture, &desc);
-            fprintf(stderr,
-                    "video: DXGI decoder output %ux%u, format %u, bind flags 0x%X, decoder binding %s\n",
-                    desc.Width,
-                    desc.Height,
-                    desc.Format,
-                    desc.BindFlags,
-                    (desc.BindFlags & D3D11_BIND_DECODER) ? "yes" : "no");
+            binding = TEXT("no\n");
+            if (desc.BindFlags & D3D11_BIND_DECODER)
+            {
+                binding = TEXT("yes\n");
+            }
+            OutputDebugString(TEXT("video: DXGI decoder output "));
+            DebugUint32(desc.Width);
+            OutputDebugString(TEXT("x"));
+            DebugUint32(desc.Height);
+            OutputDebugString(TEXT(", format "));
+            DebugUint32((uint32_t)desc.Format);
+            OutputDebugString(TEXT(", bind flags "));
+            DebugUint32(desc.BindFlags);
+            OutputDebugString(TEXT(", decoder binding "));
+            OutputDebugString(binding);
             pStream->decodePath = 1;
         }
 #endif
@@ -557,7 +599,7 @@ static BOOL UploadSample(VideoStream* pStream, IMFSample* pSample, int slot)
 #ifdef CVK_DEMO_VALIDATION
         if (pStream->decodePath != 2)
         {
-            fprintf(stderr, "video: system-memory decoder output; CPU upload fallback\n");
+            OutputDebugString(TEXT("video: system-memory decoder output; CPU upload fallback\n"));
             pStream->decodePath = 2;
         }
 #endif

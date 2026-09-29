@@ -1,4 +1,6 @@
 #include "vk_diagnostic.h"
+#include "utl/utl_decimal.h"
+#include "os/os_types.h"
 
 #include <unistd.h>
 
@@ -6,6 +8,7 @@
 #define VK_DIAGNOSTIC_HEX_COUNT (8)
 #define VK_DIAGNOSTIC_HEX_MASK  (15)
 #define VK_DIAGNOSTIC_HEX_SHIFT (4)
+#define VK_DIAGNOSTIC_UINT64_DIGITS (20)
 
 static void WriteText(const char* text)
 {
@@ -46,6 +49,38 @@ static void WriteHex(unsigned int value)
 void cvkDiagnosticWrite(const char* text)
 {
     WriteText(text);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Writes a counted text span without a trailing terminator or C runtime.
+ */
+extern FORCE_INLINE void cvkDiagnosticWriteBytes(const char* text, uint32_t byteCount)
+{
+    bool_t has_text;
+    bool_t has_bytes;
+
+    has_text  = (NULL != text);
+    has_bytes = (0 < byteCount);
+    if (has_text && has_bytes)
+    {
+        (void)write(STDERR_FILENO, text, byteCount);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The decimal module writes into bounded caller-owned storage.
+ */
+extern FORCE_INLINE void cvkDiagnosticWriteDecimal(uint64_t value)
+{
+    byte_t   digits[VK_DIAGNOSTIC_UINT64_DIGITS];
+    uint32_t count;
+
+    count = Utl_Decimal_WriteUint64(value, digits, sizeof(digits));
+    cvkDiagnosticWriteBytes((const char*)digits, count);
 }
 
 void cvkDiagnosticWriteHex(uint32_t value)

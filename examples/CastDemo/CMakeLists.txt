@@ -56,7 +56,7 @@ add_library(cast-formats STATIC
     utl/utl_castv2.c utl/utl_castv2.h
     utl/utl_json.c utl/utl_json.h
     utl/utl_chromecast.c utl/utl_chromecast.h
-    utl/utl_decimal.c utl/utl_decimal.h
+    utl/utl_decimal.h
     utl/utl_http.c utl/utl_http.h
     utl/utl_ssdp.c utl/utl_ssdp.h
     ${cast_arguments_source} utl/utl_arguments.h
@@ -82,7 +82,7 @@ set_source_files_properties(mkv_subtitles.c subtitles.c PROPERTIES COMPILE_DEFIN
 set_source_files_properties(mp4_demux.c mp4_mux.c mp4_index.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
 target_include_directories(cast-formats PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 add_dependencies(cast-formats cast-console-ansi)
-target_link_libraries(cast-formats PUBLIC crt cast-console-imports)
+target_link_libraries(cast-formats PUBLIC crt cast-console-imports utl-decimal)
 foreach(cast_text_mode IN ITEMS unicode ansi)
     add_library(cast-text-${cast_text_mode} STATIC os/win32/os_text.c os/win32/os_text.h)
     target_link_libraries(cast-text-${cast_text_mode} PUBLIC cast-formats)
@@ -113,7 +113,7 @@ target_compile_definitions(cast-session PUBLIC UNICODE _UNICODE)
 set_source_files_properties(gpu_probe.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
 set_source_files_properties(audio_gain.c PROPERTIES COMPILE_DEFINITIONS "COBJMACROS;WIN32_LEAN_AND_MEAN")
 set_source_files_properties(cast_session.c PROPERTIES COMPILE_DEFINITIONS "WIN32_LEAN_AND_MEAN")
-target_link_libraries(cast-session PUBLIC cast-formats cast-network cvk volk::volk ws2_32 mswsock secur32 winhttp mfplat mfreadwrite mfuuid ole32 propsys)
+target_link_libraries(cast-session PUBLIC cast-formats cast-network cvk volk::volk vk-diagnostic ws2_32 mswsock secur32 winhttp mfplat mfreadwrite mfuuid ole32 propsys)
 
 add_executable(CastDemo WIN32 cast_gui.c)
 target_compile_definitions(CastDemo PRIVATE UNICODE _UNICODE)

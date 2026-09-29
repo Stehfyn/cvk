@@ -22,7 +22,7 @@ endif()
 target_include_directories(immersive-video PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(immersive-video SYSTEM PUBLIC "${reference_dir}")
-target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf PRIVATE d3dcompiler)
+target_link_libraries(immersive-video PUBLIC cvk volk::volk cdx11 cdxgi cmf vk-diagnostic PRIVATE d3dcompiler)
 option(CVK_DEMO_UNICODE "Select Unicode for the generic Win32 demo interfaces" ON)
 if(CVK_DEMO_UNICODE)
     target_compile_definitions(immersive-video PUBLIC UNICODE _UNICODE)

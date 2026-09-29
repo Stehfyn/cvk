@@ -13,6 +13,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "vk_diagnostic.h"
 #include <WinSock2.h>
 #include <inaddr.h>
 #include <MSWSock.h>
@@ -75,6 +76,7 @@
 #define GROW_IDLE_MAX          (60000)
 #define TRANSFER_MEGABYTE      (1048576.0)
 #define TRANSFER_MILLISECONDS  (1000.0)
+#define TRANSFER_RATE_PRECISION (10)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -1038,6 +1040,8 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
     double                 seconds;
     double                 megabytes;
     double                 megabytes_per_second;
+    uint64_t               milliseconds;
+    uint64_t               rate_tenths;
     head = &request->reader.head;
     LOGASSERT(head->method.byteCount <= REQUEST_CAPACITY);
     LOGASSERT(head->target.byteCount <= REQUEST_CAPACITY);
@@ -1059,18 +1063,30 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
             megabytes_per_second = megabytes / seconds;
         }
     }
-    (void)fprintf(stderr,
-     "server: %.*s %.*s -> %u, sent %llu bytes from offset %llu in %.0f ms = %.1f MB/s%s\n",
-     (int32_t)head->method.byteCount,
-     head->method.data,
-     (int32_t)head->target.byteCount,
-     head->target.data,
-     (uint32_t)response->status,
-     (unsigned long long)sent,
-     (unsigned long long)response->interval.offset,
-     seconds * TRANSFER_MILLISECONDS,
-     megabytes_per_second,
-     response->growing ? " growing" : "");
+    milliseconds = (uint64_t)((seconds * TRANSFER_MILLISECONDS) + (1.0 / 2.0));
+    rate_tenths  = (uint64_t)((megabytes_per_second * TRANSFER_RATE_PRECISION) + (1.0 / 2.0));
+    cvkDiagnosticWrite("server: ");
+    cvkDiagnosticWriteBytes((const char*)head->method.data, head->method.byteCount);
+    cvkDiagnosticWrite(" ");
+    cvkDiagnosticWriteBytes((const char*)head->target.data, head->target.byteCount);
+    cvkDiagnosticWrite(" -> ");
+    cvkDiagnosticWriteDecimal((uint32_t)response->status);
+    cvkDiagnosticWrite(", sent ");
+    cvkDiagnosticWriteDecimal(sent);
+    cvkDiagnosticWrite(" bytes from offset ");
+    cvkDiagnosticWriteDecimal(response->interval.offset);
+    cvkDiagnosticWrite(" in ");
+    cvkDiagnosticWriteDecimal(milliseconds);
+    cvkDiagnosticWrite(" ms = ");
+    cvkDiagnosticWriteDecimal(rate_tenths / TRANSFER_RATE_PRECISION);
+    cvkDiagnosticWrite(".");
+    cvkDiagnosticWriteDecimal(rate_tenths % TRANSFER_RATE_PRECISION);
+    cvkDiagnosticWrite(" MB/s");
+    if (response->growing)
+    {
+        cvkDiagnosticWrite(" growing");
+    }
+    cvkDiagnosticWrite("\n");
 }
 
 /*************************************************************************************************/

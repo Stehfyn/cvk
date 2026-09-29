@@ -1,4 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
+#include "vk_diagnostic.h"
 #include <windows.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +13,9 @@
     {                                                                                                                                                                                                  \
         if (!(condition))                                                                                                                                                                              \
         {                                                                                                                                                                                              \
-            fprintf(stderr, "line %d: %s\n", __LINE__, #condition);                                                                                                                                    \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #condition "\n");                                                                                                                                    \
             return 1;                                                                                                                                                                                  \
         }                                                                                                                                                                                              \
         break;                                                                                                                                                                                         \

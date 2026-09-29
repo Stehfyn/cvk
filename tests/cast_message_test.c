@@ -1,4 +1,5 @@
 /* CASTV2 framing, HTTP range parsing and receiver-status JSON checks; no network, no Vulkan. */
+#include "vk_diagnostic.h"
 #include "utl/utl_castv2.h"
 #include "cvk/cvk_json.h"
 #include "media_server.h"
@@ -12,7 +13,9 @@
     {                                                                                                                                                                                                  \
         if (!(x))                                                                                                                                                                                      \
         {                                                                                                                                                                                              \
-            (void)fprintf(stderr, "line %d: %s\n", __LINE__, #x);                                                                                                                                      \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #x "\n");                                                                                                                                            \
             return 1;                                                                                                                                                                                  \
         }                                                                                                                                                                                              \
         break;                                                                                                                                                                                         \

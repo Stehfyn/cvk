@@ -25,6 +25,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "vk_diagnostic.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <Windows.h> // IWYU pragma: keep
@@ -276,11 +277,10 @@ static int ContainsNoCase(const char* pHaystack, const char* pNeedle)
  */
 static void Usage(void)
 {
-    (void)fprintf(stderr,
-     "CastDemoCli [file.mp4] [--device NAME] [--host ADDRESS] [--url URL] [--port N] [--bind ADDRESS]\n"
-                  "            [--seconds N] [--seek T] [--scrub T] [--bounce N] [--loop] [--list] [--verbose]\n"
-                  "Plays a video on a Google Cast receiver (default device name: %s).\n",
-                                                            DEFAULT_DEVICE_NAME);
+    cvkDiagnosticWrite(
+        "CastDemoCli [file.mp4] [--device NAME] [--host ADDRESS] [--url URL] [--port N] [--bind ADDRESS]\n"
+        "            [--seconds N] [--seek T] [--scrub T] [--bounce N] [--loop] [--list] [--verbose]\n"
+        "Plays a video on a Google Cast receiver (default device name: " DEFAULT_DEVICE_NAME ").\n");
 }
 
 /*************************************************************************************************/
@@ -419,7 +419,9 @@ static int FindDevice(CastConsole_t* app, const Options* pOptions, CastDevice* p
         ZeroMemory(pDevice, sizeof(*pDevice));
         if (!ResolveIPv4(pOptions->host, pDevice->host, sizeof(pDevice->host)))
         {
-            (void)fprintf(stderr, "cannot resolve %s\n", pOptions->host);
+            cvkDiagnosticWrite("cannot resolve ");
+            cvkDiagnosticWrite(pOptions->host);
+            cvkDiagnosticWrite("\n");
             return 0;
         }
         if (!Ssdp_DescribeHost(&app->discovery, pDevice->host, pDevice))
@@ -1216,7 +1218,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
     }
     if (0 != WSAStartup(MAKEWORD(2, 2), &wsaData))
     {
-        (void)fprintf(stderr, "WSAStartup failed\n");
+        cvkDiagnosticWrite("WSAStartup failed\n");
         return 1;
     }
     /* Failed optional proxy startup leaves original-stream casting available. */
@@ -1232,11 +1234,13 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
     }
     else
     {
-        (void)fprintf(stderr,
-         "network initialization failed: serving %u, discovery %u, route %u\n",
-         MediaServer_GetError(&app->serving),
-         Ssdp_GetError(&app->discovery),
-         OS_Network_GetError(&app->routeNetwork));
+        cvkDiagnosticWrite("network initialization failed: serving ");
+        cvkDiagnosticWriteDecimal(MediaServer_GetError(&app->serving));
+        cvkDiagnosticWrite(", discovery ");
+        cvkDiagnosticWriteDecimal(Ssdp_GetError(&app->discovery));
+        cvkDiagnosticWrite(", route ");
+        cvkDiagnosticWriteDecimal(OS_Network_GetError(&app->routeNetwork));
+        cvkDiagnosticWrite("\n");
     }
     for (;;)
     {
@@ -1313,7 +1317,9 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                  localAddress,
                  sizeof(localAddress)))
         {
-            (void)fprintf(stderr, "cannot determine the local address facing %s; pass --bind ADDRESS\n", device.host);
+            cvkDiagnosticWrite("cannot determine the local address facing ");
+            cvkDiagnosticWrite(device.host);
+            cvkDiagnosticWrite("; pass --bind ADDRESS\n");
             CloseNetworkResources(app);
             return 1;
         }
@@ -1326,7 +1332,9 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
                                     sizeof(error));
         if (NULL == pServer)
         {
-            (void)fprintf(stderr, "server: %s\n", error);
+            cvkDiagnosticWrite("server: ");
+            cvkDiagnosticWrite(error);
+            cvkDiagnosticWrite("\n");
             CloseNetworkResources(app);
             return 1;
         }
@@ -1355,7 +1363,7 @@ static FORCE_INLINE int RunConsole(CastConsole_t* app, int argc, wchar_t** argv)
     }
     if (!submitted)
     {
-        (void)fprintf(stderr, "cannot start the session\n");
+        cvkDiagnosticWrite("cannot start the session\n");
         CloseServingResources(&app->proxy, &pServer);
         CloseSessionResources(app);
         CloseNetworkResources(app);

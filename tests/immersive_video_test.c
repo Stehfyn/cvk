@@ -1,5 +1,6 @@
 /* GPU integration test: render the same decoded frames through the original
 ** CDX implementation and the CVK port, then compare their BGRA pixels. */
+#include "vk_diagnostic.h"
 #include "video.h"
 #include "cdx11.h"
 #include "cdxgi.h"
@@ -88,9 +89,17 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     printf("frame %d, %ux%u%s: max channel difference %u; channels differing by >3: %zu\n", frame, width, height, nativeCopy ? " native copy" : "", maxDifference, different);
     /* Independent APIs can round filtering and UNORM conversion differently. */
     if (transparent)
-        fprintf(stderr, "Unpainted resize margin: %zu pixels\n", transparent);
+    {
+        cvkDiagnosticWrite("Unpainted resize margin: ");
+        cvkDiagnosticWriteDecimal(transparent);
+        cvkDiagnosticWrite(" pixels\n");
+    }
     if (overwritten)
-        fprintf(stderr, "Native copy overwrote %zu pixels outside its destination\n", overwritten);
+    {
+        cvkDiagnosticWrite("Native copy overwrote ");
+        cvkDiagnosticWriteDecimal(overwritten);
+        cvkDiagnosticWrite(" pixels outside its destination\n");
+    }
     return different != 0 || transparent != 0 || overwritten != 0;
 }
 

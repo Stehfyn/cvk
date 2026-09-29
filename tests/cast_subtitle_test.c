@@ -1,5 +1,6 @@
 /* MKV subtitle regression fixtures and an opt-in local-file extraction check. */
 #define WIN32_LEAN_AND_MEAN
+#include "vk_diagnostic.h"
 #include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -22,15 +23,17 @@
 #define TEST_TEXT_CAPACITY     (128)
 #define TEST_TEXT_GUARD        (0xA7)
 #define TEST_REUSE_COUNT       (1000)
-#define CHECK(x)                                                                                                       \
-    for (;;)                                                                                                           \
-    {                                                                                                                  \
-        if (!(x))                                                                                                      \
-        {                                                                                                              \
-            fprintf(stderr, "line %d: %s\n", __LINE__, #x);                                                            \
-            return 1;                                                                                                  \
-        }                                                                                                              \
-        break;                                                                                                         \
+#define CHECK(x)                                                                                                                                                                                       \
+    for (;;)                                                                                                                                                                                           \
+    {                                                                                                                                                                                                  \
+        if (!(x))                                                                                                                                                                                      \
+        {                                                                                                                                                                                              \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #x "\n");                                                                                                                                            \
+            return 1;                                                                                                                                                                                  \
+        }                                                                                                                                                                                              \
+        break;                                                                                                                                                                                         \
     }
 /*=================================================================================================
 ** 3.2 Types
@@ -516,7 +519,7 @@ int wmain(int argc, wchar_t** argv)
         return FixtureTests();
     if (argc != 3)
     {
-        fprintf(stderr, "usage: cvk-cast-subtitle-test [video output-directory]\n");
+        cvkDiagnosticWrite("usage: cvk-cast-subtitle-test [video output-directory]\n");
         return 1;
     }
     count = Subtitles_Find(argv[1], tracks);
@@ -534,7 +537,11 @@ int wmain(int argc, wchar_t** argv)
         ULONGLONG     begin = GetTickCount64();
         if (!Subtitles_Load(&g_fixture.subtitles, &tracks[i], error, sizeof(error)))
         {
-            fprintf(stderr, "track %u: %s\n", i, error);
+            cvkDiagnosticWrite("track ");
+            cvkDiagnosticWriteDecimal(i);
+            cvkDiagnosticWrite(": ");
+            cvkDiagnosticWrite(error);
+            cvkDiagnosticWrite("\n");
             return 1;
         }
         vtt  = Subtitles_GetText(&g_fixture.subtitles);

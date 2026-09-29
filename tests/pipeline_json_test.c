@@ -1,19 +1,22 @@
 /* Parses tests/cube.pc.json (a Vulkan SC pipeline JSON) with cvkParsePipelineJson and checks the
 ** structures it yields; no device is needed. Run by CTest as cvk-pipeline-json-parse. */
 
+#include "vk_diagnostic.h"
 #include "cvk/cvk_json.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define CHECK(expression)                                                      \
-    do                                                                         \
-    {                                                                          \
-        if (!(expression))                                                     \
-        {                                                                      \
-            (void)fprintf(stderr, "%s:%d: check failed: %s\n", __FILE__, __LINE__, #expression); \
-            return 1;                                                          \
-        }                                                                      \
+#define CHECK(expression)                                                                                                                                                                              \
+    do                                                                                                                                                                                                 \
+    {                                                                                                                                                                                                  \
+        if (!(expression))                                                                                                                                                                             \
+        {                                                                                                                                                                                              \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #expression "\n");                                                                                                                                   \
+            return 1;                                                                                                                                                                                  \
+        }                                                                                                                                                                                              \
     } while (0)
 
 /* A real pointer-valued test handle; no integer-to-pointer encoding is used. */

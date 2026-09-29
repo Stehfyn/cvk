@@ -12,6 +12,7 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#include "vk_diagnostic.h"
 #include "gpu_device.h"
 #include "os/os_types.h"
 #include "os/os_assert.h"
@@ -344,7 +345,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL Validation(VkDebugUtilsMessageSeverityFlag
     (void)severity;
     (void)type;
     (void)user;
-    fprintf(stderr, "vk: %s\n", data->pMessage);
+    cvkDiagnosticWrite("vk: ");
+    cvkDiagnosticWrite(data->pMessage);
+    cvkDiagnosticWrite("\n");
     return VK_FALSE;
 }
 #endif

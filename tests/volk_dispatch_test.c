@@ -1,4 +1,5 @@
 /* Exercise real Volk loading with mock entry points; no installed loader or GPU. */
+#include "vk_diagnostic.h"
 #include <volk.h>
 #include "cvk/cvk.h"
 #include <stdio.h>
@@ -10,7 +11,9 @@
     {                                                                                                                                                                                                  \
         if (!(expression))                                                                                                                                                                             \
         {                                                                                                                                                                                              \
-            (void)fprintf(stderr, "%s:%d: check failed: %s\n", __FILE__, __LINE__, #expression);                                                                                                       \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #expression "\n");                                                                                                                                   \
             exit(1);                                                                                                                                                                                   \
         }                                                                                                                                                                                              \
     } while (0)

@@ -1,4 +1,5 @@
 /* Format layouts and copy regions need no Vulkan loader or GPU. */
+#include "vk_diagnostic.h"
 #include "cvk/cvk.h"
 #include <stdio.h>
 
@@ -7,7 +8,9 @@
     {                                                                                                                                                                                                  \
         if (!(expression))                                                                                                                                                                             \
         {                                                                                                                                                                                              \
-            (void)fprintf(stderr, "line %d: %s\n", __LINE__, #expression);                                                                                                                             \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #expression "\n");                                                                                                                                   \
             return 1;                                                                                                                                                                                  \
         }                                                                                                                                                                                              \
     } while (0)

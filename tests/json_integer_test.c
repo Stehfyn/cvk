@@ -1,4 +1,5 @@
 /* Integer parsing checks; no Vulkan loader is initialized. */
+#include "vk_diagnostic.h"
 #include "cvk/cvk_json.h"
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +9,9 @@
     {                                                                                                                                                                                                  \
         if (!(x))                                                                                                                                                                                      \
         {                                                                                                                                                                                              \
-            (void)fprintf(stderr, "line %d: %s\n", __LINE__, #x);                                                                                                                                      \
+            cvkDiagnosticWrite(__FILE__ ":");                                                                                                                                                          \
+            cvkDiagnosticWriteDecimal(__LINE__);                                                                                                                                                       \
+            cvkDiagnosticWrite(": check failed: " #x "\n");                                                                                                                                            \
             return 1;                                                                                                                                                                                  \
         }                                                                                                                                                                                              \
     } while (0)

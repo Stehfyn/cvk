@@ -133,8 +133,15 @@ elseif(UNIX)
 else()
     message(FATAL_ERROR "A CVK diagnostic backend is required for this platform")
 endif()
+add_library(utl-decimal STATIC examples/CastDemo/utl/utl_decimal.c)
+target_include_directories(utl-decimal PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/examples/CastDemo")
 add_library(vk-diagnostic STATIC ${vk_diagnostic_source})
 target_include_directories(vk-diagnostic PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/platform")
+target_link_libraries(vk-diagnostic PRIVATE utl-decimal)
+if(MSVC)
+    target_compile_options(utl-decimal PRIVATE /GS- /Zl)
+    target_compile_options(vk-diagnostic PRIVATE /GS- /Zl)
+endif()
 
 # Regenerate the core, JSON, and platform pairs from the registries and policies.
 # Generated files are committed; run this target after changing the policy or generator.
@@ -201,19 +208,19 @@ endif()
 # JSON parsing and mock Volk dispatch need no GPU or installed Vulkan loader.
 enable_testing()
 add_executable(cvk-pipeline-json-test tests/pipeline_json_test.c)
-target_link_libraries(cvk-pipeline-json-test PRIVATE cvk)
+target_link_libraries(cvk-pipeline-json-test PRIVATE cvk vk-diagnostic)
 add_test(NAME cvk-pipeline-json-parse COMMAND cvk-pipeline-json-test ${CMAKE_CURRENT_SOURCE_DIR}/tests/cube.pc.json)
 
 add_executable(cvk-volk-dispatch-test tests/volk_dispatch_test.c)
-target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk)
+target_link_libraries(cvk-volk-dispatch-test PRIVATE cvk volk::volk vk-diagnostic)
 add_test(NAME cvk-volk-dispatch COMMAND cvk-volk-dispatch-test)
 
 add_executable(cvk-json-integer-test tests/json_integer_test.c)
-target_link_libraries(cvk-json-integer-test PRIVATE cvk)
+target_link_libraries(cvk-json-integer-test PRIVATE cvk vk-diagnostic)
 add_test(NAME cvk-json-integers COMMAND cvk-json-integer-test)
 
 add_executable(cvk-format-test tests/format_test.c)
-target_link_libraries(cvk-format-test PRIVATE cvk)
+target_link_libraries(cvk-format-test PRIVATE cvk vk-diagnostic)
 add_test(NAME cvk-format-layouts COMMAND cvk-format-test)
 
 # Vulkan SC profile: the same generator over the SC registry (external/VulkanSC-Headers),
