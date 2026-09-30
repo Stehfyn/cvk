@@ -266,8 +266,8 @@ static FORCE_INLINE HRESULT CreateConversionWriter(const TCHAR* dest,
 }
 
 static FORCE_INLINE HRESULT EnsureVideoDecodeTime(IMFSample* sample, LONGLONG time,
-                                     LONGLONG* pNextVideoDecodeTime,
-                                     int* pHaveVideoDecodeTime)
+                                      LONGLONG* pNextVideoDecodeTime,
+                                      int* pHaveVideoDecodeTime)
 {
     UINT64 decode = 0;
     LONGLONG sampleDuration = 0;

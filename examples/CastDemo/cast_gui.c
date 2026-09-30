@@ -652,10 +652,8 @@ static FORCE_INLINE void Utf8ToWide(const char* pText, WCHAR* pWide, int capacit
 {
     const char* safe_text = (NULL != pText) ? pText : "";
 
-    if (0 == MultiByteToWideChar(CP_UTF8, 0, safe_text, -1, pWide, capacity))
-    {
-        pWide[0] = L'\0';
-    }
+    pWide[0] = L'\0';
+    (void)MultiByteToWideChar(CP_UTF8, 0, safe_text, -1, pWide, capacity);
 }
 
 static FORCE_INLINE void Utf8ToNative(const char* pText, LPTSTR pNative, uint32_t capacity)
@@ -3122,25 +3120,31 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     TCHAR state[GUI_STATE_TEXT_CAPACITY];
     TCHAR text[GUI_STATUS_TEXT_CAPACITY];
     NativeText writer;
+    HWND hSeek;
+    double durationSeconds;
+    bool_t seeking;
 
-    if (pApp->seeking)
+    hSeek           = pApp->hSeek;
+    durationSeconds = pApp->status.duration;
+    seeking         = pApp->seeking;
+    if (seeking)
     {
         return;
     }
-    if (pApp->status.duration > 0)
+    if (durationSeconds > 0)
     {
-        if (seconds > pApp->status.duration)
+        if (seconds > durationSeconds)
         {
-            seconds = pApp->status.duration;
+            seconds = durationSeconds;
         }
-        SendMessage(pApp->hSeek,
+        SendMessage(hSeek,
                     TBM_SETPOS,
                     TRUE,
-                    (LPARAM)(LONG)((seconds / pApp->status.duration * SEEK_RANGE) + GUI_ROUNDING_HALF));
+                    (LPARAM)(LONG)((seconds / durationSeconds * SEEK_RANGE) + GUI_ROUNDING_HALF));
     }
     else
     {
-        SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, 0);
+        SendMessage(hSeek, TBM_SETPOS, TRUE, 0);
     }
     if (pApp->status.hasMedia)
     {
@@ -3357,9 +3361,13 @@ static FORCE_INLINE void PollSessionEvents(App* pApp)
  */
 static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
 {
+    CastSession_t* session;
+    double         durationSeconds;
     double seconds;
 
-    if (NULL == pApp->pSession || pApp->status.duration <= 0)
+    session         = pApp->pSession;
+    durationSeconds = pApp->status.duration;
+    if (NULL == session || durationSeconds <= 0)
     {
         return;
     }
@@ -3371,7 +3379,7 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
     {
         ratio = 1.0;
     }
-    seconds = pApp->status.duration * ratio;
+    seconds = durationSeconds * ratio;
     SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, (LPARAM)(LONG)((ratio * SEEK_RANGE) + GUI_ROUNDING_HALF));
     if (final)
     {
@@ -3544,12 +3552,14 @@ static FORCE_INLINE LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM
 static FORCE_INLINE void OnSeekScroll(App* pApp, UINT code)
 {
     const int position = (int)SendMessage(pApp->hSeek, TBM_GETPOS, 0, 0);
+    CastSession_t* session = pApp->pSession;
+    double duration = pApp->status.duration;
 
-    if (NULL == pApp->pSession || pApp->status.duration <= 0 || TB_THUMBTRACK == code)
+    if (NULL == session || duration <= 0 || TB_THUMBTRACK == code)
     {
         return; /* mouse tracking is handled by the subclass */
     }
-    CastSession_Post(pApp->pSession, CAST_COMMAND_SEEK, pApp->status.duration * position / SEEK_RANGE);
+    CastSession_Post(session, CAST_COMMAND_SEEK, duration * position / SEEK_RANGE);
 }
 
 /*************************************************************************************************/

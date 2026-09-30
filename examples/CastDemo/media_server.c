@@ -993,13 +993,18 @@ static FORCE_INLINE uint64_t StreamGrowingFile(const Connection_t* pConnection, 
  */
 static FORCE_INLINE bool_t SendResponse(Connection_t* connection, const CastHttp_Response_t* response)
 {
+    SOCKET   socket;
+    byte_t*  output;
     uint32_t count;
     bool_t   sent;
-    count = CastHttp_WriteResponse(response, connection->response, RESPONSE_CAPACITY);
+
+    socket = connection->socket;
+    output = connection->response;
+    count = CastHttp_WriteResponse(response, output, RESPONSE_CAPACITY);
     sent  = (0 < count);
     if (sent)
     {
-        sent = SendAll(connection->socket, connection->response, count);
+        sent = SendAll(socket, output, count);
     }
     return sent;
 }

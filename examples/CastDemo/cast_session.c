@@ -1869,6 +1869,7 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
     bool_t                   launched;
     ULONGLONG                lastHeartbeat;
     ULONGLONG                lastPoll;
+    CastChannel*             channel;
     const char* pReason        = NULL;
     int         result         = 1;
     int         proxyAnnounced = 0;
@@ -1941,10 +1942,11 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
             break;
         }
         now = GetTickCount64();
+        channel = pSession->pChannel;
         commands = ServiceSessionIteration(pSession, now, &lastHeartbeat, &lastPoll, &proxyAnnounced);
         if (commands < 0)
         {
-            pReason = CastChannel_GetError(pSession->pChannel);
+            pReason = CastChannel_GetError(channel);
             goto done;
         }
         if (0 == commands)

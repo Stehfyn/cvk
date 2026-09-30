@@ -646,8 +646,12 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
     byte_t   discard = 0;
     byte_t*  destination;
     const void* source;
+    bool_t   failed;
+    uint32_t capacity;
 
     LOGASSERT(NULL != buffer);
+    failed      = buffer->failed;
+    capacity    = buffer->capacity;
     has_input   = (NULL != data);
     empty       = (0 == count);
     valid_input = has_input || empty;
@@ -656,7 +660,7 @@ static FORCE_INLINE void BufferBytes(MuxBuffer* buffer, const void* data, uint32
     bounded_count = count & ((uint32_t)0 - (uint32_t)fits);
     required = buffer->size + bounded_count;
     grown = TRUE;
-    if (!buffer->failed && buffer->capacity < required)
+    if (!failed && capacity < required)
     {
         grown = GrowBuffer(buffer, required);
     }
@@ -807,10 +811,12 @@ static void BufferMatrix(MuxBuffer* pBuffer)
  */
 static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_t count)
 {
+    HANDLE file;
     bool_t valid;
     DWORD  written;
 
     LOGASSERT(NULL != mux);
+    file = mux->file;
     valid = !mux->failed;
     if (valid)
     {
@@ -818,7 +824,7 @@ static FORCE_INLINE bool_t WriteFileBytes(Mp4Mux* mux, const void* data, uint32_
         {
             LOGASSERT(NULL != data);
             written     = 0;
-            valid       = !!WriteFile(mux->file, data, count, &written, NULL);
+            valid       = !!WriteFile(file, data, count, &written, NULL);
             valid       = valid && (count == written);
             mux->failed = !valid;
         }
