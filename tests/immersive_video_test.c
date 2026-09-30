@@ -44,7 +44,7 @@ static int Compare(ID3D11Device* device, ID3D11DeviceContext* context, VideoStre
     if (nativeCopy)
         VideoStream_CopyFrame(port, textures[1], 0, copyX, copyY);
     else
-        VideoStream_Draw(port, targets[1], width, height);
+        VideoStream_Draw(port, textures[1], width, height);
     for (i = 0; i < 2; ++i)
     {
         cdx11DeviceContextCopyResource(context, (ID3D11Resource*)staging[i], (ID3D11Resource*)textures[i]);

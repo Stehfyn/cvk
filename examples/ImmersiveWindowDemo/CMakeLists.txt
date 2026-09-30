@@ -49,15 +49,60 @@ if(CVK_DEMO_VALIDATION)
     target_compile_definitions(immersive-video PRIVATE CVK_DEMO_VALIDATION)
 endif()
 
-add_executable(ImmersiveWindowDemo WIN32 demo.c immersive_window.c
-    "${PROJECT_SOURCE_DIR}/examples/CastDemo/os/win32/os_entry.c" presentation.h
-    "${reference_dir}/immersive_window.h"
-    shaders/fullscreen.vert shaders/nv12.frag shaders/plane_copy.hlsl)
+set(opus3_dir "${CMAKE_CURRENT_SOURCE_DIR}/opus3")
+add_library(immersive-opus3-window STATIC
+    "${opus3_dir}/caption.c"
+    "${opus3_dir}/delayhlpx.c"
+    "${opus3_dir}/ShellScalingApiX.c"
+    "${opus3_dir}/swapchain.c"
+    "${opus3_dir}/versionhelpersx.c"
+    "${opus3_dir}/window.c")
+target_include_directories(immersive-opus3-window PUBLIC "${opus3_dir}")
+target_compile_definitions(immersive-opus3-window PRIVATE UNICODE _UNICODE)
+target_link_libraries(immersive-opus3-window PUBLIC cdcomp cd2d cdx11 cdxgi)
+target_compile_options(immersive-opus3-window PRIVATE /GS- /Zl)
+cvk_external_target(immersive-opus3-window)
+add_executable(ImmersiveWindowDemo WIN32
+    opus3_main.c
+    opus3_main.h
+    opus3_video.c
+    opus3_video.h
+    shaders/fullscreen.vert
+    shaders/nv12.frag
+    shaders/plane_copy.hlsl)
 set_source_files_properties(shaders/fullscreen.vert shaders/nv12.frag shaders/plane_copy.hlsl
     PROPERTIES HEADER_FILE_ONLY TRUE)
 set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT ImmersiveWindowDemo)
-target_link_libraries(ImmersiveWindowDemo PRIVATE immersive-video cdcomp cd2d cdw
-    dwmapi uxtheme gdi32 user32 shell32 comctl32 ole32 uuid cast-no-crt)
+target_compile_options(ImmersiveWindowDemo PRIVATE /GS- /Zl /wd4711)
+target_link_options(ImmersiveWindowDemo PRIVATE /NODEFAULTLIB /ENTRY:WinMainCRTStartup /INCREMENTAL:NO)
+target_link_libraries(ImmersiveWindowDemo PRIVATE
+    immersive-video
+    immersive-opus3-window
+    cdcomp
+    cd2d
+    cdw
+    dwmapi
+    uxtheme
+    gdi32
+    user32
+    shell32
+    comctl32
+    ole32
+    uuid
+    windowscodecs
+    d3d11
+    d2d1
+    dwrite
+    dxgi
+    dxguid
+    dcomp
+    mfplat
+    mfreadwrite
+    mfuuid
+    cast-formats
+    crt-abi
+    BufferOverflowU
+    kernel32)
 # Optional real-GPU comparison against the pinned reference implementation.
 set(CVK_DEMO_TEST_VIDEO "" CACHE FILEPATH "Video fixture for the optional CDX/CVK pixel comparison")
 if(CVK_DEMO_TEST_VIDEO)

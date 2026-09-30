@@ -432,7 +432,14 @@ static void CreatePasses(VideoRenderer* r)
 
     CreatePipeline(r, VIDEO_PASS_NV12);
     CreatePipeline(r, VIDEO_PASS_BICUBIC);
-    cvkCreateSingleTypeDescriptorPool(r->device, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, (VIDEO_RENDERER_FRAMES * 2) + 1, NULL, (VkDescriptorPoolCreateFlags)0, VIDEO_RENDERER_FRAMES + 1, NULL, &r->descriptors);
+    cvkCreateSingleTypeDescriptorPool(r->device,
+                                      VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                      (VIDEO_RENDERER_FRAMES * 2) + 1,
+                                      NULL,
+                                      (VkDescriptorPoolCreateFlags)0,
+                                      VIDEO_RENDERER_FRAMES + 1,
+                                      NULL,
+                                      &r->descriptors);
     for (index = 0; index < VIDEO_RENDERER_FRAMES; ++index)
     {
         cvkAllocateDescriptorSet(r->device, NULL, r->descriptors, r->setLayouts[VIDEO_PASS_NV12], &r->frames[index]);
@@ -604,7 +611,16 @@ void VideoRenderer_SetSize(VideoRenderer* r, UINT width, UINT height)
                                &r->converted.image,
                                &r->converted.memory);
     cvkCreateWholeImageView2D(r->device, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, NULL, (VkImageViewCreateFlags)0, r->converted.image, VK_FORMAT_B8G8R8A8_UNORM, NULL, &r->converted.views[0]);
-    cvkCreateSingleAttachmentFramebuffer(r->device, NULL, (VkFramebufferCreateFlags)0, r->renderPass, r->converted.width, r->converted.height, 1, r->converted.views[0], NULL, &r->converted.framebuffer);
+    cvkCreateSingleAttachmentFramebuffer(r->device,
+                                         NULL,
+                                         (VkFramebufferCreateFlags)0,
+                                         r->renderPass,
+                                         r->converted.width,
+                                         r->converted.height,
+                                         1,
+                                         r->converted.views[0],
+                                         NULL,
+                                         &r->converted.framebuffer);
     cvkUpdateCombinedImageSamplerDescriptorSet(r->device,
                                                r->samplers[VIDEO_PASS_BICUBIC],
                                                r->converted.views[0],
@@ -779,12 +795,10 @@ static void RecordDrawCommands(VideoRenderer* r, UINT width, UINT height)
     r->recordedHeight = height;
 }
 
-void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int slot, BOOL convert, UINT width, UINT height)
+void VideoRenderer_Draw(VideoRenderer* r, ID3D11Texture2D* target, int slot, BOOL convert, UINT width, UINT height)
 {
     uint32_t             frame_index;
     VkResult             result;
-    ID3D11Resource*      backBuffer;
-    ID3D11Texture2D*     texture;
     D3D11_TEXTURE2D_DESC desc;
     VkDeviceMemory       syncs[3];
     VkCommandBuffer      command;
@@ -800,10 +814,7 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
     bool_t               drawCommandsOutdated;
 
     frame_index = FrameIndex(slot);
-    cdx11ViewGetResource((ID3D11View*)target, &backBuffer);
-    cdx11UnknownQueryInterfaceAsTexture2D((IUnknown*)backBuffer, &texture);
-    cdx11Texture2DGetDesc(texture, &desc);
-    cdxgiUnknownRelease((IUnknown*)texture);
+    cdx11Texture2DGetDesc(target, &desc);
     contentFitsBackBuffer   = (width <= desc.Width) && (height <= desc.Height);
     outputMatchesBackBuffer = (r->output.width == desc.Width) && (r->output.height == desc.Height);
     CVK_ASSERT(contentFitsBackBuffer);
@@ -831,15 +842,11 @@ void VideoRenderer_Draw(VideoRenderer* r, ID3D11RenderTargetView* target, int sl
         r->outputHeight = height;
     }
     /* The copy precedes the original Direct2D caption and DXGI presentation. */
-    cdxgiKeyedMutexAcquireSync(r->output.mutex, redraw ? 1 : 0, INFINITE);
     /* Cover the entire composition buffer, including pixels a growing window
     ** can expose before its geometry paint reaches DWM. The shader preserves
     ** the exact client-area mapping and clamps the extra area to video edges.
     ** A cropped copy leaves undefined pixels in a flip-discard back buffer. */
-    cdx11DeviceContextCopyResource(r->context, backBuffer, (ID3D11Resource*)r->output.texture);
-    cdxgiKeyedMutexReleaseSync(r->output.mutex, 0);
-    cdx11DeviceContextFlush(r->context);
-    cdxgiUnknownRelease((IUnknown*)backBuffer);
+    cdx11DeviceContextCopyResourceWithKeyedMutex(r->context, (ID3D11Resource*)target, (ID3D11Resource*)r->output.texture, r->output.mutex, redraw ? 1 : 0, 0);
     if (redraw)
     {
         result = cvkWaitForFenceIndefinitely(r->device, r->fence);
@@ -870,10 +877,7 @@ void VideoRenderer_CopyFrame(VideoRenderer* r, ID3D11Texture2D* target, UINT sub
     syncs[2] = r->ring[frame_index].planes[1].memory;
     cvkResetFence(r->device, r->fence);
     cvkQueueSubmitInfoWithWin32KeyedMutexAcquireReleaseInfo(r->queue, NULL, 3, syncs, acquireKeys, timeouts, 3, syncs, releaseKeys, 0, NULL, NULL, 1, &command, 0, NULL, r->fence);
-    cdxgiKeyedMutexAcquireSync(r->output.mutex, 1, INFINITE);
-    cdx11DeviceContextCopySubresourceRegion(r->context, (ID3D11Resource*)target, subresource, x, y, 0, (ID3D11Resource*)r->output.texture, 0, &source);
-    cdxgiKeyedMutexReleaseSync(r->output.mutex, 0);
-    cdx11DeviceContextFlush(r->context);
+    cdx11DeviceContextCopySubresourceRegionWithKeyedMutex(r->context, (ID3D11Resource*)target, subresource, x, y, 0, (ID3D11Resource*)r->output.texture, 0, &source, r->output.mutex, 1, 0);
     result = cvkWaitForFenceIndefinitely(r->device, r->fence);
     CVK_ASSERT(VK_SUCCESS == result);
     r->outputWidth = r->outputHeight = 0;

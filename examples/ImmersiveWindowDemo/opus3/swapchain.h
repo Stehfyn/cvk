@@ -1,0 +1,53 @@
+#pragma once
+
+#include <windows.h>
+#pragma warning(push)
+#pragma warning(disable : 4201) /* nameless struct/union in the DirectX headers */
+#include <d3d11.h>
+#include <dxgi1_3.h>
+#include <cd2d.h>
+#include <cdcomp.h>
+#pragma warning(pop)
+
+/* The presenter's GPU stack: a BGRA/video-capable D3D11 device, a desktop-sized premultiplied
+   FLIP_DISCARD composition swap chain with one frame of latency, a Direct2D device context targeting its
+   back buffer, and the DirectComposition device / target / visual that bind the swap chain to the
+   window. Zero-initialize, then InitSwapChain and BindSwapChain, in that order. */
+typedef struct SWAPCHAIN
+{
+    ID3D11Device*        device;
+    IDXGIDevice1*        dxgiDevice;
+    IDXGISwapChain1*     swapChain;
+    ID2D1DeviceContext*  context;           /* targets the swap chain's back buffer */
+    IDCompositionDevice* compositionDevice;
+    IDCompositionTarget* compositionTarget;
+    IDCompositionVisual* visual;            /* content: the swap chain                */
+    /* Frame accounting, for a debugger (volatile so the stores survive). */
+    volatile ULONGLONG   presentCount;
+    volatile ULONGLONG   commitCount;
+} SWAPCHAIN;
+
+void
+InitSwapChain(
+    SWAPCHAIN*     swapChain,
+    IDXGIAdapter*  adapter);
+
+void
+BindSwapChain(
+    SWAPCHAIN* swapChain,
+    HWND       hwnd);
+
+BOOL
+PresentSwapChain(
+    SWAPCHAIN* swapChain,
+    BOOL       restart,
+    BOOL       vsync);
+
+void
+CommitSwapChain(
+    SWAPCHAIN*               swapChain,
+    DCOMPOSITION_BORDER_MODE borderMode);
+
+void
+WaitForSwapChainCommit(
+    SWAPCHAIN* swapChain);

@@ -378,7 +378,15 @@ static FORCE_INLINE void SetupFonts(LPIMMERSIVEWINDOW pw)
     cdwFontCreateFontFace(pw->pSymbolFont, &pw->pSymbolFontFace);
     cdwFontFaceGetGlyphIndices(pw->pSymbolFontFace, symbolCodePoints, 3, pw->symbolGlyphs);
 
-    cdwFactoryCreateTextFormat(factory, L"Segoe MDL2 Assets", pw->pFontCollection, DWRITE_FONT_WEIGHT_THIN, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, CAPTION_FONT_SIZE, L"", &pw->pTextFormat);
+    cdwFactoryCreateTextFormat(factory,
+                               L"Segoe MDL2 Assets",
+                               pw->pFontCollection,
+                               DWRITE_FONT_WEIGHT_THIN,
+                               DWRITE_FONT_STYLE_NORMAL,
+                               DWRITE_FONT_STRETCH_NORMAL,
+                               CAPTION_FONT_SIZE,
+                               L"",
+                               &pw->pTextFormat);
 }
 
 static void SetupBrushes(LPIMMERSIVEWINDOW pw)
@@ -388,11 +396,31 @@ static void SetupBrushes(LPIMMERSIVEWINDOW pw)
     const COLORREF     accent   = GetSysColor(COLOR_MENUHILIGHT);
 
     cd2dRenderTargetCreateSolidColorBrushRGBA(target, 1.0F, 1.0F, 1.0F, LIGHT_BRUSH_ALPHA, &pw->pLightBrush);
-    cd2dRenderTargetCreateSolidColorBrushRGBA(target, DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL, DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL, DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL, DARK_BRUSH_ALPHA, &pw->pDarkBrush);
+    cd2dRenderTargetCreateSolidColorBrushRGBA(target,
+                                              DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL,
+                                              DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL,
+                                              DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL,
+                                              DARK_BRUSH_ALPHA,
+                                              &pw->pDarkBrush);
     cd2dRenderTargetCreateSolidColorBrushRGBA(target, RED_COLOR_CHANNEL / MAX_COLOR_CHANNEL, DIM_COLOR_CHANNEL / MAX_COLOR_CHANNEL, BLUE_COLOR_CHANNEL / MAX_COLOR_CHANNEL, 1.0F, &pw->pRedBrush);
-    cd2dRenderTargetCreateSolidColorBrushRGBA(target, GetRValue(inactive) / MAX_COLOR_CHANNEL, GetGValue(inactive) / MAX_COLOR_CHANNEL, GetBValue(inactive) / MAX_COLOR_CHANNEL, 1.0F, &pw->pInactiveBrush);
-    cd2dRenderTargetCreateSolidColorBrushRGBA(target, GetRValue(accent) / MAX_COLOR_CHANNEL, GetGValue(accent) / MAX_COLOR_CHANNEL, GetBValue(accent) / MAX_COLOR_CHANNEL, 1.0F, &pw->pColorizationBrush);
-    cd2dRenderTargetCreateSolidColorBrushRGBA(target, GetRValue(accent) / MAX_COLOR_CHANNEL, GetGValue(accent) / MAX_COLOR_CHANNEL, GetBValue(accent) / MAX_COLOR_CHANNEL, FADED_BRUSH_ALPHA, &pw->pFadedColorizationBrush);
+    cd2dRenderTargetCreateSolidColorBrushRGBA(target,
+                                              GetRValue(inactive) / MAX_COLOR_CHANNEL,
+                                              GetGValue(inactive) / MAX_COLOR_CHANNEL,
+                                              GetBValue(inactive) / MAX_COLOR_CHANNEL,
+                                              1.0F,
+                                              &pw->pInactiveBrush);
+    cd2dRenderTargetCreateSolidColorBrushRGBA(target,
+                                              GetRValue(accent) / MAX_COLOR_CHANNEL,
+                                              GetGValue(accent) / MAX_COLOR_CHANNEL,
+                                              GetBValue(accent) / MAX_COLOR_CHANNEL,
+                                              1.0F,
+                                              &pw->pColorizationBrush);
+    cd2dRenderTargetCreateSolidColorBrushRGBA(target,
+                                              GetRValue(accent) / MAX_COLOR_CHANNEL,
+                                              GetGValue(accent) / MAX_COLOR_CHANNEL,
+                                              GetBValue(accent) / MAX_COLOR_CHANNEL,
+                                              FADED_BRUSH_ALPHA,
+                                              &pw->pFadedColorizationBrush);
     cd2dFactory1CreateStrokeStyle((ID2D1Factory1*)pw->pD2D1Factory2,
                                   D2D1_CAP_STYLE_SQUARE,
                                   D2D1_CAP_STYLE_SQUARE,

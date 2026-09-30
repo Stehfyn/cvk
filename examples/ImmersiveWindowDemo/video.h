@@ -21,7 +21,7 @@ VideoStream* VideoStream_Open(ID3D11Device* device, ID3D11DeviceContext* context
 void VideoStream_GetInfo(const VideoStream* stream, VideoInfo* info);
 BOOL VideoStream_NextFrame(VideoStream* stream);
 void VideoStream_Prefetch(VideoStream* stream, DWORD budgetMs);
-void VideoStream_Draw(VideoStream* stream, ID3D11RenderTargetView* target, UINT width, UINT height);
+void VideoStream_Draw(VideoStream* stream, ID3D11Texture2D* target, UINT width, UINT height);
 /* Convert at native resolution and copy into the supplied GPU texture region.
 ** The destination format is BGRA8 and must contain the complete native-size frame. */
 void VideoStream_CopyFrame(VideoStream* stream, ID3D11Texture2D* target, UINT subresource, UINT x, UINT y);

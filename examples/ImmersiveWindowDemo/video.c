@@ -714,7 +714,7 @@ extern FORCE_INLINE BOOL VideoStream_NextFrame(VideoStream* pStream)
     return TRUE;
 }
 
-void VideoStream_Draw(VideoStream* pStream, ID3D11RenderTargetView* pTarget, UINT width, UINT height)
+void VideoStream_Draw(VideoStream* pStream, ID3D11Texture2D* pTarget, UINT width, UINT height)
 {
     if (!pStream->fHaveFrame || 0 == width || 0 == height)
     {
