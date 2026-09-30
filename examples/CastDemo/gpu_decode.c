@@ -2,6 +2,7 @@
 ** decode loop with reference management. Decoded luma is read back through cvk's queue-ownership
 ** transfer helper. */
 #define WIN32_LEAN_AND_MEAN
+#include "os/os_types.h"
 #include <windows.h>
 
 #include <stdarg.h>
@@ -16,7 +17,6 @@
 #include "gpu_decode.h"
 #include "crt/crt_format.h"
 #include "crt/crt_memory.h"
-#include "os/os_types.h"
 
 #define MAX_SESSION_MEMORY 8
 #define MAX_DPB_SLOTS      17
@@ -133,11 +133,7 @@ static void CreateVideoImage(GpuDecoder*       pDecoder,
     VkImageSubresourceRange range;
 
     cvkInitExtent3D(&extent, pDecoder->codedExtent.width, pDecoder->codedExtent.height, 1);
-    cvkInitComponentMapping(&identity,
-                            VK_COMPONENT_SWIZZLE_IDENTITY,
-                            VK_COMPONENT_SWIZZLE_IDENTITY,
-                            VK_COMPONENT_SWIZZLE_IDENTITY,
-                            VK_COMPONENT_SWIZZLE_IDENTITY);
+    cvkInitComponentMapping(&identity, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY);
     cvkInitImageSubresourceRange(&range, (VkImageAspectFlags)VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
 
     cvkCreateImageWithVideoProfileListInfo(pDecoder->device,
@@ -159,24 +155,9 @@ static void CreateVideoImage(GpuDecoder*       pDecoder,
                                            VK_IMAGE_LAYOUT_UNDEFINED,
                                            NULL,
                                            pImage);
-    cvkAllocateImageMemory(pDecoder->physical,
-                           pDecoder->device,
-                           *pImage,
-                           (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                           NULL,
-                           NULL,
-                           pMemory);
-    cvkBindImageMemory(pDecoder->device, *pImage, *pMemory, VK_NO_OFFSET);
-    cvkCreateImageView(pDecoder->device,
-                       NULL,
-                       (VkImageViewCreateFlags)0,
-                       *pImage,
-                       VK_IMAGE_VIEW_TYPE_2D,
-                       format,
-                       identity,
-                       range,
-                       NULL,
-                       pView);
+    cvkAllocateImageMemory(pDecoder->physical, pDecoder->device, (*pImage), (VkMemoryPropertyFlags)VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, NULL, NULL, pMemory);
+    cvkBindImageMemory(pDecoder->device, (*pImage), (*pMemory), VK_NO_OFFSET);
+    cvkCreateImageView(pDecoder->device, NULL, (VkImageViewCreateFlags)0, (*pImage), VK_IMAGE_VIEW_TYPE_2D, format, identity, range, NULL, pView);
 }
 
 /* Fills a picture-resource descriptor for a DPB image view. */
@@ -189,7 +170,7 @@ static VkVideoPictureResourceInfoKHR GetPictureResource(const GpuDecoder* pDecod
 {
     VkVideoPictureResourceInfoKHR resource;
 
-    memset(&resource, 0, sizeof(resource));
+    (void)memset(&resource, 0, sizeof(resource));
     resource.sType            = VK_STRUCTURE_TYPE_VIDEO_PICTURE_RESOURCE_INFO_KHR;
     resource.codedExtent      = pDecoder->codedExtent;
     resource.baseArrayLayer   = 0;
@@ -495,12 +476,7 @@ const byte_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, un
  *  Derives luma/chroma plane offsets and strides from the output format and
  *  returns borrowed pointers into mapped readback storage.
  */
-const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
-                                 unsigned*         pWidth,
-                                 unsigned*         pHeight,
-                                 unsigned*         pLumaStride,
-                                 const byte_t**   ppChroma,
-                                 unsigned*         pChromaStride)
+const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pLumaStride, const byte_t** ppChroma, unsigned* pChromaStride)
 {
     VkDeviceSize plane_offsets[MAX_IMAGE_PLANES];
     uint32_t     plane_strides[MAX_IMAGE_PLANES];

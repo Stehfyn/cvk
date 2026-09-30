@@ -47,12 +47,7 @@ const byte_t* GpuDecode_GetLuma(const GpuDecoder* pDecoder, unsigned* pWidth, un
 
 /* The most recently decoded frame as NV12: the returned pointer is the luma plane; ppChroma points
 ** to the interleaved half-resolution Cb/Cr plane. Strides and dimensions are written out. */
-const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder,
-                                 unsigned*         pWidth,
-                                 unsigned*         pHeight,
-                                 unsigned*         pLumaStride,
-                                 const byte_t**   ppChroma,
-                                 unsigned*         pChromaStride);
+const byte_t* GpuDecode_GetNv12(const GpuDecoder* pDecoder, unsigned* pWidth, unsigned* pHeight, unsigned* pLumaStride, const byte_t** ppChroma, unsigned* pChromaStride);
 
 /* Fills pFrame with a view of the most recently decoded frame in whatever format the decoder chose. */
 void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame);

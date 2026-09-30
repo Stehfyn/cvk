@@ -15,8 +15,12 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <winsock2.h>
-#include <windows.h>
+#include <stdint.h>
+#include <Windows.h> // IWYU pragma: keep
+#include <synchapi.h>
+#include <minwindef.h>
+#include <sysinfoapi.h>
+#include <winnt.h>
 
 #include <float.h>
 #include <stdarg.h>
@@ -38,7 +42,6 @@
 #include "os/os_types.h"
 #include "utl/utl_unicode.h"
 #include "cvk/cvk_json.h"
-#include "mp4_index.h"
 
 /*=================================================================================================
 ** 3. DECLARATIONS

@@ -1,7 +1,10 @@
 /* h264_params.c - Exp-Golomb SPS/PPS parser to Vulkan Std H.264 structures. */
+#include <stdint.h>
 #include <string.h>
+#include <vk_video/vulkan_video_codec_h264std.h>
 
 #include "h264_params.h"
+#include "os/os_types.h"
 
 #define MAX_PARAM_SET 4096u
 
@@ -45,7 +48,7 @@ static uint32_t ReadBit(BitReader* pReader)
         return 0;
     }
     byte = pReader->pData[pReader->bytePos];
-    bit  = (byte >> (7 - pReader->bitPos)) & 1u;
+    bit  = (byte >> (7 - pReader->bitPos)) & 1U;
     if (++pReader->bitPos == 8)
     {
         pReader->bitPos = 0;
@@ -118,7 +121,7 @@ static uint32_t ReadUe(BitReader* pReader)
     {
         return 0;
     }
-    return ((1u << leadingZeros) - 1u) + ReadBits(pReader, leadingZeros);
+    return ((1U << leadingZeros) - 1U) + ReadBits(pReader, leadingZeros);
 }
 
 /* se(v): signed Exp-Golomb. */
@@ -136,7 +139,7 @@ static int32_t ReadSe(BitReader* pReader)
     {
         return 0;
     }
-    return (code & 1u) ? (int32_t)((code + 1u) / 2u) : -(int32_t)(code / 2u);
+    return (code & 1U) ? (int32_t)((code + 1U) / 2U) : -(int32_t)(code / 2U);
 }
 
 /* Consumes a scaling list of the given size (values are not stored). */
@@ -232,8 +235,10 @@ int H264_ParseSps(const byte_t*                    pNal,
     BitReader reader;
     uint32_t  profileIdc;
     uint32_t  levelIdc;
-    uint32_t  cropUnitX = 1, cropUnitY = 1;
-    unsigned  width, height;
+    uint32_t  cropUnitX = 1;
+    uint32_t  cropUnitY = 1;
+    unsigned  width;
+    unsigned  height;
 
     if (size < 2 || (pNal[0] & 0x1F) != 7)
     {
@@ -328,22 +333,22 @@ int H264_ParseSps(const byte_t*                    pNal,
     /* vui_parameters_present_flag and the VUI itself are not needed by the decoder session. */
 
     width  = (pSps->pic_width_in_mbs_minus1 + 1) * 16;
-    height = (pSps->pic_height_in_map_units_minus1 + 1) * 16 * (pSps->flags.frame_mbs_only_flag ? 1u : 2u);
+    height = (pSps->pic_height_in_map_units_minus1 + 1) * 16 * (pSps->flags.frame_mbs_only_flag ? 1U : 2U);
     if (pSps->flags.frame_cropping_flag)
     {
         if (1 == pSps->chroma_format_idc)
         {
             cropUnitX = 2;
-            cropUnitY = pSps->flags.frame_mbs_only_flag ? 2u : 4u;
+            cropUnitY = pSps->flags.frame_mbs_only_flag ? 2U : 4U;
         }
         else if (2 == pSps->chroma_format_idc)
         {
             cropUnitX = 2;
-            cropUnitY = pSps->flags.frame_mbs_only_flag ? 1u : 2u;
+            cropUnitY = pSps->flags.frame_mbs_only_flag ? 1U : 2U;
         }
         else
         {
-            cropUnitY = pSps->flags.frame_mbs_only_flag ? 1u : 2u;
+            cropUnitY = pSps->flags.frame_mbs_only_flag ? 1U : 2U;
         }
         width  -= (pSps->frame_crop_left_offset + pSps->frame_crop_right_offset) * cropUnitX;
         height -= (pSps->frame_crop_top_offset + pSps->frame_crop_bottom_offset) * cropUnitY;
@@ -373,9 +378,9 @@ static int GetRbspLastBit(const byte_t* pData, uint32_t size)
 
             for (bit = 0; bit < 8; ++bit)
             {
-                if (pData[byteIndex] & (1u << bit))
+                if (pData[byteIndex] & (1U << bit))
                 {
-                    return byteIndex * 8 + (7 - bit);
+                    return (byteIndex * 8) + (7 - bit);
                 }
             }
         }
@@ -445,7 +450,7 @@ int H264_ParsePps(const byte_t* pNal, uint32_t size, StdVideoH264PictureParamete
     /* more_rbsp_data(): payload remains while the cursor is before the stop bit. High-profile
     ** streams carry the 8x8-transform flag and a second chroma QP offset here, and decoding is
     ** wrong without them. */
-    if ((int)(reader.bytePos * 8 + reader.bitPos) < stopBit)
+    if ((int)((reader.bytePos * 8) + reader.bitPos) < stopBit)
     {
         pPps->flags.transform_8x8_mode_flag = ReadBit(&reader);
         if (ReadBit(&reader)) /* pic_scaling_matrix_present_flag */

@@ -27,6 +27,7 @@
 #include <profileapi.h>
 #include <WinBase.h>
 #include <stringapiset.h>
+#include <WinNls.h>
 
 #include "media_server.h"
 #include "cast_http.h"
@@ -75,6 +76,7 @@
 #define TRANSFER_MEGABYTE      (1048576.0)
 #define TRANSFER_MILLISECONDS  (1000.0)
 #define TRANSFER_RATE_PRECISION (10)
+#define TRANSFER_ROUND_HALF      (0.5)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -1061,8 +1063,8 @@ static FORCE_INLINE void LogResponse(const Connection_t*        connection,
             megabytes_per_second = megabytes / seconds;
         }
     }
-    milliseconds = (uint64_t)((seconds * TRANSFER_MILLISECONDS) + (1.0 / 2.0));
-    rate_tenths  = (uint64_t)((megabytes_per_second * TRANSFER_RATE_PRECISION) + (1.0 / 2.0));
+    milliseconds = (uint64_t)((seconds * TRANSFER_MILLISECONDS) + TRANSFER_ROUND_HALF);
+    rate_tenths  = (uint64_t)((megabytes_per_second * TRANSFER_RATE_PRECISION) + TRANSFER_ROUND_HALF);
     cvkDiagnosticWrite("server: ");
     cvkDiagnosticWriteBytes((const char*)head->method.data, head->method.byteCount);
     cvkDiagnosticWrite(" ");

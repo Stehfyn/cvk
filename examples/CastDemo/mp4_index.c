@@ -9,9 +9,14 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
-#include <windows.h>
+#include <minwindef.h>
+#include <fileapi.h>
+#include <winbase.h>
+#include <wchar.h>
+#include <handleapi.h>
 
 #include <stdint.h>
+#include <winnt.h>
 
 #include "mp4_index.h"
 #include "utl/utl_mpeg4.h"

@@ -2,14 +2,17 @@
 ** and rate control, per-frame encode of downscaled frames, and bitstream read-back. The input
 ** picture format is whatever the driver advertises for encode source images, so the per-frame
 ** upload is driven by that format's plane layout rather than assuming one pixel format. */
+#include <vulkan/vulkan_core.h>
+#include <vk_video/vulkan_video_codec_h264std.h>
+#include "os/os_types.h"
+#include <minwindef.h>
+#include <vk_video/vulkan_video_codec_h264std_encode.h>
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
 
 #include <stdarg.h>
 #include <stdint.h>
 #include <string.h>
 
-#include <vulkan/vulkan.h>
 #include <volk.h>
 #include "cvk/cvk.h"
 
@@ -218,19 +221,19 @@ static void GenerateParameters(GpuEncoder* pEncoder)
     pSps->pic_order_cnt_type                = STD_VIDEO_H264_POC_TYPE_0;
     pSps->log2_max_pic_order_cnt_lsb_minus4 = 4;
     pSps->max_num_ref_frames                = 1;
-    pSps->pic_width_in_mbs_minus1           = (pEncoder->codedExtent.width / 16u) - 1u;
-    pSps->pic_height_in_map_units_minus1    = (pEncoder->codedExtent.height / 16u) - 1u;
+    pSps->pic_width_in_mbs_minus1           = (pEncoder->codedExtent.width / 16U) - 1U;
+    pSps->pic_height_in_map_units_minus1    = (pEncoder->codedExtent.height / 16U) - 1U;
     pSps->flags.frame_mbs_only_flag         = 1;
     pSps->flags.direct_8x8_inference_flag   = 1;
-    if ((pEncoder->height & 15u) != 0)
+    if ((pEncoder->height & 15U) != 0)
     {
         pSps->flags.frame_cropping_flag = 1;
-        pSps->frame_crop_bottom_offset  = (pEncoder->codedExtent.height - pEncoder->height) / 2u;
+        pSps->frame_crop_bottom_offset  = (pEncoder->codedExtent.height - pEncoder->height) / 2U;
     }
-    if ((pEncoder->width & 15u) != 0)
+    if ((pEncoder->width & 15U) != 0)
     {
         pSps->flags.frame_cropping_flag = 1;
-        pSps->frame_crop_right_offset   = (pEncoder->codedExtent.width - pEncoder->width) / 2u;
+        pSps->frame_crop_right_offset   = (pEncoder->codedExtent.width - pEncoder->width) / 2U;
     }
 
     pPps = &pEncoder->pps;
@@ -315,8 +318,8 @@ static void PackFrame(GpuEncoder*    pEncoder,
         texel        = plane_strides[plane] / plane_width; /* bytes per texel, from the stride */
         div_w        = pEncoder->codedExtent.width / plane_width;
         div_h        = pEncoder->codedExtent.height / plane_height;
-        src_valid_w  = (pEncoder->width + div_w - 1u) / div_w;
-        src_valid_h  = (pEncoder->height + div_h - 1u) / div_h;
+        src_valid_w  = (pEncoder->width + div_w - 1U) / div_w;
+        src_valid_h  = (pEncoder->height + div_h - 1U) / div_h;
         p_src        = (0 == plane) ? pLuma : pChroma;
         src_stride   = (0 == plane) ? lumaStride : chromaStride;
         for (y = 0; y < plane_height; ++y)
@@ -324,17 +327,17 @@ static void PackFrame(GpuEncoder*    pEncoder,
             unsigned src_y;
             unsigned x;
 
-            src_y = (y < src_valid_h) ? y : src_valid_h - 1u;
+            src_y = (y < src_valid_h) ? y : src_valid_h - 1U;
             for (x = 0; x < plane_width; ++x)
             {
                 unsigned src_x;
                 unsigned b;
 
-                src_x = (x < src_valid_w) ? x : src_valid_w - 1u;
+                src_x = (x < src_valid_w) ? x : src_valid_w - 1U;
                 for (b = 0; b < texel; ++b)
                 {
-                    p_dst[plane_offsets[plane] + (VkDeviceSize)y * plane_strides[plane] + (VkDeviceSize)x * texel + b] =
-                        p_src[(size_t)src_y * src_stride + (size_t)src_x * texel + b];
+                    p_dst[plane_offsets[plane] + ((VkDeviceSize)y * plane_strides[plane]) + ((VkDeviceSize)x * texel) +
+                          b] = p_src[((size_t)src_y * src_stride) + ((size_t)src_x * texel) + b];
                 }
             }
         }
@@ -403,9 +406,9 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
     pEncoder->transferQueue      = pGpu->transferQueue;
     pEncoder->width              = width;
     pEncoder->height             = height;
-    pEncoder->codedExtent.width  = (width + 15u) & ~15u;
-    pEncoder->codedExtent.height = (height + 15u) & ~15u;
-    pEncoder->gopLength          = gopLength ? gopLength : 12u;
+    pEncoder->codedExtent.width  = (width + 15U) & ~15U;
+    pEncoder->codedExtent.height = (height + 15U) & ~15U;
+    pEncoder->gopLength          = gopLength ? gopLength : 12U;
     pEncoder->qpIntra            = (qpIntra > 0 && qpIntra < 52) ? qpIntra : 24;
     pEncoder->qpInter            = (qpInter > 0 && qpInter < 52) ? qpInter : 26;
     pEncoder->rateControlReset   = 1;
@@ -732,7 +735,7 @@ const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
         pEncoder->framesSinceIdr = 0;
     }
     current_slot = pEncoder->frameIndex % ENCODE_DPB_SLOTS;
-    ref_slot     = (pEncoder->frameIndex + ENCODE_DPB_SLOTS - 1u) % ENCODE_DPB_SLOTS;
+    ref_slot     = (pEncoder->frameIndex + ENCODE_DPB_SLOTS - 1U) % ENCODE_DPB_SLOTS;
     has_ref      = (!is_idr && pEncoder->frameIndex > 0) ? 1 : 0;
     qp           = (qpOverride > 0 && qpOverride < 52) ? qpOverride : (is_idr ? pEncoder->qpIntra : pEncoder->qpInter);
 
@@ -808,8 +811,8 @@ const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
 
     memset(&setup_ref_info, 0, sizeof(setup_ref_info));
     setup_ref_info.primary_pic_type = is_idr ? STD_VIDEO_H264_PICTURE_TYPE_IDR : STD_VIDEO_H264_PICTURE_TYPE_P;
-    setup_ref_info.FrameNum         = is_idr ? 0u : pEncoder->framesSinceIdr;
-    setup_ref_info.PicOrderCnt      = (int32_t)(2u * pEncoder->framesSinceIdr);
+    setup_ref_info.FrameNum         = is_idr ? 0U : pEncoder->framesSinceIdr;
+    setup_ref_info.PicOrderCnt      = (int32_t)(2U * pEncoder->framesSinceIdr);
     cvkInitVideoEncodeH264DpbSlotInfo(&setup_dpb_info, NULL, &setup_ref_info);
     cvkInitVideoReferenceSlotInfo(&setup_slot_begin, NULL, -1, &setup_resource);
     cvkInitVideoReferenceSlotInfo(&setup_slot_encode, &setup_dpb_info, (int32_t)current_slot, &setup_resource);
@@ -820,8 +823,8 @@ const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
         ref_resource = GetPictureResource(pEncoder, pEncoder->dpbView[ref_slot]);
         memset(&ref_ref_info, 0, sizeof(ref_ref_info));
         ref_ref_info.primary_pic_type = STD_VIDEO_H264_PICTURE_TYPE_P;
-        ref_ref_info.FrameNum         = pEncoder->framesSinceIdr - 1u;
-        ref_ref_info.PicOrderCnt      = (int32_t)(2u * (pEncoder->framesSinceIdr - 1u));
+        ref_ref_info.FrameNum         = pEncoder->framesSinceIdr - 1U;
+        ref_ref_info.PicOrderCnt      = (int32_t)(2U * (pEncoder->framesSinceIdr - 1U));
         cvkInitVideoEncodeH264DpbSlotInfo(&ref_dpb_info, NULL, &ref_ref_info);
         cvkInitVideoReferenceSlotInfo(&ref_slot_info, &ref_dpb_info, (int32_t)ref_slot, &ref_resource);
         begin_slots[begin_count++] = ref_slot_info;
@@ -903,14 +906,14 @@ const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
     }
 
     memset(&std_picture, 0, sizeof(std_picture));
-    std_picture.flags.IdrPicFlag     = is_idr ? 1u : 0u;
-    std_picture.flags.is_reference   = 1u;
+    std_picture.flags.IdrPicFlag     = is_idr ? 1U : 0U;
+    std_picture.flags.is_reference   = 1U;
     std_picture.seq_parameter_set_id = 0;
     std_picture.pic_parameter_set_id = 0;
     std_picture.idr_pic_id           = (uint16_t)pEncoder->idrPicId;
     std_picture.primary_pic_type     = is_idr ? STD_VIDEO_H264_PICTURE_TYPE_IDR : STD_VIDEO_H264_PICTURE_TYPE_P;
-    std_picture.frame_num            = is_idr ? 0u : pEncoder->framesSinceIdr;
-    std_picture.PicOrderCnt          = (int32_t)(2u * pEncoder->framesSinceIdr);
+    std_picture.frame_num            = is_idr ? 0U : pEncoder->framesSinceIdr;
+    std_picture.PicOrderCnt          = (int32_t)(2U * pEncoder->framesSinceIdr);
     std_picture.pRefLists            = &ref_lists;
 
     cvkInitVideoEncodeH264NaluSliceInfo(&nalu_slice, NULL, qp, &slice_header);
@@ -930,7 +933,7 @@ const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
                                          aligned_range,
                                          input_resource,
                                          &setup_slot_encode,
-                                         has_ref ? 1u : 0u,
+                                         has_ref ? 1U : 0U,
                                          has_ref ? &ref_slot_info : NULL,
                                          0);
     cvkCmdEndQuery(pEncoder->encodeCmd, pEncoder->feedbackPool, 0);
@@ -963,7 +966,7 @@ const byte_t* GpuEncode_EncodeFrame(GpuEncoder*    pEncoder,
     pEncoder->lastKeyframe           = is_idr;
     if (is_idr)
     {
-        pEncoder->idrPicId = (pEncoder->idrPicId + 1u) & 0xFFFFu;
+        pEncoder->idrPicId = (pEncoder->idrPicId + 1U) & 0xFFFFU;
     }
     ++pEncoder->frameIndex;
     ++pEncoder->framesSinceIdr;

@@ -387,8 +387,7 @@ static FORCE_INLINE App* GetApp(HWND window)
  */
 static FORCE_INLINE void PollJobs(App* app);
 
-static FORCE_INLINE LRESULT CALLBACK
-SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
+static FORCE_INLINE LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
 static FORCE_INLINE void SeekBar_OnNcDestroy(HWND hWnd);
 static FORCE_INLINE void SeekBar_OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags);
 static FORCE_INLINE void SeekBar_OnLButtonDown(HWND hWnd, BOOL doubleClick, int x, int y, UINT keyFlags);
@@ -3570,8 +3569,8 @@ static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
  */
 static FORCE_INLINE BOOL CastWindow_OnEraseBackground(HWND hWnd, HDC dc)
 {
-    (void)hWnd;
-    (void)dc;
+    UNREFERENCED_PARAMETER(hWnd);
+    UNREFERENCED_PARAMETER(dc);
     return TRUE;
 }
 
@@ -3586,7 +3585,6 @@ static FORCE_INLINE HBRUSH CastWindow_ControlColor(HWND hWnd, HDC dc, HWND hCont
     App* pApp;
 
     pApp = GetApp(hWnd);
-    (void)hWnd;
 
     int field = type == CTLCOLOR_EDIT || type == CTLCOLOR_LISTBOX || hControl == pApp->hSubtitle;
     SetTextColor(dc, IsWindowEnabled(hControl) ? DARK_TEXT : DARK_MUTED);
@@ -3876,11 +3874,12 @@ static FORCE_INLINE void CastWindow_OnSize(HWND hWnd, UINT state, int width, int
 {
     App* pApp;
 
+    UNREFERENCED_PARAMETER(state);
+    UNREFERENCED_PARAMETER(width);
+    UNREFERENCED_PARAMETER(height);
+
     pApp = GetApp(hWnd);
     Layout(pApp);
-    (void)state;
-    (void)width;
-    (void)height;
 }
 
 /*************************************************************************************************/
@@ -4096,7 +4095,7 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
     EnableWindow(pApp->hPreview, !pApp->preparingAudio);
     if (!pApp->closing && NULL != pResult && pResult->ok && pResult->frames > 0)
     {
-        TCHAR text[192];
+        TCHAR      text[192];
         NativeText writer;
 
         NativeText_Initialize(&writer, text, ARRAYSIZE(text));
@@ -4269,25 +4268,25 @@ static FORCE_INLINE void PresentCastWindow(void* parameter)
  */
 static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
 {
-    HRESULT              ole_result;
-    bool_t               ole_ready;
-    WSADATA              wsa_data;
-    int32_t              network_result;
-    bool_t               network_ready;
-    int32_t              result;
-    INITCOMMONCONTROLSEX controls;
+    HRESULT                   ole_result;
+    bool_t                    ole_ready;
+    WSADATA                   wsa_data;
+    int32_t                   network_result;
+    bool_t                    network_ready;
+    int32_t                   result;
+    INITCOMMONCONTROLSEX      controls;
     IMMERSIVEWINDOWCREATEINFO createInfo;
-    bool_t               controls_ready;
-    HWND                 window;
-    bool_t               window_ready;
-    uint32_t             argumentCount;
-    WCHAR                argument[MAX_PATH];
-    bool_t               hasArgument;
-    MSG                  message;
-    BOOL                 message_result;
-    bool_t               pump_failed;
-    bool_t               has_message;
-    bool_t               is_quit;
+    bool_t                    controls_ready;
+    HWND                      window;
+    bool_t                    window_ready;
+    uint32_t                  argumentCount;
+    WCHAR                     argument[MAX_PATH];
+    bool_t                    hasArgument;
+    MSG                       message;
+    BOOL                      message_result;
+    bool_t                    pump_failed;
+    bool_t                    has_message;
+    bool_t                    is_quit;
 
     LOGASSERT(NULL != app);
 

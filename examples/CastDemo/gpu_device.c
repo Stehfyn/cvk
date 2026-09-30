@@ -12,7 +12,9 @@
 ** 2. INCLUDE FILES
 **===============================================================================================*/
 
+#ifndef NDEBUG
 #include "vk_diagnostic.h"
+#endif
 #include "gpu_device.h"
 #include "os/os_types.h"
 #include "os/os_assert.h"
@@ -815,6 +817,10 @@ void GpuDevice_Destroy(GpuDevice* pDevice)
 {
     if (NULL != pDevice)
     {
+        bool_t decoderBusy = pDevice->decoderBusy;
+        bool_t encoderBusy = pDevice->encoderBusy;
+        bool_t transcoderBusy = pDevice->transcoderBusy;
+
         if (VK_NULL_HANDLE != pDevice->device)
         {
             cvkDeviceWaitIdle(pDevice->device);
@@ -831,5 +837,8 @@ void GpuDevice_Destroy(GpuDevice* pDevice)
             cvkDestroyInstance(pDevice->instance, NULL);
         }
         GpuDevice_Initialize(pDevice);
+        pDevice->decoderBusy    = decoderBusy;
+        pDevice->encoderBusy    = encoderBusy;
+        pDevice->transcoderBusy = transcoderBusy;
     }
 }
