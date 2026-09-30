@@ -723,6 +723,9 @@ static FORCE_INLINE void WriteReadyReport(Report_t* report, const GpuDevice* pDe
 void GpuDevice_Initialize(GpuDevice* pDevice)
 {
     LOGASSERT(NULL != pDevice);
+    pDevice->decoderBusy     = FALSE;
+    pDevice->encoderBusy     = FALSE;
+    pDevice->transcoderBusy  = FALSE;
     pDevice->instance        = VK_NULL_HANDLE;
     pDevice->physical        = VK_NULL_HANDLE;
     pDevice->device          = VK_NULL_HANDLE;

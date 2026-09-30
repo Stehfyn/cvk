@@ -7,12 +7,12 @@
 #include <security.h>
 #include <schannel.h>
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "cast_channel.h"
 #include "crt/crt_memory.h"
+#include "crt/crt_format.h"
 #include "os/os_assert.h"
 #include "os/os_memory.h"
 
@@ -57,11 +57,11 @@ static void SetError(char* pError, size_t capacity, const char* pWhat, unsigned 
 {
     if (0 != code)
     {
-        (void)snprintf(pError, capacity, "%s (0x%08lX)", pWhat, code);
+        (void)CRT_Format_Write(pError, (uint32_t)capacity, "%s (0x%08lX)", pWhat, code);
     }
     else
     {
-        (void)snprintf(pError, capacity, "%s", pWhat);
+        (void)CRT_Format_Copy(pError, (uint32_t)capacity, pWhat);
     }
 }
 
@@ -113,7 +113,7 @@ static SOCKET ConnectTcp(const char* pHost, unsigned short port, char* pError, s
     hints.ai_family   = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
-    (void)snprintf(service, sizeof(service), "%u", (unsigned)port);
+    (void)CRT_Format_Write(service, (uint32_t)sizeof(service), "%u", (unsigned)port);
     if (0 != getaddrinfo(pHost, service, &hints, &pResults))
     {
         SetError(pError, errorCapacity, "cannot resolve the receiver address", (unsigned long)WSAGetLastError());

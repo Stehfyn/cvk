@@ -40,7 +40,7 @@
 bool_t CRT_Format_Copy(char_t* output, uint32_t capacity, const char_t* text);
 
 /** Appends the supported diagnostic format subset to terminated caller storage. */
-bool_t CRT_Format_VAppend(char_t* output, uint32_t capacity, const char_t* format, va_list arguments);
+bool_t CRT_Format_VAppend(char_t* output, uint32_t capacity, const char_t* format, va_list* arguments);
 
 /** Clears caller storage and writes the supported diagnostic format subset. */
 bool_t CRT_Format_Write(char_t* output, uint32_t capacity, const char_t* format, ...);

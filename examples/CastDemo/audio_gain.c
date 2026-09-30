@@ -14,7 +14,7 @@
 #include <mfreadwrite.h>
 #include <mferror.h>
 #include <propvarutil.h>
-#include <stdio.h>
+#include "crt/crt_format.h"
 #include "audio_gain.h"
 
 /*=================================================================================================
@@ -125,7 +125,8 @@ int AudioGain_NeedsConversion(const wchar_t* source, char* error, size_t errorCa
     }
 done:
     if (result < 0)
-        snprintf(error, errorCapacity, "Cannot inspect audio (0x%08lX) at %s.", (unsigned long)hr, step);
+        (void)CRT_Format_Write(error, (uint32_t)errorCapacity, "Cannot inspect audio (0x%08lX) at %s.",
+                               (unsigned long)hr, step);
     RELEASE(IMFMediaType, type);
     RELEASE(IMFSourceReader, reader);
     if (started)
@@ -346,9 +347,10 @@ done:
     if (!ok)
     {
         if (hr == E_ABORT)
-            snprintf(error, errorCapacity, "Audio conversion cancelled.");
+            (void)CRT_Format_Copy(error, (uint32_t)errorCapacity, "Audio conversion cancelled.");
         else
-            snprintf(error, errorCapacity, "Audio conversion failed (0x%08lX) at %.140s.", (unsigned long)hr, step);
+            (void)CRT_Format_Write(error, (uint32_t)errorCapacity,
+                                   "Audio conversion failed (0x%08lX) at %.*s.", (unsigned long)hr, 140, step);
     }
     RELEASE(IMFMediaBuffer, buffer);
     RELEASE(IMFSample, sample);

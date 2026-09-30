@@ -26,6 +26,8 @@
 ** 3.1 Macros
 **===============================================================================================*/
 
+#define GPU_SESSION_STORAGE_CAPACITY (65536U)
+
 /*=================================================================================================
 ** 3.2 Types
 **===============================================================================================*/
@@ -36,6 +38,24 @@
  */
 typedef struct GpuDevice
 {
+    union
+    {
+        uint64_t alignment;
+        byte_t   bytes[GPU_SESSION_STORAGE_CAPACITY];
+    } decoderStorage; ///< Startup-owned storage for one decoder session.
+    union
+    {
+        uint64_t alignment;
+        byte_t   bytes[GPU_SESSION_STORAGE_CAPACITY];
+    } encoderStorage; ///< Startup-owned storage for one encoder session.
+    union
+    {
+        uint64_t alignment;
+        byte_t   bytes[GPU_SESSION_STORAGE_CAPACITY];
+    } transcoderStorage; ///< Startup-owned storage for one transcode session.
+    bool_t                  decoderBusy; ///< One decoder may borrow the storage at a time.
+    bool_t                  encoderBusy; ///< One encoder may borrow the storage at a time.
+    bool_t                  transcoderBusy; ///< One transcoder may borrow the storage at a time.
     VkInstance              instance;        ///< Native instance, or VK_NULL_HANDLE when closed.
     VkPhysicalDevice        physical;        ///< Selected device with all requested capabilities.
     VkDevice                device;          ///< Shared logical device, or VK_NULL_HANDLE when closed.

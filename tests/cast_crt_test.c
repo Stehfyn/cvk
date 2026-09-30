@@ -9,6 +9,7 @@
 **===============================================================================================*/
 
 #include "crt/crt_memory.h"
+#include "crt/crt_format.h"
 #include "os/os_types.h"
 #include <stdint.h>
 #include "os/os_assert.h"
@@ -30,6 +31,11 @@
 #define TEST_PATTERN_MULTIPLIER (71)
 #define TEST_PATTERN_DIVISOR    (7)
 #define TEST_PATTERN_BIAS       (193)
+#define TEST_FORMAT_CAPACITY     (80)
+#define TEST_FORMAT_HEX          (0x12ABUL)
+#define TEST_FORMAT_POSITIVE     (42ULL)
+#define TEST_FORMAT_NEGATIVE     (-42LL)
+#define TEST_FORMAT_FRACTION     (1.25)
 
 /*=================================================================================================
 ** 3.2 Types
@@ -107,6 +113,8 @@ static FORCE_INLINE void CheckSet(byte_t* output, uint32_t length, uint32_t outp
  * \retval None
  */
 static FORCE_INLINE void CheckCopyAndSet(void);
+
+static FORCE_INLINE void CheckFormat(void);
 
 /*************************************************************************************************/
 /**
@@ -348,6 +356,28 @@ static FORCE_INLINE void CheckCompare(void)
 **===============================================================================================*/
 
 /*************************************************************************************************/
+/** \brief Checks bounded diagnostics and the numeric formats used by CastDemo. */
+static FORCE_INLINE void CheckFormat(void)
+{
+    char_t output[TEST_FORMAT_CAPACITY];
+    bool_t complete;
+    int32_t comparison;
+
+    complete = CRT_Format_Write(output, (uint32_t)sizeof(output), "%.*s %08lX %llu %lld %.1f %.2f %%",
+                                3, "abcdef", TEST_FORMAT_HEX, TEST_FORMAT_POSITIVE,
+                                TEST_FORMAT_NEGATIVE, TEST_FORMAT_FRACTION, TEST_FORMAT_FRACTION);
+    LOGASSERT(complete);
+    comparison = CRT_Memory_Compare(output, "abc 000012AB 42 -42 1.3 1.25 %",
+                                    sizeof("abc 000012AB 42 -42 1.3 1.25 %"));
+    LOGASSERT(0 == comparison);
+
+    complete = CRT_Format_Copy(output, 4U, "longer");
+    LOGASSERT(!complete);
+    comparison = CRT_Memory_Compare(output, "lon", sizeof("lon"));
+    LOGASSERT(0 == comparison);
+}
+
+/*************************************************************************************************/
 /**
  * \par Details:
  *  All fixtures use fixed caller-owned storage and the selected native runtime backend.
@@ -358,6 +388,7 @@ uint32_t OS_Application_Main(void)
     CheckCopyAndSet();
     CheckMove();
     CheckCompare();
+    CheckFormat();
 
     return 0;
 }

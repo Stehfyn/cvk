@@ -20,7 +20,6 @@
 
 #include <float.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "cast_channel.h"
@@ -32,6 +31,7 @@
 #include "os/os_memory.h"
 #include "os/os_atomic.h"
 #include "crt/crt_memory.h"
+#include "crt/crt_format.h"
 #include "utl/utl_chromecast.h"
 #include "utl/utl_castv2.h"
 #include "utl/utl_json.h"
@@ -716,8 +716,9 @@ static void Log(CastSession_State_t* pSession, const char* pFormat, ...)
     va_list arguments;
     char    text[1600];
 
+    text[0] = '\0';
     va_start(arguments, pFormat);
-    (void)vsnprintf(text, sizeof(text), pFormat, arguments);
+    (void)CRT_Format_VAppend(text, (uint32_t)sizeof(text), pFormat, &arguments);
     va_end(arguments);
     pSession->config.callback(pSession->config.pUser, CAST_EVENT_LOG, NULL, text);
 }
@@ -740,7 +741,7 @@ static void EmitStatus(CastSession_State_t* pSession)
 static void SetPhase(CastSession_State_t* pSession, CastPlayerState state, const char* pName)
 {
     pSession->status.state = state;
-    (void)snprintf(pSession->status.stateName, sizeof(pSession->status.stateName), "%s", pName);
+    (void)CRT_Format_Copy(pSession->status.stateName, (uint32_t)sizeof(pSession->status.stateName), pName);
     EmitStatus(pSession);
 }
 
@@ -1377,7 +1378,7 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
     CopyJsonString(cvkGetJsonMember(pDocument, pExtended, "playerState"), extendedName, sizeof(extendedName));
     if (0 == strcmp(name, "IDLE") && 0 == strcmp(extendedName, "LOADING"))
     {
-        (void)snprintf(name, sizeof(name), "LOADING");
+        (void)CRT_Format_Copy(name, (uint32_t)sizeof(name), "LOADING");
     }
     changed = (0 != strcmp(name, pSession->status.stateName));
     if (changed && 0 != pSession->resumeSince && 0 == strcmp(name, "PLAYING"))
@@ -1387,7 +1388,7 @@ static int OnMediaStatus(CastSession_State_t* pSession, const cvkJsonDocument* p
             (unsigned long long)(GetTickCount64() - pSession->resumeSince));
         pSession->resumeSince = 0;
     }
-    (void)snprintf(pSession->status.stateName, sizeof(pSession->status.stateName), "%s", name);
+    (void)CRT_Format_Copy(pSession->status.stateName, (uint32_t)sizeof(pSession->status.stateName), name);
     pSession->status.state = GetStateFromName(name, 0 == strcmp(name, "LOADING"));
     /* A resuming seek should leave the receiver playing; some receivers land it paused after a
     ** burst of scrub seeks and hold audio muted. Once the seek has landed, force PLAY. */
@@ -1923,7 +1924,7 @@ static FORCE_INLINE int32_t RunSession(CastSession_State_t* pSession)
     Leave(pSession);
 done:
     /* Channel error text belongs to the channel. Preserve it before closing. */
-    (void)snprintf(error, sizeof(error), "%s", (NULL != pReason) ? pReason : "Session ended.");
+    (void)CRT_Format_Copy(error, (uint32_t)sizeof(error), (NULL != pReason) ? pReason : "Session ended.");
     CastChannel_Close(pSession->pChannel);
     pSession->pChannel        = NULL;
     pSession->status.hasMedia = 0;

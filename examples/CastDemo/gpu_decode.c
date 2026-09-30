@@ -5,8 +5,6 @@
 #include <windows.h>
 
 #include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <vulkan/vulkan.h>
@@ -15,6 +13,8 @@
 
 #include "gpu_device.h"
 #include "gpu_decode.h"
+#include "crt/crt_format.h"
+#include "crt/crt_memory.h"
 #include "os/os_types.h"
 
 #define MAX_SESSION_MEMORY 8
@@ -34,6 +34,7 @@ typedef struct DpbSlot
 
 struct GpuDecoder
 {
+    GpuDevice* owner;
     VkPhysicalDevice physical;
     VkDevice         device;
     uint32_t         decodeFamily;
@@ -93,6 +94,9 @@ struct GpuDecoder
     unsigned     decodeOrder; /* increments per stored reference, to stamp DpbSlot.age */
 };
 
+typedef char GpuDecoder_StorageSizeCheck[(sizeof(GpuDecoder) <= GPU_SESSION_STORAGE_CAPACITY) ? 1 : -1];
+typedef char GpuDecoder_StorageAlignmentCheck[(__alignof(GpuDecoder) <= __alignof(uint64_t)) ? 1 : -1];
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -101,14 +105,12 @@ struct GpuDecoder
 static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 {
     va_list arguments;
-    size_t  used = pReport ? strlen(pReport) : 0;
-
-    if (!pReport || used + 1 >= capacity)
+    if ((NULL == pReport) || (capacity > UINT32_MAX))
     {
         return;
     }
     va_start(arguments, pFormat);
-    (void)vsnprintf(pReport + used, capacity - used, pFormat, arguments);
+    (void)CRT_Format_VAppend(pReport, (uint32_t)capacity, pFormat, &arguments);
     va_end(arguments);
 }
 
@@ -262,11 +264,14 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     uint32_t                                     i;
     VkDeviceSize                                 readback_size;
 
-    pDecoder = (GpuDecoder*)calloc(1, sizeof(*pDecoder));
-    if (NULL == pDecoder)
+    if ((NULL == pGpu) || pGpu->decoderBusy)
     {
         return NULL;
     }
+    pDecoder = (GpuDecoder*)pGpu->decoderStorage.bytes;
+    CRT_Memory_Set(pDecoder, 0, sizeof(*pDecoder));
+    pDecoder->owner = pGpu;
+    pGpu->decoderBusy = TRUE;
     if (reportCapacity > 0)
     {
         pReport[0] = 0;
@@ -285,10 +290,7 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     pDecoder->maxDpbSlots    = maxDpbSlots < MAX_DPB_SLOTS ? maxDpbSlots : MAX_DPB_SLOTS;
     pDecoder->firstFrame     = 1;
 
-    cvkInitVideoDecodeH264ProfileInfo(&pDecoder->h264Profile,
-                                      NULL,
-                                      pSps->profile_idc,
-                                      VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR);
+    cvkInitVideoDecodeH264ProfileInfo(&pDecoder->h264Profile, NULL, pSps->profile_idc, VK_VIDEO_DECODE_H264_PICTURE_LAYOUT_PROGRESSIVE_KHR);
     cvkInitVideoProfileInfo(&pDecoder->profile,
                             &pDecoder->h264Profile,
                             VK_VIDEO_CODEC_OPERATION_DECODE_H264_BIT_KHR,
@@ -298,22 +300,19 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     cvkInitVideoProfileListInfo(&profile_list, NULL, 1, &pDecoder->profile);
 
     cvkInitVideoDecodeH264Capabilities(&h264_caps, NULL);
-    memset(&decode_caps, 0, sizeof(decode_caps));
-    memset(&capabilities, 0, sizeof(capabilities));
+    (void)memset(&decode_caps, 0, sizeof(decode_caps));
+    (void)memset(&capabilities, 0, sizeof(capabilities));
     decode_caps.sType  = VK_STRUCTURE_TYPE_VIDEO_DECODE_CAPABILITIES_KHR;
     decode_caps.pNext  = &h264_caps;
     capabilities.sType = VK_STRUCTURE_TYPE_VIDEO_CAPABILITIES_KHR;
-    if (VK_SUCCESS !=
-        cvkGetPhysicalDeviceVideoCapabilities(pDecoder->physical, &pDecoder->profile, &decode_caps, &capabilities))
+    if (VK_SUCCESS != cvkGetPhysicalDeviceVideoCapabilities(pDecoder->physical, &pDecoder->profile, &decode_caps, &capabilities))
     {
         Report(pReport, reportCapacity, "decode not supported for this profile\n");
         GpuDecode_Destroy(pDecoder);
         return NULL;
     }
-    coincide = (decode_caps.flags &
-                (VkVideoDecodeCapabilityFlagsKHR)VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR) != 0;
-    pDecoder->bitstreamAlignment =
-        capabilities.minBitstreamBufferSizeAlignment ? capabilities.minBitstreamBufferSizeAlignment : 1;
+    coincide = (decode_caps.flags & (VkVideoDecodeCapabilityFlagsKHR)VK_VIDEO_DECODE_CAPABILITY_DPB_AND_OUTPUT_COINCIDE_BIT_KHR) != 0;
+    pDecoder->bitstreamAlignment = capabilities.minBitstreamBufferSizeAlignment ? capabilities.minBitstreamBufferSizeAlignment : 1;
 
     cvkInitPhysicalDeviceVideoFormatInfo(&format_info,
                                          &profile_list,
@@ -332,9 +331,7 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     pDecoder->dpbFormat     = formats[0].format;
     if (!coincide)
     {
-        cvkInitPhysicalDeviceVideoFormatInfo(&format_info,
-                                             &profile_list,
-                                             (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR);
+        cvkInitPhysicalDeviceVideoFormatInfo(&format_info, &profile_list, (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR);
         cvkGetPhysicalDeviceVideoFormatProperties(pDecoder->physical, &format_info, &format_count, formats);
         if (0 == format_count)
         {
@@ -347,11 +344,8 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     pDecoder->codedExtent.width  = (width + 15u) & ~15u;
     pDecoder->codedExtent.height = (height + 15u) & ~15u;
 
-    memset(&std_header, 0, sizeof(std_header));
-    (void)snprintf(std_header.extensionName,
-                   sizeof(std_header.extensionName),
-                   "%s",
-                   VK_STD_VULKAN_VIDEO_CODEC_H264_DECODE_EXTENSION_NAME);
+    (void)memset(&std_header, 0, sizeof(std_header));
+    (void)CRT_Format_Copy(std_header.extensionName, (uint32_t)sizeof(std_header.extensionName), VK_STD_VULKAN_VIDEO_CODEC_H264_DECODE_EXTENSION_NAME);
     std_header.specVersion = VK_STD_VULKAN_VIDEO_CODEC_H264_DECODE_SPEC_VERSION;
 
     pDecoder->sessionMemoryCount = MAX_SESSION_MEMORY;
@@ -389,12 +383,7 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     /* DPB reference images, the distinct output image, and the two staging buffers. */
     for (i = 0; i < pDecoder->maxDpbSlots; ++i)
     {
-        CreateVideoImage(pDecoder,
-                         pDecoder->dpbFormat,
-                         (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
-                         &pDecoder->dpbImage[i],
-                         &pDecoder->dpbMemory[i],
-                         &pDecoder->dpbView[i]);
+        CreateVideoImage(pDecoder, pDecoder->dpbFormat, (VkImageUsageFlags)VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR, &pDecoder->dpbImage[i], &pDecoder->dpbMemory[i], &pDecoder->dpbView[i]);
     }
     CreateVideoImage(pDecoder,
                      pDecoder->pictureFormat,
@@ -420,24 +409,19 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     cvkAllocateBufferMemory(pDecoder->physical,
                             pDecoder->device,
                             pDecoder->bitstream,
-                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                                                    (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                            (VkMemoryPropertyFlags)(
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                             NULL,
                             NULL,
                             &pDecoder->bitstreamMemory);
     cvkBindBufferMemory(pDecoder->device, pDecoder->bitstream, pDecoder->bitstreamMemory, VK_NO_OFFSET);
-    cvkMapMemory(pDecoder->device,
-                 pDecoder->bitstreamMemory,
-                 VK_NO_OFFSET,
-                 VK_WHOLE_SIZE,
-                 (VkMemoryMapFlags)0,
-                 &pDecoder->bitstreamMapped);
+    cvkMapMemory(pDecoder->device, pDecoder->bitstreamMemory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, &pDecoder->bitstreamMapped);
 
     pDecoder->lumaStride = (int)pDecoder->codedExtent.width;
     /* Size the readback buffer from the output pixel format itself (plane count, subsampling and
     ** per-texel bytes all derived by vku), so no bit depth or chroma layout is assumed here. */
-    readback_size =
-        cvkGetFormatSize(pDecoder->pictureFormat, pDecoder->codedExtent.width, pDecoder->codedExtent.height);
+    readback_size = cvkGetFormatSize(pDecoder->pictureFormat, pDecoder->codedExtent.width, pDecoder->codedExtent.height);
     cvkCreateBuffer(pDecoder->device,
                     NULL,
                     (VkBufferCreateFlags)0,
@@ -453,44 +437,20 @@ GpuDecoder* GpuDecode_Create(GpuDevice*                              pGpu,
     cvkAllocateBufferMemory(pDecoder->physical,
                             pDecoder->device,
                             pDecoder->readback,
-                            (VkMemoryPropertyFlags)((VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                                                    (VkFlags)VK_MEMORY_PROPERTY_HOST_CACHED_BIT |
-                                                    (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
+                            (VkMemoryPropertyFlags)(
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_CACHED_BIT |
+                                (VkFlags)VK_MEMORY_PROPERTY_HOST_COHERENT_BIT),
                             NULL,
                             NULL,
                             &pDecoder->readbackMemory);
     cvkBindBufferMemory(pDecoder->device, pDecoder->readback, pDecoder->readbackMemory, VK_NO_OFFSET);
-    cvkMapMemory(pDecoder->device,
-                 pDecoder->readbackMemory,
-                 VK_NO_OFFSET,
-                 VK_WHOLE_SIZE,
-                 (VkMemoryMapFlags)0,
-                 &pDecoder->readbackMapped);
+    cvkMapMemory(pDecoder->device, pDecoder->readbackMemory, VK_NO_OFFSET, VK_WHOLE_SIZE, (VkMemoryMapFlags)0, &pDecoder->readbackMapped);
 
-    cvkCreateCommandPool(pDecoder->device,
-                         NULL,
-                         (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-                         pDecoder->decodeFamily,
-                         NULL,
-                         &pDecoder->decodePool);
-    cvkAllocateCommandBuffers(pDecoder->device,
-                              NULL,
-                              pDecoder->decodePool,
-                              VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-                              1,
-                              &pDecoder->decodeCmd);
-    cvkCreateCommandPool(pDecoder->device,
-                         NULL,
-                         (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-                         pDecoder->transferFamily,
-                         NULL,
-                         &pDecoder->transferPool);
-    cvkAllocateCommandBuffers(pDecoder->device,
-                              NULL,
-                              pDecoder->transferPool,
-                              VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-                              1,
-                              &pDecoder->transferCmd);
+    cvkCreateCommandPool(pDecoder->device, NULL, (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,pDecoder->decodeFamily, NULL, &pDecoder->decodePool);
+    cvkAllocateCommandBuffers(pDecoder->device, NULL, pDecoder->decodePool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1, &pDecoder->decodeCmd);
+    cvkCreateCommandPool(pDecoder->device, NULL, (VkCommandPoolCreateFlags)VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, pDecoder->transferFamily, NULL, &pDecoder->transferPool);
+    cvkAllocateCommandBuffers(pDecoder->device, NULL, pDecoder->transferPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1, &pDecoder->transferCmd);
     cvkCreateFence(pDecoder->device, NULL, (VkFenceCreateFlags)0, NULL, &pDecoder->decodeFence);
     cvkCreateFence(pDecoder->device, NULL, (VkFenceCreateFlags)0, NULL, &pDecoder->transferFence);
     cvkCreateSemaphore(pDecoder->device, NULL, (VkSemaphoreCreateFlags)0, NULL, &pDecoder->decodeDone);
@@ -591,16 +551,7 @@ void GpuDecode_GetFrame(const GpuDecoder* pDecoder, DecodedFrame* pFrame)
     /* Read back the frame in whatever layout the pixel format defines: vku gives each plane's
     ** offset, row stride and subsampled extent, so no bit depth or chroma shape is hard-coded. */
     base                      = (const byte_t*)pDecoder->readbackMapped;
-    plane_count               = cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat,
-                                                               pDecoder->displayWidth,
-                                                               pDecoder->displayHeight,
-                                                               1,
-                                                               1,
-                                                               1,
-                                                               plane_offsets,
-                                                               plane_strides,
-                                                               plane_extents,
-                                                               &size);
+    plane_count               = cvkCalculateFormatPlaneLayouts(pDecoder->pictureFormat, pDecoder->displayWidth, pDecoder->displayHeight, 1, 1, 1, plane_offsets, plane_strides, plane_extents, &size);
     pFrame->width             = pDecoder->displayWidth;
     pFrame->height            = pDecoder->displayHeight;
     pFrame->lumaStride        = plane_strides[0];
@@ -715,7 +666,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
             p_stream[stream_length++]    = 0;
             p_stream[stream_length++]    = 0;
             p_stream[stream_length++]    = 1;
-            memcpy(p_stream + stream_length, pSample + offset, nal_size);
+            (void)memcpy(p_stream + stream_length, pSample + offset, nal_size);
             stream_length += nal_size;
         }
         offset += nal_size;
@@ -770,10 +721,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
         }
         ref_resource[decode_ref_count] = GetPictureResource(pDecoder, pDecoder->dpbView[i]);
         cvkInitVideoDecodeH264DpbSlotInfo(&dpb_slot_info[decode_ref_count], NULL, &pDecoder->dpb[i].refInfo);
-        cvkInitVideoReferenceSlotInfo(&decode_refs[decode_ref_count],
-                                      &dpb_slot_info[decode_ref_count],
-                                      (int32_t)i,
-                                      &ref_resource[decode_ref_count]);
+        cvkInitVideoReferenceSlotInfo(&decode_refs[decode_ref_count], &dpb_slot_info[decode_ref_count], (int32_t)i, &ref_resource[decode_ref_count]);
         begin_slots[begin_count++] = decode_refs[decode_ref_count];
         ++decode_ref_count;
     }
@@ -781,7 +729,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
     /* The reconstructed slot: begin is given it inactive (slotIndex -1); the decode setup slot
     ** carries its H.264 reference info and the target slot index. */
     setup_resource = GetPictureResource(pDecoder, pDecoder->dpbView[current_slot]);
-    memset(&setup_ref_info, 0, sizeof(setup_ref_info));
+    (void)memset(&setup_ref_info, 0, sizeof(setup_ref_info));
     setup_ref_info.FrameNum       = (uint16_t)header.frameNum;
     setup_ref_info.PicOrderCnt[0] = poc;
     setup_ref_info.PicOrderCnt[1] = poc;
@@ -832,13 +780,11 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
                            begin_slots);
     if (pDecoder->firstFrame)
     {
-        cvkCmdControlVideoCoding(pDecoder->decodeCmd,
-                                 NULL,
-                                 (VkVideoCodingControlFlagsKHR)VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR);
+        cvkCmdControlVideoCoding(pDecoder->decodeCmd, NULL, (VkVideoCodingControlFlagsKHR)VK_VIDEO_CODING_CONTROL_RESET_BIT_KHR);
         pDecoder->firstFrame = 0;
     }
 
-    memset(&std_picture, 0, sizeof(std_picture));
+    (void)memset(&std_picture, 0, sizeof(std_picture));
     std_picture.seq_parameter_set_id = pDecoder->sps.seq_parameter_set_id;
     std_picture.pic_parameter_set_id = pDecoder->pps.pic_parameter_set_id;
     std_picture.frame_num            = (uint16_t)header.frameNum;
@@ -856,7 +802,7 @@ int GpuDecode_DecodeFrame(GpuDecoder* pDecoder, const byte_t* pSample, uint32_t 
     {
         aligned_range = BITSTREAM_CAPACITY;
     }
-    memset((byte_t*)pDecoder->bitstreamMapped + stream_length, 0, (size_t)(aligned_range - stream_length));
+    (void)memset((byte_t*)pDecoder->bitstreamMapped + stream_length, 0, (size_t)(aligned_range - stream_length));
 
     cvkCmdDecodeVideoWithH264PictureInfo(pDecoder->decodeCmd,
                                          NULL,
@@ -1084,5 +1030,5 @@ void GpuDecode_Destroy(GpuDecoder* pDecoder)
         }
         /* The device and instance belong to the shared GpuDevice, not to the decoder. */
     }
-    free(pDecoder);
+    pDecoder->owner->decoderBusy = FALSE;
 }

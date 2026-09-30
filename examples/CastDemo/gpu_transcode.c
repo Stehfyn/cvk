@@ -3,7 +3,6 @@
 #include <windows.h>
 
 #include <stdarg.h>
-#include <stdio.h>
 #include <string.h>
 
 #include <vulkan/vulkan.h>
@@ -11,6 +10,8 @@
 #include "cvk/cvk.h"
 
 #include "gpu_transcode.h"
+#include "crt/crt_format.h"
+#include "crt/crt_memory.h"
 #include "os/os_atomic.h"
 #include "os/os_types.h"
 
@@ -23,14 +24,13 @@
 static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 {
     va_list arguments;
-    size_t  used = strlen(pReport);
 
-    if (used + 1 >= capacity)
+    if ((NULL == pReport) || (capacity > UINT32_MAX))
     {
         return;
     }
     va_start(arguments, pFormat);
-    (void)vsnprintf(pReport + used, capacity - used, pFormat, arguments);
+    (void)CRT_Format_VAppend(pReport, (uint32_t)capacity, pFormat, &arguments);
     va_end(arguments);
 }
 
@@ -64,6 +64,7 @@ typedef struct FrameSlot
 
 struct GpuTranscoder
 {
+    GpuDevice*         owner;
     GpuDevice*         device;
     Mp4Demux*          demux;
     GpuDecoder*        decoder;
@@ -96,6 +97,9 @@ struct GpuTranscoder
     unsigned      head; /* producer writes here */
     unsigned      tail; /* consumer reads here */
 };
+
+typedef char GpuTranscoder_StorageSizeCheck[(sizeof(GpuTranscoder) <= GPU_SESSION_STORAGE_CAPACITY) ? 1 : -1];
+typedef char GpuTranscoder_StorageAlignmentCheck[(__alignof(GpuTranscoder) <= __alignof(uint64_t)) ? 1 : -1];
 
 /* Area-average downscale of a decoded frame (in whatever YCbCr layout the decoder produced) into the
 ** encoder's NV12 input: luma to ow x oh, chroma to (ow/2) x (oh/2) interleaved. Averaging rather than
@@ -610,12 +614,15 @@ GpuTranscoder* GpuTranscode_Open(GpuDevice* deviceStorage, const wchar_t* pFile,
         out_height = 2u;
     }
 
-    pTranscoder = (GpuTranscoder*)calloc(1, sizeof(*pTranscoder));
-    if (NULL == pTranscoder)
+    if ((NULL == deviceStorage) || deviceStorage->transcoderBusy)
     {
         Mp4Demux_Close(p_demux);
         return NULL;
     }
+    pTranscoder = (GpuTranscoder*)deviceStorage->transcoderStorage.bytes;
+    CRT_Memory_Set(pTranscoder, 0, sizeof(*pTranscoder));
+    pTranscoder->owner = deviceStorage;
+    deviceStorage->transcoderBusy = TRUE;
     pTranscoder->planeCount     = 0;
     pTranscoder->config         = (*pConfig);
     pTranscoder->demux          = p_demux;
@@ -929,7 +936,7 @@ void GpuTranscode_Close(GpuTranscoder* pTranscoder)
     free(pTranscoder->dstLuma);
     free(pTranscoder->dstChroma);
     free(pTranscoder->prevLuma);
-    free(pTranscoder);
+    pTranscoder->owner->transcoderBusy = FALSE;
 }
 
 /*************************************************************************************************/

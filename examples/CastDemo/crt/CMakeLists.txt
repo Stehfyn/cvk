@@ -7,9 +7,10 @@ else()
     message(FATAL_ERROR "The hand-written CRT needs a verified memory backend for this target")
 endif()
 
-add_library(crt STATIC crt_memory.c crt_memory.h crt_memory_backend.h ${crt_native_sources})
+add_library(crt STATIC crt_memory.c crt_memory.h crt_memory_backend.h crt_format.c crt_format.h ${crt_native_sources})
 target_include_directories(crt PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_compile_options(crt PRIVATE "$<$<COMPILE_LANGUAGE:C>:/GS-;/Zl>")
+target_link_libraries(crt PRIVATE utl-decimal)
 target_link_libraries(crt-abi INTERFACE crt)
 
 # Resolve compiler-generated references before LTCG while retaining whole-program optimization.

@@ -6,8 +6,6 @@
 #include <windows.h>
 
 #include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <vulkan/vulkan.h>
@@ -16,6 +14,8 @@
 
 #include "gpu_device.h"
 #include "gpu_encode.h"
+#include "crt/crt_format.h"
+#include "crt/crt_memory.h"
 
 #define MAX_SESSION_MEMORY 8
 #define MAX_HEADER_BYTES   1024u
@@ -25,6 +25,7 @@
 
 struct GpuEncoder
 {
+    GpuDevice* owner;
     VkPhysicalDevice physical;
     VkDevice         device;
     uint32_t         encodeFamily;
@@ -92,6 +93,9 @@ struct GpuEncoder
     uint32_t headerSize;
 };
 
+typedef char GpuEncoder_StorageSizeCheck[(sizeof(GpuEncoder) <= GPU_SESSION_STORAGE_CAPACITY) ? 1 : -1];
+typedef char GpuEncoder_StorageAlignmentCheck[(__alignof(GpuEncoder) <= __alignof(uint64_t)) ? 1 : -1];
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -99,16 +103,14 @@ struct GpuEncoder
  */
 static void Report(char* pReport, size_t capacity, const char* pFormat, ...)
 {
-    size_t  used;
     va_list arguments;
 
-    used = pReport ? strlen(pReport) : 0;
-    if (!pReport || used + 1 >= capacity)
+    if ((NULL == pReport) || (capacity > UINT32_MAX))
     {
         return;
     }
     va_start(arguments, pFormat);
-    (void)vsnprintf(pReport + used, capacity - used, pFormat, arguments);
+    (void)CRT_Format_VAppend(pReport, (uint32_t)capacity, pFormat, &arguments);
     va_end(arguments);
 }
 
@@ -380,11 +382,14 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
     (void)bitrateKbps;
     (void)frameRateNum;
     (void)frameRateDen;
-    pEncoder = (GpuEncoder*)calloc(1, sizeof(*pEncoder));
-    if (NULL == pEncoder)
+    if ((NULL == pGpu) || pGpu->encoderBusy)
     {
         return NULL;
     }
+    pEncoder = (GpuEncoder*)pGpu->encoderStorage.bytes;
+    CRT_Memory_Set(pEncoder, 0, sizeof(*pEncoder));
+    pEncoder->owner = pGpu;
+    pGpu->encoderBusy = TRUE;
     if (reportCapacity > 0)
     {
         pReport[0] = 0;
@@ -451,10 +456,9 @@ GpuEncoder* GpuEncode_Create(GpuDevice* pGpu,
     pEncoder->dpbFormat = formats[0].format;
 
     memset(&std_header, 0, sizeof(std_header));
-    (void)snprintf(std_header.extensionName,
-                   sizeof(std_header.extensionName),
-                   "%s",
-                   VK_STD_VULKAN_VIDEO_CODEC_H264_ENCODE_EXTENSION_NAME);
+    (void)CRT_Format_Copy(std_header.extensionName,
+                          (uint32_t)sizeof(std_header.extensionName),
+                          VK_STD_VULKAN_VIDEO_CODEC_H264_ENCODE_EXTENSION_NAME);
     std_header.specVersion = VK_STD_VULKAN_VIDEO_CODEC_H264_ENCODE_SPEC_VERSION;
 
     cvkInitVideoEncodeH264SessionCreateInfo(&session_create, NULL, VK_TRUE, STD_VIDEO_H264_LEVEL_IDC_4_1);
@@ -1072,5 +1076,5 @@ void GpuEncode_Destroy(GpuEncoder* pEncoder)
         }
         /* The device and instance belong to the shared GpuDevice, not to the encoder. */
     }
-    free(pEncoder);
+    pEncoder->owner->encoderBusy = FALSE;
 }
