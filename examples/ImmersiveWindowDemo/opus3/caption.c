@@ -1271,3 +1271,19 @@ void DrawWindowCaption(CAPTION* pCaption, ID2D1DeviceContext* pDC)
 {
     ID2D1DeviceContext_DrawImage(pDC, (ID2D1Image*)pCaption->recording.list, NULL, NULL, D2D1_INTERPOLATION_MODE_LINEAR, D2D1_COMPOSITE_MODE_SOURCE_OVER);
 }
+
+void DestroyCaption(CAPTION* pCaption)
+{
+    CaptionRelease((IUnknown**)&pCaption->recording.list);
+    CaptionRelease((IUnknown**)&pCaption->atlas.bitmap);
+    CaptionRelease((IUnknown**)&pCaption->text.mask);
+    CaptionRelease((IUnknown**)&pCaption->toggleMasks[CG_DARK_MODE]);
+    CaptionRelease((IUnknown**)&pCaption->toggleMasks[CG_LIGHT_MODE]);
+    CaptionRelease((IUnknown**)&pCaption->iconBitmap);
+    CaptionRelease((IUnknown**)&pCaption->fontFace);
+    CaptionRelease((IUnknown**)&pCaption->brush);
+    CaptionRelease((IUnknown**)&pCaption->titleParams);
+    CaptionRelease((IUnknown**)&pCaption->textParams);
+    CaptionRelease((IUnknown**)&pCaption->dwrite);
+    CaptionRelease((IUnknown**)&pCaption->wic);
+}

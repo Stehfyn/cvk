@@ -741,6 +741,7 @@ OnNCCreate(
     LPCREATESTRUCT lpCreateStruct)
 {
     IMMERSIVEWINDOW* window;
+    BOOL             created;
 
     window = (IMMERSIVEWINDOW*)lpCreateStruct->lpCreateParams;
     window->hwnd = hwnd;
@@ -753,7 +754,12 @@ OnNCCreate(
     SetWindowUserData(hwnd, window);
     UpdateWindowMetrics(window);
 
-    return FORWARD_WM_NCCREATE(hwnd, lpCreateStruct, DefWindowProc);
+    created = FORWARD_WM_NCCREATE(hwnd, lpCreateStruct, DefWindowProc);
+    if (created && window->clientProc)
+    {
+        created = (BOOL)window->clientProc(hwnd, WM_NCCREATE, 0, (LPARAM)lpCreateStruct);
+    }
+    return created;
 }
 
 static FORCEINLINE UINT
@@ -1208,6 +1214,10 @@ OnDpiChanged(
         lpRect = &monitor.rcMonitor;
     }
     ASSERT(SetWindowRect(hwnd, NULL, lpRect, SWP_NOZORDER | SWP_NOACTIVATE));
+    if (window->clientProc)
+    {
+        (void)window->clientProc(hwnd, WM_DPICHANGED, MAKEWPARAM(dpiX, dpiY), (LPARAM)lpRect);
+    }
 }
 
 /* Plain and Alt key-downs: F9 borderless, F10 shadow, F11 fullscreen. Holding a key toggles once. */
@@ -1356,8 +1366,13 @@ OnEraseBkgnd(
     HWND hwnd,
     HDC  hdc)
 {
-    UNREFERENCED_PARAMETER(hwnd);
-    UNREFERENCED_PARAMETER(hdc);
+    IMMERSIVEWINDOW* window;
+
+    window = GetImmersiveWindow(hwnd);
+    if (window->clientProc)
+    {
+        return (BOOL)window->clientProc(hwnd, WM_ERASEBKGND, (WPARAM)hdc, 0);
+    }
 
     return TRUE;
 }
@@ -1376,16 +1391,34 @@ static FORCEINLINE void
 OnClose(
     HWND hwnd)
 {
-    ASSERT(DestroyWindow(hwnd));
+    IMMERSIVEWINDOW* window;
+
+    window = GetImmersiveWindow(hwnd);
+    if (window->clientProc)
+    {
+        (void)window->clientProc(hwnd, WM_CLOSE, 0, 0);
+    }
+    else
+    {
+        ASSERT(DestroyWindow(hwnd));
+    }
 }
 
 static FORCEINLINE void
 OnDestroy(
     HWND hwnd)
 {
-    UNREFERENCED_PARAMETER(hwnd);
+    IMMERSIVEWINDOW* window;
 
-    PostQuitMessage(EXIT_SUCCESS);
+    window = GetImmersiveWindow(hwnd);
+    if (window->clientProc)
+    {
+        (void)window->clientProc(hwnd, WM_DESTROY, 0, 0);
+    }
+    else
+    {
+        PostQuitMessage(EXIT_SUCCESS);
+    }
 }
 
 static FORCEINLINE void
@@ -1393,12 +1426,18 @@ OnNCDestroy(
     HWND hwnd)
 {
     IMMERSIVEWINDOW* window;
+    WNDPROC          clientProc;
 
     window = GetImmersiveWindow(hwnd);
+    clientProc = window->clientProc;
     window->hwnd = NULL;
     SetWindowUserData(hwnd, NULL);
 
     FORWARD_WM_NCDESTROY(hwnd, DefWindowProc);
+    if (clientProc)
+    {
+        (void)clientProc(hwnd, WM_NCDESTROY, 0, 0);
+    }
 }
 
 /* The title, kept on the window thread for the renderer (see OnNCCreate), once DefWindowProc has taken
@@ -1545,6 +1584,16 @@ WndProc(
         HANDLE_MSG(hWnd, WM_NCDESTROY,             OnNCDestroy);
     }
 
+    if (WM_NCCREATE != Msg)
+    {
+        IMMERSIVEWINDOW* window;
+
+        window = GetImmersiveWindow(hWnd);
+        if (window && window->clientProc)
+        {
+            return window->clientProc(hWnd, Msg, wParam, lParam);
+        }
+    }
     return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
 
@@ -1640,6 +1689,8 @@ InitImmersiveWindow(
     IMMERSIVEWINDOW* window)
 {
     window->hwnd             = NULL;
+    window->clientProc       = NULL;
+    window->clientData       = NULL;
     SecureZeroMemory(&window->metrics, sizeof(window->metrics));
     window->fBorderless      = TRUE;
     window->fShadow          = TRUE;
@@ -1670,12 +1721,15 @@ InitImmersiveWindow(
 
 void
 CreateImmersiveWindow(
-    IMMERSIVEWINDOW* window)
+    IMMERSIVEWINDOW*                 window,
+    const IMMERSIVEWINDOWCREATEINFO* createInfo)
 {
     WNDCLASSEX wcx;
     HINSTANCE  instance;
 
     InitImmersiveWindow(window);
+    window->clientProc = createInfo->clientProc;
+    window->clientData = createInfo->clientData;
 
     instance = GetModuleHandle(NULL);
 
@@ -1696,12 +1750,12 @@ CreateImmersiveWindow(
     window->hwnd = CreateWindowEx(
         WS_EX_NOREDIRECTIONBITMAP,
         wcx.lpszClassName,
-        TEXT("Opus3"),
+        createInfo->title,
         STYLE_AERO_BORDERLESS,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        1280,
-        720,
+        createInfo->width,
+        createInfo->height,
         NULL,
         NULL,
         instance,
@@ -1710,7 +1764,7 @@ CreateImmersiveWindow(
 
     SetBorderless(window, window->fBorderless);
     SetBorderlessShadow(window, window->fShadow);
-    ShowWindow(window->hwnd, SW_SHOW);
+    ShowWindow(window->hwnd, createInfo->showCommand);
     UpdateWindowMetrics(window); /* now that DWM has framed the window */
     UpdateCaptionIcon(window);
 

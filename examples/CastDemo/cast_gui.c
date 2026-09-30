@@ -15,6 +15,7 @@
 #include <windowsx.h>
 #include <Uxtheme.h>
 #include <dwmapi.h>
+#include <tchar.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -26,6 +27,7 @@
 #include "cast_session.h"
 #include "os/os_assert.h"
 #include "os/os_memory.h"
+#include "os/os_process.h"
 #include "media_server.h"
 #include "cast_network.h"
 #include "os/os_network.h"
@@ -36,12 +38,19 @@
 #include "audio_gain.h"
 #include "cast_events.h"
 #include "os/os_thread.h"
+#include "os/win32/os_text.h"
+#include "os/win32/os_windowsx.h"
 #include "os/os_compiler.h"
 #include "os/os_types.h"
 #include "crt/crt_memory.h"
 #include "utl/utl_decimal.h"
 #include "utl/utl_unicode.h"
 #include "utl/utl_url.h"
+#include "caption.h"
+#include "window.h"
+#include "cd2d.h"
+#include "cdw.h"
+#include "cdxgi.h"
 
 #ifdef _MSC_VER
 #pragma comment(                                                                                                       \
@@ -53,6 +62,8 @@
 #define DEFAULT_SERVER_PORT (8642)
 #define DISCOVERY_MS        (3000)
 #define SEEK_RANGE          (1000)
+#define DARK_COMBO_SUBCLASS_ID (1)
+#define DARK_HEADER_SUBCLASS_ID (1)
 
 enum ControlId
 {
@@ -136,10 +147,28 @@ typedef struct GainVariant
     WCHAR               path[MAX_PATH];
 } GainVariant;
 
+typedef struct NativeText
+{
+    LPTSTR   buffer;
+    uint32_t capacity;
+    uint32_t count;
+    bool_t   complete;
+} NativeText;
+
 typedef struct App
 {
     HINSTANCE hInstance;
     HWND      hWnd;
+    IMMERSIVEWINDOW immersiveWindow;
+    SWAPCHAIN       swapChain;
+    CAPTION         caption;
+    OS_Thread_t     presenterWorker;
+    ID2D1Factory*          paintFactory;
+    ID2D1DCRenderTarget*  paintTarget;
+    ID2D1SolidColorBrush* paintBrush;
+    IDWriteFactory*        textFactory;
+    IDWriteTextFormat*     textFormat;
+    IDWriteInlineObject*   trimmingSign;
     HWND      hListLabel;
     HWND      hList;
     HWND      hRefresh;
@@ -150,7 +179,6 @@ typedef struct App
     HWND                  hSubtitleLabel, hSubtitle, hSubtitleBrowse;
     HWND                  hGainLabel, hGain, hGainState;
     HBRUSH                backgroundBrush, fieldBrush;
-    HBRUSH                selectedBrush, accentBrush, mutedBrush, borderBrush;
     SubtitleTrack         subtitles[SUBTITLE_MAX_TRACKS];
     Subtitles_Workspace_t subtitleWorkspace;
     byte_t                subtitleScratch[SUBTITLE_TEXT_CAPACITY];
@@ -239,12 +267,13 @@ typedef struct App
 #define GAIN_URL_SCHEME ("http")
 #define GAIN_URL_RESOURCE ("/gain.mp4")
 #define GAIN_MEDIA_TYPE ("video/mp4")
+#define GUI_NATIVE_TEXT_CAPACITY (2048)
+#define SEEK_BAR_SUBCLASS_ID (1)
 
 #define DARK_BACKGROUND RGB(24, 26, 31)
 #define DARK_FIELD      RGB(36, 39, 46)
 #define DARK_TEXT       RGB(232, 235, 240)
 #define DARK_MUTED      RGB(151, 160, 174)
-#define DARK_ACCENT     RGB(82, 156, 245)
 
 /*************************************************************************************************/
 /**
@@ -269,7 +298,7 @@ static FORCE_INLINE App* GetApp(HWND window)
 {
     App* app;
 
-    app = (App*)GetWindowLongPtr(window, GWLP_USERDATA);
+    app = (App*)GetProp(window, TEXT("cvkCastApp"));
     LOGASSERT(NULL != app);
     return app;
 }
@@ -290,10 +319,159 @@ static FORCE_INLINE void PollJobs(App* app);
 
 static FORCE_INLINE LRESULT CALLBACK
 SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
+static FORCE_INLINE void SeekBar_OnNcDestroy(HWND hWnd);
+static FORCE_INLINE void SeekBar_OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags);
+static FORCE_INLINE void SeekBar_OnLButtonDown(HWND hWnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+static FORCE_INLINE void SeekBar_OnLButtonUp(HWND hWnd, int x, int y, UINT keyFlags);
 static FORCE_INLINE void RefreshSubtitles(App* pApp);
 static FORCE_INLINE void ScheduleGain(App* app);
 static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult);
 static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason);
+
+/*************************************************************************************************/
+/**
+ * \brief Presents the startup-owned window until its persistent worker is stopped.
+ *
+ * \param[in,out] parameter   Required application context retained through worker closure
+ *
+ * \retval        None
+ */
+static FORCE_INLINE void PresentCastWindow(void* parameter);
+
+/*************************************************************************************************/
+/**
+ * \brief Reads native control text into the application's fixed UTF-16 representation.
+ *
+ * \param[in]     control    Native control
+ * \param[out]    output     Caller-owned UTF-16 storage
+ * \param[in]     capacity   Output units including the terminator
+ *
+ * \retval        TRUE       Complete text was read.
+ * \retval        FALSE      Native text or output capacity was unsuitable.
+ */
+static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t capacity);
+
+/*************************************************************************************************/
+/**
+ * \brief Converts fixed UTF-16 application text for a native control.
+ *
+ * \param[in] control   Native control
+ * \param[in] text      Terminated UTF-16 text
+ *
+ * \retval    TRUE      Conversion and native update succeeded.
+ * \retval    FALSE     The text was unrepresentable or too long, or the update failed.
+ */
+static FORCE_INLINE bool_t WriteControlText(HWND control, const WCHAR* text);
+
+/*************************************************************************************************/
+/**
+ * \brief Adds a fixed UTF-16 label to a native combo box.
+ *
+ * \param[in] combo   Native combo box
+ * \param[in] text    Terminated UTF-16 label
+ *
+ * \retval    TRUE    Conversion and insertion succeeded.
+ * \retval    FALSE   The label was unrepresentable or too long, or insertion failed.
+ */
+static FORCE_INLINE bool_t AddComboText(HWND combo, const WCHAR* text);
+
+/*************************************************************************************************/
+/**
+ * \brief Deletes a fixed UTF-16 application path through the native text API.
+ *
+ * \param[in] path   Terminated UTF-16 path
+ *
+ * \retval    TRUE   The native file was deleted.
+ * \retval    FALSE  Conversion or deletion failed; GetLastError identifies the cause.
+ */
+static FORCE_INLINE bool_t DeleteUtf16File(const WCHAR* path);
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The native workspace bounds the control read before the encoding conversion.
+ */
+static FORCE_INLINE bool_t ReadControlText(HWND control, WCHAR* output, uint32_t capacity)
+{
+    TCHAR  native[GUI_NATIVE_TEXT_CAPACITY];
+    int32_t length;
+    bool_t  fits;
+    bool_t  read;
+
+    LOGASSERT(NULL != output);
+    LOGASSERT(0 < capacity);
+
+    length = GetWindowTextLength(control);
+    fits   = (0 <= length) && (length < GUI_NATIVE_TEXT_CAPACITY);
+    read   = FALSE;
+    output[0] = L'\0';
+    if (fits)
+    {
+        length = GetWindowText(control, native, GUI_NATIVE_TEXT_CAPACITY);
+        read = (0 <= length) && OS_Text_ReadNative((uint16_t*)output, capacity, native);
+    }
+    return read;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  A failed conversion leaves an empty native value rather than substituting characters.
+ */
+static FORCE_INLINE bool_t WriteControlText(HWND control, const WCHAR* text)
+{
+    TCHAR  native[GUI_NATIVE_TEXT_CAPACITY];
+    bool_t converted;
+    bool_t written;
+
+    converted = OS_Text_WriteNative(native, GUI_NATIVE_TEXT_CAPACITY, (const uint16_t*)text);
+    written   = SetWindowText(control, native);
+    return converted && written;
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  The combo owns a copy after the synchronous insertion message returns.
+ */
+static FORCE_INLINE bool_t AddComboText(HWND combo, const WCHAR* text)
+{
+    TCHAR   native[GUI_NATIVE_TEXT_CAPACITY];
+    bool_t  converted;
+    LRESULT index;
+
+    converted = OS_Text_WriteNative(native, GUI_NATIVE_TEXT_CAPACITY, (const uint16_t*)text);
+    index     = CB_ERR;
+    if (converted)
+    {
+        index = SendMessage(combo, CB_ADDSTRING, 0, (LPARAM)native);
+    }
+    return converted && (CB_ERR != index) && (CB_ERRSPACE != index);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Native conversion failure has an explicit Windows error for existing cleanup paths.
+ */
+static FORCE_INLINE bool_t DeleteUtf16File(const WCHAR* path)
+{
+    TCHAR  native[MAX_PATH];
+    bool_t converted;
+    bool_t deleted;
+
+    converted = OS_Text_WriteNative(native, MAX_PATH, (const uint16_t*)path);
+    deleted   = FALSE;
+    if (converted)
+    {
+        deleted = DeleteFile(native);
+    }
+    else
+    {
+        SetLastError(ERROR_NO_UNICODE_TRANSLATION);
+    }
+    return deleted;
+}
 
 /*************************************************************************************************/
 /**
@@ -318,6 +496,20 @@ static FORCE_INLINE void Utf8ToWide(const char* pText, WCHAR* pWide, int capacit
     }
 }
 
+static FORCE_INLINE void Utf8ToNative(const char* pText, LPTSTR pNative, uint32_t capacity)
+{
+    WCHAR wide[512];
+    bool_t converted;
+
+    LOGASSERT(capacity <= ARRAYSIZE(wide));
+    Utf8ToWide(pText, wide, (int)capacity);
+    converted = OS_Text_WriteNative(pNative, capacity, (const uint16_t*)wide);
+    if (!converted)
+    {
+        pNative[0] = TEXT('\0');
+    }
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
@@ -336,9 +528,90 @@ static FORCE_INLINE void ToUtf8(const wchar_t* pText, char* pOut, size_t capacit
  * \par Details:
  *  None
  */
-static FORCE_INLINE void SetStatus(App* pApp, const WCHAR* pText)
+static FORCE_INLINE void SetStatus(App* pApp, LPCTSTR pText)
 {
-    SetWindowTextW(pApp->hStatus, pText);
+    (void)SetWindowText(pApp->hStatus, pText);
+}
+
+static FORCE_INLINE void NativeText_Initialize(NativeText* text, LPTSTR buffer, uint32_t capacity)
+{
+    LOGASSERT(NULL != text);
+    LOGASSERT(NULL != buffer);
+    LOGASSERT(0 < capacity);
+
+    text->buffer   = buffer;
+    text->capacity = capacity;
+    text->count    = 0;
+    text->complete = TRUE;
+    buffer[0]      = TEXT('\0');
+}
+
+static FORCE_INLINE void NativeText_AppendCharacter(NativeText* text, TCHAR character)
+{
+    bool_t has_space;
+
+    has_space = (text->count < text->capacity - 1);
+    if (has_space)
+    {
+        text->buffer[text->count] = character;
+        ++text->count;
+        text->buffer[text->count] = TEXT('\0');
+    }
+    else
+    {
+        text->complete = FALSE;
+    }
+}
+
+static FORCE_INLINE void NativeText_AppendString(NativeText* text, LPCTSTR value)
+{
+    uint32_t index;
+
+    for (index = 0; TEXT('\0') != value[index]; ++index)
+    {
+        NativeText_AppendCharacter(text, value[index]);
+    }
+}
+
+static FORCE_INLINE void NativeText_AppendUnsigned(NativeText* text, uint32_t value, uint32_t minDigits)
+{
+    TCHAR    digits[10];
+    uint32_t count;
+    uint32_t digit;
+
+    count = 0;
+    for (;;)
+    {
+        digit = value % 10;
+        digits[count] = (TCHAR)(TEXT('0') + digit);
+        ++count;
+        value /= 10;
+        if ((0 == value) && (minDigits <= count))
+        {
+            break;
+        }
+    }
+    for (; 0 < count;)
+    {
+        --count;
+        NativeText_AppendCharacter(text, digits[count]);
+    }
+}
+
+static FORCE_INLINE void NativeText_AppendSigned(NativeText* text, int32_t value)
+{
+    uint32_t magnitude;
+
+    if (0 > value)
+    {
+        NativeText_AppendCharacter(text, TEXT('-'));
+        magnitude = (uint32_t)(-(int64_t)value);
+    }
+    else
+    {
+        magnitude = (uint32_t)value;
+    }
+    NativeText_AppendUnsigned(text, magnitude, 1);
 }
 
 /*************************************************************************************************/
@@ -367,21 +640,145 @@ static FORCE_INLINE int ContainsNoCase(const char* pHaystack, const char* pNeedl
  *  Rounds to the nearest second and includes an hours field only for durations
  *  of at least one hour.
  */
-static FORCE_INLINE void FormatTime(double seconds, WCHAR* pOut, size_t capacity)
+static FORCE_INLINE void FormatTime(double seconds, LPTSTR pOut, size_t capacity)
 {
-    const int total = (int)(seconds + 0.5);
+    int32_t    total;
+    NativeText text;
 
-    if (total >= 3600)
+    total = (int32_t)(seconds + 0.5);
+    NativeText_Initialize(&text, pOut, (uint32_t)capacity);
+    if (3600 <= total)
     {
-        (void)swprintf(pOut, capacity, L"%d:%02d:%02d", total / 3600, (total / 60) % 60, total % 60);
+        NativeText_AppendUnsigned(&text, (uint32_t)(total / 3600), 1);
+        NativeText_AppendCharacter(&text, TEXT(':'));
+        NativeText_AppendUnsigned(&text, (uint32_t)((total / 60) % 60), 2);
     }
     else
     {
-        (void)swprintf(pOut, capacity, L"%d:%02d", total / 60, total % 60);
+        NativeText_AppendSigned(&text, total / 60);
     }
+    NativeText_AppendCharacter(&text, TEXT(':'));
+    NativeText_AppendUnsigned(&text, (uint32_t)(total % 60), 2);
 }
 
 /* ------------------------------------------------------------------ controls and layout */
+
+static const D2D1_COLOR_F c_castBackgroundColor = {24.0F / 255.0F, 26.0F / 255.0F, 31.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castFieldColor = {36.0F / 255.0F, 39.0F / 255.0F, 46.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castSelectedColor = {48.0F / 255.0F, 91.0F / 255.0F, 146.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castTextColor = {232.0F / 255.0F, 235.0F / 255.0F, 240.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castMutedColor = {151.0F / 255.0F, 160.0F / 255.0F, 174.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castAccentColor = {82.0F / 255.0F, 156.0F / 255.0F, 245.0F / 255.0F, 1.0F};
+static const D2D1_COLOR_F c_castBorderColor = {62.0F / 255.0F, 68.0F / 255.0F, 78.0F / 255.0F, 1.0F};
+
+static FORCE_INLINE void InitControlPaint(App* app)
+{
+    D2D1_PIXEL_FORMAT format;
+
+    cd2dCreateFactorySingleThreaded(NULL, &app->paintFactory);
+    cd2dInitPixelFormat(&format, DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+    cd2dFactoryCreateDCRenderTarget(app->paintFactory,
+                                    D2D1_RENDER_TARGET_TYPE_DEFAULT,
+                                    format,
+                                    96.0F,
+                                    96.0F,
+                                    D2D1_RENDER_TARGET_USAGE_NONE,
+                                    D2D1_FEATURE_LEVEL_DEFAULT,
+                                    &app->paintTarget);
+    cd2dRenderTargetCreateSolidColorBrush((ID2D1RenderTarget*)app->paintTarget, &c_castTextColor, NULL, &app->paintBrush);
+    cdwCreateFactory(DWRITE_FACTORY_TYPE_SHARED, &app->textFactory);
+}
+
+static FORCE_INLINE void UpdateControlTextFormat(App* app)
+{
+    cdwUnknownReleaseSafe((IUnknown*)app->trimmingSign);
+    cdwUnknownReleaseSafe((IUnknown*)app->textFormat);
+    app->trimmingSign = NULL;
+    app->textFormat = NULL;
+    cdwFactoryCreateTextFormat(app->textFactory,
+                               L"Segoe UI",
+                               NULL,
+                               DWRITE_FONT_WEIGHT_NORMAL,
+                               DWRITE_FONT_STYLE_NORMAL,
+                               DWRITE_FONT_STRETCH_NORMAL,
+                               (FLOAT)Scale(app, 13),
+                               L"",
+                               &app->textFormat);
+    cdwTextFormatSetParagraphAlignment(app->textFormat, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    cdwTextFormatSetWordWrapping(app->textFormat, DWRITE_WORD_WRAPPING_NO_WRAP);
+    cdwFactoryCreateEllipsisTrimmingSign(app->textFactory, app->textFormat, &app->trimmingSign);
+    cdwTextFormatSetTrimming(app->textFormat, DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0, app->trimmingSign);
+}
+
+static FORCE_INLINE void BeginControlPaint(App* app, HDC dc, const RECT* bounds)
+{
+    cd2dDCRenderTargetBindDC(app->paintTarget, dc, bounds);
+    cd2dRenderTargetBeginDraw((ID2D1RenderTarget*)app->paintTarget);
+}
+
+static FORCE_INLINE void EndControlPaint(App* app)
+{
+    cd2dRenderTargetEndDrawAsserted((ID2D1RenderTarget*)app->paintTarget);
+}
+
+static FORCE_INLINE void FillControlRect(App* app, const RECT* rect, const D2D1_COLOR_F* color)
+{
+    cd2dSolidColorBrushSetColor(app->paintBrush, color);
+    cd2dRenderTargetFillRectangle((ID2D1RenderTarget*)app->paintTarget,
+                                  (FLOAT)rect->left,
+                                  (FLOAT)rect->top,
+                                  (FLOAT)rect->right,
+                                  (FLOAT)rect->bottom,
+                                  (ID2D1Brush*)app->paintBrush);
+}
+
+static FORCE_INLINE void DrawControlRect(App* app, const RECT* rect, const D2D1_COLOR_F* color)
+{
+    cd2dSolidColorBrushSetColor(app->paintBrush, color);
+    cd2dRenderTargetDrawRectangle((ID2D1RenderTarget*)app->paintTarget,
+                                  (FLOAT)rect->left + 0.5F,
+                                  (FLOAT)rect->top + 0.5F,
+                                  (FLOAT)rect->right - 0.5F,
+                                  (FLOAT)rect->bottom - 0.5F,
+                                  (ID2D1Brush*)app->paintBrush,
+                                  1.0F,
+                                  NULL);
+}
+
+static FORCE_INLINE void DrawControlText(App* app, LPCTSTR text, const RECT* rect, const D2D1_COLOR_F* color, DWRITE_TEXT_ALIGNMENT alignment)
+{
+    WCHAR  wide[512];
+    bool_t converted;
+
+    converted = OS_Text_ReadNative((uint16_t*)wide, ARRAYSIZE(wide), text);
+    if (!converted)
+    {
+        wide[0] = L'\0';
+    }
+    cdwTextFormatSetTextAlignment(app->textFormat, alignment);
+    cd2dSolidColorBrushSetColor(app->paintBrush, color);
+    cd2dRenderTargetDrawText((ID2D1RenderTarget*)app->paintTarget,
+                             wide,
+                             (UINT32)lstrlenW(wide),
+                             app->textFormat,
+                             (FLOAT)rect->left,
+                             (FLOAT)rect->top,
+                             (FLOAT)rect->right,
+                             (FLOAT)rect->bottom,
+                             (ID2D1Brush*)app->paintBrush,
+                             D2D1_DRAW_TEXT_OPTIONS_CLIP,
+                             DWRITE_MEASURING_MODE_NATURAL);
+}
+
+static FORCE_INLINE void DestroyControlPaint(App* app)
+{
+    cdwUnknownReleaseSafe((IUnknown*)app->trimmingSign);
+    cdwUnknownReleaseSafe((IUnknown*)app->textFormat);
+    cdwUnknownReleaseSafe((IUnknown*)app->textFactory);
+    cd2dUnknownReleaseSafe((IUnknown*)app->paintBrush);
+    cd2dUnknownReleaseSafe((IUnknown*)app->paintTarget);
+    cd2dUnknownReleaseSafe((IUnknown*)app->paintFactory);
+}
 
 /*************************************************************************************************/
 /**
@@ -389,13 +786,12 @@ static FORCE_INLINE void FormatTime(double seconds, WCHAR* pOut, size_t capacity
  *  Changes ordinary buttons to owner-draw controls and requests the dark Explorer
  *  theme after creating the child window.
  */
-static FORCE_INLINE HWND
-CreateChild(App* pApp, const WCHAR* pClass, const WCHAR* pText, DWORD style, DWORD exStyle, int id)
+static FORCE_INLINE HWND CreateChild(App* pApp, LPCTSTR pClass, LPCTSTR pText, DWORD style, DWORD exStyle, int id)
 {
     HWND child;
-    if (!wcscmp(pClass, L"BUTTON") && (style & BS_TYPEMASK) != BS_AUTOCHECKBOX)
+    if ((0 == lstrcmp(pClass, TEXT("BUTTON"))) && (style & BS_TYPEMASK) != BS_AUTOCHECKBOX)
         style = (style & ~BS_TYPEMASK) | BS_OWNERDRAW;
-    child = CreateWindowExW(exStyle,
+    child = CreateWindowEx(exStyle,
                             pClass,
                             pText,
                             WS_CHILD | WS_VISIBLE | style,
@@ -421,39 +817,43 @@ CreateChild(App* pApp, const WCHAR* pClass, const WCHAR* pText, DWORD style, DWO
  *  list-view owns header notifications. Native processing retains hit testing
  *  and column resizing.
  */
-static FORCE_INLINE void PaintDarkHeader(HWND hWnd, HDC dc, const App* pApp)
+static FORCE_INLINE void PaintDarkHeader(HWND hWnd, HDC dc, App* pApp)
 {
     RECT client;
-    const int saved = SaveDC(dc);
     GetClientRect(hWnd, &client);
-    FillRect(dc, &client, pApp->fieldBrush);
-    SelectObject(dc, pApp->hFont);
-    SetBkMode(dc, TRANSPARENT);
-    SetTextColor(dc, DARK_MUTED);
+    BeginControlPaint(pApp, dc, &client);
+    FillControlRect(pApp, &client, &c_castFieldColor);
     for (int i = 0; i < Header_GetItemCount(hWnd); ++i)
     {
-        WCHAR   text[128] = {0};
-        HDITEMW item      = {0};
+        TCHAR   native[128];
+        HDITEM  item;
         RECT    rect, divider;
+        DWRITE_TEXT_ALIGNMENT alignment;
+        ZeroMemory(&item, sizeof(item));
         item.mask       = HDI_TEXT | HDI_FORMAT;
-        item.pszText    = text;
+        item.pszText    = native;
         item.cchTextMax = 128;
         if (!Header_GetItem(hWnd, i, &item) || !Header_GetItemRect(hWnd, i, &rect))
             continue;
         divider      = rect;
         divider.left = divider.right - 1;
-        FillRect(dc, &divider, pApp->backgroundBrush);
+        FillControlRect(pApp, &divider, &c_castBackgroundColor);
         InflateRect(&rect, -Scale(pApp, 6), 0);
-        DrawTextW(dc,
-                  text,
-                  -1,
-                  &rect,
-                  DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX |
-                      ((item.fmt & HDF_RIGHT)    ? DT_RIGHT
-                       : (item.fmt & HDF_CENTER) ? DT_CENTER
-                                                 : DT_LEFT));
+        if (0 != (item.fmt & HDF_RIGHT))
+        {
+            alignment = DWRITE_TEXT_ALIGNMENT_TRAILING;
+        }
+        else if (0 != (item.fmt & HDF_CENTER))
+        {
+            alignment = DWRITE_TEXT_ALIGNMENT_CENTER;
+        }
+        else
+        {
+            alignment = DWRITE_TEXT_ALIGNMENT_LEADING;
+        }
+        DrawControlText(pApp, native, &rect, &c_castMutedColor, alignment);
     }
-    RestoreDC(dc, saved);
+    EndControlPaint(pApp);
 }
 
 /*************************************************************************************************/
@@ -462,27 +862,56 @@ static FORCE_INLINE void PaintDarkHeader(HWND hWnd, HDC dc, const App* pApp)
  *  Handles paint and print-client requests with the dark header renderer and
  *  removes the subclass during nonclient destruction.
  */
-static FORCE_INLINE LRESULT CALLBACK
-DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+static FORCE_INLINE LRESULT CALLBACK DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
+
+static FORCE_INLINE void DarkHeader_OnPaint(HWND hWnd)
 {
-    const App* pApp = (const App*)refData;
-    if (message == WM_PAINT)
+    PAINTSTRUCT paint;
+    HDC         dc;
+    App*        pApp;
+
+    pApp = GetApp(GetParent(GetParent(hWnd)));
+    dc   = BeginPaint(hWnd, &paint);
+    PaintDarkHeader(hWnd, dc, pApp);
+    (void)EndPaint(hWnd, &paint);
+}
+
+static FORCE_INLINE BOOL DarkHeader_OnEraseBackground(HWND hWnd, HDC dc)
+{
+    UNREFERENCED_PARAMETER(hWnd);
+    UNREFERENCED_PARAMETER(dc);
+    return TRUE;
+}
+
+static FORCE_INLINE void DarkHeader_OnNcDestroy(HWND hWnd)
+{
+    (void)RemoveWindowSubclass(hWnd, DarkHeaderProc, DARK_HEADER_SUBCLASS_ID);
+    FORWARD_WM_NCDESTROY(hWnd, DefSubclassProc);
+}
+
+static FORCE_INLINE void DarkHeader_OnPrintClient(HWND hWnd, HDC dc, UINT flags)
+{
+    App* pApp;
+
+    UNREFERENCED_PARAMETER(flags);
+    pApp = GetApp(GetParent(GetParent(hWnd)));
+    PaintDarkHeader(hWnd, dc, pApp);
+}
+
+static FORCE_INLINE LRESULT CALLBACK DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+{
+    UNREFERENCED_PARAMETER(idSubclass);
+    UNREFERENCED_PARAMETER(refData);
+
+    switch (message)
     {
-        PAINTSTRUCT paint;
-        HDC         dc = BeginPaint(hWnd, &paint);
-        PaintDarkHeader(hWnd, dc, pApp);
-        EndPaint(hWnd, &paint);
-        return 0;
+        HANDLE_MSG(hWnd, WM_PAINT,       DarkHeader_OnPaint);
+        HANDLE_MSG(hWnd, WM_ERASEBKGND, DarkHeader_OnEraseBackground);
+        HANDLE_MSG(hWnd, WM_NCDESTROY,   DarkHeader_OnNcDestroy);
+        HANDLE_MSG(hWnd, WM_PRINTCLIENT, DarkHeader_OnPrintClient);
+    default:
+        break;
     }
-    if (message == WM_PRINTCLIENT)
-    {
-        PaintDarkHeader(hWnd, (HDC)wParam, pApp);
-        return 0;
-    }
-    if (message == WM_ERASEBKGND)
-        return 1;
-    if (message == WM_NCDESTROY)
-        RemoveWindowSubclass(hWnd, DarkHeaderProc, idSubclass);
     return DefSubclassProc(hWnd, message, wParam, lParam);
 }
 
@@ -492,27 +921,44 @@ DarkHeaderProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR i
  *  Chooses selection and disabled colors, draws the counted combo item text and
  *  adds the focus rectangle when requested by the item state.
  */
-static FORCE_INLINE void PaintSubtitleItem(HWND combo, HDC dc, RECT rect, int index, UINT state, const App* pApp)
+static FORCE_INLINE void DrawSubtitleItem(HWND combo, RECT rect, int index, UINT state, App* pApp)
 {
-    WCHAR     text[512] = {0};
-    const int saved     = SaveDC(dc);
-    const int selected  = (state & ODS_SELECTED) && !(state & ODS_COMBOBOXEDIT);
-    HBRUSH    brush     = selected ? pApp->selectedBrush : pApp->fieldBrush;
-    FillRect(dc, &rect, brush);
-    SelectObject(dc, pApp->hFont);
-    SetBkMode(dc, TRANSPARENT);
-    SetTextColor(dc, (state & ODS_DISABLED) ? DARK_MUTED : DARK_TEXT);
+    TCHAR     text[512] = {0};
+    bool_t selected;
+    const D2D1_COLOR_F* fill;
+    const D2D1_COLOR_F* foreground;
+
+    selected = (0 != (state & ODS_SELECTED)) && (0 == (state & ODS_COMBOBOXEDIT));
+    fill = selected ? &c_castSelectedColor : &c_castFieldColor;
+    foreground = (0 != (state & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
+    FillControlRect(pApp, &rect, fill);
     if (index >= 0)
     {
-        LRESULT length = SendMessageW(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
+        LRESULT length = SendMessage(combo, CB_GETLBTEXTLEN, (WPARAM)index, 0);
         if (length >= 0 && length < 512)
-            SendMessageW(combo, CB_GETLBTEXT, (WPARAM)index, (LPARAM)text);
+        {
+            SendMessage(combo, CB_GETLBTEXT, (WPARAM)index, (LPARAM)text);
+        }
     }
     InflateRect(&rect, -Scale(pApp, 6), 0);
-    DrawTextW(dc, text, -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+    DrawControlText(pApp, text, &rect, foreground, DWRITE_TEXT_ALIGNMENT_LEADING);
     if ((state & ODS_FOCUS) && !(state & ODS_NOFOCUSRECT))
-        DrawFocusRect(dc, &rect);
-    RestoreDC(dc, saved);
+    {
+        DrawControlRect(pApp, &rect, &c_castAccentColor);
+    }
+}
+
+static FORCE_INLINE void PaintSubtitleItem(HWND combo, HDC dc, RECT bounds, int index, UINT state, App* pApp)
+{
+    RECT rect;
+
+    rect.left = 0;
+    rect.top = 0;
+    rect.right = bounds.right - bounds.left;
+    rect.bottom = bounds.bottom - bounds.top;
+    BeginControlPaint(pApp, dc, &bounds);
+    DrawSubtitleItem(combo, rect, index, state, pApp);
+    EndControlPaint(pApp);
 }
 
 /* Owner-draw covers the list items; draw the closed field, border and arrow too,
@@ -523,42 +969,41 @@ static FORCE_INLINE void PaintSubtitleItem(HWND combo, HDC dc, RECT rect, int in
  *  Draws the closed selection field, border and arrow in addition to owner-drawn
  *  list items, preventing the dropdown button from retaining its light theme.
  */
-static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, const App* pApp)
+static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, App* pApp)
 {
     RECT      client, text;
-    const int saved      = SaveDC(dc);
     const int enabled    = IsWindowEnabled(hWnd);
     const int focused    = GetFocus() == hWnd;
     const int arrowWidth = Scale(pApp, 24);
-    HBRUSH border;
-    POINT  arrow[3];
-    int       x, y;
+    const D2D1_COLOR_F* border;
+    const D2D1_COLOR_F* foreground;
+    D2D1_POINT_2F left;
+    D2D1_POINT_2F middle;
+    D2D1_POINT_2F right;
+    int x;
+    int y;
     GetClientRect(hWnd, &client);
-    FillRect(dc, &client, pApp->fieldBrush);
+    BeginControlPaint(pApp, dc, &client);
+    FillControlRect(pApp, &client, &c_castFieldColor);
     text = client;
     InflateRect(&text, -1, -1);
     text.right -= arrowWidth;
-    PaintSubtitleItem(hWnd,
-                      dc,
-                      text,
-                      (int)SendMessage(hWnd, CB_GETCURSEL, 0, 0),
-                      ODS_COMBOBOXEDIT | (enabled ? 0 : ODS_DISABLED),
-                      pApp);
-    border = focused && enabled ? pApp->accentBrush : pApp->borderBrush;
-    FrameRect(dc, &client, border);
-    x          = client.right - arrowWidth / 2;
-    y          = (client.top + client.bottom) / 2;
-    arrow[0].x = x - Scale(pApp, 4);
-    arrow[0].y = y - Scale(pApp, 2);
-    arrow[1].x = x + Scale(pApp, 4);
-    arrow[1].y = y - Scale(pApp, 2);
-    arrow[2].x = x;
-    arrow[2].y = y + Scale(pApp, 2);
-    SelectObject(dc, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(dc, enabled ? DARK_TEXT : DARK_MUTED);
-    SelectObject(dc, GetStockObject(NULL_PEN));
-    Polygon(dc, arrow, 3);
-    RestoreDC(dc, saved);
+    DrawSubtitleItem(hWnd, text, (int)SendMessage(hWnd, CB_GETCURSEL, 0, 0), ODS_COMBOBOXEDIT | (enabled ? 0 : ODS_DISABLED), pApp);
+    border = focused && enabled ? &c_castAccentColor : &c_castBorderColor;
+    DrawControlRect(pApp, &client, border);
+    x = client.right - arrowWidth / 2;
+    y = (client.top + client.bottom) / 2;
+    left.x = (FLOAT)(x - Scale(pApp, 4));
+    left.y = (FLOAT)(y - Scale(pApp, 2));
+    middle.x = (FLOAT)x;
+    middle.y = (FLOAT)(y + Scale(pApp, 2));
+    right.x = (FLOAT)(x + Scale(pApp, 4));
+    right.y = left.y;
+    foreground = enabled ? &c_castTextColor : &c_castMutedColor;
+    cd2dSolidColorBrushSetColor(pApp->paintBrush, foreground);
+    cd2dRenderTargetDrawLine((ID2D1RenderTarget*)pApp->paintTarget, left, middle, (ID2D1Brush*)pApp->paintBrush, 2.0F, NULL);
+    cd2dRenderTargetDrawLine((ID2D1RenderTarget*)pApp->paintTarget, middle, right, (ID2D1Brush*)pApp->paintBrush, 2.0F, NULL);
+    EndControlPaint(pApp);
 }
 
 /*************************************************************************************************/
@@ -567,33 +1012,108 @@ static FORCE_INLINE void PaintDarkCombo(HWND hWnd, HDC dc, const App* pApp)
  *  Supplies dark painting and requests repaint after focus, enable, selection,
  *  dropdown and theme changes handled by the default subclass procedure.
  */
-static FORCE_INLINE LRESULT CALLBACK
-DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+static FORCE_INLINE LRESULT CALLBACK DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData);
+
+static FORCE_INLINE void DarkCombo_OnSetFocus(HWND hWnd, HWND previousFocus)
 {
-    const App* pApp = (const App*)refData;
+    FORWARD_WM_SETFOCUS(hWnd, previousFocus, DefSubclassProc);
+    (void)InvalidateRect(hWnd, NULL, FALSE);
+}
+
+static FORCE_INLINE void DarkCombo_OnKillFocus(HWND hWnd, HWND nextFocus)
+{
+    FORWARD_WM_KILLFOCUS(hWnd, nextFocus, DefSubclassProc);
+    (void)InvalidateRect(hWnd, NULL, FALSE);
+}
+
+static FORCE_INLINE void DarkCombo_OnEnable(HWND hWnd, BOOL enabled)
+{
+    FORWARD_WM_ENABLE(hWnd, enabled, DefSubclassProc);
+    (void)InvalidateRect(hWnd, NULL, FALSE);
+}
+
+static FORCE_INLINE void DarkCombo_OnPaint(HWND hWnd)
+{
+    PAINTSTRUCT paint;
+    HDC         dc;
+    App*        pApp;
+
+    pApp = GetApp(GetParent(hWnd));
+    dc   = BeginPaint(hWnd, &paint);
+    PaintDarkCombo(hWnd, dc, pApp);
+    (void)EndPaint(hWnd, &paint);
+}
+
+static FORCE_INLINE BOOL DarkCombo_OnEraseBackground(HWND hWnd, HDC dc)
+{
+    UNREFERENCED_PARAMETER(hWnd);
+    UNREFERENCED_PARAMETER(dc);
+    return TRUE;
+}
+
+static FORCE_INLINE void DarkCombo_OnNcDestroy(HWND hWnd)
+{
+    (void)RemoveWindowSubclass(hWnd, DarkComboProc, DARK_COMBO_SUBCLASS_ID);
+    FORWARD_WM_NCDESTROY(hWnd, DefSubclassProc);
+}
+
+static FORCE_INLINE LRESULT DarkCombo_OnSetCurSel(HWND hWnd, int index)
+{
     LRESULT result;
-    if (message == WM_PAINT)
-    {
-        PAINTSTRUCT paint;
-        HDC         dc = BeginPaint(hWnd, &paint);
-        PaintDarkCombo(hWnd, dc, pApp);
-        EndPaint(hWnd, &paint);
-        return 0;
-    }
-    if (message == WM_PRINTCLIENT)
-    {
-        PaintDarkCombo(hWnd, (HDC)wParam, pApp);
-        return 0;
-    }
-    if (message == WM_ERASEBKGND)
-        return 1;
-    if (message == WM_NCDESTROY)
-        RemoveWindowSubclass(hWnd, DarkComboProc, idSubclass);
-    result = DefSubclassProc(hWnd, message, wParam, lParam);
-    if (message == WM_SETFOCUS || message == WM_KILLFOCUS || message == WM_ENABLE || message == CB_SETCURSEL ||
-        message == CB_SHOWDROPDOWN || message == WM_THEMECHANGED)
-        InvalidateRect(hWnd, NULL, FALSE);
+
+    result = FORWARD_CB_SETCURSEL(hWnd, index, DefSubclassProc);
+    (void)InvalidateRect(hWnd, NULL, FALSE);
     return result;
+}
+
+static FORCE_INLINE LRESULT DarkCombo_OnShowDropdown(HWND hWnd, BOOL show)
+{
+    LRESULT result;
+
+    result = FORWARD_CB_SHOWDROPDOWN(hWnd, show, DefSubclassProc);
+    (void)InvalidateRect(hWnd, NULL, FALSE);
+    return result;
+}
+
+static FORCE_INLINE void DarkCombo_OnPrintClient(HWND hWnd, HDC dc, UINT flags)
+{
+    App* pApp;
+
+    UNREFERENCED_PARAMETER(flags);
+    pApp = GetApp(GetParent(hWnd));
+    PaintDarkCombo(hWnd, dc, pApp);
+}
+
+static FORCE_INLINE LRESULT DarkCombo_OnThemeChanged(HWND hWnd)
+{
+    LRESULT result;
+
+    result = FORWARD_WM_THEMECHANGED(hWnd, DefSubclassProc);
+    (void)InvalidateRect(hWnd, NULL, FALSE);
+    return result;
+}
+
+static FORCE_INLINE LRESULT CALLBACK DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+{
+    UNREFERENCED_PARAMETER(idSubclass);
+    UNREFERENCED_PARAMETER(refData);
+
+    switch (message)
+    {
+        HANDLE_MSG(hWnd, WM_SETFOCUS,      DarkCombo_OnSetFocus);
+        HANDLE_MSG(hWnd, WM_KILLFOCUS,     DarkCombo_OnKillFocus);
+        HANDLE_MSG(hWnd, WM_ENABLE,        DarkCombo_OnEnable);
+        HANDLE_MSG(hWnd, WM_PAINT,         DarkCombo_OnPaint);
+        HANDLE_MSG(hWnd, WM_ERASEBKGND,    DarkCombo_OnEraseBackground);
+        HANDLE_MSG(hWnd, WM_NCDESTROY,     DarkCombo_OnNcDestroy);
+        HANDLE_MSG(hWnd, CB_SETCURSEL,     DarkCombo_OnSetCurSel);
+        HANDLE_MSG(hWnd, CB_SHOWDROPDOWN,  DarkCombo_OnShowDropdown);
+        HANDLE_MSG(hWnd, WM_PRINTCLIENT,   DarkCombo_OnPrintClient);
+        HANDLE_MSG(hWnd, WM_THEMECHANGED,  DarkCombo_OnThemeChanged);
+    default:
+        break;
+    }
+    return DefSubclassProc(hWnd, message, wParam, lParam);
 }
 
 /*************************************************************************************************/
@@ -604,13 +1124,15 @@ DarkComboProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR id
  */
 static FORCE_INLINE void ApplyFont(App* pApp)
 {
-    NONCLIENTMETRICSW metrics;
-    HWND              hChild;
+    NONCLIENTMETRICS metrics;
+    HWND             hChild;
+
+    UpdateControlTextFormat(pApp);
 
     metrics.cbSize = sizeof(metrics);
     if (SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0, pApp->dpi))
     {
-        HFONT hFont = CreateFontIndirectW(&metrics.lfMessageFont);
+        HFONT hFont = CreateFontIndirect(&metrics.lfMessageFont);
 
         if (NULL != hFont)
         {
@@ -647,85 +1169,140 @@ static FORCE_INLINE void Layout(App* pApp)
     const int timeW   = Scale(pApp, 150);
     const int valueW  = Scale(pApp, 108);
     const int cfgH    = labelH + gap + 5 * (rowH + gap); /* label + res + qp + gop + motion + actions */
+    const int labelOffset = Scale(pApp, 4);
+    const int buttonOffset = Scale(pApp, 2);
+    const int listMinHeight = Scale(pApp, 60);
+    const int fileLabelWidth = Scale(pApp, 40);
+    const int subtitleLabelWidth = Scale(pApp, 64);
+    const int subtitleHeight = Scale(pApp, 220);
+    const int gainStateWidth = Scale(pApp, 180);
+    const int motionValueWidth = Scale(pApp, 48);
+    const int addressColumnWidth = Scale(pApp, 120);
+    const int modelColumnWidth = Scale(pApp, 90);
+    const int columnPadding = Scale(pApp, 24);
     int width;
     int sliderX;
+    int sliderWidth;
+    int buttonX;
+    int refreshX;
+    int browseX;
+    int labelY;
+    int headerY;
+    int buttonY;
+    int listLabelWidth;
+    int fileX;
+    int fileWidth;
+    int subtitleX;
+    int subtitleWidth;
+    int gainX;
+    int gainWidth;
+    int gainStateX;
+    int hintX;
+    int hintWidth;
+    int stopX;
+    int seekX;
+    int seekWidth;
+    int timeX;
+    int motionSliderWidth;
+    int motionValueX;
+    int receiverColumnWidth;
     int y;
     int listH;
 
     GetClientRect(pApp->hWnd, &client);
-    width   = client.right - 2 * margin;
+    width = client.right - 2 * margin;
     sliderX = margin + valueW + gap;
+    sliderWidth = width - valueW - gap;
+    buttonX = client.right - margin - buttonW;
+    refreshX = buttonX - gap - buttonW;
+    browseX = buttonX;
+    listLabelWidth = refreshX - gap - margin;
+    fileX = margin + Scale(pApp, 44);
+    fileWidth = buttonX - gap - fileX;
+    subtitleX = margin + Scale(pApp, 68);
+    subtitleWidth = buttonX - gap - subtitleX;
+    gainX = margin + Scale(pApp, 112);
+    gainWidth = width - Scale(pApp, 300);
+    gainStateX = client.right - margin - gainStateWidth;
+    hintX = margin + buttonW + gap;
+    hintWidth = width - buttonW - gap;
+    stopX = margin + smallW + gap;
+    seekX = stopX + smallW + gap;
+    timeX = client.right - margin - timeW;
+    seekWidth = timeX - gap - seekX;
+    motionSliderWidth = sliderWidth - Scale(pApp, 52);
+    motionValueX = client.right - margin - motionValueWidth;
+    receiverColumnWidth = width - addressColumnWidth - modelColumnWidth - columnPadding;
     /* bottom-up: config panel, status, toolbar, hint, cast, file; the list takes the rest */
-    listH = client.bottom - (margin + labelH + gap) - 5 * (gap + rowH) - (gap + labelH) - (gap + cfgH) - margin;
-    if (listH < Scale(pApp, 60))
+    listH = client.bottom - pApp->immersiveWindow.metrics.cyCaption - (margin + labelH + gap) -
+            5 * (gap + rowH) - (gap + labelH) - (gap + cfgH) - margin;
+    if (listH < listMinHeight)
     {
-        listH = Scale(pApp, 60);
+        listH = listMinHeight;
     }
-    y = margin;
-    MoveWindow(pApp->hListLabel, margin, y + Scale(pApp, 3), width - 2 * buttonW - 2 * gap, labelH, TRUE);
-    MoveWindow(pApp->hRefresh, client.right - margin - 2 * buttonW - gap, y - Scale(pApp, 2), buttonW, rowH, TRUE);
-    MoveWindow(pApp->hWindowsCast, client.right - margin - buttonW, y - Scale(pApp, 2), buttonW, rowH, TRUE);
+    y = pApp->immersiveWindow.metrics.cyCaption + margin;
+    headerY = y + Scale(pApp, 3);
+    buttonY = y - buttonOffset;
+    MoveWindow(pApp->hListLabel, margin, headerY, listLabelWidth, labelH, TRUE);
+    MoveWindow(pApp->hRefresh, refreshX, buttonY, buttonW, rowH, TRUE);
+    MoveWindow(pApp->hWindowsCast, buttonX, buttonY, buttonW, rowH, TRUE);
     y += labelH + gap;
     MoveWindow(pApp->hList, margin, y, width, listH, TRUE);
     y += listH + gap;
-    MoveWindow(pApp->hFileLabel, margin, y + Scale(pApp, 4), Scale(pApp, 40), labelH, TRUE);
-    MoveWindow(pApp->hFile, margin + Scale(pApp, 44), y, width - Scale(pApp, 44) - gap - buttonW, rowH, TRUE);
-    MoveWindow(pApp->hBrowse, client.right - margin - buttonW, y, buttonW, rowH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hFileLabel, margin, labelY, fileLabelWidth, labelH, TRUE);
+    MoveWindow(pApp->hFile, fileX, y, fileWidth, rowH, TRUE);
+    MoveWindow(pApp->hBrowse, browseX, y, buttonW, rowH, TRUE);
     y += rowH + gap;
-    MoveWindow(pApp->hSubtitleLabel, margin, y + Scale(pApp, 4), Scale(pApp, 64), labelH, TRUE);
-    MoveWindow(pApp->hSubtitle,
-               margin + Scale(pApp, 68),
-               y,
-               width - Scale(pApp, 68) - gap - buttonW,
-               Scale(pApp, 220),
-               TRUE);
-    MoveWindow(pApp->hSubtitleBrowse, client.right - margin - buttonW, y, buttonW, rowH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hSubtitleLabel, margin, labelY, subtitleLabelWidth, labelH, TRUE);
+    MoveWindow(pApp->hSubtitle, subtitleX, y, subtitleWidth, subtitleHeight, TRUE);
+    MoveWindow(pApp->hSubtitleBrowse, browseX, y, buttonW, rowH, TRUE);
     y += rowH + gap;
-    MoveWindow(pApp->hGainLabel, margin, y + Scale(pApp, 4), Scale(pApp, 108), labelH, TRUE);
-    MoveWindow(pApp->hGain, margin + Scale(pApp, 112), y, width - Scale(pApp, 300), rowH, TRUE);
-    MoveWindow(pApp->hGainState,
-               client.right - margin - Scale(pApp, 180),
-               y + Scale(pApp, 4),
-               Scale(pApp, 180),
-               labelH,
-               TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hGainLabel, margin, labelY, valueW, labelH, TRUE);
+    MoveWindow(pApp->hGain, gainX, y, gainWidth, rowH, TRUE);
+    MoveWindow(pApp->hGainState, gainStateX, labelY, gainStateWidth, labelH, TRUE);
     y += rowH + gap;
     MoveWindow(pApp->hCast, margin, y, buttonW, rowH, TRUE);
-    MoveWindow(pApp->hHint, margin + buttonW + gap, y + Scale(pApp, 4), width - buttonW - gap, labelH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hHint, hintX, labelY, hintWidth, labelH, TRUE);
     y += rowH + gap;
     MoveWindow(pApp->hPlayPause, margin, y, smallW, rowH, TRUE);
-    MoveWindow(pApp->hStop, margin + smallW + gap, y, smallW, rowH, TRUE);
-    MoveWindow(pApp->hSeek, margin + 2 * (smallW + gap), y, width - 2 * (smallW + gap) - gap - timeW, rowH, TRUE);
-    MoveWindow(pApp->hTime, client.right - margin - timeW, y + Scale(pApp, 4), timeW, labelH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hStop, stopX, y, smallW, rowH, TRUE);
+    MoveWindow(pApp->hSeek, seekX, y, seekWidth, rowH, TRUE);
+    MoveWindow(pApp->hTime, timeX, labelY, timeW, labelH, TRUE);
     y += rowH + gap;
     MoveWindow(pApp->hStatus, margin, y, width, labelH, TRUE);
     y += labelH + gap;
     /* The transcoder configuration panel. */
     MoveWindow(pApp->hCfgLabel, margin, y, width, labelH, TRUE);
     y += labelH + gap;
-    MoveWindow(pApp->hResValue, margin, y + Scale(pApp, 4), valueW, labelH, TRUE);
-    MoveWindow(pApp->hResSlider, sliderX, y, width - valueW - gap, rowH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hResValue, margin, labelY, valueW, labelH, TRUE);
+    MoveWindow(pApp->hResSlider, sliderX, y, sliderWidth, rowH, TRUE);
     y += rowH + gap;
-    MoveWindow(pApp->hQpValue, margin, y + Scale(pApp, 4), valueW, labelH, TRUE);
-    MoveWindow(pApp->hQpSlider, sliderX, y, width - valueW - gap, rowH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hQpValue, margin, labelY, valueW, labelH, TRUE);
+    MoveWindow(pApp->hQpSlider, sliderX, y, sliderWidth, rowH, TRUE);
     y += rowH + gap;
-    MoveWindow(pApp->hGopValue, margin, y + Scale(pApp, 4), valueW, labelH, TRUE);
-    MoveWindow(pApp->hGopSlider, sliderX, y, width - valueW - gap, rowH, TRUE);
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hGopValue, margin, labelY, valueW, labelH, TRUE);
+    MoveWindow(pApp->hGopSlider, sliderX, y, sliderWidth, rowH, TRUE);
     y += rowH + gap;
-    MoveWindow(pApp->hMotionCheck, margin, y + Scale(pApp, 2), valueW, rowH, TRUE);
-    MoveWindow(pApp->hMotionSlider, sliderX, y, width - valueW - gap - Scale(pApp, 52), rowH, TRUE);
-    MoveWindow(pApp->hMotionValue,
-               client.right - margin - Scale(pApp, 48),
-               y + Scale(pApp, 4),
-               Scale(pApp, 48),
-               labelH,
-               TRUE);
+    buttonY = y + buttonOffset;
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hMotionCheck, margin, buttonY, valueW, rowH, TRUE);
+    MoveWindow(pApp->hMotionSlider, sliderX, y, motionSliderWidth, rowH, TRUE);
+    MoveWindow(pApp->hMotionValue, motionValueX, labelY, motionValueWidth, labelH, TRUE);
     y += rowH + gap;
     MoveWindow(pApp->hPreview, margin, y, buttonW, rowH, TRUE);
-    MoveWindow(pApp->hCfgReadout, margin + buttonW + gap, y + Scale(pApp, 4), width - buttonW - gap, labelH, TRUE);
-    ListView_SetColumnWidth(pApp->hList, 0, width - Scale(pApp, 120) - Scale(pApp, 90) - Scale(pApp, 24));
-    ListView_SetColumnWidth(pApp->hList, 1, Scale(pApp, 120));
-    ListView_SetColumnWidth(pApp->hList, 2, Scale(pApp, 90));
+    labelY = y + labelOffset;
+    MoveWindow(pApp->hCfgReadout, hintX, labelY, hintWidth, labelH, TRUE);
+    ListView_SetColumnWidth(pApp->hList, 0, receiverColumnWidth);
+    ListView_SetColumnWidth(pApp->hList, 1, addressColumnWidth);
+    ListView_SetColumnWidth(pApp->hList, 2, modelColumnWidth);
 }
 
 /*************************************************************************************************/
@@ -739,7 +1316,7 @@ static FORCE_INLINE void UpdateControls(App* pApp)
     const int haveSession = (NULL != pApp->pSession);
     const int busy        = haveSession || pApp->preparingAudio;
     const int haveDevice  = (-1 != ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED));
-    const int haveFile    = (GetWindowTextLengthW(pApp->hFile) > 0);
+    const int haveFile    = (GetWindowTextLength(pApp->hFile) > 0);
     const int playing     = (CAST_STATE_PLAYING == pApp->status.state || CAST_STATE_BUFFERING == pApp->status.state);
 
     EnableWindow(pApp->hCast, !busy && haveDevice && haveFile);
@@ -753,7 +1330,7 @@ static FORCE_INLINE void UpdateControls(App* pApp)
     EnableWindow(pApp->hBrowse, !busy);
     EnableWindow(pApp->hPreview, !pApp->preparingAudio && !pApp->previewBusy);
     EnableWindow(pApp->hGain, !haveSession || pApp->originalSource[0]);
-    SetWindowTextW(pApp->hPlayPause, playing ? L"Pause" : L"Play");
+    (void)SetWindowText(pApp->hPlayPause, playing ? TEXT("Pause") : TEXT("Play"));
 }
 
 /* Rewrites the slider value captions from the current transcoder config. */
@@ -764,16 +1341,27 @@ static FORCE_INLINE void UpdateControls(App* pApp)
  */
 static FORCE_INLINE void UpdateConfigLabels(App* pApp)
 {
-    WCHAR text[96];
+    TCHAR text[96];
+    NativeText writer;
 
-    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"Width  %u px", pApp->transcode.width);
-    SetWindowTextW(pApp->hResValue, text);
-    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"Quality  QP %d", pApp->transcode.qpInter);
-    SetWindowTextW(pApp->hQpValue, text);
-    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"Keyframe  %uf", pApp->transcode.gopLength);
-    SetWindowTextW(pApp->hGopValue, text);
-    (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"%d%%", pApp->transcode.motionStrength);
-    SetWindowTextW(pApp->hMotionValue, text);
+    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+    NativeText_AppendString(&writer, TEXT("Width  "));
+    NativeText_AppendUnsigned(&writer, pApp->transcode.width, 1);
+    NativeText_AppendString(&writer, TEXT(" px"));
+    (void)SetWindowText(pApp->hResValue, text);
+    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+    NativeText_AppendString(&writer, TEXT("Quality  QP "));
+    NativeText_AppendSigned(&writer, pApp->transcode.qpInter);
+    (void)SetWindowText(pApp->hQpValue, text);
+    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+    NativeText_AppendString(&writer, TEXT("Keyframe  "));
+    NativeText_AppendUnsigned(&writer, pApp->transcode.gopLength, 1);
+    NativeText_AppendCharacter(&writer, TEXT('f'));
+    (void)SetWindowText(pApp->hGopValue, text);
+    NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+    NativeText_AppendSigned(&writer, pApp->transcode.motionStrength);
+    NativeText_AppendCharacter(&writer, TEXT('%'));
+    (void)SetWindowText(pApp->hMotionValue, text);
 }
 
 /* Reads the sliders and checkbox into the transcoder config, snapping where needed, then refreshes
@@ -814,52 +1402,51 @@ static FORCE_INLINE void ReadConfigFromSliders(App* pApp)
  */
 static FORCE_INLINE void CreateControls(App* pApp)
 {
-    LVCOLUMNW column;
+    LVCOLUMN column;
 
-    pApp->hListLabel = CreateChild(pApp, L"STATIC", L"Cast receivers on this network", SS_LEFT, 0, ID_LIST_LABEL);
-    pApp->hRefresh   = CreateChild(pApp, L"BUTTON", L"Refresh", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_REFRESH);
-    pApp->hWindowsCast =
-        CreateChild(pApp, L"BUTTON", L"Windows Cast...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_WINDOWS_CAST);
-    pApp->hList = CreateChild(pApp,
-                                       WC_LISTVIEWW,
-                                       L"",
-                                       LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_TABSTOP,
-                                       WS_EX_CLIENTEDGE,
-                                       ID_LIST);
-    pApp->hFileLabel     = CreateChild(pApp, L"STATIC", L"Video", SS_LEFT, 0, ID_FILE_LABEL);
-    pApp->hFile          = CreateChild(pApp, L"EDIT", L"", ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE, ID_FILE);
-    pApp->hBrowse        = CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_BROWSE);
-    pApp->hSubtitleLabel = CreateChild(pApp, L"STATIC", L"Subtitles", SS_LEFT, 0, ID_SUBTITLE_LABEL);
+    pApp->hListLabel   = CreateChild(pApp, WC_STATIC, TEXT("Cast receivers on this network"), SS_LEFT, 0, ID_LIST_LABEL);
+    pApp->hRefresh     = CreateChild(pApp, WC_BUTTON, TEXT("Refresh"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_REFRESH);
+    pApp->hWindowsCast = CreateChild(pApp, WC_BUTTON, TEXT("Windows Cast..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_WINDOWS_CAST);
+    pApp->hList        = CreateChild(pApp,
+                                     WC_LISTVIEW,
+                                     TEXT(""),
+                                     LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_TABSTOP,
+                                     WS_EX_CLIENTEDGE,
+                                     ID_LIST);
+    pApp->hFileLabel     = CreateChild(pApp, WC_STATIC, TEXT("Video"), SS_LEFT, 0, ID_FILE_LABEL);
+    pApp->hFile          = CreateChild(pApp, WC_EDIT, TEXT(""), ES_AUTOHSCROLL | WS_TABSTOP, WS_EX_CLIENTEDGE, ID_FILE);
+    pApp->hBrowse        = CreateChild(pApp, WC_BUTTON, TEXT("Browse..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_BROWSE);
+    pApp->hSubtitleLabel = CreateChild(pApp, WC_STATIC, TEXT("Subtitles"), SS_LEFT, 0, ID_SUBTITLE_LABEL);
     pApp->hSubtitle      = CreateChild(pApp,
-                                       L"COMBOBOX",
-                                       L"",
+                                       WC_COMBOBOX,
+                                       TEXT(""),
                                        CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | CBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP,
                                        0,
                                        ID_SUBTITLE);
-    SetWindowSubclass(pApp->hSubtitle, DarkComboProc, 1, (DWORD_PTR)pApp);
+    SetWindowSubclass(pApp->hSubtitle, DarkComboProc, DARK_COMBO_SUBCLASS_ID, (DWORD_PTR)pApp);
     pApp->hSubtitleBrowse =
-        CreateChild(pApp, L"BUTTON", L"Browse...", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE);
-    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Automatic");
-    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
+        CreateChild(pApp, WC_BUTTON, TEXT("Browse..."), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_SUBTITLE_BROWSE);
+    SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Automatic"));
+    SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Off"));
     SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
-    pApp->hGainLabel = CreateChild(pApp, L"STATIC", L"Audio gain 100%", SS_LEFT, 0, ID_GAIN_LABEL);
-    pApp->hGain      = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GAIN);
+    pApp->hGainLabel = CreateChild(pApp, WC_STATIC, TEXT("Audio gain 100%"), SS_LEFT, 0, ID_GAIN_LABEL);
+    pApp->hGain      = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GAIN);
     SendMessage(pApp->hGain, TBM_SETRANGE, TRUE, MAKELPARAM(0, 400));
     SendMessage(pApp->hGain, TBM_SETPOS, TRUE, 100);
     SendMessage(pApp->hGain, TBM_SETPAGESIZE, 0, 25);
-    pApp->hGainState = CreateChild(pApp, L"STATIC", L"Original audio", SS_RIGHT | SS_ENDELLIPSIS, 0, ID_GAIN_STATE);
-    pApp->hCast      = CreateChild(pApp, L"BUTTON", L"Cast", BS_DEFPUSHBUTTON | WS_TABSTOP, 0, ID_CAST);
+    pApp->hGainState = CreateChild(pApp, WC_STATIC, TEXT("Original audio"), SS_RIGHT | SS_ENDELLIPSIS, 0, ID_GAIN_STATE);
+    pApp->hCast      = CreateChild(pApp, WC_BUTTON, TEXT("Cast"), BS_DEFPUSHBUTTON | WS_TABSTOP, 0, ID_CAST);
     pApp->hHint      = CreateChild(pApp,
-                              L"STATIC",
-                              L"A file is served to the receiver over HTTP from this PC; an http(s) URL is sent as is.",
+                              WC_STATIC,
+                              TEXT("A file is served to the receiver over HTTP from this PC; an http(s) URL is sent as is."),
                               SS_LEFT | SS_ENDELLIPSIS,
                               0,
                               ID_HINT);
-    pApp->hPlayPause = CreateChild(pApp, L"BUTTON", L"Play", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PLAY_PAUSE);
-    pApp->hStop      = CreateChild(pApp, L"BUTTON", L"Stop", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_STOP);
-    pApp->hSeek      = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | TBS_BOTH | WS_TABSTOP, 0, ID_SEEK);
-    pApp->hTime      = CreateChild(pApp, L"STATIC", L"", SS_RIGHT, 0, ID_TIME);
-    pApp->hStatus    = CreateChild(pApp, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 0, ID_STATUS);
+    pApp->hPlayPause = CreateChild(pApp, WC_BUTTON, TEXT("Play"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PLAY_PAUSE);
+    pApp->hStop      = CreateChild(pApp, WC_BUTTON, TEXT("Stop"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_STOP);
+    pApp->hSeek      = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | TBS_BOTH | WS_TABSTOP, 0, ID_SEEK);
+    pApp->hTime      = CreateChild(pApp, WC_STATIC, TEXT(""), SS_RIGHT, 0, ID_TIME);
+    pApp->hStatus    = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT | SS_ENDELLIPSIS, 0, ID_STATUS);
     ListView_SetBkColor(pApp->hList, DARK_FIELD);
     ListView_SetTextBkColor(pApp->hList, DARK_FIELD);
     ListView_SetTextColor(pApp->hList, DARK_TEXT);
@@ -867,24 +1454,24 @@ static FORCE_INLINE void CreateControls(App* pApp)
     /* Transcoder (proxy) configuration panel: sliders whose settings drive the GPU proxy encode. */
     GpuTranscode_InitializeConfig(&pApp->transcode);
     pApp->hCfgLabel = CreateChild(pApp,
-                                   L"STATIC",
-                                   L"Proxy transcoder \x2014 adjust, then Preview to test quality on the receiver",
+                                   WC_STATIC,
+                                   TEXT("Proxy transcoder - adjust, then Preview to test quality on the receiver"),
                                    SS_LEFT | SS_ENDELLIPSIS,
                                    0,
                                    ID_CFG_LABEL);
-    pApp->hResValue  = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_RES_VALUE);
-    pApp->hResSlider = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_RES_SLIDER);
-    pApp->hQpValue   = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_QP_VALUE);
-    pApp->hQpSlider  = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_QP_SLIDER);
-    pApp->hGopValue  = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_GOP_VALUE);
-    pApp->hGopSlider = CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GOP_SLIDER);
+    pApp->hResValue  = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_RES_VALUE);
+    pApp->hResSlider = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_RES_SLIDER);
+    pApp->hQpValue   = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_QP_VALUE);
+    pApp->hQpSlider  = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_QP_SLIDER);
+    pApp->hGopValue  = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_GOP_VALUE);
+    pApp->hGopSlider = CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_GOP_SLIDER);
     pApp->hMotionCheck =
-        CreateChild(pApp, L"BUTTON", L"Optical flow", BS_AUTOCHECKBOX | WS_TABSTOP, 0, ID_MOTION_CHECK);
+        CreateChild(pApp, WC_BUTTON, TEXT("Optical flow"), BS_AUTOCHECKBOX | WS_TABSTOP, 0, ID_MOTION_CHECK);
     pApp->hMotionSlider =
-        CreateChild(pApp, TRACKBAR_CLASSW, L"", TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_MOTION_SLIDER);
-    pApp->hMotionValue = CreateChild(pApp, L"STATIC", L"", SS_LEFT, 0, ID_MOTION_VALUE);
-    pApp->hPreview     = CreateChild(pApp, L"BUTTON", L"Preview", BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PREVIEW);
-    pApp->hCfgReadout  = CreateChild(pApp, L"STATIC", L"", SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_READOUT);
+        CreateChild(pApp, TRACKBAR_CLASS, TEXT(""), TBS_HORZ | TBS_NOTICKS | WS_TABSTOP, 0, ID_MOTION_SLIDER);
+    pApp->hMotionValue = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT, 0, ID_MOTION_VALUE);
+    pApp->hPreview     = CreateChild(pApp, WC_BUTTON, TEXT("Preview"), BS_PUSHBUTTON | WS_TABSTOP, 0, ID_PREVIEW);
+    pApp->hCfgReadout  = CreateChild(pApp, WC_STATIC, TEXT(""), SS_LEFT | SS_ENDELLIPSIS, 0, ID_CFG_READOUT);
 
     SendMessage(pApp->hResSlider, TBM_SETRANGE, TRUE, MAKELPARAM(320, 1920));
     SendMessage(pApp->hResSlider, TBM_SETPOS, TRUE, (LPARAM)pApp->transcode.width);
@@ -900,16 +1487,16 @@ static FORCE_INLINE void CreateControls(App* pApp)
     ZeroMemory(&column, sizeof(column));
     column.mask    = LVCF_TEXT | LVCF_WIDTH;
     column.cx      = 200;
-    column.pszText = L"Receiver";
+    column.pszText = TEXT("Receiver");
     ListView_InsertColumn(pApp->hList, 0, &column);
-    column.pszText = L"Address";
+    column.pszText = TEXT("Address");
     ListView_InsertColumn(pApp->hList, 1, &column);
-    column.pszText = L"Model";
+    column.pszText = TEXT("Model");
     ListView_InsertColumn(pApp->hList, 2, &column);
-    SetWindowSubclass(ListView_GetHeader(pApp->hList), DarkHeaderProc, 1, (DWORD_PTR)pApp);
+    SetWindowSubclass(ListView_GetHeader(pApp->hList), DarkHeaderProc, DARK_HEADER_SUBCLASS_ID, (DWORD_PTR)pApp);
     SendMessage(pApp->hSeek, TBM_SETRANGE, TRUE, MAKELPARAM(0, SEEK_RANGE));
     /* A click on the channel should jump to the cursor and scrub, not page toward it. */
-    SetWindowSubclass(pApp->hSeek, SeekBarProc, 1, (DWORD_PTR)pApp);
+    SetWindowSubclass(pApp->hSeek, SeekBarProc, SEEK_BAR_SUBCLASS_ID, (DWORD_PTR)pApp);
     ApplyFont(pApp);
     Layout(pApp);
     UpdateConfigLabels(pApp);
@@ -946,12 +1533,12 @@ static FORCE_INLINE void StartDiscovery(App* pApp)
         return;
     }
     pApp->discovering = 1;
-    SetStatus(pApp, L"Searching for Cast receivers...");
+    SetStatus(pApp, TEXT("Searching for Cast receivers..."));
     UpdateControls(pApp);
     if (0 == OS_Thread_Submit(&pApp->discoveryWorker))
     {
         pApp->discovering = 0;
-        SetStatus(pApp, L"Cannot start discovery.");
+        SetStatus(pApp, TEXT("Cannot start discovery."));
         UpdateControls(pApp);
         return;
     }
@@ -967,8 +1554,9 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
 {
     unsigned index;
     int      preferred = -1;
-    WCHAR  text[160];
+    TCHAR  text[160];
     bool_t failed;
+    NativeText writer;
 
     pApp->discovering = 0;
     if (NULL != pResult)
@@ -984,22 +1572,22 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
     for (index = 0; index < pApp->devices.count; ++index)
     {
         const CastDevice* pDevice = &pApp->devices.devices[index];
-        LVITEMW item;
-        WCHAR   name[256];
-        WCHAR   address[64];
-        WCHAR   model[256];
+        LVITEM item;
+        TCHAR   nativeName[256];
+        TCHAR   nativeAddress[64];
+        TCHAR   nativeModel[256];
 
-        Utf8ToWide(pDevice->friendlyName, name, 256);
-        Utf8ToWide(pDevice->host, address, 64);
-        Utf8ToWide(pDevice->model, model, 256);
+        Utf8ToNative(pDevice->friendlyName, nativeName, ARRAYSIZE(nativeName));
+        Utf8ToNative(pDevice->host, nativeAddress, ARRAYSIZE(nativeAddress));
+        Utf8ToNative(pDevice->model, nativeModel, ARRAYSIZE(nativeModel));
 
         ZeroMemory(&item, sizeof(item));
         item.mask    = LVIF_TEXT;
         item.iItem   = (int)index;
-        item.pszText = name;
+        item.pszText = nativeName;
         ListView_InsertItem(pApp->hList, &item);
-        ListView_SetItemText(pApp->hList, (int)index, 1, address);
-        ListView_SetItemText(pApp->hList, (int)index, 2, model);
+        ListView_SetItemText(pApp->hList, (int)index, 1, nativeAddress);
+        ListView_SetItemText(pApp->hList, (int)index, 2, nativeModel);
         if (preferred < 0 && ContainsNoCase(pDevice->friendlyName, PREFERRED_DEVICE))
         {
             preferred = (int)index;
@@ -1010,17 +1598,19 @@ static FORCE_INLINE void OnDiscovered(App* pApp, const DiscoveryResult* pResult)
         const int select = (preferred >= 0) ? preferred : 0;
 
         ListView_SetItemState(pApp->hList, select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-        (void)swprintf(text,
-                       sizeof(text) / sizeof(text[0]),
-                       L"%u receiver%s found.",
-                       pApp->devices.count,
-                       1 == pApp->devices.count ? L"" : L"s");
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendUnsigned(&writer, pApp->devices.count, 1);
+        NativeText_AppendString(&writer, TEXT(" receiver"));
+        if (1 != pApp->devices.count)
+        {
+            NativeText_AppendCharacter(&writer, TEXT('s'));
+        }
+        NativeText_AppendString(&writer, TEXT(" found."));
     }
     else
     {
-        (void)swprintf(text,
-                       sizeof(text) / sizeof(text[0]),
-                       L"No Cast receiver answered. Is the projector on and on this network?");
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, TEXT("No Cast receiver answered. Is the projector on and on this network?"));
     }
     failed = (0 == pApp->devices.count) && (0 != pApp->devices.error);
     if (failed)
@@ -1072,22 +1662,26 @@ static FORCE_INLINE void SessionJob(void* context)
  */
 static FORCE_INLINE void RefreshSubtitles(App* pApp)
 {
-    WCHAR source[1024], automatic[380];
-    GetWindowTextW(pApp->hFile, source, 1024);
+    WCHAR      source[1024];
+    TCHAR      automatic[380];
+    TCHAR      label[320];
+    const WCHAR* selectedLabel;
+    NativeText writer;
+    (void)ReadControlText(pApp->hFile, source, 1024);
     if (!wcscmp(source, pApp->subtitleSource))
         return;
     wcscpy_s(pApp->subtitleSource, 1024, source);
     pApp->subtitleCount = _wcsnicmp(source, L"http", 4) ? Subtitles_Find(source, pApp->subtitles) : 0;
     SendMessage(pApp->hSubtitle, CB_RESETCONTENT, 0, 0);
-    _snwprintf_s(automatic,
-                 380,
-                 _TRUNCATE,
-                 L"Automatic - %ls",
-                 pApp->subtitleCount ? pApp->subtitles[0].label : L"no supported subtitles found");
-    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)automatic);
-    SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)L"Off");
+    selectedLabel = (0 < pApp->subtitleCount) ? pApp->subtitles[0].label : L"no supported subtitles found";
+    (void)OS_Text_WriteNative(label, ARRAYSIZE(label), (const uint16_t*)selectedLabel);
+    NativeText_Initialize(&writer, automatic, ARRAYSIZE(automatic));
+    NativeText_AppendString(&writer, TEXT("Automatic - "));
+    NativeText_AppendString(&writer, label);
+    (void)SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)automatic);
+    SendMessage(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)TEXT("Off"));
     for (unsigned i = 0; i < pApp->subtitleCount; ++i)
-        SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)pApp->subtitles[i].label);
+        (void)AddComboText(pApp->hSubtitle, pApp->subtitles[i].label);
     SendMessage(pApp->hSubtitle, CB_SETCURSEL, 0, 0);
 }
 
@@ -1099,21 +1693,30 @@ static FORCE_INLINE void RefreshSubtitles(App* pApp)
  */
 static FORCE_INLINE void BrowseSubtitles(App* pApp)
 {
-    OPENFILENAMEW dialog         = {0};
-    WCHAR         path[MAX_PATH] = {0};
+    OPENFILENAME dialog;
+    TCHAR        nativePath[MAX_PATH];
+    WCHAR        path[MAX_PATH];
+    bool_t       converted;
+
     RefreshSubtitles(pApp);
+    ZeroMemory(&dialog, sizeof(dialog));
+    nativePath[0] = TEXT('\0');
     dialog.lStructSize = sizeof(dialog);
     dialog.hwndOwner   = pApp->hWnd;
-    dialog.lpstrFilter = L"Subtitles\0*.srt;*.vtt\0";
-    dialog.lpstrFile   = path;
+    dialog.lpstrFilter = TEXT("Subtitles\0*.srt;*.vtt\0");
+    dialog.lpstrFile   = nativePath;
     dialog.nMaxFile    = MAX_PATH;
-    dialog.lpstrTitle  = L"Choose subtitles";
+    dialog.lpstrTitle  = TEXT("Choose subtitles");
     dialog.Flags       = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-    if (GetOpenFileNameW(&dialog) && pApp->subtitleCount < SUBTITLE_MAX_TRACKS)
+    if (GetOpenFileName(&dialog) && pApp->subtitleCount < SUBTITLE_MAX_TRACKS)
     {
-        Subtitles_InitializeFileTrack(path, &pApp->subtitles[pApp->subtitleCount]);
-        SendMessageW(pApp->hSubtitle, CB_ADDSTRING, 0, (LPARAM)pApp->subtitles[pApp->subtitleCount++].label);
-        SendMessage(pApp->hSubtitle, CB_SETCURSEL, (WPARAM)pApp->subtitleCount + 1, 0);
+        converted = OS_Text_ReadNative((uint16_t*)path, MAX_PATH, nativePath);
+        if (converted)
+        {
+            Subtitles_InitializeFileTrack(path, &pApp->subtitles[pApp->subtitleCount]);
+            (void)AddComboText(pApp->hSubtitle, pApp->subtitles[pApp->subtitleCount++].label);
+            SendMessage(pApp->hSubtitle, CB_SETCURSEL, (WPARAM)pApp->subtitleCount + 1, 0);
+        }
     }
 }
 
@@ -1158,7 +1761,7 @@ static FORCE_INLINE void CancelGain(App* app)
     }
     else if (app->gainOutput[0])
     {
-        (void)DeleteFile(app->gainOutput);
+        (void)DeleteUtf16File(app->gainOutput);
         app->gainOutput[0] = TEXT('\0');
     }
 }
@@ -1178,6 +1781,7 @@ static FORCE_INLINE void StartGain(App* app)
     bool_t   use_original;
     DWORD    length;
     WCHAR    directory[MAX_PATH];
+    TCHAR    nativeDirectory[MAX_PATH];
     bool_t   valid_path;
     int32_t  written;
 
@@ -1202,8 +1806,12 @@ static FORCE_INLINE void StartGain(App* app)
         }
         else
         {
-            length     = GetTempPath(MAX_PATH, directory);
+            length     = GetTempPath(MAX_PATH, nativeDirectory);
             valid_path = (0 < length) && (length < MAX_PATH);
+            if (valid_path)
+            {
+                valid_path = OS_Text_ReadNative((uint16_t*)directory, MAX_PATH, nativeDirectory);
+            }
             if (valid_path)
             {
                 written = _snwprintf_s(app->gainOutput,
@@ -1226,7 +1834,7 @@ static FORCE_INLINE void StartGain(App* app)
                               app->gainBusy ? TEXT("Preparing gain...") : TEXT("Cannot start audio worker"));
                 if ((!app->gainBusy) && app->preparingAudio)
                 {
-                    FinishSession(app, TEXT("Cannot start audio preparation."));
+                    FinishSession(app, L"Cannot start audio preparation.");
                 }
             }
             else
@@ -1234,7 +1842,7 @@ static FORCE_INLINE void StartGain(App* app)
                 SetWindowText(app->hGainState, TEXT("Cannot create gain file"));
                 if (app->preparingAudio)
                 {
-                    FinishSession(app, TEXT("Cannot create the audio preparation file."));
+                    FinishSession(app, L"Cannot create the audio preparation file.");
                 }
             }
         }
@@ -1276,10 +1884,7 @@ static FORCE_INLINE void ScheduleGain(App* app)
  * \retval TRUE    A complete terminated IPv4 host was written.
  * \retval FALSE   The URL or output capacity is unsuitable.
  */
-static FORCE_INLINE bool_t ReadGainLocalAddress(const char_t* source,
-                                                 uint32_t      sourceCapacity,
-                                                 char_t*       output,
-                                                 uint32_t      outputCapacity)
+static FORCE_INLINE bool_t ReadGainLocalAddress(const char_t* source, uint32_t sourceCapacity, char_t* output, uint32_t outputCapacity)
 {
     Utl_Url_t    original_url;
     uint32_t     original_url_bytes;
@@ -1341,12 +1946,7 @@ static FORCE_INLINE bool_t ReadGainLocalAddress(const char_t* source,
  * \retval TRUE    The complete URL was written.
  * \retval FALSE   A component or output bound was invalid.
  */
-static FORCE_INLINE bool_t WriteGainUrl(const char_t* local,
-                                         uint32_t      localCapacity,
-                                         uint16_t      port,
-                                         char_t*       output,
-                                         uint32_t      outputCapacity,
-                                         uint32_t*     byteCount)
+static FORCE_INLINE bool_t WriteGainUrl(const char_t* local, uint32_t localCapacity, uint16_t port, char_t* output, uint32_t outputCapacity, uint32_t* byteCount)
 {
     Utl_Url_t url;
     byte_t    port_text[GAIN_PORT_CAPACITY];
@@ -1414,7 +2014,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         WCHAR message[GAIN_ERROR_CAPACITY];
 
         Utf8ToWide(app->gainError, message, GAIN_ERROR_CAPACITY);
-        SetWindowTextW(app->hGainState, L"Audio preparation failed");
+        (void)WriteControlText(app->hGainState, L"Audio preparation failed");
         if (app->preparingAudio)
         {
             FinishSession(app, message);
@@ -1422,7 +2022,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         else
         {
             CancelGain(app);
-            SetStatus(app, message);
+            (void)WriteControlText(app->hStatus, message);
         }
         return;
     }
@@ -1436,10 +2036,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         }
     }
     /* Use the same reachable local address selected for the original file. */
-    has_local_address = ReadGainLocalAddress(app->originalUrl,
-                                              sizeof(app->originalUrl),
-                                              local,
-                                              sizeof(local));
+    has_local_address = ReadGainLocalAddress(app->originalUrl, sizeof(app->originalUrl), local, sizeof(local));
     has_variant = (NULL != variant);
     can_serve   = has_variant && has_local_address;
     if (!can_serve)
@@ -1449,7 +2046,7 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         {
             FinishSession(app, L"Cannot serve prepared audio.");
         }
-        SetWindowTextW(app->hGainState, L"Cannot serve audio gain");
+        (void)WriteControlText(app->hGainState, L"Cannot serve audio gain");
         return;
     }
     variant->server = MediaServer_Start(&app->serving, app->gainOutput, NULL, 0, GAIN_MEDIA_TYPE, error, sizeof(error));
@@ -1460,19 +2057,14 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         {
             FinishSession(app, L"Cannot serve prepared audio.");
         }
-        SetWindowTextW(app->hGainState, L"Cannot serve audio gain");
+        (void)WriteControlText(app->hGainState, L"Cannot serve audio gain");
         return;
     }
     wcscpy_s(variant->path, MAX_PATH, app->gainOutput);
     app->gainOutput[0] = 0;
     variant->next      = app->gainVariants;
     app->gainVariants  = variant;
-    wrote_url = WriteGainUrl(local,
-                              sizeof(local),
-                              MediaServer_GetPort(variant->server),
-                              url,
-                              sizeof(url),
-                              &url_bytes);
+    wrote_url = WriteGainUrl(local, sizeof(local), MediaServer_GetPort(variant->server), url, sizeof(url), &url_bytes);
     LOGASSERT(wrote_url);
     if (app->preparingAudio)
     {
@@ -1492,12 +2084,12 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
         app->preparingAudio = 0;
         ZeroMemory(&app->status, sizeof(app->status));
         UpdateControls(app);
-        SetWindowTextW(app->hGainState, L"AAC audio ready");
+        (void)WriteControlText(app->hGainState, L"AAC audio ready");
     }
     else
     {
         CastSession_ReplaceMedia(app->pSession, url, GAIN_MEDIA_TYPE);
-        SetWindowTextW(app->hGainState, L"Gain ready - switching");
+        (void)WriteControlText(app->hGainState, L"Gain ready - switching");
     }
 }
 
@@ -1510,132 +2102,216 @@ static FORCE_INLINE void FinishGain(App* app, unsigned serial)
  */
 static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int buildProxy)
 {
-    const int            selected = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
-    const CastDevice* pDevice;
-    CastSessionConfig config;
-    WCHAR             source[1024];
-    char              error[256];
-    char              localAddress[64];
-    const byte_t*        vtt      = NULL;
-    uint64_t             vttSize  = 0;
-    const SubtitleTrack* subtitle = NULL;
+    int32_t              selected;
+    uint32_t             deviceCount;
+    uint32_t             safeSelected;
+    const CastDevice*    pDevice;
+    CastSessionConfig    config;
+    WCHAR                source[1024];
+    char                 error[256];
+    char                 localAddress[64];
+    const byte_t*        vtt;
+    uint64_t             vttSize;
+    const SubtitleTrack* subtitle;
+    bool_t               is_closing;
+    bool_t               finish_pending;
+    bool_t               gain_busy;
+    bool_t               session_active;
+    bool_t               preparing_audio;
+    bool_t               selection_nonnegative;
+    bool_t               selection_in_range;
+    bool_t               can_start;
+    bool_t               source_ready;
+    bool_t               subtitle_ready;
+    bool_t               content_ready;
+    bool_t               audio_ready;
+    bool_t               session_started;
+    bool_t               wants_proxy;
+    bool_t               is_remote;
+    bool_t               has_subtitles;
+    bool_t               needs_subtitle_server;
+    bool_t               route_ready;
+    bool_t               server_ready;
+    bool_t               needs_gain;
+    bool_t               has_proxy_source;
+    bool_t               start_proxy;
 
-    if (pApp->closing || pApp->finishPending || pApp->gainBusy || NULL != pApp->pSession || pApp->preparingAudio ||
-        selected < 0 || (unsigned)selected >= pApp->devices.count)
+    selected              = ListView_GetNextItem(pApp->hList, -1, LVNI_SELECTED);
+    deviceCount           = pApp->devices.count;
+    is_closing            = !!pApp->closing;
+    finish_pending        = !!pApp->finishPending;
+    gain_busy             = !!pApp->gainBusy;
+    session_active        = (NULL != pApp->pSession);
+    preparing_audio       = !!pApp->preparingAudio;
+    selection_nonnegative = (0 <= selected);
+    selection_in_range    = FALSE;
+    safeSelected          = 0;
+    if (selection_nonnegative)
     {
-        return;
+        selection_in_range = ((uint32_t)selected < deviceCount);
+        if (selection_in_range)
+        {
+            safeSelected = (uint32_t)selected;
+        }
     }
-    pDevice = &pApp->devices.devices[selected];
-    wcscpy_s(source, sizeof(source) / sizeof(source[0]), pSourceIn);
-    if (0 == source[0])
+    can_start             = (!is_closing) && (!finish_pending) && (!gain_busy) &&
+                            (!session_active) && (!preparing_audio) && selection_in_range;
+    wants_proxy           = (0 != buildProxy);
+    source_ready          = FALSE;
+    pDevice               = &pApp->devices.devices[safeSelected];
+    if (can_start)
     {
-        return;
+        wcscpy_s(source, sizeof(source) / sizeof(source[0]), pSourceIn);
+        source_ready = (L'\0' != source[0]);
     }
-    ZeroMemory(&config, sizeof(config));
-    (void)snprintf(config.host, sizeof(config.host), "%s", pDevice->host);
-    config.callback = OnSessionEvent;
-    config.pUser    = &pApp->events;
-    if (buildProxy)
+
+    vtt            = NULL;
+    vttSize        = 0;
+    subtitle       = NULL;
+    subtitle_ready = source_ready;
+    if (source_ready)
     {
-        int choice;
+        ZeroMemory(&config, sizeof(config));
+        (void)snprintf(config.host, sizeof(config.host), "%s", pDevice->host);
+        config.callback = OnSessionEvent;
+        config.pUser    = &pApp->events;
+    }
+    if (source_ready && wants_proxy)
+    {
+        int32_t choice;
+        bool_t  automatic_selected;
+        bool_t  track_selected;
+
         RefreshSubtitles(pApp);
-        choice = (int)SendMessage(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
-        if (choice == 0 && pApp->subtitleCount)
+        choice             = (int32_t)SendMessage(pApp->hSubtitle, CB_GETCURSEL, 0, 0);
+        automatic_selected = (0 == choice) && (0 < pApp->subtitleCount);
+        track_selected     = (2 <= choice) && ((uint32_t)(choice - 2) < pApp->subtitleCount);
+        if (automatic_selected)
+        {
             subtitle = &pApp->subtitles[0];
-        else if (choice >= 2 && (unsigned)(choice - 2) < pApp->subtitleCount)
+        }
+        else if (track_selected)
+        {
             subtitle = &pApp->subtitles[choice - 2];
-        if (subtitle)
+        }
+        if (NULL != subtitle)
         {
-            if (!Subtitles_Load(&pApp->subtitleWorkspace, subtitle, error, sizeof(error)))
+            TCHAR message[256];
+
+            subtitle_ready = Subtitles_Load(&pApp->subtitleWorkspace, subtitle, error, sizeof(error));
+            if (subtitle_ready)
             {
-                WCHAR message[256];
-                Utf8ToWide(error, message, 256);
-                SetStatus(pApp, message);
-                return;
+                vtt     = Subtitles_GetText(&pApp->subtitleWorkspace);
+                vttSize = Subtitles_GetByteCount(&pApp->subtitleWorkspace);
             }
-            vtt     = Subtitles_GetText(&pApp->subtitleWorkspace);
-            vttSize = Subtitles_GetByteCount(&pApp->subtitleWorkspace);
+            else
+            {
+                Utf8ToNative(error, message, 256);
+                SetStatus(pApp, message);
+            }
         }
     }
-    pApp->originalSource[0] = 0;
-    if (0 == _wcsnicmp(source, L"http://", 7) || 0 == _wcsnicmp(source, L"https://", 8))
-    {
-        const wchar_t* pExtension = wcsrchr(source, L'.');
 
-        ToUtf8(source, config.contentUrl, sizeof(config.contentUrl));
-        ToUtf8(source, config.title, sizeof(config.title));
-        (void)snprintf(config.contentType,
-                       sizeof(config.contentType),
-                       "%s",
-                       (NULL != pExtension && NULL == wcschr(pExtension, L'/'))
-                           ? MediaServer_GetContentTypeForExtension(pExtension)
-                           : "video/mp4");
+    content_ready = subtitle_ready;
+    if (subtitle_ready)
+    {
+        pApp->originalSource[0] = L'\0';
+        is_remote = (0 == _wcsnicmp(source, L"http://", 7)) ||
+                    (0 == _wcsnicmp(source, L"https://", 8));
+        if (is_remote)
+        {
+            const wchar_t* pExtension;
+
+            pExtension = wcsrchr(source, L'.');
+            ToUtf8(source, config.contentUrl, sizeof(config.contentUrl));
+            ToUtf8(source, config.title, sizeof(config.title));
+            (void)snprintf(config.contentType,
+                           sizeof(config.contentType),
+                           "%s",
+                           (NULL != pExtension && NULL == wcschr(pExtension, L'/'))
+                               ? MediaServer_GetContentTypeForExtension(pExtension)
+                               : "video/mp4");
+        }
+        else
+        {
+            const wchar_t* pName;
+            const wchar_t* pExtension;
+            char           extension[16];
+
+            pName      = wcsrchr(source, L'\\');
+            pExtension = wcsrchr(source, L'.');
+            pName      = (NULL != pName) ? pName + 1 : source;
+            if ((NULL != pExtension) && (pExtension < pName))
+            {
+                pExtension = NULL;
+            }
+            ToUtf8(pName, config.title, sizeof(config.title));
+            ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
+            (void)snprintf(config.contentType,
+                           sizeof(config.contentType),
+                           "%s",
+                           MediaServer_GetContentTypeForExtension(pExtension));
+            config.servingLocally = 1;
+            route_ready = CastNetwork_ReadLocalAddress(&pApp->routeNetwork,
+                                                       pDevice->host,
+                                                       sizeof(pDevice->host),
+                                                       localAddress,
+                                                       sizeof(localAddress));
+            content_ready = route_ready;
+            if (!route_ready)
+            {
+                SetStatus(pApp, TEXT("Cannot determine the local address facing the receiver."));
+            }
+            if (route_ready)
+            {
+                pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving,
+                                                               source,
+                                                               NULL,
+                                                               DEFAULT_SERVER_PORT,
+                                                               config.contentType,
+                                                               vtt,
+                                                               vttSize,
+                                                               error,
+                                                               sizeof(error));
+                server_ready = (NULL != pApp->pServer);
+                content_ready = server_ready;
+                if (server_ready)
+                {
+                    (void)snprintf(config.contentUrl,
+                                   sizeof(config.contentUrl),
+                                   "http://%s:%u/media%s",
+                                   localAddress,
+                                   (unsigned)MediaServer_GetPort(pApp->pServer),
+                                   extension);
+                    config.keyframeCount = Mp4Index_ReadKeyframes(source, pApp->keyframes, MP4_INDEX_MAX_KEYFRAMES);
+                    config.pKeyframes    = pApp->keyframes;
+                    wcscpy_s(pApp->proxySource, MAX_PATH, source);
+                    (void)snprintf(pApp->proxyLocal, sizeof(pApp->proxyLocal), "%s", localAddress);
+                    pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
+                    wcscpy_s(pApp->originalSource, MAX_PATH, source);
+                }
+                else
+                {
+                    TCHAR message[256];
+
+                    Utf8ToNative(error, message, 256);
+                    SetStatus(pApp, message);
+                }
+            }
+        }
     }
-    else
-    {
-        const wchar_t* pName      = wcsrchr(source, L'\\');
-        const wchar_t* pExtension = wcsrchr(source, L'.');
-        char extension[16];
 
-        pName = (NULL != pName) ? pName + 1 : source;
-        if (NULL != pExtension && pExtension < pName)
-        {
-            pExtension = NULL;
-        }
-        ToUtf8(pName, config.title, sizeof(config.title));
-        ToUtf8(NULL != pExtension ? pExtension : L"", extension, sizeof(extension));
-        (void)snprintf(config.contentType,
-                       sizeof(config.contentType),
-                       "%s",
-                       MediaServer_GetContentTypeForExtension(pExtension));
-        config.servingLocally = 1;
-        if (!CastNetwork_ReadLocalAddress(&pApp->routeNetwork,
-                                          pDevice->host,
-                                          sizeof(pDevice->host),
-                                          localAddress,
-                                          sizeof(localAddress)))
-        {
-            SetStatus(pApp, L"Cannot determine the local address facing the receiver.");
-            return;
-        }
-        pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving,
-                                                       source,
-                                                       NULL,
-                                                       DEFAULT_SERVER_PORT,
-                                                       config.contentType,
-                                                       vtt,
-                                                       vttSize,
-                                                       error,
-                                                       sizeof(error));
-        if (NULL == pApp->pServer)
-        {
-            WCHAR message[256];
-
-            Utf8ToWide(error, message, 256);
-            SetStatus(pApp, message);
-            return;
-        }
-        (void)snprintf(config.contentUrl,
-                       sizeof(config.contentUrl),
-                       "http://%s:%u/media%s",
-                       localAddress,
-                       (unsigned)MediaServer_GetPort(pApp->pServer),
-                       extension);
-        /* Scrub previews snap to keyframes so the receiver paints them after a one-frame decode. */
-        config.keyframeCount = Mp4Index_ReadKeyframes(source, pApp->keyframes, MP4_INDEX_MAX_KEYFRAMES);
-        config.pKeyframes    = pApp->keyframes;
-        wcscpy_s(pApp->proxySource, MAX_PATH, source);
-        (void)snprintf(pApp->proxyLocal, sizeof(pApp->proxyLocal), "%s", localAddress);
-        pApp->proxyPort = (unsigned short)(MediaServer_GetPort(pApp->pServer) + 1);
-        wcscpy_s(pApp->originalSource, MAX_PATH, source);
-    }
-    if (vtt && !pApp->pServer)
+    has_subtitles         = (NULL != vtt);
+    needs_subtitle_server = has_subtitles && (NULL == pApp->pServer);
+    if (content_ready && needs_subtitle_server)
     {
-        if (CastNetwork_ReadLocalAddress(&pApp->routeNetwork,
-                                         pDevice->host,
-                                         sizeof(pDevice->host),
-                                         localAddress,
-                                         sizeof(localAddress)))
+        route_ready = CastNetwork_ReadLocalAddress(&pApp->routeNetwork,
+                                                   pDevice->host,
+                                                   sizeof(pDevice->host),
+                                                   localAddress,
+                                                   sizeof(localAddress));
+        if (route_ready)
+        {
             pApp->pServer = MediaServer_StartWithSubtitles(&pApp->serving,
                                                            NULL,
                                                            NULL,
@@ -1645,80 +2321,105 @@ static FORCE_INLINE void StartCastSource(App* pApp, const WCHAR* pSourceIn, int 
                                                            vttSize,
                                                            error,
                                                            sizeof(error));
-        if (!pApp->pServer)
+        }
+        server_ready  = (NULL != pApp->pServer);
+        content_ready = server_ready;
+        if (!server_ready)
         {
-            SetStatus(pApp, L"Cannot serve subtitles to the receiver.");
-            return;
+            SetStatus(pApp, TEXT("Cannot serve subtitles to the receiver."));
         }
     }
-    if (vtt)
+    if (content_ready && has_subtitles)
     {
-        snprintf(config.subtitleUrl,
-                 sizeof(config.subtitleUrl),
-                 "http://%s:%u/subtitles.vtt",
-                 localAddress,
-                 (unsigned)MediaServer_GetPort(pApp->pServer));
-        snprintf(config.subtitleLanguage, sizeof(config.subtitleLanguage), "%s", subtitle->language);
+        (void)snprintf(config.subtitleUrl,
+                       sizeof(config.subtitleUrl),
+                       "http://%s:%u/subtitles.vtt",
+                       localAddress,
+                       (unsigned)MediaServer_GetPort(pApp->pServer));
+        (void)snprintf(config.subtitleLanguage, sizeof(config.subtitleLanguage), "%s", subtitle->language);
     }
-    snprintf(pApp->originalUrl, sizeof(pApp->originalUrl), "%s", config.contentUrl);
-    snprintf(pApp->originalType, sizeof(pApp->originalType), "%s", config.contentType);
-    pApp->audioNeedsConversion = 0;
-    if (buildProxy && pApp->originalSource[0])
+
+    audio_ready = content_ready;
+    if (content_ready)
     {
-        pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, sizeof(error));
-        if (pApp->audioNeedsConversion < 0)
+        (void)snprintf(pApp->originalUrl, sizeof(pApp->originalUrl), "%s", config.contentUrl);
+        (void)snprintf(pApp->originalType, sizeof(pApp->originalType), "%s", config.contentType);
+        pApp->audioNeedsConversion = 0;
+        has_proxy_source = wants_proxy && (L'\0' != pApp->originalSource[0]);
+        if (has_proxy_source)
         {
-            WCHAR message[256];
-            Utf8ToWide(error, message, 256);
-            FinishSession(pApp, message);
-            return;
+            pApp->audioNeedsConversion = AudioGain_NeedsConversion(source, error, sizeof(error));
+            if (0 > pApp->audioNeedsConversion)
+            {
+                WCHAR message[256];
+
+                Utf8ToWide(error, message, 256);
+                FinishSession(pApp, message);
+                audio_ready = FALSE;
+            }
+            else
+            {
+                needs_gain = !!pApp->audioNeedsConversion ||
+                             (100 != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
+                if (needs_gain)
+                {
+                    pApp->pendingConfig  = config;
+                    pApp->preparingAudio = 1;
+                    pApp->proxyLocal[0]  = '\0';
+                    pApp->stopping       = 0;
+                    SetStatus(pApp, TEXT("Preparing AAC audio before playback; video quality is preserved. Stop cancels."));
+                    UpdateControls(pApp);
+                    ScheduleGain(pApp);
+                    audio_ready = FALSE;
+                }
+            }
         }
-        if (pApp->audioNeedsConversion || SendMessage(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
+    }
+
+    session_started = FALSE;
+    if (audio_ready)
+    {
+        ++pApp->events.generation;
+        CastEvents_Begin(&pApp->events.mailbox, pApp->events.generation);
+        CastSession_Prepare(&pApp->session, &config);
+        pApp->pSession    = &pApp->session;
+        pApp->sessionBusy = OS_Thread_Submit(&pApp->sessionWorker);
+        session_started  = !!pApp->sessionBusy;
+        if (!session_started)
         {
-            pApp->pendingConfig  = config;
-            pApp->preparingAudio = 1;
-            pApp->proxyLocal[0]  = 0;
-            pApp->stopping       = 0;
-            SetStatus(pApp, L"Preparing AAC audio before playback; video quality is preserved. Stop cancels.");
-            UpdateControls(pApp);
+            FinishSession(pApp, L"Cannot start the Cast session.");
+        }
+    }
+    if (session_started)
+    {
+        start_proxy = wants_proxy && ('\0' != pApp->proxyLocal[0]);
+        if (start_proxy)
+        {
+            Proxy_Request_t request;
+
+            request.serving = &pApp->serving;
+            request.source  = pApp->proxySource;
+            request.sourceCapacity       = MAX_PATH;
+            request.localAddress         = pApp->proxyLocal;
+            request.localAddressCapacity = sizeof(pApp->proxyLocal);
+            request.config               = &pApp->transcode;
+            request.port                 = pApp->proxyPort;
+            request.session              = pApp->pSession;
+            (void)Proxy_Start(&pApp->proxy, &request);
+        }
+        else
+        {
+            pApp->proxyLocal[0] = '\0';
+        }
+        ZeroMemory(&pApp->status, sizeof(pApp->status));
+        pApp->stopping = 0;
+        UpdateControls(pApp);
+        needs_gain = wants_proxy && (100 != SendMessage(pApp->hGain, TBM_GETPOS, 0, 0));
+        if (needs_gain)
+        {
             ScheduleGain(pApp);
-            return;
         }
     }
-    ++pApp->events.generation;
-    CastEvents_Begin(&pApp->events.mailbox, pApp->events.generation);
-    CastSession_Prepare(&pApp->session, &config);
-    pApp->pSession    = &pApp->session;
-    pApp->sessionBusy = OS_Thread_Submit(&pApp->sessionWorker);
-    if (!pApp->sessionBusy)
-    {
-        FinishSession(pApp, TEXT("Cannot start the Cast session."));
-        return;
-    }
-    if (buildProxy && pApp->proxyLocal[0])
-    {
-        Proxy_Request_t request;
-
-        request.serving = &pApp->serving;
-        request.source  = pApp->proxySource;
-
-        request.sourceCapacity       = MAX_PATH;
-        request.localAddress         = pApp->proxyLocal;
-        request.localAddressCapacity = sizeof(pApp->proxyLocal);
-        request.config               = &pApp->transcode;
-        request.port                 = pApp->proxyPort;
-        request.session              = pApp->pSession;
-        (void)Proxy_Start(&pApp->proxy, &request);
-    }
-    else
-    {
-        pApp->proxyLocal[0] = 0;
-    }
-    ZeroMemory(&pApp->status, sizeof(pApp->status));
-    pApp->stopping = 0;
-    UpdateControls(pApp);
-    if (buildProxy && SendMessage(pApp->hGain, TBM_GETPOS, 0, 0) != 100)
-        ScheduleGain(pApp);
 }
 
 /* The Cast button: play the chosen file with the background scrub proxy. */
@@ -1731,7 +2432,7 @@ static FORCE_INLINE void StartCast(App* pApp)
 {
     WCHAR source[1024];
 
-    GetWindowTextW(pApp->hFile, source, (int)(sizeof(source) / sizeof(source[0])));
+    (void)ReadControlText(pApp->hFile, source, ARRAYSIZE(source));
     StartCastSource(pApp, source, 1);
 }
 
@@ -1764,6 +2465,8 @@ static FORCE_INLINE void PreviewJobRun(void* context)
     if (pResult->ok)
     {
         HANDLE        hFile;
+        TCHAR         nativePath[MAX_PATH];
+        bool_t        nativePathReady;
         unsigned      produced;
         double        motion;
         LARGE_INTEGER size;
@@ -1809,8 +2512,12 @@ static FORCE_INLINE void PreviewJobRun(void* context)
         pResult->frames        = produced;
         pResult->motionPercent = (int)(motion * 100.0 + 0.5);
         size.QuadPart          = 0;
-        hFile =
-            CreateFileW(pJob->dest, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        nativePathReady = OS_Text_WriteNative(nativePath, MAX_PATH, (const uint16_t*)pJob->dest);
+        hFile = INVALID_HANDLE_VALUE;
+        if (nativePathReady)
+        {
+            hFile = CreateFile(nativePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        }
         if (INVALID_HANDLE_VALUE != hFile)
         {
             double seconds;
@@ -1834,6 +2541,8 @@ static FORCE_INLINE void StartPreview(App* pApp)
     WCHAR       source[MAX_PATH];
     DWORD       length;
     WCHAR       temp[MAX_PATH];
+    TCHAR       nativeTemp[MAX_PATH];
+    bool_t      converted;
     PreviewJob* pJob;
     int         position;
     double      ratio;
@@ -1842,15 +2551,25 @@ static FORCE_INLINE void StartPreview(App* pApp)
     {
         return;
     }
-    GetWindowTextW(pApp->hFile, source, MAX_PATH);
+    (void)ReadControlText(pApp->hFile, source, MAX_PATH);
     if (0 == source[0] || 0 == _wcsnicmp(source, L"http", 4))
     {
-        SetWindowTextW(pApp->hCfgReadout, L"Preview needs a local video file.");
+        (void)WriteControlText(pApp->hCfgReadout, L"Preview needs a local video file.");
         return;
     }
     ReadConfigFromSliders(pApp);
-    length = GetTempPathW(MAX_PATH, temp);
-    if (0 == length || length > MAX_PATH - 40)
+    length = GetTempPath(MAX_PATH, nativeTemp);
+    converted = (0 < length) && (length < MAX_PATH);
+    if (converted)
+    {
+        converted = OS_Text_ReadNative((uint16_t*)temp, MAX_PATH, nativeTemp);
+    }
+    if (!converted)
+    {
+        return;
+    }
+    length = (DWORD)lstrlenW(temp);
+    if (length > MAX_PATH - 40)
     {
         return;
     }
@@ -1871,7 +2590,7 @@ static FORCE_INLINE void StartPreview(App* pApp)
 
     pApp->previewBusy = 1;
     EnableWindow(pApp->hPreview, FALSE);
-    SetWindowTextW(pApp->hCfgReadout, L"Building preview\x2026");
+    (void)WriteControlText(pApp->hCfgReadout, L"Building preview\x2026");
     if (!OS_Thread_Submit(&pApp->previewWorker))
     {
         pApp->previewBusy = 0;
@@ -1908,9 +2627,11 @@ static FORCE_INLINE void StopCast(App* pApp)
  */
 static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
 {
-    WCHAR duration[32];
-    WCHAR position[32];
-    WCHAR text[128];
+    TCHAR duration[32];
+    TCHAR position[32];
+    TCHAR state[64];
+    TCHAR text[128];
+    NativeText writer;
 
     if (pApp->seeking)
     {
@@ -1930,20 +2651,21 @@ static FORCE_INLINE void ShowPosition(App* pApp, double seconds)
     }
     if (pApp->status.hasMedia)
     {
-        FormatTime(seconds, position, sizeof(position) / sizeof(position[0]));
-        FormatTime(pApp->status.duration, duration, sizeof(duration) / sizeof(duration[0]));
-        (void)swprintf(text,
-                       sizeof(text) / sizeof(text[0]),
-                       L"%hs  %ls / %ls",
-                       pApp->status.stateName,
-                       position,
-                       duration);
+        FormatTime(seconds, position, ARRAYSIZE(position));
+        FormatTime(pApp->status.duration, duration, ARRAYSIZE(duration));
+        Utf8ToNative(pApp->status.stateName, state, ARRAYSIZE(state));
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, state);
+        NativeText_AppendString(&writer, TEXT("  "));
+        NativeText_AppendString(&writer, position);
+        NativeText_AppendString(&writer, TEXT(" / "));
+        NativeText_AppendString(&writer, duration);
     }
     else
     {
-        (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"%hs", pApp->status.stateName);
+        Utf8ToNative(pApp->status.stateName, text, ARRAYSIZE(text));
     }
-    SetWindowTextW(pApp->hTime, text);
+    (void)SetWindowText(pApp->hTime, text);
 }
 
 /*************************************************************************************************/
@@ -2024,7 +2746,7 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
         variant_stopped = MediaServer_TryStop(&variant->server);
         if (variant_stopped)
         {
-            file_removed = DeleteFile(variant->path);
+            file_removed = DeleteUtf16File(variant->path);
             if (!file_removed)
             {
                 error        = GetLastError();
@@ -2063,15 +2785,15 @@ static FORCE_INLINE void FinishSession(App* pApp, const WCHAR* pReason)
         pApp->preparingAudio       = 0;
         pApp->audioNeedsConversion = 0;
         ZeroMemory(&pApp->pendingConfig, sizeof(pApp->pendingConfig));
-        SetWindowTextW(pApp->hGainState, L"");
+        (void)WriteControlText(pApp->hGainState, L"");
         pApp->stopping      = 0;
         pApp->finishPending = 0;
         ZeroMemory(&pApp->status, sizeof(pApp->status));
         SendMessage(pApp->hSeek, TBM_SETPOS, TRUE, 0);
-        SetWindowTextW(pApp->hTime, L"");
+        (void)WriteControlText(pApp->hTime, L"");
         if (NULL != pReason)
         {
-            SetStatus(pApp, pReason);
+            (void)WriteControlText(pApp->hStatus, pReason);
         }
         UpdateControls(pApp);
     }
@@ -2087,6 +2809,7 @@ static FORCE_INLINE void PollSessionEvents(App* pApp)
 {
     CastEvents_Snapshot_t snapshot;
     WCHAR                 text[CAST_EVENTS_TEXT_CAPACITY];
+    TCHAR                 nativeText[CAST_EVENTS_TEXT_CAPACITY];
 
     if (CastEvents_Take(&pApp->events.mailbox, &snapshot))
     {
@@ -2096,8 +2819,8 @@ static FORCE_INLINE void PollSessionEvents(App* pApp)
         }
         if (snapshot.present & CAST_EVENTS_LOG)
         {
-            Utf8ToWide(snapshot.log, text, CAST_EVENTS_TEXT_CAPACITY);
-            SetStatus(pApp, text);
+            Utf8ToNative(snapshot.log, nativeText, CAST_EVENTS_TEXT_CAPACITY);
+            SetStatus(pApp, nativeText);
         }
         if (snapshot.present & CAST_EVENTS_ENDED)
         {
@@ -2147,16 +2870,21 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
     }
     else
     {
-        WCHAR preview[32];
-        WCHAR duration[32];
-        WCHAR text[96];
+        TCHAR preview[32];
+        TCHAR duration[32];
+        TCHAR text[96];
+        NativeText writer;
 
         pApp->seeking = 1;
         CastSession_Post(pApp->pSession, CAST_COMMAND_SCRUB, seconds);
-        FormatTime(seconds, preview, sizeof(preview) / sizeof(preview[0]));
-        FormatTime(pApp->status.duration, duration, sizeof(duration) / sizeof(duration[0]));
-        (void)swprintf(text, sizeof(text) / sizeof(text[0]), L"SEEK  %ls / %ls", preview, duration);
-        SetWindowTextW(pApp->hTime, text);
+        FormatTime(seconds, preview, ARRAYSIZE(preview));
+        FormatTime(pApp->status.duration, duration, ARRAYSIZE(duration));
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, TEXT("SEEK  "));
+        NativeText_AppendString(&writer, preview);
+        NativeText_AppendString(&writer, TEXT(" / "));
+        NativeText_AppendString(&writer, duration);
+        (void)SetWindowText(pApp->hTime, text);
     }
 }
 
@@ -2167,17 +2895,15 @@ static FORCE_INLINE void SeekToRatio(App* pApp, double ratio, int final)
  *  Maps the mouse coordinate into the trackbar channel's horizontal span.
  *  A nonpositive span produces zero.
  */
-static FORCE_INLINE double GetRatioFromClick(HWND hSeek, LPARAM lParam)
+static FORCE_INLINE double GetRatioFromClick(HWND hSeek, int x)
 {
     RECT    channel;
-    int32_t x;
     double  span;
     double  offset;
     bool_t  has_span;
     double  ratio;
 
     SendMessage(hSeek, TBM_GETCHANNELRECT, 0, (LPARAM)&channel);
-    x        = GET_X_LPARAM(lParam);
     span     = (double)channel.right - (double)channel.left;
     offset   = (double)x - (double)channel.left;
     has_span = 0.0 < span;
@@ -2189,42 +2915,105 @@ static FORCE_INLINE double GetRatioFromClick(HWND hSeek, LPARAM lParam)
     return ratio;
 }
 
-/* Subclass: a channel click jumps to the cursor and scrubs; release seeks there exactly. */
 /*************************************************************************************************/
 /**
  * \par Details:
- *  Captures mouse dragging for scrub updates, sends a final seek on release and
- *  removes its subclass during nonclient destruction.
+ *  Releases the subclass before forwarding native nonclient destruction.
  */
-static FORCE_INLINE LRESULT CALLBACK
-SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+static FORCE_INLINE void SeekBar_OnNcDestroy(HWND hWnd)
 {
-    App* pApp = (App*)refData;
+    (void)RemoveWindowSubclass(hWnd, SeekBarProc, SEEK_BAR_SUBCLASS_ID);
+    FORWARD_WM_NCDESTROY(hWnd, DefSubclassProc);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  A captured button drag updates the preview without ending the seek.
+ */
+static FORCE_INLINE void SeekBar_OnMouseMove(HWND hWnd, int x, int y, UINT keyFlags)
+{
+    App*   app;
+    bool_t has_capture;
+    bool_t button_down;
+    bool_t dragging;
+    double ratio;
+
+    UNREFERENCED_PARAMETER(y);
+
+    has_capture = (hWnd == GetCapture());
+    button_down = !!(keyFlags & MK_LBUTTON);
+    dragging    = has_capture && button_down;
+    if (dragging)
+    {
+        app   = GetApp(GetParent(hWnd));
+        ratio = GetRatioFromClick(hWnd, x);
+        SeekToRatio(app, ratio, FALSE);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Starts a captured scrub at the clicked channel position.
+ */
+static FORCE_INLINE void SeekBar_OnLButtonDown(HWND hWnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+{
+    App*   app;
+    double ratio;
+
+    UNREFERENCED_PARAMETER(doubleClick);
+    UNREFERENCED_PARAMETER(y);
+    UNREFERENCED_PARAMETER(keyFlags);
+
+    app   = GetApp(GetParent(hWnd));
+    ratio = GetRatioFromClick(hWnd, x);
+    (void)SetFocus(hWnd);
+    (void)SetCapture(hWnd);
+    SeekToRatio(app, ratio, FALSE);
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Completes a captured seek. Uncaptured releases retain trackbar default handling.
+ */
+static FORCE_INLINE void SeekBar_OnLButtonUp(HWND hWnd, int x, int y, UINT keyFlags)
+{
+    App*   app;
+    bool_t has_capture;
+    double ratio;
+
+    has_capture = (hWnd == GetCapture());
+    if (has_capture)
+    {
+        app   = GetApp(GetParent(hWnd));
+        ratio = GetRatioFromClick(hWnd, x);
+        (void)ReleaseCapture();
+        SeekToRatio(app, ratio, TRUE);
+    }
+    else
+    {
+        FORWARD_WM_LBUTTONUP(hWnd, x, y, keyFlags, DefSubclassProc);
+    }
+}
+
+/*************************************************************************************************/
+/**
+ * \par Details:
+ *  Uses typed mouse crackers and forwards all other messages to the subclass chain.
+ */
+static FORCE_INLINE LRESULT CALLBACK SeekBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR idSubclass, DWORD_PTR refData)
+{
+    UNREFERENCED_PARAMETER(idSubclass);
+    UNREFERENCED_PARAMETER(refData);
 
     switch (message)
     {
-    case WM_LBUTTONDOWN:
-        SetFocus(hWnd);
-        SetCapture(hWnd);
-        SeekToRatio(pApp, GetRatioFromClick(hWnd, lParam), 0);
-        return 0;
-    case WM_MOUSEMOVE:
-        if (GetCapture() == hWnd && (MK_LBUTTON & wParam))
-        {
-            SeekToRatio(pApp, GetRatioFromClick(hWnd, lParam), 0);
-        }
-        return 0;
-    case WM_LBUTTONUP:
-        if (GetCapture() == hWnd)
-        {
-            ReleaseCapture();
-            SeekToRatio(pApp, GetRatioFromClick(hWnd, lParam), 1);
-            return 0;
-        }
-        break;
-    case WM_NCDESTROY:
-        RemoveWindowSubclass(hWnd, SeekBarProc, idSubclass);
-        break;
+        HANDLE_MSG(hWnd, WM_NCDESTROY,   SeekBar_OnNcDestroy);
+        HANDLE_MSG(hWnd, WM_MOUSEMOVE,   SeekBar_OnMouseMove);
+        HANDLE_MSG(hWnd, WM_LBUTTONDOWN, SeekBar_OnLButtonDown);
+        HANDLE_MSG(hWnd, WM_LBUTTONUP,   SeekBar_OnLButtonUp);
     default:
         break;
     }
@@ -2258,27 +3047,30 @@ static FORCE_INLINE void OnSeekScroll(App* pApp, int code)
  */
 static FORCE_INLINE void Browse(App* pApp)
 {
-    WCHAR         file[MAX_PATH];
-    OPENFILENAMEW dialog;
+    TCHAR        file[MAX_PATH];
+    OPENFILENAME dialog;
+    int32_t      length;
+    bool_t       is_url;
 
-    file[0] = 0;
-    GetWindowTextW(pApp->hFile, file, MAX_PATH);
-    if (0 == _wcsnicmp(file, L"http", 4))
+    length = GetWindowText(pApp->hFile, file, ARRAYSIZE(file));
+    is_url = (4 <= length) &&
+             (CSTR_EQUAL == CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, file, 4, TEXT("http"), 4));
+    if (is_url)
     {
-        file[0] = 0;
+        file[0] = TEXT('\0');
     }
     ZeroMemory(&dialog, sizeof(dialog));
     dialog.lStructSize = sizeof(dialog);
     dialog.hwndOwner   = pApp->hWnd;
-    dialog.lpstrFilter = L"Video files\0*.mp4;*.m4v;*.mov;*.webm;*.mkv\0Audio "
-                         L"files\0*.mp3;*.m4a;*.aac;*.flac;*.wav;*.ogg\0All files\0*.*\0";
+    dialog.lpstrFilter = TEXT("Video files\0*.mp4;*.m4v;*.mov;*.webm;*.mkv\0Audio ")
+                         TEXT("files\0*.mp3;*.m4a;*.aac;*.flac;*.wav;*.ogg\0All files\0*.*\0");
     dialog.lpstrFile  = file;
     dialog.nMaxFile   = MAX_PATH;
-    dialog.lpstrTitle = L"Choose a video to cast";
+    dialog.lpstrTitle = TEXT("Choose a video to cast");
     dialog.Flags      = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
-    if (GetOpenFileNameW(&dialog))
+    if (GetOpenFileName(&dialog))
     {
-        SetWindowTextW(pApp->hFile, file);
+        (void)SetWindowText(pApp->hFile, file);
         UpdateControls(pApp);
     }
 }
@@ -2292,7 +3084,7 @@ static FORCE_INLINE void Browse(App* pApp)
  */
 static FORCE_INLINE void OpenWindowsCast(App* pApp)
 {
-    ShellExecuteW(pApp->hWnd, L"open", L"ms-settings-connectabledevices:devicediscovery", NULL, NULL, SW_SHOWNORMAL);
+    ShellExecute(pApp->hWnd, TEXT("open"), TEXT("ms-settings-connectabledevices:devicediscovery"), NULL, NULL, SW_SHOWNORMAL);
 }
 
 /* ------------------------------------------------------------------ the window */
@@ -2304,7 +3096,7 @@ static FORCE_INLINE void OpenWindowsCast(App* pApp)
  *  create the timer rejects window creation without starting any worker.
  *  A partial worker initialization is closed by the established timer.
  */
-static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
+static FORCE_INLINE BOOL CastWindow_OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
 {
     App*     pApp;
     UINT_PTR timer;
@@ -2318,6 +3110,7 @@ static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
     bool_t   gain_ready;
     bool_t   session_ready;
     bool_t   preview_ready;
+    bool_t   presenter_ready;
     bool_t   state_ready;
     bool_t   execution_ready;
     bool_t   workers_ready;
@@ -2334,15 +3127,10 @@ static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
         pApp->dpi             = GetDpiForWindow(hWnd);
         pApp->backgroundBrush = CreateSolidBrush(DARK_BACKGROUND);
         pApp->fieldBrush      = CreateSolidBrush(DARK_FIELD);
-        pApp->selectedBrush   = CreateSolidBrush(RGB(48, 91, 146));
-        pApp->accentBrush     = CreateSolidBrush(DARK_ACCENT);
-        pApp->mutedBrush      = CreateSolidBrush(DARK_MUTED);
-        pApp->borderBrush     = CreateSolidBrush(RGB(62, 68, 78));
+        InitControlPaint(pApp);
+        UpdateControlTextFormat(pApp);
         CastEvents_Initialize(&pApp->events.mailbox);
-        Subtitles_Initialize(&pApp->subtitleWorkspace,
-                             pApp->subtitleScratch,
-                             pApp->subtitleOutput,
-                             SUBTITLE_TEXT_CAPACITY);
+        Subtitles_Initialize(&pApp->subtitleWorkspace, pApp->subtitleScratch, pApp->subtitleOutput, SUBTITLE_TEXT_CAPACITY);
         /* Optional proxy startup failure keeps original-stream casting available. */
         (void)Proxy_Initialize(&pApp->proxy);
         serving_ready           = MediaServer_Initialize(&pApp->serving);
@@ -2353,8 +3141,9 @@ static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
         gain_ready              = OS_Thread_Initialize(&pApp->gainWorker, GainJob, pApp);
         session_ready           = OS_Thread_Initialize(&pApp->sessionWorker, SessionJob, pApp);
         preview_ready           = OS_Thread_Initialize(&pApp->previewWorker, PreviewJobRun, &pApp->previewJob);
+        presenter_ready         = OS_Thread_Initialize(&pApp->presenterWorker, PresentCastWindow, pApp);
         state_ready             = serving_ready && storage_ready && discovery_storage_ready && route_ready;
-        execution_ready         = discovery_ready && gain_ready && session_ready && preview_ready;
+        execution_ready         = discovery_ready && gain_ready && session_ready && preview_ready && presenter_ready;
         workers_ready           = state_ready && execution_ready;
         DwmSetWindowAttribute(hWnd, 20 /* DWMWA_USE_IMMERSIVE_DARK_MODE */, &dark, sizeof(dark));
         CreateControls(pApp);
@@ -2377,14 +3166,10 @@ static FORCE_INLINE BOOL OnCreate(HWND hWnd, LPCREATESTRUCT pCreate)
  * \par Details:
  *  Fills the client area with the retained background brush.
  */
-static FORCE_INLINE BOOL OnEraseBackground(HWND hWnd, HDC dc)
+static FORCE_INLINE BOOL CastWindow_OnEraseBackground(HWND hWnd, HDC dc)
 {
-    App* pApp;
-
-    pApp = GetApp(hWnd);
-    RECT rect;
-    GetClientRect(hWnd, &rect);
-    FillRect(dc, &rect, pApp->backgroundBrush);
+    (void)hWnd;
+    (void)dc;
     return TRUE;
 }
 
@@ -2394,7 +3179,7 @@ static FORCE_INLINE BOOL OnEraseBackground(HWND hWnd, HDC dc)
  *  Selects field or background colors and returns the corresponding retained
  *  brush, using muted text for disabled controls.
  */
-static FORCE_INLINE HBRUSH OnControlColor(HWND hWnd, HDC dc, HWND hControl, int type)
+static FORCE_INLINE HBRUSH CastWindow_ControlColor(HWND hWnd, HDC dc, HWND hControl, int type)
 {
     App* pApp;
 
@@ -2407,12 +3192,32 @@ static FORCE_INLINE HBRUSH OnControlColor(HWND hWnd, HDC dc, HWND hControl, int 
     return field ? pApp->fieldBrush : pApp->backgroundBrush;
 }
 
+static FORCE_INLINE HBRUSH CastWindow_OnCtlColorEdit(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    return CastWindow_ControlColor(hWnd, dc, hControl, type);
+}
+
+static FORCE_INLINE HBRUSH CastWindow_OnCtlColorListBox(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    return CastWindow_ControlColor(hWnd, dc, hControl, type);
+}
+
+static FORCE_INLINE HBRUSH CastWindow_OnCtlColorButton(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    return CastWindow_ControlColor(hWnd, dc, hControl, type);
+}
+
+static FORCE_INLINE HBRUSH CastWindow_OnCtlColorStatic(HWND hWnd, HDC dc, HWND hControl, int type)
+{
+    return CastWindow_ControlColor(hWnd, dc, hControl, type);
+}
+
 /*************************************************************************************************/
 /**
  * \par Details:
  *  Sets the subtitle combo's DPI-scaled item height and forwards other requests.
  */
-static FORCE_INLINE void OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
+static FORCE_INLINE void CastWindow_OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
 {
     App* pApp;
 
@@ -2422,7 +3227,7 @@ static FORCE_INLINE void OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
         item->itemHeight = (UINT)Scale(pApp, 22);
         return;
     }
-    FORWARD_WM_MEASUREITEM(hWnd, item, DefWindowProcW);
+    FORWARD_WM_MEASUREITEM(hWnd, item, DefWindowProc);
 }
 
 /*************************************************************************************************/
@@ -2431,13 +3236,15 @@ static FORCE_INLINE void OnMeasureItem(HWND hWnd, MEASUREITEMSTRUCT* item)
  *  Draws subtitle entries or dark buttons with selection/focus state; forwards
  *  unhandled control types to default window processing.
  */
-static FORCE_INLINE void OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
+static FORCE_INLINE void CastWindow_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
 {
     App* pApp;
+    RECT rect;
+    const D2D1_COLOR_F* fill;
+    const D2D1_COLOR_F* foreground;
 
     pApp = GetApp(hWnd);
-    WCHAR  label[128];
-    HBRUSH fill;
+    TCHAR label[128];
     if (item->CtlType == ODT_COMBOBOX && item->CtlID == ID_SUBTITLE)
     {
         PaintSubtitleItem(item->hwndItem,
@@ -2450,23 +3257,25 @@ static FORCE_INLINE void OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* item)
     }
     if (item->CtlType != ODT_BUTTON)
     {
-        FORWARD_WM_DRAWITEM(hWnd, item, DefWindowProcW);
+        FORWARD_WM_DRAWITEM(hWnd, item, DefWindowProc);
         return;
     }
-    fill = (item->itemState & ODS_SELECTED) ? pApp->selectedBrush : pApp->fieldBrush;
-    FillRect(item->hDC, &item->rcItem, fill);
-    SetBkMode(item->hDC, TRANSPARENT);
-    SetTextColor(item->hDC, (item->itemState & ODS_DISABLED) ? DARK_MUTED : DARK_TEXT);
-    GetWindowTextW(item->hwndItem, label, 128);
+    rect.left = 0;
+    rect.top = 0;
+    rect.right = item->rcItem.right - item->rcItem.left;
+    rect.bottom = item->rcItem.bottom - item->rcItem.top;
+    fill = (0 != (item->itemState & ODS_SELECTED)) ? &c_castSelectedColor : &c_castFieldColor;
+    foreground = (0 != (item->itemState & ODS_DISABLED)) ? &c_castMutedColor : &c_castTextColor;
+    BeginControlPaint(pApp, item->hDC, &item->rcItem);
+    FillControlRect(pApp, &rect, fill);
+    (void)GetWindowText(item->hwndItem, label, ARRAYSIZE(label));
+    DrawControlText(pApp, label, &rect, foreground, DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (0 != (item->itemState & ODS_FOCUS))
     {
-        RECT rect = item->rcItem;
-        DrawTextW(item->hDC, label, -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-        if (item->itemState & ODS_FOCUS)
-        {
-            InflateRect(&rect, -3, -3);
-            DrawFocusRect(item->hDC, &rect);
-        }
+        InflateRect(&rect, -3, -3);
+        DrawControlRect(pApp, &rect, &c_castAccentColor);
     }
+    EndControlPaint(pApp);
     return;
 }
 
@@ -2486,7 +3295,7 @@ static FORCE_INLINE void PollJobs(App* app)
     failed = (OS_THREAD_FAILED == OS_Thread_GetState(&app->sessionWorker));
     if (app->sessionBusy && failed)
     {
-        FinishSession(app, TEXT("Session worker stopped."));
+        FinishSession(app, L"Session worker stopped.");
     }
 
     if (app->gainBusy)
@@ -2501,7 +3310,7 @@ static FORCE_INLINE void PollJobs(App* app)
             {
                 if (app->gainOutput[0])
                 {
-                    (void)DeleteFile(app->gainOutput);
+                    (void)DeleteUtf16File(app->gainOutput);
                     app->gainOutput[0] = TEXT('\0');
                 }
             }
@@ -2542,13 +3351,14 @@ static FORCE_INLINE void PollJobs(App* app)
  *  Polls worker/session progress, advances the position readout and handles
  *  debounced subtitle/gain jobs. Closing polls all worker exits without waiting.
  */
-static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
+static FORCE_INLINE void CastWindow_OnTimer(HWND hWnd, UINT id)
 {
     App*   pApp = GetApp(hWnd);
     bool_t discovery_closed;
     bool_t gain_closed;
     bool_t session_closed;
     bool_t preview_closed;
+    bool_t presenter_closed;
     bool_t jobs_closed;
     bool_t can_release;
     bool_t can_destroy;
@@ -2585,7 +3395,8 @@ static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
             {
                 preview_closed = OS_Thread_TryClose(&pApp->previewWorker);
             }
-            jobs_closed = discovery_closed && gain_closed && session_closed && preview_closed;
+            presenter_closed = OS_Thread_TryClose(&pApp->presenterWorker);
+            jobs_closed = discovery_closed && gain_closed && session_closed && preview_closed && presenter_closed;
             can_release = jobs_closed && (!pApp->pSession) && (!pApp->finishPending);
             can_destroy = FALSE;
             if (can_release)
@@ -2603,7 +3414,7 @@ static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
             }
             if (can_destroy)
             {
-                DestroyWindow(hWnd);
+                LOGASSERT(DestroyWindow(hWnd));
             }
             return;
         }
@@ -2621,14 +3432,18 @@ static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
         OnPositionTimer(pApp);
         if (pApp->gainBusy)
         {
-            WCHAR progress[100];
-            _snwprintf_s(progress,
-                         100,
-                         _TRUNCATE,
-                         L"Preparing AAC (%u%%): %ld%%",
-                         pApp->gainPercent,
-                         InterlockedCompareExchange(&pApp->gainProgress, 0, 0));
-            SetWindowTextW(pApp->hGainState, progress);
+            TCHAR      progress[100];
+            NativeText writer;
+            LONG       gainProgress;
+
+            gainProgress = InterlockedCompareExchange(&pApp->gainProgress, 0, 0);
+            NativeText_Initialize(&writer, progress, ARRAYSIZE(progress));
+            NativeText_AppendString(&writer, TEXT("Preparing AAC ("));
+            NativeText_AppendUnsigned(&writer, pApp->gainPercent, 1);
+            NativeText_AppendString(&writer, TEXT("%): "));
+            NativeText_AppendSigned(&writer, gainProgress);
+            NativeText_AppendCharacter(&writer, TEXT('%'));
+            (void)SetWindowText(pApp->hGainState, progress);
         }
     }
     else if (id == SUBTITLE_TIMER)
@@ -2653,17 +3468,15 @@ static FORCE_INLINE void OnTimer(HWND hWnd, UINT id)
  * \par Details:
  *  None
  */
-static FORCE_INLINE void OnSize(HWND hWnd, UINT state, int width, int height)
+static FORCE_INLINE void CastWindow_OnSize(HWND hWnd, UINT state, int width, int height)
 {
     App* pApp;
 
     pApp = GetApp(hWnd);
-    (void)hWnd;
+    Layout(pApp);
     (void)state;
     (void)width;
     (void)height;
-
-    Layout(pApp);
 }
 
 /*************************************************************************************************/
@@ -2671,7 +3484,7 @@ static FORCE_INLINE void OnSize(HWND hWnd, UINT state, int width, int height)
  * \par Details:
  *  Applies the DPI-scaled minimum tracking size.
  */
-static FORCE_INLINE void OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo)
+static FORCE_INLINE void CastWindow_OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo)
 {
     App* pApp;
 
@@ -2679,7 +3492,7 @@ static FORCE_INLINE void OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo)
     (void)hWnd;
 
     pInfo->ptMinTrackSize.x = Scale(pApp, 620);
-    pInfo->ptMinTrackSize.y = Scale(pApp, 584);
+    pInfo->ptMinTrackSize.y = Scale(pApp, 584) + pApp->immersiveWindow.metrics.cyCaption;
 }
 
 /*************************************************************************************************/
@@ -2688,21 +3501,14 @@ static FORCE_INLINE void OnGetMinMaxInfo(HWND hWnd, MINMAXINFO* pInfo)
  *  Accepts the suggested window rectangle and refreshes fonts and layout using
  *  the new vertical DPI.
  */
-static FORCE_INLINE void OnDpiChanged(HWND hWnd, UINT dpiX, UINT dpiY, const RECT* pSuggested)
+static FORCE_INLINE void CastWindow_OnDpiChanged(HWND hWnd, UINT dpiX, UINT dpiY, const RECT* pSuggested)
 {
     App* pApp;
 
     pApp = GetApp(hWnd);
-    (void)dpiX;
-
     pApp->dpi = dpiY;
-    SetWindowPos(hWnd,
-                 NULL,
-                 pSuggested->left,
-                 pSuggested->top,
-                 pSuggested->right - pSuggested->left,
-                 pSuggested->bottom - pSuggested->top,
-                 SWP_NOZORDER | SWP_NOACTIVATE);
+    (void)dpiX;
+    (void)pSuggested;
     ApplyFont(pApp);
     Layout(pApp);
 }
@@ -2713,7 +3519,7 @@ static FORCE_INLINE void OnDpiChanged(HWND hWnd, UINT dpiX, UINT dpiY, const REC
  *  Routes control commands and file-edit notifications to their application
  *  operations; forwards unhandled commands.
  */
-static FORCE_INLINE void OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNotify)
+static FORCE_INLINE void CastWindow_OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNotify)
 {
     App* pApp;
 
@@ -2763,7 +3569,7 @@ static FORCE_INLINE void OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNo
     default:
         break;
     }
-    FORWARD_WM_COMMAND(hWnd, id, hControl, codeNotify, DefWindowProcW);
+    FORWARD_WM_COMMAND(hWnd, id, hControl, codeNotify, DefWindowProc);
 }
 
 /*************************************************************************************************/
@@ -2772,7 +3578,7 @@ static FORCE_INLINE void OnCommand(HWND hWnd, int id, HWND hControl, UINT codeNo
  *  Supplies slider custom drawing and receiver-list selection/double-click
  *  behavior, then forwards notifications requiring default processing.
  */
-static FORCE_INLINE LRESULT OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
+static FORCE_INLINE LRESULT CastWindow_OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
 {
     App* pApp;
 
@@ -2789,10 +3595,24 @@ static FORCE_INLINE LRESULT OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
                 return CDRF_NOTIFYITEMDRAW;
             if (draw->dwDrawStage == CDDS_ITEMPREPAINT)
             {
-                HBRUSH brush = draw->dwItemSpec == TBCD_THUMB
-                                   ? (IsWindowEnabled(pHeader->hwndFrom) ? pApp->accentBrush : pApp->mutedBrush)
-                                   : pApp->fieldBrush;
-                FillRect(draw->hdc, &draw->rc, brush);
+                RECT rect;
+                const D2D1_COLOR_F* fill;
+
+                rect.left = 0;
+                rect.top = 0;
+                rect.right = draw->rc.right - draw->rc.left;
+                rect.bottom = draw->rc.bottom - draw->rc.top;
+                if (TBCD_THUMB == draw->dwItemSpec)
+                {
+                    fill = IsWindowEnabled(pHeader->hwndFrom) ? &c_castAccentColor : &c_castMutedColor;
+                }
+                else
+                {
+                    fill = &c_castFieldColor;
+                }
+                BeginControlPaint(pApp, draw->hdc, &draw->rc);
+                FillControlRect(pApp, &rect, fill);
+                EndControlPaint(pApp);
                 return CDRF_SKIPDEFAULT;
             }
         }
@@ -2809,7 +3629,7 @@ static FORCE_INLINE LRESULT OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
             StartCast(pApp);
         }
     }
-    return FORWARD_WM_NOTIFY(hWnd, idFrom, pHeader, DefWindowProcW);
+    return FORWARD_WM_NOTIFY(hWnd, idFrom, pHeader, DefWindowProc);
 }
 
 /*************************************************************************************************/
@@ -2818,7 +3638,7 @@ static FORCE_INLINE LRESULT OnNotify(HWND hWnd, int idFrom, NMHDR* pHeader)
  *  Updates gain captions and its debounce timer, routes seeking, or copies
  *  transcoder slider values into configuration.
  */
-static FORCE_INLINE void OnHScroll(HWND hWnd, HWND hControl, UINT code, int position)
+static FORCE_INLINE void CastWindow_OnHScroll(HWND hWnd, HWND hControl, UINT code, int position)
 {
     App* pApp;
 
@@ -2827,14 +3647,18 @@ static FORCE_INLINE void OnHScroll(HWND hWnd, HWND hControl, UINT code, int posi
 
     if (hControl == pApp->hGain)
     {
-        WCHAR text[64];
+        TCHAR text[64];
+        NativeText writer;
         unsigned percent = (unsigned)SendMessage(pApp->hGain, TBM_GETPOS, 0, 0);
-        _snwprintf_s(text, 64, _TRUNCATE, L"Audio gain %u%%", percent);
-        SetWindowTextW(pApp->hGainLabel, text);
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendString(&writer, TEXT("Audio gain "));
+        NativeText_AppendUnsigned(&writer, percent, 1);
+        NativeText_AppendCharacter(&writer, TEXT('%'));
+        (void)SetWindowText(pApp->hGainLabel, text);
         if (pApp->pSession || pApp->preparingAudio)
             SetTimer(hWnd, GAIN_TIMER, 500, NULL);
         else
-            SetWindowTextW(pApp->hGainState, percent == 100 ? L"Original audio" : L"Applies during playback");
+            (void)SetWindowText(pApp->hGainState, (100 == percent) ? TEXT("Original audio") : TEXT("Applies during playback"));
     }
     else if (hControl == pApp->hSeek)
     {
@@ -2864,16 +3688,19 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
     EnableWindow(pApp->hPreview, !pApp->preparingAudio);
     if (!pApp->closing && NULL != pResult && pResult->ok && pResult->frames > 0)
     {
-        WCHAR text[192];
+        TCHAR text[192];
+        NativeText writer;
 
-        (void)swprintf(text,
-                       sizeof(text) / sizeof(text[0]),
-                       L"%u px, QP %d, ~%u kbps, motion %d%% \x2014 playing on the receiver",
-                       pResult->width,
-                       pApp->transcode.qpInter,
-                       pResult->kbps,
-                       pResult->motionPercent);
-        SetWindowTextW(pApp->hCfgReadout, text);
+        NativeText_Initialize(&writer, text, ARRAYSIZE(text));
+        NativeText_AppendUnsigned(&writer, pResult->width, 1);
+        NativeText_AppendString(&writer, TEXT(" px, QP "));
+        NativeText_AppendSigned(&writer, pApp->transcode.qpInter);
+        NativeText_AppendString(&writer, TEXT(", ~"));
+        NativeText_AppendUnsigned(&writer, pResult->kbps, 1);
+        NativeText_AppendString(&writer, TEXT(" kbps, motion "));
+        NativeText_AppendSigned(&writer, pResult->motionPercent);
+        NativeText_AppendString(&writer, TEXT("% - playing on the receiver"));
+        (void)SetWindowText(pApp->hCfgReadout, text);
         /* Show the transcoded clip on the receiver: no proxy, since the clip is the output. */
         if (NULL == pApp->pSession)
         {
@@ -2882,7 +3709,7 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
     }
     else
     {
-        SetWindowTextW(pApp->hCfgReadout, L"Preview failed (need a local AVC MP4 with an H.264 track).");
+        (void)SetWindowText(pApp->hCfgReadout, TEXT("Preview failed (need a local AVC MP4 with an H.264 track)."));
     }
     (void)pResult; /* App-owned storage; nothing to free */
 }
@@ -2893,7 +3720,7 @@ static FORCE_INLINE void OnPreviewDone(HWND hWnd, const PreviewResult* pResult)
  *  Latches closing, requests worker cancellation and session Stop, and starts
  *  cleanup. The position timer completes deferred window destruction.
  */
-static FORCE_INLINE void OnClose(HWND hWnd)
+static FORCE_INLINE void CastWindow_OnClose(HWND hWnd)
 {
     App* app;
 
@@ -2912,6 +3739,7 @@ static FORCE_INLINE void OnClose(HWND hWnd)
         (void)OS_Thread_Stop(&app->gainWorker);
         (void)OS_Thread_Stop(&app->sessionWorker);
         (void)OS_Thread_Stop(&app->previewWorker);
+        (void)OS_Thread_Stop(&app->presenterWorker);
         FinishSession(app, NULL);
     }
 }
@@ -2921,120 +3749,109 @@ static FORCE_INLINE void OnClose(HWND hWnd)
  * \par Details:
  *  Deletes the retained theme brushes and posts the thread's quit message.
  */
-static FORCE_INLINE void OnDestroy(HWND hWnd)
+static FORCE_INLINE void CastWindow_OnDestroy(HWND hWnd)
 {
     App* pApp;
 
     pApp = GetApp(hWnd);
     (void)hWnd;
 
-    DeleteObject(pApp->backgroundBrush);
-    DeleteObject(pApp->fieldBrush);
-    DeleteObject(pApp->selectedBrush);
-    DeleteObject(pApp->accentBrush);
-    DeleteObject(pApp->mutedBrush);
-    DeleteObject(pApp->borderBrush);
     pApp->windowDestroyed = TRUE;
     PostQuitMessage(0);
 }
 
-/* Message crackers for messages absent from windowsx.h; signatures match the handlers. */
-#ifndef HANDLE_WM_DPICHANGED
-/* void OnDpiChanged(HWND, UINT dpiX, UINT dpiY, const RECT* suggested) */
-#define HANDLE_WM_DPICHANGED(hwnd, wParam, lParam, fn)                                                                 \
-    ((fn)((hwnd), (UINT)LOWORD(wParam), (UINT)HIWORD(wParam), (const RECT*)(lParam)), (LRESULT)0)
-#endif
-
-/*************************************************************************************************/
-/**
- * \brief Binds the caller-owned context passed to CreateWindowEx.
- *
- * \param[in] window   Native window being constructed
- * \param[in] create   Native creation record containing the required context
- *
- * \retval    TRUE    Context binding succeeded.
- * \retval    FALSE   Native binding failed; creation must stop.
- */
-static FORCE_INLINE BOOL OnNcCreate(HWND window, LPCREATESTRUCT create);
-
-/*************************************************************************************************/
-/**
- * \par Details:
- *  A zero previous value is expected for a new window. Last-error distinguishes
- *  that successful result from native failure before WM_CREATE may use the owner.
- */
-static FORCE_INLINE BOOL OnNcCreate(HWND window, LPCREATESTRUCT create)
+static FORCE_INLINE BOOL CastWindow_OnNcCreate(HWND window, LPCREATESTRUCT create)
 {
-    App*     app;
-    LONG_PTR previous;
-    DWORD    error;
-    bool_t   has_previous;
-    bool_t   no_error;
-    bool_t   attached;
+    IMMERSIVEWINDOW* immersiveWindow;
+    App*             app;
 
-    LOGASSERT(NULL != create);
-    LOGASSERT(NULL != create->lpCreateParams);
+    immersiveWindow = (IMMERSIVEWINDOW*)create->lpCreateParams;
+    app = (App*)immersiveWindow->clientData;
+    app->hWnd = window;
+    return SetProp(window, TEXT("cvkCastApp"), app);
+}
 
-    app          = (App*)create->lpCreateParams;
-    app->hWnd    = window;
-    SetLastError(ERROR_SUCCESS);
-    previous     = SetWindowLongPtr(window, GWLP_USERDATA, (LONG_PTR)app);
-    error        = GetLastError();
-    has_previous = (0 != previous);
-    no_error     = (ERROR_SUCCESS == error);
-    attached     = has_previous || no_error;
-    return attached;
+static FORCE_INLINE void CastWindow_OnNcDestroy(HWND window)
+{
+    (void)RemoveProp(window, TEXT("cvkCastApp"));
 }
 
 /*************************************************************************************************/
 /**
  * \par Details:
  *  Uses the main-window message crackers and forwards unhandled messages to
- *  default window processing.
+ *  the ImmersiveWindow's default processing.
  */
 static FORCE_INLINE LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    App* app;
-    LRESULT result;
-
     switch (message)
     {
-        HANDLE_MSG(hWnd, WM_NCCREATE, OnNcCreate);
+        HANDLE_MSG(hWnd, WM_CREATE,          CastWindow_OnCreate);
+        HANDLE_MSG(hWnd, WM_DESTROY,         CastWindow_OnDestroy);
+        HANDLE_MSG(hWnd, WM_SIZE,            CastWindow_OnSize);
+        HANDLE_MSG(hWnd, WM_CLOSE,           CastWindow_OnClose);
+        HANDLE_MSG(hWnd, WM_ERASEBKGND,      CastWindow_OnEraseBackground);
+        HANDLE_MSG(hWnd, WM_GETMINMAXINFO,   CastWindow_OnGetMinMaxInfo);
+        HANDLE_MSG(hWnd, WM_DRAWITEM,        CastWindow_OnDrawItem);
+        HANDLE_MSG(hWnd, WM_MEASUREITEM,     CastWindow_OnMeasureItem);
+        HANDLE_MSG(hWnd, WM_NOTIFY,          CastWindow_OnNotify);
+        HANDLE_MSG(hWnd, WM_NCCREATE,        CastWindow_OnNcCreate);
+        HANDLE_MSG(hWnd, WM_NCDESTROY,       CastWindow_OnNcDestroy);
+        HANDLE_MSG(hWnd, WM_COMMAND,         CastWindow_OnCommand);
+        HANDLE_MSG(hWnd, WM_TIMER,           CastWindow_OnTimer);
+        HANDLE_MSG(hWnd, WM_HSCROLL,         CastWindow_OnHScroll);
+        HANDLE_MSG(hWnd, WM_CTLCOLOREDIT,    CastWindow_OnCtlColorEdit);
+        HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX, CastWindow_OnCtlColorListBox);
+        HANDLE_MSG(hWnd, WM_CTLCOLORBTN,     CastWindow_OnCtlColorButton);
+        HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC,  CastWindow_OnCtlColorStatic);
+        HANDLE_MSG(hWnd, WM_DPICHANGED,      CastWindow_OnDpiChanged);
     default:
         break;
     }
-    app = (App*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-    if (NULL != app)
+
+    return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+static FORCE_INLINE void PresentCastWindow(void* parameter)
+{
+    App*                      app;
+    IDXGIFactory6*            factory;
+    IDXGIAdapter1*            adapter;
+    IMMERSIVEPAINTSTRUCT      paint;
+    ID2D1DeviceContext*       context;
+    HRESULT                   comResult;
+    bool_t                    stopping;
+    static const D2D1_COLOR_F background = {24.0F / 255.0F, 26.0F / 255.0F, 31.0F / 255.0F, 1.0F};
+
+    app = (App*)parameter;
+    comResult = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    LOGASSERT(SUCCEEDED(comResult));
+    cdxgiSetupDefaultFactory(&factory);
+    cdxgiFactoryGetMinimumPowerAdapter(factory, &adapter);
+    InitSwapChain(&app->swapChain, (IDXGIAdapter*)adapter);
+    cdxgiUnknownReleaseSafe((IUnknown*)adapter);
+    cdxgiUnknownReleaseSafe((IUnknown*)factory);
+    InitCaption(&app->caption, &app->immersiveWindow, app->swapChain.context);
+    app->immersiveWindow.caption = &app->caption;
+    cdcompSetupDevice((IDXGIDevice*)app->swapChain.dxgiDevice, app->hWnd, FALSE, &app->swapChain.compositionDevice, &app->swapChain.compositionTarget, &app->swapChain.visual);
+    cdcompVisualSetContent(app->swapChain.visual, (IUnknown*)app->swapChain.swapChain);
+    app->immersiveWindow.swapChain = &app->swapChain;
+
+    stopping = OS_Thread_IsStopping(&app->presenterWorker);
+    for (; !stopping;)
     {
-        switch (message)
-        {
-            HANDLE_MSG(hWnd, WM_CREATE, OnCreate);
-            HANDLE_MSG(hWnd, WM_ERASEBKGND, OnEraseBackground);
-            HANDLE_MSG(hWnd, WM_CTLCOLORSTATIC, OnControlColor);
-            HANDLE_MSG(hWnd, WM_CTLCOLORBTN, OnControlColor);
-            HANDLE_MSG(hWnd, WM_CTLCOLOREDIT, OnControlColor);
-            HANDLE_MSG(hWnd, WM_CTLCOLORLISTBOX, OnControlColor);
-            HANDLE_MSG(hWnd, WM_MEASUREITEM, OnMeasureItem);
-            HANDLE_MSG(hWnd, WM_DRAWITEM, OnDrawItem);
-            HANDLE_MSG(hWnd, WM_TIMER, OnTimer);
-            HANDLE_MSG(hWnd, WM_SIZE, OnSize);
-            HANDLE_MSG(hWnd, WM_GETMINMAXINFO, OnGetMinMaxInfo);
-            HANDLE_MSG(hWnd, WM_DPICHANGED, OnDpiChanged);
-            HANDLE_MSG(hWnd, WM_COMMAND, OnCommand);
-            HANDLE_MSG(hWnd, WM_NOTIFY, OnNotify);
-            HANDLE_MSG(hWnd, WM_HSCROLL, OnHScroll);
-            HANDLE_MSG(hWnd, WM_CLOSE, OnClose);
-            HANDLE_MSG(hWnd, WM_DESTROY, OnDestroy);
-        default:
-            break;
-        }
+        context = BeginImmersivePaint(&app->immersiveWindow, &paint);
+        cd2dRenderTargetClear((ID2D1RenderTarget*)context, &background);
+        EndImmersivePaint(&app->immersiveWindow, &paint);
+        Sleep(USER_TIMER_MINIMUM);
+        stopping = OS_Thread_IsStopping(&app->presenterWorker);
     }
-    result = DefWindowProc(hWnd, message, wParam, lParam);
-    if (WM_NCDESTROY == message)
-    {
-        (void)SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
-    }
-    return result;
+
+    app->immersiveWindow.caption = NULL;
+    app->immersiveWindow.swapChain = NULL;
+    DestroyCaption(&app->caption);
+    DestroySwapChain(&app->swapChain);
+    CoUninitialize();
 }
 
 /*************************************************************************************************/
@@ -3052,14 +3869,13 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
     bool_t               network_ready;
     int32_t              result;
     INITCOMMONCONTROLSEX controls;
+    IMMERSIVEWINDOWCREATEINFO createInfo;
     bool_t               controls_ready;
-    WNDCLASSEX           window_class;
-    ATOM                 class_atom;
-    bool_t               class_ready;
     HWND                 window;
     bool_t               window_ready;
-    int32_t              argument_count;
-    LPWSTR*              arguments;
+    uint32_t             argumentCount;
+    WCHAR                argument[MAX_PATH];
+    bool_t               hasArgument;
     MSG                  message;
     BOOL                 message_result;
     bool_t               pump_failed;
@@ -3072,7 +3888,7 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
     ole_result    = OleInitialize(NULL);
     ole_ready     = SUCCEEDED(ole_result);
     network_ready = FALSE;
-    class_ready   = FALSE;
+    controls_ready = FALSE;
     result        = 1;
     if (ole_ready)
     {
@@ -3084,51 +3900,34 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
         controls.dwSize = sizeof(controls);
         controls.dwICC  = ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES | ICC_STANDARD_CLASSES;
         controls_ready  = !!InitCommonControlsEx(&controls);
-        if (controls_ready)
-        {
-            ZeroMemory(&window_class, sizeof(window_class));
-            window_class.cbSize        = sizeof(window_class);
-            window_class.lpfnWndProc   = WindowProc;
-            window_class.hInstance     = instance;
-            window_class.hCursor       = LoadCursor(NULL, IDC_ARROW);
-            window_class.hbrBackground = NULL;
-            window_class.lpszClassName = TEXT("cvkCastDemo");
-            window_class.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
-            class_atom                 = RegisterClassEx(&window_class);
-            class_ready                = (0 != class_atom);
-        }
     }
-    if (class_ready)
+    if (controls_ready)
     {
         app->hInstance = instance;
         app->dpi       = GetDpiForSystem();
-        window         = CreateWindowEx(0,
-                                        TEXT("cvkCastDemo"),
-                                        TEXT("CastDemo"),
-                                        WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX,
-                                        CW_USEDEFAULT,
-                                        CW_USEDEFAULT,
-                                        Scale(app, 720),
-                                        Scale(app, 700),
-                                        NULL,
-                                        NULL,
-                                        instance,
-                                        app);
+        createInfo.clientProc = WindowProc;
+        createInfo.clientData = app;
+        createInfo.title = L"CastDemo";
+        createInfo.width = Scale(app, 720);
+        createInfo.height = Scale(app, 740);
+        createInfo.showCommand = showCommand;
+        CreateImmersiveWindow(&app->immersiveWindow, &createInfo);
+        window = app->immersiveWindow.hwnd;
         window_ready = (NULL != window);
         if (window_ready)
         {
-            argument_count = 0;
-            arguments      = CommandLineToArgvW(GetCommandLineW(), &argument_count);
-            if (NULL != arguments)
+            if (!app->closing && !OS_Thread_Submit(&app->presenterWorker))
             {
-                if (1 < argument_count)
-                {
-                    SetWindowTextW(app->hFile, arguments[1]);
-                    UpdateControls(app);
-                }
-                (void)LocalFree(arguments);
+                CastWindow_OnClose(window);
             }
-            ShowWindow(window, showCommand);
+            argumentCount = 0;
+            hasArgument   = OS_Process_ReadArgument(&argumentCount, (uint16_t*)argument, MAX_PATH - 1, 1);
+            if (hasArgument)
+            {
+                argument[argumentCount] = L'\0';
+                (void)WriteControlText(app->hFile, argument);
+                UpdateControls(app);
+            }
             pump_failed = FALSE;
             for (;;)
             {
@@ -3141,7 +3940,7 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
                     has_message = !!PeekMessage(&message, NULL, 0, 0, PM_REMOVE);
                     if (!has_message)
                     {
-                        OnTimer(window, POSITION_TIMER);
+                        CastWindow_OnTimer(window, POSITION_TIMER);
                         (void)MsgWaitForMultipleObjectsEx(0, NULL, POSITION_TICK_MS, QS_ALLINPUT, MWMO_INPUTAVAILABLE);
                     }
                 }
@@ -3157,7 +3956,7 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
                             result = (int32_t)message.wParam;
                         }
                         pump_failed = TRUE;
-                        OnClose(window);
+                        CastWindow_OnClose(window);
                     }
                 }
                 if (has_message)
@@ -3178,7 +3977,10 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
         {
             (void)DeleteObject(app->hFont);
         }
-        (void)UnregisterClass(TEXT("cvkCastDemo"), instance);
+        (void)DeleteObject(app->backgroundBrush);
+        (void)DeleteObject(app->fieldBrush);
+        DestroyControlPaint(app);
+        LOGASSERT(UnregisterClass(WC_IMMERSIVEWINDOW, instance));
     }
     if (network_ready)
     {
@@ -3197,9 +3999,9 @@ static FORCE_INLINE int RunWindow(App* app, HINSTANCE instance, int showCommand)
  *  Retains the context outside the window procedure until all workers and the
  *  native window have stopped using it. Native memory-release failure is retried.
  */
-int APIENTRY wWinMain(_In_ HINSTANCE instance,
+int APIENTRY _tWinMain(_In_ HINSTANCE instance,
                       _In_opt_ HINSTANCE previousInstance,
-                      _In_ LPWSTR commandLine,
+                      _In_ LPTSTR commandLine,
                       _In_ int showCommand)
 {
     OS_Memory_t memory;
@@ -3208,8 +4010,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance,
     App*        app;
     bool_t      closed;
 
-    (void)previousInstance;
-    (void)commandLine;
+    UNREFERENCED_PARAMETER(previousInstance);
+    UNREFERENCED_PARAMETER(commandLine);
 
     ready  = OS_Memory_Initialize(&memory, sizeof(App));
     result = 1;

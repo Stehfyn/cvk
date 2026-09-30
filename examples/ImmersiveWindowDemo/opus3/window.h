@@ -39,6 +39,8 @@ typedef struct WINDOWMETRICS
 typedef struct IMMERSIVEWINDOW
 {
     HWND               hwnd;
+    WNDPROC            clientProc;
+    void*              clientData;
     WINDOWMETRICS      metrics;
     BOOL               fBorderless;
     BOOL               fShadow;
@@ -63,6 +65,16 @@ typedef struct IMMERSIVEWINDOW
     CAPTION*           caption;    /* set by the app once built; EndImmersivePaint draws it */
     ULONGLONG          paintCount; /* frames painted; paces the visual's border mode        */
 } IMMERSIVEWINDOW;
+
+typedef struct IMMERSIVEWINDOWCREATEINFO
+{
+    WNDPROC      clientProc;
+    void*        clientData;
+    const WCHAR* title;
+    int          width;
+    int          height;
+    int          showCommand;
+} IMMERSIVEWINDOWCREATEINFO;
 
 /* The borderless caption's geometry in client pixels for a client width, laid out from the window's
    cached metrics so that hit-testing and drawing agree. Built per hit test and per frame. */
@@ -93,7 +105,8 @@ GetCaptionButtonState(
 
 void
 CreateImmersiveWindow(
-    IMMERSIVEWINDOW* window);
+    IMMERSIVEWINDOW*                 window,
+    const IMMERSIVEWINDOWCREATEINFO* createInfo);
 
 /* One frame's state, filled by BeginImmersivePaint and consumed by EndImmersivePaint, as PAINTSTRUCT is
    by Begin/EndPaint. Between the two the window's geometry holds still and the context is inside

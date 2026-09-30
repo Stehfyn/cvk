@@ -117,7 +117,9 @@ target_link_libraries(cast-session PUBLIC cast-formats cast-network cvk volk::vo
 
 add_executable(CastDemo WIN32 cast_gui.c)
 target_compile_definitions(CastDemo PRIVATE UNICODE _UNICODE)
-target_link_libraries(CastDemo PRIVATE cast-session comctl32 comdlg32 shell32 ole32 user32 gdi32 uxtheme dwmapi)
+target_link_libraries(CastDemo PRIVATE cast-session cast-text-unicode immersive-opus3-window cdw
+    comctl32 comdlg32 shell32 ole32 user32 gdi32 uxtheme dwmapi
+    d2d1 dwrite dxgi dxguid dcomp windowscodecs uuid)
 
 add_executable(CastDemoCli cast_demo.c)
 target_compile_definitions(CastDemoCli PRIVATE WIN32_LEAN_AND_MEAN)

@@ -89,6 +89,10 @@ InitCaption(
     const IMMERSIVEWINDOW* window,
     ID2D1DeviceContext*    context);
 
+void
+DestroyCaption(
+    CAPTION* caption);
+
 /* Before a frame's draw opens: bring the resources up to date with the window's caption revision and
    the frame's layout (its DPI and width), and the recording up to date with both and the window's
    state. Rebuilds and recording retarget the context. */

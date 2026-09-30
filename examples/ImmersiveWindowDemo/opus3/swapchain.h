@@ -32,9 +32,12 @@ InitSwapChain(
     SWAPCHAIN*     swapChain,
     IDXGIAdapter*  adapter);
 
+void
+DestroySwapChain(
+    SWAPCHAIN* swapChain);
+
 BOOL
 PresentSwapChain(
     SWAPCHAIN* swapChain,
     BOOL       restart,
     BOOL       vsync);
-

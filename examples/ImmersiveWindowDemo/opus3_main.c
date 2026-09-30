@@ -63,6 +63,8 @@ NTSYSCALLAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER D
 #define APP_COMMIT_WINDOW_100NS   (-3LL * 10000LL) /* relative due time: 3 ms after the blank */
 #define APP_100NS_PER_SECOND      10000000         /* refresh period = this / VREFRESH */
 #define APP_100NS_PER_MILLISECOND 10000LL
+#define APP_WINDOW_WIDTH          1280
+#define APP_WINDOW_HEIGHT         720
 
 /* ---- types ------------------------------------------------------------------------------------- */
 
@@ -167,13 +169,20 @@ static DWORD WINAPI AppWindowThread(LPVOID pvParameter)
 {
     APP_WINDOW_LAUNCH* pLaunch;
     IMMERSIVEWINDOW    window;
+    IMMERSIVEWINDOWCREATEINFO createInfo;
     MSG                msg;
     BOOL               fHasMessage;
     LARGE_INTEGER      liDelay;
     NTSTATUS           status;
 
     pLaunch = (APP_WINDOW_LAUNCH*)pvParameter;
-    CreateImmersiveWindow(&window);
+    createInfo.clientProc = NULL;
+    createInfo.clientData = NULL;
+    createInfo.title = TEXT("Opus3");
+    createInfo.width = APP_WINDOW_WIDTH;
+    createInfo.height = APP_WINDOW_HEIGHT;
+    createInfo.showCommand = SW_SHOW;
+    CreateImmersiveWindow(&window, &createInfo);
     pLaunch->hwnd    = window.hwnd;
     pLaunch->pWindow = &window;
     ASSERT(SetEvent(pLaunch->hAck));

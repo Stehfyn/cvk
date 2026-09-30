@@ -114,3 +114,14 @@ BOOL PresentSwapChain(SWAPCHAIN* pSwapChain, BOOL fRestart, BOOL fVSync)
     ASSERT(SUCCEEDED(hrSecond) || (DXGI_ERROR_WAS_STILL_DRAWING == hrSecond));
     return (S_OK == hrFirst) && (S_OK == hrSecond);
 }
+
+void DestroySwapChain(SWAPCHAIN* pSwapChain)
+{
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->visual);
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->compositionTarget);
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->compositionDevice);
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->context);
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->swapChain);
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->dxgiDevice);
+    cdxgiUnknownReleaseSafe((IUnknown*)pSwapChain->device);
+}
